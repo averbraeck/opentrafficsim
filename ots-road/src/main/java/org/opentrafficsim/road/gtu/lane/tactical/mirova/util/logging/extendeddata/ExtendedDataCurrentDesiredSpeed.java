@@ -3,26 +3,30 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendedda
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
-/** Current speed delta to leading vehicle [m/s]: ego speed minus leader speed. */
-public class ExtendedDataFrontGapDeltaSpeed extends ExtendedDataSpeed<GtuData>
+/** Current desired speed according to car-following model [m/s]. */
+public class ExtendedDataCurrentDesiredSpeed extends ExtendedDataSpeed<GtuData>
 {
 
     /** Single instance. */
-    public static final ExtendedDataFrontGapDeltaSpeed INSTANCE = new ExtendedDataFrontGapDeltaSpeed();
+    public static final ExtendedDataCurrentDesiredSpeed INSTANCE = new ExtendedDataCurrentDesiredSpeed();
 
     /**
      *
      */
-    public ExtendedDataFrontGapDeltaSpeed()
+    public ExtendedDataCurrentDesiredSpeed()
     {
-        super("FrontGapDeltaSpeed", "Current speed delta to leading vehicle [m/s]: ego speed minus leader speed");
+        super("CurrentDesiredSpeed", "Current desired speed according to car-following model [m/s]");
     }
 
     /** Wert je GTU (Sampler-Einstiegspunkt). */
@@ -34,13 +38,20 @@ public class ExtendedDataFrontGapDeltaSpeed extends ExtendedDataSpeed<GtuData>
             LaneBasedGtu lgtu = road.getGtu();
             if (lgtu.getTacticalPlanner() instanceof MirovaTacticalPlanner p)
             {
-                Speed deltaSpeed = p.getContextManager().getCategory("Neighbors", NeighborsContext.class).getCachedValue(
-                        NeighborsContext.FRONT_GAP_DELTA_SPEED_CURRENT, Speed.class);
-                if (deltaSpeed == null)
+                Speed desiredSpeed = Speed.NaN;
+                try
+                {
+                    desiredSpeed = p.getContextManager().getCategory("Ego", EgoContext.class).getCurrentDesiredSpeed();
+                }
+                catch (ParameterException | GtuException | NetworkException exception)
+                {
+                    exception.printStackTrace();
+                }
+                if (desiredSpeed == null)
                 {
                     return FloatSpeed.instantiateSI(Float.NaN, SpeedUnit.SI);
                 }
-                return FloatSpeed.instantiateSI((float) deltaSpeed.si, SpeedUnit.SI);
+                return FloatSpeed.instantiateSI((float) desiredSpeed.si, SpeedUnit.SI);
             }
             else
             {
@@ -53,6 +64,6 @@ public class ExtendedDataFrontGapDeltaSpeed extends ExtendedDataSpeed<GtuData>
     @Override
     public final String toString()
     {
-        return "Current speed delta to leading vehicle [m/s]: ego speed minus leader speed";
+        return "Current desired speed according to car-following model [m/s]";
     }
 }

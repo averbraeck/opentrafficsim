@@ -7,6 +7,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 
 /**
  * {@code ActionStateCompleteLaneChange}
@@ -56,7 +57,7 @@ public class ActionStateCompleteLaneChange extends ActionState {
         // Immediately finalize maneuver
         finalizeManeuver();
         return new SimpleOperationalPlan(
-                this.vehicle.computeLongitudinalAcceleration(),
+                this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration(),
             this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT),
             LateralDirectionality.NONE
         );

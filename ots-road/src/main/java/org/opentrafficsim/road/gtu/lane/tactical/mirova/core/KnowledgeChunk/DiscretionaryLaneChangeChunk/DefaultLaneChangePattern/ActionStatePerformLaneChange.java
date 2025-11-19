@@ -6,6 +6,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -37,6 +38,7 @@ public class ActionStatePerformLaneChange extends ActionState {
     /** Target direction of the lane change (LEFT or RIGHT). */
     private final LateralDirectionality direction;
 
+
     /** Desire hysteresis for abort stability. */
     private static final double DESIRE_HYSTERESIS = 0.1;
 
@@ -55,6 +57,8 @@ public class ActionStatePerformLaneChange extends ActionState {
     public ActionStatePerformLaneChange(final ManeuverPattern pattern, final LateralDirectionality direction) {
         super(pattern);
         this.direction = direction;
+
+
         this.originLane = this.vehicle.getGtu().getLane();
     }
 
@@ -81,18 +85,16 @@ public class ActionStatePerformLaneChange extends ActionState {
         Speed egoSpeed = egoCtx.getEgoSpeed();
         Parameters params = this.vehicle.getGtu().getParameters();
 
-        // Retrieve leaders via context (no direct perception access here!)
-        Headway currentLeader = neighborsCtx.getCurrentLeader();
 
 
         // Start with relaxed car-following acceleration (already includes Desire effects)
-        Acceleration minAcc = this.vehicle.computeLongitudinalAcceleration();
+        Acceleration minAcc = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration();
 
 
         // Add target-lane leader constraint
         if (this.vehicle.getGtu().getLane() == this.originLane) {
             // Only consider target-lane leader if still on origin lane;
-            HeadwayGtu targetLeader = neighborsCtx.getLeaderInDirection(this.direction);
+            HeadwayGtu targetLeader = neighborsCtx.getLeader(this.direction);
             if (targetLeader != null) {
                 Acceleration aTarget = CarFollowingUtil.followSingleLeader(
                         this.vehicle.getCarFollowingModel(),
@@ -105,10 +107,18 @@ public class ActionStatePerformLaneChange extends ActionState {
             }
         }
 
-        return new SimpleOperationalPlan(
+        SimpleOperationalPlan plan =new SimpleOperationalPlan(
                 minAcc,
                 params.getParameter(ParameterTypes.DT),
                 this.direction);
+
+        if (this.direction == LateralDirectionality.LEFT) {
+            plan.setIndicatorIntentLeft();
+        } else if (this.direction == LateralDirectionality.RIGHT) {
+            plan.setIndicatorIntentRight();
+        }
+
+        return plan;
 //        if (this.vehicle.getLaneChange().isChangingLane()) {
 //            // Create operational plan
 //            return new SimpleOperationalPlan(

@@ -34,7 +34,7 @@ public class ExtendedDataFrontGapDistance extends ExtendedDataLength<GtuData>
             LaneBasedGtu lgtu = road.getGtu();
             if (lgtu.getTacticalPlanner() instanceof MirovaTacticalPlanner p)
             {
-                Length distanceHeadway = p.getContextManager().getCategory("Neighbors", NeighborsContext.class).getCachedValue(NeighborsContext.FRONT_GAP_DISTANCE, Length.class);
+                Length distanceHeadway = p.getContextManager().getCategory("Neighbors", NeighborsContext.class).getCachedValue(NeighborsContext.FRONT_GAP_DISTANCE_CURRENT, Length.class);
                 if (distanceHeadway == null)
                 {
                     return FloatLength.instantiateSI(Float.NaN, LengthUnit.SI);

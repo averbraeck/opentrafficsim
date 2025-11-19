@@ -13,6 +13,8 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
@@ -43,9 +45,32 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     public static final String EGO_DECEL_RIGHT = "egoDecel_RIGHT";
     public static final String FOLLOWER_DECEL_LEFT = "followerDecel_LEFT";
     public static final String FOLLOWER_DECEL_RIGHT = "followerDecel_RIGHT";
-    public static final String FRONT_GAP_DISTANCE = "frontGapDistance";
-    public static final String FRONT_GAP_DELTA_SPEED = "frontGapDeltaSpeed";
-    public static final String FRONT_GAP_TIME_HEADWAY = "frontGapTimeHeadway";
+    public static final String FRONT_GAP_DISTANCE_CURRENT = "frontGapDistanceCurrent";
+    public static final String FRONT_GAP_DISTANCE_LEFT = "frontGapDistanceLeft";
+    public static final String FRONT_GAP_DISTANCE_RIGHT = "frontGapDistanceRight";
+    public static final String FRONT_GAP_DELTA_SPEED_CURRENT = "frontGapDeltaSpeedCurrent";
+    public static final String FRONT_GAP_DELTA_SPEED_LEFT = "frontGapDeltaSpeedLeft";
+    public static final String FRONT_GAP_DELTA_SPEED_RIGHT = "frontGapDeltaSpeedRight";
+    public static final String FRONT_GAP_TIME_HEADWAY_CURRENT = "frontGapTimeHeadwayCurrent";
+    public static final String FRONT_GAP_TIME_HEADWAY_LEFT = "frontGapTimeHeadwayLeft";
+    public static final String FRONT_GAP_TIME_HEADWAY_RIGHT = "frontGapTimeHeadwayRight";
+    public static final String CURRENT_LEADER = "currentLeader";
+    public static final String LEFT_LEADER = "leftLeader";
+    public static final String RIGHT_LEADER = "rightLeader";
+    public static final String CURRENT_FOLLOWER = "currentFollower";
+    public static final String LEFT_FOLLOWER = "leftFollower";
+    public static final String RIGHT_FOLLOWER = "rightFollower";
+    public static final String REAR_GAP_DISTANCE_CURRENT = "rearGapDistanceCurrent";
+    public static final String REAR_GAP_DISTANCE_LEFT = "rearGapDistanceLeft";
+    public static final String REAR_GAP_DISTANCE_RIGHT = "rearGapDistanceRight";
+    public static final String REAR_GAP_DELTA_SPEED_CURRENT = "rearGapDeltaSpeedCurrent";
+    public static final String REAR_GAP_DELTA_SPEED_LEFT = "rearGapDeltaSpeedLeft";
+    public static final String REAR_GAP_DELTA_SPEED_RIGHT = "rearGapDeltaSpeedRight";
+    public static final String REAR_GAP_TIME_HEADWAY_CURRENT = "rearGapTimeHeadwayCurrent";
+    public static final String REAR_GAP_TIME_HEADWAY_LEFT = "rearGapTimeHeadwayLeft";
+    public static final String REAR_GAP_TIME_HEADWAY_RIGHT = "rearGapTimeHeadwayRight";
+
+
 
     // ----------------------------------------------------------------------
     // Construction
@@ -183,30 +208,174 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         return result;
     }
 
-    public Length getFrontGapDistance() {
-        Length cached = getCachedValue(FRONT_GAP_DISTANCE, Length.class);
+    public Length getFrontGapDistance(final LateralDirectionality dir) {
+        String name;
+        if (dir.isLeft()) {
+            name = FRONT_GAP_DISTANCE_LEFT;
+        } else if (dir.isRight()) {
+            name = FRONT_GAP_DISTANCE_RIGHT;
+        } else {
+            name = FRONT_GAP_DISTANCE_CURRENT;
+        }
+        Length cached = getCachedValue(name, Length.class);
         if (cached != null) return cached;
 
-        Length result = computeFrontGapDistance();
-        cacheValue(FRONT_GAP_DISTANCE, result, true);
+        Length result = computeFrontGapDistance(dir);
+        cacheValue(name, result, true);
         return result;
     }
 
-    public Speed getFrontGapDeltaSpeed() {
-        Speed cached = getCachedValue(FRONT_GAP_DELTA_SPEED, Speed.class);
+    public Speed getFrontGapDeltaSpeed(final LateralDirectionality dir) {
+        String name;
+        if (dir.isLeft()) {
+            name = FRONT_GAP_DELTA_SPEED_LEFT;
+        } else if (dir.isRight()) {
+            name = FRONT_GAP_DELTA_SPEED_RIGHT;
+        } else {
+            name = FRONT_GAP_DELTA_SPEED_CURRENT;
+        }
+        Speed cached = getCachedValue(name, Speed.class);
         if (cached != null) return cached;
 
-        Speed result = computeFrontGapDeltaSpeed();
-        cacheValue(FRONT_GAP_DELTA_SPEED, result, true);
+        Speed result = computeFrontGapDeltaSpeed(dir);
+        cacheValue(name, result, true);
         return result;
     }
 
-    public Duration getFrontGapTimeHeadway() {
-        Duration cached = getCachedValue(FRONT_GAP_TIME_HEADWAY, Duration.class);
+    public Duration getFrontGapTimeHeadway(final LateralDirectionality dir) {
+        String name;
+        if (dir.isLeft()) {
+            name = FRONT_GAP_TIME_HEADWAY_LEFT;
+        } else if (dir.isRight()) {
+            name = FRONT_GAP_TIME_HEADWAY_RIGHT;
+        } else {
+            name = FRONT_GAP_TIME_HEADWAY_CURRENT;
+        }
+        Duration cached = getCachedValue(name, Duration.class);
         if (cached != null) return cached;
 
-        Duration result = computeFrontGapTimeHeadway();
-        cacheValue(FRONT_GAP_TIME_HEADWAY, result, true);
+        Duration result = computeFrontGapTimeHeadway(dir);
+        cacheValue(name, result, true);
+        return result;
+    }
+
+    public Length getRearGapDistance(final LateralDirectionality dir) {
+        String name;
+        if (dir.isLeft()) {
+            name = REAR_GAP_DISTANCE_LEFT;
+        } else if (dir.isRight()) {
+            name = REAR_GAP_DISTANCE_RIGHT;
+        } else {
+            name = REAR_GAP_DISTANCE_CURRENT;
+        }
+        Length cached = getCachedValue(name, Length.class);
+        if (cached != null) return cached;
+
+        Length result = computeRearGapDistance(dir);
+        cacheValue(name, result, true);
+        return result;
+        }
+
+    public Speed getRearGapDeltaSpeed(final LateralDirectionality dir) {
+        String name;
+        if (dir.isLeft()) {
+            name = REAR_GAP_DELTA_SPEED_LEFT;
+        } else if (dir.isRight()) {
+            name = REAR_GAP_DELTA_SPEED_RIGHT;
+        } else {
+            name = REAR_GAP_DELTA_SPEED_CURRENT;
+        }
+        Speed cached = getCachedValue(name, Speed.class);
+        if (cached != null) return cached;
+
+        Speed result = computeRearGapDeltaSpeed(dir);
+        cacheValue(name, result, true);
+        return result;
+    }
+
+    public Duration getRearGapTimeHeadway(final LateralDirectionality dir) {
+        String name;
+        if (dir.isLeft()) {
+            name = REAR_GAP_TIME_HEADWAY_LEFT;
+        } else if (dir.isRight()) {
+            name = REAR_GAP_TIME_HEADWAY_RIGHT;
+        } else {
+            name = REAR_GAP_TIME_HEADWAY_CURRENT;
+        }
+        Duration cached = getCachedValue(name, Duration.class);
+        if (cached != null) return cached;
+
+        Duration result = computeRearGapTimeHeadway(dir);
+        cacheValue(name, result, true);
+        return result;
+    }
+
+
+    public HeadwayGtu getLeader(final LateralDirectionality dir) {
+        if (dir.isLeft()) {
+            return getLeftLeader();
+        } else if (dir.isRight()) {
+            return getRightLeader();
+        } else {
+            return getCurrentLeader();
+        }
+    }
+
+    public HeadwayGtu getCurrentLeader() {
+        HeadwayGtu cached = getCachedValue(CURRENT_LEADER, HeadwayGtu.class);
+        if (cached != null) return cached;
+        HeadwayGtu result = computeLeader(RelativeLane.CURRENT);
+        cacheValue(CURRENT_LEADER, result, true);
+        return result;
+    }
+
+    public HeadwayGtu getLeftLeader() {
+        HeadwayGtu cached = getCachedValue(LEFT_LEADER, HeadwayGtu.class);
+        if (cached != null) return cached;
+        HeadwayGtu result = computeLeader(RelativeLane.LEFT);
+        cacheValue(LEFT_LEADER, result, true);
+        return result;
+    }
+
+    public HeadwayGtu getRightLeader() {
+        HeadwayGtu cached = getCachedValue(RIGHT_LEADER, HeadwayGtu.class);
+        if (cached != null) return cached;
+        HeadwayGtu result = computeLeader(RelativeLane.RIGHT);
+        cacheValue(RIGHT_LEADER, result, true);
+        return result;
+    }
+
+    public HeadwayGtu getFollower(final LateralDirectionality dir) {
+        if (dir.isLeft()) {
+            return getLeftFollower();
+        } else if (dir.isRight()) {
+            return getRightFollower();
+        } else {
+            return null;
+        }
+    }
+
+    public HeadwayGtu getCurrentFollower() {
+        HeadwayGtu cached = getCachedValue(CURRENT_FOLLOWER, HeadwayGtu.class);
+        if (cached != null) return cached;
+        HeadwayGtu result = computeFollower(RelativeLane.CURRENT);
+        cacheValue(CURRENT_FOLLOWER, result, true);
+        return result;
+    }
+
+    public HeadwayGtu getLeftFollower() {
+        HeadwayGtu cached = getCachedValue(LEFT_FOLLOWER, HeadwayGtu.class);
+        if (cached != null) return cached;
+        HeadwayGtu result = computeFollower(RelativeLane.LEFT);
+        cacheValue(LEFT_FOLLOWER, result, true);
+        return result;
+    }
+
+    public HeadwayGtu getRightFollower() {
+        HeadwayGtu cached = getCachedValue(RIGHT_FOLLOWER, HeadwayGtu.class);
+        if (cached != null) return cached;
+        HeadwayGtu result = computeFollower(RelativeLane.RIGHT);
+        cacheValue(RIGHT_FOLLOWER, result, true);
         return result;
     }
 
@@ -226,124 +395,269 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         }
     }
 
-    private Length computeFrontGapDistance() {
+    private Length computeFrontGapDistance(final LateralDirectionality dir) {
         try {
-            Headway leaderHeadway = getCurrentLeader();
-            if (leaderHeadway != null) {
-                return leaderHeadway.getDistance();
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private Speed computeFrontGapDeltaSpeed() {
-        try {
-            Headway leaderHeadway = getCurrentLeader();
-            if (leaderHeadway != null) {
-                return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(leaderHeadway.getSpeed());
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private Duration computeFrontGapTimeHeadway() {
-        try {
-            Headway leaderHeadway = getCurrentLeader();
-            if (leaderHeadway != null) {
-                Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
-                if (egoSpeed.gt(Speed.ZERO)) {
-                    return Duration.instantiateSI(leaderHeadway.getDistance().si / egoSpeed.si);
+            if (dir.isLeft()) {
+                HeadwayGtu leftLeader = getLeftLeader();
+                if (leftLeader != null) {
+                    return leftLeader.getDistance();
                 } else {
-                    return null;
+                    return Length.POSITIVE_INFINITY;
+                }
+            } else if (dir.isRight()) {
+                HeadwayGtu rightLeader = getRightLeader();
+                if (rightLeader != null) {
+                    return rightLeader.getDistance();
+                } else {
+                    return Length.POSITIVE_INFINITY;
+                }
+            }
+            else {
+                HeadwayGtu leaderHeadway = getCurrentLeader();
+                if (leaderHeadway == null) {
+                    return Length.POSITIVE_INFINITY;
+                }
+                else {
+                    return leaderHeadway.getDistance();
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Speed computeFrontGapDeltaSpeed(final LateralDirectionality dir) {
+        try {
+            if (dir.isLeft()) {
+                HeadwayGtu leftLeader = getLeftLeader();
+                if (leftLeader != null) {
+                    return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(leftLeader.getSpeed());
+                } else {
+                    return Speed.ZERO;
+                }
+            } else if (dir.isRight()) {
+                HeadwayGtu rightLeader = getRightLeader();
+                if (rightLeader != null) {
+                    return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(rightLeader.getSpeed());
+                } else {
+                    return Speed.ZERO;
                 }
             } else {
-                return null;
+                HeadwayGtu leaderHeadway = getCurrentLeader();
+                if (leaderHeadway != null) {
+                    return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(leaderHeadway.getSpeed());
+                } else {
+                    return Speed.ZERO;
+                }
             }
         } catch (Exception e) {
             return null;
         }
     }
+
+    private Duration computeFrontGapTimeHeadway(final LateralDirectionality dir) {
+        try {
+            if (dir.isLeft()) {
+                HeadwayGtu leftLeader = getLeftLeader();
+                if (leftLeader != null) {
+                    Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+                    if (egoSpeed.gt(Speed.ZERO)) {
+                        return Duration.instantiateSI(leftLeader.getDistance().si / egoSpeed.si);
+                    } else {
+                        return Duration.POSITIVE_INFINITY;
+                    }
+                } else {
+                    return Duration.POSITIVE_INFINITY;
+                }
+            } else if (dir.isRight()) {
+                HeadwayGtu rightLeader = getRightLeader();
+                if (rightLeader != null) {
+                    Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+                    if (egoSpeed.gt(Speed.ZERO)) {
+                        return Duration.instantiateSI(rightLeader.getDistance().si / egoSpeed.si);
+                    } else {
+                        return Duration.POSITIVE_INFINITY;
+                    }
+                } else {
+                    return Duration.POSITIVE_INFINITY;
+                }
+            } else {
+                HeadwayGtu leaderHeadway = getCurrentLeader();
+                if (leaderHeadway != null) {
+                    Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+                    if (egoSpeed.gt(Speed.ZERO)) {
+                        return Duration.instantiateSI(leaderHeadway.getDistance().si / egoSpeed.si);
+                    } else {
+                        return Duration.POSITIVE_INFINITY;
+                    }
+                } else {
+                    return Duration.POSITIVE_INFINITY;
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Length computeRearGapDistance(final LateralDirectionality dir) {
+        try {
+            if (dir.isLeft()) {
+                HeadwayGtu leftFollower = getLeftFollower();
+                if (leftFollower != null) {
+                    return leftFollower.getDistance();
+                } else {
+                    return Length.POSITIVE_INFINITY;
+                }
+            } else if (dir.isRight()) {
+                HeadwayGtu rightFollower = getRightFollower();
+                if (rightFollower != null) {
+                    return rightFollower.getDistance();
+                } else {
+                    return Length.POSITIVE_INFINITY;
+                }
+            }
+            else {
+                HeadwayGtu followerHeadway = getCurrentFollower();
+                if (followerHeadway == null) {
+                    return Length.POSITIVE_INFINITY;
+                }
+                else {
+                    return followerHeadway.getDistance();
+                }
+                }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Speed computeRearGapDeltaSpeed(final LateralDirectionality dir) {
+        try {
+            if (dir.isLeft()) {
+                HeadwayGtu leftFollower = getLeftFollower();
+                if (leftFollower != null) {
+                    return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(leftFollower.getSpeed());
+                } else {
+                    return Speed.ZERO;
+                }
+            } else if (dir.isRight()) {
+                HeadwayGtu rightFollower = getRightFollower();
+                if (rightFollower != null) {
+                    return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(rightFollower.getSpeed());
+                } else {
+                    return Speed.ZERO;
+                }
+            } else {
+                HeadwayGtu followerHeadway = getCurrentFollower();
+                if (followerHeadway != null) {
+                    return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(followerHeadway.getSpeed());
+                } else {
+                    return Speed.ZERO;
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Duration computeRearGapTimeHeadway(final LateralDirectionality dir) {
+        try {
+            if (dir.isLeft()) {
+                HeadwayGtu leftFollower = getLeftFollower();
+                if (leftFollower != null) {
+                    Speed followerSpeed = getFollower(dir).getSpeed();
+                    if (followerSpeed.gt(Speed.ZERO)) {
+                        return Duration.instantiateSI(leftFollower.getDistance().si / followerSpeed.si);
+                    } else {
+                        return Duration.POSITIVE_INFINITY;
+                    }
+                } else {
+                    return Duration.POSITIVE_INFINITY;
+                }
+            } else if (dir.isRight()) {
+                HeadwayGtu rightFollower = getRightFollower();
+                if (rightFollower != null) {
+                    Speed followerSpeed = getFollower(dir).getSpeed();
+                    if (followerSpeed.gt(Speed.ZERO)) {
+                        return Duration.instantiateSI(rightFollower.getDistance().si / followerSpeed.si);
+                    } else {
+                        return Duration.POSITIVE_INFINITY;
+                    }
+                } else {
+                    return Duration.POSITIVE_INFINITY;
+                }
+            } else {
+                HeadwayGtu followerHeadway = getCurrentFollower();
+                if (followerHeadway != null) {
+                    Speed followerSpeed = getFollower(dir).getSpeed();
+                    if (followerSpeed.gt(Speed.ZERO)) {
+                        return Duration.instantiateSI(followerHeadway.getDistance().si / followerSpeed.si);
+                    } else {
+                        return Duration.POSITIVE_INFINITY;
+                    }
+                } else {
+                    return Duration.POSITIVE_INFINITY;
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     // ----------------------------------------------------------------------
     // Leader accessors
     // ----------------------------------------------------------------------
 
+
     /**
-     * Returns the current leader vehicle on the ego lane.
+     * Returns the current follower vehicle on a lane.
      * <p>
-     * This uses the {@link DirectDefaultSimplePerception} category to find
-     * the nearest forward vehicle on the current lane.
+     * This is a convenience method that generalizes {@link #computeFollower(RelativeLane)}.
      * </p>
+     * @param lane
      *
-     * @return {@link Headway} to the nearest leader ahead, or {@code null} if none exists
+     * @return {@link HeadwayGtu} to the nearest follower behind, or {@code null} if none exists
+     * @throws OperationalPlanException if perception fails
      */
-    public Headway getCurrentLeader() {
-        try {
-            var direct = this.vehicle.getPerception()
-                    .getPerceptionCategory(DirectDefaultSimplePerception.class);
-            return direct != null ? direct.getForwardHeadwayGtu() : null;
-        } catch (Exception e) {
-            return null;
+    public HeadwayGtu computeFollower(final RelativeLane lane) {
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = null;
+        try
+        {
+            followers = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class)
+                    .getFollowers(lane);
         }
+        catch (OperationalPlanException exception)
+        {
+            exception.printStackTrace();
+        }
+        return followers.isEmpty() ? null : followers.first();
     }
 
     /**
-     * Returns the nearest leader vehicle on the left adjacent lane, if available.
+     * Returns the current leader vehicle on a lane.
      * <p>
-     * If no left lane or leader is present, this returns {@code null}.
+     * This is a convenience method that generalizes {@link #computeLeader(RelativeLane)}.
      * </p>
+     * @param lane
      *
-     * @return nearest {@link HeadwayGtu} on the left lane, or {@code null}
+     * @return {@link HeadwayGtu} to the nearest leader ahead, or {@code null} if none exists
+     * @throws OperationalPlanException if perception fails
      */
-    public HeadwayGtu getLeftLeader() {
-        try {
-            var neighbors = this.vehicle.getPerception()
-                    .getPerceptionCategory(NeighborsPerception.class);
-            SortedSet<HeadwayGtu> leftLeaders = neighbors.getFirstLeaders(LateralDirectionality.LEFT);
-            return leftLeaders.isEmpty() ? null : leftLeaders.first();
-        } catch (Exception e) {
-            return null;
+    public HeadwayGtu computeLeader(final RelativeLane lane) {
+        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = null;
+        try
+        {
+            leaders = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class)
+                    .getLeaders(lane);
         }
+        catch (OperationalPlanException exception)
+        {
+            exception.printStackTrace();
+        }
+        return leaders.isEmpty() ? null : leaders.first();
     }
 
-    /**
-     * Returns the nearest leader vehicle on the right adjacent lane, if available.
-     * <p>
-     * If no right lane or leader is present, this returns {@code null}.
-     * </p>
-     *
-     * @return nearest {@link HeadwayGtu} on the right lane, or {@code null}
-     */
-    public HeadwayGtu getRightLeader() {
-        try {
-            var neighbors = this.vehicle.getPerception()
-                    .getPerceptionCategory(NeighborsPerception.class);
-            SortedSet<HeadwayGtu> rightLeaders = neighbors.getFirstLeaders(LateralDirectionality.RIGHT);
-            return rightLeaders.isEmpty() ? null : rightLeaders.first();
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
-    /**
-     * Returns the leader vehicle in the specified lateral direction.
-     * <p>
-     * This is a convenience method that generalizes {@link #getLeftLeader()} and {@link #getRightLeader()}.
-     * </p>
-     *
-     * @param dir lateral direction (LEFT, RIGHT)
-     * @return the nearest {@link HeadwayGtu} in that direction, or {@code null}
-     */
-    public HeadwayGtu getLeaderInDirection(final LateralDirectionality dir) {
-        if (dir == null) return null;
-        return dir.isLeft() ? getLeftLeader() : getRightLeader();
-    }
 
 
 
@@ -354,7 +668,25 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
                 ", egoDecelRight=" + getCachedValue(EGO_DECEL_RIGHT, Acceleration.class) +
                 ", followerDecelLeft=" + getCachedValue(FOLLOWER_DECEL_LEFT, Acceleration.class) +
                 ", followerDecelRight=" + getCachedValue(FOLLOWER_DECEL_RIGHT, Acceleration.class) +
- "]";
+                ", frontGapDistanceCurrent=" + getCachedValue(FRONT_GAP_DISTANCE_CURRENT, Length.class) +
+                ", frontGapDistanceLeft=" + getCachedValue(FRONT_GAP_DISTANCE_LEFT, Length.class) +
+                ", frontGapDistanceRight=" + getCachedValue(FRONT_GAP_DISTANCE_RIGHT, Length.class) +
+                ", frontGapDeltaSpeedCurrent=" + getCachedValue(FRONT_GAP_DELTA_SPEED_CURRENT, Speed.class) +
+                ", frontGapDeltaSpeedLeft=" + getCachedValue(FRONT_GAP_DELTA_SPEED_LEFT, Speed.class) +
+                ", frontGapDeltaSpeedRight=" + getCachedValue(FRONT_GAP_DELTA_SPEED_RIGHT, Speed.class) +
+                ", frontGapTimeHeadwayCurrent=" + getCachedValue(FRONT_GAP_TIME_HEADWAY_CURRENT, Duration.class) +
+                ", frontGapTimeHeadwayLeft=" + getCachedValue(FRONT_GAP_TIME_HEADWAY_LEFT, Duration.class) +
+                ", frontGapTimeHeadwayRight=" + getCachedValue(FRONT_GAP_TIME_HEADWAY_RIGHT, Duration.class) +
+                ", rearGapDistanceCurrent=" + getCachedValue(REAR_GAP_DISTANCE_CURRENT, Length.class) +
+                ", rearGapDistanceLeft=" + getCachedValue(REAR_GAP_DISTANCE_LEFT, Length.class) +
+                ", rearGapDistanceRight=" + getCachedValue(REAR_GAP_DISTANCE_RIGHT, Length.class) +
+                ", rearGapDeltaSpeedCurrent=" + getCachedValue(REAR_GAP_DELTA_SPEED_CURRENT, Speed.class) +
+                ", rearGapDeltaSpeedLeft=" + getCachedValue(REAR_GAP_DELTA_SPEED_LEFT, Speed.class) +
+                ", rearGapDeltaSpeedRight=" + getCachedValue(REAR_GAP_DELTA_SPEED_RIGHT, Speed.class) +
+                ", rearGapTimeHeadwayCurrent=" + getCachedValue(REAR_GAP_TIME_HEADWAY_CURRENT, Duration.class) +
+                ", rearGapTimeHeadwayLeft=" + getCachedValue(REAR_GAP_TIME_HEADWAY_LEFT, Duration.class) +
+                ", rearGapTimeHeadwayRight=" + getCachedValue(REAR_GAP_TIME_HEADWAY_RIGHT, Duration.class) +
+                "]";
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -53,11 +54,18 @@ public class ActionStatePrepareLaneChange extends ActionState {
     public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
         // Delegate to the MIROVA vehicle’s car-following behavior
 
-        Acceleration acceleration = this.vehicle.computeLongitudinalAcceleration();
-        return new SimpleOperationalPlan(
+        Acceleration acceleration = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration();
+        SimpleOperationalPlan plan = new SimpleOperationalPlan(
                 acceleration,
             this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT)
         );
+
+        if (this.direction == LateralDirectionality.LEFT) {
+            plan.setIndicatorIntentLeft();;
+        } else if (this.direction == LateralDirectionality.RIGHT) {
+            plan.setIndicatorIntentRight();
+        }
+        return plan;
 
     }
 
@@ -120,8 +128,15 @@ public class ActionStatePrepareLaneChange extends ActionState {
         Acceleration egoDecel = neighbors.getEgoDeceleration(this.direction);
         Acceleration follDecel = neighbors.getFollowerDeceleration(this.direction);
 
+        Length desiredRearHeadway = egoCtx.getDesiredRearHeadway(this.direction);
+        Length rearHeadway = neighbors.getRearGapDistance(this.direction);
 
-        return egoDecel.gt(bDes) && follDecel.gt(bDes);
+        Length desiredFrontHeadway = egoCtx.getDesiredFrontHeadway(this.direction);
+        Length frontHeadway = neighbors.getFrontGapDistance(this.direction);
+
+
+        return egoDecel.gt(bDes) && follDecel.gt(bDes) && rearHeadway.gt(desiredRearHeadway) && frontHeadway.gt(desiredFrontHeadway);
+
     }
 
     @Override

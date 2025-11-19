@@ -115,6 +115,9 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
      /** Normalized relaxation progress from 0 (start) to 1 (completed). */
      private double relaxProgress = 0.0;
 
+     /** Simulation time at which the vehicle was created. */
+     Duration createTime;
+
 
 
     // ----------------------------------------------------------------------
@@ -135,6 +138,8 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         this.contextManager = new VehicleContextManager(this);
         this.params = getGtu().getParameters();
         this.laneChange.setDesiredLaneChangeDuration(getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
+
+        this.createTime = gtu.getSimulator().getSimulatorTime();
 
     }
 
@@ -157,10 +162,14 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
     {
+        Duration dt = getGtu().getParameters().getParameter(ParameterTypes.DT);
         SimpleOperationalPlan plan;
-        if (getGtu().getFront() == null || getGtu().getReferencePosition() == null || getGtu().getOperationalPlan() == null) {
+        Boolean justCreated = (startTime.si < this.createTime.si + 2.0);
+        if (getGtu().getFront() == null || getGtu().getReferencePosition() == null || getGtu().getOperationalPlan() == null
+                || justCreated) {
             // GTU noch nicht vollständig positioniert → überspringe diesen Takt
-            plan =  new SimpleOperationalPlan(Acceleration.ZERO, Duration.instantiateSI(1.0), LateralDirectionality.NONE);
+            Acceleration acc = getGtu().getCarFollowingAcceleration();
+            plan =  new SimpleOperationalPlan(acc, dt);
         }
 
         else {
@@ -234,6 +243,9 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
           // 1️. Update perception and contextual information
         this.getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class).updateForwardHeadwayGtu();
         this.contextManager.advanceTick();
+        this.getContextManager().getCategory("Neighbors", NeighborsContext.class).getFrontGapDeltaSpeed(LateralDirectionality.NONE);
+        this.getContextManager().getCategory("Neighbors", NeighborsContext.class).getFrontGapTimeHeadway(LateralDirectionality.NONE);
+        this.getContextManager().getCategory("Neighbors", NeighborsContext.class).getFrontGapDistance(LateralDirectionality.NONE);
 
 
         // 2. Compute current LMRS-style net desire (aggregated from all knowledge chunks)
@@ -312,6 +324,21 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         else
         {
             getContextManager().getCategory("Ego", EgoContext.class).cacheValue(EgoContext.CURRENT_CF_ACCELERATION, this.operationalPlan.getAcceleration(), true);
+        }
+        if (getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration().si < -8.0  || getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration().eq(Acceleration.NEGATIVE_INFINITY)
+                || getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration().le(Acceleration.NEG_MAXVALUE)
+                )
+        {
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leader = getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+            if (!leader.isEmpty())
+            {
+                System.out.printf("GTU: %s @simsec: %s -> Leader: %s distance=%s speed=%s%n", getGtu().getId(), getGtu().getSimulator().getSimulatorTime().toDisplayString(),  leader.first().getId(), leader.first().getDistance().toDisplayString(), leader.first().getSpeed().toDisplayString());
+            }
+
+            else
+            {
+                System.out.println("GTU: " + getGtu().getId() + ": No leader detected.");
+            }
         }
 
 //        if (getGtu().getId().equals("15"))
@@ -736,6 +763,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 
          candidates.add(aCf);
 
+
 //         if (leader != null)
 //         {
 //             Acceleration aLeader = CarFollowingUtil.followSingleLeader(
@@ -757,7 +785,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
                      cfModel, params, egoSpeed, currentSpeedLimitInfo, laneEndDist);
 
              // Only consider strong braking responses (to avoid minor fluctuations)
-             if (aLaneEnd.ge(params.getParameter(ParameterTypes.BCRIT).times(0.95)))
+             if (aLaneEnd.ge(params.getParameter(ParameterTypes.BCRIT).times(0.95)) && aLaneEnd!= null)
              {
                  candidates.add(aLaneEnd);
              }
@@ -786,7 +814,11 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
                  Length distanceToLimit = new Length(200.0, LengthUnit.SI);
                  Acceleration aLimit = CarFollowingUtil.approachTargetSpeed(
                          cfModel, params, egoSpeed, nextLimit, distanceToLimit, nextLegal);
-                 candidates.add(aLimit);
+                 if (aLimit != null)
+                 {
+                     candidates.add(aLimit);
+
+                 }
              }
          }
          // ----------------------------------------------------------------------
@@ -795,6 +827,13 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
          Acceleration finalAcc = candidates.stream()
                  .min(Acceleration::compareTo)
                  .orElse(aCf);
+
+//         if (finalAcc == null || finalAcc.equals(Acceleration.NEGATIVE_INFINITY) || finalAcc.equals(Acceleration.NEG_MAXVALUE) || finalAcc.si < -8.0)
+//         {
+//             System.out.println("finalAcc is " + finalAcc.toString() + " for gtu " + getGtu().getId() + " with properties: "
+//                     + egoSpeed.toString() + ", " + currentSpeedLimitInfo.toString()+ ", " + getContextManager().getCategory("Neighbors", NeighborsContext.class).toString());
+//             System.out.println("candidates: " + candidates.toString());
+//         }
 
          return finalAcc;
      }

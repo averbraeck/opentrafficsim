@@ -43,6 +43,12 @@ public class ExtendedDataCurrentCFAcceleration extends ExtendedDataAcceleration<
                 {
                     return FloatAcceleration.instantiateSI(Float.NaN, AccelerationUnit.SI);
                 }
+
+                if (acc.eq(Acceleration.NEGATIVE_INFINITY))
+                    {
+                    return FloatAcceleration.instantiateSI(Float.NEGATIVE_INFINITY, AccelerationUnit.SI);
+                }
+
                 return FloatAcceleration.instantiateSI((float) acc.si, AccelerationUnit.SI);
             }
             else

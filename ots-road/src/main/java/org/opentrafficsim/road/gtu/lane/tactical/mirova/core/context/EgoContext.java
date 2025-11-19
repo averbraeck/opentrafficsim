@@ -1,11 +1,16 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterType;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 
 /**
@@ -24,6 +29,13 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
     /** Cache key for ego speed. */
     public static final String EGO_SPEED = "egoSpeed";
     public static final String CURRENT_CF_ACCELERATION = "currentCarFollowingAcceleration";
+    public static final String CURRENT_DESIRED_SPEED = "currentDesiredSpeed";
+    public static final String DESIRED_FRONT_HEADWAY_CURRENT = "desiredFrontHeadwayCurrent";
+    public static final String DESIRED_FRONT_HEADWAY_LEFT = "desiredFrontHeadwayLeft";
+    public static final String DESIRED_FRONT_HEADWAY_RIGHT = "desiredFrontHeadwayRight";
+    public static final String DESIRED_REAR_HEADWAY_LEFT = "desiredRearHeadwayLeft";
+    public static final String DESIRED_REAR_HEADWAY_RIGHT = "desiredRearHeadwayRight";
+    public static final String DESIRED_REAR_HEADWAY_CURRENT = "desiredRearHeadwayCurrent";
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -69,8 +81,63 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
         Acceleration cached = getCachedValue(CURRENT_CF_ACCELERATION, Acceleration.class);
         if (cached != null) return cached;
 
-        Acceleration result = this.vehicle.computeLongitudinalAcceleration();
+        Acceleration result = this.vehicle.getGtu().getCarFollowingAcceleration();
         cacheValue(CURRENT_CF_ACCELERATION, result, true);
+        return result;
+    }
+
+    public Speed getCurrentDesiredSpeed() throws ParameterException, GtuException, NetworkException {
+        Speed cached = getCachedValue(CURRENT_DESIRED_SPEED, Speed.class);
+        if (cached != null) return cached;
+        Speed result = this.vehicle.getGtu().getDesiredSpeed();
+        cacheValue(CURRENT_DESIRED_SPEED, result, true);
+        return result;
+    }
+
+    public Length getDesiredFrontHeadway(final LateralDirectionality dir) {
+        String key;
+        if (dir == LateralDirectionality.LEFT)
+        {
+            key = DESIRED_FRONT_HEADWAY_LEFT;
+        }
+        else if (dir == LateralDirectionality.RIGHT)
+        {
+            key = DESIRED_FRONT_HEADWAY_RIGHT;
+        }
+        else
+        {
+            key = DESIRED_FRONT_HEADWAY_CURRENT;
+        }
+
+        Length cached = getCachedValue(key, Length.class);
+        if (cached != null) return cached;
+
+        Length result = computeDesiredFrontHeadway();
+        cacheValue(key, result, true);
+        return result;
+    }
+
+    public Length getDesiredRearHeadway(final LateralDirectionality dir) {
+        String key;
+        if (dir == LateralDirectionality.LEFT)
+        {
+            key = DESIRED_REAR_HEADWAY_LEFT;
+        }
+        else if (dir == LateralDirectionality.RIGHT)
+        {
+            key = DESIRED_REAR_HEADWAY_RIGHT;
+        }
+        else
+        {
+            key = DESIRED_REAR_HEADWAY_CURRENT;
+        }
+
+
+        Length cached = getCachedValue(key, Length.class);
+        if (cached != null) return cached;
+
+        Length result = computeDesiredRearHeadway(dir);
+        cacheValue(key, result, true);
         return result;
     }
 
@@ -92,6 +159,42 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
         } catch (Exception e) {
             return Speed.ZERO;
         }
+    }
+
+    private Length computeDesiredFrontHeadway() {
+        Length desiredFrontHeadway = Length.NaN;
+        try
+        {
+            desiredFrontHeadway = getEgoSpeed().times(this.vehicle.getCurrentRelaxedHeadway()).plus(this.vehicle.getParameters().getParameter(ParameterTypes.S0));
+        }
+        catch (ParameterException exception)
+        {
+            exception.printStackTrace();
+        }
+        return desiredFrontHeadway;
+    }
+
+    private Length computeDesiredRearHeadway(final LateralDirectionality dir) {
+        Length desiredRearHeadway = Length.NaN;
+        try
+        {
+            HeadwayGtu follower = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class).getFollower(dir);
+            if (follower == null)
+            {
+                Speed followerSpeed = getEgoSpeed();
+            }
+            else
+            {
+                Speed followerSpeed = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class).getFollower(dir).getSpeed();
+            }
+
+            desiredRearHeadway =  getEgoSpeed().times(this.vehicle.getCurrentRelaxedHeadway()).plus(this.vehicle.getParameters().getParameter(ParameterTypes.S0));
+        }
+        catch (ParameterException exception)
+        {
+            exception.printStackTrace();
+        }
+        return desiredRearHeadway;
     }
 
     // ----------------------------------------------------------------------

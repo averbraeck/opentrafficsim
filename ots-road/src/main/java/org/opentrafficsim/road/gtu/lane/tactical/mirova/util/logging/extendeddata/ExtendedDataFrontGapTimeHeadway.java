@@ -34,7 +34,7 @@ public class ExtendedDataFrontGapTimeHeadway extends ExtendedDataDuration<GtuDat
             LaneBasedGtu lgtu = road.getGtu();
             if (lgtu.getTacticalPlanner() instanceof MirovaTacticalPlanner p)
             {
-                Duration timeHeadway = p.getContextManager().getCategory("Neighbors", NeighborsContext.class).getCachedValue(NeighborsContext.FRONT_GAP_TIME_HEADWAY, Duration.class);
+                Duration timeHeadway = p.getContextManager().getCategory("Neighbors", NeighborsContext.class).getCachedValue(NeighborsContext.FRONT_GAP_TIME_HEADWAY_CURRENT, Duration.class);
                 if (timeHeadway == null)
                 {
                     return FloatDuration.instantiateSI(Float.NaN, DurationUnit.SI);

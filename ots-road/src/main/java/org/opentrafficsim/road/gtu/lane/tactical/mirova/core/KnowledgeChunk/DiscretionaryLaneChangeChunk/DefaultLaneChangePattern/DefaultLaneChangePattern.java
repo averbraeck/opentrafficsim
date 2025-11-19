@@ -1,12 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
 
 /**
@@ -75,10 +77,16 @@ public class DefaultLaneChangePattern extends ManeuverPattern {
     public boolean checkAbility() throws ParameterException {
         NeighborsContext nctx = this.vehicle.getContext(NeighborsContext.class);
         Acceleration bDes = this.knowledgeChunk.getParameters().getParameter(ParameterTypes.B).neg();
-//        System.out.println("DefaultLaneChangePattern: checkAbility with bDes=" + bDes +
-//                ", egoDecel=" + nctx.getEgoDeceleration(this.direction) +
-//                ", follDecel=" + nctx.getFollowerDeceleration(this.direction));
-        if (nctx.getEgoDeceleration(this.direction).gt(bDes) && nctx.getFollowerDeceleration(this.direction).gt(bDes))
+        EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
+
+        Length desiredRearHeadway = egoCtx.getDesiredRearHeadway(this.direction);
+        Length rearHeadway = nctx.getRearGapDistance(this.direction);
+
+        Length desiredFrontHeadway = egoCtx.getDesiredFrontHeadway(this.direction);
+        Length frontHeadway = nctx.getFrontGapDistance(this.direction);
+
+        if (nctx.getEgoDeceleration(this.direction).gt(bDes) && nctx.getFollowerDeceleration(this.direction).gt(bDes)
+                && rearHeadway.gt(desiredRearHeadway) && frontHeadway.gt(desiredFrontHeadway))
                 {
             return true;
         }
