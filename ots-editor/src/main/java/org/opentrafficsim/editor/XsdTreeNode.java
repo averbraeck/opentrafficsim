@@ -964,7 +964,7 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns the value of an attribute.
+     * Returns an attribute value.
      * @param attribute name of the attribute.
      * @return value of the attribute.
      * @throws NoSuchElementException when the attribute is not in this node.
@@ -1293,7 +1293,7 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Creates an empty copy of this node, i.e. without children, options, attributes.
+     * Creates an empty copy of this node, i.e.&nbsp;without children, options, attributes.
      * @return empty copy.
      */
     public XsdTreeNode emptyCopy()
@@ -1324,7 +1324,7 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns whether this node can contain the information of the given node. This only check equivalence of the underlying
+     * Returns whether this node can contain the information of the given node. This only checks equivalence of the underlying
      * XSD nodes, or equivalence of the referencing XSD nodes.
      * @param copied node that was copied, and may be pasted/inserted here.
      * @return whether this node can contain the information of the given node.
@@ -1834,8 +1834,8 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns the path string of this element, e.g. "Ots.Definitions.RoadLayouts". This is used to identify each unique type of
-     * element.
+     * Returns the path string of this element, e.g.&nbsp;"Ots.Definitions.RoadLayouts". This is used to identify each unique
+     * type of element.
      * @return path string of this element, e.g. "Ots.Definitions.RoadLayouts".
      */
     public String getPathString()
@@ -1967,8 +1967,8 @@ public class XsdTreeNode extends LocalEventProducer
     // ====== Coupling ======
 
     /**
-     * Returns the node to which the value refers via a CoupledValidator.
-     * @return node to which the value refers via a CoupledValidator, or {@code null} if no such node.
+     * Returns the node to which the value refers via a {@link CoupledValidator}.
+     * @return node to which the value refers via a {@link CoupledValidator}, or {@code null} if no such node.
      */
     public XsdTreeNode getCoupledNodeValue()
     {
@@ -1976,9 +1976,9 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns the node to which an attribute refers via a CoupledValidator.
+     * Returns the node to which an attribute refers via a {@link CoupledValidator}.
      * @param index index of the attribute.
-     * @return node to which an attribute refers via a CoupledValidator, or {@code null} if no such node.
+     * @return node to which an attribute refers via a {@link CoupledValidator}, or {@code null} if no such node.
      * @throws IndexOutOfBoundsException when the index is not in the bounds for the number of attributes
      */
     public XsdTreeNode getCoupledNodeAttribute(final int index)
@@ -1988,9 +1988,9 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns the node to which an attribute refers via a CoupledValidator.
+     * Returns the node to which an attribute refers via a {@link CoupledValidator}.
      * @param attribute attribute name.
-     * @return node to which an attribute refers via a CoupledValidator, or {@code null} if no such node.
+     * @return node to which an attribute refers via a {@link CoupledValidator}, or {@code null} if no such node.
      */
     public XsdTreeNode getCoupledNodeAttribute(final String attribute)
     {
