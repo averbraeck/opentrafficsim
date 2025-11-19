@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * In OpenDRIVE, a cubic polynom is represented by a <poly3> element within the <geometry> element.
+ * In OpenDRIVE, a cubic polynom is represented by a &lt;poly3&gt; element within the &lt;geometry&gt; element.
  * 
  * <p>Java class for t_road_planView_geometry_poly3 complex type</p>.
  * 

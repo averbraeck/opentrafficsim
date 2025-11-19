@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * A straight line is the simplest geometry element. It contains no further attributes.
- * In OpenDRIVE, a straight line is represented by a <line> element within the <geometry> element.
+ * In OpenDRIVE, a straight line is represented by a &lt;line&gt; element within the &lt;geometry&gt; element.
  * 
  * <p>Java class for t_road_planView_geometry_line complex type</p>.
  * 

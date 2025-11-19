@@ -10,8 +10,8 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Lane borders are another method to describe the width of lanes. Instead of defining the width directly, lane borders describe the outer limits of a lane, independent of the parameters of their inner borders. In this case, inner lanes are defined as lanes which have the same sign for their ID as the lane currently defined, but with a smaller absolute value for their ID.
  * Especially when road data is derived from automatic measurements, this type of definition is easier than specifying the lane width because it avoids creating many lane sections.
- * Lane width and lane border elements are mutually exclusive within the same lane group. If both width and lane border elements are present for a lane section in the OpenDRIVE file, the application shall use the information from the <width> elements.
- * In OpenDRIVE, lane borders are represented by the <border> element within the <lane> element.
+ * Lane width and lane border elements are mutually exclusive within the same lane group. If both width and lane border elements are present for a lane section in the OpenDRIVE file, the application shall use the information from the &lt;width&gt; elements.
+ * In OpenDRIVE, lane borders are represented by the &lt;border&gt; element within the &lt;lane&gt; element.
  * 
  * <p>Java class for t_road_lanes_laneSection_lr_lane_border complex type</p>.
  * 

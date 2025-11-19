@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * Data described in OpenCRG is represented by the <CRG> element within the <surface> element.
+ * Data described in OpenCRG is represented by the &lt;CRG&gt; element within the &lt;surface&gt; element.
  * 
  * <p>Java class for t_road_surface_CRG complex type</p>.
  * 

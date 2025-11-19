@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Spatial reference systems are standardized by the European Petroleum Survey Group Geodesy (EPSG) and are defined by parameters describing the geodetic datum. A geodetic datum is a coordinate reference system for a collection of positions that are relative to an ellipsoid model of the earth. 
  * A geodetic datum is described by a projection string according to PROJ, that is, a format for the exchange of data between two coordinate systems. This data shall be marked as CDATA, because it may contain characters that interfere with the XML syntax of an element’s attribute.
- * In OpenDRIVE, the information about the geographic reference of an OpenDRIVE dataset is represented by the <geoReference> element within the <header> element.
+ * In OpenDRIVE, the information about the geographic reference of an OpenDRIVE dataset is represented by the &lt;geoReference&gt; element within the &lt;header&gt; element.
  * 
  * <p>Java class for t_header_GeoReference complex type</p>.
  * 

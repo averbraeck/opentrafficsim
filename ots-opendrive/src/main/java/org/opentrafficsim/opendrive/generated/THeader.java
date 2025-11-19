@@ -13,7 +13,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * The <header> element is the very first element within the <OpenDRIVE> element.
+ * The &lt;header&gt; element is the very first element within the &lt;OpenDRIVE&gt; element.
  * 
  * <p>Java class for t_header complex type</p>.
  * 

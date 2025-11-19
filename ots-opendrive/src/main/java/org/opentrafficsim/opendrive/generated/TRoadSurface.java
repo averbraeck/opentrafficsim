@@ -11,7 +11,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * In OpenDRIVE, the road surface is represented by the <surface> element within the <road> element.
+ * In OpenDRIVE, the road surface is represented by the &lt;surface&gt; element within the &lt;road&gt; element.
  * 
  * <p>Java class for t_road_surface complex type</p>.
  * 

@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 
 /**
  * Ancillary data should be described near the element it refers to. Ancillary data contains data that are not yet described in OpenDRIVE, or data that is needed by an application for a specific reason. Examples are different road textures.
- * In OpenDRIVE, ancillary data is represented by <userData> elements. They may be stored at any element in OpenDRIVE.
+ * In OpenDRIVE, ancillary data is represented by &lt;userData&gt; elements. They may be stored at any element in OpenDRIVE.
  * 
  * <p>Java class for t_userData complex type</p>.
  * 

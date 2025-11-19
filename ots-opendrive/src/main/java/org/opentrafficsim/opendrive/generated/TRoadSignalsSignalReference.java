@@ -13,7 +13,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Refers to the same, that is, identical signal from multiple roads. 
- * The referenced signals require a unique ID. The <signalReference> element consists of a main element and an optional lane validity element.
+ * The referenced signals require a unique ID. The &lt;signalReference&gt; element consists of a main element and an optional lane validity element.
  * 
  * <p>Java class for t_road_signals_signalReference complex type</p>.
  * 

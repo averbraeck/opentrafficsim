@@ -13,7 +13,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Two or more junctions may be grouped in junction groups to indicate that these junctions belong to the same roundabout.
- * The <junctionGroup> element is split into a header element and a series of member elements.
+ * The &lt;junctionGroup&gt; element is split into a header element and a series of member elements.
  * 
  * <p>Java class for t_junctionGroup complex type</p>.
  * 

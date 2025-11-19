@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * Each platform element is valid on one or more track segments. The <segment> element must be specified.
+ * Each platform element is valid on one or more track segments. The &lt;segment&gt; element must be specified.
  * 
  * <p>Java class for t_station_platform_segment complex type</p>.
  * 

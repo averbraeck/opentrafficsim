@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * It is possible to link an object with one or more roads, signals or other objects using a <objectReference> element. The referenced objects require a unique ID.
+ * It is possible to link an object with one or more roads, signals or other objects using a &lt;objectReference&gt; element. The referenced objects require a unique ID.
  * The object reference element consists of a main element and an optional lane validity element.
  * 
  * <p>Java class for t_road_objects_objectReference complex type</p>.

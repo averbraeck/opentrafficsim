@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * In OpenDRIVE, a spiral is represented by a <spiral> element within the <geometry> element.
+ * In OpenDRIVE, a spiral is represented by a &lt;spiral&gt; element within the &lt;geometry&gt; element.
  * 
  * <p>Java class for t_road_planView_geometry_spiral complex type</p>.
  * 

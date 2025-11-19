@@ -11,7 +11,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * The <signals> element is the container for all signals along a road.
+ * The &lt;signals&gt; element is the container for all signals along a road.
  * 
  * <p>Java class for t_road_signals complex type</p>.
  * 

@@ -9,7 +9,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * OpenDRIVE allows including external files into the OpenDRIVE file. The processing of the files depends on the application.
- * Included data is represented by <include> elements. They may be stored at any position in OpenDRIVE.
+ * Included data is represented by &lt;include&gt; elements. They may be stored at any position in OpenDRIVE.
  * 
  * <p>Java class for t_include complex type</p>.
  * 

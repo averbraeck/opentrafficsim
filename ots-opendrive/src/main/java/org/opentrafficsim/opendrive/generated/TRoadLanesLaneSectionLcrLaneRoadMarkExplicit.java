@@ -11,7 +11,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * Irregular road markings that cannot be described by repetitive line patterns may be described by individual road marking elements. These explicit definitions also contain <line> elements for the line definition, however, these lines will not be repeated automatically as in repetitive road marking types.
+ * Irregular road markings that cannot be described by repetitive line patterns may be described by individual road marking elements. These explicit definitions also contain &lt;line&gt; elements for the line definition, however, these lines will not be repeated automatically as in repetitive road marking types.
  * 
  * <p>Java class for t_road_lanes_laneSection_lcr_lane_roadMark_explicit complex type</p>.
  * 

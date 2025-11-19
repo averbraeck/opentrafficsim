@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * Describes the material properties of objects, for example, patches that are part of the road surface but deviate from the standard road material. Supersedes the material specified in the <road material> element and is valid only within the outline of the parent road object.
+ * Describes the material properties of objects, for example, patches that are part of the road surface but deviate from the standard road material. Supersedes the material specified in the &lt;road material&gt; element and is valid only within the outline of the parent road object.
  * 
  * <p>Java class for t_road_objects_object_material complex type</p>.
  * 

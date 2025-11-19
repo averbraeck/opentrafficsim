@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * To avoid large coordinates, an offset of the whole dataset may be applied using the <offset> element. It enables inertial relocation and re-orientation of datasets. The dataset is first translated by @x, @y, and @z. Afterwards, it is rotated by @hdg around the new origin. Rotation around the z-axis should be avoided.In OpenDRIVE, the offset of a database is represented by the <offset> element within the <header> element.
+ * To avoid large coordinates, an offset of the whole dataset may be applied using the &lt;offset&gt; element. It enables inertial relocation and re-orientation of datasets. The dataset is first translated by @x, @y, and @z. Afterwards, it is rotated by @hdg around the new origin. Rotation around the z-axis should be avoided.In OpenDRIVE, the offset of a database is represented by the &lt;offset&gt; element within the &lt;header&gt; element.
  * 
  * <p>Java class for t_header_Offset complex type</p>.
  * 

@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * Some basic metadata containing information about raw data included in OpenDRIVE is described by the <rawData> element within the <dataQuality> element.
+ * Some basic metadata containing information about raw data included in OpenDRIVE is described by the &lt;rawData&gt; element within the &lt;dataQuality&gt; element.
  * 
  * <p>Java class for t_dataQuality_RawData complex type</p>.
  * 

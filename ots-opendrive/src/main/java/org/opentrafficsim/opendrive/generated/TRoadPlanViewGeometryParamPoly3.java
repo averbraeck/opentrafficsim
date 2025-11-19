@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * In OpenDRIVE, parametric cubic curves are represented by <paramPoly3> elements within the <geometry> element.
+ * In OpenDRIVE, parametric cubic curves are represented by &lt;paramPoly3&gt; elements within the &lt;geometry&gt; element.
  * 
  * <p>Java class for t_road_planView_geometry_paramPoly3 complex type</p>.
  * 

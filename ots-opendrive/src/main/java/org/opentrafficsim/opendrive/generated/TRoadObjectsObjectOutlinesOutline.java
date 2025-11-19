@@ -15,9 +15,9 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Defines a series of corner points, including the height of the object relative to the road reference line. For areas, the points should be listed in counter-clockwise order.
- * An <outline> element shall be followed by one or more <cornerRoad> element or by one or more <cornerLocal> element.
+ * An &lt;outline&gt; element shall be followed by one or more &lt;cornerRoad&gt; element or by one or more &lt;cornerLocal&gt; element.
  * 
- * OpenDRIVE 1.4 outline definitions (without <outlines> parent element) shall still be supported.
+ * OpenDRIVE 1.4 outline definitions (without &lt;outlines&gt; parent element) shall still be supported.
  * 
  * <p>Java class for t_road_objects_object_outlines_outline complex type</p>.
  * 

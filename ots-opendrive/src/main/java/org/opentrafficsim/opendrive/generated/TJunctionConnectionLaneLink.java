@@ -9,7 +9,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * Provides information about the lanes that are linked between an incoming road and a connecting road. It is strongly recommended to provide this element. It is deprecated to omit the <laneLink> element.
+ * Provides information about the lanes that are linked between an incoming road and a connecting road. It is strongly recommended to provide this element. It is deprecated to omit the &lt;laneLink&gt; element.
  * 
  * <p>Java class for t_junction_connection_laneLink complex type</p>.
  * 

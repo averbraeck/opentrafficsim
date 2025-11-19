@@ -86,6 +86,31 @@
               <token>^public enum </token>
               <value>@SuppressWarnings("all") public enum </value>
             </replacement>
+            <!-- Do not remove duplicate replacements. Five duplicates repair up to five "<element>" tags.
+            These appear in generated java classes from the OpenDRIVE xsd files. The documentation annotation is placed in
+            the javadoc, in which escaped html tags are un-escaped. The tags are therefore illegal html and invisible in the 
+            resulting javadoc. More complicated regular expressions execute much slower due to heavy branching. In 
+            OpenDRIVE 1.6 it is TRoad that has the most elements in the documentation, namely 5. -->
+            <replacement>
+              <token>^/\*\*([\S\s]*)(?:&lt;)(.*)(?:&gt;)([\S\s]*)&lt;p&gt;Java class for </token>
+              <value>/\*\*$1&amp;lt;$2&amp;gt;$3&lt;p&gt;Java class for </value>
+            </replacement>
+            <replacement>
+              <token>^/\*\*([\S\s]*)(?:&lt;)(.*)(?:&gt;)([\S\s]*)&lt;p&gt;Java class for </token>
+              <value>/\*\*$1&amp;lt;$2&amp;gt;$3&lt;p&gt;Java class for </value>
+            </replacement>
+            <replacement>
+              <token>^/\*\*([\S\s]*)(?:&lt;)(.*)(?:&gt;)([\S\s]*)&lt;p&gt;Java class for </token>
+              <value>/\*\*$1&amp;lt;$2&amp;gt;$3&lt;p&gt;Java class for </value>
+            </replacement>
+            <replacement>
+              <token>^/\*\*([\S\s]*)(?:&lt;)(.*)(?:&gt;)([\S\s]*)&lt;p&gt;Java class for </token>
+              <value>/\*\*$1&amp;lt;$2&amp;gt;$3&lt;p&gt;Java class for </value>
+            </replacement>
+            <replacement>
+              <token>^/\*\*([\S\s]*)(?:&lt;)(.*)(?:&gt;)([\S\s]*)&lt;p&gt;Java class for </token>
+              <value>/\*\*$1&amp;lt;$2&amp;gt;$3&lt;p&gt;Java class for </value>
+            </replacement>
           </replacements>
         </configuration>
       </plugin>

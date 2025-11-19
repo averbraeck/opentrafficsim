@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * An arc describes a road reference line with constant curvature. In OpenDRIVE, an arc is represented by an <arc> element within the <geometry> element.
+ * An arc describes a road reference line with constant curvature. In OpenDRIVE, an arc is represented by an &lt;arc&gt; element within the &lt;geometry&gt; element.
  * 
  * <p>Java class for t_road_planView_geometry_arc complex type</p>.
  * 

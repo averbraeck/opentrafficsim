@@ -17,8 +17,8 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
 
 
 /**
- * In OpenDRIVE, the road network is represented by <road> elements. Each road runs along one road reference line. A road shall have at least one lane with a width larger than 0.
- * OpenDRIVE roads may be roads in the real road network or artificial road network created for application use. Each road is described by one or more <road> elements. One <road> element may cover a long stretch of a road, shorter stretches between junctions, or even several roads. A new <road> element should only start if the properties of the road cannot be described within the previous <road> element or if a junction is required.
+ * In OpenDRIVE, the road network is represented by &lt;road&gt; elements. Each road runs along one road reference line. A road shall have at least one lane with a width larger than 0.
+ * OpenDRIVE roads may be roads in the real road network or artificial road network created for application use. Each road is described by one or more &lt;road&gt; elements. One &lt;road&gt; element may cover a long stretch of a road, shorter stretches between junctions, or even several roads. A new &lt;road&gt; element should only start if the properties of the road cannot be described within the previous &lt;road&gt; element or if a junction is required.
  * 
  * <p>Java class for t_road complex type</p>.
  * 

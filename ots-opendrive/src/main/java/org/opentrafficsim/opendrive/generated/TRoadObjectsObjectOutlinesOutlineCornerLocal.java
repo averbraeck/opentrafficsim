@@ -10,7 +10,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * Used to describe complex forms of objects. Defines a corner point on the object outline relative to the object pivot point in local u/v-coordinates. The pivot point and the orientation of the object are given by the s/t/heading arguments of the <object> element.
+ * Used to describe complex forms of objects. Defines a corner point on the object outline relative to the object pivot point in local u/v-coordinates. The pivot point and the orientation of the object are given by the s/t/heading arguments of the &lt;object&gt; element.
  * 
  * <p>Java class for t_road_objects_object_outlines_outline_cornerLocal complex type</p>.
  * 

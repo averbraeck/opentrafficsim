@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * The absolute or relative errors of road data are described by <error> elements within the <dataQuality> element.
+ * The absolute or relative errors of road data are described by &lt;error&gt; elements within the &lt;dataQuality&gt; element.
  * 
  * <p>Java class for t_dataQuality_Error complex type</p>.
  * 

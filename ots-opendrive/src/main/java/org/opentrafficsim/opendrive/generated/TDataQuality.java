@@ -8,7 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Raw data or data from external sources that is integrated in OpenDRIVE may be of varying quality. It is possible to describe quality and accuracy of external data in OpenDRIVE.
- * The description of the data quality is represented by <dataQuality> elements. They may be stored at any position in OpenDRIVE.
+ * The description of the data quality is represented by &lt;dataQuality&gt; elements. They may be stored at any position in OpenDRIVE.
  * Measurement data derived from external sources like GPS that is integrated in OpenDRIVE may be inaccurate. The error range, given in [m], may be listed in the application.
  * 
  * <p>Java class for t_dataQuality complex type</p>.
