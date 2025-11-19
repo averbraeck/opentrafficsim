@@ -69,6 +69,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.DefaultMirovaPerceptionF
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataActionState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataCurrentCFAcceleration;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataCurrentDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataEgoDecelLeft;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataEgoDecelRight;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataFollowerDecelLeft;
@@ -119,6 +120,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.DetectorType;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.demo.mirova.scenariomanagement.libraries.DesiredSpeedLibrary;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 
@@ -213,6 +215,7 @@ public class SimpleSimulation extends AbstractSimulationScript
                 .registerExtendedDataType(new ExtendedDataEgoDecelRight())
                 .registerExtendedDataType(new ExtendedDataEgoDecelLeft())
                 .registerExtendedDataType(new ExtendedDataCurrentCFAcceleration())
+                .registerExtendedDataType(new ExtendedDataCurrentDesiredSpeed())
                 .create();
 
         SamplerData<?> samplerData = this.samplerExtended.getSamplerData();
@@ -252,16 +255,11 @@ public class SimpleSimulation extends AbstractSimulationScript
 
 
 
-        InterpolatedEmpiricalDistribution vWishDistribution =
-                new InterpolatedEmpiricalDistribution(
-                    new Number[] {80, 90, 100, 110, 120, 130, 140, 150, 160, 180, 200},
-                    new double[] {0.0, 0.05, 0.10, 0.25, 0.45, 0.65, 0.80, 0.90, 0.96, 0.99, 1.0});
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar = DesiredSpeedLibrary.germanMotorwayCars(this.stream);
+               // new ContinuousDistDoubleScalar.Rel<>(new DistEmpiricalInterpolated(this.stream, vWishDistribution), SpeedUnit.KM_PER_HOUR);
 
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
-                new ContinuousDistDoubleScalar.Rel<>(new DistEmpiricalInterpolated(this.stream, vWishDistribution), SpeedUnit.KM_PER_HOUR);
-
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTrucks =
-                new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 80.0, 100.0), SpeedUnit.KM_PER_HOUR);
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTrucks = DesiredSpeedLibrary.trucks(this.stream);
+               // new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 80.0, 100.0), SpeedUnit.KM_PER_HOUR);
         Supplier<Route> routeGeneratorCar = new FixedRouteGenerator(new Route("RouteAB", car, nodes));
         Supplier<Route> routeGeneratorTruck = new FixedRouteGenerator(new Route("RouteAB", truck, nodes));
 
