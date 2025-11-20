@@ -69,7 +69,6 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.RelativeWid
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.WidthGenerator;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
-import org.opentrafficsim.xml.bindings.types.LengthType;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
@@ -87,10 +86,10 @@ import org.opentrafficsim.xml.generated.StripeCompatibility;
 import org.opentrafficsim.xml.generated.StripeElements.Gap;
 import org.opentrafficsim.xml.generated.StripeElements.Line;
 import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed;
+import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed.GapDash;
 import org.opentrafficsim.xml.generated.StripeType;
 import org.opentrafficsim.xml.generated.TrafficLightType;
 
-import jakarta.xml.bind.JAXBElement;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
@@ -662,9 +661,10 @@ public final class NetworkParser
     private static LengthVector getDashes(final Dashed dashed, final Eval eval)
     {
         List<Double> dashes = new ArrayList<>();
-        for (JAXBElement<LengthType> length : dashed.getGapAndDash())
+        for (GapDash gapDash : dashed.getGapDash())
         {
-            dashes.add(length.getValue().get(eval).si);
+            dashes.add(gapDash.getGap().get(eval).si);
+            dashes.add(gapDash.getDash().get(eval).si);
         }
         return new LengthVector(dashes.stream().mapToDouble(v -> v).toArray());
     }

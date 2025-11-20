@@ -42,8 +42,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     private static final QName _LinkClothoidEndCurvature_QNAME = new QName("http://www.opentrafficsim.org/ots", "EndCurvature");
     private static final QName _LinkClothoidA_QNAME = new QName("http://www.opentrafficsim.org/ots", "A");
     private static final QName _LinkClothoidFlattener_QNAME = new QName("http://www.opentrafficsim.org/ots", "Flattener");
-    private static final QName _StripeElementsLineDashedGap_QNAME = new QName("http://www.opentrafficsim.org/ots", "Gap");
-    private static final QName _StripeElementsLineDashedDash_QNAME = new QName("http://www.opentrafficsim.org/ots", "Dash");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.opentrafficsim.xml.generated
@@ -460,6 +458,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public StripeElements.Line createStripeElementsLine() {
         return new StripeElements.Line();
+    }
+
+    /**
+     * Create an instance of {@link StripeElements.Line.Dashed }
+     * 
+     * @return
+     *     the new instance of {@link StripeElements.Line.Dashed }
+     */
+    public StripeElements.Line.Dashed createStripeElementsLineDashed() {
+        return new StripeElements.Line.Dashed();
     }
 
     /**
@@ -2303,13 +2311,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link StripeElements.Line.Dashed }
+     * Create an instance of {@link StripeElements.Line.Dashed.GapDash }
      * 
      * @return
-     *     the new instance of {@link StripeElements.Line.Dashed }
+     *     the new instance of {@link StripeElements.Line.Dashed.GapDash }
      */
-    public StripeElements.Line.Dashed createStripeElementsLineDashed() {
-        return new StripeElements.Line.Dashed();
+    public StripeElements.Line.Dashed.GapDash createStripeElementsLineDashedGapDash() {
+        return new StripeElements.Line.Dashed.GapDash();
     }
 
     /**
@@ -2588,34 +2596,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     @XmlElementDecl(namespace = "http://www.opentrafficsim.org/ots", name = "Flattener", scope = org.opentrafficsim.xml.generated.Link.Clothoid.class)
     public JAXBElement<FlattenerType> createLinkClothoidFlattener(FlattenerType value) {
         return new JAXBElement<>(_LinkClothoidFlattener_QNAME, FlattenerType.class, org.opentrafficsim.xml.generated.Link.Clothoid.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link LengthType }{@code >}
-     * 
-     * @param value
-     *     Java instance representing xml element's value.
-     * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link LengthType }{@code >}
-     */
-    @XmlElementDecl(namespace = "http://www.opentrafficsim.org/ots", name = "Gap", scope = StripeElements.Line.Dashed.class)
-    @XmlJavaTypeAdapter(LengthAdapter.class)
-    public JAXBElement<LengthType> createStripeElementsLineDashedGap(LengthType value) {
-        return new JAXBElement<>(_StripeElementsLineDashedGap_QNAME, LengthType.class, StripeElements.Line.Dashed.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link LengthType }{@code >}
-     * 
-     * @param value
-     *     Java instance representing xml element's value.
-     * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link LengthType }{@code >}
-     */
-    @XmlElementDecl(namespace = "http://www.opentrafficsim.org/ots", name = "Dash", scope = StripeElements.Line.Dashed.class)
-    @XmlJavaTypeAdapter(LengthAdapter.class)
-    public JAXBElement<LengthType> createStripeElementsLineDashedDash(LengthType value) {
-        return new JAXBElement<>(_StripeElementsLineDashedDash_QNAME, LengthType.class, StripeElements.Line.Dashed.class, value);
     }
 
 }

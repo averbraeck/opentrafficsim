@@ -231,7 +231,7 @@
       <xsd:element name="Line">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:choice minOccurs="1">
+            <xsd:choice>
               <xsd:element name="Continuous" type="ots:EmptyType" />
               <xsd:element name="Dashed">
                 <xsd:annotation>
@@ -241,10 +241,14 @@
                 </xsd:annotation>
                 <xsd:complexType>
                   <xsd:sequence>
-                    <xsd:sequence minOccurs="1" maxOccurs="unbounded">
-                      <xsd:element name="Gap" type="ots:LengthType" />
-                      <xsd:element name="Dash" type="ots:LengthType" />
-                    </xsd:sequence>
+                    <xsd:element name="GapDash" maxOccurs="unbounded">
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element name="Gap" type="ots:LengthType" />
+                          <xsd:element name="Dash" type="ots:LengthType" />
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
                   </xsd:sequence>
                 </xsd:complexType>
               </xsd:element>

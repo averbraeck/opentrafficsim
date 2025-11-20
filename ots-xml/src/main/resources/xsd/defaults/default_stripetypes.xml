@@ -17,8 +17,10 @@
       <ots:Gap Width="20cm" />
       <ots:Line Width="20cm">
         <ots:Dashed>
-          <ots:Gap>9m</ots:Gap>
-          <ots:Dash>3m</ots:Dash>
+          <ots:GapDash>
+            <ots:Gap>9m</ots:Gap>
+            <ots:Dash>3m</ots:Dash>
+          </ots:GapDash>
         </ots:Dashed>
       </ots:Line>
     </ots:Elements>
@@ -30,8 +32,10 @@
     <ots:Elements>
       <ots:Line Width="20cm">
         <ots:Dashed>
-          <ots:Gap>9m</ots:Gap>
-          <ots:Dash>3m</ots:Dash>
+          <ots:GapDash>
+            <ots:Gap>9m</ots:Gap>
+            <ots:Dash>3m</ots:Dash>
+          </ots:GapDash>
         </ots:Dashed>
       </ots:Line>
       <ots:Gap Width="20cm" />
@@ -47,8 +51,10 @@
     <ots:Elements>
       <ots:Line Width="20cm">
         <ots:Dashed>
-          <ots:Gap>9m</ots:Gap>
-          <ots:Dash>3m</ots:Dash>
+          <ots:GapDash>
+            <ots:Gap>9m</ots:Gap>
+            <ots:Dash>3m</ots:Dash>
+          </ots:GapDash>
         </ots:Dashed>
       </ots:Line>
     </ots:Elements>
@@ -71,15 +77,19 @@
     <ots:Elements>
       <ots:Line Width="20cm">
         <ots:Dashed>
-          <ots:Gap>9m</ots:Gap>
-          <ots:Dash>3m</ots:Dash>
+          <ots:GapDash>
+            <ots:Gap>9m</ots:Gap>
+            <ots:Dash>3m</ots:Dash>
+          </ots:GapDash>
         </ots:Dashed>
       </ots:Line>
       <ots:Gap Width="20cm" />
       <ots:Line Width="20cm">
         <ots:Dashed>
-          <ots:Gap>9m</ots:Gap>
-          <ots:Dash>3m</ots:Dash>
+          <ots:GapDash>
+            <ots:Gap>9m</ots:Gap>
+            <ots:Dash>3m</ots:Dash>
+          </ots:GapDash>
         </ots:Dashed>
       </ots:Line>
     </ots:Elements>
@@ -91,8 +101,10 @@
     <ots:Elements>
       <ots:Line Width="40cm">
         <ots:Dashed>
-          <ots:Gap>3m</ots:Gap>
-          <ots:Dash>1m</ots:Dash>
+          <ots:GapDash>
+            <ots:Gap>3m</ots:Gap>
+            <ots:Dash>1m</ots:Dash>
+          </ots:GapDash>
         </ots:Dashed>
       </ots:Line>
     </ots:Elements>

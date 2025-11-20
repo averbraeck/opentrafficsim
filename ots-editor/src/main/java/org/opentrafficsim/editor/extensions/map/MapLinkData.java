@@ -795,7 +795,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         List<Double> gapsAndDashes = new ArrayList<>();
                         for (XsdTreeNode gapDash : elementNode.getChild(0).getChildren())
                         {
-                            gapsAndDashes.add(Adapters.get(Length.class).unmarshal(gapDash.getValue()).get(getEval()).si);
+                            gapsAndDashes.add(
+                                    Adapters.get(Length.class).unmarshal(gapDash.getChild(0).getValue()).get(getEval()).si);
+                            gapsAndDashes.add(
+                                    Adapters.get(Length.class).unmarshal(gapDash.getChild(1).getValue()).get(getEval()).si);
                         }
                         elements.add(StripeElement.dashed(w, color,
                                 new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
