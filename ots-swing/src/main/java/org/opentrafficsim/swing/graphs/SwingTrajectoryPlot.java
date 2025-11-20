@@ -86,12 +86,20 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
     public SwingTrajectoryPlot(final TrajectoryPlot plot, final boolean defaultColorers)
     {
         super(plot);
-        if (defaultColorers && plot.getLaneCount() == 1)
+        if (plot.getLaneCount() == 1)
         {
-            addColorer(new FixedTrajectoryColorer(Color.BLUE, "Blue"), true);
-            addColorer(new IdTrajectoryColorer(), false);
-            addColorer(new SpeedTrajectoryColorer(), false);
-            addColorer(new AccelerationTrajectoryColorer(), false);
+            if (defaultColorers)
+            {
+                addColorer(new FixedTrajectoryColorer(Color.BLUE, "Blue"), true);
+                addColorer(new IdTrajectoryColorer(), false);
+                addColorer(new SpeedTrajectoryColorer(), false);
+                addColorer(new AccelerationTrajectoryColorer(), false);
+            }
+            else
+            {
+                // Make sure a single-lane plot has some colorer, even if non will be set through addColorer()
+                plot.setColorer(new FixedTrajectoryColorer(Color.BLUE, "Blue"));
+            }
         }
     }
 
@@ -128,6 +136,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
         }
         menuItem.setFont(this.colorMenu.getFont());
         this.colorMenu.add(menuItem);
+        this.colorMenu.setVisible(true);
     }
 
     @Override
@@ -137,6 +146,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
         if (getPlot().getLaneCount() == 1)
         {
             this.colorMenu = new JMenu("Color");
+            this.colorMenu.setVisible(false);
             popupMenu.insert(this.colorMenu, 0);
         }
     }
