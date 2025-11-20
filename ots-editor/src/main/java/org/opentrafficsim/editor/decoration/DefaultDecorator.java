@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.opentrafficsim.base.Resource;
+import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -201,7 +201,7 @@ public final class DefaultDecorator
     public static ImageIcon loadIcon(final String image, final int width, final int height, final int bgWidth,
             final int bgHeight) throws IOException
     {
-        Image im = ImageIO.read(Resource.getResourceAsStream(image));
+        Image im = ImageIO.read(ResourceResolver.resolve(image).openStream());
         if (width > 0 || height > 0)
         {
             im = im.getScaledInstance(width > 0 ? width : im.getWidth(null), height > 0 ? height : im.getHeight(null),

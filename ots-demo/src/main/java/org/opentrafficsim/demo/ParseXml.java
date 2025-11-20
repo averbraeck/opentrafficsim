@@ -2,6 +2,7 @@ package org.opentrafficsim.demo;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -10,7 +11,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.djutils.io.URLResource;
+import org.djutils.io.ResourceResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -36,7 +37,7 @@ public class ParseXml
      */
     public ParseXml() throws Exception
     {
-        domTree(URLResource.getResource("/resources/conflict/Simple.xml").getPath());
+        domTree(ResourceResolver.resolve("/resources/conflict/Simple.xml").asUrl().getPath());
     }
 
     /**
@@ -135,18 +136,18 @@ public class ParseXml
         }
 
         @Override
-        public InputSource resolveEntity(final String publicId, final String systemId)
+        public InputSource resolveEntity(final String publicId, final String systemId) throws IOException
         {
             if (systemId.contains("defaults/"))
             {
                 System.out.println("\nINCLUDING " + systemId);
                 String location = "/resources/xsd/defaults" + systemId.substring(systemId.lastIndexOf('/'));
-                InputStream stream = URLResource.getResourceAsStream(location);
+                InputStream stream = ResourceResolver.resolve(location).openStream();
                 return new InputSource(stream);
             }
             else
             {
-                return new InputSource(URLResource.getResourceAsStream(systemId));
+                return new InputSource(ResourceResolver.resolve(systemId).openStream());
             }
         }
     }

@@ -8,7 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.djutils.io.URLResource;
+import org.djutils.io.ResourceResolver;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -43,7 +43,7 @@ public final class PrintParser
     public static void main(final String[] args)
             throws ParserConfigurationException, SAXException, IOException, URISyntaxException
     {
-        URL res = URLResource.getResource("/resources/");
+        URL res = ResourceResolver.resolve("/resources/").asUrl();
         if (res == null)
         {
             System.out.println("Cannot find file");

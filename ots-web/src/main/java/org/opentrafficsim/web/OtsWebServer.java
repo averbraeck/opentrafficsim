@@ -14,7 +14,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
-import org.djutils.io.URLResource;
+import org.djutils.io.ResourceResolver;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -109,7 +109,7 @@ public abstract class OtsWebServer implements EventListener
             ResourceHandler resourceHandler = new ResourceHandler();
 
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
-            URL homeFolder = URLResource.getResource("/resources/home");
+            URL homeFolder = ResourceResolver.resolve("/resources/home").asUrl();
             String webRoot = homeFolder.toExternalForm();
             Logger.ots().trace("webRoot is " + webRoot);
 

@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import org.opentrafficsim.base.Resource;
+import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 
@@ -57,15 +57,15 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
     public XsdTreeCellRenderer(final OtsEditor editor) throws IOException
     {
         this.editor = editor;
-        this.consumer =
-                ImageIO.read(Resource.getResourceAsStream("./Application.png")).getScaledInstance(12, 12, Image.SCALE_SMOOTH);
+        this.consumer = ImageIO.read(ResourceResolver.resolve("./Application.png").openStream()).getScaledInstance(12, 12,
+                Image.SCALE_SMOOTH);
         this.description =
-                ImageIO.read(Resource.getResourceAsStream("./Info.png")).getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-        this.dropdown = ImageIO.read(Resource.getResourceAsStream("./dropdown.png"));
+                ImageIO.read(ResourceResolver.resolve("./Info.png").openStream()).getScaledInstance(10, 10, Image.SCALE_SMOOTH);
+        this.dropdown = ImageIO.read(ResourceResolver.resolve("./dropdown.png").openStream());
 
-        this.leafIcon = new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_file.png")));
-        this.openIcon = new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_folder_open.png")));
-        this.closedIcon = new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_folder.png")));
+        this.leafIcon = new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_file.png").openStream()));
+        this.openIcon = new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_folder_open.png").openStream()));
+        this.closedIcon = new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_folder.png").openStream()));
     }
 
     @Override

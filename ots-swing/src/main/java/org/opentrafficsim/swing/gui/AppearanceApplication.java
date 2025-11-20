@@ -34,7 +34,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.opentrafficsim.base.Resource;
+import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.logger.Logger;
 
 import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
@@ -113,7 +113,7 @@ public class AppearanceApplication extends JFrame
         }
         try
         {
-            setIconImage(ImageIO.read(Resource.getResourceAsStream("/OTS_merge.png")));
+            setIconImage(ImageIO.read(ResourceResolver.resolve("/OTS_merge.png").openStream()));
         }
         catch (IOException io)
         {

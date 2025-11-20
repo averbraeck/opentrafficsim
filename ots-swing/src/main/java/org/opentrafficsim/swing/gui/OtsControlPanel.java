@@ -56,7 +56,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.Resource;
+import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -278,7 +278,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     {
         try
         {
-            return new ImageIcon(ImageIO.read(Resource.getResourceAsStream(iconPath)));
+            return new ImageIcon(ImageIO.read(ResourceResolver.resolve(iconPath).openStream()));
         }
         catch (NullPointerException | IOException npe)
         {
@@ -296,7 +296,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     {
         try
         {
-            return new ImageIcon(GrayFilter.createDisabledImage(ImageIO.read(Resource.getResourceAsStream(iconPath))));
+            return new ImageIcon(GrayFilter.createDisabledImage(ImageIO.read(ResourceResolver.resolve(iconPath).openStream())));
         }
         catch (NullPointerException | IOException e)
         {

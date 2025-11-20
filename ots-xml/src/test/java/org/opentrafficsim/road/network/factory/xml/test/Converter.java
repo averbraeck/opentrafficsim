@@ -15,7 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djutils.io.URLResource;
+import org.djutils.io.ResourceResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -49,7 +49,7 @@ public class Converter
         factory.setNamespaceAware(true);
         factory.setXIncludeAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        URL in = URLResource.getResource(this.fName);
+        URL in = ResourceResolver.resolve(this.fName).asUrl();
         InputStream stream = new BufferedInputStream(new FileInputStream(in.getFile()));
         Document document = builder.parse(stream);
         NodeList xmlNodeList = document.getDocumentElement().getChildNodes();
@@ -175,7 +175,7 @@ public class Converter
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
-        
+
         <LaneTypes>
           <LaneType Id="STREET">
             <Compatibility GtuType="NL.VEHICLE" />
@@ -236,7 +236,7 @@ public class Converter
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
-        
+
         <LaneTypes>
           <LaneType Id="STREET">
             <Compatibility GtuType="NL.VEHICLE" />
@@ -389,7 +389,7 @@ public class Converter
            <Link Id="L2EB" NodeStart="N2EB" NodeEnd="N3EB" RoadLayout="HW3AFSLAG">
              <Polyline IntermediatePoints="(137792,395679) (137816,395665) (137902.6725,395617.2567)" />
            </Link>
-        
+
            NEW:
              <Link Id="NS23" NodeStart="NS2" NodeEnd="NS3" Type="NL.STREET">
                <Straight />

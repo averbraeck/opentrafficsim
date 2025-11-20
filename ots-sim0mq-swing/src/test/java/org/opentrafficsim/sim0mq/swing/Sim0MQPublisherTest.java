@@ -16,7 +16,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.io.URLResource;
+import org.djutils.io.ResourceResolver;
 import org.djutils.serialization.SerializationException;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
@@ -120,7 +120,7 @@ public final class Sim0MQPublisherTest
             SerializationException, InterruptedException, URISyntaxException
     {
         ZContext zContext = new ZContext(5); // 5 IO threads - how many is reasonable? It actually works with 1 IO thread.
-        networkXML = new String(Files.readAllBytes(Paths.get(URLResource.getResource("/resources/network.xml").toURI())));
+        networkXML = new String(Files.readAllBytes(Paths.get(ResourceResolver.resolve("/resources/network.xml").asUri())));
 
         List<byte[]> receivedMessages = Collections.synchronizedList(new ArrayList<>());
         List<byte[]> synchronizedReceivedMessages = Collections.synchronizedList(receivedMessages);

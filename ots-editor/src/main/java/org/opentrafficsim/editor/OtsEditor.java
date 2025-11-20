@@ -91,9 +91,9 @@ import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Try;
+import org.djutils.io.ResourceResolver;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.base.Resource;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.decoration.DefaultDecorator;
@@ -375,8 +375,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // This happens to the leaf/open/closed icons that can be set on the tree. This needs to be done before the JTreeTable
         // is created, otherwise it loads normal default icons.
         UIManager.put("Tree.collapsedIcon",
-                new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_collapsed.png"))));
-        UIManager.put("Tree.expandedIcon", new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_expanded.png"))));
+                new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_collapsed.png").openStream())));
+        UIManager.put("Tree.expandedIcon",
+                new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_expanded.png").openStream())));
 
         // empty tree table
         this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null));

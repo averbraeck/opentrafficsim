@@ -12,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djunits.value.vfloat.scalar.base.FloatScalar;
-import org.djutils.io.URLResource;
+import org.djutils.io.ResourceResolver;
 import org.eclipse.jetty.ee10.servlet.SessionHandler;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
@@ -106,7 +106,7 @@ public class TestDemoServer
             ResourceHandler resourceHandler = new MyResourceHandler();
 
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
-            URL homeFolder = URLResource.getResource("/resources/home");
+            URL homeFolder = ResourceResolver.resolve("/resources/home").asUrl();
             String webRoot = homeFolder.toExternalForm();
             Logger.ots().trace("webRoot is " + webRoot);
 
