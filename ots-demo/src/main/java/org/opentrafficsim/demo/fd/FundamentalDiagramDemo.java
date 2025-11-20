@@ -629,6 +629,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         this.trajectoryPlot.updateFixedDomainRange(true);
         SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(this.trajectoryPlot)
         {
+            /** */
+            private static final long serialVersionUID = 20251121L;
+
             @Override
             protected void addPopUpMenuItems(final JPopupMenu popupMenu)
             {
@@ -766,6 +769,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
      */
     private class SwingFundamentalDiagramNoControl extends SwingFundamentalDiagram
     {
+        /** */
+        private static final long serialVersionUID = 20251121L;
+
         /**
          * @param plot fundamental diagram
          */
@@ -784,7 +790,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     /**
      * Fundamental diagram line class based on local settings.
      */
-    private class DynamicFdLine implements FdLine
+    private final class DynamicFdLine implements FdLine
     {
         /** Map of points for each quantity. */
         private Map<Quantity, double[]> map = new LinkedHashMap<>();

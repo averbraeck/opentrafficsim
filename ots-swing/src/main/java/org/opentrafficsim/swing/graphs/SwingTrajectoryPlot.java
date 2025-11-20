@@ -14,6 +14,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import org.djutils.draw.point.Point2d;
+import org.djutils.exceptions.Throw;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.annotations.XYLineAnnotation;
@@ -68,13 +69,24 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
     private ButtonGroup colorButtonGroup = new ButtonGroup();
 
     /**
-     * Construct a new Swing container for a TrajectoryPlot.
+     * Construct a new Swing container for a TrajectoryPlot. Default colorers for blue, speed, id and acceleration are used if
+     * the plot has a single lane.
      * @param plot the plot to embed
      */
     public SwingTrajectoryPlot(final TrajectoryPlot plot)
     {
+        this(plot, true);
+    }
+
+    /**
+     * Constructor. Default colorers might be set based on the input, but only when the plot has a single lane.
+     * @param plot the plot to embed
+     * @param defaultColorers whether to use default colorers for blue, speed, id and acceleration
+     */
+    public SwingTrajectoryPlot(final TrajectoryPlot plot, final boolean defaultColorers)
+    {
         super(plot);
-        if (plot.getLaneCount() == 1)
+        if (defaultColorers && plot.getLaneCount() == 1)
         {
             addColorer(new FixedTrajectoryColorer(Color.BLUE, "Blue"), true);
             addColorer(new IdTrajectoryColorer(), false);
@@ -87,9 +99,12 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
      * Add colorer.
      * @param colorer colorer
      * @param selected whether the colorer should be the selected one
+     * @throws IllegalStateException when the plot has multiple lanes, in which case colorers are not supported
      */
     public void addColorer(final TrajectoryColorer colorer, final boolean selected)
     {
+        Throw.when(getPlot().getLaneCount() > 1, IllegalStateException.class,
+                "Trajectory plots of multiple lanes do not support colorers.");
         if (this.colorMenu == null)
         {
             // a sub-class may override addPopUpMenuItems() in which case there is perhaps no color menu
@@ -106,9 +121,9 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
             }
         });
         this.colorButtonGroup.add(menuItem);
-        if (selected)
+        if (selected || this.colorButtonGroup.getButtonCount() == 1)
         {
-            menuItem.setSelected(selected);
+            menuItem.setSelected(true);
             SwingTrajectoryPlot.this.getPlot().setColorer(colorer);
         }
         menuItem.setFont(this.colorMenu.getFont());

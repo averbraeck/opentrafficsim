@@ -183,7 +183,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         PlotScheduler scheduler = new OtsPlotScheduler(getModel().getSimulator());
         Duration updateInterval = Duration.ofSI(10.0);
         SwingTrajectoryPlot plot = new SwingTrajectoryPlot(
-                new TrajectoryPlot("Trajectory right lane", updateInterval, scheduler, sampler.getSamplerData(), path));
+                new TrajectoryPlot("Trajectory right lane", updateInterval, scheduler, sampler.getSamplerData(), path), true);
         plot.addColorer(new SynchronizationTrajectoryColorer(syncData), false);
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
                 plot.getContentPane());
