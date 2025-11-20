@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -21,13 +21,12 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
-import org.djutils.io.URLResource;
+import org.djutils.io.ResourceResolver;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
-import org.opentrafficsim.core.dsol.OtsSimulator;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -85,6 +84,12 @@ public final class XmlParser
     /** Whether to parse conflicts. */
     private boolean parseConflicts;
 
+    /** Main OTS tag. */
+    private Ots ots;
+
+    /** Eval for scenario. */
+    private Eval eval;
+
     /**
      * Constructor.
      * @param network network.
@@ -95,30 +100,16 @@ public final class XmlParser
     }
 
     /**
-     * Set file name.
-     * @param filename file name.
+     * Set resource.
+     * @param resource resource.
      * @return this parser for method chaining.
      * @throws IllegalStateException file, URL or stream has already been set.
      * @throws IOException file could not be opened.
      */
-    public XmlParser setFile(final String filename) throws IOException
+    public XmlParser setResource(final String resource) throws IOException
     {
-        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setFile(), setUrl(), or setStream().");
-        this.stream = URLResource.getResource(filename).openStream();
-        return this;
-    }
-
-    /**
-     * Set url.
-     * @param url url.
-     * @return this parser for method chaining.
-     * @throws IllegalStateException file, URL or stream has already been set.
-     * @throws IOException file could not be opened.
-     */
-    public XmlParser setUrl(final URL url) throws IOException
-    {
-        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setFile(), setUrl(), or setStream().");
-        this.stream = url.openStream();
+        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setFile() or setStream().");
+        this.stream = ResourceResolver.resolve(resource).openStream();
         return this;
     }
 
@@ -128,9 +119,10 @@ public final class XmlParser
      * @return this parser for method chaining.
      * @throws IllegalStateException file, URL or stream has already been set.
      */
+    @SuppressWarnings("hiddenfield")
     public XmlParser setStream(final InputStream stream)
     {
-        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setFile(), setUrl(), or setStream().");
+        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setFile() or setStream().");
         this.stream = stream;
         return this;
     }
@@ -140,9 +132,11 @@ public final class XmlParser
      * @param scenario name of scenario to parse.
      * @return this parser for method chaining.
      */
+    @SuppressWarnings("hiddenfield")
     public XmlParser setScenario(final String scenario)
     {
         this.scenario = scenario;
+        this.eval = null; // depends on selected scenario
         return this;
     }
 
@@ -151,6 +145,7 @@ public final class XmlParser
      * @param parseConflicts whether to parse conflicts.
      * @return this parser for method chaining.
      */
+    @SuppressWarnings("hiddenfield")
     public XmlParser setParseConflict(final boolean parseConflicts)
     {
         this.parseConflicts = parseConflicts;
@@ -160,7 +155,7 @@ public final class XmlParser
     /**
      * Build the simulation.
      * @return the experiment based on the information in the Run tag
-     * @throws IllegalStateException when no file, url or stream was set.
+     * @throws IllegalStateException if no file, URL or stream has been set
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -177,9 +172,96 @@ public final class XmlParser
             throws SimRuntimeException, MalformedURLException, JAXBException, URISyntaxException, NetworkException,
             XmlParserException, SAXException, ParserConfigurationException, GtuException, IOException, TrafficControlException
     {
-        Throw.when(this.stream == null, IllegalStateException.class,
-                "Invoke one of setFile(), setUrl(), or setStream() before parsing.");
-        return build(parseXml(this.stream), this.network, this.scenario, this.parseConflicts);
+        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        return build(getOts(), this.network, this.scenario, this.parseConflicts);
+    }
+
+    /**
+     * Loads XML tags, or takes it from cache.
+     * @return OTS tag
+     * @throws JAXBException when the parsing fails
+     * @throws SAXException on error creating SAX parser
+     * @throws ParserConfigurationException on error with parser configuration
+     */
+    private Ots getOts() throws JAXBException, SAXException, ParserConfigurationException
+    {
+        if (this.ots == null)
+        {
+            this.ots = parseXml(this.stream);
+        }
+        return this.ots;
+    }
+
+    /**
+     * Loads {@link Eval} from scenario, or takes it from cache.
+     * @return eval
+     * @throws JAXBException when the parsing fails
+     * @throws SAXException on error creating SAX parser
+     * @throws ParserConfigurationException on error with parser configuration
+     */
+    private Eval getEval() throws JAXBException, SAXException, ParserConfigurationException
+    {
+        if (this.eval == null)
+        {
+            this.eval = ScenarioParser.parseInputParameters(getOts().getScenarios(), this.scenario);
+        }
+        return this.eval;
+    }
+
+    /**
+     * Returns warmup period. This information is only valid until {@link #setScenario} is invoked.
+     * @return warmup period
+     * @throws JAXBException when the parsing fails
+     * @throws SAXException on error creating SAX parser
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws IllegalStateException if no file, URL or stream has been set
+     */
+    public Duration getWarmupPeriod() throws JAXBException, SAXException, ParserConfigurationException
+    {
+        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        return getOts().getRun().getWarmupPeriod() == null ? Duration.ZERO : getOts().getRun().getWarmupPeriod().get(getEval());
+    }
+
+    /**
+     * Returns run length (total simulation time). This information is only valid until {@link #setScenario} is invoked.
+     * @return run length
+     * @throws JAXBException when the parsing fails
+     * @throws SAXException on error creating SAX parser
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws IllegalStateException if no file, URL or stream has been set
+     */
+    public Duration getRunLength() throws JAXBException, SAXException, ParserConfigurationException
+    {
+        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        return getOts().getRun().getRunLength().get(getEval());
+    }
+
+    /**
+     * Returns history. This information is only valid until {@link #setScenario} is invoked.
+     * @return history
+     * @throws JAXBException when the parsing fails
+     * @throws SAXException on error creating SAX parser
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws IllegalStateException if no file, URL or stream has been set
+     */
+    public Duration getHistory() throws JAXBException, SAXException, ParserConfigurationException
+    {
+        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        return getOts().getRun().getHistory() == null ? Duration.ZERO : getOts().getRun().getHistory().get(getEval());
+    }
+
+    /**
+     * Returns list of scenario names.
+     * @return list of scenario names
+     * @throws JAXBException when the parsing fails
+     * @throws SAXException on error creating SAX parser
+     * @throws ParserConfigurationException on error with parser configuration
+     * @throws IllegalStateException if no file, URL or stream has been set
+     */
+    public List<String> getScenarios() throws JAXBException, SAXException, ParserConfigurationException
+    {
+        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        return getOts().getScenarios().getScenario().stream().map((s) -> s.getId()).collect(Collectors.toList());
     }
 
     /**
@@ -328,29 +410,24 @@ public final class XmlParser
         @Override
         public InputSource resolveEntity(final String publicId, final String systemId)
         {
-            if (systemId.contains("defaults/"))
+            try
             {
-                String location = "/resources/xsd/defaults" + systemId.substring(systemId.lastIndexOf('/'));
-                InputStream stream = URLResource.getResourceAsStream(location);
-                return new InputSource(stream);
+                if (systemId.contains("defaults/"))
+                {
+                    String location = "/resources/xsd/defaults" + systemId.substring(systemId.lastIndexOf('/'));
+                    InputStream stream = ResourceResolver.resolve(location).openStream();
+                    return new InputSource(stream);
+                }
+                else
+                {
+                    return new InputSource(ResourceResolver.resolve(systemId).openStream());
+                }
             }
-            else
+            catch (IOException exception)
             {
-                return new InputSource(URLResource.getResourceAsStream(systemId));
+                throw new OtsRuntimeException(exception);
             }
         }
-    }
-
-    /**
-     * Main method.
-     * @param args not used
-     * @throws Exception on parsing error
-     */
-    public static void main(final String[] args) throws Exception
-    {
-        OtsSimulatorInterface simulator = new OtsSimulator("XmlNetworkLaneParser");
-        new XmlParser(new RoadNetwork("", simulator)).setFile("/example.xml").build();
-        System.exit(0);
     }
 
 }

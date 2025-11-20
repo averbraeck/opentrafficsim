@@ -4,16 +4,10 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.Collections;
 
-import javax.naming.NamingException;
-
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.editor.OtsRunner.OtsRunnerModel;
-import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -56,18 +50,15 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
     {
         try
         {
-            // TODO two-pass XML parser to read history, simulation time, etc.
             OtsAnimator simulator = new OtsAnimator("EditorRun");
             final OtsRunnerModel runnerModel = new OtsRunnerModel(simulator, file, scenario);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), runnerModel,
-                    new HistoryManagerDevs(simulator, Duration.ofSI(5.0), Duration.ofSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(runnerModel.getNetwork().getExtent(), simulator,
                     runnerModel, DEFAULT_GTU_COLORERS, runnerModel.getNetwork());
             OtsRunner app = new OtsRunner(animationPanel, runnerModel);
             app.setExitOnClose(false);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
+        catch (SimRuntimeException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -82,16 +73,10 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
     /**
      * The simulation model.
      */
-    public static class OtsRunnerModel extends AbstractOtsModel
+    public static class OtsRunnerModel extends OtsXmlModel
     {
-        /** File. */
-        private File file;
-
         /** Scenario. */
         private String scenario;
-
-        /** The network. */
-        private RoadNetwork network;
 
         /**
          * Constructor.
@@ -101,34 +86,14 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
          */
         public OtsRunnerModel(final OtsSimulatorInterface simulator, final File file, final String scenario)
         {
-            super(simulator);
-            this.file = file;
+            super(simulator, file.toString());
             this.scenario = scenario;
         }
 
         @Override
-        public void constructModel() throws SimRuntimeException
+        public void constructModel(final XmlParser xmlParser) throws Exception
         {
-            try
-            {
-                this.network = new RoadNetwork("EditorNetwork", getSimulator());
-                XmlParser parser = new XmlParser(this.network).setUrl(this.file.toURI().toURL());
-                if (this.scenario != null)
-                {
-                    parser.setScenario(this.scenario);
-                }
-                parser.build();
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-
-        @Override
-        public RoadNetwork getNetwork()
-        {
-            return this.network;
+            xmlParser.setScenario(this.scenario).build();
         }
     }
 

@@ -1,21 +1,12 @@
 package org.opentrafficsim.demo.conflict;
 
-import java.net.URL;
 import java.rmi.RemoteException;
 
-import javax.naming.NamingException;
-
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
-import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
+import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
@@ -66,15 +57,13 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
         {
             OtsAnimator simulator = new OtsAnimator("TurboRoundaboutDemo");
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
-                    HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
                     junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
             TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
+        catch (SimRuntimeException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -83,40 +72,15 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
     /**
      * The simulation model.
      */
-    public static class TurboRoundaboutModel extends AbstractOtsModel
+    public static class TurboRoundaboutModel extends OtsXmlModel
     {
-        /** The network. */
-        private RoadNetwork network;
-
         /**
          * Constructor.
          * @param simulator the simulator for this model
          */
         public TurboRoundaboutModel(final OtsSimulatorInterface simulator)
         {
-            super(simulator);
+            super(simulator, "/resources/conflict/TurboRoundabout.xml");
         }
-
-        @Override
-        public void constructModel() throws SimRuntimeException
-        {
-            try
-            {
-                URL xmlURL = URLResource.getResource("/resources/conflict/TurboRoundabout.xml");
-                this.network = new RoadNetwork("TurboRoundabout", getSimulator());
-                new XmlParser(this.network).setUrl(xmlURL).build();
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-
-        @Override
-        public RoadNetwork getNetwork()
-        {
-            return this.network;
-        }
-
     }
 }

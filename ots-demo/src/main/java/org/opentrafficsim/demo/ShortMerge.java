@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,8 +10,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import javax.naming.NamingException;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
@@ -25,10 +22,11 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.io.URLResource;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SynchronizationGtuColorer;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -36,7 +34,6 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantSupplier;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.ObjectDistribution;
-import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -50,7 +47,6 @@ import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
-import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.ShortMerge.ShortMergeModel;
 import org.opentrafficsim.draw.colorer.Colorer;
@@ -86,8 +82,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
-import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
+import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
@@ -213,8 +208,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             OtsAnimator simulator = new OtsAnimator("ShortMerge");
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(SIMTIME.si), otsModel,
-                    HistoryManagerDevs.noHistory(simulator));
             List<Colorer<? super Gtu>> colorers = new ArrayList<>(DEFAULT_GTU_COLORERS);
             colorers.add(new SynchronizationGtuColorer());
             colorers.add(new IncentiveGtuColorer(IncentiveCourtesy.class, "Courtesy incentive"));
@@ -224,7 +217,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | IndexOutOfBoundsException | DsolException exception)
+        catch (SimRuntimeException | RemoteException | IndexOutOfBoundsException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -240,50 +233,22 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static class ShortMergeModel extends AbstractOtsModel
+    public static class ShortMergeModel extends OtsXmlModel
     {
-        /** The network. */
-        private RoadNetwork network;
-
         /**
          * Constructor.
          * @param simulator the simulator
          */
         public ShortMergeModel(final OtsSimulatorInterface simulator)
         {
-            super(simulator);
-        }
-
-        /**
-         * Set network.
-         * @param network set network.
-         */
-        public void setNetwork(final RoadNetwork network)
-        {
-            this.network = network;
+            super(simulator, "/resources/lmrs/" + NETWORK + ".xml");
         }
 
         @Override
         public void constructModel() throws SimRuntimeException
         {
-            try
-            {
-                URL xmlURL = URLResource.getResource("/resources/lmrs/" + NETWORK + ".xml");
-                this.network = new RoadNetwork("ShortMerge", getSimulator());
-                new XmlParser(this.network).setUrl(xmlURL).build();
-                addGenerator();
-
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-
-        @Override
-        public RoadNetwork getNetwork()
-        {
-            return this.network;
+            super.constructModel();
+            Try.execute(() -> addGenerator(), OtsRuntimeException.class, "Unable to add generator to network.");
         }
 
         /**
@@ -292,10 +257,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          * @throws GtuException on GTU exception
          * @throws NetworkException if not does not exist
          * @throws SimRuntimeException in case of sim run time exception
-         * @throws RemoteException if no simulator
          */
-        private void addGenerator()
-                throws ParameterException, GtuException, NetworkException, SimRuntimeException, RemoteException
+        private void addGenerator() throws ParameterException, GtuException, NetworkException, SimRuntimeException
         {
 
             Random seedGenerator = new Random(1L);
@@ -328,12 +291,12 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
 
             GtuType car = DefaultsNl.CAR;
             GtuType truck = DefaultsNl.TRUCK;
-            Route routeAE = this.network.getShortestRouteBetween(car, this.network.getNode("A"), this.network.getNode("E"));
+            Route routeAE = getNetwork().getShortestRouteBetween(car, getNetwork().getNode("A"), getNetwork().getNode("E"));
             Route routeAG = !NETWORK.equals("shortWeave") ? null
-                    : this.network.getShortestRouteBetween(car, this.network.getNode("A"), this.network.getNode("G"));
-            Route routeFE = this.network.getShortestRouteBetween(car, this.network.getNode("F"), this.network.getNode("E"));
+                    : getNetwork().getShortestRouteBetween(car, getNetwork().getNode("A"), getNetwork().getNode("G"));
+            Route routeFE = getNetwork().getShortestRouteBetween(car, getNetwork().getNode("F"), getNetwork().getNode("E"));
             Route routeFG = !NETWORK.equals("shortWeave") ? null
-                    : this.network.getShortestRouteBetween(car, this.network.getNode("F"), this.network.getNode("G"));
+                    : getNetwork().getShortestRouteBetween(car, getNetwork().getNode("F"), getNetwork().getNode("G"));
 
             double leftFraction = NETWORK.equals("shortWeave") ? LEFT_FRACTION : 0.0;
             List<FrequencyAndObject<Route>> routesA = new ArrayList<>();
@@ -348,8 +311,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             Speed speedA = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
             Speed speedF = new Speed(20.0, SpeedUnit.KM_PER_HOUR);
 
-            CrossSectionLink linkA = (CrossSectionLink) this.network.getLink("AB");
-            CrossSectionLink linkF = (CrossSectionLink) this.network.getLink("FF2");
+            CrossSectionLink linkA = (CrossSectionLink) getNetwork().getLink("AB");
+            CrossSectionLink linkF = (CrossSectionLink) getNetwork().getLink("FF2");
 
             ParameterFactoryByType bcFactory = new ParameterFactoryByType();
             bcFactory.addParameter(car, ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120, 12.0 / 120));
@@ -457,7 +420,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             initialLongitudinalPositions.add(new LanePosition(lane, new Length(5.0, LengthUnit.SI)));
             LaneBasedGtuTemplateDistribution characteristicsGenerator = new LaneBasedGtuTemplateDistribution(distribution);
             LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(id, headwaySupplier, characteristicsGenerator,
-                    GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, getSimulator(), roomChecker,
+                    GeneratorPositions.create(initialLongitudinalPositions, stream), getNetwork(), getSimulator(), roomChecker,
                     idSupplier);
             generator.setNoLaneChangeDistance(Length.ofSI(100.0));
             generator.setBookkeeping(LaneBookkeeping.START);

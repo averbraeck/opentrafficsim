@@ -2,34 +2,27 @@ package org.opentrafficsim.demo.trafficcontrol;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
-import javax.naming.NamingException;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.io.URLResource;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.NonLocatedObject;
-import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
-import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
+import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
@@ -100,19 +93,14 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         try
         {
             OtsAnimator simulator = new OtsAnimator("TrafCODDemo2");
-            URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
-            Logger.ots().info("url is " + url);
-            String xml = readStringFromURL(url);
-            final TrafCodModel trafcodModel = new TrafCodModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), trafcodModel,
-                    HistoryManagerDevs.noHistory(simulator));
+            final TrafCodModel trafcodModel = new TrafCodModel(simulator, "TrafCODModel", "TrafCOD demonstration Model");
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(), simulator,
                     trafcodModel, DEFAULT_GTU_COLORERS, trafcodModel.getNetwork());
             TrafCodDemo2 app = new TrafCodDemo2("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
+        catch (SimRuntimeException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -157,47 +145,18 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
     /**
      * The simulation model.
      */
-    public static class TrafCodModel extends AbstractOtsModel implements EventListener
+    public static class TrafCodModel extends OtsXmlModel implements EventListener
     {
-        /** The network. */
-        private RoadNetwork network;
-
-        /** The XML. */
-        private final String xml;
-
         /**
          * Constructor.
          * @param simulator the simulator
          * @param shortName name of the model
          * @param description description of the model
-         * @param xml the XML string
          */
-        public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
-                final String xml)
+        public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
         {
-            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams());
-            this.xml = xml;
-        }
-
-        @Override
-        public void constructModel() throws SimRuntimeException
-        {
-            try
-            {
-                this.network = new RoadNetwork(getShortName(), getSimulator());
-                new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
-                        .build();
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-
-        @Override
-        public final RoadNetwork getNetwork()
-        {
-            return this.network;
+            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams(),
+                    "/resources/TrafCODDemo2/TrafCODDemo2.xml");
         }
 
         @Override
@@ -240,7 +199,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         @Override
         public String toString()
         {
-            return "TrafCODModel [network=" + this.network.getId() + "]";
+            return "TrafCODModel [network=" + getNetwork().getId() + "]";
         }
 
     }

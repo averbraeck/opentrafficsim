@@ -1,8 +1,5 @@
 package org.opentrafficsim.web.test;
 
-import java.net.URL;
-
-import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -37,9 +34,8 @@ public class TJunctionModel extends AbstractOtsModel
     {
         try
         {
-            URL xmlURL = URLResource.getResource("/resources/conflict/TJunction.xml");
             this.network = new RoadNetwork("TJunction", getSimulator());
-            new XmlParser(this.network).setUrl(xmlURL).setScenario("1").build();
+            new XmlParser(this.network).setResource("/resources/conflict/TJunction.xml").setScenario("1").build();
         }
         catch (Exception exception)
         {

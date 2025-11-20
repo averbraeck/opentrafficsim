@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import java.rmi.RemoteException;
 import java.util.Locale;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -275,10 +274,10 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         DirectedPoint2d point = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.line = new PolyLine2d(new double[] {0.0, 0.0}, new double[] {-w45, w45});
+        this.relativeContour = new Polygon2d(PolyLine2d.concatenate(this.line, this.line.reverse()).getPointList());
         this.bounds = LaneBasedObjectData.super.getRelativeBounds();
-        this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
-        this.relativeContour =
-                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
+        this.absoluteContour =
+                new Polygon2d(OtsShape.toAbsoluteTransform(this.location).transform(this.relativeContour.iterator()));
         setValid();
     }
 

@@ -1,21 +1,12 @@
 package org.opentrafficsim.demo.conflict;
 
-import java.net.URL;
 import java.rmi.RemoteException;
 
-import javax.naming.NamingException;
-
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.io.URLResource;
-import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
-import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
+import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
@@ -66,15 +57,13 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
         {
             OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
-                    HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
                     junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
+        catch (SimRuntimeException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }
@@ -83,40 +72,15 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
     /**
      * The simulation model.
      */
-    public static class TJunctionModel extends AbstractOtsModel
+    public static class TJunctionModel extends OtsXmlModel
     {
-        /** The network. */
-        private RoadNetwork network;
-
         /**
          * Constructor.
          * @param simulator the simulator for this model
          */
         public TJunctionModel(final OtsSimulatorInterface simulator)
         {
-            super(simulator);
+            super(simulator, "/resources/conflict/TJunction.xml");
         }
-
-        @Override
-        public void constructModel() throws SimRuntimeException
-        {
-            try
-            {
-                URL xmlURL = URLResource.getResource("/resources/conflict/TJunction.xml");
-                this.network = new RoadNetwork("TJunction", getSimulator());
-                new XmlParser(this.network).setUrl(xmlURL).setScenario("1").build();
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-
-        @Override
-        public RoadNetwork getNetwork()
-        {
-            return this.network;
-        }
-
     }
 }
