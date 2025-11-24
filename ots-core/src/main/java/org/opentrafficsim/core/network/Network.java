@@ -14,6 +14,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
+import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
@@ -831,10 +832,14 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      *         node to the end node via the intermediate nodes in the network, null is returned.
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
+     * @throws IllegalArgumentException if the from and to node are equal
      */
     public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia, final LinkWeight linkWeight) throws NetworkException
     {
+        Throw.whenNull(nodeFrom, "nodeFrom");
+        Throw.whenNull(nodeTo, "nodeTo");
+        Throw.when(nodeFrom.equals(nodeTo), IllegalArgumentException.class, "From node and to node should not be the same.");
         Route route = new Route("Route for " + gtuType + " from " + nodeFrom + "to " + nodeTo + " via " + nodesVia.toString(),
                 gtuType);
         SimpleDirectedWeightedGraph<Node, Link> graph = getGraph(gtuType, linkWeight);
