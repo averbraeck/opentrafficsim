@@ -1171,8 +1171,8 @@
   <contributors>
     <contributor>
       <name>Hans van Lint</name>
-      <email>a.verbraeck@tudelft.nl</email>
-      <url>https://hansvanlint.weblog.tudelft.nl/</url>
+      <email>j.w.c.vanlint@tudelft.nl</email>
+      <url>https://www.tudelft.nl/citg/over-faculteit/afdelingen/transport-planning/staff/persoonlijke-paginas/lint-jwc-van</url>
       <organization>Delft University of Technology, the Netherlands</organization>
       <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
       <timezone>1</timezone>
@@ -1183,10 +1183,9 @@
 
     <contributor>
       <name>Guus Tamminga</name>
-      <email>g.f.tamminga@tudelft.nl</email>
-      <url>https://www.citg.tudelft.nl/en/about-faculty/departments/transport-and-planning/staff-information/drs-guus-tamminga-msc/</url>
-      <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
+      <url>https://nl.linkedin.com/in/guustamminga</url>
+      <organization>Sweco, the Netherlands</organization>
+      <organizationUrl>https://www.sweco.nl</organizationUrl>
       <timezone>1</timezone>
       <roles>
         <role>architect</role>
