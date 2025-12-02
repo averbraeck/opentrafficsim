@@ -37,13 +37,15 @@
         <ots:Elements>
           <ots:Line Width="20cm">
             <ots:Dashed>
-              <ots:Gap>9m</ots:Gap>
-              <ots:Dash>3m</ots:Dash>
+              <ots:GapDash>
+                <ots:Gap>9m</ots:Gap>
+                <ots:Dash>3m</ots:Dash>
+              </ots:GapDash>
             </ots:Dashed>
           </ots:Line>
         </ots:Elements>
         <ots:DashOffset>
-          <ots:SyncUpstream/>
+          <ots:SyncUpstream />
         </ots:DashOffset>
       </ots:StripeType>
     </ots:StripeTypes>
@@ -52,11 +54,6 @@
         <ots:Compatibility GtuType="CAR" />
       </ots:LaneType>
     </ots:LaneTypes>
-    <ots:DetectorTypes>
-      <ots:DetectorType Id="SINK">
-        <ots:Compatibility GtuType="CAR" />
-      </ots:DetectorType>
-    </ots:DetectorTypes>
     <ots:RoadLayouts>
       <ots:RoadLayout Id="2" LinkType="FREEWAY">
         <ots:Stripe Id="1">
@@ -84,12 +81,14 @@
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Stripe Id="2">
-          <ots:Custom RightChangeLane="false" LeftChangeLane="true">
+          <ots:Custom RightChangeLane="true" LeftChangeLane="false">
             <ots:Elements>
               <ots:Line Width="40cm">
                 <ots:Dashed>
-                  <ots:Gap>3m</ots:Gap>
-                  <ots:Dash>1m</ots:Dash>
+                  <ots:GapDash>
+                    <ots:Gap>3m</ots:Gap>
+                    <ots:Dash>1m</ots:Dash>
+                  </ots:GapDash>
                 </ots:Dashed>
               </ots:Line>
             </ots:Elements>
@@ -97,15 +96,17 @@
         </ots:Stripe>
         <ots:Lane Id="Lane2" LaneType="FREEWAY">
           <ots:WidthStart>3.5m</ots:WidthStart>
-          <ots:WidthEnd>0m</ots:WidthEnd>
+          <ots:WidthEnd>0.01m</ots:WidthEnd>
         </ots:Lane>
         <ots:Stripe Id="3">
-          <ots:Custom RightChangeLane="true" LeftChangeLane="false">
+          <ots:Custom RightChangeLane="false" LeftChangeLane="true">
             <ots:Elements>
               <ots:Line Width="40cm">
                 <ots:Dashed>
-                  <ots:Gap>3m</ots:Gap>
-                  <ots:Dash>1m</ots:Dash>
+                  <ots:GapDash>
+                    <ots:Gap>3m</ots:Gap>
+                    <ots:Dash>1m</ots:Dash>
+                  </ots:GapDash>
                 </ots:Dashed>
               </ots:Line>
             </ots:Elements>
@@ -150,12 +151,17 @@
         </ots:Stripe>
       </ots:RoadLayout>
     </ots:RoadLayouts>
+    <ots:DetectorTypes>
+      <ots:DetectorType Id="SINK">
+        <ots:Compatibility GtuType="CAR" />
+      </ots:DetectorType>
+    </ots:DetectorTypes>
   </ots:Definitions>
   <ots:Network>
-    <ots:Node Coordinate="(0,0)" Id="A" />
-    <ots:Node Coordinate="(500,0)" Id="B" />
-    <ots:Node Coordinate="(750,0)" Id="C" />
-    <ots:Node Coordinate="(1250,0)" Id="D" />
+    <ots:Node Coordinate="(0,0)" Direction="0deg" Id="A" />
+    <ots:Node Coordinate="(500,0)" Direction="0deg" Id="B" />
+    <ots:Node Coordinate="(750,0)" Direction="0deg" Id="C" />
+    <ots:Node Coordinate="(1250,0)" Direction="0deg" Id="D" />
     <ots:Node Coordinate="(0,-20)" Direction="0deg" Id="E" />
     <ots:Link Id="AB" NodeEnd="B" NodeStart="A" Type="FREEWAY">
       <ots:Straight />
