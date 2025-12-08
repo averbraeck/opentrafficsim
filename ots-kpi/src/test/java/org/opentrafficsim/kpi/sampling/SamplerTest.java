@@ -26,6 +26,7 @@ import org.djunits.value.vfloat.scalar.FloatDirection;
 import org.djunits.value.vfloat.vector.FloatDirectionVector;
 import org.djutils.data.Row;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.CrossSection.LanePosition;
 import org.opentrafficsim.kpi.sampling.SamplerData.Compression;
@@ -231,7 +232,7 @@ public final class SamplerTest
             sampler.getSamplerData().writeToFile("", Compression.NONE);
             fail("Should fail on write to empty file name.");
         }
-        catch (RuntimeException ex)
+        catch (OtsRuntimeException ex)
         {
             assertTrue(IOException.class.isAssignableFrom(ex.getCause().getClass()));
         }

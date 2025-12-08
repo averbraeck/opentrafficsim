@@ -23,6 +23,7 @@ import org.djutils.math.AngleUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -272,7 +273,7 @@ public final class GtuDumperTest implements OtsModelInterface
             new GtuDumper(Duration.ofSI(-10.0), Duration.ofSI(300.0), this.network, this.containerDir.getCanonicalPath() + "/");
             fail("null parameter should have thrown a NullPointerException");
         }
-        catch (RuntimeException rte)
+        catch (OtsRuntimeException rte)
         {
             // Ignore expected exception
         }
@@ -282,7 +283,7 @@ public final class GtuDumperTest implements OtsModelInterface
             new GtuDumper(Duration.ofSI(10.0), Duration.ofSI(-300.0), this.network, this.containerDir.getCanonicalPath() + "/");
             fail("firstDumpTime before current simulator time should have thrown a OtsRuntimeException");
         }
-        catch (RuntimeException rte)
+        catch (OtsRuntimeException rte)
         {
             // Ignore expected exception
         }

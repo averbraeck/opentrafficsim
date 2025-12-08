@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 
@@ -179,7 +180,7 @@ public final class ParametersTest implements ConstraintInterface
                 fail("Default value " + value + " fails default " + constraint + " constraint.");
             }
         }
-        catch (RuntimeException re)
+        catch (OtsRuntimeException re)
         {
             if (!shouldFail)
             {
