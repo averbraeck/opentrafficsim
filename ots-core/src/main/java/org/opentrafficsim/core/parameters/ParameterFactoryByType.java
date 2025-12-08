@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -164,7 +165,7 @@ public class ParameterFactoryByType implements ParameterFactory
         }
         if (!altered && !remainingCorrelations.isEmpty())
         {
-            throw new RuntimeException("Circular correlation between parameters.");
+            throw new OtsRuntimeException("Circular correlation between parameters.");
         }
 
     }
@@ -204,7 +205,7 @@ public class ParameterFactoryByType implements ParameterFactory
         }
         catch (ParameterException exception)
         {
-            throw new RuntimeException("Value out of bounds or dependent parameter not present.", exception);
+            throw new OtsRuntimeException("Value out of bounds or dependent parameter not present.", exception);
         }
     }
 

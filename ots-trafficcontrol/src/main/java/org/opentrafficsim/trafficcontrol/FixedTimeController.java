@@ -18,6 +18,7 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
@@ -504,7 +505,7 @@ public class FixedTimeController extends AbstractTrafficController
                             duration = this.preGreen;
                             break;
                         default:
-                            throw new RuntimeException("Cannot happen.");
+                            throw new OtsRuntimeException("Cannot happen.");
                     }
                 }
                 setTrafficLights(color);
@@ -513,7 +514,7 @@ public class FixedTimeController extends AbstractTrafficController
             catch (SimRuntimeException exception)
             {
                 // cannot happen; we check all durations for consistency
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
         }
 

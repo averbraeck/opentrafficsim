@@ -13,6 +13,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.decoration.validation.XsdAllValidator;
 import org.w3c.dom.Node;
@@ -186,7 +187,7 @@ public final class XsdTreeNodeUtil
             return XiIncludeNode.XI_INCLUDE;
         }
         Node refNode = schema.getElement(ref);
-        Throw.when(refNode == null, RuntimeException.class, "Unable to load ref for %s from XSD schema.", ref);
+        Throw.when(refNode == null, OtsRuntimeException.class, "Unable to load ref for %s from XSD schema.", ref);
         return refNode;
     }
 
@@ -219,7 +220,7 @@ public final class XsdTreeNodeUtil
             return null;
         }
         Node typeNode = schema.getType(type);
-        Throw.when(typeNode == null, RuntimeException.class, "Unable to load type for %s from XSD schema.", type);
+        Throw.when(typeNode == null, OtsRuntimeException.class, "Unable to load type for %s from XSD schema.", type);
         return typeNode;
     }
 

@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import org.djunits.value.vdouble.scalar.Dimensionless;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
 /**
@@ -58,7 +59,7 @@ public record Desire(double left, double right)
         {
             return this.right;
         }
-        throw new RuntimeException("Lateral direction may not be NONE.");
+        throw new OtsRuntimeException("Lateral direction may not be NONE.");
     }
 
     /**

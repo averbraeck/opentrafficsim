@@ -8,6 +8,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
@@ -244,7 +245,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
             }
             catch (NetworkException exception)
             {
-                throw new RuntimeException("Route could not be determined.", exception);
+                throw new OtsRuntimeException("Route could not be determined.", exception);
             }
         }
         return this.route;

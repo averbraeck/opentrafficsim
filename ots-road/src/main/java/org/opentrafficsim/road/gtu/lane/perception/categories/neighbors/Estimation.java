@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -115,7 +116,7 @@ public interface Estimation
         }
         catch (OperationalPlanException exception)
         {
-            throw new RuntimeException("Speed difference is perceived using EgoPerception for the ego speed, but it's missing.",
+            throw new OtsRuntimeException("Speed difference is perceived using EgoPerception for the ego speed, but it's missing.",
                     exception);
         }
     }

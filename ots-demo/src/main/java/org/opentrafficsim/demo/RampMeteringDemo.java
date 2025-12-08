@@ -31,6 +31,7 @@ import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.GtuTypeGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
@@ -414,7 +415,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             }
             catch (IOException | TextSerializationException exception)
             {
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
 
             // travel time data
@@ -422,7 +423,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             {
                 measureTravelTime(gtu.getId());
             }
-            Throw.when(!this.gtusInSimulation.isEmpty(), RuntimeException.class,
+            Throw.when(!this.gtusInSimulation.isEmpty(), OtsRuntimeException.class,
                     "GTUs remain in simulation that are not measured.");
             file = String.format("%s_%02d_time.txt", this.scenario, getSeed());
             BufferedWriter bw = null;
@@ -436,7 +437,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             }
             catch (IOException exception)
             {
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
             finally
             {
@@ -449,7 +450,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 }
                 catch (IOException ex)
                 {
-                    throw new RuntimeException(ex);
+                    throw new OtsRuntimeException(ex);
                 }
             }
         }

@@ -10,6 +10,7 @@ import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
@@ -84,7 +85,7 @@ public class SplitFraction
         catch (ValueRuntimeException exception)
         {
             // should not happen, input is not null
-            throw new RuntimeException("Input null while creating duration vector.", exception);
+            throw new OtsRuntimeException("Input null while creating duration vector.", exception);
         }
         addFraction(link, gtuType, time, fracs);
     }
@@ -120,7 +121,7 @@ public class SplitFraction
             catch (ValueRuntimeException exception)
             {
                 // should not happen, sizes are checked
-                throw new RuntimeException("Index out of range.", exception);
+                throw new OtsRuntimeException("Index out of range.", exception);
             }
         }
     }

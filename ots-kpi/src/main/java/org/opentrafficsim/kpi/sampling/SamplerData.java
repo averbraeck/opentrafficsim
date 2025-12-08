@@ -34,6 +34,7 @@ import org.djutils.data.csv.CsvData;
 import org.djutils.data.serialization.TextSerializationException;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.CompressedFileWriter;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
@@ -251,7 +252,7 @@ public class SamplerData<G extends GtuData> extends Table
         }
         catch (IOException | TextSerializationException exception)
         {
-            throw new RuntimeException("Unable to write sampler data.", exception);
+            throw new OtsRuntimeException("Unable to write sampler data.", exception);
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -194,7 +195,7 @@ public class CycleTimeLightController implements RampMeteringLightController
                 }
                 catch (SimRuntimeException exception)
                 {
-                    throw new RuntimeException(exception);
+                    throw new OtsRuntimeException(exception);
                 }
             }
         }

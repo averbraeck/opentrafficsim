@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 
@@ -75,10 +76,10 @@ public class GtuDumper
         Throw.whenNull(network, "Network may not be null");
         this.simulator = network.getSimulator();
         Throw.whenNull(firstDumpTime, "firstDumpTime may not be null");
-        Throw.when(firstDumpTime.lt(this.simulator.getSimulatorTime()), RuntimeException.class,
+        Throw.when(firstDumpTime.lt(this.simulator.getSimulatorTime()), OtsRuntimeException.class,
                 "firstDumptTime may not be before current simulator time");
         Throw.whenNull(interval, "interval may not be null");
-        Throw.when(interval.le(Duration.ZERO), RuntimeException.class, "Duration must be positive");
+        Throw.when(interval.le(Duration.ZERO), OtsRuntimeException.class, "Duration must be positive");
         Throw.whenNull(fileNamePrefix, "fileNamePrefix may not be null");
         this.interval = interval;
         this.network = network;

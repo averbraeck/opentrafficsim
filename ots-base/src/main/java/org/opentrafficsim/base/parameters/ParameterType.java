@@ -2,6 +2,7 @@ package org.opentrafficsim.base.parameters;
 
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
@@ -117,7 +118,7 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
             }
             catch (ParameterException pe)
             {
-                throw new RuntimeException(
+                throw new OtsRuntimeException(
                         "Default value of parameter '" + this.id + "' does not comply with default constraints.", pe);
             }
             try
@@ -128,7 +129,7 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
             }
             catch (ParameterException pe)
             {
-                throw new RuntimeException(
+                throw new OtsRuntimeException(
                         "Default value of parameter '" + getId() + "' does not comply with custom constraints.", pe);
             }
         }

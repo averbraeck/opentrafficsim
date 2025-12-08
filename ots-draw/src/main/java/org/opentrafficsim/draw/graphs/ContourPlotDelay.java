@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.matrix.DurationMatrix;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.egtf.Converter;
@@ -53,7 +54,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
             catch (ValueRuntimeException exception)
             {
                 // should not happen as filtered data comes from the EGTF
-                throw new RuntimeException("Unexpected exception while converting duration to output format.", exception);
+                throw new OtsRuntimeException("Unexpected exception while converting duration to output format.", exception);
             }
         }
     });
@@ -93,7 +94,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
                         }
                         catch (SamplingException | ValueRuntimeException exception)
                         {
-                            throw new RuntimeException("Unexpected exception while calculating delay.", exception);
+                            throw new OtsRuntimeException("Unexpected exception while calculating delay.", exception);
                         }
                         sumActualTime += trajectory.getTotalDuration().si;
                     }

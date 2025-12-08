@@ -41,6 +41,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.djutils.math.means.HarmonicMean;
 import org.opentrafficsim.animation.GraphLaneUtil;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -599,7 +600,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
             catch (NetworkException exception)
             {
-                throw new RuntimeException("Unable to create cross section.", exception);
+                throw new OtsRuntimeException("Unable to create cross section.", exception);
             }
             Duration aggregationTime = Duration.ofSI(30.0);
             FdSource source = FundamentalDiagram.sourceFromSampler(this.sampler, crossSection, true, aggregationTime, false);

@@ -1,22 +1,18 @@
 package org.opentrafficsim.demo;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
-import javax.swing.JButton;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
-import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
@@ -150,7 +146,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
+            throw new OtsRuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());
         GraphPath.initRecording(sampler, path01);
@@ -187,7 +183,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException(exception);
+            throw new OtsRuntimeException(exception);
         }
 
         plot = new SwingFundamentalDiagram(

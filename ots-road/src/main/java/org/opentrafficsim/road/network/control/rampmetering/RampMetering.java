@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.control.rampmetering;
 
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
@@ -63,7 +64,7 @@ public class RampMetering
         }
         catch (SimRuntimeException exception)
         {
-            throw new RuntimeException("Interval from ramp metering switch is not a valid positive duration.", exception);
+            throw new OtsRuntimeException("Interval from ramp metering switch is not a valid positive duration.", exception);
         }
     }
 

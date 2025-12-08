@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -98,7 +99,7 @@ public class BusStopConflictRule implements ConflictRule
         }
         catch (GtuException exception)
         {
-            throw new RuntimeException("Error while looking for GTU upstream of merge at bus stop.", exception);
+            throw new OtsRuntimeException("Error while looking for GTU upstream of merge at bus stop.", exception);
         }
         boolean busHasPriority = gtu != null && gtu.getType().isOfType(this.busType) && gtu.getTurnIndicatorStatus().isLeft();
 

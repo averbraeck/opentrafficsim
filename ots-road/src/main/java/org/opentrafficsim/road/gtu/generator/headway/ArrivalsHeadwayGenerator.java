@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.generator.headway;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -154,7 +155,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
                 return Duration.ofSI(t1.si + t - now.si);
             }
         }
-        throw new RuntimeException("Exception while determining headway from Arrivals.");
+        throw new OtsRuntimeException("Exception while determining headway from Arrivals.");
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -104,7 +105,7 @@ public class StripeData
      */
     public final boolean isPermeable(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
-        Throw.when(lateralDirection.isNone(), RuntimeException.class,
+        Throw.when(lateralDirection.isNone(), OtsRuntimeException.class,
                 "May not request NONE lateral direction for permeability.");
         for (GtuType testGtuType = gtuType; null != testGtuType; testGtuType = testGtuType.getParent())
         {

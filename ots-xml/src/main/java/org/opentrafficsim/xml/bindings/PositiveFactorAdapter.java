@@ -1,6 +1,7 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.xml.bindings.types.DoubleType;
 
 /**
@@ -31,7 +32,7 @@ public class PositiveFactorAdapter extends ExpressionAdapter<Double, DoubleType>
         }
         double factor = value.endsWith("%") ? Double.parseDouble(value.substring(0, value.length() - 1)) / 100.0
                 : Double.parseDouble(value);
-        Throw.when(factor < 0.0, RuntimeException.class, "Factor %d is not positive.", factor);
+        Throw.when(factor < 0.0, OtsRuntimeException.class, "Factor %d is not positive.", factor);
         return new DoubleType(factor);
     }
 

@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.eval.Eval;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -121,7 +122,7 @@ public final class ControlParser
             catch (SimRuntimeException exception)
             {
                 // cannot happen; parsing happens with a new simulator at time = 0
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
         }
 
@@ -145,7 +146,7 @@ public final class ControlParser
                 // String mapSpace = mapData.getSpace().get(eval);
                 if (!Encoding.BASE64.equals(encoding))
                 {
-                    throw new RuntimeException("Unexpected image encoding: " + encoding);
+                    throw new OtsRuntimeException("Unexpected image encoding: " + encoding);
                 }
                 byte[] imageBytes = DatatypeConverter.parseBase64Binary(encodedData);
                 switch (graphicsType)
@@ -156,7 +157,7 @@ public final class ControlParser
                         break;
 
                     default:
-                        throw new RuntimeException("Unexpected image type: " + graphicsType);
+                        throw new OtsRuntimeException("Unexpected image type: " + graphicsType);
                 }
             }
             Console trafCODConsole = trafCod.getConsole();

@@ -56,7 +56,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
         }
         else
         {
-            throw new RuntimeException("AbstractMoveChecker is a listener to an unknown event type.");
+            throw new OtsRuntimeException("AbstractMoveChecker is a listener to an unknown event type.");
         }
     }
 

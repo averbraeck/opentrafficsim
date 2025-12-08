@@ -41,6 +41,7 @@ import org.opentrafficsim.animation.gtu.colorer.DesiredHeadwayGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -162,7 +163,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
         catch (NoSuchFieldException | IllegalStateException | IllegalArgumentException | CliException exception)
         {
-            throw new RuntimeException(exception);
+            throw new OtsRuntimeException(exception);
         }
     }
 
@@ -420,7 +421,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 }
                 catch (NamingException | GtuException | NetworkException | SimRuntimeException exception)
                 {
-                    throw new RuntimeException(exception);
+                    throw new OtsRuntimeException(exception);
                 }
                 this.nextGtuType = this.stream.nextDouble() < this.truckFraction ? DefaultsNl.TRUCK : DefaultsNl.CAR;
                 this.queue.clear();

@@ -18,6 +18,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -117,7 +118,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         }
         catch (IllegalStateException | IllegalArgumentException | CliException exception)
         {
-            throw new RuntimeException("Exception while setting properties in @Command annotation.", exception);
+            throw new OtsRuntimeException("Exception while setting properties in @Command annotation.", exception);
         }
     }
 
@@ -272,7 +273,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             // }
             // catch (SimRuntimeException exception)
             // {
-            // throw new RuntimeException(exception);
+            // throw new OtsRuntimeException(exception);
             // }
             onSimulationEnd();
             // solve bug that event is fired twice
@@ -397,7 +398,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             AbstractSimulationScript.this.simulator.getModel().getStreams().putAll(streams);
             AbstractSimulationScript.this.network =
                     Try.assign(() -> AbstractSimulationScript.this.setupSimulation(AbstractSimulationScript.this.simulator),
-                            RuntimeException.class, "Exception while setting up simulation.");
+                            OtsRuntimeException.class, "Exception while setting up simulation.");
             AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
                     Replication.END_REPLICATION_EVENT);
         }

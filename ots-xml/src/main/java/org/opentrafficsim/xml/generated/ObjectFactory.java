@@ -2,16 +2,18 @@
 package org.opentrafficsim.xml.generated;
 
 import javax.xml.namespace.QName;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.annotation.XmlElementDecl;
-import jakarta.xml.bind.annotation.XmlRegistry;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.opentrafficsim.xml.bindings.ClassAdapter;
 import org.opentrafficsim.xml.bindings.LengthAdapter;
 import org.opentrafficsim.xml.bindings.LinearDensityAdapter;
 import org.opentrafficsim.xml.bindings.types.ClassType;
 import org.opentrafficsim.xml.bindings.types.LengthType;
 import org.opentrafficsim.xml.bindings.types.LinearDensityType;
+
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**

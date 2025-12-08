@@ -594,7 +594,7 @@ public final class NetworkTest implements EventListener
                     }
                     for (int toNodeIndex = 0; toNodeIndex < maxNode; toNodeIndex++)
                     {
-                        if (prevNodeIndex == toNodeIndex)
+                        if (fromNodeIndex == toNodeIndex)
                         {
                             continue;
                         }

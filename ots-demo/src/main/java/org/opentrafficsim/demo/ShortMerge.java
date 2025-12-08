@@ -175,7 +175,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
+            throw new OtsRuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
         ExtendedDataSync<GtuDataRoad> syncData = new ExtendedDataSync<GtuDataRoad>();
         RoadSampler sampler = new RoadSampler(Set.of(syncData), Collections.emptySet(), getModel().getNetwork());

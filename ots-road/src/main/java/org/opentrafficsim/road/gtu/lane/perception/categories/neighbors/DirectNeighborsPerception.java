@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -75,7 +76,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         }
         catch (ParameterException | GtuException | IllegalArgumentException exception)
         {
-            throw new RuntimeException("Unexpected exception while computing first leaders.", exception);
+            throw new OtsRuntimeException("Unexpected exception while computing first leaders.", exception);
         }
     }
 
@@ -106,7 +107,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         }
         catch (ParameterException | GtuException | IllegalArgumentException exception)
         {
-            throw new RuntimeException("Unexpected exception while computing first followers.", exception);
+            throw new OtsRuntimeException("Unexpected exception while computing first followers.", exception);
         }
     }
 
@@ -149,7 +150,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         }
         catch (ParameterException | IllegalArgumentException exception) // | GtuException
         {
-            throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
+            throw new OtsRuntimeException("Unexpected exception while computing gtu alongside.", exception);
         }
         // no such GTU
         return false;

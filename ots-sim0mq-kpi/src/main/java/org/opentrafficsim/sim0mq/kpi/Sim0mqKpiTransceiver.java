@@ -323,7 +323,7 @@ public class Sim0mqKpiTransceiver
     // }
     // catch (IMBException exception)
     // {
-    // throw new RuntimeException("Cannot send statistics update.", exception);
+    // throw new OtsRuntimeException("Cannot send statistics update.", exception);
     // }
     // }
     // }

@@ -32,6 +32,7 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OffsetRectangleShape;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
@@ -819,7 +820,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     {
         if (maximumAcceleration.le(Acceleration.ZERO))
         {
-            throw new RuntimeException("Maximum acceleration of GTU " + this.id + " set to value <= 0");
+            throw new OtsRuntimeException("Maximum acceleration of GTU " + this.id + " set to value <= 0");
         }
         this.maximumAcceleration = maximumAcceleration;
     }
@@ -841,7 +842,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     {
         if (maximumDeceleration.ge(Acceleration.ZERO))
         {
-            throw new RuntimeException("Cannot set maximum deceleration of GTU " + this.id + " to " + maximumDeceleration
+            throw new OtsRuntimeException("Cannot set maximum deceleration of GTU " + this.id + " to " + maximumDeceleration
                     + " (value must be negative)");
         }
         this.maximumDeceleration = maximumDeceleration;
@@ -899,7 +900,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
         }
         catch (OperationalPlanException exception)
         {
-            throw new RuntimeException(exception);
+            throw new OtsRuntimeException(exception);
         }
     }
 
@@ -934,7 +935,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
         }
         catch (Exception e)
         {
-            throw new RuntimeException(e);
+            throw new OtsRuntimeException(e);
         }
     }
 

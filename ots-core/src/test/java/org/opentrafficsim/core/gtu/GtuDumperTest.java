@@ -280,7 +280,7 @@ public final class GtuDumperTest implements OtsModelInterface
         try
         {
             new GtuDumper(Duration.ofSI(10.0), Duration.ofSI(-300.0), this.network, this.containerDir.getCanonicalPath() + "/");
-            fail("firstDumpTime before current simulator time should have thrown a RuntimeException");
+            fail("firstDumpTime before current simulator time should have thrown a OtsRuntimeException");
         }
         catch (RuntimeException rte)
         {

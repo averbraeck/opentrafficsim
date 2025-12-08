@@ -11,6 +11,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.draw.graphs.AbstractContourPlot;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
@@ -135,7 +136,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
                 }
                 else
                 {
-                    throw new RuntimeException("Unknown ActionEvent");
+                    throw new OtsRuntimeException("Unknown ActionEvent");
                 }
                 SwingContourPlot.this.ignoreEvent = false;
             });

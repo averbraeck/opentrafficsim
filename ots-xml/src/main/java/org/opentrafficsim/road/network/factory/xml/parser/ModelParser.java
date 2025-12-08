@@ -26,6 +26,7 @@ import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterType;
@@ -364,7 +365,7 @@ public class ModelParser
             }
             else
             {
-                throw new RuntimeException("First in Correlation is not valid.");
+                throw new OtsRuntimeException("First in Correlation is not valid.");
             }
         }
         ParameterType<T> thenType = null;
@@ -417,7 +418,7 @@ public class ModelParser
         }
         else
         {
-            throw new RuntimeException("Then in Correlation is not valid.");
+            throw new OtsRuntimeException("Then in Correlation is not valid.");
         }
         parameterFactory.addCorrelation(gtuType, firstType, thenType, correlation);
     }
@@ -454,7 +455,7 @@ public class ModelParser
                 }
                 return Dimensionless.ofSI(((Number) then).doubleValue());
             }
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "Value for " + value + " in correlation expression is not valid. Only 'first' and 'then' allowed.");
         });
         Object result = eval.evaluate(expression);
@@ -467,7 +468,7 @@ public class ModelParser
             }
             catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
             {
-                throw new RuntimeException("Unable to cast result of expression " + expression, ex);
+                throw new OtsRuntimeException("Unable to cast result of expression " + expression, ex);
             }
         }
         if (Double.class.isAssignableFrom(clazz))
@@ -1019,7 +1020,7 @@ public class ModelParser
                 catch (InvocationTargetException | InstantiationException | IllegalAccessException
                         | IllegalArgumentException exception)
                 {
-                    throw new RuntimeException("Exception while creating new instance of perception category.", exception);
+                    throw new OtsRuntimeException("Exception while creating new instance of perception category.", exception);
                 }
                 return lanePerception;
             }

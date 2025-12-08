@@ -8,6 +8,7 @@ import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.AccelerationVector;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
  * A 3D acceleration vector, decomposed in X, Y, and Z-acceleration with easy conversion from and to a spherical coordinate
@@ -98,7 +99,7 @@ public class Acceleration3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getX() gave an exception; apparently vector " + this.acceleration + " was not constructed right",
                     exception);
         }
@@ -117,7 +118,7 @@ public class Acceleration3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getY() gave an exception; apparently vector " + this.acceleration + " was not constructed right",
                     exception);
         }
@@ -136,7 +137,7 @@ public class Acceleration3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getZ() gave an exception; apparently vector " + this.acceleration + " was not constructed right",
                     exception);
         }

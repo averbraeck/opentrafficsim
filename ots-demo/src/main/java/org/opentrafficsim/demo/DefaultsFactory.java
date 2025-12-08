@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -75,7 +76,7 @@ public final class DefaultsFactory
         }
         catch (ParameterException pe)
         {
-            throw new RuntimeException("Parameter type 'LOOKAHEAD' could not be set.", pe);
+            throw new OtsRuntimeException("Parameter type 'LOOKAHEAD' could not be set.", pe);
         }
 
         return params;

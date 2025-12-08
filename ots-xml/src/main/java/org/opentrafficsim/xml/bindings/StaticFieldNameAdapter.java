@@ -3,6 +3,7 @@ package org.opentrafficsim.xml.bindings;
 import java.lang.reflect.Field;
 
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.FieldType;
 
@@ -44,7 +45,7 @@ public class StaticFieldNameAdapter extends ExpressionAdapter<Field, FieldType>
         catch (Exception exception)
         {
             Logger.ots().error(exception, "Problem parsing Static Field '" + field + "'");
-            throw new RuntimeException(exception);
+            throw new OtsRuntimeException(exception);
         }
     }
 

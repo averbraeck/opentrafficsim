@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
@@ -875,7 +876,7 @@ public final class ConflictUtil
             }
             else
             {
-                throw new RuntimeException(
+                throw new OtsRuntimeException(
                         "Conflict is of unknown type " + conflict.getConflictType() + ", which is not merge nor a crossing.");
             }
 
@@ -1046,25 +1047,25 @@ public final class ConflictUtil
         /**
          * Sets the current phase to 'yield' for the given stop line.
          * @param stopLine stop line
-         * @throws RuntimeException if the phase was not set to approach before
+         * @throws OtsRuntimeException if the phase was not set to approach before
          */
         void setStopPhaseYield(final PerceivedObject stopLine)
         {
             Throw.when(
                     !this.stopPhases.containsKey(stopLine.getId())
                             || !this.stopPhases.get(stopLine.getId()).equals(StopPhase.APPROACH),
-                    RuntimeException.class, "Yield stop phase is set for stop line that was not approached.");
+                    OtsRuntimeException.class, "Yield stop phase is set for stop line that was not approached.");
             this.stopPhases.put(stopLine.getId(), StopPhase.YIELD);
         }
 
         /**
          * Sets the current phase to 'run' for the given stop line.
          * @param stopLine stop line
-         * @throws RuntimeException if the phase was not set to approach before
+         * @throws OtsRuntimeException if the phase was not set to approach before
          */
         void setStopPhaseRun(final PerceivedObject stopLine)
         {
-            Throw.when(!this.stopPhases.containsKey(stopLine.getId()), RuntimeException.class,
+            Throw.when(!this.stopPhases.containsKey(stopLine.getId()), OtsRuntimeException.class,
                     "Run stop phase is set for stop line that was not approached.");
             this.stopPhases.put(stopLine.getId(), StopPhase.YIELD);
         }

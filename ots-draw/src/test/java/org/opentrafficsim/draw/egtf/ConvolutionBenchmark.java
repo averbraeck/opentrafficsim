@@ -1,5 +1,7 @@
 package org.opentrafficsim.draw.egtf;
 
+import org.opentrafficsim.base.OtsRuntimeException;
+
 /**
  * Performs a benchmark on Convolution using the classic or FFT method.
  * <p>
@@ -60,7 +62,7 @@ public final class ConvolutionBenchmark
                         {
                             if (Math.abs(out1[k][l] - out2[k][l]) > 1e-6)
                             {
-                                throw new RuntimeException(
+                                throw new OtsRuntimeException(
                                         String.format("output unequal: %.16f vs. %.16f", out1[k][l], out2[k][l]));
                             }
                         }

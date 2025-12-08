@@ -5,6 +5,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -70,7 +71,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     {
         super(id, getPoint(lane, longitudinalPosition), contour, height);
 
-        Throw.when((line instanceof Polygon2d), RuntimeException.class, "Nope");
+        Throw.when((line instanceof Polygon2d), OtsRuntimeException.class, "Nope");
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(longitudinalPosition, "longitudinal position is null");
         Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLength(),

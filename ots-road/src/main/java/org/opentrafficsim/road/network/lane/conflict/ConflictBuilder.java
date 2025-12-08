@@ -17,6 +17,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -190,7 +191,7 @@ public final class ConflictBuilder
                 }
                 catch (NetworkException ne)
                 {
-                    throw new RuntimeException("Conflict build with bad combination of types / rules.", ne);
+                    throw new OtsRuntimeException("Conflict build with bad combination of types / rules.", ne);
                 }
             }
         }
@@ -238,7 +239,7 @@ public final class ConflictBuilder
         }
         catch (NetworkException ne)
         {
-            throw new RuntimeException("Conflict build with bad combination of types / rules.", ne);
+            throw new OtsRuntimeException("Conflict build with bad combination of types / rules.", ne);
         }
     }
 
@@ -1284,7 +1285,7 @@ public final class ConflictBuilder
             }
             catch (NetworkException ne)
             {
-                throw new RuntimeException("Conflict build with bad combination of types / rules.", ne);
+                throw new OtsRuntimeException("Conflict build with bad combination of types / rules.", ne);
             }
             this.nrOfJobs.decrementAndGet();
         }

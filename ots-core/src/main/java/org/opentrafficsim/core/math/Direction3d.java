@@ -6,6 +6,7 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.DirectionVector;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
  * 3D-rotation, RPY coded (longitudinal roll along the x-axis, lateral pitch along the y-axis and vertical yaw along the
@@ -76,7 +77,7 @@ public class Direction3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getRoll() gave an exception; apparently vector " + this.rotation + " was not constructed right",
                     exception);
         }
@@ -95,7 +96,7 @@ public class Direction3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getPitch() gave an exception; apparently vector " + this.rotation + " was not constructed right",
                     exception);
         }
@@ -114,7 +115,7 @@ public class Direction3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getYaw() gave an exception; apparently vector " + this.rotation + " was not constructed right", exception);
         }
     }

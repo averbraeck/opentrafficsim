@@ -57,6 +57,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.ResourceResolver;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -442,7 +443,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
                 if (null == OtsControlPanel.this.model)
                 {
-                    throw new RuntimeException("Do not know how to restart this simulation");
+                    throw new OtsRuntimeException("Do not know how to restart this simulation");
                 }
 
                 // find the JFrame position and dimensions
@@ -774,7 +775,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 final OtsSimulatorInterface simulator)
         {
             Throw.when(minimum <= 0 || minimum > initialValue || initialValue > maximum || maximum > 9999,
-                    RuntimeException.class, "Bad (combination of) minimum, maximum and initialValue; "
+                    OtsRuntimeException.class, "Bad (combination of) minimum, maximum and initialValue; "
                             + "(restrictions: 0 < minimum <= initialValue <= maximum <= 9999)");
             switch (ticksPerDecade)
             {
@@ -788,7 +789,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     this.ratios = new int[] {1, 2, 5};
                     break;
                 default:
-                    throw new RuntimeException("Bad ticksPerDecade value (must be 1, 2 or 3)");
+                    throw new OtsRuntimeException("Bad ticksPerDecade value (must be 1, 2 or 3)");
             }
             Hashtable<Integer, JLabel> labels = new Hashtable<>();
             int maximumTick = -1;

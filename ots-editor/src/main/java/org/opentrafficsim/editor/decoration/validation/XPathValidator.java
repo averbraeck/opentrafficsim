@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
@@ -359,14 +360,14 @@ public abstract class XPathValidator implements ValueValidator
                     {
                         return keyOrChildNode.getValue();
                     }
-                    throw new RuntimeException("Field path " + fieldPath + " points to a node that cannot give a value.");
+                    throw new OtsRuntimeException("Field path " + fieldPath + " points to a node that cannot give a value.");
                 }
                 String attribute = fieldPath.substring(attr + 1);
                 if (keyOrChildNode.hasAttribute(attribute))
                 {
                     return keyOrChildNode.getAttributeValue(attribute);
                 }
-                throw new RuntimeException(
+                throw new OtsRuntimeException(
                         "Field path " + fieldPath + " points to a node that does not have attribute " + attribute + " .");
             }
             // input node is child node not pertaining to this field (case 3), or it is the key node (case 1)
@@ -375,7 +376,7 @@ public abstract class XPathValidator implements ValueValidator
             {
                 keyLevelNode = keyLevelNode.getParent();
             }
-            Throw.when(keyLevelNode == null, RuntimeException.class, "Unable to get valued from node " + keyOrChildNode
+            Throw.when(keyLevelNode == null, OtsRuntimeException.class, "Unable to get valued from node " + keyOrChildNode
                     + " within key/unique/keyref " + getKeyName() + " field " + this.fullFieldPath);
             for (String fieldPath : this.fieldPaths)
             {
@@ -388,7 +389,7 @@ public abstract class XPathValidator implements ValueValidator
                     // there can be more field names which may supply a value
                 }
             }
-            throw new RuntimeException("Field " + this.fullFieldPath + " cannot be found for node " + keyOrChildNode);
+            throw new OtsRuntimeException("Field " + this.fullFieldPath + " cannot be found for node " + keyOrChildNode);
         }
 
         /**

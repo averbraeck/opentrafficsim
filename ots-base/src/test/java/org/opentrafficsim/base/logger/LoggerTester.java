@@ -12,6 +12,7 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.logger.CategoryLogger.CategoryAppenderFactory;
 import org.djutils.logger.LogCategory;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -183,7 +184,7 @@ public final class LoggerTester
                 }
                 catch (InterruptedException exception)
                 {
-                    throw new RuntimeException(exception);
+                    throw new OtsRuntimeException(exception);
                 }
             }));
         }
@@ -210,7 +211,7 @@ public final class LoggerTester
             }
             catch (InterruptedException exception)
             {
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
         }
 

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.colorer.LegendColorer;
-import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be

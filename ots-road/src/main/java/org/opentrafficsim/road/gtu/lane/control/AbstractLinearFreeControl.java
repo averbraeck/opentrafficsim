@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.control;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -55,7 +56,7 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
         }
         catch (OperationalPlanException exception)
         {
-            throw new RuntimeException("Infrastructure perception is not available.", exception);
+            throw new OtsRuntimeException("Infrastructure perception is not available.", exception);
         }
         Speed v0 = gtu.getTacticalPlanner().getCarFollowingModel().desiredSpeed(gtu.getParameters(), speedInfo);
         Acceleration a = Acceleration.ofSI(settings.getParameter(KF) * (v0.si - gtu.getSpeed().si));

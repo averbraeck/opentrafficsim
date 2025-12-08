@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.control;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -73,11 +74,11 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
         }
         catch (OperationalPlanException exception)
         {
-            throw new RuntimeException("Missing perception category LongitudinalControllerPerception", exception);
+            throw new OtsRuntimeException("Missing perception category LongitudinalControllerPerception", exception);
         }
         catch (ParameterException exception)
         {
-            throw new RuntimeException("Missing parameter", exception);
+            throw new OtsRuntimeException("Missing parameter", exception);
         }
     }
 

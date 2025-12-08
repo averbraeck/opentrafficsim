@@ -38,6 +38,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
@@ -921,7 +922,7 @@ public final class EditorMap extends JPanel implements EventListener
     public void reinitialize(final XsdTreeNode node)
     {
         remove(node);
-        Try.execute(() -> add(node), RuntimeException.class, "Unable to bind to context.");
+        Try.execute(() -> add(node), OtsRuntimeException.class, "Unable to bind to context.");
     }
 
     /**

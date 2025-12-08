@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
  * A category is a set of objects who's class belongs to a certain categorization. One {@code Category} object can specify to
@@ -99,7 +100,7 @@ public class Category
     @SuppressWarnings("unchecked")
     public final <T> T get(final Class<T> clazz)
     {
-        Throw.when(!this.categorization.entails(clazz), RuntimeException.class,
+        Throw.when(!this.categorization.entails(clazz), OtsRuntimeException.class,
                 "Trying to get a categorization object by class, with the class not belonging to the categorization.");
         for (Object obj : this.objects)
         {
@@ -108,7 +109,7 @@ public class Category
                 return (T) obj; // assignable so safe
             }
         }
-        throw new RuntimeException(
+        throw new OtsRuntimeException(
                 "Categorization contains no object assignable to given class, even though the categorization entails the class.");
     }
 

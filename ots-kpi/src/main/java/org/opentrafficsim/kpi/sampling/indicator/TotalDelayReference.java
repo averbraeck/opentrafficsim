@@ -8,6 +8,7 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.SamplingException;
@@ -80,7 +81,7 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
             }
             catch (SamplingException exception)
             {
-                throw new RuntimeException("Exception while trying to determine delay in trajectory.", exception);
+                throw new OtsRuntimeException("Exception while trying to determine delay in trajectory.", exception);
             }
         }
         Duration delaySum = Duration.ZERO;

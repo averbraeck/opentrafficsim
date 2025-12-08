@@ -34,6 +34,7 @@ import java.text.AttributedCharacterIterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 
 /**
@@ -367,7 +368,7 @@ public class HtmlGraphics2d extends Graphics2D
                     addFloatArray(coords, 4);
                     break;
                 default:
-                    throw new RuntimeException("unkown segment");
+                    throw new OtsRuntimeException("unkown segment");
             }
             i.next();
         }
@@ -453,7 +454,7 @@ public class HtmlGraphics2d extends Graphics2D
                     addDoubleArray(coords, 4);
                     break;
                 default:
-                    throw new RuntimeException("unkown segment");
+                    throw new OtsRuntimeException("unkown segment");
             }
             i.next();
         }

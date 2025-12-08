@@ -30,6 +30,7 @@ import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.ColorbarColorer;
 import org.opentrafficsim.draw.colorer.Colorer;
@@ -367,7 +368,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             }
             n -= m;
         }
-        throw new RuntimeException("Discrepancy between series number and available data.");
+        throw new OtsRuntimeException("Discrepancy between series number and available data.");
     }
 
     /**

@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -157,7 +158,7 @@ public class TrafficLight extends AbstractLaneBasedObject
         catch (NetworkException ex)
         {
             // we explicitly use the previous link which should be connected, and check the number of nodes in the route
-            throw new RuntimeException(ex);
+            throw new OtsRuntimeException(ex);
         }
     }
 

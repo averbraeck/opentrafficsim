@@ -25,6 +25,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -349,7 +350,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         }
         catch (SimRuntimeException exception)
         {
-            throw new RuntimeException("Unexpected exception while scheduling tryToPlace event.", exception);
+            throw new OtsRuntimeException("Unexpected exception while scheduling tryToPlace event.", exception);
         }
     }
 

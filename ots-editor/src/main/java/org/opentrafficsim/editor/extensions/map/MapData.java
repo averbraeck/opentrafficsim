@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.extensions.map;
 import java.util.function.Consumer;
 
 import org.djutils.eval.Eval;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -128,7 +129,7 @@ public abstract class MapData implements EvalListener
         }
         catch (Exception ex)
         {
-            throw new RuntimeException("Unexpected exception", ex);
+            throw new OtsRuntimeException("Unexpected exception", ex);
         }
     }
 

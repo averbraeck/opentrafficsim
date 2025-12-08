@@ -1,7 +1,5 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import java.rmi.RemoteException;
-
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.sampling.data;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -40,7 +41,7 @@ public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException("Could not obtain speed limit.", exception);
+            throw new OtsRuntimeException("Could not obtain speed limit.", exception);
         }
     }
 

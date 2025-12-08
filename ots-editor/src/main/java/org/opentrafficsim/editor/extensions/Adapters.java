@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.xml.bindings.AngleAdapter;
 import org.opentrafficsim.xml.bindings.ArcDirectionAdapter;
@@ -78,7 +79,7 @@ public final class Adapters
     @SuppressWarnings("unchecked")
     public static <T, E extends ExpressionType<T>> ExpressionAdapter<T, E> get(final Class<T> clazz)
     {
-        Throw.when(!ADAPTERS.containsKey(clazz), RuntimeException.class,
+        Throw.when(!ADAPTERS.containsKey(clazz), OtsRuntimeException.class,
                 "No adapter for class %s available. Add it in the static code block of MapData or create one directly.");
         return (ExpressionAdapter<T, E>) ADAPTERS.get(clazz);
     }

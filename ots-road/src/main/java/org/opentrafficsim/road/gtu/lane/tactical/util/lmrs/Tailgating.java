@@ -1,9 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating.socialPressure;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -74,7 +77,7 @@ public interface Tailgating
             }
             catch (ParameterException exception)
             {
-                throw new RuntimeException("Could not obtain or set parameter value.", exception);
+                throw new OtsRuntimeException("Could not obtain or set parameter value.", exception);
             }
         }
 
@@ -118,7 +121,7 @@ public interface Tailgating
             }
             catch (ParameterException exception)
             {
-                throw new RuntimeException("Could not obtain or set parameter value.", exception);
+                throw new OtsRuntimeException("Could not obtain or set parameter value.", exception);
             }
         }
 

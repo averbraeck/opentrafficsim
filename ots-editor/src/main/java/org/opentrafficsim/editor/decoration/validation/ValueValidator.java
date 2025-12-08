@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
@@ -260,7 +261,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
             case "xi:include":
                 return null;
             default:
-                throw new RuntimeException("Unable to validate " + node.getNodeName() + ".");
+                throw new OtsRuntimeException("Unable to validate " + node.getNodeName() + ".");
         }
     }
 

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -208,7 +209,7 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
             // intermediate layer, we need to obtain the next layer's map
             map = (Map<Object, Object>) map.computeIfAbsent(context[i], (k) -> new LinkedHashMap<>());
         }
-        throw new RuntimeException("Unexpected exception while obtaining contextual key for specific perceived info.");
+        throw new OtsRuntimeException("Unexpected exception while obtaining contextual key for specific perceived info.");
     }
 
     /**

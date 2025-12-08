@@ -21,6 +21,7 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.logger.Logger;
@@ -291,7 +292,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
                 return;
             }
 
-            throw new RuntimeException("Traffic light detector was notified that "
+            throw new OtsRuntimeException("Traffic light detector was notified that "
                     + "a GTU was added to a lane, but could not figure out what to do with it.");
         }
         else

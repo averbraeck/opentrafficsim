@@ -9,6 +9,7 @@ import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djutils.exceptions.Throw;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
  * Implementation of {@link Parameters} with methods to initialize the set of parameters.
@@ -196,7 +197,7 @@ public class ParameterSet implements Parameters
         catch (ParameterException pe)
         {
             // should not happen, default value and parameter type are connected
-            throw new RuntimeException(pe);
+            throw new OtsRuntimeException(pe);
         }
         return this;
     }
@@ -237,17 +238,17 @@ public class ParameterSet implements Parameters
                 catch (IllegalArgumentException iare)
                 {
                     // should not happen, field and clazz are related
-                    throw new RuntimeException(iare);
+                    throw new OtsRuntimeException(iare);
                 }
                 catch (IllegalAccessException iace)
                 {
                     // parameter type not public
-                    throw new RuntimeException(iace);
+                    throw new OtsRuntimeException(iace);
                 }
                 catch (ParameterException pe)
                 {
                     // do not set parameter without default value
-                    throw new RuntimeException(pe);
+                    throw new OtsRuntimeException(pe);
                 }
             }
         }
@@ -285,7 +286,7 @@ public class ParameterSet implements Parameters
             }
             catch (ParameterException exception)
             {
-                throw new RuntimeException(exception); // should not happen
+                throw new OtsRuntimeException(exception); // should not happen
             }
         }
     }
@@ -305,7 +306,7 @@ public class ParameterSet implements Parameters
             catch (ParameterException pe)
             {
                 // We know the parameter has been set as we get the keySet from parameters
-                throw new RuntimeException(pe);
+                throw new OtsRuntimeException(pe);
             }
         }
         out.append("]");

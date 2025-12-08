@@ -17,6 +17,7 @@ import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -140,7 +141,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             }
             catch (NetworkException exception)
             {
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
             GraphPath.initRecording(sampler, path);
             SwingPlot plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1),

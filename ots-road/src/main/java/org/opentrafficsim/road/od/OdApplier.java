@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -443,13 +444,13 @@ public final class OdApplier
             {
                 // should not happen, we check that time is 0
                 Logger.ots().error(exception);
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
             catch (NetworkException exception)
             {
                 // should not happen, as unique ids are guaranteed by UUID
                 Logger.ots().error(exception);
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
         }
     }
@@ -532,7 +533,7 @@ public final class OdApplier
                     {
                         // can not happen, we use Length.ZERO and lane.getLength()
                         Logger.ots().error(exception);
-                        throw new RuntimeException(exception);
+                        throw new OtsRuntimeException(exception);
                     }
                 }
             }
@@ -750,7 +751,7 @@ public final class OdApplier
          */
         public K draw(final Duration time)
         {
-            Throw.when(this.children.isEmpty(), RuntimeException.class, "Calling draw on a leaf node in the demand tree.");
+            Throw.when(this.children.isEmpty(), OtsRuntimeException.class, "Calling draw on a leaf node in the demand tree.");
             Map<K, Double> weightMap = new LinkedHashMap<>();
             if (this.markov == null)
             {

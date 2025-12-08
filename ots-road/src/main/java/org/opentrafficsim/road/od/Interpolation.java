@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
  * Interpolation of demand.
@@ -147,10 +148,10 @@ public enum Interpolation
         catch (ValueRuntimeException ve)
         {
             // should not happen, vector lengths are checked when given is input
-            throw new RuntimeException("Index out of bounds.", ve);
+            throw new OtsRuntimeException("Index out of bounds.", ve);
         }
         // should not happen
-        throw new RuntimeException("Demand interpolation failed.");
+        throw new OtsRuntimeException("Demand interpolation failed.");
     }
 
 }

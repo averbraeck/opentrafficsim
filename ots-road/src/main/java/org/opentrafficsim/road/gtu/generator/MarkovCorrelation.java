@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -517,7 +518,7 @@ public class MarkovCorrelation<S, I extends Number>
                     return this.nodes.get(j).drawState(previousState, stream);
                 }
             }
-            throw new RuntimeException("Unexpected error while drawing state from matrix.");
+            throw new OtsRuntimeException("Unexpected error while drawing state from matrix.");
         }
 
         /**

@@ -4,6 +4,12 @@ package org.opentrafficsim.xml.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.opentrafficsim.xml.bindings.ColorAdapter;
+import org.opentrafficsim.xml.bindings.LengthAdapter;
+import org.opentrafficsim.xml.bindings.PositiveLengthAdapter;
+import org.opentrafficsim.xml.bindings.types.ColorType;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -11,10 +17,6 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opentrafficsim.xml.bindings.ColorAdapter;
-import org.opentrafficsim.xml.bindings.LengthAdapter;
-import org.opentrafficsim.xml.bindings.PositiveLengthAdapter;
-import org.opentrafficsim.xml.bindings.types.ColorType;
 
 
 /**

@@ -2,14 +2,16 @@
 package org.opentrafficsim.xml.generated;
 
 import java.io.Serializable;
+
+import org.opentrafficsim.xml.bindings.SpaceAdapter;
+import org.opentrafficsim.xml.bindings.StringAdapter;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opentrafficsim.xml.bindings.SpaceAdapter;
-import org.opentrafficsim.xml.bindings.StringAdapter;
 
 
 /**

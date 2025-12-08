@@ -8,6 +8,7 @@ import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
@@ -120,7 +121,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
+            throw new OtsRuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
 
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());

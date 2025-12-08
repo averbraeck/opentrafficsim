@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.perception;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterType;
@@ -154,7 +155,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
             catch (ParameterException exception)
             {
                 // should not happen
-                throw new RuntimeException(exception);
+                throw new OtsRuntimeException(exception);
             }
         }
 

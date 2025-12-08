@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -315,7 +316,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
         }
         catch (ValueRuntimeException exception)
         {
-            throw new RuntimeException("Unexpected exception: fraction could not be interpolated.", exception);
+            throw new OtsRuntimeException("Unexpected exception: fraction could not be interpolated.", exception);
         }
     }
 
@@ -382,7 +383,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
                     return Length.interpolate(this.width.get(i), this.width.get(i + 1), r);
                 }
             }
-            throw new RuntimeException("Unexpected exception: fraction could not be interpolated.");
+            throw new OtsRuntimeException("Unexpected exception: fraction could not be interpolated.");
         }
 
         /**
@@ -401,7 +402,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
             }
             catch (ValueRuntimeException exception)
             {
-                throw new RuntimeException("Unexpected exception: widths could not be put in a vector.", exception);
+                throw new OtsRuntimeException("Unexpected exception: widths could not be put in a vector.", exception);
             }
         }
 

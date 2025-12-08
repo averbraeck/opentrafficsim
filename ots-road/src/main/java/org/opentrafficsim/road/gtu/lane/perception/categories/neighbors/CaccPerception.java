@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 import java.util.Iterator;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -118,7 +119,7 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
         }
         catch (ParameterException exception)
         {
-            throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
+            throw new OtsRuntimeException("Unexpected exception while computing gtu alongside.", exception);
         }
     }
 

@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -385,7 +386,7 @@ public class Schema
         }
         catch (SAXException | IOException | ParserConfigurationException | URISyntaxException e)
         {
-            throw new RuntimeException("Unable to find resource " + folder(node) + schemaLocation);
+            throw new OtsRuntimeException("Unable to find resource " + folder(node) + schemaLocation);
         }
     }
 

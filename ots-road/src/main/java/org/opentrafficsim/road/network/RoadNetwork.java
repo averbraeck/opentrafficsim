@@ -17,6 +17,7 @@ import org.djutils.multikeymap.MultiKeyMap;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -194,7 +195,7 @@ public class RoadNetwork extends Network
         else
         {
             // in case it is inadvertently extended in the future
-            throw new RuntimeException(String.format("Unknown LaneChangeLaw %s", laneAccessLaw));
+            throw new OtsRuntimeException(String.format("Unknown LaneChangeLaw %s", laneAccessLaw));
         }
         return outputLaneChangeInfo;
     }
@@ -287,7 +288,7 @@ public class RoadNetwork extends Network
             catch (NetworkException exception)
             {
                 // this should not happen, as we obtained the destination by moving downstream towards the end of the network
-                throw new RuntimeException("Could not find route to destination.", exception);
+                throw new OtsRuntimeException("Could not find route to destination.", exception);
             }
         }
         else
@@ -480,7 +481,7 @@ public class RoadNetwork extends Network
                         lane = (Lane) next;
                     }
                 }
-                Throw.when(lane == null, RuntimeException.class, "Requesting destination node on network without lanes.");
+                Throw.when(lane == null, OtsRuntimeException.class, "Requesting destination node on network without lanes.");
                 // move to downstream link for as long as there is 1 downstream link
                 try
                 {
@@ -491,13 +492,13 @@ public class RoadNetwork extends Network
                         link = downstreamLinks.iterator().next();
                         downstreamLinks = link.getEndNode().nextLinks(gtuType, link);
                     }
-                    Throw.when(downstreamLinks.size() > 1, RuntimeException.class, "Using null route on network with split. "
+                    Throw.when(downstreamLinks.size() > 1, OtsRuntimeException.class, "Using null route on network with split. "
                             + "Unable to find a destination to find lane change info towards.");
                     this.noRouteDestination = link.getEndNode();
                 }
                 catch (NetworkException ne)
                 {
-                    throw new RuntimeException("Requesting lane change info from link that does not allow the GTU type.", ne);
+                    throw new OtsRuntimeException("Requesting lane change info from link that does not allow the GTU type.", ne);
                 }
             }
             return this.noRouteDestination;

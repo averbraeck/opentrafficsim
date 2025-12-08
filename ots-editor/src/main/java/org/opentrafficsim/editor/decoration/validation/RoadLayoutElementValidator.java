@@ -13,6 +13,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdOption;
 import org.opentrafficsim.editor.XsdPaths;
@@ -349,7 +350,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             }
             default:
             {
-                throw new RuntimeException("Unsupported layout coupling " + this.layoutCoupling);
+                throw new OtsRuntimeException("Unsupported layout coupling " + this.layoutCoupling);
             }
         }
 

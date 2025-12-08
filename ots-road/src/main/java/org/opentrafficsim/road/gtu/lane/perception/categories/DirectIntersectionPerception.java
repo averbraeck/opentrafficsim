@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -193,7 +194,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
         }
         catch (ParameterException exception)
         {
-            throw new RuntimeException("Unexpected exception while computing conflict alongside.", exception);
+            throw new OtsRuntimeException("Unexpected exception while computing conflict alongside.", exception);
         }
     }
 

@@ -3,6 +3,7 @@ package org.opentrafficsim.base.parameters.constraint;
 import java.util.IllegalFormatException;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
  * List of default constraint for ParameterTypes.
@@ -96,7 +97,7 @@ public enum NumericConstraint implements Constraint<Number>
         }
         catch (IllegalFormatException ife)
         {
-            throw new RuntimeException("Default parameter constraint " + this.toString()
+            throw new OtsRuntimeException("Default parameter constraint " + this.toString()
                     + " has an illegal formatting of the fail message as given to the constructor."
                     + " It should contain a single '%s'.", ife);
         }

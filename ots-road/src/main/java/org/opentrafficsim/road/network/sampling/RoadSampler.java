@@ -18,6 +18,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.Sampler;
@@ -139,7 +140,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         }
         catch (SimRuntimeException exception)
         {
-            throw new RuntimeException("Cannot start recording.", exception);
+            throw new OtsRuntimeException("Cannot start recording.", exception);
         }
     }
 
@@ -152,7 +153,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         }
         catch (SimRuntimeException exception)
         {
-            throw new RuntimeException("Cannot stop recording.", exception);
+            throw new OtsRuntimeException("Cannot stop recording.", exception);
         }
     }
 
@@ -177,7 +178,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             }
             catch (Exception exception)
             {
-                throw new RuntimeException("Position cannot be obtained for GTU that is registered on a lane", exception);
+                throw new OtsRuntimeException("Position cannot be obtained for GTU that is registered on a lane", exception);
             }
         }
     }
@@ -306,7 +307,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         catch (SimRuntimeException exception)
         {
             // should not happen with getSimulatorTime.add()
-            throw new RuntimeException("Scheduling sampling in the past.", exception);
+            throw new OtsRuntimeException("Scheduling sampling in the past.", exception);
         }
         this.eventsPerGtu.computeIfAbsent(gtu.getId(), (key) -> new LinkedHashMap<>()).put(lane, simEvent);
     }

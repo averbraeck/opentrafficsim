@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -121,7 +122,7 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
         }
         catch (ParameterException exception)
         {
-            throw new RuntimeException("Unexpected exception while perceiving bus stops.");
+            throw new OtsRuntimeException("Unexpected exception while perceiving bus stops.");
         }
     }
 

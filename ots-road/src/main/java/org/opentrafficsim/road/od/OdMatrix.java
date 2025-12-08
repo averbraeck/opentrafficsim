@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -264,7 +265,7 @@ public class OdMatrix implements Identifiable
         catch (ValueRuntimeException exception)
         {
             // verified to be > 1, so no empty vector
-            throw new RuntimeException("Unexpected exception while checking time vector.", exception);
+            throw new OtsRuntimeException("Unexpected exception while checking time vector.", exception);
         }
         for (Duration time : timeVector)
         {
@@ -333,7 +334,7 @@ public class OdMatrix implements Identifiable
             catch (ValueRuntimeException exception)
             {
                 // cannot happen, we use an existing vector
-                throw new RuntimeException("An object was null.", exception);
+                throw new OtsRuntimeException("An object was null.", exception);
             }
         }
         putDemandVector(origin, destination, category, demandScaled, timeVector, interpolation);
@@ -379,7 +380,7 @@ public class OdMatrix implements Identifiable
         catch (ValueRuntimeException exception)
         {
             // cannot happen, we use an existing vector
-            throw new RuntimeException("An object was null.", exception);
+            throw new OtsRuntimeException("An object was null.", exception);
         }
         putDemandVector(origin, destination, category, demandScaled, timeVector, interpolation);
     }
@@ -588,7 +589,7 @@ public class OdMatrix implements Identifiable
         catch (ValueRuntimeException exception)
         {
             // should not happen as we check and then loop over the array length
-            throw new RuntimeException("Could not translate trip vector into demand vector.", exception);
+            throw new OtsRuntimeException("Could not translate trip vector into demand vector.", exception);
         }
     }
 
@@ -621,7 +622,7 @@ public class OdMatrix implements Identifiable
             catch (ValueRuntimeException exception)
             {
                 // should not happen as we loop over the array length
-                throw new RuntimeException("Could not translate demand vector into trip vector.", exception);
+                throw new OtsRuntimeException("Could not translate demand vector into trip vector.", exception);
             }
         }
         return trips;
@@ -658,7 +659,7 @@ public class OdMatrix implements Identifiable
         catch (ValueRuntimeException exception)
         {
             // should not happen as the index was checked
-            throw new RuntimeException("Could not get number of trips.", exception);
+            throw new OtsRuntimeException("Could not get number of trips.", exception);
         }
     }
 
@@ -701,7 +702,7 @@ public class OdMatrix implements Identifiable
         catch (ValueRuntimeException exception)
         {
             // should not happen as the index was checked
-            throw new RuntimeException("Unexpected exception while getting number of trips.", exception);
+            throw new OtsRuntimeException("Unexpected exception while getting number of trips.", exception);
         }
     }
 
@@ -783,7 +784,7 @@ public class OdMatrix implements Identifiable
                 catch (ValueRuntimeException exception)
                 {
                     // should not happen as we loop over the array length
-                    throw new RuntimeException("Unexcepted exception while determining total trips over time.", exception);
+                    throw new OtsRuntimeException("Unexcepted exception while determining total trips over time.", exception);
                 }
             }
         }

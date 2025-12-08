@@ -12,6 +12,7 @@ import org.djutils.event.EventType;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyrefValidator;
 import org.opentrafficsim.editor.decoration.validation.XPathValidator;
@@ -114,7 +115,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             }
             catch (RemoteException exception)
             {
-                throw new RuntimeException("Unexpected remote exception in local context.", exception);
+                throw new OtsRuntimeException("Unexpected remote exception in local context.", exception);
             }
         }
         return super.addListener(listener, eventType, position, referenceType);

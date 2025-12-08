@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.matrix.base.DoubleMatrix;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.Quantity;
 
@@ -44,7 +45,7 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U, T>, K extends 
             catch (ValueRuntimeException exception)
             {
                 // should not happen
-                throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);
+                throw new OtsRuntimeException("Unexcepted exception: data is null when converting.", exception);
             }
         }
     });
@@ -62,7 +63,7 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U, T>, K extends 
             catch (ValueRuntimeException exception)
             {
                 // should not happen
-                throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);
+                throw new OtsRuntimeException("Unexcepted exception: data is null when converting.", exception);
             }
         }
     });
@@ -81,7 +82,7 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U, T>, K extends 
                     catch (ValueRuntimeException exception)
                     {
                         // should not happen
-                        throw new RuntimeException("Unexcepted exception: data is null when converting.", exception);
+                        throw new OtsRuntimeException("Unexcepted exception: data is null when converting.", exception);
                     }
                 }
             });

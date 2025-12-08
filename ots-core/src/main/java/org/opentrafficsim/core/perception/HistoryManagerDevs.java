@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -76,7 +77,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         }
         catch (SimRuntimeException exception)
         {
-            throw new RuntimeException(exception);
+            throw new OtsRuntimeException(exception);
         }
     }
 

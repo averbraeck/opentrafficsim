@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.math.means.ArithmeticMean;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.egtf.Converter;
@@ -45,7 +46,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                     catch (ValueRuntimeException exception)
                     {
                         // should not happen as filtered data comes from the EGTF
-                        throw new RuntimeException("Unexpected exception while converting acceleration to output format.",
+                        throw new OtsRuntimeException("Unexpected exception while converting acceleration to output format.",
                                 exception);
                     }
                 }

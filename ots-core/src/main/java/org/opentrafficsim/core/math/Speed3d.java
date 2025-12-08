@@ -8,6 +8,7 @@ import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.SpeedVector;
+import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
  * A 3D speed vector, decomposed in X, Y, and Z-speed with easy conversion from and to a spherical coordinate system. <br>
@@ -95,7 +96,7 @@ public class Speed3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getX() gave an exception; apparently vector " + this.speed + " was not constructed right", exception);
         }
     }
@@ -113,7 +114,7 @@ public class Speed3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getY() gave an exception; apparently vector " + this.speed + " was not constructed right", exception);
         }
     }
@@ -131,7 +132,7 @@ public class Speed3d
         catch (ValueRuntimeException exception)
         {
             // should be impossible as we constructed the vector always with three elements
-            throw new RuntimeException(
+            throw new OtsRuntimeException(
                     "getZ() gave an exception; apparently vector " + this.speed + " was not constructed right", exception);
         }
     }

@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -54,7 +55,7 @@ public class GtuDataRoad implements GtuData
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException("Could not get origin node.", exception);
+            throw new OtsRuntimeException("Could not get origin node.", exception);
         }
     }
 
@@ -67,7 +68,7 @@ public class GtuDataRoad implements GtuData
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException("Could not get destination node.", exception);
+            throw new OtsRuntimeException("Could not get destination node.", exception);
         }
     }
 
@@ -94,7 +95,7 @@ public class GtuDataRoad implements GtuData
         }
         catch (NetworkException exception)
         {
-            throw new RuntimeException("Could not obtain reference speed from GTU " + this.gtu, exception);
+            throw new OtsRuntimeException("Could not obtain reference speed from GTU " + this.gtu, exception);
         }
     }
 
