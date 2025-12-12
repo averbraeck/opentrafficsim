@@ -255,7 +255,7 @@ public class SimpleSimulation extends AbstractSimulationScript
 
 
 
-        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar = DesiredSpeedLibrary.germanMotorwayCars(this.stream);
+        ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar = DesiredSpeedLibrary.carsUnrestricted(this.stream);
                // new ContinuousDistDoubleScalar.Rel<>(new DistEmpiricalInterpolated(this.stream, vWishDistribution), SpeedUnit.KM_PER_HOUR);
 
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTrucks = DesiredSpeedLibrary.trucks(this.stream);

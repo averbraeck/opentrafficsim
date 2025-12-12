@@ -5,11 +5,13 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -23,6 +25,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -69,6 +72,9 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     public static final String REAR_GAP_TIME_HEADWAY_CURRENT = "rearGapTimeHeadwayCurrent";
     public static final String REAR_GAP_TIME_HEADWAY_LEFT = "rearGapTimeHeadwayLeft";
     public static final String REAR_GAP_TIME_HEADWAY_RIGHT = "rearGapTimeHeadwayRight";
+    public static final String RIGHT_SIDE_OVERTAKING_AHEAD = "rightSideOvertakingAhead";
+    public static final String LANE_CHANGE_POSSIBLE_LEFT = "laneChangePossibleLeft";
+    public static final String LANE_CHANGE_POSSIBLE_RIGHT = "laneChangePossibleRight";
 
 
 
@@ -657,8 +663,102 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         return leaders.isEmpty() ? null : leaders.first();
     }
 
+    public Boolean getRightSideOvertakingAhead() {
+        Boolean cached = getCachedValue(RIGHT_SIDE_OVERTAKING_AHEAD, Boolean.class);
+        if (cached != null) return cached;
 
+        Boolean result = checkRightSideOvertakingAhead();
+        cacheValue(RIGHT_SIDE_OVERTAKING_AHEAD, result, true);
+        return result;
+    }
 
+    /**
+     * Checks if there is a right-side overtaking situation ahead of the ego vehicle.
+     * <p>
+     * This method evaluates the speed and distance of vehicles in the left and current lanes
+     * to determine if the ego vehicle is set to overtake a slower vehicle in the left lane.
+     * </p>
+     *
+     * @return true if a right-side overtaking situation is detected, false otherwise
+     */
+    public Boolean checkRightSideOvertakingAhead() {
+        try {
+
+            Speed leftSpeedDelta = getFrontGapDeltaSpeed(LateralDirectionality.LEFT);
+            Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+
+            // german law allows right-side overtaking only if the left vehicle is at least 20 km/h slower and ego is not exceeding 60 km/h (StVO §5(4))
+            // for now, we assume strict adherence to this rule (because we are german)
+            if (leftSpeedDelta.le(new Speed(20.0, SpeedUnit.KM_PER_HOUR)) && egoSpeed.le(new Speed(60.0, SpeedUnit.KM_PER_HOUR))) {
+                return false;
+            }
+
+            Length leftDistance = getFrontGapDistance(LateralDirectionality.LEFT);
+            Length currentDistance = getFrontGapDistance(LateralDirectionality.NONE);
+
+            if (leftSpeedDelta.gt(Speed.ZERO) && leftDistance.lt(currentDistance)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Determines if a lane change is feasible in the specified direction.
+     * <p>
+     * The feasibility check considers the required decelerations for both
+     * the ego vehicle and the follower on the target lane, as well as
+     * the available headways (gaps) in front of and behind the ego vehicle.
+     * </p>
+     *
+     * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
+     * @return true if the lane change is feasible, false otherwise
+     * @throws ParameterException if parameter retrieval fails
+     */
+    public Boolean checkIfLaneChangeIsPossible(final LateralDirectionality laneChangeDirection) throws ParameterException {
+
+        EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
+
+        // TODO: threshold should be dynamically determined based on desire and urgency of lane change
+        Acceleration bDes = this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.B).neg();
+        Double reductionFactor = this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
+
+        Acceleration egoDecel = getEgoDeceleration(laneChangeDirection);
+        Acceleration followerDecel = getFollowerDeceleration(laneChangeDirection);
+
+        Length desiredRearHeadway = egoCtx.getDesiredRearHeadway(laneChangeDirection).times(reductionFactor);
+        Length rearHeadway = getRearGapDistance(laneChangeDirection);
+
+        Length desiredFrontHeadway = egoCtx.getDesiredFrontHeadway(laneChangeDirection).times(reductionFactor);
+        Length frontHeadway = getFrontGapDistance(laneChangeDirection);
+
+        return egoDecel.gt(bDes) && followerDecel.gt(bDes) && rearHeadway.gt(desiredRearHeadway) && frontHeadway.gt(desiredFrontHeadway);
+    }
+
+    public Boolean getIfLaneChangePossible(final LateralDirectionality dir) {
+        String name;
+        if (dir.isLeft()) {
+            name = LANE_CHANGE_POSSIBLE_LEFT;
+        } else {
+            name = LANE_CHANGE_POSSIBLE_RIGHT;
+        }
+        Boolean cached = getCachedValue(name, Boolean.class);
+        if (cached != null) return cached;
+
+        Boolean result;
+        try {
+            result = checkIfLaneChangeIsPossible(dir);
+        } catch (ParameterException e) {
+            result = false;
+        }
+        cacheValue(name, result, true);
+        return result;
+    }
 
 
     @Override
@@ -686,6 +786,9 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
                 ", rearGapTimeHeadwayCurrent=" + getCachedValue(REAR_GAP_TIME_HEADWAY_CURRENT, Duration.class) +
                 ", rearGapTimeHeadwayLeft=" + getCachedValue(REAR_GAP_TIME_HEADWAY_LEFT, Duration.class) +
                 ", rearGapTimeHeadwayRight=" + getCachedValue(REAR_GAP_TIME_HEADWAY_RIGHT, Duration.class) +
+                ", rightSideOvertakingAhead=" + getCachedValue(RIGHT_SIDE_OVERTAKING_AHEAD, Boolean.class) +
+                ", laneChangePossibleLeft=" + getCachedValue(LANE_CHANGE_POSSIBLE_LEFT, Boolean.class) +
+                ", laneChangePossibleRight=" + getCachedValue(LANE_CHANGE_POSSIBLE_RIGHT, Boolean.class) +
                 "]";
     }
 

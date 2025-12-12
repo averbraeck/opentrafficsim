@@ -84,6 +84,25 @@ public class ScenarioParameters {
         return Collections.unmodifiableMap(this.params);
     }
 
+    /**
+     * Applies all parameters from the given ScenarioParameters object onto this instance.
+     * Only parameters present in the override set will be overwritten.
+     *
+     * @param overrides ScenarioParameters containing the values to override
+     * @return this (for fluent chaining)
+     */
+    public ScenarioParameters applyOverridesFrom(final ScenarioParameters overrides) {
+        if (overrides == null) {
+            return this;
+        }
+        for (Map.Entry<String, Object> entry : overrides.asUnmodifiableMap().entrySet()) {
+            this.params.put(entry.getKey(), entry.getValue());
+        }
+        return this;
+    }
+
+
+
     // ----------------------------------------------------------------------
     // Convenience typed getters/setters for common parameters
     // ----------------------------------------------------------------------

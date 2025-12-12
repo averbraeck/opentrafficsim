@@ -1,5 +1,6 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.SocialInteractionsChunk;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -13,8 +14,10 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
 
 import java.util.function.Supplier;
 
@@ -51,11 +54,18 @@ public class SocialInteractionsChunk extends KnowledgeChunk
     public Desire computeDesire() throws ParameterException
     {
 
+
+        Double rhoEgo = egoSocialPressure(RelativeLane.CURRENT);
+        this.vehicle.setSocioSpeedPressure(rhoEgo==null?0.0:rhoEgo);
+        Double dLeft = 0.0;
+        Double dRight = 0.0;
+
+
         double socioSpeedSensitivity = getMirovaTacticalPlanner().getSocioSpeedSensitivity();
         // Stay out of the way (left lane)
         Double rhoPotentialFollower = followerSocialPressure(RelativeLane.LEFT);
         Double rhoEgoPotential = egoSocialPressure(RelativeLane.LEFT);
-        Double dLeft = 0.0;
+
 
         if (getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).gt(getParameters().getParameter(ParameterTypes.LOOKAHEAD))
             && rhoPotentialFollower != null && rhoEgoPotential != null && rhoPotentialFollower * socioSpeedSensitivity > rhoEgoPotential)
@@ -64,17 +74,19 @@ public class SocialInteractionsChunk extends KnowledgeChunk
         }
 
 
-
-        // Get out of the way (right lane)
+         // Get out of the way (right lane)
         Double rhoActualFollower = followerSocialPressure(RelativeLane.CURRENT);
-        Double rhoEgo = egoSocialPressure(RelativeLane.CURRENT);
-        Double dRight = 0.0;
+        Double rhoEgoRight = egoSocialPressure(RelativeLane.RIGHT);
+        rhoEgoRight = rhoEgoRight==null?0.0:rhoEgoRight;
+
 
         if (getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).gt(getParameters().getParameter(ParameterTypes.LOOKAHEAD))
-            && rhoActualFollower != null && rhoEgo != null && rhoActualFollower * socioSpeedSensitivity > rhoEgo)
+            && rhoActualFollower != null && rhoEgo != null && rhoActualFollower * socioSpeedSensitivity > rhoEgo && rhoActualFollower > rhoEgoRight)
         {
-            dRight = rhoActualFollower * socioSpeedSensitivity; // encourage lane change to right with positive incentive
+            dRight = (rhoActualFollower) * socioSpeedSensitivity; // encourage lane change to right with positive incentive
         }
+
+
 
         return new Desire(dLeft, dRight, false); // discretionary desire
 
@@ -86,9 +98,10 @@ public class SocialInteractionsChunk extends KnowledgeChunk
         {
             return null; // no follower
         }
-
+        EgoContext egoContext = getMirovaTacticalPlanner().getContext(EgoContext.class);
+        NeighborsContext neighborsContext = getMirovaTacticalPlanner().getContext(NeighborsContext.class);
         Speed vGain = getMirovaTacticalPlanner().getVGain();
-        Speed vLeader = getEgoPerception().getSpeed();
+        Speed vLeader = egoContext.getEgoSpeed();
         HeadwayGtu follower = getNeighborsPerception().getFollowers(lane).first();
         Speed followerDesiredSpeed = follower.getDesiredSpeed();
         Length headway = follower.getDistance();
@@ -104,8 +117,9 @@ public class SocialInteractionsChunk extends KnowledgeChunk
         {
             return null; // no leader
         }
+        EgoContext egoContext = getMirovaTacticalPlanner().getContext(EgoContext.class);
         Speed vGain = getMirovaTacticalPlanner().getVGain();
-        Speed vFollower = getEgoPerception().getSpeed();
+        Speed vFollower = egoContext.getEgoSpeed();
         Speed followerDesiredSpeed = getMirovaTacticalPlanner().getGtu().getDesiredSpeed();
         Length followerLookahead = getParameters().getParameter(ParameterTypes.LOOKAHEAD);
         HeadwayGtu leader = getNeighborsPerception().getLeaders(lane).first();

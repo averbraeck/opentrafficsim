@@ -2,6 +2,7 @@ package org.opentrafficsim.demo.mirova.scenariomanagement;
 
 import java.awt.Dimension;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,13 +146,40 @@ public abstract class AbstractSimulationScriptBase implements EventListener {
     private void runHeadless() throws Exception {
         this.simulator = new OtsSimulator(this.name);
         ScriptModel model = new ScriptModel(this.simulator);
-        this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, model,
-            new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
+        Integer replicationId = (int) Thread.currentThread().getId();
+        this.simulator.initialize(
+                this.startTime,
+                this.warmupTime,
+                this.simulationTime,
+                model,
+            new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)),
+            replicationId);
 
         this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
 
+
+        double simEnd = this.simulationTime.si;
+        double nextReport = 0.0;
+        double reportIntervalSimTime = 10.0;  // alle 10 Sekunden Simulation
+        int lastPercent = -1;
+
         while (this.simulator.getSimulatorAbsTime().si < this.simulationTime.si) {
             this.simulator.step();
+            double t = this.simulator.getSimulatorAbsTime().si;
+
+            // --- Zeitbasiertes Reporting (alle X Sekunden Simulationszeit) ---
+            if (t >= nextReport) {
+                int percent = (int) Math.round((t / simEnd) * 100.0);
+
+                // nur ausgeben wenn Prozent fortschreiten
+                if (percent != lastPercent) {
+                    String bar = progressBar(percent, 30);
+                    System.out.printf("[SIM %s] %s %3d%%  t=%.0f/%.0f s%n",
+                        this.name, bar, percent, t, simEnd);
+                    lastPercent = percent;
+                }
+                nextReport += reportIntervalSimTime;
+            }
         }
 
         onSimulationEnd();
@@ -213,6 +241,15 @@ public abstract class AbstractSimulationScriptBase implements EventListener {
     protected Map<GtuType, GtuMarker> getGtuMarkers() {
         return Collections.emptyMap();
     }
+
+    private static String progressBar(final int percent, final int width) {
+        int filled = (percent * width) / 100;
+        char[] bar = new char[width];
+        Arrays.fill(bar, 0, filled, '#');
+        Arrays.fill(bar, filled, width, '-');
+        return "[" + new String(bar) + "]";
+    }
+
 
     // ----------------------------------------------------------------------
     // Model wrapper

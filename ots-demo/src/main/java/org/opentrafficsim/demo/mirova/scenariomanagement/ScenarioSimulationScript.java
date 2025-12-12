@@ -18,7 +18,7 @@ public class ScenarioSimulationScript extends AbstractSimulationScriptBase {
     /** Scenario parameters to apply. */
     private final ScenarioParameters parameters;
     /** Scenario output configuration to apply. */
-    private final ScenarioOutputConfiguration outputConfig;
+    private ScenarioOutputConfiguration outputConfig;
 
     /**
      *  Constructor.
@@ -28,13 +28,13 @@ public class ScenarioSimulationScript extends AbstractSimulationScriptBase {
      */
     public ScenarioSimulationScript(
             final ScenarioGenerator scenario,
-            final ScenarioParameters params,
-            final ScenarioOutputConfiguration outputConfig)
+            final ScenarioParameters params
+            )
     {
         super("Scenario-" + scenario.scenarioName, "Scenario simulation runner");
         this.scenario = scenario;
         this.parameters = params;
-        this.outputConfig = outputConfig;
+        this.outputConfig = null;
 
         // Apply scenario parameters to the simulation base class
         applyParameters(params);
@@ -73,7 +73,21 @@ public class ScenarioSimulationScript extends AbstractSimulationScriptBase {
     protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim)
             throws Exception
     {
-        return this.scenario.setupSimulation(sim, this.parameters, this.outputConfig);
+        RoadNetwork network = this.scenario.setupSimulation(sim, this.parameters);
+        this.outputConfig = this.scenario.getOutputConfiguration();
+        return network;
+    }
+    /**
+     * Sets the output directory for this simulation's output configuration.
+     * @param outputDirectory String
+     */
+    public void setOutputDirectory(final String outputDirectory) {
+        if (this.outputConfig != null) {
+            this.outputConfig.setOutputDirectory(outputDirectory);
+        }
+        else {
+            System.out.println("Warning: output configuration is null, cannot set output directory");
+        }
     }
 
     // ------------------------------------------------------------

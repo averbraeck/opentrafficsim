@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -18,9 +18,11 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern.DefaultLaneChangePattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.AutobahnFreeDrivingPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePattern.DiscretionaryLaneChangePattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTrafficContext;
 import org.opentrafficsim.road.network.LaneChangeInfo;
 
@@ -42,10 +44,18 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
     {
         super(vehicle);
 
-
         // procedural maneuvers possibly triggered by discretionary desires
-        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.LEFT));
-        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.RIGHT));
+        this.addManeuverPattern(() -> {
+            try
+            {
+                return new AutobahnFreeDrivingPattern(this);
+            }
+            catch (ParameterException exception)
+            {
+                exception.printStackTrace();
+            }
+            return null;
+        });
     }
 
     @Override
@@ -60,6 +70,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         Speed vGain = getMirovaTacticalPlanner().getVGain();
 
         MacroTrafficContext macroContext = getMirovaTacticalPlanner().getContext(MacroTrafficContext.class);
+        EgoContext egoContext = getMirovaTacticalPlanner().getContext(EgoContext.class);
 
         double leftDist = getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT,
                 LateralDirectionality.LEFT).si;
@@ -69,7 +80,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         Speed vCur = macroContext.getAverageSpeed(RelativeLane.CURRENT);
 
 
-        Acceleration aCur = getMirovaTacticalPlanner().computeLongitudinalAcceleration(); // Try.assign(() -> getAbstractMirovaVehicle().computeLongitudinalAcceleration(), "Could not obtain the GTU.");
+        Acceleration aCur = egoContext.getCurrentCarFollowingAcceleration();
         if (aCur.si > 0)
         {
             Acceleration a = getParameters().getParameter(ParameterTypes.A);
@@ -96,6 +107,8 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
          if (rightDist > 0.0 && getInfrastructurePerception().getCrossSection().contains(RelativeLane.RIGHT))
          {
              Speed vRight = macroContext.getAverageSpeed(RelativeLane.RIGHT);
+             dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
+             /* why should we do this?
              if (vCur.si >= getParameters().getParameter(ParameterTypes.VCONG).si)
              {
                  dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
@@ -104,6 +117,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
              {
                  dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
              }
+             */
          }
          else
              {
@@ -122,10 +136,13 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 
          if (rightDist > 0.0)
          {
-             if (getTrafficPerception().getSpeed(RelativeLane.RIGHT).ge(getMirovaTacticalPlanner().getGtu().getDesiredSpeed()) && Length.instantiateSI(rightDist)
+             if (macroContext.getAverageSpeed(RelativeLane.RIGHT).ge(getMirovaTacticalPlanner().getGtu().getDesiredSpeed()) && Length.instantiateSI(rightDist)
                      .ge(params.getParameter(ParameterTypes.LOOKAHEAD)))
              {
-                 dRight = dRight + dFree;
+                 dRight = dRight +
+                         (this.vehicle.getParameters().getParameter(MirovaParameters.DFREE) *
+                                 this.vehicle.getTimeSinceLastLaneChange().si /
+                                 this.vehicle.getParameters().getParameter(MirovaParameters.socialInteractionCooldown).si);
              }
 
          }

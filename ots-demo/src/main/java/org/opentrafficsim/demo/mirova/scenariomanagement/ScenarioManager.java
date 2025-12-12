@@ -1,6 +1,9 @@
 package org.opentrafficsim.demo.mirova.scenariomanagement;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -39,8 +42,8 @@ public class ScenarioManager {
      * @param name name of the scenario
      * @param generator scenario generator instance
      * */
-    public void addScenario(final String name, final ScenarioGenerator generator) {
-        this.scenarios.put(name, new ScenarioEntry(generator));
+    public void addScenario(final String name, final Class<? extends ScenarioGenerator> scenarioClass) {
+        this.scenarios.put(name, new ScenarioEntry(scenarioClass));
     }
 
     /** Adds a parameter variation entry for the given scenario.
@@ -66,9 +69,16 @@ public class ScenarioManager {
     /**
      * Runs all scenarios including parameter variations & replications.
      * @param parallelThreads number of parallel workers
+     * @throws InterruptedException
      * @throws ExecutionException
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
      */
-    public void runAll(final int parallelThreads) throws InterruptedException, ExecutionException {
+    public void runAll(final int parallelThreads, final boolean enableGUI) throws InterruptedException, ExecutionException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
         System.out.println("Starting ScenarioManager with " + parallelThreads + " parallel threads...");
         ExecutorService pool = Executors.newFixedThreadPool(parallelThreads);
@@ -77,42 +87,56 @@ public class ScenarioManager {
         for (Map.Entry<String, ScenarioEntry> entry : this.scenarios.entrySet()) {
 
             String scenarioName = entry.getKey();
-            ScenarioGenerator generator = entry.getValue().generator;
+            Class<? extends ScenarioGenerator> genClass = entry.getValue().generatorClass;
             List<ScenarioParameters> variations = entry.getValue().parameterVariations;
-            System.out.println("Preparing scenario: " + scenarioName + " with "
-                    + variations.size() + " parameter variations and "
-                    + this.replications + " replications each.");
 
             File scenarioFolder = new File(this.outputRoot, scenarioName);
             scenarioFolder.mkdirs();
 
-            // If no variations added -> use default parameters
-            if (variations.isEmpty()) {
-                variations.add(generator.getParameters());
-            }
+            for (ScenarioParameters paramsVariation : variations) {
 
-            for (ScenarioParameters params : variations) {
+              // Create unique folder for this variation
+              File variationFolder = new File(scenarioFolder, "variation_" + UUID.randomUUID().toString());
+              variationFolder.mkdirs();
+
+              // Save runParams as a text file in variationFolder
+              File paramsFile = new File(variationFolder, "runParams.txt");
+              try (FileWriter writer = new FileWriter(paramsFile)) {
+                writer.write(paramsVariation.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 for (int run = 0; run < this.replications; run++) {
 
-                    long seed = params.getSeed() + run;
+                    // → create NEW ScenarioGenerator instance
+                    ScenarioGenerator generator =
+                        genClass.getDeclaredConstructor().newInstance();
 
-                    ScenarioParameters runParams = params.copy();
-                    runParams.setSeed(seed);
+                    ScenarioParameters defaultParams = generator.getDefaultParameters();
 
-                    File runFolder = new File(scenarioFolder, "run_seed_" + seed);
+                    // copy parameters
+                    ScenarioParameters runParams = paramsVariation.copy();
+                    long seed = defaultParams.getSeed() + run;
+                    defaultParams.setSeed(seed);
+
+                    // build output folder
+                    File runFolder = new File(variationFolder, "run_seed_" + seed);
                     runFolder.mkdirs();
 
-                    ScenarioOutputConfiguration outputConfig =
-                            generator.configureOutput().setOutputDirectory(runFolder.getAbsolutePath());
+                    generator.setOutputDirectory(runFolder);
 
+                    // Create SimulationScript
                     ScenarioSimulationScript script =
-                            generator.buildSimulationScript(runParams, outputConfig);
+                            generator.buildSimulationScript(defaultParams.copy().applyOverridesFrom(runParams));
+
+                    script.setGuiEnabled(false);
+
+                    System.out.println("[RUN] " + scenarioName + " | seed=" + seed);
 
                     futures.add(pool.submit(() -> {
                         try {
-                            System.out.println("[RUN] " + scenarioName + " | seed=" + seed);
                             script.start();
-                            //SimulationRunner.run(script, runParams, true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -120,28 +144,27 @@ public class ScenarioManager {
                 }
             }
         }
-
         // Wait for all to finish
-        for (Future<?> f : futures) f.get();
+      for (Future<?> f : futures) f.get();
 
-        pool.shutdown();
-        pool.awaitTermination(7, TimeUnit.DAYS);
+      pool.shutdown();
+      pool.awaitTermination(7, TimeUnit.DAYS);
+
+      System.out.println("All scenarios completed.");
+
     }
+        /** Internal structure to hold scenario and its parameter variations. */
+        class ScenarioEntry {
+            Class<? extends ScenarioGenerator> generatorClass;
+            List<ScenarioParameters> parameterVariations = new ArrayList<>();
 
-    // ------------------------------------------------------------
-    // Helper structure
-    // ------------------------------------------------------------
-
-    /** Internal structure to hold scenario generator and its parameter variations. */
-    private static class ScenarioEntry {
-        ScenarioGenerator generator;
-        List<ScenarioParameters> parameterVariations = new ArrayList<>();
-
-        /** Constructor.
-         * @param gen scenario generator
-         *  */
-        ScenarioEntry(final ScenarioGenerator gen) {
-            this.generator = gen;
+            /** Constructor.
+             * @param clazz scenario generator class
+             */
+            ScenarioEntry(final Class<? extends ScenarioGenerator> clazz) {
+                this.generatorClass = clazz;
+            }
         }
+
     }
-}
+

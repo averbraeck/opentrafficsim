@@ -1,15 +1,22 @@
 package org.opentrafficsim.demo.mirova.scenariomanagement;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.data.Table;
+import org.djutils.data.csv.CsvData;
+import org.djutils.data.serialization.TextSerializationException;
+import org.djutils.io.CompressedFileWriter;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 
 /**
  * ScenarioOutputConfiguration
@@ -33,6 +40,8 @@ public class ScenarioOutputConfiguration {
     /** Collects RoadSamplers configured for this scenario. */
     protected final List<RoadSampler> samplers = new ArrayList<>();
 
+    protected final List<LoopDetector> detectors = new ArrayList<>();
+
     /** Optional custom writers (e.g., KPI summaries). */
     protected final List<Runnable> customWriters = new ArrayList<>();
 
@@ -46,7 +55,7 @@ public class ScenarioOutputConfiguration {
     private final List<Consumer<RoadSampler>> samplerPostProcessors = new ArrayList<>();
 
     /** Output directory for generated files. */
-    private String outputDirectory = "output/";
+    private String outputDirectory = null;
 
     /** Optional override for CSV output filename. */
     private String outputFilename = "trajectory_data.csv";
@@ -56,6 +65,9 @@ public class ScenarioOutputConfiguration {
 
     /** Time at which sampling stops (default: entire simulation). */
     private Time recordingEndTime = null;
+
+    /** Reference to the road network (set during scenario setup). */
+    private RoadNetwork roadNetwork = null;
 
     // ----------------------------------------------------------------------
     // Configuration API
@@ -212,9 +224,29 @@ public class ScenarioOutputConfiguration {
         return this.recordingEndTime;
     }
 
+
+
     // -------------------------------------------------------------
     // Fluent builder-like API
     // -------------------------------------------------------------
+
+    /** sets the road network.
+     * @param roadNetwork road network
+     * @return road network
+     */
+    public ScenarioOutputConfiguration setRoadNetwork(final RoadNetwork roadNetwork)
+    {
+        this.roadNetwork = roadNetwork;
+        return this;
+    }
+
+    /** Returns the road network.
+     * @return road network
+     */
+    public RoadNetwork getRoadNetwork()
+    {
+        return this.roadNetwork;
+    }
 
     /** Adds a RoadSampler to the configuration.
      * @param sampler RoadSampler instance
@@ -222,6 +254,26 @@ public class ScenarioOutputConfiguration {
      */
     public ScenarioOutputConfiguration addSampler(final RoadSampler sampler) {
         this.samplers.add(sampler);
+        return this;
+    }
+
+    /** Adds a LoopDetector to the configuration.
+     * @param detector LoopDetector instance
+     * @return this ScenarioOutputConfiguration for chaining
+     */
+    public ScenarioOutputConfiguration addLoopDetector(final LoopDetector detector)
+    {
+        this.detectors.add(detector);
+        return this;
+    }
+
+    /** Adds multiple LoopDetectors to the configuration.
+     * @param detectors list of LoopDetector instances
+     * @return this ScenarioOutputConfiguration for chaining
+     */
+    public ScenarioOutputConfiguration addLoopDetectors(final List<LoopDetector> detectors)
+    {
+        this.detectors.addAll(detectors);
         return this;
     }
 
@@ -239,6 +291,14 @@ public class ScenarioOutputConfiguration {
      */
     public List<RoadSampler> getSamplers() {
         return this.samplers;
+    }
+
+    /** Returns the list of configured LoopDetectors.
+     * @return list of LoopDetectors
+     */
+    public List<LoopDetector> getDetectors()
+    {
+        return this.detectors;
     }
 
     // -------------------------------------------------------------
@@ -284,6 +344,23 @@ public class ScenarioOutputConfiguration {
                 ex.printStackTrace();
             }
         }
+
+        try
+        {
+            LoopDetector detector = this.detectors.get(0);
+
+            CompressedFileWriter zippedWriter = new CompressedFileWriter(new File(this.outputDirectory,
+                    "detector.zip").getAbsolutePath());
+            Table detectorData = detector.asTablePeriodicData(getRoadNetwork());
+            CsvData.writeZippedData(zippedWriter, "detector_data.csv", "detector_data.csvm", detectorData);
+            System.out.println("[OUTPUT]   -> wrote detector data: " + detector.getId() + "_data.csv");
+        }
+        catch (IOException | TextSerializationException exception)
+        {
+            System.err.println("[ERROR] Failed to write loop detector output: " + exception.getMessage());
+            exception.printStackTrace();
+        }
+
 
         // ---------------------------------------------------------
         // Write additional scenario-level custom exports (optional)

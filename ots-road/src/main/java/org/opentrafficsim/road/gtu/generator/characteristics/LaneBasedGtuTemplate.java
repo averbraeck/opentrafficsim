@@ -64,6 +64,14 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
         return new LaneBasedGtuCharacteristics(super.get(), this.strategicalPlannerFactory, this.routeSupplier.get(), null,
                 null, VehicleModel.MINMAX);
     }
+    /**
+     * Returns the strategical planner factory.
+     * @return the strategical planner factory
+     */
+    public LaneBasedStrategicalPlannerFactory<?> getStrategicalPlannerFactory()
+    {
+        return this.strategicalPlannerFactory;
+    }
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")

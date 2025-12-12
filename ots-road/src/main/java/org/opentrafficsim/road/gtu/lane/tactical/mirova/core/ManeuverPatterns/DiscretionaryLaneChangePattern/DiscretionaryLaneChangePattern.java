@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePattern;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -7,7 +7,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
 
@@ -23,7 +23,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsCo
  * (e.g. sufficient gap, safe relative speed) before execution.
  * </p>
  */
-public class DefaultLaneChangePattern extends ManeuverPattern {
+public class DiscretionaryLaneChangePattern extends ManeuverPattern {
 
     /** Direction of the lane change (LEFT or RIGHT). */
     private final LateralDirectionality direction;
@@ -38,7 +38,7 @@ public class DefaultLaneChangePattern extends ManeuverPattern {
      * @param knowledgeChunk reference to the associated knowledge chunk
      * @param direction desired lateral direction (left or right)
      */
-    public DefaultLaneChangePattern(final KnowledgeChunk knowledgeChunk,
+    public DiscretionaryLaneChangePattern(final KnowledgeChunk knowledgeChunk,
                                     final LateralDirectionality direction) {
         super(PatternType.FREE_LC, knowledgeChunk);
         this.direction = direction;

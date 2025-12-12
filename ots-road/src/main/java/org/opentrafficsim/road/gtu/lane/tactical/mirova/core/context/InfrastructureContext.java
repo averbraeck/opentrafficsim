@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.*;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.*;
 import org.opentrafficsim.road.gtu.lane.perception.categories.*;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -43,6 +44,10 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
     private static final String NEXT_SPEED_LIMIT = "nextSpeedLimit";
     /** Cache key for effective legal speed limit (minimum across limit types). */
     private static final String LEGAL_SPEED_LIMIT = "legalSpeedLimit";
+    /** Cache key for left lane availability. */
+    private static final String LEFT_LANE_AVAILABLE = "leftLaneAvailable";
+    /** Cache key for right lane availability. */
+    private static final String RIGHT_LANE_AVAILABLE = "rightLaneAvailable";
 
 
     /** Distance threshold [m] below which a lane-end is considered critical. */
@@ -232,6 +237,42 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         return infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(lookAhead);
     }
 
+    /**
+     * Checks whether a lane change is currently legally permitted in the specified direction.
+     *
+     * @param laneChangeDirection direction of the lane change
+     * @return {@code true} if a lane change is allowed, else {@code false}
+     */
+    private boolean checkLaneAvailable(final LateralDirectionality laneChangeDirection) {
+        try {
+            InfrastructurePerception infra = this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+
+            Length distance = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, laneChangeDirection);
+
+            return distance.lt(new Length(Double.POSITIVE_INFINITY, LengthUnit.SI));
+
+        } catch (OperationalPlanException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Returns whether a lane change is currently legally permitted in the specified direction.
+     * <p>
+     * The result is cached per simulation tick to avoid redundant perception queries.
+     * </p>
+     *
+     * @param laneChangeDirection direction of the lane change
+     * @return {@code true} if a lane change is allowed, else {@code false}
+     */
+    public boolean getIfLaneAvailable(final LateralDirectionality laneChangeDirection) {
+        String cacheKey = laneChangeDirection == LateralDirectionality.LEFT ? LEFT_LANE_AVAILABLE : RIGHT_LANE_AVAILABLE;
+        Boolean cached = getCachedValue(cacheKey, Boolean.class);
+        if (cached != null) return cached;
+        boolean available = checkLaneAvailable(laneChangeDirection);
+        cacheValue(cacheKey, available, true);
+        return available;
+    }
 
     /**
      * Updates the cache validity for this context category.
@@ -258,6 +299,8 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         return "InfrastructureContext[" +
                 "distToLaneEnd=" + getCachedValue(DIST_TO_LANE_END, Length.class) +
                 ", legalSpeedLimit=" + getCachedValue(LEGAL_SPEED_LIMIT, Speed.class) +
+                ", leftLaneAvailable=" + getCachedValue(LEFT_LANE_AVAILABLE, Boolean.class) +
+                ", rightLaneAvailable=" + getCachedValue(RIGHT_LANE_AVAILABLE, Boolean.class) +
                 "]";
     }
 }
