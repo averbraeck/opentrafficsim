@@ -33,14 +33,14 @@ The technical project information and API files for all modules of OTS are store
 
 All current contributors work at Delft University of Technology in the Netherlands. We are not picky; if you believe you can contribute to this ambitious project, please contact us. The current group of contributors is:
 
-* Hans van Lint, TU Delft, faculty CEG
 * Alexander Verbraeck, TU Delft, faculty TBM
-* Peter Knoppers, TU Delft, faculty CEG
 * Wouter Schakel, TU Delft, faculty CEG (author of this manual)
+* Peter Knoppers
+* Hans van Lint, TU Delft, faculty CEG
 
 Early contributors to the project were:
 
-* Guus Tamminga, TU Delft, faculty CEG
+* Guus Tamminga
 * Yufei Yuan, TU Delft, faculty CEG
 
 

@@ -1131,22 +1131,19 @@
       <roles>
         <role>architect</role>
         <role>developer</role>
-        <role>maintainance</role>
+        <role>maintenance</role>
       </roles>
     </developer>
 
     <developer>
       <id>pknoppers</id>
       <name>Peter Knoppers</name>
-      <email>p.knoppers@tudelft.nl</email>
       <url>https://github.com/peter-knoppers</url>
-      <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
       <timezone>1</timezone>
       <roles>
         <role>architect</role>
         <role>developer</role>
-        <role>maintainance</role>
+        <role>maintenance</role>
       </roles>
     </developer>
 
@@ -1161,7 +1158,7 @@
       <roles>
         <role>architect</role>
         <role>developer</role>
-        <role>maintainance</role>
+        <role>maintenance</role>
       </roles>
     </developer>
 
@@ -1171,11 +1168,6 @@
   <contributors>
     <contributor>
       <name>Hans van Lint</name>
-      <email>j.w.c.vanlint@tudelft.nl</email>
-      <url>https://www.tudelft.nl/citg/over-faculteit/afdelingen/transport-planning/staff/persoonlijke-paginas/lint-jwc-van</url>
-      <organization>Delft University of Technology, the Netherlands</organization>
-      <organizationUrl>https://www.citg.tudelft.nl</organizationUrl>
-      <timezone>1</timezone>
       <roles>
         <role>architect</role>
       </roles>
@@ -1183,14 +1175,14 @@
 
     <contributor>
       <name>Guus Tamminga</name>
-      <url>https://nl.linkedin.com/in/guustamminga</url>
-      <organization>Sweco, the Netherlands</organization>
-      <organizationUrl>https://www.sweco.nl</organizationUrl>
-      <timezone>1</timezone>
       <roles>
         <role>architect</role>
         <role>developer</role>
       </roles>
+    </contributor>
+    
+    <contributor>
+      <name>Yufei Yuan</name>
     </contributor>
   </contributors>
 
