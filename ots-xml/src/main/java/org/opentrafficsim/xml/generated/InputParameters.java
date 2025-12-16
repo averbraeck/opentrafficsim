@@ -4,7 +4,14 @@ package org.opentrafficsim.xml.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlValue;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.opentrafficsim.xml.bindings.AccelerationAdapter;
 import org.opentrafficsim.xml.bindings.BooleanAdapter;
 import org.opentrafficsim.xml.bindings.ClassAdapter;
@@ -27,15 +34,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
 import org.opentrafficsim.xml.bindings.types.LongType;
 import org.opentrafficsim.xml.bindings.types.SpeedType;
 import org.opentrafficsim.xml.bindings.types.StringType;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElements;
-import jakarta.xml.bind.annotation.XmlType;
-import jakarta.xml.bind.annotation.XmlValue;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**

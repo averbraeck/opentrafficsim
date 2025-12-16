@@ -2,20 +2,18 @@
 package org.opentrafficsim.xml.generated;
 
 import java.io.Serializable;
-
-import org.opentrafficsim.xml.bindings.PositiveDurationAdapter;
-import org.opentrafficsim.xml.bindings.PositiveIntegerAdapter;
-import org.opentrafficsim.xml.bindings.PositiveTimeAdapter;
-import org.opentrafficsim.xml.bindings.types.DurationType;
-import org.opentrafficsim.xml.bindings.types.IntegerType;
-import org.opentrafficsim.xml.bindings.types.TimeType;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.opentrafficsim.xml.bindings.PositiveDurationAdapter;
+import org.opentrafficsim.xml.bindings.PositiveIntegerAdapter;
+import org.opentrafficsim.xml.bindings.PositiveTimeAdapter;
+import org.opentrafficsim.xml.bindings.types.DurationType;
+import org.opentrafficsim.xml.bindings.types.IntegerType;
+import org.opentrafficsim.xml.bindings.types.TimeType;
 
 
 /**
