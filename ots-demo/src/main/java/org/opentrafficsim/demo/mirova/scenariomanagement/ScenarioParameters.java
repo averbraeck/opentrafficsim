@@ -114,6 +114,7 @@ public class ScenarioParameters {
     public static final String KEY_DESIRED_SPEED_DISTRIBUTION = "desiredSpeedDistribution";
     public static final String KEY_NETWORK_NAME = "networkName";
     public static final String KEY_RANDOM_STREAM = "randomStream";
+    public static final String KEY_MERGE_SHARE = "mergeShare";
 
     // ----- demand -----
     public ScenarioParameters setDemand(final double vehPerHour) {
@@ -140,6 +141,15 @@ public class ScenarioParameters {
 
     public Long getSeed() {
         return get(KEY_SEED, Long.class);
+    }
+
+    // ----- Merge share -----
+    public ScenarioParameters setMergeShare(final double share) {
+        return set(KEY_MERGE_SHARE, share);
+    }
+
+    public Double getMergeShare() {
+        return get(KEY_MERGE_SHARE, Double.class);
     }
 
     // ----- speed distribution -----

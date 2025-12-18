@@ -345,6 +345,7 @@ public class ScenarioOutputConfiguration {
             }
         }
 
+        /*
         try
         {
             LoopDetector detector = this.detectors.get(0);
@@ -355,12 +356,12 @@ public class ScenarioOutputConfiguration {
             CsvData.writeZippedData(zippedWriter, "detector_data.csv", "detector_data.csvm", detectorData);
             System.out.println("[OUTPUT]   -> wrote detector data: " + detector.getId() + "_data.csv");
         }
-        catch (IOException | TextSerializationException exception)
+        catch (IOException | TextSerializationException | IndexOutOfBoundsException exception)
         {
             System.err.println("[ERROR] Failed to write loop detector output: " + exception.getMessage());
             exception.printStackTrace();
         }
-
+        */
 
         // ---------------------------------------------------------
         // Write additional scenario-level custom exports (optional)
