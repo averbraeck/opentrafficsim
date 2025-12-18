@@ -69,7 +69,7 @@ In some cases the utility may need to store information such that it can remembe
 ```java
     public static Acceleration approachConflicts(…, 
         final ConflictPlans conflictPlans, …)
-            throws GTUException, ParameterException
+            throws GtuException, ParameterException
     {
         …
     }

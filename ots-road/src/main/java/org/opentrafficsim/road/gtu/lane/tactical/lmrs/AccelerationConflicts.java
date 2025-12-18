@@ -39,7 +39,7 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
 
     /** Set of yield plans at conflicts with priority. Remembering for static model. */
     // @docs/06-behavior/tactical-planner/#modular-utilities
-    private final ConflictPlans yieldPlans = new ConflictPlans();
+    private final ConflictPlans conflictPlans = new ConflictPlans();
 
     /**
      * Constructor.
@@ -72,22 +72,22 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
         }
         conflicts = onRoute(conflicts, gtu);
         Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, width, speed,
-                acceleration, speedLimitInfo, this.yieldPlans, gtu, lane);
+                acceleration, speedLimitInfo, this.conflictPlans, gtu, lane);
         simplePlan.minimizeAcceleration(a);
-        if (this.yieldPlans.getIndicatorIntent().isLeft())
+        if (this.conflictPlans.getIndicatorIntent().isLeft())
         {
-            simplePlan.setIndicatorIntentLeft(this.yieldPlans.getIndicatorObjectDistance());
+            simplePlan.setIndicatorIntentLeft(this.conflictPlans.getIndicatorObjectDistance());
         }
-        else if (this.yieldPlans.getIndicatorIntent().isRight())
+        else if (this.conflictPlans.getIndicatorIntent().isRight())
         {
-            simplePlan.setIndicatorIntentRight(this.yieldPlans.getIndicatorObjectDistance());
+            simplePlan.setIndicatorIntentRight(this.conflictPlans.getIndicatorObjectDistance());
         }
     }
 
     @Override
     public boolean isBlocking()
     {
-        return this.yieldPlans.isBlocking();
+        return this.conflictPlans.isBlocking();
     }
 
     @Override

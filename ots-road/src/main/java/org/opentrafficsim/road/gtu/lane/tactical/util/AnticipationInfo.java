@@ -101,10 +101,6 @@ public record AnticipationInfo(Duration duration, Speed endSpeed)
             final Parameters parameters, final CarFollowingModel carFollowingModel, final SpeedLimitInfo speedLimitInfo,
             final Duration timeStep) throws ParameterException
     {
-        if (distance.lt0())
-        {
-            return new AnticipationInfo(Duration.ZERO, initialSpeed);
-        }
         Duration out = Duration.ZERO;
         if (distance.lt0())
         {
