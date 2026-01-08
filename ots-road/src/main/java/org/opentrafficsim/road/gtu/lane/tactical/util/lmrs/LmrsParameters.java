@@ -90,4 +90,8 @@ public interface LmrsParameters
     ParameterTypeDouble SOCIO =
             new ParameterTypeDouble("socio", "Sensitivity level for speed of others", 1.0, ConstraintInterface.UNITINTERVAL);
 
+    /** Behavioral adaptation factor on voluntary lane change desire. */
+    ParameterTypeDouble LAMBDA_V = new ParameterTypeDouble("lambda_v",
+            "Factor on voluntary lane change desire due to behavioral adaptation", 1.0, ConstraintInterface.POSITIVEZERO);
+
 }

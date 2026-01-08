@@ -11,7 +11,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
+import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 
@@ -24,7 +24,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ChannelTaskSocio extends AbstractTaskId implements ChannelTask, Stateless<ChannelTaskSocio>
+public class ChannelTaskSocio extends AbstractTask implements ChannelTask, Stateless<ChannelTaskSocio>
 {
 
     /** Singleton instance. */

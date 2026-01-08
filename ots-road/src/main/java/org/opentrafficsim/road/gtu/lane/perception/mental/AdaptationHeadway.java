@@ -7,7 +7,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 
 /**
  * Behavioral adaptation which increases the desired headway to reduce task-demand.
@@ -19,7 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdapt
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AdaptationHeadway implements BehavioralAdaptation
+public class AdaptationHeadway extends FactorAdaptation
 {
 
     /** Parameter for desired headway scaling. */
@@ -48,10 +47,7 @@ public class AdaptationHeadway implements BehavioralAdaptation
             this.t0Min = parameters.getParameterOrNull(ParameterTypes.TMIN);
             this.t0Max = parameters.getParameterOrNull(ParameterTypes.TMAX);
         }
-        Double tsCrit = parameters.getParameterOrNull(SumFuller.TS_CRIT);
-        double eps = parameters.getParameter(Fuller.TS) - (tsCrit == null ? 1.0 : tsCrit);
-        eps = eps < 0.0 ? 0.0 : (eps > 1.0 ? 1.0 : eps);
-        double factor = 1.0 + parameters.getParameter(BETA_T) * eps;
+        double factor = getFactor(parameters, BETA_T);
         Duration tMin = this.t0Min.times(factor);
         Duration tMax = this.t0Max.times(factor);
         if (tMax.si <= parameters.getParameter(ParameterTypes.TMIN).si)

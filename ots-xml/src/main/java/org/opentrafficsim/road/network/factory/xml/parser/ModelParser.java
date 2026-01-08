@@ -57,8 +57,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Perceive
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
+import org.opentrafficsim.road.gtu.lane.perception.mental.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 import org.opentrafficsim.road.gtu.lane.perception.mental.SumFuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTask;
@@ -682,12 +682,12 @@ public class ModelParser
         return new CarFollowingModelFactory<CarFollowingModel>()
         {
             @Override
-            public Parameters getParameters() throws ParameterException
+            public Parameters getParameters(final GtuType gtuType) throws ParameterException
             {
                 // Note when extending for more car-following models, these parameters are IDM specific
                 ParameterSet parameters = new ParameterSet();
-                desiredHeadwayModelFactory.getParameters().setAllIn(parameters);
-                desiredSpeedModelFactory.getParameters().setAllIn(parameters);
+                desiredHeadwayModelFactory.getParameters(gtuType).setAllIn(parameters);
+                desiredSpeedModelFactory.getParameters(gtuType).setAllIn(parameters);
                 parameters.setDefaultParameters(AbstractIdm.class);
                 parameters.setParameter(ParameterTypes.FSPEED, fSpeed.draw());
                 return parameters;
@@ -717,7 +717,7 @@ public class ModelParser
             return new ModelComponentSupplier<>()
             {
                 @Override
-                public Parameters getParameters() throws ParameterException
+                public Parameters getParameters(final GtuType gtuType) throws ParameterException
                 {
                     return new ParameterSet(); // IDM factory takes care of parameters for default model
                 }
@@ -752,7 +752,7 @@ public class ModelParser
             return new ModelComponentSupplier<>()
             {
                 @Override
-                public Parameters getParameters() throws ParameterException
+                public Parameters getParameters(final GtuType gtuType) throws ParameterException
                 {
                     return new ParameterSet(); // IDM factory takes care of parameters for default model
                 }
@@ -773,10 +773,10 @@ public class ModelParser
             {
 
                 @Override
-                public Parameters getParameters() throws ParameterException
+                public Parameters getParameters(final GtuType gtuType) throws ParameterException
                 {
                     ParameterSet parameters = new ParameterSet();
-                    wrapped.getParameters().setAllIn(parameters);
+                    wrapped.getParameters(gtuType).setAllIn(parameters);
                     parameters.setDefaultParameters(SocioDesiredSpeed.class);
                     return parameters;
                 }
@@ -812,7 +812,7 @@ public class ModelParser
         return new ModelComponentSupplier<>()
         {
             @Override
-            public Parameters getParameters() throws ParameterException
+            public Parameters getParameters(final GtuType gtuType) throws ParameterException
             {
                 ParameterSet parameters = new ParameterSet();
                 parameters.setDefaultParameters(clazz);
@@ -851,7 +851,8 @@ public class ModelParser
             Estimation estimation = perceived.getEstimation() == null ? Estimation.NONE : perceived.getEstimation().get(eval);
             Anticipation anticipation =
                     perceived.getAnticipation() == null ? Anticipation.NONE : perceived.getAnticipation().get(eval);
-            headwayGtuType = new AnticipationPerceivedGtuType(estimation, anticipation);
+            // TODO using Tr = 0 now, but this code needs an overhaul, might use flexible LmrsFactory
+            headwayGtuType = new AnticipationPerceivedGtuType(estimation, anticipation, () -> Duration.ZERO);
         }
         else
         {
@@ -980,7 +981,7 @@ public class ModelParser
         return new PerceptionFactory()
         {
             @Override
-            public Parameters getParameters() throws ParameterException
+            public Parameters getParameters(final GtuType gtuType) throws ParameterException
             {
                 ParameterSet parameters = new ParameterSet();
                 for (Class<?> clazz : componentClasses)

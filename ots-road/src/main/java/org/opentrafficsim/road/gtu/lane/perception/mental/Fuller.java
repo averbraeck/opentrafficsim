@@ -11,7 +11,6 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
@@ -47,10 +46,6 @@ public abstract class Fuller implements Mental
 
     /** Over-estimation parameter type. Negative values reflect under-estimation. */
     public static final ParameterTypeDouble OVER_EST = new ParameterTypeDouble("OVER_EST", "Over estimation factor.", 1.0);
-
-    /** Erroneous estimation factor on distance and speed difference. */
-    public static final ParameterTypeDouble EST_FACTOR = new ParameterTypeDouble("f_est",
-            "Erroneous estimation factor on distance and speed difference.", 1.0, NumericConstraint.POSITIVE);
 
     /** Behavioral adaptations depending on task saturation. */
     private final Set<BehavioralAdaptation> behavioralAdapatations;
@@ -96,19 +91,5 @@ public abstract class Fuller implements Mental
      * @return tasks
      */
     public abstract ImmutableSet<? extends Task> getTasks();
-
-    /**
-     * Behavioral adaptation by changing parameter values.
-     */
-    @FunctionalInterface
-    public interface BehavioralAdaptation
-    {
-        /**
-         * Adapt to task saturation by changing parameter values.
-         * @param parameters parameters
-         * @throws ParameterException if a parameter is missing or out of bounds
-         */
-        void adapt(Parameters parameters) throws ParameterException;
-    }
 
 }

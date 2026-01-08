@@ -8,6 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.DualBound;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.mental.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.SumFuller;
 
 /**

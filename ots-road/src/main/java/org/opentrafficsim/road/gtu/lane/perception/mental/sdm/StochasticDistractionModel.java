@@ -22,7 +22,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 import org.opentrafficsim.road.gtu.lane.perception.mental.SumFuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ConstantTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskConstant;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelFuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskConstant;
@@ -110,7 +110,7 @@ public class StochasticDistractionModel implements EventListener
                 }
                 if (gtu.getTacticalPlanner().getPerception().getMental() instanceof SumFuller sumFuller)
                 {
-                    Task task = new ConstantTask(distraction.getId(), distraction.getTaskDemand());
+                    Task task = new ArTaskConstant(distraction.getId(), distraction.getTaskDemand());
                     ((SumFuller<Task>) sumFuller).addTask(task);
                     this.tasks.put(task, gtuId, distraction.getId());
                 }

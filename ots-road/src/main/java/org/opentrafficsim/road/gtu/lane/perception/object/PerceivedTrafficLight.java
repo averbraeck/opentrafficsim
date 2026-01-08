@@ -56,7 +56,7 @@ public class PerceivedTrafficLight extends PerceivedLaneBasedObjectBase
      * Returns the traffic light color.
      * @return the traffic light color.
      */
-    public final TrafficLightColor getTrafficLightColor()
+    public TrafficLightColor getTrafficLightColor()
     {
         return this.trafficLight.getTrafficLightColor();
     }
@@ -65,13 +65,22 @@ public class PerceivedTrafficLight extends PerceivedLaneBasedObjectBase
      * Whether the perceiving GTU may turn on red.
      * @return whether the perceiving GTU may turn on red.
      */
-    public final boolean canTurnOnRed()
+    public boolean canTurnOnRed()
     {
         return this.turnOnRed;
     }
 
+    /**
+     * Returns the traffic light for sub classes.
+     * @return traffic light
+     */
+    protected TrafficLight getTrafficLight()
+    {
+        return this.trafficLight;
+    }
+
     @Override
-    public final String toString()
+    public String toString()
     {
         return "HeadwayTrafficLight [trafficLight=" + this.trafficLight + "]";
     }

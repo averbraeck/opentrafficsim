@@ -14,8 +14,20 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 public abstract class AbstractTask implements Task
 {
 
+    /** Id. */
+    private final String id;
+
     /** Task demand. */
     private double taskDemand;
+
+    /**
+     * Constructor.
+     * @param id id
+     */
+    public AbstractTask(final String id)
+    {
+        this.id = id;
+    }
 
     @Override
     public double getTaskDemand(final LanePerception perception) throws ParameterException
@@ -36,6 +48,12 @@ public abstract class AbstractTask implements Task
     public double getTaskDemand()
     {
         return this.taskDemand;
+    }
+
+    @Override
+    public String getId()
+    {
+        return this.id;
     }
 
 }

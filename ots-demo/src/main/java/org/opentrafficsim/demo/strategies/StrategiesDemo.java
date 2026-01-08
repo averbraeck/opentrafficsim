@@ -629,7 +629,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
 
         @Override
-        public Parameters getParameters() throws ParameterException
+        public Parameters getParameters(final GtuType gtuType) throws ParameterException
         {
             ParameterSet parameters = new ParameterSet();
             parameters.setDefaultParameters(AbstractIdm.class);
@@ -666,7 +666,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
 
         @Override
-        public Parameters getParameters() throws ParameterException
+        public Parameters getParameters(final GtuType gtuType) throws ParameterException
         {
             return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKAHEAD)
                     .setDefaultParameter(ParameterTypes.LOOKBACKOLD).setDefaultParameter(ParameterTypes.PERCEPTION)

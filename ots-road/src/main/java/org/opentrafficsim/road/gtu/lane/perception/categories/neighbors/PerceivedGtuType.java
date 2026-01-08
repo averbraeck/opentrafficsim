@@ -1,11 +1,12 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
+import java.util.function.Supplier;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
@@ -56,14 +57,6 @@ public interface PerceivedGtuType
 
     /**
      * Class for neighbors perceived with estimation and anticipation. Adjacent neighbors are perceived exactly.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     class AnticipationPerceivedGtuType implements PerceivedGtuType
     {
@@ -72,6 +65,9 @@ public interface PerceivedGtuType
 
         /** Anticipation. */
         private final Anticipation anticipation;
+
+        /** Perception delay provider. */
+        private final Supplier<Duration> perceptionDelay;
 
         /** Last update time. */
         private Duration updateTime = null;
@@ -89,11 +85,14 @@ public interface PerceivedGtuType
          * Constructor.
          * @param estimation estimation
          * @param anticipation anticipation
+         * @param perceptionDelay perception delay provider
          */
-        public AnticipationPerceivedGtuType(final Estimation estimation, final Anticipation anticipation)
+        public AnticipationPerceivedGtuType(final Estimation estimation, final Anticipation anticipation,
+                final Supplier<Duration> perceptionDelay)
         {
             this.estimation = estimation;
             this.anticipation = anticipation;
+            this.perceptionDelay = perceptionDelay;
         }
 
         @Override
@@ -105,13 +104,10 @@ public interface PerceivedGtuType
             if (this.updateTime == null || now.si > this.updateTime.si)
             {
                 this.updateTime = now;
-                this.tr = perceivingGtu.getParameters().getParameter(ParameterTypes.TR);
-                Duration whenTemp = now.minus(this.tr);
-                if (this.when == null || whenTemp.si > this.when.si)
-                {
-                    // never go backwards in time if the reaction time increases
-                    this.when = whenTemp;
-                }
+                this.tr = this.when == null ? this.perceptionDelay.get()
+                        // never go backwards in time even if Tr increases more than time has passed since previous step
+                        : Duration.min(this.perceptionDelay.get(), now.minus(this.when));
+                this.when = now.minus(this.tr);
                 this.traveledDistance = perceivingGtu.equals(reference)
                         ? perceivingGtu.getOdometer().minus(perceivingGtu.getOdometer(this.when)) : Length.ZERO;
             }

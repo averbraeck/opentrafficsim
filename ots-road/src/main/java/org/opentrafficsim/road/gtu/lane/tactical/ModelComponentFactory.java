@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuType;
 
 /**
  * Interface for factories of model components, such as strategical planners, tactical planners and car-following models. This
@@ -18,6 +19,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 @FunctionalInterface
 public interface ModelComponentFactory
 {
+
     /**
      * Returns parameters for the given component. These parameters should contain, and possibly overwrite, parameters from
      * sub-components. A parameter factory at the highest level (strategical planner) may overwrite any parameter. This
@@ -48,9 +50,14 @@ public interface ModelComponentFactory
      * The same holds for static utilities that are used. Parameters should be defined at the utility class, and parameters of
      * used utilities should be included.<br>
      * <br>
+     * Because high-level model components might determine what low-level components to use depending on GTU type, and hence
+     * which parameters might be required, the GTU type is given as input. Many components will however not need it to return
+     * the required parameters.<br>
+     * <br>
+     * @param gtuType GTU type
      * @return parameters for the given component
      * @throws ParameterException on parameter exception
      */
-    Parameters getParameters() throws ParameterException;
+    Parameters getParameters(GtuType gtuType) throws ParameterException;
 
 }

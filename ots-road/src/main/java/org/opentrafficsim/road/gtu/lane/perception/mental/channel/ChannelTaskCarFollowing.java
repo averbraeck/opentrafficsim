@@ -13,8 +13,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.CarFollowingTaskExp;
+import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskCarFollowingExp;
 
 /**
  * Task demand for car-following. This is defined as {@code exp(-T/h)} where {@code T} is the time headway to the leader and
@@ -25,13 +25,13 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.ar.CarFollowingTaskExp
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ChannelTaskCarFollowing extends AbstractTaskId implements ChannelTask
+public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
 {
 
     /** Car-following task parameter. */
-    public static final ParameterTypeDuration HEXP = CarFollowingTaskExp.HEXP;
+    public static final ParameterTypeDuration HEXP = ArTaskCarFollowingExp.HEXP;
 
-    /** Singleton implementation. */
+    /** Singleton instance. */
     private static final ChannelTaskCarFollowing DEFAULT = new ChannelTaskCarFollowing();
 
     /** Default set that is returned by the supplier. */

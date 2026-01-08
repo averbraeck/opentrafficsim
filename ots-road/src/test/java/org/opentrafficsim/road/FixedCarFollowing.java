@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.FixedCarFollowing.FixedCarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
@@ -63,7 +64,7 @@ public class FixedCarFollowing implements CarFollowingModelFactory<FixedCarFollo
     }
 
     @Override
-    public Parameters getParameters() throws ParameterException
+    public Parameters getParameters(final GtuType gtuType) throws ParameterException
     {
         return new ParameterSet();
     }

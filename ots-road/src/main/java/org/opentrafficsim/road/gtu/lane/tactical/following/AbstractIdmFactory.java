@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuType;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -48,7 +49,7 @@ public class AbstractIdmFactory<T extends AbstractIdm> implements CarFollowingMo
     }
 
     @Override
-    public Parameters getParameters() throws ParameterException
+    public Parameters getParameters(final GtuType gtuType) throws ParameterException
     {
         ParameterSet parameters = new ParameterSet();
         parameters.setDefaultParameters(AbstractIdm.class);

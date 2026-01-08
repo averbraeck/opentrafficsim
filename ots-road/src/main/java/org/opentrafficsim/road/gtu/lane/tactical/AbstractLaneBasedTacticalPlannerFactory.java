@@ -85,12 +85,13 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
     /**
      * Returns the parameters for the car-following model using the factory. This method should be used in the
      * {@code getParameters()} method of implementing sub-classes.
+     * @param gtuType GTU type
      * @return parameters for the car-following model using the factory
      * @throws ParameterException on illegal parameter value
      */
-    protected final Parameters getCarFollowingParameters() throws ParameterException
+    protected final Parameters getCarFollowingParameters(final GtuType gtuType) throws ParameterException
     {
-        return this.carFollowingModelFactory.getParameters();
+        return this.carFollowingModelFactory.getParameters(gtuType);
     }
 
     /**

@@ -46,6 +46,7 @@ public class ChannelTaskLocalDistraction extends AbstractTask implements Channel
      */
     public ChannelTaskLocalDistraction(final Object channel, final LateralDirectionality side)
     {
+        super("local-distraction");
         this.channel = channel;
         this.side = side;
     }

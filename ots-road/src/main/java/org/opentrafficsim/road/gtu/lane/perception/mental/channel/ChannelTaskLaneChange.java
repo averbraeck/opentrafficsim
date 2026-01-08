@@ -42,6 +42,7 @@ public final class ChannelTaskLaneChange extends AbstractTask implements Channel
      */
     private ChannelTaskLaneChange(final boolean left)
     {
+        super("lane-changing");
         this.left = left;
     }
 

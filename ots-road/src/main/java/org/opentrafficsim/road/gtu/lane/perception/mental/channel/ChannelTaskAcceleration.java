@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Underly
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
+import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 
 /**
  * Task demand for acceleration from stand-still or low speeds. This mostly functions to increase attention when leaving a
@@ -31,7 +31,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ChannelTaskAcceleration extends AbstractTaskId implements ChannelTask, Stateless<ChannelTaskAcceleration>
+public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask, Stateless<ChannelTaskAcceleration>
 {
 
     /** Distance discount range. */

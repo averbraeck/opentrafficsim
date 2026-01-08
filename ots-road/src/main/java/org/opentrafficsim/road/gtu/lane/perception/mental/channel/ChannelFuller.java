@@ -21,6 +21,8 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.DualBound;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.mental.BehavioralAdaptation;
+import org.opentrafficsim.road.gtu.lane.perception.mental.FactorEstimation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 
 /**
@@ -43,6 +45,12 @@ public class ChannelFuller extends Fuller implements ChannelMental
 
     /** Task saturation. */
     public static final ParameterTypeDouble TS = Fuller.TS;
+
+    /** Over-estimation parameter type. Negative values reflect under-estimation. */
+    public static final ParameterTypeDouble OVER_EST = Fuller.OVER_EST;
+
+    /** Erroneous estimation factor on distance and speed difference. */
+    public static final ParameterTypeDouble EST_FACTOR = FactorEstimation.EST_FACTOR;
 
     /** Level of attention, which is the maximum in the steady state of the Attention Matrix. */
     public static final ParameterTypeDouble ATT =
@@ -162,7 +170,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
 
         // Results
         double ts = sumTaskDemand / tc;
-        parameters.setParameter(EST_FACTOR, Math.pow(Math.max(ts, 1.0), parameters.getParameter(Fuller.OVER_EST)));
+        parameters.setParameter(EST_FACTOR, Math.pow(Math.max(ts, 1.0), parameters.getParameter(OVER_EST)));
         parameters.setParameter(ATT, maxAttention);
         return sumTaskDemand;
 

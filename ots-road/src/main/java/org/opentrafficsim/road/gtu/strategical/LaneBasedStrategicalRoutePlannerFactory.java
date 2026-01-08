@@ -108,7 +108,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
         }
         try
         {
-            this.peekedParameters = this.tacticalPlannerFactory.getParameters();
+            this.peekedParameters = this.tacticalPlannerFactory.getParameters(gtuType);
             this.parameterFactory.setValues(this.peekedParameters, gtuType);
         }
         catch (ParameterException exception)

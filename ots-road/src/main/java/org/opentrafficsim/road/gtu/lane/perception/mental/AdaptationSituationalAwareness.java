@@ -10,7 +10,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 
 /**
  * Behavioral adaptation which sets parameters for situational awareness and reaction time.
@@ -79,7 +78,8 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
     {
         // situational awareness
         double taskSaturation = parameters.getParameter(Fuller.TS);
-        double tsCrit = parameters.getParameter(SumFuller.TS_CRIT);
+        Double tsCrit = parameters.getParameterOrNull(SumFuller.TS_CRIT);
+        tsCrit = tsCrit == null ? 1.0 : tsCrit;
         double tsMax = parameters.getParameter(SumFuller.TS_MAX);
         double saMin = parameters.getParameter(SA_MIN);
         double saMax = parameters.getParameter(SA_MAX);
@@ -88,7 +88,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
         parameters.setParameter(SA, sa);
 
         // estimation factor
-        parameters.setParameter(Fuller.EST_FACTOR, 1.0 + parameters.getParameter(Fuller.OVER_EST) * (saMax - sa));
+        parameters.setParameter(FactorEstimation.EST_FACTOR, 1.0 + parameters.getParameter(Fuller.OVER_EST) * (saMax - sa));
 
         // reaction time
         parameters.setParameter(ParameterTypes.TR, parameters.getParameter(TR_MAX).times(saMax - sa));

@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.mental.channel;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
+import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 
 /**
  * Constant task demand.
@@ -12,7 +12,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ChannelTaskConstant extends AbstractTaskId implements ChannelTask
+public class ChannelTaskConstant extends AbstractTask implements ChannelTask
 {
 
     /** Channel. */

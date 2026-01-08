@@ -90,6 +90,7 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
      */
     private ChannelTaskConflict(final SortedSet<UnderlyingDistance<Conflict>> conflicts)
     {
+        super("conflicts");
         this.conflicts = conflicts;
     }
 

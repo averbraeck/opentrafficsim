@@ -59,6 +59,7 @@ public class ChannelTaskSignal extends AbstractTask implements ChannelTask
      */
     public ChannelTaskSignal(final Object channel)
     {
+        super("signal");
         this.channel = channel;
         if (channel.equals(FRONT))
         {

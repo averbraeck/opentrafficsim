@@ -1,15 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
@@ -34,7 +29,7 @@ public interface Estimation
                 throws ParameterException
         {
             return new NeighborTriplet(getDelayedDistance(perceivingGtu, reference, perceivedGtu, distance, downstream, when),
-                    getEgoSpeed(perceivingGtu, reference)
+                    getDelayedReferenceSpeed(perceivingGtu, reference, when)
                             .plus(getDelayedSpeedDifference(perceivingGtu, reference, perceivedGtu, when)),
                     perceivedGtu.getAcceleration(when));
         }
@@ -43,16 +38,6 @@ public interface Estimation
         public String toString()
         {
             return "NONE";
-        }
-    };
-
-    /** Underestimation based on situational awareness. */
-    Estimation FACTOR_ESTIMATION = new FactorEstimation()
-    {
-        @Override
-        public String toString()
-        {
-            return "FACTOR_ESTIMATION";
         }
     };
 
@@ -71,9 +56,9 @@ public interface Estimation
             boolean downstream, Duration when) throws ParameterException;
 
     /**
-     * Returns a delayed distance. For a static reference this is the current distance minus the odometer difference of the
-     * perceived GTU over the delay. In case the reference is the perceiving GTU, the odometer difference over the delay of the
-     * perceiving GTU is added.
+     * Returns a delayed distance. If the reference is not the perceiving GTU (e.g. a static object) this is the current
+     * distance minus the odometer difference of the perceived GTU over the delay. In case the reference is the perceiving GTU,
+     * the odometer difference over the delay of the perceiving GTU is added.
      * @param perceivingGtu perceiving GTU
      * @param reference reference object, e.g. the perceiving GTU, or a Conflict
      * @param perceivedGtu perceived GTU
@@ -98,32 +83,26 @@ public interface Estimation
     }
 
     /**
-     * Returns the ego speed. If the perceiving GTU is the reference, it is the speed of the perceiving GTU. Otherwise zero
-     * speed is returned, assuming a static reference.
+     * Returns the reference speed. If the perceiving GTU is the reference, it is the speed of the perceiving GTU. Otherwise
+     * zero speed is returned, assuming a static reference.
      * @param perceivingGtu perceiving GTU
      * @param reference reference object, e.g. the perceiving GTU, or a Conflict
+     * @param when moment of perception, reaction time included
      * @return ego speed
      */
-    default Speed getEgoSpeed(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference)
+    default Speed getDelayedReferenceSpeed(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
+            final Duration when)
     {
         if (!perceivingGtu.equals(reference))
         {
             return Speed.ZERO;
         }
-        try
-        {
-            return perceivingGtu.getTacticalPlanner().getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-        }
-        catch (OperationalPlanException exception)
-        {
-            throw new OtsRuntimeException("Speed difference is perceived using EgoPerception for the ego speed, but it's missing.",
-                    exception);
-        }
+        return perceivingGtu.getSpeed(when);
     }
 
     /**
-     * Returns a delayed speed difference (other minus ego). If the perceiving GTU is the reference, this is the speed
-     * difference between the two GTUs. Otherwise it is the speed of the perceived GTU (i.e. speed difference to a static
+     * Returns a delayed speed difference (other minus reference speed). If the perceiving GTU is the reference, this is the
+     * speed difference between the two GTUs. Otherwise it is the speed of the perceived GTU (i.e. speed difference to a static
      * object).
      * @param perceivingGtu perceiving GTU
      * @param reference reference object, e.g. the perceiving GTU, or a Conflict
@@ -139,34 +118,6 @@ public interface Estimation
             return perceivedGtu.getSpeed(when).minus(perceivingGtu.getSpeed(when));
         }
         return perceivedGtu.getSpeed(when);
-    }
-
-    /**
-     * Estimation based on a factor.
-     */
-    abstract class FactorEstimation implements Estimation
-    {
-        /**
-         * Constructor.
-         */
-        public FactorEstimation()
-        {
-            //
-        }
-
-        @Override
-        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
-                final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Duration when)
-                throws ParameterException
-        {
-            double factor = perceivingGtu.getParameters().getParameter(Fuller.EST_FACTOR);
-            Length headway =
-                    getDelayedDistance(perceivingGtu, reference, perceivedGtu, distance, downstream, when).times(factor);
-            Speed speed = getEgoSpeed(perceivingGtu, reference)
-                    .plus(getDelayedSpeedDifference(perceivingGtu, reference, perceivedGtu, when).times(factor));
-            Acceleration acceleration = perceivedGtu.getAcceleration(when);
-            return new NeighborTriplet(headway, speed, acceleration);
-        }
     }
 
 }

@@ -10,6 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerFactory;
@@ -94,15 +95,15 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs>
     }
 
     @Override
-    public final Parameters getParameters() throws ParameterException
+    public final Parameters getParameters(final GtuType gtuType) throws ParameterException
     {
         ParameterSet parameters = new ParameterSet();
         parameters.setDefaultParameters(LmrsUtil.class);
         parameters.setDefaultParameters(LmrsParameters.class);
         parameters.setDefaultParameters(ConflictUtil.class);
         parameters.setDefaultParameters(TrafficLightUtil.class);
-        getCarFollowingParameters().setAllIn(parameters);
-        getPerceptionFactory().getParameters().setAllIn(parameters);
+        getCarFollowingParameters(gtuType).setAllIn(parameters);
+        getPerceptionFactory().getParameters(gtuType).setAllIn(parameters);
         parameters.setDefaultParameter(ParameterTypes.VCONG);
         parameters.setDefaultParameter(ParameterTypes.T0);
         parameters.setDefaultParameter(ParameterTypes.LCDUR);
@@ -123,7 +124,7 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs>
     @Override
     public final String toString()
     {
-        return "LMRSFactory [car-following=" + getCarFollowingModelFactoryString() + "]";
+        return "LmrsFactory [car-following=" + getCarFollowingModelFactoryString() + "]";
     }
 
     /**

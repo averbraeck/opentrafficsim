@@ -481,7 +481,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                     new LaneBasedTacticalPlannerFactory<LaneBasedTacticalPlanner>()
                     {
                         @Override
-                        public Parameters getParameters() throws ParameterException
+                        public Parameters getParameters(final GtuType gtuType) throws ParameterException
                         {
                             ParameterSet set = new ParameterSet();
                             set.setDefaultParameter(ParameterTypes.PERCEPTION);

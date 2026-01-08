@@ -13,8 +13,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.CarFollowingTaskExp;
+import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskCarFollowingExp;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 /**
@@ -26,11 +26,11 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ChannelTaskTrafficLight extends AbstractTaskId implements ChannelTask, Stateless<ChannelTaskTrafficLight>
+public class ChannelTaskTrafficLight extends AbstractTask implements ChannelTask, Stateless<ChannelTaskTrafficLight>
 {
 
     /** Car-following task parameter. */
-    public static final ParameterTypeDuration HEXP = CarFollowingTaskExp.HEXP;
+    public static final ParameterTypeDuration HEXP = ArTaskCarFollowingExp.HEXP;
 
     /** Singleton instance. */
     public static final ChannelTaskTrafficLight SINGLETON = new ChannelTaskTrafficLight();

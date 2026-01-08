@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
-import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
+import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 
 /**
  * Has id, task demand and anticipation reliance as internal variables.
@@ -12,7 +12,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTaskId;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public abstract class AbstractArTask extends AbstractTaskId implements ArTask
+public abstract class AbstractArTask extends AbstractTask implements ArTask
 {
 
     /** Anticipation reliance. */

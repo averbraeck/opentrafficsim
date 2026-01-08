@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
@@ -59,20 +60,20 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTraffi
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType.AnticipationPerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
+import org.opentrafficsim.road.gtu.lane.perception.mental.BehavioralAdaptation;
+import org.opentrafficsim.road.gtu.lane.perception.mental.FactorEstimation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArFuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTask;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.CarFollowingTaskExp;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.LaneChangeTaskD;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.TaskCarFollowing;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.TaskRoadSideDistraction;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskCarFollowingExp;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskLaneChangingD;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskCarFollowing;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskRoadSideDistraction;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdmFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -264,7 +265,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             PerceptionFactory perceptionFactory = perception ? new PerceptionFactory()
             {
                 @Override
-                public Parameters getParameters() throws ParameterException
+                public Parameters getParameters(final GtuType gtuType) throws ParameterException
                 {
                     /*
                      * We need to include (default) values for 1) the Fuller task demand model of task demand, capacity and
@@ -277,7 +278,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                     perceptionParams.setDefaultParameters(Fuller.class);
                     perceptionParams.setDefaultParameters(ArFuller.class);
                     perceptionParams.setDefaultParameters(AdaptationSituationalAwareness.class);
-                    perceptionParams.setDefaultParameter(CarFollowingTaskExp.HEXP);
+                    perceptionParams.setDefaultParameter(ArTaskCarFollowingExp.HEXP);
                     perceptionParams.setDefaultParameter(Fuller.OVER_EST);
                     perceptionParams.setDefaultParameter(AdaptationHeadway.BETA_T);
                     perceptionParams.setDefaultParameter(AdaptationSpeed.BETA_V0);
@@ -289,9 +290,9 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                 {
                     // Tasks that determine task demand
                     Set<ArTask> tasks = new LinkedHashSet<>();
-                    tasks.add(new TaskCarFollowing());
-                    tasks.add(new LaneChangeTaskD());
-                    tasks.add(new TaskRoadSideDistraction()); // Level of distraction is defined in Distraction network object
+                    tasks.add(ArTaskCarFollowing.SINGLETON);
+                    tasks.add(new ArTaskLaneChangingD());
+                    tasks.add(new ArTaskRoadSideDistraction()); // Level of distraction is defined in Distraction network object
                     // Behavioral adaptations (AdaptationSituationalAwareness only sets situational awareness and reaction time)
                     Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
                     behavioralAdapatations.add(new AdaptationSituationalAwareness());
@@ -302,7 +303,11 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                             new CategoricalLanePerception(gtu, new ArFuller(tasks, behavioralAdapatations, "lane-changing"));
                     // Imperfect estimation of distance and speed difference, with reaction time, and compensatory anticipation
                     PerceivedGtuType perceptionGtuType =
-                            new AnticipationPerceivedGtuType(Estimation.FACTOR_ESTIMATION, Anticipation.CONSTANT_SPEED);
+                            new AnticipationPerceivedGtuType(FactorEstimation.SINGLETON, Anticipation.CONSTANT_SPEED, () ->
+                            {
+                                return Try.assign(() -> gtu.getParameters().getParameter(ParameterTypes.TR),
+                                        "Unable to get reaction time parameter");
+                            });
                     // Standard perception categories, using imperfect perception regarding neighbors
                     perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
                     perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));

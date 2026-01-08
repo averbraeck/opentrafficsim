@@ -97,6 +97,7 @@ public final class LmrsUtil implements LmrsParameters
             final LmrsData lmrsData, final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,
             final Iterable<VoluntaryIncentive> voluntaryIncentives) throws GtuException, NetworkException, ParameterException
     {
+
         // obtain objects to get info
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         SpeedLimitProspect slp = infra.getSpeedLimitProspect(RelativeLane.CURRENT);
@@ -368,31 +369,33 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // Total desire
-        double thetaLeft = 0;
+        double thetaA = parameters.getParameter(LAMBDA_V);
+        double leftThetaV = 0;
         double dLeftMandatoryAbs = Math.abs(dLeftMandatory);
         double dRightMandatoryAbs = Math.abs(dRightMandatory);
         if (dLeftMandatoryAbs <= dSync || dLeftMandatory * dLeftVoluntary >= 0)
         {
             // low mandatory desire, or same sign
-            thetaLeft = 1;
+            leftThetaV = 1;
         }
         else if (dSync < dLeftMandatoryAbs && dLeftMandatoryAbs < dCoop && dLeftMandatory * dLeftVoluntary < 0)
         {
             // linear from 1 at dSync to 0 at dCoop
-            thetaLeft = (dCoop - dLeftMandatoryAbs) / (dCoop - dSync);
+            leftThetaV = (dCoop - dLeftMandatoryAbs) / (dCoop - dSync);
         }
-        double thetaRight = 0;
+        double rightThetaV = 0;
         if (dRightMandatoryAbs <= dSync || dRightMandatory * dRightVoluntary >= 0)
         {
             // low mandatory desire, or same sign
-            thetaRight = 1;
+            rightThetaV = 1;
         }
         else if (dSync < dRightMandatoryAbs && dRightMandatoryAbs < dCoop && dRightMandatory * dRightVoluntary < 0)
         {
             // linear from 1 at dSync to 0 at dCoop
-            thetaRight = (dCoop - dRightMandatoryAbs) / (dCoop - dSync);
+            rightThetaV = (dCoop - dRightMandatoryAbs) / (dCoop - dSync);
         }
-        return new Desire(dLeftMandatory + thetaLeft * dLeftVoluntary, dRightMandatory + thetaRight * dRightVoluntary);
+        return new Desire(dLeftMandatory + thetaA * leftThetaV * dLeftVoluntary,
+                dRightMandatory + thetaA * rightThetaV * dRightVoluntary);
 
     }
 

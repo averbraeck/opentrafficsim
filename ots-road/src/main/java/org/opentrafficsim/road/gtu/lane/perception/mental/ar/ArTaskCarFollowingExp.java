@@ -6,6 +6,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -22,17 +23,20 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CarFollowingTaskExp extends AbstractArTask
+public final class ArTaskCarFollowingExp extends AbstractArTask implements Stateless<ArTaskCarFollowingExp>
 {
 
     /** Car-following task parameter. */
     public static final ParameterTypeDuration HEXP = new ParameterTypeDuration("h_exp",
             "Exponential decay of car-following task by headway.", Duration.ofSI(3.83), NumericConstraint.POSITIVE);
 
+    /** Singleton instance. */
+    public static final ArTaskCarFollowingExp SINGLETON = new ArTaskCarFollowingExp();
+
     /**
      * Constructor.
      */
-    public CarFollowingTaskExp()
+    private ArTaskCarFollowingExp()
     {
         super("car-following");
     }
@@ -47,6 +51,12 @@ public class CarFollowingTaskExp extends AbstractArTask
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
         Duration headway = leaders.collect(new TaskHeadwayCollector(gtu.getSpeed()));
         return headway == null ? 0.0 : Math.exp(-headway.si / parameters.getParameter(HEXP).si);
+    }
+
+    @Override
+    public ArTaskCarFollowingExp get()
+    {
+        return SINGLETON;
     }
 
 }

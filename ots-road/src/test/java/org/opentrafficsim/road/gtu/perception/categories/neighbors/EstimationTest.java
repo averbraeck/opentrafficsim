@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborTriplet;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
+import org.opentrafficsim.road.gtu.lane.perception.mental.FactorEstimation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
@@ -45,10 +46,10 @@ public final class EstimationTest
     @Test
     public void testEstimation() throws ParameterException, OperationalPlanException
     {
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.ofSI(59.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.ofSI(58.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.5, Duration.ofSI(59.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.8, Duration.ofSI(58.0));
+        singleEstimation(FactorEstimation.SINGLETON, 0.9, Duration.ofSI(59.0));
+        singleEstimation(FactorEstimation.SINGLETON, 0.9, Duration.ofSI(58.0));
+        singleEstimation(FactorEstimation.SINGLETON, 0.5, Duration.ofSI(59.0));
+        singleEstimation(FactorEstimation.SINGLETON, 0.8, Duration.ofSI(58.0));
         // Mimic NONE estimation by using 1.0 for the situational awareness (all equations multiplied by 1)
         singleEstimation(Estimation.NONE, 1.0, Duration.ofSI(59.0));
         singleEstimation(Estimation.NONE, 1.0, Duration.ofSI(58.0));
@@ -78,7 +79,7 @@ public final class EstimationTest
         LaneBasedGtu perceivingGtu = Mockito.mock(LaneBasedGtu.class, Mockito.RETURNS_DEEP_STUBS);
         ParameterSet perceivingParameters = new ParameterSet();
         perceivingParameters.setParameter(Fuller.OVER_EST, 1.0);
-        perceivingParameters.setParameter(Fuller.EST_FACTOR, factor);
+        perceivingParameters.setParameter(FactorEstimation.EST_FACTOR, factor);
         perceivingParameters.setParameter(AdaptationSituationalAwareness.SA_MAX, 1.0);
         perceivingParameters.setParameter(AdaptationSituationalAwareness.SA, sa);
         Mockito.when(perceivingGtu.getParameters()).thenReturn(perceivingParameters);

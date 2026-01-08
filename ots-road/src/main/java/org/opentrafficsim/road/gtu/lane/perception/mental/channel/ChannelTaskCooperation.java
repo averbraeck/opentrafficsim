@@ -48,6 +48,7 @@ public final class ChannelTaskCooperation extends AbstractTask implements Channe
      */
     private ChannelTaskCooperation(final boolean left)
     {
+        super("cooperation");
         this.left = left;
     }
 

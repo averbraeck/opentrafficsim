@@ -40,6 +40,7 @@ public class ChannelTaskScan extends AbstractTask implements ChannelTask
      */
     public ChannelTaskScan(final Object channel)
     {
+        super("scan");
         this.channel = channel;
     }
 
