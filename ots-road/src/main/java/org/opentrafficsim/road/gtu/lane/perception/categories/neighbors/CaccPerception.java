@@ -1,18 +1,19 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
-import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.control.Cacc;
-import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
+import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
@@ -66,54 +67,28 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
      */
     private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeLeaders()
     {
+        final Set<Byte> firstIfNotEmpty = new LinkedHashSet<>(); // hack to let lambda expression govern a "boolean" value
+        firstIfNotEmpty.add((byte) 1);
         try
         {
-            Iterator<Entry<LaneBasedGtu>> leaders = getPerception().getLaneStructure().getDownstreamGtus(RelativeLane.CURRENT,
-                    RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR).iterator();
-            return new AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>(getGtu())
-            {
-                @Override
-                protected Iterator<UnderlyingDistance<LaneBasedGtu>> primaryIterator()
-                {
-                    return new Iterator<>()
+            Iterable<Entry<LaneBasedGtu>> leaders = new FilteredIterable<Entry<LaneBasedGtu>>(
+                    getPerception().getLaneStructure().getDownstreamGtus(RelativeLane.CURRENT, RelativePosition.FRONT,
+                            RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR),
+                    (t) ->
                     {
-                        /** Next entry which is the first vehicle, or a further CACC vehicle (defined by tactical planner). */
-                        private UnderlyingDistance<LaneBasedGtu> next;
-
-                        /** To include the first vehicle always. */
-                        private boolean first = true;
-
-                        @Override
-                        public boolean hasNext()
+                        if (!firstIfNotEmpty.isEmpty() || t.object().getTacticalPlanner() instanceof Cacc)
                         {
-                            while (leaders.hasNext() && this.next == null)
-                            {
-                                Entry<LaneBasedGtu> entry = leaders.next();
-                                if (this.first || entry.object().getTacticalPlanner() instanceof Cacc)
-                                {
-                                    this.next = new UnderlyingDistance<>(entry.object(), entry.distance());
-                                }
-                                this.first = false;
-                            }
-                            return this.next != null;
+                            firstIfNotEmpty.clear(); // if not empty -> first leader, so include always
+                            return true;
                         }
-
-                        @Override
-                        public UnderlyingDistance<LaneBasedGtu> next()
-                        {
-                            hasNext();
-                            return this.next;
-                        }
-                    };
-                }
-
-                @Override
-                protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
-                        throws GtuException, ParameterException
-                {
-                    return CaccPerception.this.sensors.createPerceivedGtu(getObject(), getObject(), object, distance, true);
-                }
-            };
+                        return false;
+                    });
+            return new PerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>(getGtu(), leaders, (object, distance) ->
+            {
+                return Try.assign(
+                        () -> CaccPerception.this.sensors.createPerceivedGtu(getGtu(), getGtu(), object, distance, true),
+                        "ParameterException while creating PerceivedGtu");
+            });
         }
         catch (ParameterException exception)
         {

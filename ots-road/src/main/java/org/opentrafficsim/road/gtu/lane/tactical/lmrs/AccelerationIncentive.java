@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.function.Predicate;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -19,6 +17,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
+ * Interface for acceleration incentives.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -27,6 +26,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@FunctionalInterface
 public interface AccelerationIncentive
 {
 
@@ -59,22 +59,18 @@ public interface AccelerationIncentive
     default <T extends PerceivedLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
     {
         Route route = gtu.getStrategicalPlanner().getRoute();
-        return new FilteredIterable<>(iterable, new Predicate<T>()
+        return new FilteredIterable<>(iterable, (t) ->
         {
-            @Override
-            public boolean test(final T t)
+            if (route == null)
             {
-                if (route == null)
-                {
-                    return true; // when there is no route, we are always on it...
-                }
-                Link link = t.getLane().getLink();
-                if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
-                {
-                    return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;
-                }
-                return false;
+                return true; // when there is no route, we are always on it...
             }
+            Link link = t.getLane().getLink();
+            if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
+            {
+                return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;
+            }
+            return false;
         });
     }
 
