@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating.socialPressure;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -73,7 +71,7 @@ public interface Tailgating
                 PerceivedGtu leader = leaders.first();
                 Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
-                parameters.setParameter(RHO, rho);
+                parameters.setClaimedParameter(RHO, rho, this);
             }
             catch (ParameterException exception)
             {
@@ -112,11 +110,11 @@ public interface Tailgating
                 PerceivedGtu leader = leaders.first();
                 Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
-                parameters.setParameter(RHO, rho);
+                parameters.setClaimedParameter(RHO, rho, this);
                 double tNew = rho * tMin.si + (1.0 - rho) * tMax.si;
                 if (tNew < t.si)
                 {
-                    parameters.setParameter(ParameterTypes.T, Duration.ofSI(tNew));
+                    parameters.setClaimedParameter(ParameterTypes.T, Duration.ofSI(tNew), LmrsUtil.T_KEY);
                 }
             }
             catch (ParameterException exception)

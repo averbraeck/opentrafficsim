@@ -38,7 +38,7 @@ public final class AdaptationLaneChangeDesire extends FactorAdaptation implement
     @Override
     public void adapt(final Parameters parameters) throws ParameterException
     {
-        parameters.setParameter(LmrsParameters.LAMBDA_V, 1.0 / getFactor(parameters, BETA_D));
+        parameters.setClaimedParameter(LmrsParameters.LAMBDA_V, 1.0 / getFactor(parameters, BETA_D), this);
     }
 
     @Override

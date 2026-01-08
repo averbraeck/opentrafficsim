@@ -170,8 +170,8 @@ public class ChannelFuller extends Fuller implements ChannelMental
 
         // Results
         double ts = sumTaskDemand / tc;
-        parameters.setParameter(EST_FACTOR, Math.pow(Math.max(ts, 1.0), parameters.getParameter(OVER_EST)));
-        parameters.setParameter(ATT, maxAttention);
+        parameters.setClaimedParameter(EST_FACTOR, Math.pow(Math.max(ts, 1.0), parameters.getParameter(OVER_EST)), this);
+        parameters.setClaimedParameter(ATT, maxAttention, this);
         return sumTaskDemand;
 
         // super sets task saturation

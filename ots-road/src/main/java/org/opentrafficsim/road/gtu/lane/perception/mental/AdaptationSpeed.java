@@ -48,7 +48,7 @@ public class AdaptationSpeed implements BehavioralAdaptation
         double eps = parameters.getParameter(Fuller.TS) - (tsCrit == null ? 1.0 : tsCrit);
         eps = eps < 0.0 ? 0.0 : (eps > 1.0 ? 1.0 : eps);
         double factor = 1.0 - parameters.getParameter(BETA_V0) * eps;
-        parameters.setParameter(ParameterTypes.FSPEED, this.fSpeed0 * factor);
+        parameters.setClaimedParameter(ParameterTypes.FSPEED, this.fSpeed0 * factor, this);
     }
 
 }

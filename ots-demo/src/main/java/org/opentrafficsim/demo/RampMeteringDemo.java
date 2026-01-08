@@ -611,8 +611,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
                     getMandatoryIncentives(), getVoluntaryIncentives(), this.dummyMap);
 
             // other vehicles respond to these 'interpreted' levels of lane change desire
-            getGtu().getParameters().setParameter(LmrsParameters.DLEFT, desire.left());
-            getGtu().getParameters().setParameter(LmrsParameters.DRIGHT, desire.right());
+            getGtu().getParameters().setClaimedParameter(LmrsParameters.DLEFT, desire.left(), this);
+            getGtu().getParameters().setClaimedParameter(LmrsParameters.DRIGHT, desire.right(), this);
 
             // car-following
             Acceleration a = getGtu().getCarFollowingAcceleration();

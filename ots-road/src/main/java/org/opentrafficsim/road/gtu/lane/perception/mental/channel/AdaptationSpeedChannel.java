@@ -40,7 +40,7 @@ public class AdaptationSpeedChannel extends FactorAdaptation
         {
             this.fSpeed0 = parameters.getParameter(ParameterTypes.FSPEED);
         }
-        parameters.setParameter(ParameterTypes.FSPEED, this.fSpeed0 / getFactor(parameters, BETA_V0));
+        parameters.setClaimedParameter(ParameterTypes.FSPEED, this.fSpeed0 / getFactor(parameters, BETA_V0), this);
     }
 
 }

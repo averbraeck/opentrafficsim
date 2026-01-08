@@ -91,7 +91,6 @@ public class ParameterSet implements Parameters
         Throw.when(previousKey != null && !key.equals(previousKey), ParameterException.class,
                 "Parameter of type '%s' was assigned trying to claim from '%s' but was claimed by '%s'.", parameterType.getId(),
                 key, previousKey);
-
         saveSetParameter(parameterType, value, false);
     }
 

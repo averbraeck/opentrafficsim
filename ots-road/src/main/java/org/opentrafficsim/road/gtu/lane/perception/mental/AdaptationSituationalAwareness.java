@@ -85,7 +85,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
         double saMax = parameters.getParameter(SA_MAX);
         double sa = taskSaturation < tsCrit ? saMax
                 : (taskSaturation >= tsMax ? saMin : saMax - (saMax - saMin) * (taskSaturation - tsCrit) / (tsMax - tsCrit));
-        parameters.setParameter(SA, sa);
+        parameters.setClaimedParameter(SA, sa, this);
 
         // estimation factor
         parameters.setParameter(FactorEstimation.EST_FACTOR, 1.0 + parameters.getParameter(Fuller.OVER_EST) * (saMax - sa));

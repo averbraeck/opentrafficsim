@@ -1,13 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
-
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
@@ -188,7 +180,7 @@ public interface Synchronization extends LmrsParameters
             {
                 PerceivedGtu leader = leaders.first();
                 Length gap = leader.getDistance();
-                LmrsUtil.setDesiredHeadway(params, desire);
+                LmrsUtil.setDesiredHeadway(params, desire, true);
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers =
                         perception.getPerceptionCategory(NeighborsPerception.class).getFollowers(relativeLane);
                 if (!followers.isEmpty())
@@ -669,7 +661,7 @@ public interface Synchronization extends LmrsParameters
             return Acceleration.max(params.getParameter(ParameterTypes.BCRIT).neg(),
                     CarFollowingUtil.stop(cfm, params, ownSpeed, sli, xMerge));
         }
-        LmrsUtil.setDesiredHeadway(params, 1.0);
+        LmrsUtil.setDesiredHeadway(params, 1.0, true);
         Acceleration a = CarFollowingUtil.stop(cfm, params, ownSpeed, sli, xCur);
         if (a.lt0())
         {

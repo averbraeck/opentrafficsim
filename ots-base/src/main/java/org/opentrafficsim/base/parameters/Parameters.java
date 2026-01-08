@@ -16,7 +16,7 @@ public interface Parameters
     /**
      * Set parameter value of given parameter type.
      * @param parameterType the parameter type
-     * @param value new value for the parameter of type <code>parameterType</code>
+     * @param value new value for the parameter of type {@code parameterType}
      * @param <T> class of value
      * @throws ParameterException if the value does not comply with value type constraints or is claimed
      */
@@ -27,7 +27,7 @@ public interface Parameters
      * Set parameter value of given parameter type. This method claims setting the value by the key. No other key may be used to
      * set the parameter.
      * @param parameterType the parameter type
-     * @param value new value for the parameter of type <code>parameterType</code>
+     * @param value new value for the parameter of type {@code parameterType}
      * @param key key object for unique right to set the parameter value
      * @param <T> class of value
      * @throws ParameterException if the value does not comply with value type constraints or is claimed by another key
@@ -35,16 +35,17 @@ public interface Parameters
     <T> void setClaimedParameter(ParameterType<T> parameterType, T value, Object key) throws ParameterException;
 
     /**
-     * Set parameter value of given parameter type, store old value to allow a reset.
+     * Set parameter value of given parameter type, store old value to allow a reset. This method ignores any claim on the
+     * parameter, and should always be followed by a reset.
      * @param parameterType the parameter type
-     * @param value new value for the parameter of type <code>parameterType</code>
+     * @param value new value for the parameter of type {@code parameterType}
      * @param <T> class of value
      * @throws ParameterException if the value does not comply with value type constraints
      */
     <T> void setParameterResettable(ParameterType<T> parameterType, T value) throws ParameterException;
 
     /**
-     * Resets the parameter value to the value from before the last set. This goes only a single value back.
+     * Resets the parameter value to the value from before the last resettable set. This goes only a single value back.
      * @param parameterType the parameter type
      * @throws ParameterException if the parameter was never set
      * @throws NullPointerException when any input is null
@@ -73,7 +74,7 @@ public interface Parameters
     /**
      * Indicate whether the given parameter type has been set.
      * @param parameterType the parameter type to check
-     * @return true if <code>parameterType</code> has been set; false if <code>parameterType</code> has not been set
+     * @return true if {@code parameterType} has been set; false if {@code parameterType} has not been set
      */
     boolean contains(ParameterType<?> parameterType);
 

@@ -70,6 +70,26 @@ public final class LmrsUtil implements LmrsParameters
     /** Maximum critical deceleration, e.g. stop/go at traffic light. */
     public static final ParameterTypeAcceleration BCRIT = ParameterTypes.BCRIT;
 
+    /** Parameter key. */
+    private static final Object PARAMETER_KEY = new Object()
+    {
+        @Override
+        public String toString()
+        {
+            return "LmrsUtil.PARAMETER_KEY";
+        }
+    };
+
+    /** Parameter key for T. This value might e.g. be set by relaxation, its initialization, and tailgating. */
+    public static final Object T_KEY = new Object()
+    {
+        @Override
+        public String toString()
+        {
+            return "LmrsUtil.T_KEY";
+        }
+    };
+
     /**
      * Do not instantiate.
      */
@@ -142,8 +162,8 @@ public final class LmrsUtil implements LmrsParameters
                 // change left
                 initiatedOrContinuedLaneChange = LateralDirectionality.LEFT;
                 turnIndicatorStatus = TurnIndicatorIntent.LEFT;
-                params.setParameter(DLC, desire.left());
-                setDesiredHeadway(params, desire.left());
+                params.setClaimedParameter(DLC, desire.left(), PARAMETER_KEY);
+                setDesiredHeadway(params, desire.left(), false);
                 leaders = neighbors.getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
@@ -163,8 +183,8 @@ public final class LmrsUtil implements LmrsParameters
                 // change right
                 initiatedOrContinuedLaneChange = LateralDirectionality.RIGHT;
                 turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
-                params.setParameter(DLC, desire.right());
-                setDesiredHeadway(params, desire.right());
+                params.setClaimedParameter(DLC, desire.right(), PARAMETER_KEY);
+                setDesiredHeadway(params, desire.right(), false);
                 leaders = neighbors.getLeaders(RelativeLane.RIGHT);
                 if (!leaders.isEmpty())
                 {
@@ -179,19 +199,19 @@ public final class LmrsUtil implements LmrsParameters
         if (initiatedOrContinuedLaneChange.isLeft())
         {
             // Let surrounding GTUs respond fully to our movement
-            params.setParameter(DLEFT, 1.0);
-            params.setParameter(DRIGHT, 0.0);
+            params.setClaimedParameter(DLEFT, 1.0, PARAMETER_KEY);
+            params.setClaimedParameter(DRIGHT, 0.0, PARAMETER_KEY);
         }
         else if (initiatedOrContinuedLaneChange.isRight())
         {
             // Let surrounding GTUs respond fully to our movement
-            params.setParameter(DLEFT, 0.0);
-            params.setParameter(DRIGHT, 1.0);
+            params.setClaimedParameter(DLEFT, 0.0, PARAMETER_KEY);
+            params.setClaimedParameter(DRIGHT, 1.0, PARAMETER_KEY);
         }
         else
         {
-            params.setParameter(DLEFT, desire.left());
-            params.setParameter(DRIGHT, desire.right());
+            params.setClaimedParameter(DLEFT, desire.left(), PARAMETER_KEY);
+            params.setClaimedParameter(DRIGHT, desire.right(), PARAMETER_KEY);
 
             // take action if we cannot change lane
             Acceleration aSync;
@@ -292,7 +312,7 @@ public final class LmrsUtil implements LmrsParameters
         Double dlc = leader.getBehavior().getParameters().getParameterOrNull(DLC);
         if (dlc != null)
         {
-            setDesiredHeadway(params, dlc);
+            setDesiredHeadway(params, dlc, false);
         }
         // else could not be perceived
     }
@@ -305,8 +325,8 @@ public final class LmrsUtil implements LmrsParameters
     private static void exponentialHeadwayRelaxation(final Parameters params) throws ParameterException
     {
         double ratio = params.getParameter(DT).si / params.getParameter(TAU).si;
-        params.setParameter(T,
-                Duration.interpolate(params.getParameter(T), params.getParameter(TMAX), ratio <= 1.0 ? ratio : 1.0));
+        params.setClaimedParameter(T,
+                Duration.interpolate(params.getParameter(T), params.getParameter(TMAX), ratio <= 1.0 ? ratio : 1.0), T_KEY);
     }
 
     /**
@@ -588,14 +608,24 @@ public final class LmrsUtil implements LmrsParameters
      * Sets value for T depending on level of lane change desire.
      * @param params parameters
      * @param desire lane change desire
+     * @param resettable whether the T value will be reset later (ignoring key), or regular claimed setting (with key)
      * @throws ParameterException if T, TMIN or TMAX is not in the parameters
      */
-    static void setDesiredHeadway(final Parameters params, final double desire) throws ParameterException
+    static void setDesiredHeadway(final Parameters params, final double desire, final boolean resettable)
+            throws ParameterException
     {
         double limitedDesire = desire < 0 ? 0 : desire > 1 ? 1 : desire;
         double tDes = limitedDesire * params.getParameter(TMIN).si + (1 - limitedDesire) * params.getParameter(TMAX).si;
-        double t = params.getParameter(T).si;
-        params.setParameterResettable(T, Duration.ofSI(tDes < t ? tDes : t));
+        double tSi = params.getParameter(T).si;
+        Duration t = Duration.ofSI(tDes < tSi ? tDes : tSi);
+        if (resettable)
+        {
+            params.setParameterResettable(T, t);
+        }
+        else
+        {
+            params.setClaimedParameter(T, t, T_KEY);
+        }
     }
 
     /**
@@ -625,7 +655,7 @@ public final class LmrsUtil implements LmrsParameters
             throws ParameterException
     {
         // set T
-        setDesiredHeadway(params, desire);
+        setDesiredHeadway(params, desire, true);
         // calculate acceleration
         Acceleration a = CarFollowingUtil.followSingleLeader(cfm, params, followerSpeed, sli, distance, leaderSpeed);
         // reset T

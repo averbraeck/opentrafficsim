@@ -69,8 +69,8 @@ public final class AdaptationUpdateTime implements BehavioralAdaptation, Statele
     @Override
     public void adapt(final Parameters parameters) throws ParameterException
     {
-        parameters.setParameter(DT, Duration.interpolate(parameters.getParameter(DT_MAX), parameters.getParameter(DT_MIN),
-                parameters.getParameter(ATT)));
+        parameters.setClaimedParameter(DT, Duration.interpolate(parameters.getParameter(DT_MAX),
+                parameters.getParameter(DT_MIN), parameters.getParameter(ATT)), this);
     }
 
     @Override

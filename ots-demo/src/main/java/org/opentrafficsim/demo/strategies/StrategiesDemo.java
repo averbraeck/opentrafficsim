@@ -265,7 +265,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 {
                     if (gtu.getType().isOfType(DefaultsNl.CAR))
                     {
-                        Try.execute(() -> gtu.getParameters().setParameter(LmrsParameters.VGAIN, vGain),
+                        Try.execute(() -> gtu.getParameters().setClaimedParameter(LmrsParameters.VGAIN, vGain, egoSlider),
                                 "Exception while setting vGain");
                     }
                 }
@@ -305,7 +305,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 {
                     if (gtu.getType().isOfType(DefaultsNl.CAR))
                     {
-                        Try.execute(() -> gtu.getParameters().setParameter(LmrsParameters.SOCIO, sigma),
+                        Try.execute(() -> gtu.getParameters().setClaimedParameter(LmrsParameters.SOCIO, sigma, socioSlider),
                                 "Exception while setting vGain");
                     }
                 }

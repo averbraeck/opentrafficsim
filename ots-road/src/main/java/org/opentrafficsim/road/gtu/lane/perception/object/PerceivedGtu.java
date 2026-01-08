@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
@@ -281,7 +282,8 @@ public interface PerceivedGtu extends PerceivedObject
          * any assumptions about the observed GTU. When successive observations of the GTU take place, parameters about its
          * behavior can be estimated more accurately. Another interesting easy-to-implement solution is to return a set of
          * parameters per GTU type, where the parameters of a truck can differ from that of a car.
-         * @return the parameters that represent the expected behavior of the observed GTU
+         * @return the parameters that represent the expected behavior of the observed GTU, in case of exact values a safe copy
+         *         is returned
          */
         Parameters getParameters();
 
@@ -396,7 +398,8 @@ public interface PerceivedGtu extends PerceivedObject
         {
             Throw.whenNull(gtu, "gtu");
             Throw.whenNull(time, "time");
-            Parameters parameters = gtu.getParameters(); // these are not historical, they could be, but that's really slow
+            // parameters are not historical, they could be, but that's really slow
+            Parameters parameters = new ParameterSet(gtu.getParameters());
             return new Behavior()
             {
                 /** Speed limit info. */

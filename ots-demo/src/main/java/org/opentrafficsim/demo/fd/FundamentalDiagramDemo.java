@@ -492,12 +492,23 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 {
                     try
                     {
-                        gtu.getParameters().setParameter(ParameterTypes.TMIN, FundamentalDiagramDemo.this.tMin);
-                        gtu.getParameters().setParameter(ParameterTypes.TMAX, FundamentalDiagramDemo.this.tMax);
+                        gtu.getParameters().setClaimedParameter(ParameterTypes.TMIN, FundamentalDiagramDemo.this.tMin, tSlider);
+                        gtu.getParameters().setClaimedParameter(ParameterTypes.TMAX, FundamentalDiagramDemo.this.tMax, tSlider);
                     }
                     catch (ParameterException exception)
                     {
-                        Logger.ots().error("Unable to set headway parameter.");
+                        // Try different order, perhaps a large increase caused Tmin > Tmax
+                        try
+                        {
+                            gtu.getParameters().setClaimedParameter(ParameterTypes.TMAX, FundamentalDiagramDemo.this.tMax,
+                                    tSlider);
+                            gtu.getParameters().setClaimedParameter(ParameterTypes.TMIN, FundamentalDiagramDemo.this.tMin,
+                                    tSlider);
+                        }
+                        catch (ParameterException exception2)
+                        {
+                            Logger.ots().error("Unable to set headway parameter.");
+                        }
                     }
                 }
             }

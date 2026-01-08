@@ -67,7 +67,7 @@ public abstract class Fuller implements Mental
         Parameters parameters = gtu.getParameters();
         // a) the fundamental diagrams of task workload are defined in the tasks
         // b) sum task demand (possibly with anticipation reliance in sub-class)
-        parameters.setParameter(TS, getTotalTaskDemand(perception) / parameters.getParameter(TC));
+        parameters.setClaimedParameter(TS, getTotalTaskDemand(perception) / parameters.getParameter(TC), this);
         // c) behavioral adaptation
         for (BehavioralAdaptation behavioralAdapatation : this.behavioralAdapatations)
         {

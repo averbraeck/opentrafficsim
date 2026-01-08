@@ -127,13 +127,14 @@ public interface GapAcceptance
                 {
                     // Change headway parameter
                     Parameters folParams = follower.getBehavior().getParameters();
-                    folParams.setParameterResettable(ParameterTypes.TMIN, params.getParameter(ParameterTypes.TMIN));
-                    folParams.setParameterResettable(ParameterTypes.TMAX, params.getParameter(ParameterTypes.TMAX));
+                    // safe copy, so no need to set/reset
+                    folParams.setParameter(ParameterTypes.TMIN, params.getParameter(ParameterTypes.TMIN));
+                    folParams.setParameter(ParameterTypes.TMAX, params.getParameter(ParameterTypes.TMAX));
                     Acceleration aFollow = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed,
                             desire, folParams, follower.getBehavior().getSpeedLimitInfo(),
                             follower.getBehavior().getCarFollowingModel());
-                    folParams.resetParameter(ParameterTypes.TMIN);
-                    folParams.resetParameter(ParameterTypes.TMAX);
+                    // folParams.resetParameter(ParameterTypes.TMIN);
+                    // folParams.resetParameter(ParameterTypes.TMAX);
                     if (threshold.gt(aFollow))
                     {
                         return false;

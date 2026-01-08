@@ -52,13 +52,13 @@ public class AdaptationHeadway extends FactorAdaptation
         Duration tMax = this.t0Max.times(factor);
         if (tMax.si <= parameters.getParameter(ParameterTypes.TMIN).si)
         {
-            parameters.setParameter(ParameterTypes.TMIN, tMin);
-            parameters.setParameter(ParameterTypes.TMAX, tMax);
+            parameters.setClaimedParameter(ParameterTypes.TMIN, tMin, this);
+            parameters.setClaimedParameter(ParameterTypes.TMAX, tMax, this);
         }
         else
         {
-            parameters.setParameter(ParameterTypes.TMAX, tMax);
-            parameters.setParameter(ParameterTypes.TMIN, tMin);
+            parameters.setClaimedParameter(ParameterTypes.TMAX, tMax, this);
+            parameters.setClaimedParameter(ParameterTypes.TMIN, tMin, this);
         }
     }
 
