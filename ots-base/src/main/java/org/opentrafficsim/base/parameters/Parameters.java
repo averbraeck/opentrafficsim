@@ -15,36 +15,48 @@ public interface Parameters
 
     /**
      * Set parameter value of given parameter type.
-     * @param parameterType the parameter type.
-     * @param value new value for the parameter of type <code>parameterType</code>.
-     * @param <T> Class of value.
-     * @throws ParameterException If the value does not comply with value type constraints.
+     * @param parameterType the parameter type
+     * @param value new value for the parameter of type <code>parameterType</code>
+     * @param <T> class of value
+     * @throws ParameterException if the value does not comply with value type constraints or is claimed
      */
     // @docs/06-behavior/parameters.md (without throws)
     <T> void setParameter(ParameterType<T> parameterType, T value) throws ParameterException;
 
     /**
+     * Set parameter value of given parameter type. This method claims setting the value by the key. No other key may be used to
+     * set the parameter.
+     * @param parameterType the parameter type
+     * @param value new value for the parameter of type <code>parameterType</code>
+     * @param key key object for unique right to set the parameter value
+     * @param <T> class of value
+     * @throws ParameterException if the value does not comply with value type constraints or is claimed by another key
+     */
+    <T> void setClaimedParameter(ParameterType<T> parameterType, T value, Object key) throws ParameterException;
+
+    /**
      * Set parameter value of given parameter type, store old value to allow a reset.
-     * @param parameterType the parameter type.
-     * @param value new value for the parameter of type <code>parameterType</code>.
-     * @param <T> Class of value.
-     * @throws ParameterException If the value does not comply with value type constraints.
+     * @param parameterType the parameter type
+     * @param value new value for the parameter of type <code>parameterType</code>
+     * @param <T> class of value
+     * @throws ParameterException if the value does not comply with value type constraints
      */
     <T> void setParameterResettable(ParameterType<T> parameterType, T value) throws ParameterException;
 
     /**
      * Resets the parameter value to the value from before the last set. This goes only a single value back.
-     * @param parameterType the parameter type.
-     * @throws ParameterException If the parameter was never set.
+     * @param parameterType the parameter type
+     * @throws ParameterException if the parameter was never set
+     * @throws NullPointerException when any input is null
      */
     void resetParameter(ParameterType<?> parameterType) throws ParameterException;
 
     /**
      * Get parameter of given type.
-     * @param parameterType the parameter type.
-     * @param <T> Class of value.
+     * @param parameterType the parameter type
+     * @param <T> class of value
      * @return parameter of the requested type if it exists
-     * @throws ParameterException If the parameter was never set.
+     * @throws ParameterException if the parameter was never set
      */
     // @docs/06-behavior/parameters.md (without throws)
     <T> T getParameter(ParameterType<T> parameterType) throws ParameterException;

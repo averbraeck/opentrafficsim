@@ -32,6 +32,9 @@ public class ParameterSet implements Parameters
     /** List of parameters. */
     private Map<ParameterType<?>, Object> parameters;
 
+    /** Keys that claim setting parameters. */
+    private Map<ParameterType<?>, Object> keys = new LinkedHashMap<>();
+
     /** List of parameters with values before last set. */
     private Map<ParameterType<?>, Object> previous;
 
@@ -65,18 +68,36 @@ public class ParameterSet implements Parameters
     }
 
     @Override
-    public final <T> void setParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
+    public <T> void setParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
+        Throw.whenNull(parameterType, "parameterType");
         Throw.when(value == null, ParameterException.class,
                 "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
+        Object key = this.keys.get(parameterType);
+        Throw.when(key != null, ParameterException.class, "Parameter of type '%s' is set, but it is claimed by '%s'.",
+                parameterType.getId(), key);
         saveSetParameter(parameterType, value, false);
     }
 
     @Override
-    public final <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
+    public <T> void setClaimedParameter(final ParameterType<T> parameterType, final T value, final Object key)
+            throws ParameterException
     {
+        Throw.whenNull(parameterType, "parameterType");
         Throw.when(value == null, ParameterException.class,
                 "Parameter of type '%s' was assigned a null value, this is not allowed.", parameterType.getId());
+        Throw.whenNull(key, "key");
+        Object previousKey = this.keys.putIfAbsent(parameterType, key);
+        Throw.when(previousKey != null && !key.equals(previousKey), ParameterException.class,
+                "Parameter of type '%s' was assigned trying to claim from '%s' but was claimed by '%s'.", parameterType.getId(),
+                key, previousKey);
+
+        saveSetParameter(parameterType, value, false);
+    }
+
+    @Override
+    public <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
+    {
         saveSetParameter(parameterType, value, true);
     }
 
@@ -116,7 +137,7 @@ public class ParameterSet implements Parameters
     }
 
     @Override
-    public final void resetParameter(final ParameterType<?> parameterType) throws ParameterException
+    public void resetParameter(final ParameterType<?> parameterType) throws ParameterException
     {
         checkCopyOnWrite();
         Object prevValue = this.previous.remove(parameterType);
@@ -147,7 +168,7 @@ public class ParameterSet implements Parameters
     }
 
     @Override
-    public final <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
+    public <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
     {
         @SuppressWarnings("unchecked")
         // set methods guarantee matching of parameter type and value
@@ -159,14 +180,14 @@ public class ParameterSet implements Parameters
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> T getParameterOrNull(final ParameterType<T> parameterType)
+    public <T> T getParameterOrNull(final ParameterType<T> parameterType)
     {
         // set methods guarantee matching of parameter type and value
         return (T) this.parameters.get(parameterType);
     }
 
     @Override
-    public final boolean contains(final ParameterType<?> parameterType)
+    public boolean contains(final ParameterType<?> parameterType)
     {
         return this.parameters.containsKey(parameterType);
     }
@@ -175,7 +196,7 @@ public class ParameterSet implements Parameters
      * Returns a safe copy of the parameters.
      * @return a safe copy of the parameters, e.g., for printing
      */
-    public final Map<ParameterType<?>, Object> getParameters()
+    public Map<ParameterType<?>, Object> getParameters()
     {
         return new LinkedHashMap<>(this.parameters);
     }
@@ -187,7 +208,7 @@ public class ParameterSet implements Parameters
      * @return this set of parameters (for method chaining)
      * @throws ParameterException if the parameter type has no default value
      */
-    public final <T> ParameterSet setDefaultParameter(final ParameterType<T> parameter) throws ParameterException
+    public <T> ParameterSet setDefaultParameter(final ParameterType<T> parameter) throws ParameterException
     {
         T defaultValue = parameter.getDefaultValue();
         try
@@ -208,7 +229,7 @@ public class ParameterSet implements Parameters
      * @param clazz class with parameters
      * @return this set of parameters (for method chaining)
      */
-    public final ParameterSet setDefaultParameters(final Class<?> clazz)
+    public ParameterSet setDefaultParameters(final Class<?> clazz)
     {
         return setDefaultParametersLocal(clazz);
     }
@@ -256,7 +277,7 @@ public class ParameterSet implements Parameters
     }
 
     @Override
-    public final void setAllIn(final Parameters params)
+    public void setAllIn(final Parameters params)
     {
         if (params instanceof ParameterSet)
         {
@@ -292,7 +313,7 @@ public class ParameterSet implements Parameters
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         StringBuilder out = new StringBuilder("Parameters [");
         String sep = "";

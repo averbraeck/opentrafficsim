@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
@@ -292,8 +293,30 @@ public final class ParametersTest implements ConstraintInterface
     };
 
     /**
+     * Tests the claimed set mechanism.
+     * @throws ParameterException should not be thrown, is for untested methods (in this test) that throw the exception
+     */
+    @Test
+    public void claimTest() throws ParameterException
+    {
+        ParameterTypeInteger a = new ParameterTypeInteger("a", "along", 0);
+
+        Parameters params = new ParameterSet();
+        params.setParameter(a, 1);
+        UnitTest.testFail(() -> params.setClaimedParameter(a, null, "fail"), "Null value should fail",
+                ParameterException.class);
+        params.setClaimedParameter(a, 2, "a");
+        UnitTest.testFail(() -> params.setParameter(a, 3), "Setting claimed parameter should fail.", ParameterException.class);
+        UnitTest.testFail(() -> params.setClaimedParameter(a, 4, "b"),
+                "Setting claimed parameter with different key should fail.", ParameterException.class);
+        assertEquals(2, params.getParameter(a));
+        params.setClaimedParameter(a, 5, "a");
+        assertEquals(5, params.getParameter(a));
+    }
+
+    /**
      * Tests the set/reset mechanism.
-     * @throws ParameterException Should not be thrown, is for untested methods (in this test) that throw the exception.
+     * @throws ParameterException should not be thrown, is for untested methods (in this test) that throw the exception
      */
     @Test
     public void setResetTest() throws ParameterException
@@ -301,115 +324,66 @@ public final class ParametersTest implements ConstraintInterface
         ParameterTypeInteger a = new ParameterTypeInteger("a", "along", 0);
 
         // exception reset without set: no value -> reset
-        Parameters params = new ParameterSet();
-        try
-        {
-            params.resetParameter(a);
-            fail("Reset of parameter that was never set does not fail.");
-        }
-        catch (ParameterException pe)
-        {
-            // Should fail
-        }
+        Parameters params1 = new ParameterSet();
+        UnitTest.testFail(() -> params1.resetParameter(a), "Reset of parameter that was never set does not fail.",
+                ParameterException.class);
 
         // exception for get after reset to no value: no value -> set -> reset -> get
-        params = new ParameterSet();
-        params.setParameterResettable(a, 1);
-        params.resetParameter(a);
-        try
-        {
-            params.getParameter(a);
-            fail("Get of parameter that was not given before set and reset, does not fail.");
-        }
-        catch (ParameterException pe)
-        {
-            // Should fail
-        }
+        Parameters params2 = new ParameterSet();
+        params2.setParameterResettable(a, 1);
+        params2.resetParameter(a);
+        UnitTest.testFail(() -> params2.getParameter(a),
+                "Get of parameter that was not given before set and reset, does not fail.", ParameterException.class);
 
         // exception for multiple resets: no value -> set -> reset -> reset
-        params = new ParameterSet();
-        params.setParameterResettable(a, 1);
-        params.resetParameter(a);
-        try
-        {
-            params.resetParameter(a);
-            fail("Second reset without intermediate set does not fail when first reset was to no value.");
-        }
-        catch (ParameterException pe)
-        {
-            // Should fail
-        }
+        Parameters params3 = new ParameterSet();
+        params3.setParameterResettable(a, 1);
+        params3.resetParameter(a);
+        UnitTest.testFail(() -> params3.resetParameter(a),
+                "Second reset without intermediate set does not fail when first reset was to no value.",
+                ParameterException.class);
 
         // exception for multiple resets: set -> set -> reset -> reset
-        params = new ParameterSet();
-        params.setParameterResettable(a, 1);
-        params.setParameterResettable(a, 2);
-        params.resetParameter(a);
-        try
-        {
-            params.resetParameter(a);
-            fail("Second reset without intermediate set does not fail when first reset was to a value.");
-        }
-        catch (ParameterException pe)
-        {
-            // Should fail
-        }
+        Parameters params4 = new ParameterSet();
+        params4.setParameterResettable(a, 1);
+        params4.setParameterResettable(a, 2);
+        params4.resetParameter(a);
+        UnitTest.testFail(() -> params4.resetParameter(a),
+                "Second reset without intermediate set does not fail when first reset was to a value.",
+                ParameterException.class);
 
         // no exception: set -> reset -> set -> reset
-        params = new ParameterSet();
-        params.setParameterResettable(a, 1);
-        params.resetParameter(a);
-        params.setParameterResettable(a, 2);
-        try
-        {
-            params.resetParameter(a);
-        }
-        catch (ParameterException pe)
-        {
-            fail("Reset fails after set, with reset before that set.");
-            // Should not fail
-        }
+        Parameters params5 = new ParameterSet();
+        params5.setParameterResettable(a, 1);
+        params5.resetParameter(a);
+        params5.setParameterResettable(a, 2);
+        params5.resetParameter(a);
 
         // same value: set(1) -> set(2) -> reset -> get(1?)
-        params = new ParameterSet();
-        params.setParameterResettable(a, 1);
-        params.setParameterResettable(a, 2);
-        params.resetParameter(a);
-        assertEquals(1.0, (double) params.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
+        Parameters params6 = new ParameterSet();
+        params6.setParameterResettable(a, 1);
+        params6.setParameterResettable(a, 2);
+        params6.resetParameter(a);
+        assertEquals(1.0, (double) params6.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
 
         // no reset after (none resettable) set
-        params = new ParameterSet();
-        params.setParameter(a, 1);
-        try
-        {
-            params.resetParameter(a);
-            fail("Reset should fail after regular set.");
-        }
-        catch (ParameterException pe)
-        {
-            // should fail
-        }
+        Parameters params7 = new ParameterSet();
+        params7.setParameter(a, 1);
+        UnitTest.testFail(() -> params7.resetParameter(a), "Reset should fail after regular set.", ParameterException.class);
 
         // no reset after (none resettable) set, even with resettable set before
-        params = new ParameterSet();
-        params.setParameterResettable(a, 1);
-        params.setParameter(a, 2);
-        try
-        {
-            params.resetParameter(a);
-            fail("Reset should fail after regular set, dispite resettable set before.");
-        }
-        catch (ParameterException pe)
-        {
-            // should fail
-        }
+        Parameters params8 = new ParameterSet();
+        params8.setParameterResettable(a, 1);
+        params8.setParameter(a, 2);
+        UnitTest.testFail(() -> params8.resetParameter(a),
+                "Reset should fail after regular set, dispite resettable set before.", ParameterException.class);
 
         // same value: regular set(1) -> set(2) -> reset -> get(1?)
-        params = new ParameterSet();
-        params.setParameter(a, 1);
-        params.setParameterResettable(a, 2);
-        params.resetParameter(a);
-        assertEquals(1.0, (double) params.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
+        Parameters params9 = new ParameterSet();
+        params9.setParameter(a, 1);
+        params9.setParameterResettable(a, 2);
+        params9.resetParameter(a);
+        assertEquals(1.0, (double) params9.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
 
         // If null value is ever going to be allowed, use these tests to check proper set/reset.
         // // check null is not the same as 'no value': no value -> set(null) -> reset -> get

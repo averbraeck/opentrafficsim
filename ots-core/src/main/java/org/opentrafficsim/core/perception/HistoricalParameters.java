@@ -69,6 +69,14 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
     }
 
     @Override
+    public <T> void setClaimedParameter(final ParameterType<T> parameterType, final T value, final Object key)
+            throws ParameterException
+    {
+        addEvent(new ParameterEvent(now().si, parameterType, this.params, key));
+        this.params.setClaimedParameter(parameterType, value, key);
+    }
+
+    @Override
     public <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
         addEvent(new ParameterEvent(now().si, parameterType, this.params));
@@ -117,8 +125,9 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
      * @param <T> type of parameter
      * @param parameter parameter
      * @param value parameter value
+     * @param key key
      */
-    record ParameterValueSet<T>(ParameterType<T> parameter, T value)
+    record ParameterValueSet<T>(ParameterType<T> parameter, T value, Object key)
     {
     }
 
@@ -137,7 +146,21 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
          */
         public <T> ParameterEvent(final double time, final ParameterType<T> parameterType, final Parameters parameters)
         {
-            super(time, new ParameterValueSet<T>(parameterType, parameters.getParameterOrNull(parameterType)));
+            this(time, parameterType, parameters, null);
+        }
+
+        /**
+         * Constructor. New value is not required, as it's not required to restore the state from before the change.
+         * @param time time of event
+         * @param parameterType parameter type
+         * @param parameters parameters
+         * @param key key
+         * @param <T> parameter value type
+         */
+        public <T> ParameterEvent(final double time, final ParameterType<T> parameterType, final Parameters parameters,
+                final Object key)
+        {
+            super(time, new ParameterValueSet<T>(parameterType, parameters.getParameterOrNull(parameterType), key));
         }
 
         /**
@@ -150,7 +173,20 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
         {
             try
             {
-                parameters.setParameter((ParameterType<T>) getValue().parameter(), (T) getValue().value());
+                T value = (T) getValue().value();
+                if (value == null)
+                {
+                    // cannot remove a value; leave oldest value
+                    return;
+                }
+                else if (getValue().key() == null)
+                {
+                    parameters.setParameter((ParameterType<T>) getValue().parameter(), value);
+                }
+                else
+                {
+                    parameters.setClaimedParameter((ParameterType<T>) getValue().parameter(), value, getValue().key());
+                }
             }
             catch (ParameterException exception)
             {
