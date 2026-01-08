@@ -84,61 +84,73 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
      * <br>
      * Note: implementations should not cache the template per GTU type, as different simulations may request templates for the
      * same GTU type, while having their separate random streams.
-     * @param gtuType GTU type.
-     * @param randomStream random stream.
-     * @return template, {@code null} if no default is defined.
+     * @param gtuType GTU type
+     * @param randomStream random stream
+     * @return template, {@code null} if no default is defined
      */
     @Override
     public GtuTemplate apply(final GtuType gtuType, final StreamInterface randomStream)
+    {
+        return apply(gtuType, gtuType, randomStream);
+    }
+
+    /**
+     * Local implementation that will loop the parent types until a known type is encountered.
+     * @param gtuType (parent) GTU type
+     * @param originalGtuType original request GTU type (will be part of the characteristics)
+     * @param randomStream random stream
+     * @return template, {@code null} if no default is defined
+     */
+    private GtuTemplate apply(final GtuType gtuType, final GtuType originalGtuType, final StreamInterface randomStream)
     {
         GtuTemplate template;
         if (gtuType.equals(CAR))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(4.19)),
+            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(4.19)),
                     new ConstantSupplier<>(Length.ofSI(1.7)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(TRUCK))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
+            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
                     new ConstantSupplier<>(Length.ofSI(2.55)),
                     new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
         }
         else if (gtuType.equals(BUS))
         {
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
+            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
                     new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(VAN))
         {
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
+            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
                     new ConstantSupplier<>(Length.ofSI(2.4)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(EMERGENCY_VEHICLE))
         {
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
+            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
                     new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(MOTORCYCLE))
         {
             // Yamaha R7 2022
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(2.1)),
+            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(2.1)),
                     new ConstantSupplier<>(Length.ofSI(0.7)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(BICYCLE))
         {
             // length/width: https://www.verderfietsen.nl/fiets-afmetingen/
             // width: https://www.fietsberaad.nl/CROWFietsberaad/media/Kennis/Bestanden/document000172.pdf?ext=.pdf
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(1.9)),
+            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(1.9)),
                     new ConstantSupplier<>(Length.ofSI(0.6)), new ConstantSupplier<>(new Speed(35, SpeedUnit.KM_PER_HOUR)));
         }
         else
         {
-            template = apply(gtuType.getParent(), randomStream);
+            template = apply(gtuType.getParent(), originalGtuType, randomStream);
         }
         return template;
-    };
+    }
 
     /***************************************************************************************/
     /**************************************** LINK *****************************************/

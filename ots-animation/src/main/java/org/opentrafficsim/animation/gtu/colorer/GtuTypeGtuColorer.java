@@ -31,12 +31,31 @@ public class GtuTypeGtuColorer extends AbstractLegendColorer<Gtu, GtuType>
      */
     public GtuTypeGtuColorer(final Map<GtuType, Color> gtuTypeColors, final Color unknownColor)
     {
-        super((gtu) -> gtu.getType(),
-                (gtuType) -> gtuTypeColors.containsKey(gtuType) ? gtuTypeColors.get(gtuType) : unknownColor,
+        super((gtu) -> gtu.getType(), (gtuType) -> getColor(gtuType, gtuTypeColors, unknownColor),
                 Stream.concat(
                         gtuTypeColors.entrySet().stream()
                                 .map((e) -> new LegendEntry(e.getValue(), e.getKey().getId(), e.getKey().getId())),
                         Stream.of(new LegendEntry(unknownColor, "Unknown", "Unknown"))).collect(Collectors.toList()));
+    }
+
+    /**
+     * Returns the color for the first GTU encounter in the parent hierarchy.
+     * @param gtuType GTU type
+     * @param gtuTypeColors colors for GTU types
+     * @param unknownColor color for when the GTU type is not known, nor any parent type
+     * @return color for the first GTU encounter in the parent hierarchy
+     */
+    private static Color getColor(final GtuType gtuType, final Map<GtuType, Color> gtuTypeColors, final Color unknownColor)
+    {
+        if (gtuTypeColors.containsKey(gtuType))
+        {
+            return gtuTypeColors.get(gtuType);
+        }
+        if (gtuType.getParent() == null)
+        {
+            return unknownColor;
+        }
+        return getColor(gtuType.getParent(), gtuTypeColors, unknownColor);
     }
 
     /**
