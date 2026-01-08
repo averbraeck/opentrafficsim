@@ -1,21 +1,18 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.channel;
 
-import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
@@ -101,7 +98,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
             }
             return set;
         }
-        catch (ParameterException | GtuException | IllegalArgumentException exception)
+        catch (ParameterException | IllegalArgumentException exception)
         {
             throw new RuntimeException("Unexpected exception while computing first leaders.", exception);
         }
@@ -134,7 +131,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
             }
             return set;
         }
-        catch (ParameterException | GtuException | IllegalArgumentException exception)
+        catch (ParameterException | IllegalArgumentException exception)
         {
             throw new RuntimeException("Unexpected exception while computing first followers.", exception);
         }
@@ -201,43 +198,18 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
      */
     private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
     {
-        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamGtus(lane,
-                RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR), "");
+        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() ->
+        {
+            return getPerception().getLaneStructure().getDownstreamGtus(lane, RelativePosition.FRONT, RelativePosition.FRONT,
+                    RelativePosition.FRONT, RelativePosition.REAR);
+        }, "Unable to get leaders from LaneStructure");
         PerceivedGtuType perceivedGtuType = lane.getLateralDirectionality().isNone() ? this.perceivedGtuTypeFront
                 : (lane.getLateralDirectionality().isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight);
-        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
+        return new PerceptionReiterable<>(getGtu(), iterable, (perceivedGtu, distance) ->
         {
-            /** {@inheritDoc} */
-            @Override
-            protected Iterator<PrimaryIteratorEntry> primaryIterator()
-            {
-                Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
-                return new Iterator<>()
-                {
-                    /** {@inheritDoc} */
-                    @Override
-                    public boolean hasNext()
-                    {
-                        return iterator.hasNext();
-                    }
-
-                    /** {@inheritDoc} */
-                    @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
-                    {
-                        Entry<LaneBasedGtu> entry = iterator.next();
-                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
-                    }
-                };
-            }
-
-            @Override
-            protected PerceivedGtu perceive(final LaneBasedGtu perceivedGtu, final Length distance)
-                    throws GtuException, ParameterException
-            {
-                return perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), perceivedGtu, distance, true);
-            }
-        };
+            return Try.assign(() -> perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), perceivedGtu, distance, true),
+                    "ParameterException during perception of leader.");
+        });
     }
 
     /** {@inheritDoc} */
@@ -255,43 +227,18 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
      */
     private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
     {
-        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getUpstreamGtus(lane,
-                RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT), "");
+        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() ->
+        {
+            return getPerception().getLaneStructure().getUpstreamGtus(lane, RelativePosition.FRONT, RelativePosition.FRONT,
+                    RelativePosition.REAR, RelativePosition.FRONT);
+        }, "Unable to get followers from LaneStructure");
         PerceivedGtuType perceivedGtuType = lane.getLateralDirectionality().isNone() ? this.perceivedGtuTypeRear
                 : (lane.getLateralDirectionality().isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight);
-        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
+        return new PerceptionReiterable<>(getGtu(), iterable, (perceivedGtu, distance) ->
         {
-            /** {@inheritDoc} */
-            @Override
-            protected Iterator<PrimaryIteratorEntry> primaryIterator()
-            {
-                Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
-                return new Iterator<>()
-                {
-                    /** {@inheritDoc} */
-                    @Override
-                    public boolean hasNext()
-                    {
-                        return iterator.hasNext();
-                    }
-
-                    /** {@inheritDoc} */
-                    @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
-                    {
-                        Entry<LaneBasedGtu> entry = iterator.next();
-                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
-                    }
-                };
-            }
-
-            @Override
-            protected PerceivedGtu perceive(final LaneBasedGtu perceivedGtu, final Length distance)
-                    throws GtuException, ParameterException
-            {
-                return perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), perceivedGtu, distance, false);
-            }
-        };
+            return Try.assign(() -> perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), perceivedGtu, distance, false),
+                    "ParameterException during perception of leader.");
+        });
     }
 
     /**

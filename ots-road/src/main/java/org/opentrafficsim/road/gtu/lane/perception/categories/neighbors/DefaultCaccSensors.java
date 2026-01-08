@@ -4,8 +4,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
@@ -41,8 +41,7 @@ public class DefaultCaccSensors implements PerceivedGtuType
     /** {@inheritDoc} */
     @Override
     public PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
-            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
-            throws GtuException, ParameterException
+            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream) throws ParameterException
     {
         Duration t;
         try
@@ -55,10 +54,10 @@ public class DefaultCaccSensors implements PerceivedGtuType
         {
             if (!(perceivingGtu.getTacticalPlanner() instanceof ControlTacticalPlanner))
             {
-                throw new GtuException("DefaultCaccSensors relies on the tactical planner being a ControlTacticalPlanner",
-                        exception);
+                throw new OtsRuntimeException(
+                        "DefaultCaccSensors relies on the tactical planner being a ControlTacticalPlanner", exception);
             }
-            throw new GtuException(exception);
+            throw exception;
         }
         String id = perceivedGtu.getId();
         GtuType gtuType = perceivedGtu.getType();

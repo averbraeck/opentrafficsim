@@ -22,28 +22,28 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <P> perceiving object type
- * @param <H> headway type
- * @param <U> underlying headway type
+ * @param <O> perceiving object type (an {@code O} is perceiving a {@code U} as a {@code P})
+ * @param <P> perceived object type (an {@code O} is perceiving a {@code U} as a {@code P})
+ * @param <U> underlying object type (an {@code O} is perceiving a {@code U} as a {@code P})
  */
-public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends PerceivedObject, U>
-        extends AbstractPerceptionReiterable<P, H, U>
+public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends PerceivedObject, U>
+        extends AbstractPerceptionReiterable<O, P, U>
 {
 
     /** Set of iterators per lane. */
-    private final Map<RelativeLane, Iterator<PrimaryIteratorEntry>> iterators = new LinkedHashMap<>();
+    private final Map<RelativeLane, Iterator<UnderlyingDistance<U>>> iterators = new LinkedHashMap<>();
 
     /** Map of lane per object. */
     private final Map<U, RelativeLane> laneMap = new LinkedHashMap<>();
 
     /** Map of iterable per lane. */
-    private final Map<RelativeLane, AbstractPerceptionReiterable<P, H, U>> iterables = new LinkedHashMap<>();
+    private final Map<RelativeLane, AbstractPerceptionReiterable<O, P, U>> iterables = new LinkedHashMap<>();
 
     /**
      * Constructor.
      * @param perceivingObject perceiving object
      */
-    public MultiLanePerceptionIterable(final P perceivingObject)
+    public MultiLanePerceptionIterable(final O perceivingObject)
     {
         super(perceivingObject);
     }
@@ -53,14 +53,14 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Pe
      * @param lane lane
      * @param iterable iterable
      */
-    public void addIterable(final RelativeLane lane, final AbstractPerceptionReiterable<P, H, U> iterable)
+    public void addIterable(final RelativeLane lane, final AbstractPerceptionReiterable<O, P, U> iterable)
     {
         this.iterators.put(lane, iterable.getPrimaryIterator());
         this.iterables.put(lane, iterable);
     }
 
     @Override
-    public Iterator<PrimaryIteratorEntry> primaryIterator()
+    public Iterator<UnderlyingDistance<U>> primaryIterator()
     {
         return new MultiLaneIterator();
     }
@@ -76,11 +76,11 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Pe
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    private class MultiLaneIterator implements Iterator<PrimaryIteratorEntry>
+    private class MultiLaneIterator implements Iterator<UnderlyingDistance<U>>
     {
 
         /** Sorted elements per lane. */
-        private SortedMap<PrimaryIteratorEntry, RelativeLane> elements;
+        private SortedMap<UnderlyingDistance<U>, RelativeLane> elements;
 
         /** Constructor. */
         MultiLaneIterator()
@@ -97,7 +97,7 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Pe
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public PrimaryIteratorEntry next()
+        public UnderlyingDistance<U> next()
         {
             assureNext();
             if (this.elements.isEmpty())
@@ -106,12 +106,12 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Pe
             }
 
             // get and remove next
-            PrimaryIteratorEntry next = this.elements.firstKey();
+            UnderlyingDistance<U> next = this.elements.firstKey();
             RelativeLane lane = this.elements.get(next);
             this.elements.remove(next);
 
             // prepare next
-            Iterator<PrimaryIteratorEntry> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
+            Iterator<UnderlyingDistance<U>> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
             if (laneIterator != null)
             {
                 if (laneIterator.hasNext())
@@ -125,7 +125,7 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Pe
                 }
             }
 
-            MultiLanePerceptionIterable.this.laneMap.put(next.getObject(), lane);
+            MultiLanePerceptionIterable.this.laneMap.put(next.object(), lane);
             return next;
         }
 
@@ -140,7 +140,7 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Pe
                 this.elements = new TreeMap<>();
                 for (RelativeLane lane : MultiLanePerceptionIterable.this.iterators.keySet())
                 {
-                    Iterator<PrimaryIteratorEntry> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
+                    Iterator<UnderlyingDistance<U>> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
                     if (laneIterator.hasNext())
                     {
                         this.elements.put(laneIterator.next(), lane);
@@ -152,7 +152,7 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Pe
     }
 
     @Override
-    public H perceive(final U object, final Length distance) throws GtuException, ParameterException
+    public P perceive(final U object, final Length distance) throws GtuException, ParameterException
     {
         return this.iterables.get(this.laneMap.get(object)).perceive(object, distance);
     }

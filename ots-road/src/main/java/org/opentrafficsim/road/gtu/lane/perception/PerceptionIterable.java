@@ -11,16 +11,16 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <H> headway type
+ * @param <P> perceived object type
  */
-public interface PerceptionIterable<H extends PerceivedObject> extends Iterable<H>
+public interface PerceptionIterable<P extends PerceivedObject> extends Iterable<P>
 {
 
     /**
      * Returns the first element.
      * @return first element
      */
-    H first();
+    P first();
 
     /**
      * Returns whether this iterable is empty.

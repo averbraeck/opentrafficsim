@@ -160,8 +160,8 @@ Next, we give an example of _super_ generics, which are often considered vague, 
 Next, we show an example using quite some type arguments, to show that although at first glance this may seem unclear, it makes perfect sense. The example discusses a `PerceptionCollectable`. It is designed to allow iteration over perceived representations of type `H` regarding underlying objects in simulation of type `U`. Furthermore, it can perceive a collected result of type `C`, resulting from considering all objects of type `U` together. Finally, as the collected (accumulated) result is determined, there is an intermediate result of type `I`. As a concrete example, density may be determined by considering leaders of type `U = Gtu`, perceived as `H = HeadwayGtu`, resulting in a density `C = LinearDensity`, with an intermediate type `I` which is some class that stores a cumulative GTU count, and the distance over which these GTUs are found. The identity returns an initial value for this (count = 0), while the accumulator increases the result for every next GTU, and the finalizer translates the last intermediate result in a density. We again see the `super` keyword, as for instance we could have a `PerceptionCollectable` of lane-based GTUs with `U = LaneBasedGtu`. From the set of lane-based GTUs we could use an accumulator of GTUs (so a superclass of `LaneBasedGtu`) as for instance only speed is used, which GTUs also have. Without the super keyword, a `PerceptionAccumulator<Gtu, ?>` could not be used.
 
 ```java
-    public interface PerceptionCollectable<H extends Headway, U> 
-            extends PerceptionIterable<H>
+    public interface PerceptionCollectable<P extends PerceivedObject, U> 
+            extends PerceptionIterable<P>
     {
         <C, I> C collect(Supplier<I> identity, 
                 PerceptionAccumulator<? super U, I> accumulator, 

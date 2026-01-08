@@ -8,21 +8,21 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 /**
@@ -89,41 +89,19 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
      */
     private PerceptionCollectable<PerceivedTrafficLight, TrafficLight> computeTrafficLights(final RelativeLane lane)
     {
-        Iterable<Entry<TrafficLight>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamObjects(lane,
-                TrafficLight.class, RelativePosition.FRONT, true), "");
-        Route route = Try.assign(() -> getPerception().getGtu().getStrategicalPlanner().getRoute(), "");
-        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
+        Iterable<Entry<TrafficLight>> iterable = Try.assign(() ->
         {
-            @Override
-            protected Iterator<PrimaryIteratorEntry> primaryIterator()
-            {
-                Iterator<Entry<TrafficLight>> iterator = iterable.iterator();
-                return new Iterator<>()
-                {
-                    @Override
-                    public boolean hasNext()
-                    {
-                        return iterator.hasNext();
-                    }
-
-                    @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedTrafficLight,
-                            TrafficLight>.PrimaryIteratorEntry next()
-                    {
-                        Entry<TrafficLight> entry = iterator.next();
-                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
-                    }
-                };
-            }
-
-            @Override
-            protected PerceivedTrafficLight perceive(final TrafficLight trafficLight, final Length distance)
-                    throws GtuException, ParameterException
-            {
-                return new PerceivedTrafficLight(trafficLight, distance,
-                        trafficLight.canTurnOnRed(route, getPerception().getGtu().getType()));
-            }
-        };
+            return getPerception().getLaneStructure().getDownstreamObjects(lane, TrafficLight.class, RelativePosition.FRONT,
+                    true);
+        }, "Unable to get downstream traffic lights from LaneStructure");
+        LaneBasedGtu gtu = getPerception().getGtu();
+        Route route = Try.assign(() -> gtu.getStrategicalPlanner().getRoute(), "");
+        return new PerceptionReiterable<>(gtu, iterable, (trafficLight, distance) ->
+        {
+            return Try.assign(
+                    () -> new PerceivedTrafficLight(trafficLight, distance, trafficLight.canTurnOnRed(route, gtu.getType())),
+                    "Unable to create PerceivedTrafficLight");
+        });
     }
 
     /**
@@ -134,40 +112,15 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
     private PerceptionCollectable<PerceivedConflict, Conflict> computeConflicts(final RelativeLane lane)
     {
         Iterable<Entry<Conflict>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamObjects(lane,
-                Conflict.class, RelativePosition.FRONT, true), "");
-        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
-        {
-            @Override
-            protected Iterator<PrimaryIteratorEntry> primaryIterator()
-            {
-                Iterator<Entry<Conflict>> iterator = iterable.iterator();
-                return new Iterator<>()
+                Conflict.class, RelativePosition.FRONT, true), "Unable to get downstream conflicts from LaneStructure");
+        return new PerceptionReiterable<LaneBasedObject, PerceivedConflict, Conflict>(getGtu(), iterable,
+                (conflict, distance) ->
                 {
-                    @Override
-                    public boolean hasNext()
-                    {
-                        return iterator.hasNext();
-                    }
-
-                    @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedConflict, Conflict>.PrimaryIteratorEntry next()
-                    {
-                        Entry<Conflict> entry = iterator.next();
-                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
-                    }
-                };
-            }
-
-            @Override
-            protected PerceivedConflict perceive(final Conflict conflict, final Length distance)
-                    throws GtuException, ParameterException
-            {
-                Length lookAhead = Try.assign(() -> getObject().getParameters().getParameter(LOOKAHEAD),
-                        "Parameter Look-ahead not present.");
-                return PerceivedConflict.of(getGtu(), conflict, DirectIntersectionPerception.this.perceptionGtuType, distance,
-                        lookAhead);
-            }
-        };
+                    Length lookAhead = Try.assign(() -> getGtu().getParameters().getParameter(LOOKAHEAD),
+                            "Parameter Look-ahead not present.");
+                    return PerceivedConflict.of(getGtu(), conflict, DirectIntersectionPerception.this.perceptionGtuType,
+                            distance, lookAhead);
+                });
     }
 
     /**

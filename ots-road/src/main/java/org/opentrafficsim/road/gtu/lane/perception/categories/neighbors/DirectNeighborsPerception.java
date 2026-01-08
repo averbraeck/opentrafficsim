@@ -1,22 +1,19 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
-import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
+import org.opentrafficsim.road.gtu.lane.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
@@ -74,7 +71,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             }
             return set;
         }
-        catch (ParameterException | GtuException | IllegalArgumentException exception)
+        catch (ParameterException | IllegalArgumentException exception)
         {
             throw new OtsRuntimeException("Unexpected exception while computing first leaders.", exception);
         }
@@ -105,7 +102,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             }
             return set;
         }
-        catch (ParameterException | GtuException | IllegalArgumentException exception)
+        catch (ParameterException | IllegalArgumentException exception)
         {
             throw new OtsRuntimeException("Unexpected exception while computing first followers.", exception);
         }
@@ -170,39 +167,16 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
      */
     private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
     {
-        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamGtus(lane,
-                RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR), "");
-        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
+        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() ->
         {
-            @Override
-            protected Iterator<PrimaryIteratorEntry> primaryIterator()
-            {
-                Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
-                return new Iterator<>()
-                {
-                    @Override
-                    public boolean hasNext()
-                    {
-                        return iterator.hasNext();
-                    }
-
-                    @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
-                    {
-                        Entry<LaneBasedGtu> entry = iterator.next();
-                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
-                    }
-                };
-            }
-
-            @Override
-            protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
-                    throws GtuException, ParameterException
-            {
-                return DirectNeighborsPerception.this.perceptionGtuType.createPerceivedGtu(getObject(), getObject(), object,
-                        distance, true);
-            }
-        };
+            return getPerception().getLaneStructure().getDownstreamGtus(lane, RelativePosition.FRONT, RelativePosition.FRONT,
+                    RelativePosition.FRONT, RelativePosition.REAR);
+        }, "Unable to get leaders from LaneStructure");
+        return new PerceptionReiterable<>(getGtu(), iterable, (object, distance) ->
+        {
+            return Try.assign(() -> DirectNeighborsPerception.this.perceptionGtuType.createPerceivedGtu(getGtu(), getGtu(),
+                    object, distance, true), "Unable to create PerceivedGtu");
+        });
     }
 
     @Override
@@ -219,39 +193,16 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
      */
     private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
     {
-        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getUpstreamGtus(lane,
-                RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT), "");
-        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
+        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() ->
         {
-            @Override
-            protected Iterator<PrimaryIteratorEntry> primaryIterator()
-            {
-                Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
-                return new Iterator<>()
-                {
-                    @Override
-                    public boolean hasNext()
-                    {
-                        return iterator.hasNext();
-                    }
-
-                    @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
-                    {
-                        Entry<LaneBasedGtu> entry = iterator.next();
-                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
-                    }
-                };
-            }
-
-            @Override
-            protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
-                    throws GtuException, ParameterException
-            {
-                return DirectNeighborsPerception.this.perceptionGtuType.createPerceivedGtu(getObject(), getObject(), object,
-                        distance, false);
-            }
-        };
+            return getPerception().getLaneStructure().getUpstreamGtus(lane, RelativePosition.FRONT, RelativePosition.FRONT,
+                    RelativePosition.REAR, RelativePosition.FRONT);
+        }, "Unable to get followers from LaneStructure");
+        return new PerceptionReiterable<>(getGtu(), iterable, (object, distance) ->
+        {
+            return Try.assign(() -> DirectNeighborsPerception.this.perceptionGtuType.createPerceivedGtu(getGtu(), getGtu(),
+                    object, distance, false), "Unable to create PerceivedGtu");
+        });
     }
 
     /**

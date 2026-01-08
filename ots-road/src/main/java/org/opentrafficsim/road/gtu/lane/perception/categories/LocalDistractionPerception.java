@@ -54,7 +54,7 @@ public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneB
         return new AbstractPerceptionReiterable<>(getGtu())
         {
             @Override
-            protected Iterator<PrimaryIteratorEntry> primaryIterator()
+            protected Iterator<UnderlyingDistance<LocalDistraction>> primaryIterator()
             {
                 Iterator<Entry<LocalDistraction>> iterator = iterable.iterator();
                 return new Iterator<>()
@@ -66,11 +66,10 @@ public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneB
                     }
 
                     @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedLocalDistraction,
-                            LocalDistraction>.PrimaryIteratorEntry next()
+                    public UnderlyingDistance<LocalDistraction> next()
                     {
                         Entry<LocalDistraction> entry = iterator.next();
-                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
+                        return new UnderlyingDistance<>(entry.object(), entry.distance());
                     }
                 };
             }

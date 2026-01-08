@@ -18,33 +18,33 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <H> headway type
+ * @param <P> perceived object type
  * @param <U> underlying object type
  */
-public class PerceptionCollectableFiltered<H extends PerceivedObject, U> implements PerceptionCollectable<H, U>
+public class PerceptionCollectableFiltered<P extends PerceivedObject, U> implements PerceptionCollectable<P, U>
 {
 
     /** Iterator of headway objects. */
-    private final Iterator<H> iteratorH;
+    private final Iterator<P> iteratorH;
 
     /** Iterator of underlying objects. */
     private final Iterator<U> iteratorU;
 
     /** Filter predicate. */
-    private final Predicate<H> predicate;
+    private final Predicate<P> predicate;
 
     /** First entry. */
-    private Entry<H, U> first;
+    private Entry<P, U> first;
 
     /** Last entry (so far). */
-    private Entry<H, U> last;
+    private Entry<P, U> last;
 
     /**
      * Constructor.
      * @param collectable collectable to filter.
      * @param predicate predicate, should return {@code true} for items that remain in the collectable.
      */
-    public PerceptionCollectableFiltered(final PerceptionCollectable<H, U> collectable, final Predicate<H> predicate)
+    public PerceptionCollectableFiltered(final PerceptionCollectable<P, U> collectable, final Predicate<P> predicate)
     {
         this.iteratorH = collectable.iterator();
         this.iteratorU = collectable.underlying();
@@ -52,7 +52,7 @@ public class PerceptionCollectableFiltered<H extends PerceivedObject, U> impleme
     }
 
     @Override
-    public H first()
+    public P first()
     {
         if (this.first == null)
         {
@@ -71,7 +71,7 @@ public class PerceptionCollectableFiltered<H extends PerceivedObject, U> impleme
     }
 
     @Override
-    public Iterator<H> iterator()
+    public Iterator<P> iterator()
     {
         return new FilterIterator<>((entry) -> entry.h);
     }
@@ -114,13 +114,13 @@ public class PerceptionCollectableFiltered<H extends PerceivedObject, U> impleme
     {
         if (this.iteratorH.hasNext())
         {
-            H h = this.iteratorH.next();
+            P h = this.iteratorH.next();
             U u = this.iteratorU.next();
             if (!this.predicate.test(h))
             {
                 return prepareNext();
             }
-            Entry<H, U> entry = new Entry<>(h, u);
+            Entry<P, U> entry = new Entry<>(h, u);
             if (this.first == null)
             {
                 this.first = entry;
@@ -184,19 +184,19 @@ public class PerceptionCollectableFiltered<H extends PerceivedObject, U> impleme
     private class FilterIterator<R> implements Iterator<R>
     {
         /** Converter. */
-        private final Function<Entry<H, U>, R> converter;
+        private final Function<Entry<P, U>, R> converter;
 
         /** Last entry. */
-        private Entry<H, U> last = null;
+        private Entry<P, U> last = null;
 
         /** Next entry. */
-        private Entry<H, U> next = null;
+        private Entry<P, U> next = null;
 
         /**
          * Constructor.
          * @param converter converter to return type.
          */
-        FilterIterator(final Function<Entry<H, U>, R> converter)
+        FilterIterator(final Function<Entry<P, U>, R> converter)
         {
             this.converter = converter;
         }

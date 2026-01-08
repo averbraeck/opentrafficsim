@@ -7,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
@@ -40,12 +39,10 @@ public interface PerceivedGtuType
      * @param distance distance
      * @param downstream downstream (or upstream) neighbor
      * @return perception object from a gtu
-     * @throws GtuException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
     default PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
-            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
-            throws GtuException, ParameterException
+            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream) throws ParameterException
     {
         Speed v = perceivedGtu.getSpeed();
         Acceleration a = perceivedGtu.getAcceleration();
@@ -97,8 +94,7 @@ public interface PerceivedGtuType
 
         @Override
         public PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
-                final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
-                throws GtuException, ParameterException
+                final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream) throws ParameterException
         {
             Duration now = perceivedGtu.getSimulator().getSimulatorTime();
             if (this.updateTime == null || now.si > this.updateTime.si)

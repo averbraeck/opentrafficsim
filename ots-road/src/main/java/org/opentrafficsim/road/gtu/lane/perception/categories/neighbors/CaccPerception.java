@@ -73,13 +73,12 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
             return new AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>(getGtu())
             {
                 @Override
-                protected Iterator<AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu,
-                        LaneBasedGtu>.PrimaryIteratorEntry> primaryIterator()
+                protected Iterator<UnderlyingDistance<LaneBasedGtu>> primaryIterator()
                 {
                     return new Iterator<>()
                     {
                         /** Next entry which is the first vehicle, or a further CACC vehicle (defined by tactical planner). */
-                        private PrimaryIteratorEntry next;
+                        private UnderlyingDistance<LaneBasedGtu> next;
 
                         /** To include the first vehicle always. */
                         private boolean first = true;
@@ -92,7 +91,7 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                                 Entry<LaneBasedGtu> entry = leaders.next();
                                 if (this.first || entry.object().getTacticalPlanner() instanceof Cacc)
                                 {
-                                    this.next = new PrimaryIteratorEntry(entry.object(), entry.distance());
+                                    this.next = new UnderlyingDistance<>(entry.object(), entry.distance());
                                 }
                                 this.first = false;
                             }
@@ -100,8 +99,7 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                         }
 
                         @Override
-                        public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu,
-                                LaneBasedGtu>.PrimaryIteratorEntry next()
+                        public UnderlyingDistance<LaneBasedGtu> next()
                         {
                             hasNext();
                             return this.next;

@@ -16,10 +16,10 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <H> headway type
+ * @param <P> perceived object type
  * @param <U> underlying object type
  */
-public interface PerceptionCollectable<H extends PerceivedObject, U> extends PerceptionIterable<H>
+public interface PerceptionCollectable<P extends PerceivedObject, U> extends PerceptionIterable<P>
 {
 
     /**
@@ -89,6 +89,7 @@ public interface PerceptionCollectable<H extends PerceivedObject, U> extends Per
      * @param <U> underlying object type
      * @param <I> intermediate result type
      */
+    @FunctionalInterface
     interface PerceptionAccumulator<U, I>
     {
         /**
@@ -107,7 +108,7 @@ public interface PerceptionCollectable<H extends PerceivedObject, U> extends Per
      */
     class Intermediate<I>
     {
-        /** Number of underlying object being iterated. */
+        /** Number of underlying objects being iterated. */
         private int number = 0;
 
         /** Intermediate object. */

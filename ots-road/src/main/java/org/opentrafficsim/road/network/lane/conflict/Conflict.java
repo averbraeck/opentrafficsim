@@ -570,15 +570,15 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         }
 
         @Override
-        protected Iterator<PrimaryIteratorEntry> primaryIterator()
+        protected Iterator<UnderlyingDistance<LaneBasedGtu>> primaryIterator()
         {
             /**
              * Iterator that iterates over PrimaryIteratorEntry objects.
              */
-            class ConflictGtuIterator implements Iterator<PrimaryIteratorEntry>
+            class ConflictGtuIterator implements Iterator<UnderlyingDistance<LaneBasedGtu>>
             {
                 /** Next entry. */
-                private PrimaryIteratorEntry next;
+                private UnderlyingDistance<LaneBasedGtu> next;
 
                 @Override
                 public boolean hasNext()
@@ -601,7 +601,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             }
                             if (gtu.distance() == null || gtu.distance().le(ConflictGtuIterable.this.visibility))
                             {
-                                this.next = new PrimaryIteratorEntry(gtu.object(), gtu.distance());
+                                this.next = new UnderlyingDistance<>(gtu.object(), gtu.distance());
                             }
                         }
                     }
@@ -609,11 +609,11 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 }
 
                 @Override
-                public PrimaryIteratorEntry next()
+                public UnderlyingDistance<LaneBasedGtu> next()
                 {
                     if (hasNext())
                     {
-                        PrimaryIteratorEntry out = this.next;
+                        UnderlyingDistance<LaneBasedGtu> out = this.next;
                         this.next = null;
                         return out;
                     }

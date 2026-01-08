@@ -17,13 +17,13 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <H> headway type
+ * @param <P> perceived object type
  */
-public class PerceptionIterableSet<H extends PerceivedObject> implements PerceptionIterable<H>
+public class PerceptionIterableSet<P extends PerceivedObject> implements PerceptionIterable<P>
 {
 
     /** Internal set. */
-    private Set<H> set;
+    private Set<P> set;
 
     /**
      * Creates an empty iterable.
@@ -37,7 +37,7 @@ public class PerceptionIterableSet<H extends PerceivedObject> implements Percept
      * Creates a single-value iterable.
      * @param headway headway
      */
-    public PerceptionIterableSet(final H headway)
+    public PerceptionIterableSet(final P headway)
     {
         this.set = new LinkedHashSet<>();
         this.set.add(headway);
@@ -47,19 +47,19 @@ public class PerceptionIterableSet<H extends PerceivedObject> implements Percept
      * Creates an iterable from a sorted set.
      * @param headways set of headway
      */
-    public PerceptionIterableSet(final SortedSet<H> headways)
+    public PerceptionIterableSet(final SortedSet<P> headways)
     {
         this.set = headways;
     }
 
     @Override
-    public Iterator<H> iterator()
+    public Iterator<P> iterator()
     {
         return this.set.iterator();
     }
 
     @Override
-    public H first()
+    public P first()
     {
         return this.set.iterator().next();
     }

@@ -64,7 +64,7 @@ public class Generics
     }
 
     // @docs/02-model-structure/java.md#java-generics
-    public interface PerceptionCollectable<H extends PerceivedObject, U> extends PerceptionIterable<H>
+    public interface PerceptionCollectable<P extends PerceivedObject, U> extends PerceptionIterable<P>
     {
         <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator, Function<I, C> finalizer);
     }

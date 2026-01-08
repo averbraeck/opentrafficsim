@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
@@ -34,10 +33,9 @@ public class PerceivedTrafficLightChannel extends PerceivedTrafficLight
      * @param distance the distance to the traffic light, distance cannot be null.
      * @param turnOnRed whether the perceiving GTU may turn on red.
      * @param perceptionDelay perception delay supplier.
-     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public PerceivedTrafficLightChannel(final TrafficLight trafficLight, final Length distance, final boolean turnOnRed,
-            final Supplier<Duration> perceptionDelay) throws GtuException
+            final Supplier<Duration> perceptionDelay)
     {
         super(trafficLight, distance, turnOnRed);
         this.perceptionDelay = perceptionDelay;

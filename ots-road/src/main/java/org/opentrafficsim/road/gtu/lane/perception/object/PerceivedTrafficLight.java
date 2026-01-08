@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.perception.object;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
@@ -30,10 +29,8 @@ public class PerceivedTrafficLight extends PerceivedLaneBasedObjectBase
      * @param trafficLight the traffic light object for further observation, can not be null.
      * @param distance the distance to the traffic light, distance cannot be null.
      * @param turnOnRed whether the perceiving GTU may turn on red.
-     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public PerceivedTrafficLight(final TrafficLight trafficLight, final Length distance, final boolean turnOnRed)
-            throws GtuException
     {
         super(id(trafficLight), ObjectType.TRAFFICLIGHT, Length.ZERO, Kinematics.staticAhead(distance), trafficLight.getLane());
         this.trafficLight = trafficLight;
@@ -44,9 +41,8 @@ public class PerceivedTrafficLight extends PerceivedLaneBasedObjectBase
      * Get the id of the traffic light; throw an exception if traffic light is null.
      * @param trafficLight the traffic light object for further observation, can not be null.
      * @return he id of the traffic light.
-     * @throws GtuException when the trafficLight object is null
      */
-    private static String id(final TrafficLight trafficLight) throws GtuException
+    private static String id(final TrafficLight trafficLight)
     {
         Throw.whenNull(trafficLight, "trafficLight");
         return trafficLight.getId();

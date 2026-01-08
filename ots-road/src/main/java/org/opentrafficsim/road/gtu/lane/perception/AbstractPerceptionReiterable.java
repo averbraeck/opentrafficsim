@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
@@ -23,12 +24,12 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <P> perceiving object type
- * @param <H> headway type
- * @param <U> underlying object type
+ * @param <O> perceiving object type (an {@code O} is perceiving a {@code U} as a {@code P})
+ * @param <P> perceived object type (an {@code O} is perceiving a {@code U} as a {@code P})
+ * @param <U> underlying object type (an {@code O} is perceiving a {@code U} as a {@code P})
  */
-public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H extends PerceivedObject, U>
-        implements PerceptionCollectable<H, U>
+public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P extends PerceivedObject, U>
+        implements PerceptionCollectable<P, U>
 {
 
     /** First entry. */
@@ -38,16 +39,16 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
     private SecondaryIteratorEntry last;
 
     /** Primary iterator. */
-    private Iterator<PrimaryIteratorEntry> primaryIterator;
+    private Iterator<UnderlyingDistance<U>> primaryIterator;
 
     /** Perceiving object. */
-    private final P perceivingObject;
+    private final O perceivingObject;
 
     /**
      * Constructor.
      * @param perceivingObject perceiving object.
      */
-    protected AbstractPerceptionReiterable(final P perceivingObject)
+    protected AbstractPerceptionReiterable(final O perceivingObject)
     {
         this.perceivingObject = perceivingObject;
     }
@@ -56,7 +57,7 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
      * Returns the perceiving object.
      * @return perceiving object.
      */
-    protected P getObject()
+    public O getObject()
     {
         return this.perceivingObject;
     }
@@ -65,7 +66,7 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
      * Returns the primary iterator.
      * @return primary iterator
      */
-    final Iterator<PrimaryIteratorEntry> getPrimaryIterator()
+    final Iterator<UnderlyingDistance<U>> getPrimaryIterator()
     {
         if (this.primaryIterator == null)
         {
@@ -78,7 +79,7 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
      * Returns the primary iterator. This method is called once by AbstractPerceptionReiterable.
      * @return primary iterator
      */
-    protected abstract Iterator<PrimaryIteratorEntry> primaryIterator();
+    protected abstract Iterator<UnderlyingDistance<U>> primaryIterator();
 
     /**
      * Returns a perceived version of the underlying object.
@@ -88,10 +89,10 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
      * @throws GtuException on exception
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    protected abstract H perceive(U object, Length distance) throws GtuException, ParameterException;
+    protected abstract P perceive(U object, Length distance) throws GtuException, ParameterException;
 
     @Override
-    public final synchronized H first()
+    public final synchronized P first()
     {
         assureFirst();
         if (this.first == null)
@@ -114,11 +115,11 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
 
     /**
      * Adds an iterator entry to the internal linked list.
-     * @param next next object
+     * @param next next object with distance
      */
-    final void addNext(final PrimaryIteratorEntry next)
+    final void addNext(final UnderlyingDistance<U> next)
     {
-        SecondaryIteratorEntry entry = new SecondaryIteratorEntry(next.object, next.distance);
+        SecondaryIteratorEntry entry = new SecondaryIteratorEntry(next);
         if (AbstractPerceptionReiterable.this.last == null)
         {
             AbstractPerceptionReiterable.this.first = entry;
@@ -138,7 +139,7 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
     }
 
     @Override
-    public final Iterator<H> iterator()
+    public final Iterator<P> iterator()
     {
         return new PerceptionIterator();
     }
@@ -156,7 +157,8 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
             next = assureNext(next, lastReturned);
             while (next != null && !intermediate.isStop())
             {
-                intermediate = accumulator.accumulate(intermediate, next.object, next.distance);
+                intermediate = accumulator.accumulate(intermediate, next.underlyingDistance.object(),
+                        next.underlyingDistance.distance());
                 intermediate.step();
                 lastReturned = next;
                 next = lastReturned.next;
@@ -201,7 +203,7 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
                 this.lastReturned = this.next;
                 this.next = this.lastReturned.next;
                 this.next = assureNext(this.next, this.lastReturned);
-                return this.lastReturned.object;
+                return this.lastReturned.underlyingDistance.object();
             }
         };
     }
@@ -232,7 +234,8 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
                 this.lastReturned = this.next;
                 this.next = this.lastReturned.next;
                 this.next = assureNext(this.next, this.lastReturned);
-                return new UnderlyingDistance<>(this.lastReturned.object, this.lastReturned.distance);
+                return new UnderlyingDistance<>(this.lastReturned.underlyingDistance.object(),
+                        this.lastReturned.underlyingDistance.distance());
             }
         };
     }
@@ -250,7 +253,7 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class PerceptionIterator implements Iterator<H>
+    public class PerceptionIterator implements Iterator<P>
     {
 
         /** Last returned entry. */
@@ -273,7 +276,7 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
         }
 
         @Override
-        public H next()
+        public P next()
         {
             this.next = assureNext(this.next, this.lastReturned);
             if (this.next == null)
@@ -319,52 +322,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
     }
 
     /**
-     * Class for {@code primaryIterator()} to return, implemented in subclasses.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    protected class PrimaryIteratorEntry implements Comparable<PrimaryIteratorEntry>
-    {
-        /** Object. */
-        private final U object;
-
-        /** Distance to the object. */
-        private final Length distance;
-
-        /**
-         * Constructor.
-         * @param object object
-         * @param distance distance
-         */
-        public PrimaryIteratorEntry(final U object, final Length distance)
-        {
-            this.object = object;
-            this.distance = distance;
-        }
-
-        @Override
-        public int compareTo(final PrimaryIteratorEntry o)
-        {
-            return this.distance.compareTo(o.distance);
-        }
-
-        /**
-         * Returns the object.
-         * @return object
-         */
-        protected U getObject()
-        {
-            return this.object;
-        }
-    }
-
-    /**
      * Entries that make up a linked list of values for secondary iterators to iterate over.
      * <p>
      * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -378,49 +335,33 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
     private class SecondaryIteratorEntry
     {
         /** Value. */
-        private final U object;
-
-        /** Distance to object. */
-        private final Length distance;
+        private final UnderlyingDistance<U> underlyingDistance;
 
         /** Value. */
-        private H value;
+        private P value;
 
         /** Next entry. */
         private SecondaryIteratorEntry next;
 
         /**
          * Constructor.
-         * @param object object
-         * @param distance distance to object
+         * @param underlyingDistance object with distance to object
          */
-        SecondaryIteratorEntry(final U object, final Length distance)
+        SecondaryIteratorEntry(final UnderlyingDistance<U> underlyingDistance)
         {
-            this.object = object;
-            this.distance = distance;
+            this.underlyingDistance = underlyingDistance;
         }
 
         /**
          * Returns the perceived version of the object.
          * @return perceived version of the object
          */
-        H getValue()
+        P getValue()
         {
             if (this.value == null)
             {
-                /*-
-                this.value = Try.assign(() -> perceive(AbstractPerceptionReiterable.this.getGtu(), this.object, this.distance),
+                this.value = Try.assign(() -> perceive(this.underlyingDistance.object(), this.underlyingDistance.distance()),
                         "Exception during perception of object.");
-                */
-                try
-                {
-                    this.value = perceive(this.object, this.distance);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-
             }
             return this.value;
         }
