@@ -644,6 +644,19 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
     }
 
     /**
+     * Returns value of setting for the GTU type.
+     * @param <V> value type
+     * @param setting setting
+     * @param gtuType GTU type
+     * @return value from value array for the GTU type
+     */
+    // This method is for sub classes, which cannot access the value lists directly
+    protected <V> V get(final Setting<V> setting, final GtuType gtuType)
+    {
+        return get(setting.getListFunction().apply(this), gtuType);
+    }
+
+    /**
      * Returns value from value array for the GTU type.
      * @param <V> value type
      * @param values values
