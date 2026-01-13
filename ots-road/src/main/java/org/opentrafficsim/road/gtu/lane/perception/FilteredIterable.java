@@ -27,7 +27,7 @@ public class FilteredIterable<T> implements Iterable<T>
     /**
      * Constructor.
      * @param iterable iterable
-     * @param predicate predicate
+     * @param predicate predicate for elements that should remain
      */
     public FilteredIterable(final Iterable<T> iterable, final Predicate<T> predicate)
     {
