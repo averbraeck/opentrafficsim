@@ -1,16 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
-import org.opentrafficsim.road.network.lane.object.Distraction;
+import org.opentrafficsim.road.gtu.lane.perception.mental.DistractionField;
 
 /**
  * Task-demand for road-side distraction.
@@ -23,46 +16,23 @@ import org.opentrafficsim.road.network.lane.object.Distraction;
 public class ArTaskRoadSideDistraction extends AbstractArTask
 {
 
-    /** Odometer values at distraction. */
-    private Map<Distraction, Double> odos = new LinkedHashMap<>();
+    /** Distraction field. */
+    private final DistractionField distractionField;
 
-    /** Constructor. */
-    public ArTaskRoadSideDistraction()
+    /**
+     * Constructor.
+     * @param gtu GTU
+     */
+    public ArTaskRoadSideDistraction(final LaneBasedGtu gtu)
     {
         super("road-side distraction");
+        this.distractionField = new DistractionField(gtu);
     }
 
     @Override
     public double calculateTaskDemand(final LanePerception perception) throws ParameterException
     {
-        double odo = perception.getGtu().getOdometer().si;
-
-        for (RelativeLane lane : perception.getLaneStructure().getRootCrossSection())
-        {
-            for (Entry<Distraction> distraction : perception.getLaneStructure().getDownstreamObjects(lane, Distraction.class,
-                    RelativePosition.FRONT, false))
-            {
-                this.odos.put(distraction.object(), odo + distraction.distance().si);
-            }
-        }
-
-        // loop over all distractions in odos
-        Iterator<Distraction> it = this.odos.keySet().iterator();
-        double demand = 0.0;
-        while (it.hasNext())
-        {
-            Distraction next = it.next();
-            Double distraction = next.getDistraction(Length.ofSI(odo - this.odos.get(next)));
-            if (distraction == null)
-            {
-                it.remove();
-            }
-            else
-            {
-                demand += distraction;
-            }
-        }
-        return demand;
+        return this.distractionField.getDistraction((lane, distraction) -> lane.isCurrent());
     }
 
 }

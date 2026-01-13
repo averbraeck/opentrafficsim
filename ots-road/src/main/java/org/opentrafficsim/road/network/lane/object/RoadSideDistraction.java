@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -15,11 +16,14 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Distraction extends AbstractLaneBasedObject
+public class RoadSideDistraction extends AbstractLaneBasedObject
 {
 
     /** Distraction profile. */
     private final DistractionProfile profile;
+
+    /** Side of the distraction. */
+    private final LateralDirectionality side;
 
     /**
      * Constructor.
@@ -27,14 +31,15 @@ public class Distraction extends AbstractLaneBasedObject
      * @param lane lane
      * @param longitudinalPosition longitudinal position
      * @param profile distraction profile
+     * @param side side of the distraction, left of road (LEFT), right of road (RIGHT), or on the lane of the object (NONE)
      * @throws NetworkException on network exception
      */
-    public Distraction(final String id, final Lane lane, final Length longitudinalPosition, final DistractionProfile profile)
-            throws NetworkException
+    public RoadSideDistraction(final String id, final Lane lane, final Length longitudinalPosition,
+            final DistractionProfile profile, final LateralDirectionality side) throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), Length.ZERO);
         this.profile = profile;
-
+        this.side = side;
         init();
     }
 
@@ -46,6 +51,15 @@ public class Distraction extends AbstractLaneBasedObject
     public Double getDistraction(final Length distance)
     {
         return this.profile.getDistraction(distance);
+    }
+
+    /**
+     * Returns the side of the distraction, relative to the driving direction.
+     * @return side of the distraction, left of road (LEFT), right of road (RIGHT), or on the lane of the object (NONE)
+     */
+    public LateralDirectionality getSide()
+    {
+        return this.side;
     }
 
     /**

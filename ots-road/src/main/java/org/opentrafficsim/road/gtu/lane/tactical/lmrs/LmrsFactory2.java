@@ -51,6 +51,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskCarFollowing;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskCarFollowingExp;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskLaneChanging;
 import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskLaneChangingD;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskRoadSideDistraction;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.AdaptationSpeedChannel;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.AdaptationUpdateTime;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelFuller;
@@ -61,6 +62,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskCar
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskConflict;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskCooperation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskLaneChange;
+import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskRoadSideDistraction;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskScan;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskSignal;
 import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskTrafficLight;
@@ -238,9 +240,16 @@ import picocli.CommandLine.Option;
  * <td>&#10003;</td>
  * </tr>
  * <tr>
+ * <td style="text-align:left">TASK_ROADSIDE_DISTRACTION</td>
+ * <td>-</td>
+ * <td>&#10003;</td>
+ * <td>&#10003;</td>
+ * <td>&#10003;</td>
+ * </tr>
  * <tr>
  * <td colspan="5"><i>Behavioral adaptations for mental model</i></td>
  * </tr>
+ * <tr>
  * <td style="text-align:left">ADAPTATION_SPEED</td>
  * <td>-</td>
  * <td>&#10003;</td>
@@ -463,6 +472,11 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
     @Option(names = {"--conflictsTask"}, description = "Enables conflict task.", defaultValue = "false", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> conflictsTask = listOf(false);
+
+    /** Enables road-side distraction task (default: false). */
+    @Option(names = {"--roadSideDistractionTask"}, description = "Enables road-side distraction task.", defaultValue = "false",
+            split = "\\|", splitSynopsisLabel = "|", negatable = true)
+    private List<Boolean> roadSideDistractionTask = listOf(false);
 
     // Fuller -> Adaptations
 
@@ -906,6 +920,8 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
             addChannelTask(taskSuppliers, get(this.cooperationTask, gtuType), ChannelTaskCooperation.SUPPLIER);
             // TODO update conflict channel task to better intersection/infrastructure based model
             addChannelTask(taskSuppliers, get(this.conflictsTask, gtuType), ChannelTaskConflict.SUPPLIER);
+            addChannelTask(taskSuppliers, get(this.roadSideDistractionTask, gtuType),
+                    new ChannelTaskRoadSideDistraction.Supplier(gtu));
             addChannelTask(taskSuppliers, true, ChannelTaskScan.SUPPLIER);
 
             // behavioral adaptation
@@ -964,6 +980,10 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
             else if (get(this.alternateLaneChangingTask, gtuType))
             {
                 tasks.add(ArTaskLaneChangingD.SINGLETON);
+            }
+            if (get(this.roadSideDistractionTask, gtuType))
+            {
+                tasks.add(new ArTaskRoadSideDistraction(gtu));
             }
 
             // behavioral adaptation
@@ -1177,6 +1197,10 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
 
         /** Enables conflicts task under ATTENTION_MATRIX (default: false). */
         public static final Setting<Boolean> TASK_CONFLICTS = new Setting<>((factory) -> factory.conflictsTask);
+
+        /** Enables road-side distraction task (default: false). */
+        public static final Setting<Boolean> TASK_ROADSIDE_DISTRACTION =
+                new Setting<>((factory) -> factory.roadSideDistractionTask);
 
         // Fuller -> Adaptations
 
