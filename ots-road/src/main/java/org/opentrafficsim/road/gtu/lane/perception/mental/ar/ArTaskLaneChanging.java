@@ -75,6 +75,10 @@ public final class ArTaskLaneChanging extends ArTaskHeadwayBased implements Stat
         {
             return Duration.ZERO;
         }
+        if (h1.eq(Duration.POSITIVE_INFINITY) && h2.eq(Duration.POSITIVE_INFINITY))
+        {
+            return Duration.POSITIVE_INFINITY;
+        }
         return Duration.ofSI(h1.si * h2.si / (lat * (h1.si + h2.si)));
     }
 
