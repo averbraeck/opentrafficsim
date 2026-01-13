@@ -266,8 +266,13 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
      * @param merge ego-distance until the road of the object and the road of the perceiving GTU merge
      * @param object the perceived object
      */
-    public record Entry<T>(Length distance, Length merge, T object)
+    public record Entry<T>(Length distance, Length merge, T object) implements Comparable<Entry<?>>
     {
+        @Override
+        public int compareTo(final Entry<?> o)
+        {
+            return distance().compareTo(o.distance());
+        }
     }
 
 }
