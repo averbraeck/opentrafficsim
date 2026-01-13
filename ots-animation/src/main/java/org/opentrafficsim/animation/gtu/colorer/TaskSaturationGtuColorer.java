@@ -60,8 +60,10 @@ public class TaskSaturationGtuColorer implements LegendColorer<Gtu>
     {
         Double ts = gtu.getParameters().getParameterOrNull(Fuller.TS);
         Double tsCrit = gtu.getParameters().getParameterOrNull(SumFuller.TS_CRIT);
+        tsCrit = tsCrit == null ? 1.0 : tsCrit;
         Double tsMax = gtu.getParameters().getParameterOrNull(SumFuller.TS_MAX);
-        if (ts == null || tsCrit == null || tsMax == null)
+        tsMax = tsMax == null ? 2.0 : tsMax;
+        if (ts == null)
         {
             return NA;
         }
