@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.lane.object;
 
+import java.util.OptionalDouble;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -46,9 +48,9 @@ public class RoadSideDistraction extends AbstractLaneBasedObject
     /**
      * Returns the level of distraction at the given distance.
      * @param distance negative when approaching
-     * @return level of distraction (task-demand), or {@code null} if the distraction is no longer important
+     * @return level of distraction (task-demand), empty if the distraction is no longer important
      */
-    public Double getDistraction(final Length distance)
+    public OptionalDouble getDistraction(final Length distance)
     {
         return this.profile.getDistraction(distance);
     }
@@ -79,9 +81,9 @@ public class RoadSideDistraction extends AbstractLaneBasedObject
         /**
          * Returns the level of distraction at the given distance.
          * @param distance negative when approaching
-         * @return level of distraction (task-demand), or {@code null} if the distraction is no longer important
+         * @return level of distraction (task-demand), empty if the distraction is no longer important
          */
-        Double getDistraction(Length distance);
+        OptionalDouble getDistraction(Length distance);
     }
 
     /**
@@ -129,32 +131,33 @@ public class RoadSideDistraction extends AbstractLaneBasedObject
         }
 
         @Override
-        public Double getDistraction(final Length distance)
+        public OptionalDouble getDistraction(final Length distance)
         {
             if (distance.si < this.dMin.si)
             {
                 // before scope
-                return 0.0;
+                return OptionalDouble.of(0.0);
             }
             else if (distance.si < 0)
             {
                 // increasing distraction on approach
-                return this.maxDistraction * (1.0 - distance.si / this.dMin.si);
+                return OptionalDouble.of(this.maxDistraction * (1.0 - distance.si / this.dMin.si));
             }
             else if (distance.si < this.dMed.si)
             {
                 // max distraction at location (defined over a distance dMed)
-                return this.maxDistraction;
+                return OptionalDouble.of(this.maxDistraction);
             }
             else if (distance.si < this.dMax.si)
             {
                 // reducing distraction beyond location
-                return this.maxDistraction * (1.0 - (distance.si - this.dMed.si) / (this.dMax.si - this.dMed.si));
+                return OptionalDouble
+                        .of(this.maxDistraction * (1.0 - (distance.si - this.dMed.si) / (this.dMax.si - this.dMed.si)));
             }
             else
             {
                 // beyond scope
-                return null;
+                return OptionalDouble.empty();
             }
         }
     }

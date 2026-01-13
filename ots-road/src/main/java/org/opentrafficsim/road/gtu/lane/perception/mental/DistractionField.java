@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.function.BiFunction;
 
@@ -124,8 +125,8 @@ public class DistractionField implements EventListener
         while (distractionIterator.hasNext())
         {
             RoadSideDistraction distraction = distractionIterator.next();
-            Double td = distraction.getDistraction(Length.ofSI(odo - this.odos.get(distraction)));
-            if (td == null)
+            OptionalDouble td = distraction.getDistraction(Length.ofSI(odo - this.odos.get(distraction)));
+            if (td.isEmpty())
             {
                 distractionIterator.remove();
                 this.taskDemands.remove(distraction);
@@ -133,7 +134,7 @@ public class DistractionField implements EventListener
             }
             else
             {
-                this.taskDemands.put(distraction, td);
+                this.taskDemands.put(distraction, td.getAsDouble());
             }
         }
 

@@ -15,6 +15,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -52,6 +53,9 @@ public class StochasticDistractionModel implements EventListener
     /** Network. */
     private final RoadNetwork network;
 
+    /** GTU types. */
+    private final Set<GtuType> gtuTypes;
+
     /** Set of distracted GTUs. */
     private final Set<String> distractedGTUs = new LinkedHashSet<>();
 
@@ -70,15 +74,18 @@ public class StochasticDistractionModel implements EventListener
      * @param allowMultiTasking whether to allow multi-tasking
      * @param distractions list of distractions
      * @param network network
+     * @param gtuTypes GTU types to which the distractions apply
      */
     public StochasticDistractionModel(final boolean allowMultiTasking, final List<Distraction> distractions,
-            final RoadNetwork network)
+            final RoadNetwork network, final Set<GtuType> gtuTypes)
     {
-        Throw.whenNull(distractions, "List of tasks may not be null.");
-        Throw.whenNull(network, "Network may not be null.");
+        Throw.whenNull(distractions, "distractions");
+        Throw.whenNull(network, "network");
+        Throw.whenNull(gtuTypes, "gtuTypes");
         this.allowMultiTasking = allowMultiTasking;
         this.distractions = distractions;
         this.network = network;
+        this.gtuTypes = gtuTypes;
         network.addListener(this, Network.GTU_ADD_EVENT);
         network.addListener(this, Network.GTU_REMOVE_EVENT);
     }
@@ -211,7 +218,10 @@ public class StochasticDistractionModel implements EventListener
             // The GTU is not initialized yet, so we can't obtain the tactical planner
             String gtuId = (String) event.getContent();
             Gtu gtu = this.network.getGTU(gtuId);
-            gtu.addListener(this, Gtu.MOVE_EVENT);
+            if (this.gtuTypes.contains(gtu.getType()))
+            {
+                gtu.addListener(this, Gtu.MOVE_EVENT);
+            }
         }
         else if (event.getType().equals(Gtu.MOVE_EVENT))
         {
