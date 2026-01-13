@@ -60,11 +60,6 @@ public class ChannelTaskRoadSideDistraction extends AbstractTask implements Chan
     @Override
     protected double calculateTaskDemand(final LanePerception perception) throws ParameterException
     {
-        double d = this.distractionField.getDistraction(this.filter);
-        if (d >= 1.0)
-        {
-            d = this.distractionField.getDistraction(this.filter);
-        }
         return this.distractionField.getDistraction(this.filter);
     }
 
