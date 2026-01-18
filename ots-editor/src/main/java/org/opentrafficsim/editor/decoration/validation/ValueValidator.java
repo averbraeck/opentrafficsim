@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -35,9 +36,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
     /**
      * Returns message why a value is invalid, or {@code null} if the value is valid.
      * @param node supplied to verify with context, e.g. value combinations.
-     * @return message why a value is invalid, or {@code null} if the value is valid.
+     * @return message why a value is invalid, or empty if the value is valid.
      */
-    String validate(XsdTreeNode node);
+    Optional<String> validate(XsdTreeNode node);
 
     /**
      * Returns the options that a validator allows, typically an xsd:keyref returning defined values under the referred xsd:key
@@ -47,11 +48,12 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * may have the same name.
      * @param node node that is in the appropriate context.
      * @param field field for which to obtain the options.
-     * @return options, {@code null} if this validator is not a restriction of limited options.
+     * @return options, empty if this validator is not a restriction of limited options.
      */
-    default List<String> getOptions(final XsdTreeNode node, final Object field)
+    // Optional List because an empty list means no options allowed
+    default Optional<List<String>> getOptions(final XsdTreeNode node, final Object field)
     {
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -59,24 +61,24 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * @param directory base directory for relative paths.
      * @param fileName file name and path, possibly relative.
      * @param fallback fallback file name and path, possibly relative.
-     * @return first encountered problem in validating the value of the include, {@code null} if there is no problem.
+     * @return first encountered problem in validating the value of the include, empty if there is no problem.
      */
-    static String reportInvalidInclude(final String directory, final String fileName, final String fallback)
+    static Optional<String> reportInvalidInclude(final String directory, final String fileName, final String fallback)
     {
         if (fileName == null && fallback == null)
         {
-            return "Value is empty.";
+            return Optional.of("Value is empty.");
         }
         if (fileName == null)
         {
-            return "Fallback may only be provided if a file is also provided.";
+            return Optional.of("Fallback may only be provided if a file is also provided.");
         }
         File file = new File(fileName);
         if (!file.isAbsolute())
         {
             if (directory == null)
             {
-                return "Relative path defined but directory unknown. Try saving your work.";
+                return Optional.of("Relative path defined but directory unknown. Try saving your work.");
             }
             file = new File(directory + fileName);
         }
@@ -84,11 +86,11 @@ public interface ValueValidator extends Comparable<ValueValidator>
         {
             if (fallback == null)
             {
-                return "The file cannot be found.";
+                return Optional.of("The file cannot be found.");
             }
             return reportInvalidInclude(directory, fallback, null); // check fallback instead
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -96,21 +98,21 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * @param xsdNode node.
      * @param value value.
      * @param schema schema for type retrieval.
-     * @return first encountered problem in validating the value of the node, {@code null} if there is no problem.
+     * @return first encountered problem in validating the value of the node, empty if there is no problem.
      */
-    static String reportInvalidValue(final Node xsdNode, final String value, final Schema schema)
+    static Optional<String> reportInvalidValue(final Node xsdNode, final String value, final Schema schema)
     {
         if (xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(xsdNode, "#text").size()
-                && DocumentReader.getAttribute(xsdNode, "type") == null)
+                && DocumentReader.getAttribute(xsdNode, "type").isEmpty())
         {
             // no children and no type, this is a plain tag, e.g. <Straight />, it needs no input.
             return null;
         }
         if (value == null || value.isEmpty())
         {
-            return "Value is empty.";
+            return Optional.of("Value is empty.");
         }
-        return reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null);
+        return Optional.ofNullable(reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null));
     }
 
     /**
@@ -118,16 +120,16 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * @param xsdNode node, should be an xsd:attribute.
      * @param value value.
      * @param schema schema for type retrieval.
-     * @return first encountered problem in validating the attribute value, {@code null} if there is no problem.
+     * @return first encountered problem in validating the attribute value, empty if there is no problem.
      */
-    static String reportInvalidAttributeValue(final Node xsdNode, final String value, final Schema schema)
+    static Optional<String> reportInvalidAttributeValue(final Node xsdNode, final String value, final Schema schema)
     {
-        String use = DocumentReader.getAttribute(xsdNode, "use");
+        String use = DocumentReader.getAttribute(xsdNode, "use").orElse(null);
         if (value == null || value.isEmpty())
         {
-            return "required".equals(use) ? "Required value is empty." : null;
+            return Optional.ofNullable("required".equals(use) ? "Required value is empty." : null);
         }
-        return reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null);
+        return Optional.ofNullable(reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null));
     }
 
     /**
@@ -172,8 +174,10 @@ public interface ValueValidator extends Comparable<ValueValidator>
     private static String reportTypeNonCompliance(final Node appInfoNode, final Node node, final String typeAttribute,
             final String value, final Schema schema, final List<Node> restrictions, final List<String> baseType)
     {
-        String type = DocumentReader.getAttribute(node, typeAttribute); // can request "base" or "memberTypes" on recursion
-        String[] types = type == null ? new String[0] : type.split("\\s+"); // multiple possible when memberTypes in xsd:union
+        // can request "base" or "memberTypes" on recursion
+        String type = DocumentReader.getAttribute(node, typeAttribute).orElse(null);
+        // multiple possible when memberTypes in xsd:union
+        String[] types = type == null ? new String[0] : type.split("\\s+");
         List<String> reports = new ArrayList<>(types.length);
         for (String singleType : types)
         {
@@ -191,36 +195,39 @@ public interface ValueValidator extends Comparable<ValueValidator>
         switch (node.getNodeName())
         {
             case "xsd:complexType":
-                Node simpleContent = DocumentReader.getChild(node, "xsd:simpleContent");
-                Node extension = DocumentReader.getChild(simpleContent, "xsd:extension");
-                if (extension != null)
+                Node simpleContent = DocumentReader.getChild(node, "xsd:simpleContent").get();
+                Optional<Node> extension = DocumentReader.getChild(simpleContent, "xsd:extension");
+                if (extension.isPresent())
                 {
-                    return reportTypeNonCompliance(extension, extension, "base", value, schema, restrictions, baseType);
+                    return reportTypeNonCompliance(extension.get(), extension.get(), "base", value, schema, restrictions,
+                            baseType);
                 }
-                return reportTypeNonCompliance(appInfoNode, DocumentReader.getChild(simpleContent, "xsd:restriction"), "base",
-                        value, schema, restrictions, baseType);
+                return reportTypeNonCompliance(appInfoNode, DocumentReader.getChild(simpleContent, "xsd:restriction").get(),
+                        "base", value, schema, restrictions, baseType);
             case "xsd:simpleType":
-                Node union = DocumentReader.getChild(node, "xsd:union");
-                if (union != null)
+                Optional<Node> union = DocumentReader.getChild(node, "xsd:union");
+                if (union.isPresent())
                 {
-                    return reportTypeNonCompliance(appInfoNode, union, "memberTypes", value, schema, restrictions, baseType);
+                    return reportTypeNonCompliance(appInfoNode, union.get(), "memberTypes", value, schema, restrictions,
+                            baseType);
                 }
-                return reportTypeNonCompliance(appInfoNode, DocumentReader.getChild(node, "xsd:restriction"), "base", value,
-                        schema, restrictions, baseType);
+                return reportTypeNonCompliance(appInfoNode, DocumentReader.getChild(node, "xsd:restriction").get(), "base",
+                        value, schema, restrictions, baseType);
             case "xsd:element":
                 if (node.getChildNodes().getLength() == 0)
                 {
                     return null;
                 }
-                Node complexType = DocumentReader.getChild(node, "xsd:complexType");
-                if (complexType != null)
+                Optional<Node> complexType = DocumentReader.getChild(node, "xsd:complexType");
+                if (complexType.isPresent())
                 {
-                    return reportTypeNonCompliance(complexType, complexType, "type", value, schema, restrictions, baseType);
+                    return reportTypeNonCompliance(complexType.get(), complexType.get(), "type", value, schema, restrictions,
+                            baseType);
                 }
-                Node simpleType = DocumentReader.getChild(node, "xsd:simpleType");
+                Node simpleType = DocumentReader.getChild(node, "xsd:simpleType").get();
                 return reportTypeNonCompliance(simpleType, simpleType, "type", value, schema, restrictions, baseType);
             case "xsd:attribute":
-                Node simpleTypeAttr = DocumentReader.getChild(node, "xsd:simpleType");
+                Node simpleTypeAttr = DocumentReader.getChild(node, "xsd:simpleType").get();
                 return reportTypeNonCompliance(simpleTypeAttr, simpleTypeAttr, "type", value, schema, restrictions, baseType);
             case "xsd:restriction":
                 if (value == null)
@@ -295,11 +302,15 @@ public interface ValueValidator extends Comparable<ValueValidator>
         }
         if (type != null)
         {
-            Node typeNode = schema.getType(type);
-            String report = reportTypeNonCompliance(typeNode, typeNode, "base", value, schema, restrictions, baseType);
-            if (value != null && report != null)
+            Optional<Node> typeNode = schema.getType(type);
+            if (typeNode.isPresent())
             {
-                return report;
+                String report =
+                        reportTypeNonCompliance(typeNode.get(), typeNode.get(), "base", value, schema, restrictions, baseType);
+                if (value != null && report != null)
+                {
+                    return report;
+                }
             }
         }
         return null;
@@ -409,16 +420,16 @@ public interface ValueValidator extends Comparable<ValueValidator>
      */
     private static String reportRestrictionNonCompliance(final Node appInfoNode, final Node node, final String value)
     {
-        Node pattern = DocumentReader.getChild(node, "xsd:pattern");
-        if (pattern != null)
+        Optional<Node> pattern = DocumentReader.getChild(node, "xsd:pattern");
+        if (pattern.isPresent())
         {
-            String patternString = DocumentReader.getAttribute(pattern, "value");
+            String patternString = DocumentReader.getAttribute(pattern.get(), "value").get();
             try
             {
                 if (!Pattern.matches(patternString, value))
                 {
-                    String patternMessage = NodeAnnotation.APPINFO_PATTERN.get(appInfoNode);
-                    return patternMessage == null ? "Value does not match pattern " + patternString : patternMessage;
+                    Optional<String> patternMessage = NodeAnnotation.APPINFO_PATTERN.get(appInfoNode);
+                    return patternMessage.isEmpty() ? "Value does not match pattern " + patternString : patternMessage.get();
                 }
             }
             catch (PatternSyntaxException exception)
@@ -436,44 +447,44 @@ public interface ValueValidator extends Comparable<ValueValidator>
         List<String> options = new ArrayList<>();
         for (Node enumeration : enumerations)
         {
-            options.add(DocumentReader.getAttribute(enumeration, "value"));
+            options.add(DocumentReader.getAttribute(enumeration, "value").get());
         }
         if (!options.isEmpty() && !options.contains(value))
         {
             String arrayString = options.toString();
             return "Must be any of " + arrayString.substring(1, arrayString.length() - 1) + ".";
         }
-        Node minInclusive = DocumentReader.getChild(node, "xsd:minInclusive");
-        if (minInclusive != null)
+        Optional<Node> minInclusive = DocumentReader.getChild(node, "xsd:minInclusive");
+        if (minInclusive.isPresent())
         {
-            String val = DocumentReader.getAttribute(minInclusive, "value");
+            String val = DocumentReader.getAttribute(minInclusive.get(), "value").get();
             if (Double.valueOf(value) < Double.valueOf(val))
             {
                 return "Value must be above or equal to " + val + ".";
             }
         }
-        Node minExclusive = DocumentReader.getChild(node, "xsd:minExclusive");
-        if (minExclusive != null)
+        Optional<Node> minExclusive = DocumentReader.getChild(node, "xsd:minExclusive");
+        if (minExclusive.isPresent())
         {
-            String val = DocumentReader.getAttribute(minExclusive, "value");
+            String val = DocumentReader.getAttribute(minExclusive.get(), "value").get();
             if (Double.valueOf(value) <= Double.valueOf(val))
             {
                 return "Value must be above " + val + ".";
             }
         }
-        Node maxInclusive = DocumentReader.getChild(node, "xsd:maxInclusive");
-        if (maxInclusive != null)
+        Optional<Node> maxInclusive = DocumentReader.getChild(node, "xsd:maxInclusive");
+        if (maxInclusive.isPresent())
         {
-            String val = DocumentReader.getAttribute(maxInclusive, "value");
+            String val = DocumentReader.getAttribute(maxInclusive.get(), "value").get();
             if (Double.valueOf(value) > Double.valueOf(val))
             {
                 return "Value must be below or equal to " + val + ".";
             }
         }
-        Node maxExclusive = DocumentReader.getChild(node, "xsd:maxExclusive");
-        if (maxExclusive != null)
+        Optional<Node> maxExclusive = DocumentReader.getChild(node, "xsd:maxExclusive");
+        if (maxExclusive.isPresent())
         {
-            String val = DocumentReader.getAttribute(maxExclusive, "value");
+            String val = DocumentReader.getAttribute(maxExclusive.get(), "value").get();
             if (Double.valueOf(value) >= Double.valueOf(val))
             {
                 return "Value must be below " + val + ".";

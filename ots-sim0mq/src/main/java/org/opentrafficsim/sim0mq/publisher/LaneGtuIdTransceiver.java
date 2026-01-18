@@ -56,14 +56,14 @@ public class LaneGtuIdTransceiver extends AbstractTransceiver
             returnWrapper.nack("Bad address; need id of a link and id of a CrossSectionElement");
             return null;
         }
-        Link link = this.network.getLink((String) address[0]);
+        Link link = this.network.getLink((String) address[0]).orElse(null);
         if (null == link || (!(link instanceof CrossSectionLink)))
         {
             returnWrapper.nack("Network does not contain a link with id " + address[0]);
             return null;
         }
         CrossSectionLink csl = (CrossSectionLink) link;
-        CrossSectionElement cse = csl.getCrossSectionElement((String) address[1]);
+        CrossSectionElement cse = csl.getCrossSectionElement((String) address[1]).orElse(null);
         if (null == cse)
         {
             returnWrapper.nack("Link " + address[0] + " does not contain a cross section element with id " + address[1]);

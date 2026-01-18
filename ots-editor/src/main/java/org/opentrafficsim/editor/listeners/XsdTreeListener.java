@@ -105,13 +105,13 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
             if (node.isIdentifiable())
             {
-                this.editor.setCoupledNode(node.getCoupledNodeAttribute("Id"), node, null);
+                this.editor.setCoupledNode(node.getCoupledNodeAttribute("Id").orElse(null), node, null);
                 this.listening = node;
                 this.listening.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             }
             else if (node.isEditable())
             {
-                this.editor.setCoupledNode(node.getCoupledNodeValue(), node, null);
+                this.editor.setCoupledNode(node.getCoupledNodeValue().orElse(null), node, null);
                 this.listening = node;
                 this.listening.addListener(this, XsdTreeNode.VALUE_CHANGED);
             }
@@ -126,19 +126,19 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             String status = null;
             if (!node.isSelfValid())
             {
-                status = node.reportInvalidNode();
+                status = node.reportInvalidNode().orElse(null);
                 if (status == null)
                 {
-                    status = node.reportInvalidValue();
+                    status = node.reportInvalidValue().orElse(null);
                 }
                 if (status == null)
                 {
-                    status = node.reportInvalidId();
+                    status = node.reportInvalidId().orElse(null);
                 }
             }
             if (status == null)
             {
-                status = DocumentReader.filterHtml(node.getDescription());
+                status = DocumentReader.filterHtml(node.getDescription().orElse(null));
             }
             if (status != null)
             {
@@ -175,11 +175,11 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         {
             if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED) && "Id".equals(((Object[]) event.getContent())[1]))
             {
-                this.editor.setCoupledNode(this.listening.getCoupledNodeAttribute("Id"), this.listening, "Id");
+                this.editor.setCoupledNode(this.listening.getCoupledNodeAttribute("Id").orElse(null), this.listening, "Id");
             }
             else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
             {
-                this.editor.setCoupledNode(this.listening.getCoupledNodeValue(), this.listening, null);
+                this.editor.setCoupledNode(this.listening.getCoupledNodeValue().orElse(null), this.listening, null);
             }
         }
     }
@@ -209,7 +209,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         XsdTreeNode treeNode = this.editor.getTreeNodeAtPoint(e.getPoint());
         if (!treeNode.isSelfValid())
         {
-            this.treeTable.getTree().setToolTipText(treeNode.reportInvalidNode());
+            this.treeTable.getTree().setToolTipText(treeNode.reportInvalidNode().orElse(null));
         }
         else
         {
@@ -348,15 +348,16 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 anyAdded = true;
             }
         }
-        if (treeNode.getDescription() != null) // description is the only thing we show with the node disabled
+        if (treeNode.getDescription().isPresent()) // description is the only thing we show with the node disabled
         {
+            String description = treeNode.getDescription().get();
             JMenuItem item = new JMenuItem("Description...");
             item.addActionListener(new ActionListener()
             {
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeListener.this.editor.showDescription(treeNode.getDescription());
+                    XsdTreeListener.this.editor.showDescription(description);
                 }
             });
             item.setFont(this.treeTable.getFont());

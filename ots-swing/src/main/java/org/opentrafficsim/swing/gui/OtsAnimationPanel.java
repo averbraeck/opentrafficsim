@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -267,7 +268,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             final boolean enabled)
     {
         // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
-        JButton result = new JButton(OtsControlPanel.loadIcon(iconPath));
+        JButton result = new JButton(OtsControlPanel.loadIcon(iconPath).get());
         result.setPreferredSize(new Dimension(34, 32));
         result.setName(name);
         result.setEnabled(enabled);
@@ -293,8 +294,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
-        Icon icon = OtsControlPanel.loadIcon(iconPath);
-        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath);
+        Icon icon = OtsControlPanel.loadIcon(iconPath).get();
+        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath).get();
         button = new JCheckBox();
         button.setSelectedIcon(icon);
         button.setIcon(unIcon);
@@ -914,10 +915,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             OtsAnimationPanel.this.autoPanOnNextPaintComponent = OtsAnimationPanel.this.autoPanTrack;
             if (doPan && panKind != null && panId != null)
             {
-                Locatable locatable = panKind.searchNetwork(this.network, panId);
-                if (null != locatable)
+                Optional<? extends Locatable> locatable = panKind.searchNetwork(this.network, panId);
+                if (locatable.isPresent())
                 {
-                    Point<?> point = locatable.getLocation();
+                    Point<?> point = locatable.get().getLocation();
                     if (point != null) // Center extent around point
                     {
                         double w = getExtent().getDeltaX();

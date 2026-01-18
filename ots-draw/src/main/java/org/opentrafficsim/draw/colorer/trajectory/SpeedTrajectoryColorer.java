@@ -1,5 +1,6 @@
 package org.opentrafficsim.draw.colorer.trajectory;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Speed;
@@ -21,8 +22,8 @@ public class SpeedTrajectoryColorer extends SpeedColorer<TrajectorySection> impl
 {
 
     /** Value function. */
-    private static final Function<TrajectorySection, Speed> VALUE =
-            (traj) -> Speed.ofSI(traj.trajectory().getV(traj.section()));
+    private static final Function<TrajectorySection, Optional<Speed>> VALUE =
+            (traj) -> Optional.ofNullable(Speed.ofSI(traj.trajectory().getV(traj.section())));
 
     /**
      * Constructor.

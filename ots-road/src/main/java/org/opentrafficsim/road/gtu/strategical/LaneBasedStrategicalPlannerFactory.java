@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -39,13 +41,14 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      * @param gtuType GTU type
      * @param speedLimit speed limit
      * @param maxGtuSpeed maximum GTU speed
-     * @return desired speed of the next GTU to be generated at the given location, may be {@code null} at which point the GTU
+     * @return desired speed of the next GTU to be generated at the given location, may be empty at which point the GTU
      *         generator will use some other speed
      * @throws GtuException on parameter exception or network exception
      */
-    default Speed peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed) throws GtuException
+    default Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
+            throws GtuException
     {
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -53,13 +56,13 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      * {@code null}, at which point the GTU generator will only generate GTU's at fixed locations.
      * @param gtuType GTU type
      * @param speed speed the GTU might be generated at
-     * @return desired headway of the next GTU to be generated at the given speed, may be {@code null} at which point the GTU
-     *         generator only generate GTU's at fixed locations
+     * @return desired headway of the next GTU to be generated at the given speed, may be empty at which point the GTU generator
+     *         only generate GTU's at fixed locations
      * @throws GtuException on parameter exception or network exception
      */
-    default Length peekDesiredHeadway(final GtuType gtuType, final Speed speed) throws GtuException
+    default Optional<Length> peekDesiredHeadway(final GtuType gtuType, final Speed speed) throws GtuException
     {
-        return null;
+        return Optional.empty();
     }
 
 }

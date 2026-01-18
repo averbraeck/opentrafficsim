@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -29,6 +30,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
@@ -63,7 +65,8 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
     public static final Function<LanePerception, Set<ChannelTask>> SUPPLIER = (perception) ->
     {
         Set<ChannelTask> tasks = new LinkedHashSet<>();
-        ChannelMental channelMental = (perception.getMental() instanceof ChannelMental m) ? m : null;
+        Optional<Mental> mental = perception.getMental();
+        ChannelMental channelMental = (mental.isPresent() && mental.get() instanceof ChannelMental m) ? m : null;
         for (SortedSet<UnderlyingDistance<Conflict>> group : findConflictGroups(perception))
         {
             splitCarFollowing(tasks, group, channelMental);

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.util.Optional;
+
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -28,8 +30,8 @@ public interface LanePerception extends Perception<LaneBasedGtu>
 
     /**
      * Returns the mental module of perception.
-     * @return mental module of perception, may be {@code null} if not used
+     * @return mental module of perception, may be empty if not used
      */
-    Mental getMental();
+    Optional<Mental> getMental();
 
 }

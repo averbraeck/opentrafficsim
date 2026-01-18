@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -1074,25 +1075,25 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Obtains a custom icon for the path, or {@code null} if there is no custom icon specified for the path.
+     * Obtains a custom icon for the path.
      * @param path node path.
-     * @return custom icon, or {@code null} if there is no custom icon specified for the path.
+     * @return custom icon, empty if there is no custom icon specified for the path.
      */
-    public Icon getCustomIcon(final String path)
+    public Optional<Icon> getCustomIcon(final String path)
     {
         Icon icon = this.customIcons.get(path);
         if (icon != null)
         {
-            return icon;
+            return Optional.of(icon);
         }
         for (Entry<String, Icon> entry : this.customIcons.entrySet())
         {
             if (path.endsWith(entry.getKey()))
             {
-                return entry.getValue();
+                return Optional.of(entry.getValue());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -1152,18 +1153,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Returns the component of the tab with given name.
      * @param name name of the tab.
-     * @return component of the tab with given name or {@code null} if no such tab
+     * @return component of the tab with given name or empty if no such tab
      */
-    public Component getTab(final String name)
+    public Optional<Component> getTab(final String name)
     {
         for (int index = 0; index < this.visualizationPane.getTabCount(); index++)
         {
             if (this.visualizationPane.getTitleAt(index).equals(name))
             {
-                return this.visualizationPane.getComponentAt(index);
+                return Optional.of(this.visualizationPane.getComponentAt(index));
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

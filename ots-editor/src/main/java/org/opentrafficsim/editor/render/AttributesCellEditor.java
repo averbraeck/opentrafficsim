@@ -93,14 +93,14 @@ public class AttributesCellEditor extends DefaultCellEditor
             final int row, final int column)
     {
         XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
-        String attribute = DocumentReader.getAttribute(node.getAttributeNode(row), "name");
+        String attribute = DocumentReader.getAttribute(node.getAttributeNode(row), "name").get();
         this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, node, attribute);
         if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)
         {
             this.checkBox.setVisible(false);
             if ("xsd:boolean".equals(node.getAttributeBaseType(row)))
             {
-                String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
+                String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row).orElse(null);
                 if (message != null)
                 {
                     this.checkBox.setToolTipText(OtsEditor.limitTooltip(message));

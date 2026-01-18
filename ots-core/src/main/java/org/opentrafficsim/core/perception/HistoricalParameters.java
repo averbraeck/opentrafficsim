@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.perception;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -97,9 +99,9 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
     }
 
     @Override
-    public <T> T getParameterOrNull(final ParameterType<T> parameterType)
+    public <T> Optional<T> getOptionalParameter(final ParameterType<T> parameterType)
     {
-        return this.params.getParameterOrNull(parameterType);
+        return this.params.getOptionalParameter(parameterType);
     }
 
     @Override
@@ -160,7 +162,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
         public <T> ParameterEvent(final double time, final ParameterType<T> parameterType, final Parameters parameters,
                 final Object key)
         {
-            super(time, new ParameterValueSet<T>(parameterType, parameters.getParameterOrNull(parameterType), key));
+            super(time, new ParameterValueSet<T>(parameterType, parameters.getOptionalParameter(parameterType).get(), key));
         }
 
         /**

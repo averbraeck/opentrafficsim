@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -50,7 +51,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         Throw.when(!keyrefNode.getNodeName().equals("xsd:keyref"), IllegalArgumentException.class,
                 "The given node is not an xsd:keyref node.");
         Throw.whenNull(refer, "Refer validator may not be null.");
-        String referName = DocumentReader.getAttribute(keyrefNode, "refer").replace("ots:", "");
+        String referName = DocumentReader.getAttribute(keyrefNode, "refer").get().replace("ots:", "");
         Throw.when(!referName.equals(refer.getKeyName()), IllegalArgumentException.class,
                 "The key node refers to key/unique %s, but the provided refer validator has name %s.", referName,
                 refer.getKeyName());
@@ -93,17 +94,17 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     }
 
     @Override
-    public String validate(final XsdTreeNode node)
+    public Optional<String> validate(final XsdTreeNode node)
     {
         if (node.getParent() == null)
         {
-            return null; // Node was deleted, but is still visible in the GUI tree for a moment
+            return Optional.empty(); // Node was deleted, but is still visible in the GUI tree for a moment
         }
         List<String> values = gatherFieldValues(node);
         if (values.stream().allMatch((v) -> v == null))
         {
             removeCoupling(node);
-            return null;
+            return Optional.empty();
         }
         // xsd:keyref referred value is present?
         Map<XsdTreeNode, List<String>> valueMap = this.refer.gatherFieldValuesInContext(node);
@@ -116,7 +117,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
                 {
                     // duplicate match based on subset of values (there are null's), do not couple but also do not invalidate
                     removeCoupling(node);
-                    return null;
+                    return Optional.empty();
                 }
                 matchedNode = entry.getKey();
             }
@@ -124,7 +125,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         if (matchedNode != null)
         {
             addCoupling(node, matchedNode);
-            return null;
+            return Optional.empty();
         }
         // not matched
         removeCoupling(node);
@@ -132,11 +133,12 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         String typeString = userFriendlyXPath(types.length == 1 ? types[0] : Arrays.asList(types).toString());
         if (values.size() == 1)
         {
-            return "Value " + values.get(0) + " for " + userFriendlyXPath(getFields().get(0).getFullFieldName())
-                    + " does not refer to a known and unique " + typeString + " within " + getKeyPath() + ".";
+            return Optional.of("Value " + values.get(0) + " for " + userFriendlyXPath(getFields().get(0).getFullFieldName())
+                    + " does not refer to a known and unique " + typeString + " within " + getKeyPath() + ".");
         }
         values.removeIf((value) -> value != null && value.startsWith("{") && value.endsWith("}")); // remove expressions
-        return "Values " + values + " do not refer to a known and unique " + typeString + " within " + getKeyPath() + ".";
+        return Optional
+                .of("Values " + values + " do not refer to a known and unique " + typeString + " within " + getKeyPath() + ".");
     }
 
     /**
@@ -161,7 +163,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     }
 
     @Override
-    public List<String> getOptions(final XsdTreeNode node, final Object field)
+    public Optional<List<String>> getOptions(final XsdTreeNode node, final Object field)
     {
         /*
          * We gather values from the referred xsd:key, drawing the appropriate context from the node relevant somewhere in the
@@ -185,14 +187,14 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         }
         if (!uniqueScope)
         {
-            return null;
+            return Optional.empty();
         }
         Map<XsdTreeNode, List<String>> values = this.refer.gatherFieldValuesInContext(node);
         List<String> result = new ArrayList<>(values.size());
         int index = getFields().indexOf(field);
         values.forEach((n, list) -> result.add(list.get(index)));
         result.removeIf((v) -> v == null || v.isEmpty());
-        return result;
+        return Optional.of(result);
     }
 
     /**

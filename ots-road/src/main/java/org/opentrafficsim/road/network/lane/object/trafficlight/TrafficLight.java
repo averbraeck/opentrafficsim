@@ -10,6 +10,7 @@ import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -139,21 +140,41 @@ public class TrafficLight extends AbstractLaneBasedObject
         try
         {
             // move until next link split (link will be link before split)
-            Link link = this.getLane().getLink();
-            Set<Link> next = link.getEndNode().nextLinks(gtuType, link);
+            Link link = getLane().getLink();
+            Set<Link> next = link.getEndNode().getLinks().toSet(); // .nextLinks(gtuType, link);
+            next.remove(link);
             while (next.size() == 1)
             {
                 link = next.iterator().next();
-                next = link.getEndNode().nextLinks(gtuType, link);
+                next = link.getEndNode().getLinks().toSet(); // .nextLinks(gtuType, link);
+                next.remove(link);
             }
             // check if next node in the route, beyond the split, is ok to turn to on red
-            Node endNode = link.getEndNode();
-            int nodeIndex = route.indexOf(endNode);
-            if (nodeIndex < 0 || nodeIndex == route.size() - 1)
+            Node nextEndNode;
+            if (route != null)
             {
-                return false;
+                int nodeIndex = route.indexOf(link.getEndNode());
+                if (nodeIndex < 0 || nodeIndex == route.size() - 1)
+                {
+                    return false;
+                }
+                nextEndNode = route.getNode(nodeIndex + 1);
             }
-            return this.turnOnRed.contains(route.getNode(nodeIndex + 1));
+            else
+            {
+                next = link.getEndNode().nextLinks(gtuType, link);
+                if (next.size() == 1)
+                {
+                    nextEndNode = next.iterator().next().getEndNode();
+                }
+                else
+                {
+                    Logger.ots().warn("GTU without route cannot determine whether it can turn on red at node {}.",
+                            link.getEndNode());
+                    return false;
+                }
+            }
+            return this.turnOnRed.contains(nextEndNode);
         }
         catch (NetworkException ex)
         {

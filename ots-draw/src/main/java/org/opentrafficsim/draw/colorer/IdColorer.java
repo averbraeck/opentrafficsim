@@ -1,5 +1,6 @@
 package org.opentrafficsim.draw.colorer;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -25,7 +26,7 @@ public class IdColorer<T> extends AbstractLegendColorer<T, String>
      * Constructor.
      * @param valueFunction value function
      */
-    public IdColorer(final Function<? super T, String> valueFunction)
+    public IdColorer(final Function<? super T, Optional<String>> valueFunction)
     {
         super(valueFunction, (id) -> Colors.getIdColor(id, Colors.ENUMERATE),
                 IntStream.range(0, Colors.ENUMERATE.length).mapToObj(

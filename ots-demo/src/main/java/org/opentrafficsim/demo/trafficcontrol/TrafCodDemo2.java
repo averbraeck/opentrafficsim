@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.Optional;
 import java.util.Scanner;
 
 import javax.swing.JPanel;
@@ -123,11 +124,11 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             if (ioi instanceof TrafCod)
             {
                 TrafCod trafCOD = (TrafCod) ioi;
-                Container controllerDisplayPanel = trafCOD.getDisplayContainer();
-                if (null != controllerDisplayPanel)
+                Optional<Container> controllerDisplayPanel = trafCOD.getDisplayContainer();
+                if (controllerDisplayPanel.isPresent())
                 {
                     JPanel wrapper = new JPanel(new BorderLayout());
-                    wrapper.add(new JScrollPane(controllerDisplayPanel));
+                    wrapper.add(new JScrollPane(controllerDisplayPanel.get()));
                     TabbedContentPane tabbedPane = animationPanel.getTabbedPane();
                     tabbedPane.addTab(tabbedPane.getTabCount() - 1, trafCOD.getId(), wrapper);
                 }

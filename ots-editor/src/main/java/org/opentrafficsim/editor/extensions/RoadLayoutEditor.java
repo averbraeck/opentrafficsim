@@ -79,7 +79,7 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
     public void accept(final XsdTreeNode t)
     {
         // TODO: this is a dummy implementation
-        JLabel label = (JLabel) this.editor.getTab("Road layout");
+        JLabel label = (JLabel) this.editor.getTab("Road layout").get();
         label.setText(LocalDateTime.now().toString());
         this.editor.focusTab("Road layout");
     }

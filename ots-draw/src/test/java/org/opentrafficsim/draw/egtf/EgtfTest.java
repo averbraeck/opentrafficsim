@@ -85,7 +85,7 @@ public final class EgtfTest
         }
         egtf.addGridDataSI(detSpeed, x, t, vFreeGrid);
         // Filter filterDet = egtf.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW);
-        Filter filterDet = egtf.filterFastSI(0.0, dx, xmax, 0.0, dt, tmax, TypedQuantity.SPEED, TypedQuantity.FLOW);
+        Filter filterDet = egtf.filterFastSI(0.0, dx, xmax, 0.0, dt, tmax, TypedQuantity.SPEED, TypedQuantity.FLOW).get();
         // add FCD data
         double location = 1200;
         double time = 130;
@@ -97,8 +97,8 @@ public final class EgtfTest
             location += v;
             time += 1.0;
         }
-        Filter filterCom1 = egtf.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW);
-        Filter filterCom12 = egtf2.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW);
+        Filter filterCom1 = egtf.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW).get();
+        Filter filterCom12 = egtf2.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW).get();
         // add some more FCD data
         location = 1100;
         time = 140;
@@ -108,7 +108,7 @@ public final class EgtfTest
             location += v;
             time += 1.0;
         }
-        Filter filterCom2 = egtf.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW);
+        Filter filterCom2 = egtf.filterSI(x, t, TypedQuantity.SPEED, TypedQuantity.FLOW).get();
         // compare
         double[][] vDet = filterDet.getSI(TypedQuantity.SPEED);
         double[][] qDet = filterDet.getSI(TypedQuantity.FLOW);
@@ -181,7 +181,8 @@ public final class EgtfTest
         Egtf egtf = new Egtf();
         DataSource det = egtf.getDataSource("detectors");
         DataStream<?> detSpeed = det.addStreamSI(TypedQuantity.SPEED, 10.0, 5.0);
-        UnitTest.testFail(() -> det.addStreamSI(TypedQuantity.SPEED, 5.0, 2.5), "Double speed quantity for detectors should fail.");
+        UnitTest.testFail(() -> det.addStreamSI(TypedQuantity.SPEED, 5.0, 2.5),
+                "Double speed quantity for detectors should fail.");
         UnitTest.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[2], new double[3], new double[3]),
                 "Unequal lengths should result in a fail.", IllegalArgumentException.class);
         UnitTest.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[3], new double[2], new double[3]),

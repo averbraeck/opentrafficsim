@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentrafficsim.editor.OtsEditor;
@@ -85,16 +86,16 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     }
 
     @Override
-    public String validate(final XsdTreeNode node)
+    public Optional<String> validate(final XsdTreeNode node)
     {
         String value = node.getAttributeValue(this.parentAttribute);
         if (value == null || value.isEmpty() || !node.isActive())
         {
-            return null;
+            return Optional.empty();
         }
         List<XsdTreeNode> list = new ArrayList<>();
         list.add(node);
-        return validateParent(getContext(node), value, list);
+        return Optional.of(validateParent(getContext(node), value, list));
     }
 
     /**

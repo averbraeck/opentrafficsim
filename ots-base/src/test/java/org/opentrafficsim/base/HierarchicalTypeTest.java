@@ -36,12 +36,12 @@ public final class HierarchicalTypeTest
     {
         SubType st = new SubType("id");
         assertEquals("id", st.getId(), "id check");
-        assertNull(st.getParent(), "parent type is null");
+        assertNull(st.getParent().orElse(null), "parent type is null");
         assertTrue(st.isOfType(st), "type is type of st");
         assertFalse(st.isOfType(null), "type is not of type null");
         SubType st2 = new SubType("id2", st);
         assertEquals("id2", st2.getId(), "id check");
-        assertEquals(st, st2.getParent(), "parent type is null");
+        assertEquals(st, st2.getParent().get(), "parent type is null");
         assertTrue(st2.isOfType(st), "parent is type of child");
         assertFalse(st.isOfType(st2), "childis not of type of parent");
         assertTrue(st.hashCode() != st2.hashCode(), "hash codes should be different");
@@ -55,11 +55,11 @@ public final class HierarchicalTypeTest
         assertFalse(st3.equals(st2), "other subtype with same name but no parent is not equal");
         st3 = new SubType("id3", st2);
         SubType different = new SubType("different");
-        assertNull(different.commonAncestor(st3), "No common ancestor");
-        assertNull(st3.commonAncestor(different), "No common ancestor");
+        assertNull(different.commonAncestor(st3).orElse(null), "No common ancestor");
+        assertNull(st3.commonAncestor(different).orElse(null), "No common ancestor");
         SubType common = new SubType("common", st2);
-        assertEquals(st2, common.commonAncestor(st3), "Common ancestor");
-        assertEquals(st2, st3.commonAncestor(common), "Common ancestor");
+        assertEquals(st2, common.commonAncestor(st3).get(), "Common ancestor");
+        assertEquals(st2, st3.commonAncestor(common).get(), "Common ancestor");
         assertTrue(common.toString().startsWith("SubType "), "toString method returns something descriptive");
         try
         {
@@ -230,10 +230,10 @@ public final class HierarchicalTypeTest
     public void testHierarchies()
     {
         XType vehicle = new XType("vehicle", null);
-        assertNull(vehicle.getParent());
+        assertNull(vehicle.getParent().orElse(null));
         assertEquals(0, vehicle.getChildren().size());
         XType car = new XType("car", vehicle);
-        assertEquals(vehicle, car.getParent());
+        assertEquals(vehicle, car.getParent().get());
         assertEquals(1, vehicle.getChildren().size());
         XType truck = new XType("truck", vehicle);
         assertEquals(2, vehicle.getChildren().size());
@@ -247,7 +247,7 @@ public final class HierarchicalTypeTest
         assertFalse(road.isOfType(highway));
         // this should not compile: YType yt1 = new YType("yt1", vehicle);
         ZType zt1 = new ZType("zt1", car);
-        assertEquals(car, zt1.getParent());
+        assertEquals(car, zt1.getParent().get());
         assertTrue(zt1.isOfType(car));
         assertTrue(zt1.isOfType(vehicle));
         // Ztype is of course strange. So this should not compile: ZType zt2 = new ZType("zt2", zt1);

@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.definitions;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import org.djunits.unit.SpeedUnit;
@@ -26,7 +27,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class DefaultsNl extends Defaults implements BiFunction<GtuType, StreamInterface, GtuTemplate>
+public final class DefaultsNl extends Defaults implements BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>>
 {
 
     /**
@@ -86,12 +87,12 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
      * same GTU type, while having their separate random streams.
      * @param gtuType GTU type
      * @param randomStream random stream
-     * @return template, {@code null} if no default is defined
+     * @return template, empty if no default is defined
      */
     @Override
-    public GtuTemplate apply(final GtuType gtuType, final StreamInterface randomStream)
+    public Optional<GtuTemplate> apply(final GtuType gtuType, final StreamInterface randomStream)
     {
-        return apply(gtuType, gtuType, randomStream);
+        return Optional.ofNullable(apply(gtuType, gtuType, randomStream));
     }
 
     /**
@@ -103,53 +104,52 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
      */
     private GtuTemplate apply(final GtuType gtuType, final GtuType originalGtuType, final StreamInterface randomStream)
     {
-        GtuTemplate template;
         if (gtuType.equals(CAR))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(4.19)),
+            return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(4.19)),
                     new ConstantSupplier<>(Length.ofSI(1.7)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(TRUCK))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
+            return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
                     new ConstantSupplier<>(Length.ofSI(2.55)),
                     new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
         }
         else if (gtuType.equals(BUS))
         {
-            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
+            return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
                     new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(VAN))
         {
-            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
+            return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
                     new ConstantSupplier<>(Length.ofSI(2.4)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(EMERGENCY_VEHICLE))
         {
-            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
+            return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
                     new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(MOTORCYCLE))
         {
             // Yamaha R7 2022
-            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(2.1)),
+            return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(2.1)),
                     new ConstantSupplier<>(Length.ofSI(0.7)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(BICYCLE))
         {
             // length/width: https://www.verderfietsen.nl/fiets-afmetingen/
             // width: https://www.fietsberaad.nl/CROWFietsberaad/media/Kennis/Bestanden/document000172.pdf?ext=.pdf
-            template = new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(1.9)),
+            return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(1.9)),
                     new ConstantSupplier<>(Length.ofSI(0.6)), new ConstantSupplier<>(new Speed(35, SpeedUnit.KM_PER_HOUR)));
         }
-        else
+        else if (gtuType.getParent().isPresent())
         {
-            template = apply(gtuType.getParent(), originalGtuType, randomStream);
+            return apply(gtuType.getParent().get(), originalGtuType, randomStream);
         }
-        return template;
+        return null;
     }
 
     /***************************************************************************************/

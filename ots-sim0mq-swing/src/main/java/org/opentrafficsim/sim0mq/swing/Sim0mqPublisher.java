@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JFrame;
@@ -258,11 +259,11 @@ public final class Sim0mqPublisher
                 if (ioi instanceof TrafCod)
                 {
                     TrafCod trafCOD = (TrafCod) ioi;
-                    Container controllerDisplayPanel = trafCOD.getDisplayContainer();
-                    if (null != controllerDisplayPanel)
+                    Optional<Container> controllerDisplayPanel = trafCOD.getDisplayContainer();
+                    if (controllerDisplayPanel.isPresent())
                     {
                         JPanel wrapper = new JPanel(new BorderLayout());
-                        wrapper.add(new JScrollPane(controllerDisplayPanel));
+                        wrapper.add(new JScrollPane(controllerDisplayPanel.get()));
                         TabbedContentPane tabbedPane = this.animationPanel.getTabbedPane();
                         tabbedPane.addTab(tabbedPane.getTabCount() - 1, trafCOD.getId(), wrapper);
                     }

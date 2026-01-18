@@ -81,9 +81,9 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
                             foundFalse = true;
                         }
                     }
-                    gType = gType.getParent();
+                    gType = gType.getParent().orElse(null);
                 }
-                infra = infra.getParent();
+                infra = infra.getParent().orElse(null);
             }
             if (foundFalse)
             {

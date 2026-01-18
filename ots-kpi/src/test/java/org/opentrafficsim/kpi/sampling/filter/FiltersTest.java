@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -41,9 +43,9 @@ public final class FiltersTest
         testFilter(new FilterDataType<>("test", "test", String.class)
         {
             @Override
-            public String getValue(final GtuData gtu)
+            public Optional<String> getValue(final GtuData gtu)
             {
-                return "test";
+                return Optional.of("test");
             }
         }, "test", gtu);
     }
@@ -60,7 +62,7 @@ public final class FiltersTest
         assertNotNull(filter.getDescription());
         assertNotNull(filter.toString());
         assertEquals(filter.getType(), String.class);
-        assertEquals(filter.getValue(gtu), value);
+        assertEquals(filter.getValue(gtu).get(), value);
     }
 
     /**
@@ -78,9 +80,9 @@ public final class FiltersTest
         FilterDataType<String, GtuData> type2 = new FilterDataType<>("different", "filter", String.class)
         {
             @Override
-            public String getValue(final GtuData gtu)
+            public Optional<String> getValue(final GtuData gtu)
             {
-                return "";
+                return Optional.of("");
             }
         };
         assertFalse(filter.equals(type2));
@@ -96,9 +98,9 @@ public final class FiltersTest
             }
 
             @Override
-            public String getValue(final TestGtuData gtu)
+            public Optional<String> getValue(final TestGtuData gtu)
             {
-                return null;
+                return Optional.empty();
             }
         }
         assertFalse(new TestType("a").equals(new TestType("b")));

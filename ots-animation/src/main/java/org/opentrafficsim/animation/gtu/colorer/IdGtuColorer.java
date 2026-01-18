@@ -1,5 +1,7 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
+import java.util.Optional;
+
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.colorer.IdColorer;
 
@@ -22,7 +24,7 @@ public class IdGtuColorer extends IdColorer<Gtu>
      */
     public IdGtuColorer()
     {
-        super((gtu) -> gtu.getId());
+        super((gtu) -> Optional.ofNullable(gtu.getId()));
     }
 
 }

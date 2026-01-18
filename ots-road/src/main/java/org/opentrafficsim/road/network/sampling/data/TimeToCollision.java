@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -38,12 +39,12 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
     }
 
     @Override
-    public final FloatDuration getValue(final GtuDataRoad gtu)
+    public final Optional<FloatDuration> getValue(final GtuDataRoad gtu)
     {
         LaneBasedGtu gtuObj = gtu.getGtu();
         try
         {
-            LanePosition ref = gtuObj.getPosition();
+            LanePosition ref = gtuObj.getPositionOrRoaming();
             Set<Lane> set = new LinkedHashSet<>();
             Set<Lane> visited = new LinkedHashSet<>();
             set.add(ref.lane());
@@ -58,7 +59,7 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
                 {
                     pos = Length.ZERO;
                 }
-                next = lane.getGtuAhead(pos, RelativePosition.REAR, now);
+                next = lane.getGtuAhead(pos, RelativePosition.REAR, now).orElse(null);
                 if (next == null)
                 {
                     if (visited.contains(lane))
@@ -74,21 +75,21 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
                     // gtu found, calculate TTC
                     if (next.getSpeed().ge(gtuObj.getSpeed()))
                     {
-                        return new FloatDuration(Double.NaN, DurationUnit.SI);
+                        return Optional.ofNullable(new FloatDuration(Double.NaN, DurationUnit.SI));
                     }
                     Length ownPos = gtuObj.getPosition(ref.lane(), gtuObj.getFront());
                     Length nextPos = next.getPosition(lane, next.getRear());
                     Length dist = nextPos.minus(ownPos).plus(cumulDist);
                     Speed dv = gtuObj.getSpeed().minus(next.getSpeed());
-                    return new FloatDuration(dist.si / dv.si, DurationUnit.SI);
+                    return Optional.ofNullable(new FloatDuration(dist.si / dv.si, DurationUnit.SI));
                 }
             }
-            return FloatDuration.NaN;
+            return Optional.ofNullable(FloatDuration.NaN);
         }
         catch (GtuException exception)
         {
             // GTU was destroyed and is without a reference location
-            return FloatDuration.NaN;
+            return Optional.ofNullable(FloatDuration.NaN);
         }
     }
 

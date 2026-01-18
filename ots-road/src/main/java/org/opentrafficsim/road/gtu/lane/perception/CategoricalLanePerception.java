@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
+import java.util.Optional;
+
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -79,9 +81,9 @@ public class CategoricalLanePerception extends AbstractPerception<LaneBasedGtu> 
     }
 
     @Override
-    public Mental getMental()
+    public Optional<Mental> getMental()
     {
-        return this.mental;
+        return Optional.ofNullable(this.mental);
     }
 
     @Override

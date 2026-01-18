@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -235,9 +236,9 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
     }
 
     @Override
-    public Container getDisplayContainer()
+    public Optional<Container> getDisplayContainer()
     {
-        return null; // For now, CCOL does not have a display panel
+        return Optional.empty(); // For now, CCOL does not have a display panel
     }
 
 }

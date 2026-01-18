@@ -266,8 +266,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 @SuppressWarnings("synthetic-access")
                 GtuType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
 
-                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, stream).get(),
-                        laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
+                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, stream)
+                        .orElseThrow(
+                                () -> new GtuException("No characteristics for GTU type " + gtuType + " could be generated."))
+                        .get(), laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
             }
         };
         // generator positions
@@ -603,7 +605,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 lanePosition = Length.ofSI(i);
                 linkId = "OriginLane-drop";
             }
-            LinkPosition linkPosition = new LinkPosition(getNetwork().getLink(linkId), lanePosition);
+            LinkPosition linkPosition = new LinkPosition(getNetwork().getLink(linkId).get(), lanePosition);
             GraphCrossSection<LaneDataRoad> crossSection;
             try
             {
@@ -631,7 +633,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         names.add("Middle lane");
         names.add("Right lane");
         List<Lane> firstLanes = new ArrayList<>();
-        for (Lane lane : ((CrossSectionLink) getNetwork().getLink("OriginLane-drop")).getLanes())
+        for (Lane lane : ((CrossSectionLink) getNetwork().getLink("OriginLane-drop").get()).getLanes())
         {
             firstLanes.add(lane);
         }

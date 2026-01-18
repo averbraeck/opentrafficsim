@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -58,17 +60,17 @@ public interface AccelerationIncentive
      */
     default <T extends PerceivedLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
     {
-        Route route = gtu.getStrategicalPlanner().getRoute();
+        Optional<Route> route = gtu.getStrategicalPlanner().getRoute();
         return new FilteredIterable<>(iterable, (t) ->
         {
-            if (route == null)
+            if (route.isEmpty())
             {
                 return true; // when there is no route, we are always on it...
             }
             Link link = t.getLane().getLink();
-            if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
+            if (route.get().contains(link.getStartNode()) && route.get().contains(link.getEndNode()))
             {
-                return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;
+                return route.get().indexOf(link.getEndNode()) - route.get().indexOf(link.getStartNode()) == 1;
             }
             return false;
         });

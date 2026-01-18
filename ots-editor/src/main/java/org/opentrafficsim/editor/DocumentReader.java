@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,27 +57,27 @@ public final class DocumentReader
      * Returns the attribute of a node. This is short for:
      *
      * <pre>
-     * String value = node.hasAttributes() &amp;&amp; node.getAttributes().getNamedItem(name) != null
-     *         ? node.getAttributes().getNamedItem(name).getNodeValue() : null;
+     * Optional.ofNullable(node.hasAttributes() &amp;&amp; node.getAttributes().getNamedItem(name) != null
+     *         ? node.getAttributes().getNamedItem(name).getNodeValue() : null);
      * </pre>
      *
      * @param node node.
      * @param name attribute name.
      * @return value of the attribute in the node.
      */
-    public static String getAttribute(final Node node, final String name)
+    public static Optional<String> getAttribute(final Node node, final String name)
     {
-        return node.hasAttributes() && node.getAttributes().getNamedItem(name) != null
-                ? node.getAttributes().getNamedItem(name).getNodeValue() : null;
+        return Optional.ofNullable(node.hasAttributes() && node.getAttributes().getNamedItem(name) != null
+                ? node.getAttributes().getNamedItem(name).getNodeValue() : null);
     }
 
     /**
      * Returns a child node of specified type. It should be a type of which there may be only one.
      * @param node node
      * @param type child type, e.g. xsd:complexType.
-     * @return child node of specified type, or {@code null} if no such child.
+     * @return child node of specified type, empty if no such child.
      */
-    public static Node getChild(final Node node, final String type)
+    public static Optional<Node> getChild(final Node node, final String type)
     {
         if (node.hasChildNodes())
         {
@@ -85,11 +86,11 @@ public final class DocumentReader
                 Node child = node.getChildNodes().item(childIndex);
                 if (child.getNodeName().equals(type))
                 {
-                    return child;
+                    return Optional.of(child);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -178,16 +179,16 @@ public final class DocumentReader
          * </pre>
          *
          * @param node node, either xsd:element or xsd:attribute.
-         * @return annotation value, {@code null} if not found.
+         * @return annotation value, empty if not found.
          */
-        public String get(final Node node)
+        public Optional<String> get(final Node node)
         {
             for (Node child : DocumentReader.getChildren(node, "xsd:annotation"))
             {
                 for (Node annotation : DocumentReader.getChildren(child, this.elementName))
                 {
-                    String appInfoSource = DocumentReader.getAttribute(annotation, "source");
-                    if (appInfoSource != null && appInfoSource.equals(this.source))
+                    Optional<String> appInfoSource = DocumentReader.getAttribute(annotation, "source");
+                    if (appInfoSource.isPresent() && appInfoSource.get().equals(this.source))
                     {
                         StringBuilder str = new StringBuilder();
                         for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
@@ -199,11 +200,11 @@ public final class DocumentReader
                             }
                         }
                         // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
-                        return str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim();
+                        return Optional.of(str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim());
                     }
                 }
             }
-            return null;
+            return Optional.empty();
         }
     }
 

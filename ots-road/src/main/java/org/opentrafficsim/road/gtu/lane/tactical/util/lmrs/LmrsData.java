@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -169,9 +170,9 @@ public final class LmrsData implements DesireBased, Synchronizable
     }
 
     @Override
-    public Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
+    public Optional<Desire> getLatestDesire(final Class<? extends Incentive> incentiveClass)
     {
-        return this.desireMap.get(incentiveClass);
+        return Optional.ofNullable(this.desireMap.get(incentiveClass));
     }
 
     /**

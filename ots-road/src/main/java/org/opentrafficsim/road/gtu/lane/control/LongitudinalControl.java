@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.control;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -22,8 +24,8 @@ public interface LongitudinalControl
      * Calculate acceleration.
      * @param gtu controlled GTU
      * @param settings system settings
-     * @return level of acceleration, may be {@code null} if the controller is unable to deal with a situation
+     * @return level of acceleration, may be empty if the controller is unable to deal with a situation
      */
-    Acceleration getAcceleration(LaneBasedGtu gtu, Parameters settings);
+    Optional<Acceleration> getAcceleration(LaneBasedGtu gtu, Parameters settings);
 
 }

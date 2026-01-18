@@ -6,7 +6,6 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
@@ -65,7 +64,7 @@ public class LinkTransceiver extends AbstractTransceiver
             returnWrapper.nack(bad);
             return null;
         }
-        Link link = this.network.getLink((String) address[0]);
+        Link link = this.network.getLink((String) address[0]).orElse(null);
         if (null == link)
         {
             returnWrapper.nack("Network does not contain a link with id " + address[0]);

@@ -1,6 +1,7 @@
 package org.opentrafficsim.kpi.sampling.filter;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -77,9 +78,9 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuDat
     }
 
     @Override
-    public CrossSection getValue(final GtuData gtu)
+    public Optional<CrossSection> getValue(final GtuData gtu)
     {
-        return null; // value is not used to check whether trajectory is accepted
+        return Optional.empty(); // value is not used to check whether trajectory is accepted
     }
 
 }

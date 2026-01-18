@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -343,14 +344,44 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             {
                 // Same link, so must be a lane change
                 setLaneChangeDirection(LateralDirectionality.NONE);
-                String direction = lane.equals(exitLanePosition.lane().getLeft(getType())) ? LateralDirectionality.LEFT.name()
-                        : LateralDirectionality.RIGHT.name();
+                String direction = lane.equals(exitLanePosition.lane().getLeft(getType()).orElse(null))
+                        ? LateralDirectionality.LEFT.name() : LateralDirectionality.RIGHT.name();
                 fireTimedEvent(LaneBasedGtu.LANE_CHANGE_EVENT,
                         new Object[] {getId(), direction, exitLanePosition.lane().getLink().getId(),
                                 exitLanePosition.lane().getId(), exitLanePosition.position()},
                         getSimulator().getSimulatorTime());
             }
         }
+    }
+
+    /**
+     * Returns whether the GTU is roaming (i.e. not on a lane). In this case all methods on lane and position should not be
+     * called as they will return {@code null}.
+     * @return whether the GTU is roaming
+     */
+    public boolean isRoaming()
+    {
+        return getLane() == null;
+    }
+
+    /**
+     * Returns whether the GTU is roaming (i.e. not on a lane). In this case all methods on lane and position should not be
+     * called as they will return {@code null}.
+     * @param time simulation time to get the lane for
+     * @return whether the GTU is roaming
+     */
+    public boolean isRoaming(final Duration time)
+    {
+        return getLane(time) == null;
+    }
+
+    /**
+     * Returns the position when the GTU is on a lane, or the roaming position otherwise.
+     * @return position when the GTU is on a lane, or the roaming position otherwise
+     */
+    public LanePosition getPositionOrRoaming()
+    {
+        return isRoaming() ? getRoamingPosition() : getPosition();
     }
 
     @Override
@@ -372,7 +403,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
 
     /**
      * Returns the lane and reference position on the lane of the GTU.
-     * @return lane position at time, or {@code null} if the GTU is not at a lane
+     * @return lane position at time
      */
     public synchronized LanePosition getPosition()
     {
@@ -387,7 +418,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     /**
      * Returns the lane and reference position on the lane of the GTU.
      * @param time simulation time to get the position for
-     * @return lane position at time, or {@code null} if the GTU is not at a lane
+     * @return lane position at time
      */
     public synchronized LanePosition getPosition(final Duration time)
     {
@@ -398,7 +429,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Returns the lane and relative position on the lane of the GTU. The relative position is calculated by shifting the
      * position of the reference by {@code dx} of the relative position.
      * @param relativePosition relative position
-     * @return lane position, or {@code null} if the GTU is not at a lane
+     * @return lane position
      */
     public synchronized LanePosition getPosition(final RelativePosition relativePosition)
     {
@@ -411,7 +442,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * position of the reference by {@code dx} of the relative position.
      * @param relativePosition relative position
      * @param time simulation time to get the position for
-     * @return lane position at time, or {@code null} if the GTU is not at a lane
+     * @return lane position at time
      */
     public synchronized LanePosition getPosition(final RelativePosition relativePosition, final Duration time)
     {
@@ -519,11 +550,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      */
     protected LanePosition getRoamingPosition(final Point2d location)
     {
-        Route route = getStrategicalPlanner() == null ? null : getStrategicalPlanner().getRoute();
+        Optional<Route> route = getStrategicalPlanner() == null ? Optional.empty() : getStrategicalPlanner().getRoute();
         // TODO instead of getNetwork().getNodeMap().values(), using spatial tree would be a good alternative
         // perhaps even a findClosest() method.
-        Iterable<Node> nodes =
-                route == null ? getNetwork().getNodeMap().values() : getStrategicalPlanner().getRoute().getNodes();
+        Iterable<Node> nodes = route.isEmpty() ? getNetwork().getNodeMap().values() : route.get().getNodes();
         List<CrossSectionLink> nearestLinks = new ArrayList<>(2);
         double minDist = Double.POSITIVE_INFINITY;
         for (Node node : nodes)
@@ -534,7 +564,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 nearestLinks.clear();
                 for (Link link : node.getLinks())
                 {
-                    if (link instanceof CrossSectionLink cLink && (route == null || route.containsLink(link)))
+                    if (link instanceof CrossSectionLink cLink && (route.isEmpty() || route.get().containsLink(link)))
                     {
                         nearestLinks.add(cLink);
                         minDist = dist;
@@ -659,12 +689,14 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             findDetectorTriggers(true);
 
             LanePosition position = getPosition();
+            String linkId = position != null ? position.lane().getLink().getId() : null;
+            String laneId = position != null ? position.lane().getId() : null;
+            Length pos = position != null ? position.position() : null;
             fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
                     new Object[] {getId(),
                             new PositionVector(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER),
                             new Direction(fromLocation.getDirZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
-                            getTurnIndicatorStatus().name(), getOdometer(), position.lane().getLink().getId(),
-                            position.lane().getId(), position.position()},
+                            getTurnIndicatorStatus().name(), getOdometer(), linkId, laneId, pos},
                     getSimulator().getSimulatorTime());
 
             return false;
@@ -754,7 +786,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 {
                     Length deviation = getDeviation(lastTimeOnLane);
                     boolean noAdjacentLane =
-                            (deviation.gt0() ? laneOnPath.getLeft(getType()) : laneOnPath.getRight(getType())) == null;
+                            (deviation.gt0() ? laneOnPath.getLeft(getType()) : laneOnPath.getRight(getType())).isEmpty();
                     boolean willRoam = noAdjacentLane && overshoot.gt(getWidth().times(0.5));
 
                     Duration lateralCrossingTime = getTimeOfLateralCrossing(firstTimeOnLane, lastTimeOnLane, willRoam);
@@ -771,10 +803,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                                 : LateralDirectionality.RIGHT;
                         Length distanceTillLaneChange =
                                 getPosition(laneOnPath, lateralCrossingTime).minus(planStartPositionAtLaneOnPath);
-                        laneOnPath = laneOnPath.getAdjacentLane(lcDirection, getType());
+                        laneOnPath = laneOnPath.getAdjacentLane(lcDirection, getType()).orElse(null);
                         if (laneOnPath != null)
                         {
-                            // no lane to change to, curve back or roam
                             Length positionOnTargetLane = getPosition(laneOnPath, lateralCrossingTime);
                             double fractionOnTargetLane = positionOnTargetLane.si / laneOnPath.getLength().si;
                             planStartPositionAtLaneOnPath = positionOnTargetLane.minus(distanceTillLaneChange);
@@ -783,6 +814,13 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                             this.pendingEnterEvents.put(laneOnPath, getSimulator().scheduleEventAbs(
                                     Duration.ofSI(lateralCrossingTime.si), () -> enterLane(finalLane, fractionOnTargetLane)));
                         }
+                        else
+                        {
+                            // no lane to change to, curve back or roam
+                            this.roamEvent =
+                                    getSimulator().scheduleEventAbs(Duration.ofSI(lateralCrossingTime.si), () -> exitLane());
+                            return; // no further lanes to check when roaming
+                        }
                     }
                 }
             }
@@ -790,7 +828,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             if (enterTime != null)
             {
                 planStartPositionAtLaneOnPath = planStartPositionAtLaneOnPath.minus(laneOnPath.getLength());
-                laneOnPath = getNextLaneForRoute(laneOnPath);
+                laneOnPath = getNextLaneForRoute(laneOnPath).orElse(null);
                 if (laneOnPath == null && !Double.isNaN(enterTime.si))
                 {
                     // Check longitudinal roaming
@@ -1042,7 +1080,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     to = to.minus(searchLane.getLength());
                 }
             }
-            searchLane = to.le0() ? null : getNextLaneForRoute(searchLane);
+            searchLane = to.le0() ? null : getNextLaneForRoute(searchLane).orElse(null);
             from = Length.ZERO;
         }
         return searchedDistanceAtFromOnPendingLink;
@@ -1077,33 +1115,33 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     /**
      * Returns the next lane for a given lane to stay on the route.
      * @param lane the lane for which we want to know the next Lane
-     * @return next lane, {@code null} if none
+     * @return next lane, empty if none
      */
     @SuppressWarnings("hiddenfield")
-    public synchronized Lane getNextLaneForRoute(final Lane lane)
+    public synchronized Optional<Lane> getNextLaneForRoute(final Lane lane)
     {
         // ask strategical planner
         Set<Lane> set = getNextLanesForRoute(lane);
-        if (set == null || set.isEmpty())
+        if (set.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
         if (set.size() == 1)
         {
-            return set.iterator().next();
+            return Optional.of(set.iterator().next());
         }
         // check if the GTU is registered on any
         for (Lane l : set)
         {
             if (l.getGtuList().contains(this))
             {
-                return l;
+                return Optional.of(l);
             }
         }
         // ask tactical planner
-        return Try.assign(() -> getTacticalPlanner().chooseLaneAtSplit(lane, set),
+        return Optional.of(Try.assign(() -> getTacticalPlanner().chooseLaneAtSplit(lane, set),
                 "Could not find suitable lane at split after lane %s of link %s for GTU %s.", lane.getId(),
-                lane.getLink().getId(), getId());
+                lane.getLink().getId(), getId()));
     }
 
     /**
@@ -1521,7 +1559,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         DirectedPoint2d location = this.getOperationalPlan() == null ? new DirectedPoint2d(0.0, 0.0, 0.0) : getLocation();
         synchronized (this)
         {
-            if (dlp.lane() != null)
+            if (dlp != null && dlp.lane() != null)
             {
                 dlp.lane().removeGtu(this, true, dlp.position());
             }

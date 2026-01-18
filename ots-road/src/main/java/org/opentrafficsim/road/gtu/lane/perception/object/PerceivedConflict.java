@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.object;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
@@ -117,9 +119,9 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
 
     /**
      * Returns the distance of a traffic light upstream on the conflicting lane.
-     * @return distance of a traffic light upstream on the conflicting lane, or {@code null} if no traffic light
+     * @return distance of a traffic light upstream on the conflicting lane, empty if no traffic light
      */
-    Length getConflictingTrafficLightDistance();
+    Optional<Length> getConflictingTrafficLightDistance();
 
     /**
      * Whether the conflict is permitted by the traffic light.
@@ -295,9 +297,9 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
             }
 
             @Override
-            public Length getConflictingTrafficLightDistance()
+            public Optional<Length> getConflictingTrafficLightDistance()
             {
-                return conflictingTrafficLightDistance;
+                return Optional.of(conflictingTrafficLightDistance);
             }
 
             @Override

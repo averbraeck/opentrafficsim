@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
@@ -424,14 +425,14 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     private void getFirstLeaders(final Lane lane, final Length startDistance, final Length beyond, final Set<PerceivedGtu> set)
             throws GtuException
     {
-        LaneBasedGtu next = lane.getGtuAhead(beyond, RelativePosition.FRONT, this.simulator.getSimulatorTime());
-        if (next != null)
+        Optional<LaneBasedGtu> next = lane.getGtuAhead(beyond, RelativePosition.FRONT, this.simulator.getSimulatorTime());
+        if (next.isPresent())
         {
-            Length headway = startDistance.plus(next.getPosition(lane, next.getRear()));
+            Length headway = startDistance.plus(next.get().getPosition(lane, next.get().getRear()));
             if (headway.si < 300)
             {
-                set.add(PerceivedGtu.of(next,
-                        new Kinematics.Record(headway, next.getSpeed(), next.getAcceleration(), true, Overlap.AHEAD)));
+                set.add(PerceivedGtu.of(next.get(), new Kinematics.Record(headway, next.get().getSpeed(),
+                        next.get().getAcceleration(), true, Overlap.AHEAD)));
             }
             return;
         }
@@ -590,7 +591,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
          * @param characteristics characteristics of the proposed new GTU
          * @param since time since the GTU wanted to arrive
          * @param initialPosition initial position
-         * @return maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current time
+         * @return maximum safe speed, or Placement.NO if a GTU with the specified characteristics cannot be placed at the
+         *         current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          * @throws GtuException on parameter exception
          */

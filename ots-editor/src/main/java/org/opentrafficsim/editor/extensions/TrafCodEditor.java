@@ -58,7 +58,7 @@ public class TrafCodEditor implements EventListener, Consumer<XsdTreeNode>
     @Override
     public void accept(final XsdTreeNode t)
     {
-        JLabel label = (JLabel) this.editor.getTab("Text");
+        JLabel label = (JLabel) this.editor.getTab("Text").get();
         label.setText(LocalDateTime.now().toString());
         this.editor.focusTab("Text");
     }

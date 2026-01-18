@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentrafficsim.core.gtu.Gtu;
@@ -42,7 +43,7 @@ public class SplitGtuColorer extends AbstractLegendColorer<Gtu, Gtu>
      */
     public SplitGtuColorer()
     {
-        super((gtu) -> gtu, SplitGtuColorer::colorFunction,
+        super((gtu) -> Optional.of(gtu), SplitGtuColorer::colorFunction,
                 List.of(new LegendEntry(LEFT, "Left", "Left"), new LegendEntry(RIGHT, "Right", "Right"),
                         new LegendEntry(OTHER, "Other", "Other"), new LegendEntry(UNKNOWN, "Unknown", "Unknown")));
     }
@@ -59,10 +60,10 @@ public class SplitGtuColorer extends AbstractLegendColorer<Gtu, Gtu>
             return UNKNOWN;
         }
         LaneBasedGtu laneGtu = (LaneBasedGtu) gtu;
-        LanePosition refPos = laneGtu.getPosition();
+        LanePosition refPos = laneGtu.getPositionOrRoaming();
         Link link = refPos.lane().getLink();
-        Route route = laneGtu.getStrategicalPlanner().getRoute();
-        if (route == null)
+        Optional<Route> route = laneGtu.getStrategicalPlanner().getRoute();
+        if (route.isEmpty())
         {
             return UNKNOWN;
         }

@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -492,7 +493,11 @@ public class Egtf
             @Override
             public void run()
             {
-                listener.setFilter(filterSI(location, time, quantities));
+                Optional<Filter> filter = filterSI(location, time, quantities);
+                if (filter.isPresent())
+                {
+                    listener.setFilter(filter.get());
+                }
                 removeListener(listener);
             }
         }, "Egtf calculation thread").start();
@@ -521,7 +526,11 @@ public class Egtf
             @Override
             public void run()
             {
-                listener.setFilter(filterFastSI(xMin, xStep, xMax, tMin, tStep, tMax, quantities));
+                Optional<Filter> filter = filterFastSI(xMin, xStep, xMax, tMin, tStep, tMax, quantities);
+                if (filter.isPresent())
+                {
+                    listener.setFilter(filter.get());
+                }
                 removeListener(listener);
             }
         }, "Egtf calculation thread").start();
@@ -533,10 +542,10 @@ public class Egtf
      * @param location location of output grid in [m]
      * @param time time of output grid in [s]
      * @param quantities quantities to calculate filtered data of
-     * @return filtered data, {@code null} when interrupted
+     * @return filtered data, empty when interrupted
      */
     @SuppressWarnings("methodlength")
-    public Filter filterSI(final double[] location, final double[] time, final Quantity<?, ?>... quantities)
+    public Optional<Filter> filterSI(final double[] location, final double[] time, final Quantity<?, ?>... quantities)
     {
         Objects.requireNonNull(location, "Location may not be null.");
         Objects.requireNonNull(time, "Time may not be null.");
@@ -565,7 +574,7 @@ public class Egtf
                 // notify
                 if (notifyListeners((i + (double) j / time.length) / location.length))
                 {
-                    return null;
+                    return Optional.empty();
                 }
 
                 // initialize data per stream
@@ -689,7 +698,7 @@ public class Egtf
         }
         notifyListeners(1.0);
 
-        return new FilterDouble(location, time, map);
+        return Optional.of(new FilterDouble(location, time, map));
     }
 
     /**
@@ -707,11 +716,11 @@ public class Egtf
      * @param tStep time step of output grid [s]
      * @param tMax maximum time value of output grid [s]
      * @param quantities quantities to calculate filtered data of
-     * @return filtered data, {@code null} when interrupted
+     * @return filtered data, empty when interrupted
      */
     @SuppressWarnings("methodlength")
-    public Filter filterFastSI(final double xMin, final double xStep, final double xMax, final double tMin, final double tStep,
-            final double tMax, final Quantity<?, ?>... quantities)
+    public Optional<Filter> filterFastSI(final double xMin, final double xStep, final double xMax, final double tMin,
+            final double tStep, final double tMax, final Quantity<?, ?>... quantities)
     {
         if (xMin > xMax || xStep <= 0.0 || tMin > tMax || tStep <= 0.0)
         {
@@ -720,7 +729,7 @@ public class Egtf
         }
         if (notifyListeners(0.0))
         {
-            return null;
+            return Optional.empty();
         }
 
         // initialize data
@@ -983,7 +992,7 @@ public class Egtf
             step++;
         }
 
-        return new FilterDouble(location, time, map);
+        return Optional.of(new FilterDouble(location, time, map));
     }
 
     /**

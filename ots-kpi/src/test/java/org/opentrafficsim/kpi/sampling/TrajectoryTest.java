@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.unit.Unit;
@@ -69,9 +70,9 @@ public final class TrajectoryTest
         ExtendedDataDuration<TestGtuData> ttc = new ExtendedDataDuration<>("ttc", "time to collision")
         {
             @Override
-            public FloatDuration getValue(final TestGtuData gtu)
+            public Optional<FloatDuration> getValue(final TestGtuData gtu)
             {
-                return FloatDuration.NaN;
+                return Optional.of(FloatDuration.NaN);
             }
         };
 
@@ -247,9 +248,9 @@ public final class TrajectoryTest
             trajectory.getExtendedData(new ExtendedDataDuration<TestGtuData>("does", "not exist")
             {
                 @Override
-                public FloatDuration getValue(final TestGtuData gtu)
+                public Optional<FloatDuration> getValue(final TestGtuData gtu)
                 {
-                    return null;
+                    return Optional.empty();
                 }
             });
             fail("Requesting data for non-included extended data type should throw SamplingException.");

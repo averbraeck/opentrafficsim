@@ -52,7 +52,7 @@ public class LinkGtuIdTransceiver extends AbstractTransceiver
             returnWrapper.nack("Bad address; need id of a link");
             return null;
         }
-        Link link = this.network.getLink((String) address[0]);
+        Link link = this.network.getLink((String) address[0]).orElse(null);
         if (null == link)
         {
             returnWrapper.nack("Network does not contain a link with id " + address[0]);

@@ -201,9 +201,11 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             // acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
             // referenceLane, Length positionOnReferenceLane]
             Object[] payload = (Object[]) event.getContent();
-            CrossSectionLink link = (CrossSectionLink) this.network.getLink(payload[7].toString());
-            Lane lane = (Lane) link.getCrossSectionElement(payload[8].toString());
-            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(payload[0].toString());
+            CrossSectionLink link = (CrossSectionLink) this.network.getLink(payload[7].toString())
+                    .orElseThrow(() -> new OtsRuntimeException("Payload refers to non-existent link."));
+            Lane lane = (Lane) link.getCrossSectionElement(payload[8].toString()).orElseThrow();
+            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(payload[0].toString())
+                    .orElseThrow(() -> new OtsRuntimeException("Sampling of GTU not in the network."));
             LaneDataRoad laneData = new LaneDataRoad(lane);
             snapshot(laneData, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(), new GtuDataRoad(gtu));
         }
@@ -211,14 +213,16 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         {
             // Payload: Object[] {String gtuId, int count_after_addition, String laneId, String linkId}
             Object[] payload = (Object[]) event.getContent();
-            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[3]))
-                    .getCrossSectionElement((String) payload[2]);
+            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[3])
+                    .orElseThrow(() -> new OtsRuntimeException("Payload refers to non-existent link.")))
+                            .getCrossSectionElement((String) payload[2]).orElseThrow();
             LaneDataRoad laneData = new LaneDataRoad(lane);
             if (!getSamplerData().contains(laneData))
             {
                 return; // we are not sampling this Lane
             }
-            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) payload[0]);
+            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) payload[0])
+                    .orElseThrow(() -> new OtsRuntimeException("Sampling of GTU not in the network."));
 
             Length position = gtu.getPosition(lane, RelativePosition.REFERENCE_POSITION);
             GtuDataRoad gtuData = new GtuDataRoad(gtu);
@@ -246,8 +250,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             // Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position, String laneId,
             // String linkId}
             Object[] payload = (Object[]) event.getContent();
-            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[5]))
-                    .getCrossSectionElement((String) payload[4]);
+            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[5])
+                    .orElseThrow(() -> new OtsRuntimeException("Payload refers to non-existent link.")))
+                            .getCrossSectionElement((String) payload[4]).orElseThrow();
             LaneDataRoad laneData = new LaneDataRoad(lane);
             LaneBasedGtu gtu = (LaneBasedGtu) payload[1];
             Length position = (Length) payload[3];

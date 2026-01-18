@@ -3,6 +3,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,8 @@ public class DistractionGtuColorer extends AbstractLegendColorer<Gtu, String>
      */
     public DistractionGtuColorer(final Set<DefaultDistraction> distractions)
     {
-        super((g) -> getDistractionId(g, asIds(distractions)), DistractionGtuColorer::getColor, createLegend(distractions));
+        super((g) -> Optional.ofNullable(getDistractionId(g, asIds(distractions))), DistractionGtuColorer::getColor,
+                createLegend(distractions));
     }
 
     /**
@@ -60,8 +62,8 @@ public class DistractionGtuColorer extends AbstractLegendColorer<Gtu, String>
     {
         if (gtu.getTacticalPlanner().getPerception() instanceof LanePerception)
         {
-            Mental mental = ((LanePerception) gtu.getTacticalPlanner().getPerception()).getMental();
-            if (mental != null && mental instanceof Fuller fuller)
+            Optional<Mental> mental = ((LanePerception) gtu.getTacticalPlanner().getPerception()).getMental();
+            if (mental.isPresent() && mental.get() instanceof Fuller fuller)
             {
                 for (Task task : fuller.getTasks())
                 {

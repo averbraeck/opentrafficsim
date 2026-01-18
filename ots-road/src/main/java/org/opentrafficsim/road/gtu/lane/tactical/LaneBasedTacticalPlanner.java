@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.ImmutableSortedSet;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -43,7 +44,8 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
      */
     default Lane chooseLaneAtSplit(final Lane from, final Set<Lane> lanes) throws ParameterException
     {
-        Route route = getGtu().getStrategicalPlanner().getRoute();
+        Route route = getGtu().getStrategicalPlanner().getRoute()
+                .orElseThrow(() -> new OtsRuntimeException("Choosing lane at split without a route."));
         Length perception = getGtu().getParameters().getParameter(ParameterTypes.PERCEPTION);
         Set<Lane> bestRegardingRoute = new LinkedHashSet<>();
         LaneChangeInfo bestInfo = null;

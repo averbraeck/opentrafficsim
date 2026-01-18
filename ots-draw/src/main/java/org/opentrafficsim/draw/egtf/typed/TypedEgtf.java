@@ -1,5 +1,7 @@
 package org.opentrafficsim.draw.egtf.typed;
 
+import java.util.Optional;
+
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.base.Scalar;
@@ -12,6 +14,7 @@ import org.djunits.value.vdouble.vector.LengthVector;
 import org.djunits.value.vdouble.vector.base.DoubleVector;
 import org.opentrafficsim.draw.egtf.DataStream;
 import org.opentrafficsim.draw.egtf.Egtf;
+import org.opentrafficsim.draw.egtf.Filter;
 import org.opentrafficsim.draw.egtf.KernelShape;
 import org.opentrafficsim.draw.egtf.Quantity;
 
@@ -234,11 +237,17 @@ public class TypedEgtf extends Egtf
      * @param location location of output grid
      * @param time time of output grid
      * @param quantities quantities to calculate filtered data of
-     * @return filtered data, {@code null} when interrupted
+     * @return filtered data, empty when interrupted
      */
-    public TypedFilter filter(final LengthVector location, final DurationVector time, final Quantity<?, ?>... quantities)
+    public Optional<TypedFilter> filter(final LengthVector location, final DurationVector time,
+            final Quantity<?, ?>... quantities)
     {
-        return new TypedFilter(filterSI(location.getValuesSI(), time.getValuesSI(), quantities));
+        Optional<Filter> filter = filterSI(location.getValuesSI(), time.getValuesSI(), quantities);
+        if (filter.isEmpty())
+        {
+            return Optional.empty();
+        }
+        return Optional.of(new TypedFilter(filter.get()));
     }
 
     @Override

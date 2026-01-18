@@ -39,7 +39,12 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
             try
             {
                 Object[] payload = (Object[]) event.getContent();
-                checkMove((LaneBasedGtu) this.network.getGTU((String) payload[0]));
+                checkMove((LaneBasedGtu) this.network.getGTU((String) payload[0])
+                        .orElseThrow(() -> new OtsRuntimeException("Check move event on GTU not in the network.")));
+            }
+            catch (OtsRuntimeException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {
@@ -48,11 +53,11 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
         }
         else if (event.getType().equals(Network.GTU_ADD_EVENT))
         {
-            this.network.getGTU((String) event.getContent()).addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
+            this.network.getGTU((String) event.getContent()).get().addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
         }
         else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
         {
-            this.network.getGTU((String) event.getContent()).removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
+            this.network.getGTU((String) event.getContent()).get().removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
         }
         else
         {

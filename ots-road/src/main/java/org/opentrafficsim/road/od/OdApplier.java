@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -236,7 +237,7 @@ public final class OdApplier
                             demandNode = new DemandNode<>(origin, stream, null);
                             originNodePerLane.put(lane, demandNode);
                         }
-                        destinationNode = demandNode.getChild(destination);
+                        destinationNode = demandNode.getChild(destination).orElse(null);
                         if (destinationNode == null)
                         {
                             markovChain = null;
@@ -255,15 +256,18 @@ public final class OdApplier
                             demandNode.addChild(destinationNode);
                         }
                     }
-                    DemandNode<Category, ?> categoryNode =
-                            new DemandNode<>(category, od.getDemandPattern(origin, destination, category));
-                    if (markovian)
+                    Optional<DemandPattern> demandPattern = od.getDemandPattern(origin, destination, category);
+                    if (demandPattern.isPresent())
                     {
-                        destinationNode.addLeaf(categoryNode, category.get(GtuType.class));
-                    }
-                    else
-                    {
-                        destinationNode.addChild(categoryNode);
+                        DemandNode<Category, ?> categoryNode = new DemandNode<>(category, demandPattern.get());
+                        if (markovian)
+                        {
+                            destinationNode.addLeaf(categoryNode, category.get(GtuType.class));
+                        }
+                        else
+                        {
+                            destinationNode.addChild(categoryNode);
+                        }
                     }
                 }
             }
@@ -575,7 +579,7 @@ public final class OdApplier
                 }
                 else
                 {
-                    linkType = linkType.commonAncestor(next);
+                    linkType = linkType.commonAncestor(next).orElse(null);
                     if (linkType == null)
                     {
                         // incompatible link types
@@ -804,18 +808,18 @@ public final class OdApplier
         /**
          * Returns the child that pertains to specified object or {@code null} if no such child is present.
          * @param obj child object
-         * @return child that pertains to specified object or {@code null} if no such child is present
+         * @return child that pertains to specified object, empty if no such child is present
          */
-        public K getChild(final Object obj)
+        public Optional<K> getChild(final Object obj)
         {
             for (K child : this.children)
             {
                 if (child.getObject().equals(obj))
                 {
-                    return child;
+                    return Optional.of(child);
                 }
             }
-            return null;
+            return Optional.empty();
         }
 
         @Override
@@ -834,7 +838,7 @@ public final class OdApplier
         }
 
         @Override
-        public Duration nextTimeSlice(final Duration time)
+        public Optional<Duration> nextTimeSlice(final Duration time)
         {
             if (this.demandPattern != null)
             {
@@ -843,10 +847,10 @@ public final class OdApplier
             Duration out = null;
             for (K child : this.children)
             {
-                Duration childSlice = child.nextTimeSlice(time);
-                out = out == null || (childSlice != null && childSlice.lt(out)) ? childSlice : out;
+                Optional<Duration> childSlice = child.nextTimeSlice(time);
+                out = out == null || (childSlice.isEmpty() && childSlice.get().lt(out)) ? childSlice.orElse(null) : out;
             }
-            return out;
+            return Optional.ofNullable(out);
         }
 
         @Override

@@ -2,6 +2,7 @@ package org.opentrafficsim.base;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.base.Identifiable;
@@ -68,11 +69,11 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
 
     /**
      * Return the parent of this type, or null when no parent was identified.
-     * @return parent or {@code null} if this is a top level type.
+     * @return parent, empty if this is a top level type
      */
-    public final T getParent()
+    public final Optional<T> getParent()
     {
-        return this.parent;
+        return Optional.ofNullable(this.parent);
     }
 
     /**
@@ -105,16 +106,16 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
     /**
      * Returns the common ancestor of both types.
      * @param type other type.
-     * @return common ancestor of both types, {@code null} if none
+     * @return common ancestor of both types, empty if none
      */
-    public final T commonAncestor(final T type)
+    public final Optional<T> commonAncestor(final T type)
     {
         T otherType = type;
         while (otherType != null && !isOfType(otherType))
         {
-            otherType = otherType.getParent();
+            otherType = otherType.getParent().orElse(null);
         }
-        return otherType;
+        return Optional.ofNullable(otherType);
     }
 
     @Override

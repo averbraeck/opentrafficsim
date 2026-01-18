@@ -106,7 +106,7 @@ public class Publisher extends AbstractTransceiver
                             returnWrapper.nack(bad);
                             return null;
                         }
-                        EventProducer result = network.getGTU((String) address[0]);
+                        EventProducer result = network.getGTU((String) address[0]).orElse(null);
                         if (null == result)
                         {
                             returnWrapper.nack("No GTU with id \"" + address[0] + "\" found");
@@ -271,7 +271,7 @@ public class Publisher extends AbstractTransceiver
         {
             Throw.whenNull(address, "LookupLink requires the name of a link");
             Throw.when(address.length != 1 || !(address[1] instanceof String), IllegalArgumentException.class, "Bad address");
-            Link link = Publisher.this.network.getLink((String) address[0]);
+            Link link = Publisher.this.network.getLink((String) address[0]).orElse(null);
             if (null == link)
             {
                 returnWrapper.nack("Network does not contain a Link with id " + address[0]);

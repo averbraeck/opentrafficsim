@@ -3,6 +3,7 @@ package org.opentrafficsim.base.parameters;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.unit.DimensionlessUnit;
@@ -179,10 +180,10 @@ public class ParameterSet implements Parameters
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getParameterOrNull(final ParameterType<T> parameterType)
+    public <T> Optional<T> getOptionalParameter(final ParameterType<T> parameterType)
     {
         // set methods guarantee matching of parameter type and value
-        return (T) this.parameters.get(parameterType);
+        return Optional.ofNullable((T) this.parameters.get(parameterType));
     }
 
     @Override

@@ -979,7 +979,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                         // sampler has not yet started to record on this lane
                         continue;
                     }
-                    TrajectoryGroup<?> trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(lane);
+                    TrajectoryGroup<?> trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(lane).get();
                     int last = this.lastConsecutivelyAssignedTrajectories.get(lane);
                     SortedSet<Integer> assigned = this.assignedTrajectories.get(lane);
                     if (!this.aggregateLanes)

@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
@@ -534,11 +535,11 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     /**
      * Returns the value for the given tag, these are used for specific use cases of any sort.
      * @param tag name of the tag.
-     * @return value of the tag, or {@code null} if it is not given to the GTU.
+     * @return value of the tag, empty if it is not given to the GTU.
      */
-    public String getTag(final String tag)
+    public Optional<String> getTag(final String tag)
     {
-        return this.tags.get(tag);
+        return Optional.ofNullable(this.tags.get(tag));
     }
 
     @Override
@@ -1004,11 +1005,11 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
 
     /**
      * Returns the parent GTU, or {@code null} if this GTU has no parent.
-     * @return parent GTU, or {@code null} if this GTU has no parent
+     * @return parent GTU, empty if this GTU has no parent
      */
-    public Gtu getParent()
+    public Optional<Gtu> getParent()
     {
-        return this.parent;
+        return Optional.ofNullable(this.parent);
     }
 
     /**

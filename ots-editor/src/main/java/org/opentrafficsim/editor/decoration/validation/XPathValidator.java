@@ -48,7 +48,7 @@ public abstract class XPathValidator implements ValueValidator
         this.fields = new ArrayList<>();
         for (Node field : DocumentReader.getChildren(keyNode, "xsd:field"))
         {
-            this.fields.add(new Field(DocumentReader.getAttribute(field, "xpath")));
+            this.fields.add(new Field(DocumentReader.getAttribute(field, "xpath").get()));
         }
     }
 
@@ -85,7 +85,7 @@ public abstract class XPathValidator implements ValueValidator
      */
     public String getKeyName()
     {
-        return DocumentReader.getAttribute(this.keyNode, "name");
+        return DocumentReader.getAttribute(this.keyNode, "name").get();
     }
 
     /**
@@ -95,8 +95,8 @@ public abstract class XPathValidator implements ValueValidator
      */
     public String[] getSelectorTypeString()
     {
-        return DocumentReader.getAttribute(DocumentReader.getChild(this.keyNode, "xsd:selector"), "xpath").replace("ots:", "")
-                .split("\\|");
+        return DocumentReader.getAttribute(DocumentReader.getChild(this.keyNode, "xsd:selector").get(), "xpath").get()
+                .replace("ots:", "").split("\\|");
     }
 
     /**

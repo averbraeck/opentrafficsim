@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.plan.strategical;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -36,21 +38,21 @@ public interface StrategicalPlanner
 
     /**
      * Returns the route.
-     * @return route, may be null
+     * @return route, empty if not present
      */
-    Route getRoute();
+    Optional<Route> getRoute();
 
     /**
      * Returns the origin.
-     * @return origin, may be null
+     * @return origin, empty if not present
      */
-    Node getOrigin();
+    Optional<Node> getOrigin();
 
     /**
      * Returns the destination.
-     * @return destination, may be null
+     * @return destination, empty if not present
      */
-    Node getDestination();
+    Optional<Node> getDestination();
 
     /**
      * Get tactical planner for the GTU. The stratigical planner is free to dynamically change this.

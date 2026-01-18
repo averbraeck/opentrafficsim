@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -147,11 +146,11 @@ public final class LaneChangeInfoTest
         check(network.getLaneChangeInfo(lanesBC.get(1), routeAF2, car, range, law), right, new int[] {2}, new double[] {1200});
         check(network.getLaneChangeInfo(lanesBC.get(2), routeAF2, car, range, law), right, new int[] {1}, new double[] {1200});
         // CD - F2
-        assertNull(network.getLaneChangeInfo(lanesCD.get(0), routeAF2, car, range, law));
+        assertTrue(network.getLaneChangeInfo(lanesCD.get(0), routeAF2, car, range, law).isEmpty());
         check(network.getLaneChangeInfo(lanesCD.get(1), routeAF2, car, range, law), right, new int[] {2}, new double[] {900});
         check(network.getLaneChangeInfo(lanesCD.get(2), routeAF2, car, range, law), right, new int[] {1}, new double[] {900});
         // DE - F2
-        assertNull(network.getLaneChangeInfo(lanesDE.get(0), routeAF2, car, range, law));
+        assertTrue(network.getLaneChangeInfo(lanesDE.get(0), routeAF2, car, range, law).isEmpty());
         check(network.getLaneChangeInfo(lanesDE.get(1), routeAF2, car, range, law), right, new int[] {2}, new double[] {500});
         check(network.getLaneChangeInfo(lanesDE.get(2), routeAF2, car, range, law), right, new int[] {1}, new double[] {500});
         // EF2
@@ -176,7 +175,7 @@ public final class LaneChangeInfoTest
         check(network.getLaneChangeInfo(lanesDE.get(0), routeAH2, car, range, law), left, new int[] {1}, new double[] {1800});
         check(network.getLaneChangeInfo(lanesDE.get(1), routeAH2, car, range, law), left, new int[] {2}, new double[] {1800});
         check(network.getLaneChangeInfo(lanesDE.get(2), routeAH2, car, range, law), left, new int[] {3}, new double[] {1800});
-        assertNull(network.getLaneChangeInfo(lanesDE.get(3), routeAH2, car, range, law));
+        assertTrue(network.getLaneChangeInfo(lanesDE.get(3), routeAH2, car, range, law).isEmpty());
         // EF -> H2
         check(network.getLaneChangeInfo(lanesEF.get(0), routeAH2, car, range, law), left, new int[] {1}, new double[] {1300});
         check(network.getLaneChangeInfo(lanesEF.get(1), routeAH2, car, range, law), left, new int[] {2}, new double[] {1300});
@@ -208,13 +207,13 @@ public final class LaneChangeInfoTest
         check(network.getLaneChangeInfo(lanesDE.get(0), routeAH, car, range, law), null, new int[] {}, new double[] {});
         check(network.getLaneChangeInfo(lanesDE.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
         check(network.getLaneChangeInfo(lanesDE.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        assertNull(network.getLaneChangeInfo(lanesDE.get(3), routeAH, car, range, law));
+        assertTrue(network.getLaneChangeInfo(lanesDE.get(3), routeAH, car, range, law).isEmpty());
         // EF -> H
         check(network.getLaneChangeInfo(lanesEF.get(0), routeAH, car, range, law), null, new int[] {}, new double[] {});
         check(network.getLaneChangeInfo(lanesEF.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
         check(network.getLaneChangeInfo(lanesEF.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
         // FG -> H
-        assertNull(network.getLaneChangeInfo(lanesFG.get(0), routeAH, car, range, law));
+        assertTrue(network.getLaneChangeInfo(lanesFG.get(0), routeAH, car, range, law).isEmpty());
         check(network.getLaneChangeInfo(lanesFG.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
         check(network.getLaneChangeInfo(lanesFG.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
         check(network.getLaneChangeInfo(lanesFG.get(3), routeAH, car, range, law), null, new int[] {}, new double[] {});

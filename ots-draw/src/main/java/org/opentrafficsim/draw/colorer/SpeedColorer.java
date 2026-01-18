@@ -1,6 +1,7 @@
 package org.opentrafficsim.draw.colorer;
 
 import java.text.NumberFormat;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.djunits.unit.SpeedUnit;
@@ -30,7 +31,7 @@ public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed>
      * @param valueFunction value function
      * @param boundPaintScale bounds paint scale, based on values in km/h
      */
-    public SpeedColorer(final Function<? super T, Speed> valueFunction, final BoundsPaintScale boundPaintScale)
+    public SpeedColorer(final Function<? super T, Optional<Speed>> valueFunction, final BoundsPaintScale boundPaintScale)
     {
         super(valueFunction, (v) -> boundPaintScale.getPaint(v.getInUnit(SpeedUnit.KM_PER_HOUR)),
                 LegendColorer.fromBoundsPaintScale(boundPaintScale, FORMAT.getDoubleFormat()), boundPaintScale);
@@ -41,7 +42,7 @@ public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed>
      * @param valueFunction value function
      * @param maximumSpeed maximum speed
      */
-    public SpeedColorer(final Function<? super T, Speed> valueFunction, final Speed maximumSpeed)
+    public SpeedColorer(final Function<? super T, Optional<Speed>> valueFunction, final Speed maximumSpeed)
     {
         this(valueFunction, new BoundsPaintScale(new double[] {0.0, maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR) / 2.0,
                 maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)}, Colors.reverse(Colors.GREEN_RED)));
@@ -51,7 +52,7 @@ public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed>
      * Constructor constructing a range to 150km/h.
      * @param valueFunction value function
      */
-    public SpeedColorer(final Function<? super T, Speed> valueFunction)
+    public SpeedColorer(final Function<? super T, Optional<Speed>> valueFunction)
     {
         this(valueFunction, new Speed(150.0, SpeedUnit.KM_PER_HOUR));
     }

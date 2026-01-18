@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.BiFunction;
@@ -29,6 +30,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.multikeymap.MultiKeyMap;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
@@ -136,7 +138,7 @@ public class Injections
     private final ImmutableMap<String, GtuType> gtuTypes;
 
     /** GTU characteristics generator. */
-    private final BiFunction<GtuType, StreamInterface, GtuTemplate> gtuCharacteristicsGenerator;
+    private final BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> gtuCharacteristicsGenerator;
 
     /** Strategical planner factory. */
     private final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
@@ -204,7 +206,7 @@ public class Injections
      * @throws IllegalArgumentException when the right arguments are not provided for the columns in the injection table.
      */
     public Injections(final Table table, final Network network, final ImmutableMap<String, GtuType> gtuTypes,
-            final BiFunction<GtuType, StreamInterface, GtuTemplate> gtuCharacteristicsGenerator,
+            final BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> gtuCharacteristicsGenerator,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final StreamInterface stream,
             final Duration timeToCollision) throws IllegalArgumentException
     {
@@ -354,9 +356,8 @@ public class Injections
             for (Row row : table)
             {
                 String linkId = (String) row.getValue(this.columnNumbers.get(LINK_COLUMN));
-                Link link = this.network.getLink(linkId);
-                Throw.when(link == null, IllegalArgumentException.class, "Link %s in injections is not in the network.",
-                        linkId);
+                Link link = this.network.getLink(linkId).orElseThrow(
+                        () -> new IllegalArgumentException("Link " + linkId + " in injections is not in the network."));
                 Throw.when(!(link instanceof CrossSectionLink), IllegalArgumentException.class,
                         "Injection table contains link that is not a CrossSectionLink.");
 
@@ -512,11 +513,14 @@ public class Injections
                                 maxAcceleration, maxDeceleration, front);
 
                         Route route = Injections.this.columnNumbers.containsKey(ROUTE_COLUMN)
-                                ? (Route) Injections.this.network.getRoute((String) getCharacteristic(ROUTE_COLUMN)) : null;
+                                ? (Route) Injections.this.network.getRoute((String) getCharacteristic(ROUTE_COLUMN)).get()
+                                : null;
                         Node origin = Injections.this.columnNumbers.containsKey(ORIGIN_COLUMN)
-                                ? (Node) Injections.this.network.getNode((String) getCharacteristic(ORIGIN_COLUMN)) : null;
+                                ? (Node) Injections.this.network.getNode((String) getCharacteristic(ORIGIN_COLUMN)).get()
+                                : null;
                         Node destination = Injections.this.columnNumbers.containsKey(DESTINATION_COLUMN)
-                                ? (Node) Injections.this.network.getNode((String) getCharacteristic(DESTINATION_COLUMN)) : null;
+                                ? (Node) Injections.this.network.getNode((String) getCharacteristic(DESTINATION_COLUMN)).get()
+                                : null;
                         return new LaneBasedGtuCharacteristics(characteristics, Injections.this.strategicalPlannerFactory,
                                 route, origin, destination, VehicleModel.MINMAX);
                     }
@@ -540,8 +544,10 @@ public class Injections
                     }
                     if (this.defaultCharacteristics == null)
                     {
-                        this.defaultCharacteristics =
-                                Injections.this.gtuCharacteristicsGenerator.apply(gtuType, Injections.this.stream).get();
+                        this.defaultCharacteristics = Injections.this.gtuCharacteristicsGenerator
+                                .apply(gtuType, Injections.this.stream).orElseThrow(() -> new OtsRuntimeException(
+                                        "Unable to et GTU characteristics for GTU type " + gtuType.getId()))
+                                .get();
                     }
                     return supplier.apply(this.defaultCharacteristics);
                 }
@@ -596,8 +602,8 @@ public class Injections
              * @param characteristics characteristics of the proposed new GTU
              * @param since time since the GTU wanted to arrive
              * @param initialPosition initial position
-             * @return maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current
-             *         time
+             * @return maximum safe speed, or Placement.NO if a GTU with the specified characteristics cannot be placed at the
+             *         current time
              * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network
              *             structure
              * @throws GtuException on parameter exception

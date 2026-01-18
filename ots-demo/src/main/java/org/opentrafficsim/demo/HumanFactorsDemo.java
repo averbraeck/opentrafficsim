@@ -257,7 +257,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             new Stripe("3", DefaultsRoadNl.SOLID, link, new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5),
                     ContinuousPiecewiseLinearFunction.of(0.0, offset5), ContinuousPiecewiseLinearFunction.of(0.0, width5)));
 
-            // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile
+            // Add distraction halfway on the network, 0.7 on left lane, 0.5 on right lane, with distance profile
             new RoadSideDistraction("distractionLeft", left, Length.ofSI(1500.0),
                     new TrapezoidProfile(0.7, Length.ofSI(-100.0), Length.ofSI(50.0), Length.ofSI(150.0)),
                     LateralDirectionality.LEFT);
@@ -284,8 +284,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
          */
         private void setDemand() throws SimRuntimeException, ParameterException
         {
-            Node nodeA = this.network.getNode("A");
-            Node nodeB = this.network.getNode("B");
+            Node nodeA = this.network.getNode("A").get();
+            Node nodeB = this.network.getNode("B").get();
             Categorization categorization = new Categorization("GTU type", GtuType.class);
             List<Node> origins = new ArrayList<>();
             origins.add(nodeA);

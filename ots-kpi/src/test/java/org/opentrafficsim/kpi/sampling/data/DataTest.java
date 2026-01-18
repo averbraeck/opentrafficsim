@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -53,7 +54,7 @@ public final class DataTest
         Speed speed = Speed.ofSI(10.0);
         TestGtuData gtu = new TestGtuData("id", "origin", "destination", "gtuType", "route", speed);
         assertNotNull(ReferenceSpeed.INSTANCE.toString());
-        assertEquals(ReferenceSpeed.INSTANCE.getValue(gtu), FloatSpeed.ofSI((float) speed.si));
+        assertEquals(ReferenceSpeed.INSTANCE.getValue(gtu).get(), FloatSpeed.ofSI((float) speed.si));
 
         float[] data = new float[] {0.0f, 1.0f};
 
@@ -61,9 +62,9 @@ public final class DataTest
         ExtendedDataDuration<TestGtuData> durationData = new ExtendedDataDuration<>("id", "description")
         {
             @Override
-            public FloatDuration getValue(final TestGtuData gtu)
+            public Optional<FloatDuration> getValue(final TestGtuData gtu)
             {
-                return null;
+                return Optional.empty();
             }
         };
         assertEquals(FloatDuration.ZERO, durationData.convertValue(0.0f));
@@ -75,9 +76,9 @@ public final class DataTest
         ExtendedDataLength<TestGtuData> lengthData = new ExtendedDataLength<>("id", "description")
         {
             @Override
-            public FloatLength getValue(final TestGtuData gtu)
+            public Optional<FloatLength> getValue(final TestGtuData gtu)
             {
-                return null;
+                return Optional.empty();
             }
         };
         assertEquals(FloatLength.ZERO, lengthData.convertValue(0.0f));
@@ -89,9 +90,9 @@ public final class DataTest
         ExtendedDataSpeed<TestGtuData> speedData = new ExtendedDataSpeed<>("id", "description")
         {
             @Override
-            public FloatSpeed getValue(final TestGtuData gtu)
+            public Optional<FloatSpeed> getValue(final TestGtuData gtu)
             {
-                return null;
+                return Optional.empty();
             }
         };
         assertEquals(FloatSpeed.ZERO, speedData.convertValue(0.0f));
@@ -120,9 +121,9 @@ public final class DataTest
         ExtendedDataNumber<TestGtuData> numberData = new ExtendedDataNumber<>("id", "description")
         {
             @Override
-            public Float getValue(final TestGtuData gtu)
+            public Optional<Float> getValue(final TestGtuData gtu)
             {
-                return null;
+                return Optional.empty();
             }
         };
         float[] storage = numberData.initializeStorage();
@@ -141,9 +142,9 @@ public final class DataTest
         ExtendedDataString<TestGtuData> stringData = new ExtendedDataString<>("id", "description")
         {
             @Override
-            public String getValue(final TestGtuData gtu)
+            public Optional<String> getValue(final TestGtuData gtu)
             {
-                return null;
+                return Optional.empty();
             }
         };
         List<String> storageList = stringData.initializeStorage();

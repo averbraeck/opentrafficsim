@@ -1,5 +1,6 @@
 package org.opentrafficsim.core.perception;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.base.Identifiable;
@@ -34,9 +35,9 @@ public interface PerceivableContext extends Identifiable
     /**
      * Get a GTU in the model.
      * @param gtuId the id of the GTU
-     * @return a GTU as registered in the current model, or null when the id could not be found.
+     * @return a GTU as registered in the current model, empty when the id could not be found.
      */
-    Gtu getGTU(String gtuId);
+    Optional<Gtu> getGTU(String gtuId);
 
     /**
      * Add a GTU to the network.

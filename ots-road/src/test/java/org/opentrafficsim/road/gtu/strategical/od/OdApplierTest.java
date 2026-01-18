@@ -229,8 +229,8 @@ public class OdApplierTest
     {
 
         this.time = Time.ZERO;
-        Node nodeA = this.network.getNode("A");
-        Node nodeB = this.network.getNode("B");
+        Node nodeA = this.network.getNode("A").get();
+        Node nodeB = this.network.getNode("B").get();
         Lane lane1 = this.lanes.get("lane1");
         Lane lane2 = this.lanes.get("lane2");
 
@@ -495,8 +495,8 @@ public class OdApplierTest
             throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException, GtuException
     {
         this.time = Time.ZERO;
-        Node nodeA = this.network.getNode("A");
-        Node nodeB = this.network.getNode("B");
+        Node nodeA = this.network.getNode("A").get();
+        Node nodeB = this.network.getNode("B").get();
         Lane lane1 = this.lanes.get("lane1");
         Lane lane2 = this.lanes.get("lane2");
         OdOptions odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);

@@ -3,6 +3,8 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVE;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -42,8 +44,8 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double saMax = params.getParameterOrNull(SA_MAX);
-                    Throw.when(saMax != null && value > saMax, ParameterException.class,
+                    Optional<Double> saMax = params.getOptionalParameter(SA_MAX);
+                    Throw.when(saMax.isPresent() && value > saMax.get(), ParameterException.class,
                             "Value for SA_MIN should not be larger than SA_MAX.");
                 }
             };
@@ -55,8 +57,8 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double saMin = params.getParameterOrNull(SA_MIN);
-                    Throw.when(saMin != null && value < saMin, ParameterException.class,
+                    Optional<Double> saMin = params.getOptionalParameter(SA_MIN);
+                    Throw.when(saMin.isPresent() && value < saMin.get(), ParameterException.class,
                             "Value for SA_MAX should not be larger than SA_MIN.");
                 }
             };
@@ -78,8 +80,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
     {
         // situational awareness
         double taskSaturation = parameters.getParameter(Fuller.TS);
-        Double tsCrit = parameters.getParameterOrNull(SumFuller.TS_CRIT);
-        tsCrit = tsCrit == null ? 1.0 : tsCrit;
+        double tsCrit = parameters.getOptionalParameter(SumFuller.TS_CRIT).orElse(1.0);
         double tsMax = parameters.getParameter(SumFuller.TS_MAX);
         double saMin = parameters.getParameter(SA_MIN);
         double saMax = parameters.getParameter(SA_MAX);

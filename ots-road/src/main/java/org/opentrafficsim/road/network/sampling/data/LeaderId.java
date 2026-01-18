@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
@@ -31,16 +32,17 @@ public class LeaderId extends ExtendedDataString<GtuDataRoad>
     }
 
     @Override
-    public String getValue(final GtuDataRoad gtu)
+    public Optional<String> getValue(final GtuDataRoad gtu)
     {
         NeighborsPerception neigbors =
                 gtu.getGtu().getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class);
         if (neigbors == null)
         {
-            throw new OtsRuntimeException("Leader id can only be stored in trajectories if the GTU's have NeighborsPerception.");
+            throw new OtsRuntimeException(
+                    "Leader id can only be stored in trajectories if the GTU's have NeighborsPerception.");
         }
         Iterator<LaneBasedGtu> it = neigbors.getLeaders(RelativeLane.CURRENT).underlying();
-        return it.hasNext() ? it.next().getId() : "";
+        return Optional.ofNullable(it.hasNext() ? it.next().getId() : "");
     }
 
 }

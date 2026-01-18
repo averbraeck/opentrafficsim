@@ -24,19 +24,19 @@ public interface LaneBasedObject extends LocatedObject
 
     /**
      * Returns the lane.
-     * @return The lane for which this is a sensor.
+     * @return lane
      */
     Lane getLane();
 
     /**
      * Returns the longitudinal position.
-     * @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane.
+     * @return position (between 0.0 and the length of the lane)
      */
     Length getLongitudinalPosition();
 
     /**
      * Returns the length of the object. The default value is zero.
-     * @return length of the object.
+     * @return length of the object
      */
     default Length getLength()
     {
@@ -48,7 +48,7 @@ public interface LaneBasedObject extends LocatedObject
 
     /**
      * Returns the line that represent the location of this object on the lane.
-     * @return the line that represent the location of this object on the lane.
+     * @return the line that represent the location of this object on the lane
      */
     default PolyLine2d getLine()
     {
@@ -68,7 +68,7 @@ public interface LaneBasedObject extends LocatedObject
      * Make a geometry perpendicular to the center line of the lane with a length 90% of the width of the lane.
      * @param lane the lane for which to make a perpendicular geometry
      * @param longitudinalPosition the position on the lane
-     * @return an polygon that describes the object
+     * @return lateral line at position
      */
     static PolyLine2d makeLine(final Lane lane, final Length longitudinalPosition)
     {
@@ -80,7 +80,7 @@ public interface LaneBasedObject extends LocatedObject
      * @param lane the lane for which to make a perpendicular geometry
      * @param longitudinalPosition the position on the lane
      * @param relativeWidth lane width to use
-     * @return an OtsLine2d that describes the line
+     * @return lateral line at position
      */
     static PolyLine2d makeLine(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
     {

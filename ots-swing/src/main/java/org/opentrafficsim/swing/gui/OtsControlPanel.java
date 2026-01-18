@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -167,9 +169,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             }
 
             @Override
-            public Integer getFontSize()
+            public OptionalInt getFontSize()
             {
-                return null;
+                return OptionalInt.empty();
             }
 
             @Override
@@ -260,7 +262,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 return "AppearanceControlButton []";
             }
         }
-        JButton result = new AppearanceControlButton(loadIcon(iconPath));
+        JButton result = new AppearanceControlButton(loadIcon(iconPath).get());
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
@@ -273,36 +275,37 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     /**
      * Attempt to load and return an icon.
      * @param iconPath the path that is used to load the icon
-     * @return or null if loading failed
+     * @return icon or empty if loading failed
      */
-    public static final Icon loadIcon(final String iconPath)
+    public static final Optional<Icon> loadIcon(final String iconPath)
     {
         try
         {
-            return new ImageIcon(ImageIO.read(ResourceResolver.resolve(iconPath).openStream()));
+            return Optional.of(new ImageIcon(ImageIO.read(ResourceResolver.resolve(iconPath).openStream())));
         }
         catch (NullPointerException | IOException npe)
         {
             Logger.ots().error("Could not load icon from path {}", iconPath);
-            return null;
+            return Optional.empty();
         }
     }
 
     /**
      * Attempt to load and return an icon, which will be made gray-scale.
      * @param iconPath the path that is used to load the icon
-     * @return or null if loading failed
+     * @return icon or empty if loading failed
      */
-    public static final Icon loadGrayscaleIcon(final String iconPath)
+    public static final Optional<Icon> loadGrayscaleIcon(final String iconPath)
     {
         try
         {
-            return new ImageIcon(GrayFilter.createDisabledImage(ImageIO.read(ResourceResolver.resolve(iconPath).openStream())));
+            return Optional.of(new ImageIcon(
+                    GrayFilter.createDisabledImage(ImageIO.read(ResourceResolver.resolve(iconPath).openStream()))));
         }
         catch (NullPointerException | IOException e)
         {
             Logger.ots().error("Could not load icon from path {}", iconPath);
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -535,12 +538,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 if (this.simulator.isStartingOrRunning())
                 {
                     button.setToolTipText("Pause the simulation");
-                    button.setIcon(OtsControlPanel.loadIcon("/Pause.png"));
+                    button.setIcon(OtsControlPanel.loadIcon("/Pause.png").get());
                 }
                 else
                 {
                     button.setToolTipText("Run the simulation at the indicated speed");
-                    button.setIcon(loadIcon("/Play.png"));
+                    button.setIcon(loadIcon("/Play.png").get());
                 }
                 button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }
@@ -1093,9 +1096,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
 
         @Override
-        public Integer getFontSize()
+        public OptionalInt getFontSize()
         {
-            return null;
+            return OptionalInt.empty();
         }
 
         @Override
@@ -1204,9 +1207,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
 
         @Override
-        public Integer getFontSize()
+        public OptionalInt getFontSize()
         {
-            return null;
+            return OptionalInt.empty();
         }
 
         @Override

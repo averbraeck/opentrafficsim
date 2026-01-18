@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.pt;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -70,7 +71,7 @@ public class BusSchedule extends Route
      * @param dwellTime dwell time
      * @param forceSchedule whether to wait until departure time
      */
-    public final void addBusStop(final String busStopId, final Duration departureTime, final Duration dwellTime,
+    public void addBusStop(final String busStopId, final Duration departureTime, final Duration dwellTime,
             final boolean forceSchedule)
     {
         Throw.whenNull(busStopId, "Bus stop id may not be null.");
@@ -85,7 +86,7 @@ public class BusSchedule extends Route
      * @param time time to check
      * @return whether the bus of this line should stop for this bus stop
      */
-    public final boolean isLineStop(final String busStopId, final Duration time)
+    public boolean isLineStop(final String busStopId, final Duration time)
     {
         return this.schedule.containsKey(busStopId) && (!this.actualDeparturesConflict.containsKey(busStopId)
                 || time.lt(this.actualDeparturesConflict.get(busStopId)));
@@ -96,7 +97,7 @@ public class BusSchedule extends Route
      * @param busStopId id of bus stop
      * @return departure time for the given bus stop
      */
-    public final Duration getDepartureTime(final String busStopId)
+    public Duration getDepartureTime(final String busStopId)
     {
         checkStop(busStopId);
         return this.schedule.get(busStopId).getDepartureTime();
@@ -107,7 +108,7 @@ public class BusSchedule extends Route
      * @param busStopId id of bus stop
      * @return dwell time for the given bus stop
      */
-    public final Duration getDwellTime(final String busStopId)
+    public Duration getDwellTime(final String busStopId)
     {
         checkStop(busStopId);
         return this.schedule.get(busStopId).getDwellTime();
@@ -118,7 +119,7 @@ public class BusSchedule extends Route
      * @param busStopId id of bus stop
      * @return whether the departure time is enforced
      */
-    public final boolean isForceSchedule(final String busStopId)
+    public boolean isForceSchedule(final String busStopId)
     {
         checkStop(busStopId);
         return this.schedule.get(busStopId).isForceSchedule();
@@ -141,7 +142,7 @@ public class BusSchedule extends Route
      * @param conflictIds conflicts downstream of the bus stop
      * @param time actual departure time
      */
-    public final void setActualDeparture(final String busStopId, final Set<String> conflictIds, final Duration time)
+    public void setActualDeparture(final String busStopId, final Set<String> conflictIds, final Duration time)
     {
         this.actualDeparturesBusStop.put(busStopId, time);
         for (String conflictId : conflictIds)
@@ -153,34 +154,34 @@ public class BusSchedule extends Route
     /**
      * Return the actual departure time.
      * @param busStopId bus stop id
-     * @return actual departure time, {@code null} if not given
+     * @return actual departure time, empty if not given
      */
-    public final Duration getActualDepartureBusStop(final String busStopId)
+    public Optional<Duration> getActualDepartureBusStop(final String busStopId)
     {
-        return this.actualDeparturesBusStop.get(busStopId);
+        return Optional.ofNullable(this.actualDeparturesBusStop.get(busStopId));
     }
 
     /**
      * Return the actual departure time.
      * @param conflictId conflict id
-     * @return actual departure time, {@code null} if not given
+     * @return actual departure time, empty if not given
      */
-    public final Duration getActualDepartureConflict(final String conflictId)
+    public Optional<Duration> getActualDepartureConflict(final String conflictId)
     {
-        return this.actualDeparturesConflict.get(conflictId);
+        return Optional.ofNullable(this.actualDeparturesConflict.get(conflictId));
     }
 
     /**
      * Return bus line.
      * @return line.
      */
-    public final String getLine()
+    public String getLine()
     {
         return this.line;
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "BusSchedule [id=" + getId() + ", line=" + this.line + "]";
     }

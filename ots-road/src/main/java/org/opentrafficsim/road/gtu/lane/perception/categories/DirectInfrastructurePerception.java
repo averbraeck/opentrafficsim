@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -105,8 +106,8 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
     private SortedSet<LaneChangeInfo> computeLaneChangeInfo(final RelativeLane lane, final LaneAccessLaw laneLaw)
     {
         SortedSet<LaneChangeInfo> out = new TreeSet<>();
-        Route route = getGtu().getStrategicalPlanner().getRoute();
-        if (route == null)
+        Optional<Route> route = getGtu().getStrategicalPlanner().getRoute();
+        if (route.isEmpty())
         {
             return out;
         }
@@ -131,16 +132,13 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
             Length range =
                     Try.assign(() -> getGtu().getParameters().getParameter(PERCEPTION), "Parameter PERCEPTION not available.");
             Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
-            ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route, getGtu().getType(),
+            ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route.get(), getGtu().getType(),
                     range.minus(record.getStartDistance()).plus(front), laneLaw);
-            if (set != null)
+            for (LaneChangeInfo laneChangeInfo : set)
             {
-                for (LaneChangeInfo laneChangeInfo : set)
-                {
-                    Length dist = laneChangeInfo.remainingDistance().plus(record.getStartDistance()).minus(front);
-                    out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist, laneChangeInfo.deadEnd(),
-                            laneChangeInfo.lateralDirectionality()));
-                }
+                Length dist = laneChangeInfo.remainingDistance().plus(record.getStartDistance()).minus(front);
+                out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist, laneChangeInfo.deadEnd(),
+                        laneChangeInfo.lateralDirectionality()));
             }
         }
         return out;

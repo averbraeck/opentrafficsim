@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling.filter;
 
+import java.util.Optional;
+
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 
@@ -25,10 +27,10 @@ public class FilterDataDestination extends FilterDataType<String, GtuData>
     }
 
     @Override
-    public final String getValue(final GtuData gtu)
+    public final Optional<String> getValue(final GtuData gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        return gtu.getDestinationId();
+        return Optional.of(gtu.getDestinationId());
     }
 
     @Override

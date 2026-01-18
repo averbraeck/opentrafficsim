@@ -1,6 +1,7 @@
 package org.opentrafficsim.draw.colorer;
 
 import java.text.NumberFormat;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -29,7 +30,8 @@ public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Accelera
      * @param valueFunction value function
      * @param boundPaintScale bound paint scale
      */
-    public AccelerationColorer(final Function<? super T, Acceleration> valueFunction, final BoundsPaintScale boundPaintScale)
+    public AccelerationColorer(final Function<? super T, Optional<Acceleration>> valueFunction,
+            final BoundsPaintScale boundPaintScale)
     {
         super(valueFunction, (v) -> boundPaintScale.getPaint(v.si),
                 LegendColorer.fromBoundsPaintScale(boundPaintScale, FORMAT.getDoubleFormat()), boundPaintScale);
@@ -41,8 +43,8 @@ public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Accelera
      * @param minimumAcceleration minimum acceleration
      * @param maximumAcceleration maximum acceleration
      */
-    public AccelerationColorer(final Function<? super T, Acceleration> valueFunction, final Acceleration minimumAcceleration,
-            final Acceleration maximumAcceleration)
+    public AccelerationColorer(final Function<? super T, Optional<Acceleration>> valueFunction,
+            final Acceleration minimumAcceleration, final Acceleration maximumAcceleration)
     {
         this(valueFunction,
                 new BoundsPaintScale(new double[] {minimumAcceleration.si, 2.0 * minimumAcceleration.si / 3.0,
@@ -54,7 +56,7 @@ public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Accelera
      * Constructor constructing a scale from -6.0m/s/s to 2m/s/s.
      * @param valueFunction value function
      */
-    public AccelerationColorer(final Function<? super T, Acceleration> valueFunction)
+    public AccelerationColorer(final Function<? super T, Optional<Acceleration>> valueFunction)
     {
         this(valueFunction, Acceleration.ofSI(-6.0), Acceleration.ofSI(2.0));
     }

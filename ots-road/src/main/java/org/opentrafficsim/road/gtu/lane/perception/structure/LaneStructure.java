@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -91,7 +92,8 @@ public class LaneStructure
                 {
                     // this navigator only includes records of lanes on the route
                     Set<LaneRecord> set = record.getNext();
-                    set.removeIf((r) -> onRoute && !r.isOnRoute(LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute()));
+                    set.removeIf((r) -> onRoute
+                            && !r.isOnRoute(LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute().orElse(null)));
                     return set;
                 }, (record) ->
                 {
@@ -181,20 +183,20 @@ public class LaneStructure
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(egoPosition).dx();
         Length dxDistance = LaneStructure.this.egoGtu.getRelativePositions().get(egoDistancePosition).dx();
-        Route route = LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute();
+        Optional<Route> route = LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute();
         return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream,
                 start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
                 {
                     // this navigator ignores downstream lanes that are not on the route, if the current record is on the route
                     Set<LaneRecord> next = new LinkedHashSet<>(record.getNext());
-                    if (route != null && record.getLane().getLink().getEndNode().getLinks().size() > 2
-                            && route.containsLink(record.getLane().getLink()))
+                    if (route.isPresent() && record.getLane().getLink().getEndNode().getLinks().size() > 2
+                            && route.get().containsLink(record.getLane().getLink()))
                     {
                         Iterator<LaneRecord> it = next.iterator();
                         while (it.hasNext())
                         {
                             LaneRecord down = it.next();
-                            if (!route.containsLink(down.getLane().getLink()))
+                            if (!route.get().containsLink(down.getLane().getLink()))
                             {
                                 it.remove();
                             }
@@ -314,19 +316,19 @@ public class LaneStructure
                 start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
                 {
                     // this navigator only returns records when there are no GTUs on the lane
-                    return Try.assign(
-                            () -> record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
-                                    record.getLane().getNetwork().getSimulator().getSimulatorTime()),
-                            "Problem with GTU") == null ? record.getNext() : new LinkedHashSet<>();
+                    return Try
+                            .assign(() -> record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
+                                    record.getLane().getNetwork().getSimulator().getSimulatorTime()), "Problem with GTU")
+                            .isEmpty() ? record.getNext() : new LinkedHashSet<>();
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
-                    LaneBasedGtu down =
+                    Optional<LaneBasedGtu> down =
                             Try.assign(
                                     () -> record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
                                             record.getLane().getNetwork().getSimulator().getSimulatorTime()),
                                     "Problem with GTU");
-                    return down == null ? Collections.emptyList() : List.of(down);
+                    return down.isEmpty() ? Collections.emptyList() : List.of(down.get());
                 }, (t, r) -> r.getStartDistance().plus(position(t, r, otherDistancePosition)).minus(dxDistance));
     }
 
@@ -354,13 +356,13 @@ public class LaneStructure
                 {
                     // this navigator only returns records when there are no GTUs on the lane (it may thus ignore a GTU on a
                     // lateral lane that is closer) and combines the upstream and lateral records
-                    LaneBasedGtu gtu =
+                    Optional<LaneBasedGtu> gtu =
                             Try.assign(
                                     () -> record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx), otherPosition,
                                             record.getLane().getNetwork().getSimulator().getSimulatorTime()),
                                     "Problem with GTU");
                     Set<LaneRecord> set = new LinkedHashSet<>();
-                    if (gtu == null)
+                    if (gtu.isEmpty())
                     {
                         set.addAll(record.getPrev());
                         set.addAll(record.lateral());
@@ -369,12 +371,12 @@ public class LaneStructure
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
-                    LaneBasedGtu up =
+                    Optional<LaneBasedGtu> up =
                             Try.assign(
                                     () -> record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx), otherPosition,
                                             record.getLane().getNetwork().getSimulator().getSimulatorTime()),
                                     "Problem with GTU");
-                    return up == null ? Collections.emptyList() : List.of(up);
+                    return up.isEmpty() ? Collections.emptyList() : List.of(up.get());
                 }, (t, r) -> dxDistance.minus(r.getStartDistance().plus(position(t, r, otherDistancePosition))));
     }
 

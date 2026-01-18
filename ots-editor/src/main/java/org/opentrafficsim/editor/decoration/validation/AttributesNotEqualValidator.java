@@ -1,5 +1,7 @@
 package org.opentrafficsim.editor.decoration.validation;
 
+import java.util.Optional;
+
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorAttribute;
@@ -43,23 +45,23 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
     }
 
     @Override
-    public String validate(final XsdTreeNode node)
+    public Optional<String> validate(final XsdTreeNode node)
     {
         if (!node.isActive())
         {
-            return null;
+            return Optional.empty();
         }
         String attribute1 = node.getAttributeValue(getAttributes().get(0));
         if (attribute1 == null)
         {
-            return null;
+            return Optional.empty();
         }
         String attribute2 = node.getAttributeValue(getAttributes().get(1));
         if (attribute2 == null || !attribute2.equals(attribute1))
         {
-            return null;
+            return Optional.empty();
         }
-        return getAttributes().get(0) + " and " + getAttributes().get(1) + " may not be equal.";
+        return Optional.of(getAttributes().get(0) + " and " + getAttributes().get(1) + " may not be equal.");
     }
 
     @Override

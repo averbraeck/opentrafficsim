@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
@@ -99,17 +100,17 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     {
         if (this.lastLinkNode != null)
         {
-            MapLinkData data = (MapLinkData) getMap().getData(linkNode);
-            if (data != null)
+            Optional<MapData> data = getMap().getData(linkNode);
+            if (data.isPresent())
             {
-                data.removeListener(this, MapLinkData.LAYOUT_REBUILT);
+                ((MapLinkData) data.get()).removeListener(this, MapLinkData.LAYOUT_REBUILT);
             }
         }
         this.lastLinkNode = linkNode;
-        MapLinkData data = (MapLinkData) getMap().getData(linkNode);
-        if (data != null)
+        Optional<MapData> data = getMap().getData(linkNode);
+        if (data.isPresent())
         {
-            data.addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
+            ((MapLinkData) data.get()).addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
         }
     }
 
@@ -199,7 +200,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         }
         if (getNode().hasAttribute("Link"))
         {
-            XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link");
+            XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link").orElse(null);
             setLinkNode(linkNode);
         }
         setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
@@ -221,7 +222,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             }
             else if ("Link".equals(attribute))
             {
-                XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link");
+                XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link").orElse(null);
                 setLinkNode(linkNode);
             }
             else if ("Lane".equals(attribute))
@@ -247,12 +248,13 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             setInvalid();
             return;
         }
-        MapLinkData linkData = (MapLinkData) getMap().getData(this.lastLinkNode);
-        if (linkData == null)
+        Optional<MapData> linkDataOptional = getMap().getData(this.lastLinkNode);
+        if (linkDataOptional.isEmpty())
         {
             setInvalid();
             return;
         }
+        MapLinkData linkData = (MapLinkData) linkDataOptional.get();
         MapLaneData laneData = linkData.getLaneData(this.lane);
         if (laneData == null)
         {

@@ -221,7 +221,8 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     public final void notify(final Event event)
     {
         String gtuId = (String) ((Object[]) event.getContent())[0];
-        LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId);
+        LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId).orElseThrow(() -> new OtsRuntimeException(
+                "GTU " + gtuId + " triggers event on TrafficLightDetector but is not in the network."));
         if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
             if (!this.currentGTUs.containsKey(gtu))

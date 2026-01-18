@@ -35,7 +35,7 @@ public class ReactionTimeGtuColorer extends AbstractLegendBarColorer<Gtu, Durati
      */
     public ReactionTimeGtuColorer(final BoundsPaintScale boundsPaintScale, final Color notApplicable)
     {
-        super((gtu) -> gtu.getParameters().getParameterOrNull(ParameterTypes.TR),
+        super((gtu) -> gtu.getParameters().getOptionalParameter(ParameterTypes.TR),
                 (t) -> t == null ? notApplicable : boundsPaintScale.getPaint(t.si),
                 LegendColorer.fromBoundsPaintScale(boundsPaintScale, FORMAT.getDoubleFormat(), notApplicable),
                 boundsPaintScale);

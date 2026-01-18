@@ -95,7 +95,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                     true);
         }, "Unable to get downstream traffic lights from LaneStructure");
         LaneBasedGtu gtu = getPerception().getGtu();
-        Route route = Try.assign(() -> gtu.getStrategicalPlanner().getRoute(), "");
+        Route route = Try.assign(() -> gtu.getStrategicalPlanner().getRoute(), "Unable to obtain route.").orElse(null);
         return new PerceptionReiterable<>(gtu, iterable, (trafficLight, distance) ->
         {
             return Try.assign(

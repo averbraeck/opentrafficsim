@@ -2,6 +2,7 @@ package org.opentrafficsim.core.definitions;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * This class houses defaults instances for different types, such as GTU types and link types. The static fields should only be
@@ -48,11 +49,11 @@ public abstract class Defaults
      * @param clazz class instance of type T.
      * @param name name referring to a default through static field names, e.g. "NL.VEHICLE".
      * @param <T> type of the value.
-     * @return returned default value, {@code null} if the default could not be found.
+     * @return returned default value, empty if the default could not be found.
      */
-    public static <T> T getByName(final Class<T> clazz, final String name)
+    public static <T> Optional<T> getByName(final Class<T> clazz, final String name)
     {
-        return getByName(Defaults.class, clazz, name);
+        return Optional.ofNullable(getByName(Defaults.class, clazz, name));
     }
 
     /**

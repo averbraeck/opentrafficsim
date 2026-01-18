@@ -189,7 +189,7 @@ Let us assume that for this simulation the GTU type and route are defined in the
 ```java
     GtuType gtuType = category.get(GtuType.class);
     Route route = category.get(Route.class);
-    GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get();
+    GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get().get();
     VehicleModel vehicleModel = VehicleModel.NONE;
 ```
 

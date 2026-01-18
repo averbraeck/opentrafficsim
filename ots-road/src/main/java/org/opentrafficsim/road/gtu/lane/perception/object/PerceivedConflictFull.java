@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.object;
 
+import java.util.Optional;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Length;
@@ -132,7 +134,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return conflict type
      */
     @Override
-    public final ConflictType getConflictType()
+    public ConflictType getConflictType()
     {
         return this.conflictType;
     }
@@ -142,7 +144,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return whether this is a crossing conflict
      */
     @Override
-    public final boolean isCrossing()
+    public boolean isCrossing()
     {
         return this.conflictType.equals(ConflictType.CROSSING);
     }
@@ -152,7 +154,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return whether this is a merge conflict
      */
     @Override
-    public final boolean isMerge()
+    public boolean isMerge()
     {
         return this.conflictType.equals(ConflictType.MERGE);
     }
@@ -162,7 +164,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return whether this is a split conflict
      */
     @Override
-    public final boolean isSplit()
+    public boolean isSplit()
     {
         return this.conflictType.equals(ConflictType.SPLIT);
     }
@@ -172,7 +174,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return conflict priority
      */
     @Override
-    public final ConflictPriority getConflictPriority()
+    public ConflictPriority getConflictPriority()
     {
         return this.conflictPriority;
     }
@@ -182,7 +184,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return length of the conflict on the conflicting lane
      */
     @Override
-    public final Length getConflictingLength()
+    public Length getConflictingLength()
     {
         return this.conflictingLength;
     }
@@ -192,7 +194,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return set of conflicting GTU's upstream of the <i>start</i> of the conflict ordered close to far from the conflict
      */
     @Override
-    public final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGTUs()
+    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGTUs()
     {
         return this.upstreamConflictingGTUs;
     }
@@ -204,7 +206,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return set of conflicting GTU's downstream of the <i>start</i> of the conflict ordered close to far from the conflict
      */
     @Override
-    public final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGTUs()
+    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGTUs()
     {
         return this.downstreamConflictingGTUs;
     }
@@ -216,7 +218,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return visibility on the conflicting lane within which conflicting vehicles are visible
      */
     @Override
-    public final Length getConflictingVisibility()
+    public Length getConflictingVisibility()
     {
         return this.conflictingVisibility;
     }
@@ -226,7 +228,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return speed limit on the conflicting lane
      */
     @Override
-    public final Speed getConflictingSpeedLimit()
+    public Speed getConflictingSpeedLimit()
     {
         return this.conflictingSpeedLimit;
     }
@@ -236,7 +238,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return the conflicting link
      */
     @Override
-    public final CrossSectionLink getConflictingLink()
+    public CrossSectionLink getConflictingLink()
     {
         return this.conflictingLink;
     }
@@ -246,7 +248,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return stop line
      */
     @Override
-    public final PerceivedObject getStopLine()
+    public PerceivedObject getStopLine()
     {
         return this.stopLine;
     }
@@ -256,7 +258,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return stop line
      */
     @Override
-    public final PerceivedObject getConflictingStopLine()
+    public PerceivedObject getConflictingStopLine()
     {
         return this.conflictingStopLine;
     }
@@ -266,19 +268,19 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return conflict rule type
      */
     @Override
-    public final Class<? extends ConflictRule> getConflictRuleType()
+    public Class<? extends ConflictRule> getConflictRuleType()
     {
         return this.conflictRuleType;
     }
 
     /**
      * Returns the distance of a traffic light upstream on the conflicting lane.
-     * @return distance of a traffic light upstream on the conflicting lane, or {@code null} if no traffic light
+     * @return distance of a traffic light upstream on the conflicting lane, empty if no traffic light
      */
     @Override
-    public final Length getConflictingTrafficLightDistance()
+    public Optional<Length> getConflictingTrafficLightDistance()
     {
-        return this.conflictingTrafficLightDistance;
+        return Optional.of(this.conflictingTrafficLightDistance);
     }
 
     /**
@@ -286,7 +288,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return whether the conflict is permitted by the traffic light
      */
     @Override
-    public final boolean isPermitted()
+    public boolean isPermitted()
     {
         return this.permitted;
     }
@@ -296,7 +298,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @param trafficLightDistance distance of a traffic light upstream on the conflicting lane.
      * @param permittedConflict whether the conflict is permitted by the traffic light
      */
-    public final void setConflictingTrafficLight(final Length trafficLightDistance, final boolean permittedConflict)
+    public void setConflictingTrafficLight(final Length trafficLightDistance, final boolean permittedConflict)
     {
         this.conflictingTrafficLightDistance = trafficLightDistance;
         this.permitted = permittedConflict;
@@ -308,7 +310,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @return width at the given fraction
      */
     @Override
-    public final Length getWidthAtFraction(final double fraction)
+    public Length getWidthAtFraction(final double fraction)
     {
         try
         {

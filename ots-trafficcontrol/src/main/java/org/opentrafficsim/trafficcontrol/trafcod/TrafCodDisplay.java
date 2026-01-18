@@ -10,6 +10,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -60,18 +61,18 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
     /**
      * Look up a DetectorImage.
      * @param id id of the DetectorImage
-     * @return the detector image with matching id or null.
+     * @return the detector image with matching id or empty.
      */
-    public DetectorImage getDetectorImage(final String id)
+    public Optional<DetectorImage> getDetectorImage(final String id)
     {
         for (TrafCODObject tco : this.trafCODObjects)
         {
             if (tco instanceof DetectorImage && ((DetectorImage) tco).getId().equals(id))
             {
-                return (DetectorImage) tco;
+                return Optional.of((DetectorImage) tco);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -106,7 +107,7 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
         String toolTipText = null;
         for (TrafCODObject tco : this.trafCODObjects)
         {
-            toolTipText = tco.toolTipHit(e.getX(), e.getY());
+            toolTipText = tco.toolTipHit(e.getX(), e.getY()).orElse(null);
             if (null != toolTipText)
             {
                 break;
@@ -165,9 +166,9 @@ interface TrafCODObject
      * coordinates do not hit this TrafCODObject return null.
      * @param testX the x-coordinate
      * @param testY the y-coordinate
-     * @return the tool tip text or null if the coordinates do not hit the TrafCodObject
+     * @return the tool tip text or empty if the coordinates do not hit the TrafCodObject
      */
-    String toolTipHit(int testX, int testY);
+    Optional<String> toolTipHit(int testX, int testY);
 
 }
 
@@ -244,14 +245,14 @@ class DetectorImage implements TrafCODObject, EventListener
     }
 
     @Override
-    public String toolTipHit(final int testX, final int testY)
+    public Optional<String> toolTipHit(final int testX, final int testY)
     {
         if (testX < X_OFFSET + this.x - BOX_SIZE / 2 || testX >= X_OFFSET + this.x + BOX_SIZE / 2
                 || testY < Y_OFFSET - BOX_SIZE / 2 + this.y || testY >= Y_OFFSET + this.y + BOX_SIZE / 2)
         {
-            return null;
+            return Optional.empty();
         }
-        return this.description;
+        return Optional.ofNullable(this.description);
     }
 
     /**
@@ -301,14 +302,14 @@ class TrafficLightImage extends LocalEventProducer implements TrafCODObject
     }
 
     @Override
-    public String toolTipHit(final int testX, final int testY)
+    public Optional<String> toolTipHit(final int testX, final int testY)
     {
         if (testX < this.x - DISC_SIZE / 2 || testX >= this.x + DISC_SIZE / 2 || testY < this.y - DISC_SIZE / 2
                 || testY >= this.y + DISC_SIZE / 2)
         {
-            return null;
+            return Optional.empty();
         }
-        return this.description;
+        return Optional.ofNullable(this.description);
     }
 
     /**

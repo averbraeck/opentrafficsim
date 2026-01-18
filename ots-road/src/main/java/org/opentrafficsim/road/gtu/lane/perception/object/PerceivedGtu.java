@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.object;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -309,10 +311,10 @@ public interface PerceivedGtu extends PerceivedObject
         /**
          * Models responding to other GTU may assume a route of the vehicle, for instance at intersections. The route may be
          * short, i.e. only over the next intersection. Implementations may return anything from the actual route, a route based
-         * on indicators and other assumptions, or {@code null} if simply not known/estimated.
-         * @return route of GTU
+         * on indicators and other assumptions, or empty if simply not known/estimated.
+         * @return route of GTU, empty if there is no route
          */
-        Route getRoute();
+        Optional<Route> getRoute();
 
         /**
          * Returns the perceived left lane change desire, a value between -1 and 1.
@@ -441,7 +443,7 @@ public interface PerceivedGtu extends PerceivedObject
                 }
 
                 @Override
-                public Route getRoute()
+                public Optional<Route> getRoute()
                 {
                     return gtu.getStrategicalPlanner().getRoute();
                 }
@@ -449,22 +451,19 @@ public interface PerceivedGtu extends PerceivedObject
                 @Override
                 public double leftLaneChangeDesire()
                 {
-                    return parameters.contains(LmrsParameters.DLEFT) ? parameters.getParameterOrNull(LmrsParameters.DLEFT)
-                            : 0.0;
+                    return parameters.getOptionalParameter(LmrsParameters.DLEFT).orElse(0.0);
                 }
 
                 @Override
                 public double rightLaneChangeDesire()
                 {
-                    return parameters.contains(LmrsParameters.DRIGHT) ? parameters.getParameterOrNull(LmrsParameters.DRIGHT)
-                            : 0.0;
+                    return parameters.getOptionalParameter(LmrsParameters.DRIGHT).orElse(0.0);
                 }
 
                 @Override
                 public double socialPressure()
                 {
-                    return parameters.contains(LmrsParameters.SOCIO) ? parameters.getParameterOrNull(LmrsParameters.SOCIO)
-                            : 0.0;
+                    return parameters.getOptionalParameter(LmrsParameters.SOCIO).orElse(0.0);
                 }
             };
         }

@@ -1,6 +1,7 @@
 package org.opentrafficsim.draw.colorer;
 
 import java.awt.Color;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -17,7 +18,7 @@ public abstract class AbstractColorer<T, V> implements Colorer<T>
 {
 
     /** Value function. */
-    private Function<? super T, V> valueFunction;
+    private Function<? super T, Optional<V>> valueFunction;
 
     /** Color function. */
     private Function<V, Color> colorFunction;
@@ -25,9 +26,9 @@ public abstract class AbstractColorer<T, V> implements Colorer<T>
     /**
      * Constructor.
      * @param valueFunction value function
-     * @param colorFunction color function
+     * @param colorFunction color function, which may receive a {@code null} value
      */
-    public AbstractColorer(final Function<? super T, V> valueFunction, final Function<V, Color> colorFunction)
+    public AbstractColorer(final Function<? super T, Optional<V>> valueFunction, final Function<V, Color> colorFunction)
     {
         this.valueFunction = valueFunction;
         this.colorFunction = colorFunction;
@@ -36,7 +37,7 @@ public abstract class AbstractColorer<T, V> implements Colorer<T>
     @Override
     public Color getColor(final T object)
     {
-        return this.colorFunction.apply(this.valueFunction.apply(object));
+        return this.colorFunction.apply(this.valueFunction.apply(object).orElse(null));
     }
 
 }

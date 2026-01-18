@@ -50,11 +50,11 @@ public final class ParserTest
 
         // test node
         RoadNetwork nw = testModel.getNetwork();
-        assertEquals(300.0, nw.getNode("BLE").getPoint().x, 0.0001);
-        assertEquals(0.0, nw.getNode("BLE").getPoint().y, 0.0001);
+        assertEquals(300.0, nw.getNode("BLE").get().getPoint().x, 0.0001);
+        assertEquals(0.0, nw.getNode("BLE").get().getPoint().y, 0.0001);
 
         // test link
-        Link wwc = nw.getLink("WWC");
+        Link wwc = nw.getLink("WWC").get();
         assertEquals("URBAN", wwc.getType().getId());
         assertEquals("BLW", wwc.getStartNode().getId());
         assertEquals("BLWC", wwc.getEndNode().getId());

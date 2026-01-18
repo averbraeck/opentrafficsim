@@ -41,7 +41,7 @@ public final class GtuTypeTest
         assertTrue("pqr".equals(t2.getId()), "Id is stored in the newly created GtuType");
         // prove that the two are really distinct (do not use the same storage for the type string
         assertTrue("abc".equals(t.getId()), "Id is stored in the newly created GtuType");
-        assertEquals(DefaultsNl.VEHICLE, t.getParent(), "parent can be retrieved");
+        assertEquals(DefaultsNl.VEHICLE, t.getParent().get(), "parent can be retrieved");
     }
 
     /**
@@ -53,13 +53,13 @@ public final class GtuTypeTest
         StreamInterface randomStream = new MersenneTwister();
         GtuType car = DefaultsNl.CAR;
         String message = "Exception while deriving default GTU characteristics";
-        GtuCharacteristics characteristicsCar1 = Defaults.NL.apply(car, randomStream).get();
-        GtuCharacteristics characteristicsCar2 = Defaults.NL.apply(car, randomStream).get();
+        GtuCharacteristics characteristicsCar1 = Defaults.NL.apply(car, randomStream).get().get();
+        GtuCharacteristics characteristicsCar2 = Defaults.NL.apply(car, randomStream).get().get();
         GtuType spaceCar = new GtuType("spaceCar", car);
-        GtuCharacteristics characteristicsSpaceCar1 = Defaults.NL.apply(spaceCar, randomStream).get();
-        GtuCharacteristics characteristicsSpaceCar2 = Defaults.NL.apply(spaceCar, randomStream).get();
+        GtuCharacteristics characteristicsSpaceCar1 = Defaults.NL.apply(spaceCar, randomStream).get().get();
+        GtuCharacteristics characteristicsSpaceCar2 = Defaults.NL.apply(spaceCar, randomStream).get().get();
         GtuType truck = DefaultsNl.TRUCK;
-        GtuCharacteristics characteristicsTruck = Defaults.NL.apply(truck, randomStream).get();
+        GtuCharacteristics characteristicsTruck = Defaults.NL.apply(truck, randomStream).get().get();
 
         // Note: we can only compare characteristics that we know are not distributed for the used GTU type CAR.
         message = "Default characteristics of DEFAULTS and derived GtuType should be equal.";

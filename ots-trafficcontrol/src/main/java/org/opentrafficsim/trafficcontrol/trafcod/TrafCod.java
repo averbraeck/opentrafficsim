@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -531,11 +532,9 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 {
                     // Lookup the detector
                     EventListener el =
-                            this.stateDisplay.getDetectorImage(String.format("%02d.%s", variable.getStream(), subNumber));
-                    if (null == el)
-                    {
-                        throw new TrafficControlException("Cannor find detector image matching variable " + variable);
-                    }
+                            this.stateDisplay.getDetectorImage(String.format("%02d.%s", variable.getStream(), subNumber))
+                                    .orElseThrow(() -> new TrafficControlException(
+                                            "Cannor find detector image matching variable " + variable));
                     Logger.ots().trace("creating subscriptions to sensor {}", tls);
                     tls.addListener(el, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT);
                     tls.addListener(el, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT);
@@ -1878,9 +1877,9 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     }
 
     @Override
-    public Container getDisplayContainer()
+    public Optional<Container> getDisplayContainer()
     {
-        return this.displayContainer;
+        return Optional.of(this.displayContainer);
     }
 
     @Override
@@ -2069,7 +2068,7 @@ class Variable implements EventListener
     private String endSource;
 
     /** The traffic light (only set if this Variable is an output). */
-    private Set<TrafficLight> trafficLights;
+    private Set<TrafficLight> trafficLights = new LinkedHashSet<>();
 
     /** Letters that are used to distinguish conflict groups in the MRx variables. */
     private static String rowLetters = "ABCDXYZUVW";
@@ -2085,7 +2084,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the traffic lights controlled by this variable.
-     * @return the traffic lights controlled by this variable, or null when this variable has no traffic lights
+     * @return the traffic lights controlled by this variable, empty when this variable has no traffic lights
      */
     public Set<TrafficLight> getTrafficLights()
     {

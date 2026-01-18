@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -170,7 +171,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         GraphPath<LaneDataRoad> path;
         try
         {
-            Lane start = ((CrossSectionLink) getModel().getNetwork().getLink("AB")).getLanes().get(1);
+            Lane start = ((CrossSectionLink) getModel().getNetwork().getLink("AB").get()).getLanes().get(1);
             path = GraphLaneUtil.createPath("Right lane", start);
         }
         catch (NetworkException exception)
@@ -291,12 +292,14 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
 
             GtuType car = DefaultsNl.CAR;
             GtuType truck = DefaultsNl.TRUCK;
-            Route routeAE = getNetwork().getShortestRouteBetween(car, getNetwork().getNode("A"), getNetwork().getNode("E"));
-            Route routeAG = !NETWORK.equals("shortWeave") ? null
-                    : getNetwork().getShortestRouteBetween(car, getNetwork().getNode("A"), getNetwork().getNode("G"));
-            Route routeFE = getNetwork().getShortestRouteBetween(car, getNetwork().getNode("F"), getNetwork().getNode("E"));
-            Route routeFG = !NETWORK.equals("shortWeave") ? null
-                    : getNetwork().getShortestRouteBetween(car, getNetwork().getNode("F"), getNetwork().getNode("G"));
+            Route routeAE =
+                    getNetwork().getShortestRouteBetween(car, getNetwork().getNode("A").get(), getNetwork().getNode("E").get());
+            Route routeAG = !NETWORK.equals("shortWeave") ? null : getNetwork().getShortestRouteBetween(car,
+                    getNetwork().getNode("A").get(), getNetwork().getNode("G").get());
+            Route routeFE =
+                    getNetwork().getShortestRouteBetween(car, getNetwork().getNode("F").get(), getNetwork().getNode("E").get());
+            Route routeFG = !NETWORK.equals("shortWeave") ? null : getNetwork().getShortestRouteBetween(car,
+                    getNetwork().getNode("F").get(), getNetwork().getNode("G").get());
 
             double leftFraction = NETWORK.equals("shortWeave") ? LEFT_FRACTION : 0.0;
             List<FrequencyAndObject<Route>> routesA = new ArrayList<>();
@@ -311,8 +314,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             Speed speedA = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
             Speed speedF = new Speed(20.0, SpeedUnit.KM_PER_HOUR);
 
-            CrossSectionLink linkA = (CrossSectionLink) getNetwork().getLink("AB");
-            CrossSectionLink linkF = (CrossSectionLink) getNetwork().getLink("FF2");
+            CrossSectionLink linkA = (CrossSectionLink) getNetwork().getLink("AB").get();
+            CrossSectionLink linkF = (CrossSectionLink) getNetwork().getLink("FF2").get();
 
             ParameterFactoryByType bcFactory = new ParameterFactoryByType();
             bcFactory.addParameter(car, ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120, 12.0 / 120));
@@ -389,7 +392,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          */
         private Lane getLane(final CrossSectionLink link, final String id)
         {
-            return (Lane) link.getCrossSectionElement(id);
+            return (Lane) link.getCrossSectionElement(id).orElseThrow();
         }
 
         /**
@@ -444,13 +447,13 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
 
         @Override
-        public String getValue(final GtuDataRoad gtu)
+        public Optional<String> getValue(final GtuDataRoad gtu)
         {
             if (gtu.getGtu().getTacticalPlanner() instanceof Synchronizable sync)
             {
-                return sync.getSynchronizationState().toString();
+                return Optional.ofNullable(sync.getSynchronizationState().toString());
             }
-            return "N/A";
+            return Optional.of("N/A");
         }
 
     }

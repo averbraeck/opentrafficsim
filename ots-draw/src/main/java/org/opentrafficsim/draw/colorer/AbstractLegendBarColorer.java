@@ -2,6 +2,7 @@ package org.opentrafficsim.draw.colorer;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.opentrafficsim.draw.BoundsPaintScale;
@@ -29,8 +30,8 @@ public abstract class AbstractLegendBarColorer<T, V> extends AbstractLegendColor
      * @param legend legend to draw the legend
      * @param boundsPaintScale bounds paint scale to draw the colorbar
      */
-    public AbstractLegendBarColorer(final Function<? super T, V> valueFunction, final Function<V, Color> colorFunction,
-            final List<LegendEntry> legend, final BoundsPaintScale boundsPaintScale)
+    public AbstractLegendBarColorer(final Function<? super T, Optional<V>> valueFunction,
+            final Function<V, Color> colorFunction, final List<LegendEntry> legend, final BoundsPaintScale boundsPaintScale)
     {
         super(valueFunction, colorFunction, legend);
         this.boundsPaintScale = boundsPaintScale;

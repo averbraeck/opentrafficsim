@@ -1,5 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -21,7 +22,7 @@ public class AccelerationGtuColorer extends AccelerationColorer<Gtu>
 {
 
     /** Value function. */
-    private static final Function<Gtu, Acceleration> VALUE = (gtu) -> gtu.getAcceleration();
+    private static final Function<Gtu, Optional<Acceleration>> VALUE = (gtu) -> Optional.ofNullable(gtu.getAcceleration());
 
     /**
      * Constructor.

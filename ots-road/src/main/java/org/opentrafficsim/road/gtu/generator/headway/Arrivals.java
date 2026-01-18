@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.generator.headway;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 
@@ -36,8 +38,8 @@ public interface Arrivals
      * change of slope in the demand pattern initiates a new slice. If {@code time} is equal to a time slice boundary, the next
      * value should be returned.
      * @param time time after which the first slice start time is requested
-     * @return start time of the next time slice after the given time or {@code null} if no such slice exists
+     * @return start time of the next time slice after the given time, empty if no such slice exists
      */
-    Duration nextTimeSlice(Duration time);
+    Optional<Duration> nextTimeSlice(Duration time);
 
 }

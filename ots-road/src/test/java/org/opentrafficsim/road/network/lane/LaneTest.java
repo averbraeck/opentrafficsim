@@ -331,10 +331,9 @@ public final class LaneTest implements UNITS
 
             LaneBasedObject nextObject = positionSI < lbo1.getLongitudinalPosition().si ? lbo1
                     : positionSI < lbo2.getLongitudinalPosition().si ? lbo2 : null;
-            List<LaneBasedObject> expected = null;
+            List<LaneBasedObject> expected = new ArrayList<>();
             if (null != nextObject)
             {
-                expected = new ArrayList<>();
                 expected.add(nextObject);
             }
             List<LaneBasedObject> got = lane.getObjectAhead(Length.ofSI(positionSI));
@@ -342,10 +341,9 @@ public final class LaneTest implements UNITS
 
             nextObject = positionSI > lbo2.getLongitudinalPosition().si ? lbo2
                     : positionSI > lbo1.getLongitudinalPosition().si ? lbo1 : null;
-            expected = null;
+            expected = new ArrayList<>();
             if (null != nextObject)
             {
-                expected = new ArrayList<>();
                 expected.add(nextObject);
             }
             got = lane.getObjectBehind(Length.ofSI(positionSI));

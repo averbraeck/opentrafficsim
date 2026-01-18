@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.opentrafficsim.core.gtu.Gtu;
@@ -44,7 +45,7 @@ public abstract class DesireGtuColorer extends AbstractLegendColorer<Gtu, Desire
      * Constructor.
      * @param valueFunction value function
      */
-    public DesireGtuColorer(final Function<Gtu, Desire> valueFunction)
+    public DesireGtuColorer(final Function<Gtu, Optional<Desire>> valueFunction)
     {
         super(valueFunction, DesireGtuColorer::getColor,
                 List.of(new LegendEntry(LEFT, "Left", "Full left: 1.0"),

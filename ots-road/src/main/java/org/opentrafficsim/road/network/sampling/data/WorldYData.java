@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
+import java.util.Optional;
+
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataLength;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
@@ -20,9 +22,9 @@ public class WorldYData extends ExtendedDataLength<GtuDataRoad>
     }
 
     @Override
-    public FloatLength getValue(final GtuDataRoad gtu)
+    public Optional<FloatLength> getValue(final GtuDataRoad gtu)
     {
-        return convertValue((float) gtu.getGtu().getLocation().y);
+        return Optional.ofNullable(convertValue((float) gtu.getGtu().getLocation().y));
     }
 
 }

@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling.data;
 
+import java.util.Optional;
+
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 
@@ -28,9 +30,9 @@ public class ReferenceSpeed extends ExtendedDataSpeed<GtuData>
     }
 
     @Override
-    public final FloatSpeed getValue(final GtuData gtu)
+    public final Optional<FloatSpeed> getValue(final GtuData gtu)
     {
-        return FloatSpeed.ofSI((float) gtu.getReferenceSpeed().si);
+        return Optional.of(FloatSpeed.ofSI((float) gtu.getReferenceSpeed().si));
     }
 
     @Override

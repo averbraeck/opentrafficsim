@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.eval.Eval;
@@ -310,9 +311,7 @@ public final class DefinitionsParser
             throws XmlParserException
     {
         Throw.when(stringType == null, XmlParserException.class, "%s %s %s not defined", type, elementId, field);
-        T t = parsedDefinitions.get(clazz, stringType.get(eval));
-        Throw.when(t == null, XmlParserException.class, "%s %s %s not found", type, elementId, field);
-        return t;
+        return parsedDefinitions.getOrThrow(clazz, stringType.get(eval));
     }
 
     /**
@@ -328,10 +327,9 @@ public final class DefinitionsParser
             final boolean road) throws XmlParserException
     {
         Throw.when(definitionId == null, XmlParserException.class, "%s default has no id.", clazz.getSimpleName());
-        T t = road ? DefaultsRoad.getByName(clazz, definitionId) : Defaults.getByName(clazz, definitionId);
-        Throw.when(t == null, XmlParserException.class, "%s %s could not be found as default.", clazz.getSimpleName(),
-                definitionId);
-        return t;
+        Optional<T> t = road ? DefaultsRoad.getByName(clazz, definitionId) : Defaults.getByName(clazz, definitionId);
+        return t.orElseThrow(
+                () -> new XmlParserException(clazz.getSimpleName() + " " + definitionId + " could not be found as default."));
     }
 
     /**

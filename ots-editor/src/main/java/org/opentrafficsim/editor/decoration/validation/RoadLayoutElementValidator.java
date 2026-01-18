@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.SwingUtilities;
@@ -323,18 +324,18 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             case LAYOUT_BY_PARENT_ID:
             {
                 linkNode = null;
-                layoutNode = node.getParent().getCoupledNodeAttribute("Id");
+                layoutNode = node.getParent().getCoupledNodeAttribute("Id").get();
                 break;
             }
             case LINK_BY_PARENT_ID:
             {
-                linkNode = node.getParent().getCoupledNodeAttribute("Id");
+                linkNode = node.getParent().getCoupledNodeAttribute("Id").orElse(null);
                 layoutNode = getLayoutFromLink(linkNode);
                 break;
             }
             case LINK_ATTRIBUTE:
             {
-                linkNode = node.getCoupledNodeAttribute("Link");
+                linkNode = node.getCoupledNodeAttribute("Link").orElse(null);
                 layoutNode = getLayoutFromLink(linkNode);
                 break;
             }
@@ -435,11 +436,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         }
         layout.getChild(0).invalidate();
         layout.getChild(0).isValid(); // recouple if things have changed
-        return layout.getChild(0).getCoupledNodeValue(); // sequence of which DefinedLayout is the first node
+        return layout.getChild(0).getCoupledNodeValue().orElse(null); // sequence of which DefinedLayout is the first node
     }
 
     @Override
-    public String validate(final XsdTreeNode node)
+    public Optional<String> validate(final XsdTreeNode node)
     {
         String value = node.getAttributeValue(this.elementAttribute.attributeName);
         if (value == null || value.isEmpty())
@@ -451,14 +452,14 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                 String link = node.getAttributeValue("Link");
                 if (link == null || link.isEmpty())
                 {
-                    return null;
+                    return Optional.empty();
                 }
                 // let the code below find no coupledRoadLayoutElement
             }
             else
             {
                 // missing Lane value is ok for this validator, it can have use="required" on its own
-                return null;
+                return Optional.empty();
             }
         }
         String attribute = this.elementAttribute.attributeName;
@@ -470,7 +471,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             for (XsdTreeNode child : layoutNode.getChildren())
             {
                 if (child.getNodeName().equals(layoutElement) && child.getId() != null && !child.getId().isEmpty()
-                        && child.getId().equals(value) && child.reportInvalidId() == null)
+                        && child.getId().equals(value) && child.reportInvalidId().isEmpty())
                 {
                     coupledRoadLayoutElement = child;
                     break;
@@ -480,11 +481,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         if (coupledRoadLayoutElement == null)
         {
             removeCoupling(node);
-            return this.elementAttribute.attributeName + " " + value + " does not refer to a valid " + layoutElement
-                    + " in the road layout.";
+            return Optional.of(this.elementAttribute.attributeName + " " + value + " does not refer to a valid " + layoutElement
+                    + " in the road layout.");
         }
         addCoupling(node, coupledRoadLayoutElement);
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -494,7 +495,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     }
 
     @Override
-    public List<String> getOptions(final XsdTreeNode node, final Object field)
+    public Optional<List<String>> getOptions(final XsdTreeNode node, final Object field)
     {
         XsdTreeNode layoutNode = this.validatingLayout.get(node);
         if (layoutNode != null)
@@ -509,9 +510,9 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                     options.add(child.getId());
                 }
             }
-            return options;
+            return Optional.of(options);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

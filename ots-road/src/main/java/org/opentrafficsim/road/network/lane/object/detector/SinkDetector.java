@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiPredicate;
@@ -37,12 +38,13 @@ public class SinkDetector extends LaneDetector
         @Override
         public boolean test(final SinkDetector detector, final LaneBasedGtu gtu)
         {
-            Route route = gtu.getStrategicalPlanner().getRoute();
-            if (route == null)
+            Optional<Route> route = gtu.getStrategicalPlanner().getRoute();
+            if (route.isEmpty())
             {
                 return true;
             }
-            Node destination = route.size() == 0 ? null : Try.assign(() -> route.destinationNode(), "Cannot happen.");
+            Node destination =
+                    route.get().size() == 0 ? null : Try.assign(() -> route.get().destinationNode(), "Cannot happen.");
             Link link = detector.getLane().getLink();
             if (link.getEndNode().equals(destination))
             {

@@ -156,7 +156,7 @@ public class ModelParser
         ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
         for (ModelType model : models)
         {
-            GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(eval));
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, model.getGtuType().get(eval));
             // Parameter factory
 
             // set model parameters

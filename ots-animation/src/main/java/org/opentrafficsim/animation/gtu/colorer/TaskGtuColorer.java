@@ -3,6 +3,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
@@ -70,8 +71,8 @@ public class TaskGtuColorer implements LegendColorer<Gtu>
     {
         if (gtu.getTacticalPlanner().getPerception() instanceof LanePerception)
         {
-            Mental mental = ((LanePerception) gtu.getTacticalPlanner().getPerception()).getMental();
-            if (mental != null && mental instanceof ArFuller fuller)
+            Optional<Mental> mental = ((LanePerception) gtu.getTacticalPlanner().getPerception()).getMental();
+            if (mental.isPresent() && mental.get() instanceof ArFuller fuller)
             {
                 for (ArTask task : fuller.getTasks())
                 {

@@ -95,7 +95,7 @@ public class BusStop extends AbstractLaneBasedObject
             while (lane != null)
             {
                 List<LaneBasedObject> objects = lane.getObjectAhead(position);
-                while (objects != null)
+                while (!objects.isEmpty())
                 {
                     for (LaneBasedObject object : objects)
                     {

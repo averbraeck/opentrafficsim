@@ -30,6 +30,7 @@ import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.DetectorType;
@@ -104,12 +105,13 @@ public final class OdParser
      * @param eval expression evaluator.
      * @return generators
      * @throws XmlParserException if the OD contains an inconsistency or error
+     * @throws NetworkException if a node cannot be found
      */
     public static List<LaneBasedGtuGenerator> parseDemand(final RoadNetwork otsNetwork, final Definitions definitions,
             final Demand demand, final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates,
             final Map<String, LaneBias> definedLaneBiases, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
             final Map<String, String> modelIdReferrals, final StreamInformation streamMap, final Eval eval)
-            throws XmlParserException
+            throws XmlParserException, NetworkException
     {
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
 
@@ -128,16 +130,16 @@ public final class OdParser
             for (Cell cell : od.getCell())
             {
                 String originId = cell.getOrigin().get(eval);
-                if (!origins.contains(otsNetwork.getNode(originId)))
+                if (!origins.contains(otsNetwork.getNode(originId).get()))
                 {
-                    Node originNode = otsNetwork.getNode(originId);
+                    Node originNode = NetworkParser.getNode(otsNetwork, originId);
                     Throw.whenNull(originNode, "Parse demand: cannot find origin %s", originId);
                     origins.add(originNode);
                 }
                 String destinationId = cell.getDestination().get(eval);
-                if (!destinations.contains(otsNetwork.getNode(destinationId)))
+                if (!destinations.contains(otsNetwork.getNode(destinationId).get()))
                 {
-                    Node destinationNode = otsNetwork.getNode(destinationId);
+                    Node destinationNode = NetworkParser.getNode(otsNetwork, destinationId);
                     Throw.whenNull(destinationNode, "Parse demand: cannot find destination %s", destinationId);
                     destinations.add(destinationNode);
                 }
@@ -172,8 +174,8 @@ public final class OdParser
             MultiKeyMap<Set<Cell>> demandPerOD = new MultiKeyMap<>(Node.class, Node.class);
             for (Cell cell : od.getCell())
             {
-                Node origin = otsNetwork.getNode(cell.getOrigin().get(eval));
-                Node destination = otsNetwork.getNode(cell.getDestination().get(eval));
+                Node origin = NetworkParser.getNode(otsNetwork, cell.getOrigin().get(eval));
+                Node destination = NetworkParser.getNode(otsNetwork, cell.getDestination().get(eval));
                 demandPerOD.get(() -> new LinkedHashSet<>(), origin, destination).add(cell);
             }
             addDemand(categories, globalFactor, odMatrix, demandPerOD, eval);
@@ -184,7 +186,7 @@ public final class OdParser
                     modelIdReferrals, streamMap, odOptionsMap, od, categorization, eval);
 
             // Invoke OdApplier
-            DetectorType detectorType = definitions.get(DetectorType.class, od.getSinkType().get(eval));
+            DetectorType detectorType = definitions.getOrThrow(DetectorType.class, od.getSinkType().get(eval));
             Map<String, GeneratorObjects> output =
                     Try.assign(() -> OdApplier.applyOd(otsNetwork, odMatrix, odOptions, detectorType), XmlParserException.class,
                             "Simulator time should be zero when parsing an OD.");
@@ -208,9 +210,10 @@ public final class OdParser
      * @param eval expression evaluator.
      * @return Categorization
      * @throws XmlParserException when a category does not match the categorization.
+     * @throws NetworkException if a link cannot be found
      */
     private static Categorization parseCategories(final RoadNetwork otsNetwork, final Definitions definitions, final Od od,
-            final Map<String, Category> categories, final Eval eval) throws XmlParserException
+            final Map<String, Category> categories, final Eval eval) throws XmlParserException, NetworkException
     {
         Categorization categorization;
         Map<String, Double> categoryFactors = new LinkedHashMap<>();
@@ -261,16 +264,16 @@ public final class OdParser
                 List<Object> objects = new ArrayList<>();
                 if (categorization.entails(GtuType.class))
                 {
-                    objects.add(definitions.get(GtuType.class, category.getGtuType().get(eval)));
+                    objects.add(definitions.getOrThrow(GtuType.class, category.getGtuType().get(eval)));
                 }
                 if (categorization.entails(Route.class))
                 {
-                    objects.add(otsNetwork.getRoute(category.getRoute().get(eval)));
+                    objects.add(NetworkParser.getRoute(otsNetwork, category.getRoute().get(eval)));
                 }
                 if (categorization.entails(Lane.class))
                 {
-                    CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(category.getLane().getLink().get(eval));
-                    Lane lane = (Lane) link.getCrossSectionElement(category.getLane().getLane().get(eval));
+                    CrossSectionLink link = NetworkParser.getLink(otsNetwork, category.getLane().getLink().get(eval));
+                    Lane lane = (Lane) link.getCrossSectionElement(category.getLane().getLane().get(eval)).orElseThrow();
                     objects.add(lane);
                 }
                 categories.put(category.getId(), new Category(categorization, objects.get(0),
@@ -418,12 +421,13 @@ public final class OdParser
      * @param eval expression evaluator.
      * @return OdOptions.
      * @throws XmlParserException when options in OD are not defined, or Markov chain not well defined.
+     * @throws NetworkException if a node or link cannot be found
      */
     private static OdOptions parseOdOptions(final RoadNetwork otsNetwork, final Definitions definitions,
             final Set<GtuTemplate> templates, final Map<String, LaneBias> definedLaneBiases,
             final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
             final StreamInformation streamMap, final Map<String, org.opentrafficsim.xml.generated.OdOptions> odOptionsMap,
-            final Od od, final Categorization categorization, final Eval eval) throws XmlParserException
+            final Od od, final Categorization categorization, final Eval eval) throws XmlParserException, NetworkException
     {
         OdOptions odOptions = new OdOptions().set(OdOptions.GTU_ID, new IdSupplier(""))
                 .set(OdOptions.NO_LC_DIST, Length.ofSI(1.0)).set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
@@ -483,7 +487,7 @@ public final class OdParser
                     MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
                     for (State state : option.getMarkov().getState())
                     {
-                        GtuType gtuType = definitions.get(GtuType.class, state.getGtuType().get(eval));
+                        GtuType gtuType = definitions.getOrThrow(GtuType.class, state.getGtuType().get(eval));
                         double correlation = state.getCorrelation().get(eval);
                         if (state.getParent() == null)
                         {
@@ -491,7 +495,7 @@ public final class OdParser
                         }
                         else
                         {
-                            GtuType parentType = definitions.get(GtuType.class, state.getParent().get(eval));
+                            GtuType parentType = definitions.getOrThrow(GtuType.class, state.getParent().get(eval));
                             markov.addState(parentType, gtuType, correlation);
                         }
                     }
@@ -505,14 +509,14 @@ public final class OdParser
                     for (org.opentrafficsim.xml.generated.LaneBias laneBiasType : option.getLaneBiases().getLaneBias())
                     {
                         String gtuTypeId = laneBiasType.getGtuType().get(eval);
-                        GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
+                        GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeId);
                         Throw.whenNull(gtuType, "GTU type %s in lane bias does not exist.", gtuTypeId);
                         laneBiases.addBias(gtuType, DefinitionsParser.parseLaneBias(laneBiasType, eval));
                     }
                     for (DefinedLaneBias definedLaneBias : option.getLaneBiases().getDefinedLaneBias())
                     {
                         String gtuTypeId = definedLaneBias.getGtuType().get(eval);
-                        GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
+                        GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeId);
                         Throw.whenNull(gtuType, "GTU type %s in defined lane bias does not exist.", gtuTypeId);
                         laneBiases.addBias(gtuType, definedLaneBiases.get(definedLaneBias.getGtuType().get(eval)));
                     }
@@ -536,12 +540,13 @@ public final class OdParser
      * @param option OD option item tag.
      * @param eval expression evaluator.
      * @throws XmlParserException when a non-existent model is referred.
+     * @throws NetworkException if a node or link cannot be found
      */
     private static void parseModelOption(final RoadNetwork otsNetwork, final Definitions definitions,
             final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
             final OdOptions odOptions, final Set<GtuTemplate> templates,
             final LaneBasedStrategicalRoutePlannerFactory defaultLmrsFactory, final OdOptionsItem option, final Eval eval)
-            throws XmlParserException
+            throws XmlParserException, NetworkException
     {
         Factory characteristicsGeneratorFactory;
         if (option.getDefaultModel() != null || (option.getModel() != null && !option.getModel().isEmpty()))
@@ -565,7 +570,7 @@ public final class OdParser
             {
                 for (Model model : option.getModel())
                 {
-                    GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(eval));
+                    GtuType gtuType = definitions.getOrThrow(GtuType.class, model.getGtuType().get(eval));
                     Throw.when(!factories.containsKey(model.getId().get(eval)), XmlParserException.class,
                             "OD option Model refers to a non existent-model with ID %s.", model.getId());
                     gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals, eval)));
@@ -615,7 +620,7 @@ public final class OdParser
         Set<GtuTemplate> templates = new LinkedHashSet<>();
         for (org.opentrafficsim.xml.generated.GtuTemplate template : gtuTemplates.values())
         {
-            GtuType gtuType = definitions.get(GtuType.class, template.getGtuType().get(eval));
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, template.getGtuType().get(eval));
             Supplier<Length> lengthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getLengthDist(),
                     template.getLengthDist().getLengthUnit().get(eval), eval);
             Supplier<Length> widthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getWidthDist(),
@@ -709,24 +714,27 @@ public final class OdParser
      * @param definitions parsed definitions.
      * @param eval expression evaluator.
      * @param <T> option value type
+     * @throws NetworkException if a node or link cannot be found
      */
     private static <T> void setOption(final OdOptions odOptions, final Option<T> option, final T value,
             final OdOptionsItem options, final RoadNetwork otsNetwork, final Definitions definitions, final Eval eval)
+            throws NetworkException
     {
         if (value != null)
         {
             if (options.getLinkType() != null)
             {
-                odOptions.set(definitions.get(LinkType.class, options.getLinkType().get(eval)), option, value);
+                odOptions.set(definitions.getOrThrow(LinkType.class, options.getLinkType().get(eval)), option, value);
             }
             else if (options.getOrigin() != null)
             {
-                odOptions.set(otsNetwork.getNode(options.getOrigin().get(eval)), option, value);
+                odOptions.set(NetworkParser.getNode(otsNetwork, options.getOrigin().get(eval)), option, value);
             }
             else if (options.getLane() != null)
             {
-                CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(options.getLane().getLink().get(eval));
-                odOptions.set((Lane) link.getCrossSectionElement(options.getLane().getLane().get(eval)), option, value);
+                CrossSectionLink link = NetworkParser.getLink(otsNetwork, options.getLane().getLink().get(eval));
+                odOptions.set((Lane) link.getCrossSectionElement(options.getLane().getLane().get(eval)).orElseThrow(), option,
+                        value);
             }
             else
             {

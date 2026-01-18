@@ -191,8 +191,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
 
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
-                this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledNodeAttribute("NodeStart"));
-                this.nodeEnd = replaceNode(this.nodeEnd, linkNode.getCoupledNodeAttribute("NodeEnd"));
+                this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledNodeAttribute("NodeStart").orElse(null));
+                this.nodeEnd = replaceNode(this.nodeEnd, linkNode.getCoupledNodeAttribute("NodeEnd").orElse(null));
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetStart", null}));
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
                 XsdTreeNode shape = linkNode.getChild(0);
@@ -308,7 +308,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 {
                     this.definedRoadLayoutNode = selected.getChild(0);
                     this.definedRoadLayoutNode.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                    this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledNodeValue();
+                    this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledNodeValue().orElse(null);
                     if (this.roadLayoutNode != null)
                     {
                         getMap().getRoadLayoutListener(this.roadLayoutNode).addListener(this, ChangeListener.CHANGE_EVENT,
@@ -336,7 +336,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 getMap().getRoadLayoutListener(this.roadLayoutNode).removeListener(this, ChangeListener.CHANGE_EVENT);
             }
-            this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledNodeValue();
+            this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledNodeValue().orElse(null);
             if (this.roadLayoutNode != null)
             {
                 getMap().getRoadLayoutListener(this.roadLayoutNode).addListener(this, ChangeListener.CHANGE_EVENT,
@@ -353,9 +353,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 if (node.isIdentifiable() && this.definedRoadLayoutNode != null)
                 {
                     // for if the id in the road layout has changed
-                    this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledNodeValue();
+                    this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledNodeValue().orElse(null);
                 }
-                if (node.equals(this.roadLayoutNode) && node.reportInvalidId() == null)
+                if (node.equals(this.roadLayoutNode) && node.reportInvalidId().isEmpty())
                 {
                     buildLayout();
                 }
@@ -381,11 +381,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         else if ("NodeStart".equals(attribute))
         {
-            this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart"));
+            this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
         }
         else if ("NodeEnd".equals(attribute))
         {
-            this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd"));
+            this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
         }
         else if ("OffsetStart".equals(attribute))
         {
@@ -700,7 +700,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         ChildNodeFinder stripeRefFinder = new ChildNodeFinder(node);
         if (stripeRefFinder.hasActiveChild("DefinedStripe"))
         {
-            stripeNode = stripeRefFinder.get().getCoupledNodeValue();
+            stripeNode = stripeRefFinder.get().getCoupledNodeValue().orElse(null);
         }
         else if (stripeRefFinder.hasActiveChild("Custom"))
         {
@@ -784,7 +784,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     String colorName = elementNode.getAttributeValue("Color");
                     if (colorName == null)
                     {
-                        colorName = elementNode.getDefaultAttributeValue(elementNode.getAttributeIndexByName("Color"));
+                        colorName = elementNode.getDefaultAttributeValue(elementNode.getAttributeIndexByName("Color")).get();
                     }
                     Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
                     if (elementNode.getChild(0).getNodeName().equals("Continuous"))
@@ -843,8 +843,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         if (getNode().isActive())
         {
             this.id = getNode().getId() == null ? "" : getNode().getId();
-            this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart"));
-            this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd"));
+            this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
+            this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
             setValue((v) -> this.offsetStart = v, Adapters.get(Length.class), getNode(), "OffsetStart");
             setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), getNode(), "OffsetEnd");
             this.shapeListener.update();
@@ -858,8 +858,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public void notifyNodeIdChanged(final XsdTreeNode node)
     {
-        this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart"));
-        this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd"));
+        this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
+        this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
         buildDesignLine();
     }
 
@@ -1168,7 +1168,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         }
                         catch (Exception ex)
                         {
-                            throw new OtsRuntimeException("Expression adapter could not unmarshal value for polyline coordinate.");
+                            throw new OtsRuntimeException(
+                                    "Expression adapter could not unmarshal value for polyline coordinate.");
                         }
                     }
                     buildDesignLine();
@@ -1203,7 +1204,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                                         this.a = orNull(child.getValue(), Adapters.get(Length.class));
                                         break;
                                     default:
-                                        throw new OtsRuntimeException("Clothoid child " + child.getNodeName() + " not supported.");
+                                        throw new OtsRuntimeException(
+                                                "Clothoid child " + child.getNodeName() + " not supported.");
                                 }
                             }
                             catch (Exception ex)
@@ -1227,7 +1229,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     buildDesignLine();
                     break;
                 default:
-                    throw new OtsRuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
+                    throw new OtsRuntimeException(
+                            "Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
             }
         }
 
@@ -1237,7 +1240,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          */
         private void setAttribute(final String attribute)
         {
-            if (this.shapeNode.reportInvalidAttributeValue(this.shapeNode.getAttributeIndexByName(attribute)) != null)
+            if (this.shapeNode.reportInvalidAttributeValue(this.shapeNode.getAttributeIndexByName(attribute)).isEmpty())
             {
                 // invalid value, do nothing
                 return;
@@ -1347,7 +1350,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     Angle angle = Angle.ofSI(left ? endHeading - from.dirZ : from.dirZ - endHeading);
                     return new Arc2d(from, this.radius.si, left, angle.si);
                 default:
-                    throw new OtsRuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
+                    throw new OtsRuntimeException(
+                            "Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
             }
         }
     }

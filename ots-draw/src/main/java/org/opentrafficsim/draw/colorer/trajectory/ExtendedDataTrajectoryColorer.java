@@ -2,6 +2,7 @@ package org.opentrafficsim.draw.colorer.trajectory;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
@@ -30,7 +31,8 @@ public class ExtendedDataTrajectoryColorer<D, V> extends AbstractLegendColorer<T
     public ExtendedDataTrajectoryColorer(final ExtendedDataType<? extends D, ?, ?, ?> dataType,
             final Function<D, V> translateFunction, final Function<V, Color> colorFunction, final List<LegendEntry> legend)
     {
-        super((traj) -> translateFunction.apply(traj.trajectory().getValue(traj.section(), dataType)), colorFunction, legend);
+        super((traj) -> Optional.ofNullable(translateFunction.apply(traj.trajectory().getValue(traj.section(), dataType))),
+                colorFunction, legend);
         this.name = dataType.getDescription();
     }
 

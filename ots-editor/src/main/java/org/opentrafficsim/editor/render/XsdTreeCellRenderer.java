@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -74,16 +75,16 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
     {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
         XsdTreeNode node = (XsdTreeNode) value;
-        Icon customIcon = this.editor.getCustomIcon(node.getPathString());
-        if (customIcon != null)
+        Optional<Icon> customIcon = this.editor.getCustomIcon(node.getPathString());
+        if (customIcon.isPresent())
         {
-            setIcon(customIcon);
+            setIcon(customIcon.get());
         }
         if (node.hasConsumer())
         {
             preAppend(this.consumer, false);
         }
-        if (node.getDescription() != null)
+        if (node.getDescription().isPresent())
         {
             preAppend(this.description, false);
         }

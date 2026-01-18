@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -33,7 +34,6 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.Break;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
@@ -199,13 +199,14 @@ public final class ConflictUtil
             if (lane.isCurrent())
             {
                 // TODO priority rules of busses should be handled differently, this also makes a GTU type unnecessary here
-                if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getType().isOfType(DefaultsNl.BUS)
+                Optional<Route> route = gtu.getStrategicalPlanner().getRoute();
+                if (route.isPresent() && route.get() instanceof BusSchedule busSchedule
+                        && gtu.getType().isOfType(DefaultsNl.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
-                    BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
-                    Duration actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
-                    if (actualDeparture != null
-                            && actualDeparture.si < gtu.getSimulator().getSimulatorTime().si + parameters.getParameter(TI).si)
+                    Optional<Duration> actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
+                    if (actualDeparture.isPresent() && actualDeparture.get().si < gtu.getSimulator().getSimulatorTime().si
+                            + parameters.getParameter(TI).si)
                     {
                         // TODO depending on left/right-hand traffic
                         conflictPlans.setIndicatorIntent(TurnIndicatorIntent.LEFT, conflict.getDistance());
@@ -400,7 +401,7 @@ public final class ConflictUtil
         if (conflict.getDistance().gt0())
         {
             c = downstreamGTUs.first();
-            virtualHeadway = conflict.getDistance().plus(c.getKinematics().getOverlap().getOverlapRear());
+            virtualHeadway = conflict.getDistance().plus(c.getKinematics().getOverlap().getOverlapRear().get());
         }
         else
         {
@@ -420,7 +421,7 @@ public final class ConflictUtil
                 //                              /       /
                 //                             /       /
                 // {@formatter:on}
-                virtualHeadway = conflict.getDistance().plus(con.getKinematics().getOverlap().getOverlapRear());
+                virtualHeadway = conflict.getDistance().plus(con.getKinematics().getOverlap().getOverlapRear().get());
                 if (virtualHeadway.gt0())
                 {
                     if (conflict.isSplit())
@@ -526,9 +527,9 @@ public final class ConflictUtil
             if (conflictingGTU.getKinematics().getOverlap().isParallel())
             {
                 tteCz = new AnticipationInfo(Duration.ZERO, conflictingGTU.getSpeed());
-                distance = conflictingGTU.getKinematics().getOverlap().getOverlapRear().abs()
-                        .plus(conflictingGTU.getKinematics().getOverlap().getOverlap())
-                        .plus(Length.max(Length.ZERO, conflictingGTU.getKinematics().getOverlap().getOverlapFront().neg()));
+                distance = conflictingGTU.getKinematics().getOverlap().getOverlapRear().get().abs()
+                        .plus(conflictingGTU.getKinematics().getOverlap().getOverlap().get()).plus(Length.max(Length.ZERO,
+                                conflictingGTU.getKinematics().getOverlap().getOverlapFront().get().neg()));
             }
             else
             {
@@ -627,7 +628,7 @@ public final class ConflictUtil
         Iterable<PerceivedGtu> conflictingVehicles;
         if (conflictingVehiclesCollectable.isEmpty())
         {
-            if (conflict.getConflictingTrafficLightDistance() == null)
+            if (conflict.getConflictingTrafficLightDistance().isEmpty())
             {
                 // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
                 Length length = Length.ofSI(4.0);
@@ -647,8 +648,9 @@ public final class ConflictUtil
         else
         {
             PerceivedGtu conflicting = conflictingVehiclesCollectable.first();
-            if (conflict.getConflictingTrafficLightDistance() != null && conflicting.getKinematics().getOverlap().isAhead()
-                    && conflict.getConflictingTrafficLightDistance().lt(conflicting.getDistance())
+            Optional<Length> tlDistance = conflict.getConflictingTrafficLightDistance();
+            if (tlDistance.isPresent() && conflicting.getKinematics().getOverlap().isAhead()
+                    && tlDistance.get().lt(conflicting.getDistance())
                     && (conflicting.getSpeed().eq0() || conflicting.getAcceleration().lt0()))
             {
                 // conflicting traffic upstream of traffic light
@@ -834,16 +836,16 @@ public final class ConflictUtil
     {
         try
         {
-            Route route = gtu.getBehavior().getRoute();
-            if (route == null)
+            Optional<Route> route = gtu.getBehavior().getRoute();
+            if (route.isEmpty())
             {
                 // conservative assumption: it's on the route (gtu should be upstream of the conflict)
                 return true;
             }
             Node startNode = conflictingLink.getStartNode();
             Node endNode = conflictingLink.getEndNode();
-            return route.contains(startNode) && route.contains(endNode)
-                    && Math.abs(route.indexOf(endNode) - route.indexOf(startNode)) == 1;
+            return route.get().contains(startNode) && route.get().contains(endNode)
+                    && Math.abs(route.get().indexOf(endNode) - route.get().indexOf(startNode)) == 1;
         }
         catch (UnsupportedOperationException uoe)
         {

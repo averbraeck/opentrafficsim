@@ -296,7 +296,7 @@ public final class TransceiverTest
             assertEquals(6, gtuResult.length, "result has 6 fields");
             assertEquals(String.class, gtuResult[0].getClass(), "first field is a String");
             assertEquals(result[i], gtuResult[0], "gtuResult is gtu with expected id");
-            LaneBasedGtu gtu = (LaneBasedGtu) network.getGTU(((String) gtuResult[0]));
+            LaneBasedGtu gtu = (LaneBasedGtu) network.getGTU(((String) gtuResult[0])).get();
             assertNotNull(gtu, "GTU is in the network");
             assertTrue(gtuResult[1] instanceof String, "field 1 is id of a GtuType");
             assertEquals(gtuType.getId(), gtuResult[1], "gtu type matches");

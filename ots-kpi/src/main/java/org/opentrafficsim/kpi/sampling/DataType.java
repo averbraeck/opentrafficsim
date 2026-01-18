@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
+import java.util.Optional;
+
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -71,9 +73,9 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
     /**
      * Retrieves the value of the data of this type from a GTU.
      * @param gtu gtu to retrieve the value from
-     * @return value of the data of this type from a GTU, may be {@code null} if not applicable.
+     * @return value of the data of this type from a GTU, may be empty if not applicable.
      */
-    public abstract T getValue(G gtu);
+    public abstract Optional<T> getValue(G gtu);
 
     @Override
     public final int hashCode()

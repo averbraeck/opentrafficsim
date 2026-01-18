@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.generator.characteristics;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -52,7 +53,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
     private VehicleModelFactory vehicleModelFactory = VehicleModelFactory.MINMAX;
 
     /** Template function. */
-    private BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction;
+    private BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> templateFunction;
 
     /**
      * Constructor using route supplier, provided GTU templates and provided strategical planner factory supplier.
@@ -65,7 +66,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
     private DefaultLaneBasedGtuCharacteristicsGeneratorOd(final Supplier<GtuType> gtuTypeGenerator,
             final Set<GtuTemplate> templates, final LaneBasedStrategicalPlannerFactory<?> factory,
             final VehicleModelFactory vehicleModelFactory,
-            final BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction)
+            final BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> templateFunction)
     {
         Throw.whenNull(factory, "Strategical planner factory may not be null.");
         this.gtuTypeGenerator = gtuTypeGenerator;
@@ -115,7 +116,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
         else
         {
-            gtuCharacteristics = this.templateFunction.apply(gtuType, randomStream).get();
+            gtuCharacteristics = this.templateFunction.apply(gtuType, randomStream).get().get();
         }
         Route route = categorization.entails(Route.class) ? category.get(Route.class) : null;
         VehicleModel vehicleModel = this.vehicleModelFactory.create(gtuType);
@@ -160,7 +161,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         private VehicleModelFactory vehicleModelFactory = VehicleModelFactory.MINMAX;
 
         /** Default templates. */
-        private BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction = Defaults.NL;
+        private BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> templateFunction = Defaults.NL;
 
         /**
          * Constructor.
@@ -209,7 +210,8 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
          * @param templateFunction template function
          * @return this factory for method chaining
          */
-        public Factory setGtuTemplateFunction(final BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction)
+        public Factory setGtuTemplateFunction(
+                final BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> templateFunction)
         {
             this.templateFunction = templateFunction;
             return this;

@@ -90,7 +90,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
         Duration firstPossibleDataTime;
         if (this.samplerData.contains(spaceTimeRegion.lane()))
         {
-            firstPossibleDataTime = this.samplerData.getTrajectoryGroup(spaceTimeRegion.lane()).getStartTime();
+            firstPossibleDataTime = this.samplerData.getTrajectoryGroup(spaceTimeRegion.lane()).get().getStartTime();
         }
         else
         {
@@ -214,7 +214,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
         String gtuId = gtu.getId();
         Trajectory<G> trajectory = new Trajectory<G>(gtu, makeFilterData(gtu), this.extendedDataTypes);
         this.trajectoryPerGtu.computeIfAbsent(gtuId, (key) -> new LinkedHashMap<>()).put(lane, trajectory);
-        this.samplerData.getTrajectoryGroup(lane).addTrajectory(trajectory);
+        this.samplerData.getTrajectoryGroup(lane).get().addTrajectory(trajectory);
     }
 
     /**
@@ -293,7 +293,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     private Map<FilterDataType<?, ? super G>, Object> makeFilterData(final G gtu)
     {
         Map<FilterDataType<?, ? super G>, Object> filterData = new LinkedHashMap<>();
-        this.filterDataTypes.forEach((filterDataType) -> filterData.put(filterDataType, filterDataType.getValue(gtu)));
+        this.filterDataTypes
+                .forEach((filterDataType) -> filterData.put(filterDataType, filterDataType.getValue(gtu).orElse(null)));
         return filterData;
     }
 

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import java.util.Optional;
+
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
@@ -32,12 +34,12 @@ public interface LmrsParameters
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
                     // @docs/06-behavior/parameters.md
-                    Double dSync = params.getParameterOrNull(DSYNC);
-                    Throw.when(dSync != null && value >= dSync, ParameterException.class,
+                    Optional<Double> dSync = params.getOptionalParameter(DSYNC);
+                    Throw.when(dSync.isPresent() && value >= dSync.get(), ParameterException.class,
                             "Value of dFree is above or equal to dSync.");
                     // @end
-                    Double dCoop = params.getParameterOrNull(DCOOP);
-                    Throw.when(dCoop != null && value >= dCoop, ParameterException.class,
+                    Optional<Double> dCoop = params.getOptionalParameter(DCOOP);
+                    Throw.when(dCoop.isPresent() && value >= dCoop.get(), ParameterException.class,
                             "Value of dFree is above or equal to dCoop.");
                 }
             };
@@ -51,11 +53,13 @@ public interface LmrsParameters
         public void check(final Double value, final Parameters params) throws ParameterException
         {
             // @docs/06-behavior/parameters.md
-            Double dFree = params.getParameterOrNull(DFREE);
-            Throw.when(dFree != null && value <= dFree, ParameterException.class, "Value of dSync is below or equal to dFree.");
+            Optional<Double> dFree = params.getOptionalParameter(DFREE);
+            Throw.when(dFree.isPresent() && value <= dFree.get(), ParameterException.class,
+                    "Value of dSync is below or equal to dFree.");
             // @end
-            Double dCoop = params.getParameterOrNull(DCOOP);
-            Throw.when(dCoop != null && value >= dCoop, ParameterException.class, "Value of dSync is above or equal to dCoop.");
+            Optional<Double> dCoop = params.getOptionalParameter(DCOOP);
+            Throw.when(dCoop.isPresent() && value >= dCoop.get(), ParameterException.class,
+                    "Value of dSync is above or equal to dCoop.");
         }
     };
 
@@ -66,10 +70,12 @@ public interface LmrsParameters
         @Override
         public void check(final Double value, final Parameters params) throws ParameterException
         {
-            Double dFree = params.getParameterOrNull(DFREE);
-            Throw.when(dFree != null && value <= dFree, ParameterException.class, "Value of dCoop is below or equal to dFree.");
-            Double dSync = params.getParameterOrNull(DSYNC);
-            Throw.when(dSync != null && value <= dSync, ParameterException.class, "Value of dCoop is below or equal to dSync.");
+            Optional<Double> dFree = params.getOptionalParameter(DFREE);
+            Throw.when(dFree.isPresent() && value <= dFree.get(), ParameterException.class,
+                    "Value of dCoop is below or equal to dFree.");
+            Optional<Double> dSync = params.getOptionalParameter(DSYNC);
+            Throw.when(dSync.isPresent() && value <= dSync.get(), ParameterException.class,
+                    "Value of dCoop is below or equal to dSync.");
         }
     };
 

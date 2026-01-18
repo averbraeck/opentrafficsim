@@ -167,7 +167,7 @@ public final class Trajectory<G extends GtuData>
     private <T, S> void appendValue(final ExtendedDataType<T, ?, S, ? super G> extendedDataType, final G gtu)
     {
         S in = (S) this.extendedData.get(extendedDataType);
-        S out = extendedDataType.setValue(in, this.size, extendedDataType.getValue(gtu));
+        S out = extendedDataType.setValue(in, this.size, extendedDataType.getValue(gtu).get());
         if (in != out)
         {
             this.extendedData.put(extendedDataType, out);

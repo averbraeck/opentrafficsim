@@ -43,7 +43,7 @@ public class SocialPressureGtuColorer extends AbstractLegendBarColorer<Gtu, Doub
      */
     public SocialPressureGtuColorer()
     {
-        super((gtu) -> gtu.getParameters().getParameterOrNull(Tailgating.RHO), (rho) -> rho == null ? NA : SCALE.getPaint(rho),
+        super((gtu) -> gtu.getParameters().getOptionalParameter(Tailgating.RHO), (rho) -> rho == null ? NA : SCALE.getPaint(rho),
                 List.of(new LegendEntry(NONE, "None", "None: 0.0"), new LegendEntry(FULL, "Full", "Full: 1.0"),
                         new LegendEntry(NA, "N/A", "N/A")),
                 SCALE);

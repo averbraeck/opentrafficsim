@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -87,9 +89,9 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
         RelativeLane[] lanes;
-        double dLeft = params.getParameterOrNull(LmrsParameters.DLEFT);
-        double dRight = params.getParameterOrNull(LmrsParameters.DRIGHT);
-        double dSync = params.getParameterOrNull(LmrsParameters.DSYNC);
+        double dLeft = params.getParameter(LmrsParameters.DLEFT);
+        double dRight = params.getParameter(LmrsParameters.DRIGHT);
+        double dSync = params.getParameter(LmrsParameters.DSYNC);
         if (dLeft >= dSync && dLeft >= dRight)
         {
             lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.LEFT};
@@ -130,7 +132,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
     }
 
     @Override
-    public final Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
+    public final Optional<Desire> getLatestDesire(final Class<? extends Incentive> incentiveClass)
     {
         return this.lmrsData.getLatestDesire(incentiveClass);
     }

@@ -2,6 +2,7 @@ package org.opentrafficsim.editor.render;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.Optional;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -82,7 +83,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             String baseType = node.getAttributeBaseType(row);
             if ("xsd:boolean".equals(baseType))
             {
-                String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
+                String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row).orElse(null);
                 if (message != null)
                 {
                     this.checkBox.setToolTipText(OtsEditor.limitTooltip(message));
@@ -106,8 +107,8 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 }
                 if (value == null || value.toString().isEmpty())
                 {
-                    String defaultValue = node.getDefaultAttributeValue(row);
-                    this.checkBox.setSelected(defaultValue != null && defaultValue.toString().equalsIgnoreCase("true"));
+                    Optional<String> defaultValue = node.getDefaultAttributeValue(row);
+                    this.checkBox.setSelected(defaultValue.isPresent() && defaultValue.toString().equalsIgnoreCase("true"));
                     this.checkBox.setText(" (default)");
                     this.checkBox.setFont(table.getFont());
                 }
@@ -135,9 +136,9 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             if (value == null || value.toString().isEmpty())
             {
                 node = ((AttributesTableModel) table.getModel()).getNode();
-                String defaultValue = node.getDefaultAttributeValue(row);
-                showingDefault = defaultValue != null;
-                setText(showingDefault ? defaultValue : "");
+                Optional<String> defaultValue = node.getDefaultAttributeValue(row);
+                showingDefault = defaultValue.isPresent();
+                setText(showingDefault ? defaultValue.get() : "");
             }
             else
             {
@@ -159,7 +160,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : this.tableForgroundColor);
         if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)
         {
-            String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
+            String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row).orElse(null);
             if (message != null)
             {
                 setToolTipText(OtsEditor.limitTooltip(message));

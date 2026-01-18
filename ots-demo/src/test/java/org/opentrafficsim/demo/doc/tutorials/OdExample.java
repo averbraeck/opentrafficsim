@@ -128,7 +128,7 @@ public class OdExample
                 // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
                 GtuType gtuType = category.get(GtuType.class);
                 Route route = category.get(Route.class);
-                GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get();
+                GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get().get();
                 VehicleModel vehicleModel = VehicleModel.NONE;
 
                 LaneBasedTacticalPlannerFactory<?> tactical =

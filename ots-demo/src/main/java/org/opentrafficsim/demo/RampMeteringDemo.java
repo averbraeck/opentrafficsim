@@ -394,7 +394,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     private void measureTravelTime(final String id)
     {
         double tt = getSimulator().getSimulatorTime().si - this.gtusInSimulation.get(id);
-        double x = getNetwork().getGTU(id).getOdometer().si;
+        double x = getNetwork().getGTU(id).get().getOdometer().si;
         // TODO: we assume 120km/h everywhere, including the slower ramps
         double ttd = tt - (x / (120 / 3.6));
         this.totalTravelTime += tt;
@@ -539,12 +539,14 @@ public class RampMeteringDemo extends AbstractSimulationScript
         {
             GtuType gtuType = category.get(GtuType.class);
             // if GTU type is a controlled car, create characteristics for a controlled car
-            if (gtuType.equals(RampMeteringDemo.this.definitions.get(GtuType.class, CONTROLLED_CAR_ID)))
+            if (gtuType.equals(RampMeteringDemo.this.definitions.get(GtuType.class, CONTROLLED_CAR_ID).get()))
             {
                 Route route = null;
                 VehicleModel vehicleModel = VehicleModel.MINMAX;
-                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream).get(),
-                        this.controlledPlannerFactory, route, origin, destination, vehicleModel);
+                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream)
+                        .orElseThrow(
+                                () -> new GtuException("No characteristics for GTU type " + gtuType + " could be generated."))
+                        .get(), this.controlledPlannerFactory, route, origin, destination, vehicleModel);
             }
             // otherwise generate default characteristics
             return this.defaultGenerator.draw(origin, destination, category, randomStream);

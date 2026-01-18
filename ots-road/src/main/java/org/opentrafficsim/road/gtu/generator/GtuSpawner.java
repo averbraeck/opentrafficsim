@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -33,7 +34,7 @@ public class GtuSpawner
 {
 
     /** Default GTU templates. */
-    private BiFunction<GtuType, StreamInterface, GtuTemplate> defaultGtuTemplate = Defaults.NL;
+    private BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> defaultGtuTemplate = Defaults.NL;
 
     /** Random stream. */
     private StreamInterface stream = new MersenneTwister(123L);
@@ -60,7 +61,8 @@ public class GtuSpawner
      * @param defaultGtuTemplate default GTU templates.
      * @return for method chaining.
      */
-    public GtuSpawner setUseDefaultGtuTemplate(final BiFunction<GtuType, StreamInterface, GtuTemplate> defaultGtuTemplate)
+    public GtuSpawner setUseDefaultGtuTemplate(
+            final BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> defaultGtuTemplate)
     {
         this.defaultGtuTemplate = defaultGtuTemplate;
         return this;
@@ -125,7 +127,7 @@ public class GtuSpawner
     {
 
         GtuCharacteristics defaultCharacteristics =
-                this.defaultGtuTemplate.apply(templateGtuType.getGtuType(), this.stream).get();
+                this.defaultGtuTemplate.apply(templateGtuType.getGtuType(), this.stream).get().get();
 
         LaneBasedGtu gtu =
                 new LaneBasedGtu(id, templateGtuType.getGtuType(), templateGtuType.getLength(), templateGtuType.getWidth(),

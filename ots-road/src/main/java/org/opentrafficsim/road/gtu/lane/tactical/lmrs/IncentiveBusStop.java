@@ -58,7 +58,10 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
         Duration now = perception.getGtu().getSimulator().getSimulatorTime();
         for (PerceivedBusStop stop : stops)
         {
-            if (((BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()).isLineStop(stop.getId(), now))
+            BusSchedule busSchedule = (BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()
+                    .orElseThrow(() -> new OperationalPlanException(
+                            "Unable to determine lane change desire for bus stops for bus without bus schedule."));
+            if (busSchedule.isLineStop(stop.getId(), now))
             {
                 firstStop = stop;
                 break;

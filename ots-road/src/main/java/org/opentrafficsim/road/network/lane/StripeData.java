@@ -107,7 +107,7 @@ public class StripeData
     {
         Throw.when(lateralDirection.isNone(), OtsRuntimeException.class,
                 "May not request NONE lateral direction for permeability.");
-        for (GtuType testGtuType = gtuType; null != testGtuType; testGtuType = testGtuType.getParent())
+        for (GtuType testGtuType = gtuType; testGtuType != null; testGtuType = testGtuType.getParent().orElse(null))
         {
             Set<LateralDirectionality> set = this.permeabilityMap.get(testGtuType);
             if (null != set)

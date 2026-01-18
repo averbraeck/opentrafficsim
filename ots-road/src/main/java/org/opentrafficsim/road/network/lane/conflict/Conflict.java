@@ -18,6 +18,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -181,7 +182,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         {
             this.maxUpstreamVisibility = visibility;
             this.upstreamTime = null;
-            this.downstreamTime = null;
+            clearUpstreamListening();
         }
     }
 
@@ -194,9 +195,39 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         if (visibility.gt(this.maxDownstreamVisibility))
         {
             this.maxDownstreamVisibility = visibility;
-            this.upstreamTime = null;
             this.downstreamTime = null;
+            clearDownstreamListening();
         }
+    }
+
+    /**
+     * Clear any listening to upstream GTUs.
+     */
+    private void clearUpstreamListening()
+    {
+        for (LaneBasedGtu gtu : this.upstreamListening)
+        {
+            if (!this.downstreamListening.contains(gtu))
+            {
+                gtu.removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
+            }
+        }
+        this.upstreamListening.clear();
+    }
+
+    /**
+     * Clear any listening to downstream GTUs.
+     */
+    private void clearDownstreamListening()
+    {
+        for (LaneBasedGtu gtu : this.downstreamListening)
+        {
+            if (!this.upstreamListening.contains(gtu))
+            {
+                gtu.removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
+            }
+        }
+        this.downstreamListening.clear();
     }
 
     /**
@@ -213,12 +244,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         Duration time = this.getLane().getLink().getSimulator().getSimulatorTime();
         if (this.upstreamTime == null || !time.eq(this.upstreamTime))
         {
-            for (LaneBasedGtu gtu : this.upstreamListening)
-            {
-                Try.execute(() -> gtu.removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
-                        gtu);
-            }
-            this.upstreamListening.clear();
+            clearUpstreamListening();
             // setup a base iterable to provide the GTUs
             this.upstreamLanes.clear();
             this.upstreamGtus = new NavigatingIterable<LaneBasedGtu, SimpleLaneRecord>(LaneBasedGtu.class,
@@ -250,7 +276,12 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             gtus = gtus.subList(from, to + 1);
                         }
                         Collections.reverse(gtus);
-                        gtus.forEach((g) -> this.upstreamLanes.put(g, l.getLane()));
+                        gtus.forEach((g) ->
+                        {
+                            this.upstreamLanes.put(g, l.getLane());
+                            g.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
+                            this.upstreamListening.add(g);
+                        });
                         return gtus;
                     }, (t, r) -> r.getStartDistance().neg().minus(position(t, r, RelativePosition.FRONT)));
             this.upstreamTime = time;
@@ -274,12 +305,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         Duration time = this.getLane().getLink().getSimulator().getSimulatorTime();
         if (this.downstreamTime == null || !time.eq(this.downstreamTime))
         {
-            for (LaneBasedGtu gtu : this.downstreamListening)
-            {
-                Try.execute(() -> gtu.removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT), "Unable to unlisten to GTU %s.",
-                        gtu);
-            }
-            this.downstreamListening.clear();
+            clearDownstreamListening();
             // setup a base iterable to provide the GTUs
             this.downstreamLanes.clear();
             this.downstreamGtus = new Reiterable(new NavigatingIterable<LaneBasedGtu, SimpleLaneRecord>(LaneBasedGtu.class,
@@ -310,7 +336,12 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                         {
                             gtus = gtus.subList(from, to + 1);
                         }
-                        gtus.forEach((g) -> this.downstreamLanes.put(g, l.getLane()));
+                        gtus.forEach((g) ->
+                        {
+                            this.downstreamLanes.put(g, l.getLane());
+                            g.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
+                            this.downstreamListening.add(g);
+                        });
                         return gtus;
                     }, (t, r) -> r.getStartDistance().plus(position(t, r, RelativePosition.REAR))));
             this.downstreamTime = time;
@@ -338,14 +369,17 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     public void notify(final Event event)
     {
         Object[] payload = (Object[]) event.getContent();
-        LaneBasedGtu gtu = (LaneBasedGtu) getLane().getNetwork().getGTU((String) payload[0]);
+        LaneBasedGtu gtu = (LaneBasedGtu) getLane().getNetwork().getGTU((String) payload[0])
+                .orElseThrow(() -> new OtsRuntimeException("Lane-change event on GTU not in the network."));
         if (this.upstreamListening.contains(gtu))
         {
             this.upstreamTime = null;
+            clearUpstreamListening();
         }
         if (this.downstreamListening.contains(gtu))
         {
             this.downstreamTime = null;
+            clearDownstreamListening();
         }
     }
 

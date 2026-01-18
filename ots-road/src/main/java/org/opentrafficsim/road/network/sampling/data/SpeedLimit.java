@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
+import java.util.Optional;
+
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djutils.exceptions.Throw;
@@ -31,13 +33,14 @@ public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
     }
 
     @Override
-    public final FloatSpeed getValue(final GtuDataRoad gtu)
+    public final Optional<FloatSpeed> getValue(final GtuDataRoad gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
         LaneBasedGtu laneGtu = gtu.getGtu();
         try
         {
-            return new FloatSpeed(laneGtu.getPosition().lane().getSpeedLimit(laneGtu.getType()).si, SpeedUnit.SI);
+            return Optional
+                    .ofNullable(new FloatSpeed(laneGtu.getPosition().lane().getSpeedLimit(laneGtu.getType()).si, SpeedUnit.SI));
         }
         catch (NetworkException exception)
         {

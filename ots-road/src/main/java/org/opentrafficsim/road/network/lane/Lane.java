@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -728,30 +729,30 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Get the last GTU on the lane, relative to a driving direction on this lane.
-     * @return the last GTU on this lane in the given direction, or null if no GTU could be found.
+     * @return the last GTU on this lane in the given direction, empty if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getLastGtu() throws GtuException
+    public final Optional<LaneBasedGtu> getLastGtu() throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
-            return null;
+            return Optional.empty();
         }
-        return this.gtuList.get(this.gtuList.size() - 1);
+        return Optional.of(this.gtuList.get(this.gtuList.size() - 1));
     }
 
     /**
      * Get the first GTU on the lane, relative to a driving direction on this lane.
-     * @return the first GTU on this lane in the given direction, or null if no GTU could be found.
+     * @return the first GTU on this lane in the given direction, empty if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getFirstGtu() throws GtuException
+    public final Optional<LaneBasedGtu> getFirstGtu() throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
-            return null;
+            return Optional.empty();
         }
-        return this.gtuList.get(0);
+        return Optional.of(this.gtuList.get(0));
     }
 
     /**
@@ -760,16 +761,16 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position the position before which the relative position of a GTU will be searched.
      * @param relativePosition RelativePosition.TYPE; the relative position we want to compare against
      * @param when the simulation time for which to evaluate the positions.
-     * @return the first GTU before a position on this lane in the given direction, or null if no GTU could be found.
+     * @return the first GTU before a position on this lane in the given direction, empty if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.Type relativePosition,
+    public final Optional<LaneBasedGtu> getGtuAhead(final Length position, final RelativePosition.Type relativePosition,
             final Duration when) throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
         if (list.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
         int[] search = lineSearch((final int index) ->
         {
@@ -778,9 +779,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         }, list.size(), position.si);
         if (search[1] < list.size())
         {
-            return list.get(search[1]);
+            return Optional.of(list.get(search[1]));
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -789,16 +790,16 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position the position before which the relative position of a GTU will be searched.
      * @param relativePosition RelativePosition.TYPE; the relative position of the GTU we are looking for.
      * @param when the time for which to evaluate the positions.
-     * @return the first GTU after a position on this lane in the given direction, or null if no GTU could be found.
+     * @return the first GTU after a position on this lane in the given direction, empty if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.Type relativePosition,
+    public final Optional<LaneBasedGtu> getGtuBehind(final Length position, final RelativePosition.Type relativePosition,
             final Duration when) throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
         if (list.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
         int[] search = lineSearch((final int index) ->
         {
@@ -807,9 +808,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         }, list.size(), position.si);
         if (search[0] >= 0)
         {
-            return list.get(search[0]);
+            return Optional.of(list.get(search[0]));
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -884,7 +885,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * this lane, compared to the DESIGN LINE. Perception should iterate over results from this method to see what is most
      * limiting.
      * @param position the position after which the relative position of an object will be searched.
-     * @return the first object(s) before a position on this lane in the given direction, or null if no object could be found.
+     * @return the first object(s) before a position on this lane in the given direction, empty if no object could be found.
      */
     public final List<LaneBasedObject> getObjectAhead(final Length position)
     {
@@ -895,7 +896,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                 return new ArrayList<>(this.laneBasedObjects.get(distance));
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -903,7 +904,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * this lane, compared to the DESIGN LINE. Perception should iterate over results from this method to see what is most
      * limiting.
      * @param position the position after which the relative position of an object will be searched.
-     * @return the first object(s) after a position on this lane in the given direction, or null if no object could be found.
+     * @return the first object(s) after a position on this lane in the given direction, empty if no object could be found.
      */
     public final List<LaneBasedObject> getObjectBehind(final Length position)
     {
@@ -916,7 +917,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                 return new ArrayList<>(this.laneBasedObjects.get(distance));
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /*
@@ -1071,7 +1072,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
      * @param lateralDirection LEFT or RIGHT.
      * @param gtuType the type of GTU for which to return the adjacent lanes.
-     * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
+     * @return the set of lanes that are accessible, empty if there is no lane that is accessible with a matching driving
      *         direction.
      */
     public final Set<Lane> accessibleAdjacentLanesPhysical(final LateralDirectionality lateralDirection, final GtuType gtuType)
@@ -1089,7 +1090,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
      * @param lateralDirection LEFT or RIGHT.
      * @param gtuType the type of GTU for which to return the adjacent lanes.
-     * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
+     * @return the set of lanes that are accessible, empty if there is no lane that is accessible with a matching driving
      *         direction.
      */
     public final Set<Lane> accessibleAdjacentLanesLegal(final LateralDirectionality lateralDirection, final GtuType gtuType)
@@ -1106,49 +1107,46 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     }
 
     /**
-     * Returns the left lane for given GTU type.
+     * Returns the left lane for given GTU type, regardless of legality.
      * @param gtuType GTU type
-     * @return left lane for given GTU type
+     * @return left lane for given GTU type, empty if none
      */
-    public Lane getLeft(final GtuType gtuType)
+    public Optional<Lane> getLeft(final GtuType gtuType)
     {
         Set<Lane> set = neighbors(LateralDirectionality.LEFT, gtuType, false);
         if (set.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
-        return set.iterator().next();
+        return Optional.of(set.iterator().next());
     }
 
     /**
-     * Returns the right lane for given GTU type.
+     * Returns the right lane for given GTU type, regardless of legality.
      * @param gtuType GTU type
-     * @return right lane for given GTU type
+     * @return right lane for given GTU type, empty if none
      */
-    public Lane getRight(final GtuType gtuType)
+    public Optional<Lane> getRight(final GtuType gtuType)
     {
         Set<Lane> set = neighbors(LateralDirectionality.RIGHT, gtuType, false);
         if (set.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
-        return set.iterator().next();
+        return Optional.of(set.iterator().next());
     }
 
     /**
-     * Returns one adjacent lane.
+     * Returns one adjacent lane, regardless of legality.
      * @param laneChangeDirection lane change direction
-     * @param gtuType GTU type.
-     * @return adjacent lane, {@code null} if none
+     * @param gtuType GTU type
+     * @return adjacent lane, empty if none
      */
-    public Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
+    public Optional<Lane> getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
     {
-        Set<Lane> adjLanes = accessibleAdjacentLanesLegal(laneChangeDirection, gtuType);
-        if (!adjLanes.isEmpty())
-        {
-            return adjLanes.iterator().next();
-        }
-        return null;
+        Throw.whenNull(laneChangeDirection, "laneChangeDirection");
+        Throw.when(laneChangeDirection.isNone(), IllegalArgumentException.class, "Lane change direction should not be null.");
+        return laneChangeDirection.isLeft() ? getLeft(gtuType) : getRight(gtuType);
     }
 
     /**
@@ -1167,13 +1165,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             {
                 speedLimit = this.speedLimitMap.get(gtuType);
             }
-            else if (gtuType.getParent() != null)
-            {
-                speedLimit = getSpeedLimit(gtuType.getParent());
-            }
             else
             {
-                throw new NetworkException("No speed limit set for GtuType " + gtuType + " on lane " + toString());
+                speedLimit = getSpeedLimit(gtuType.getParent().orElseThrow(
+                        () -> new NetworkException("No speed limit set for GtuType " + gtuType + " on lane " + toString())));
             }
             this.cachedSpeedLimits.put(gtuType, speedLimit);
         }

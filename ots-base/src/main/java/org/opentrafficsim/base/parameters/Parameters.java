@@ -1,5 +1,7 @@
 package org.opentrafficsim.base.parameters;
 
+import java.util.Optional;
+
 /**
  * Interface for parameter objects containing the methods for during a simulation.
  * <p>
@@ -67,9 +69,9 @@ public interface Parameters
      * {@code contains()} and {@code getParameter()} in performance critical code.
      * @param parameterType parameter type
      * @param <T> type of parameter value
-     * @return parameter value, or {@code null} if not present
+     * @return parameter value, empty if not present
      */
-    <T> T getParameterOrNull(ParameterType<T> parameterType);
+    <T> Optional<T> getOptionalParameter(ParameterType<T> parameterType);
 
     /**
      * Indicate whether the given parameter type has been set.

@@ -58,8 +58,8 @@ public final class PerceivedObjectTest
                 egoLength);
         testSingleDistance(true, Length.ofSI(-16.0), Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(-4.0), otherLength,
                 egoLength);
-        UnitTest.testFail(() -> testSingleDistance(true, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(-4.0),
-                otherLength, egoLength), IllegalArgumentException.class);
+        UnitTest.testFail(() -> testSingleDistance(true, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0),
+                Length.ofSI(-4.0), otherLength, egoLength), IllegalArgumentException.class);
 
         // upstream longer
         testSingleDistance(false, Length.ofSI(10.0), null, null, null, otherLength, egoLength);
@@ -112,8 +112,8 @@ public final class PerceivedObjectTest
                 egoLength2);
         testSingleDistance(true, Length.ofSI(-16.0), Length.ofSI(-4.0), Length.ofSI(0.0), Length.ofSI(-12.0), otherLength2,
                 egoLength2);
-        UnitTest.testFail(() -> testSingleDistance(true, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(-4.0),
-                otherLength2, egoLength2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> testSingleDistance(true, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0),
+                Length.ofSI(-4.0), otherLength2, egoLength2), IllegalArgumentException.class);
 
         // upstream shorter
         testSingleDistance(false, Length.ofSI(10.0), null, null, null, otherLength2, egoLength2);
@@ -158,9 +158,9 @@ public final class PerceivedObjectTest
                 downstream ? Kinematics.dynamicAhead(headway, Speed.ONE, Acceleration.ONE, false, otherLength, egoLength)
                         : Kinematics.dynamicBehind(headway, Speed.ONE, Acceleration.ONE, false, otherLength, egoLength);
         assertEquals(headway.si, kinematics.getDistance().si, 1e-6);
-        assertNullableEquals(overlapRear, kinematics.getOverlap().getOverlapRear());
-        assertNullableEquals(overlap, kinematics.getOverlap().getOverlap());
-        assertNullableEquals(overlapFront, kinematics.getOverlap().getOverlapFront());
+        assertNullableEquals(overlapRear, kinematics.getOverlap().getOverlapRear().orElse(null));
+        assertNullableEquals(overlap, kinematics.getOverlap().getOverlap().orElse(null));
+        assertNullableEquals(overlapFront, kinematics.getOverlap().getOverlapFront().orElse(null));
     }
 
     /**

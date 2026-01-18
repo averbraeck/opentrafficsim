@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
@@ -34,7 +35,7 @@ public class BlockingGtuColorer extends AbstractLegendColorer<Gtu, Boolean>
      */
     public BlockingGtuColorer()
     {
-        super((gtu) -> gtu.getTacticalPlanner() instanceof Blockable block ? block.isBlocking() : null,
+        super((gtu) -> gtu.getTacticalPlanner() instanceof Blockable block ? Optional.of(block.isBlocking()) : Optional.empty(),
                 (blocking) -> blocking == null ? NA : (blocking ? BLOCKING : NOT_BLOCKING),
                 List.of(new LegendEntry(NOT_BLOCKING, "Not blocking", "Not blocking"),
                         new LegendEntry(BLOCKING, "Blocking", "Blocking"), new LegendEntry(NA, "N/A", "N/A")));

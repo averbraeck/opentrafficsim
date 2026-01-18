@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -46,8 +47,8 @@ public class SumFuller<T extends Task> extends Fuller
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double tsMax = params.getParameterOrNull(TS_MAX);
-                    Throw.when(tsMax != null && value > tsMax, ParameterException.class,
+                    Optional<Double> tsMax = params.getOptionalParameter(TS_MAX);
+                    Throw.when(tsMax.isPresent() && value > tsMax.get(), ParameterException.class,
                             "Value for TS_CRIT should not be larger than TS_MAX.");
                 }
             };
@@ -59,8 +60,8 @@ public class SumFuller<T extends Task> extends Fuller
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
-                    Double tsCrit = params.getParameterOrNull(TS_CRIT);
-                    Throw.when(tsCrit != null && value < tsCrit, ParameterException.class,
+                    Optional<Double> tsCrit = params.getOptionalParameter(TS_CRIT);
+                    Throw.when(tsCrit.isPresent() && value < tsCrit.get(), ParameterException.class,
                             "Value for TS_MAX should not be smaller than TS_CRIT.");
                 }
             };

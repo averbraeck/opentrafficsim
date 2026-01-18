@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 import javax.naming.NamingException;
 
@@ -96,9 +97,9 @@ public final class GtuTest
             }
 
             @Override
-            public Route getRoute()
+            public Optional<Route> getRoute()
             {
-                return null;
+                return Optional.empty();
             }
 
             @Override
@@ -108,15 +109,15 @@ public final class GtuTest
             }
 
             @Override
-            public Node getOrigin()
+            public Optional<Node> getOrigin()
             {
-                return null;
+                return Optional.empty();
             }
 
             @Override
-            public Node getDestination()
+            public Optional<Node> getDestination()
             {
-                return null;
+                return Optional.empty();
             }
 
             @Override

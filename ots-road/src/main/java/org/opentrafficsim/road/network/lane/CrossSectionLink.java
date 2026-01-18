@@ -2,6 +2,7 @@ package org.opentrafficsim.road.network.lane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
@@ -147,18 +148,18 @@ public class CrossSectionLink extends Link
     /**
      * Find a cross section element with a specified id.
      * @param id the id to search for
-     * @return the cross section element with the given id, or null if not found
+     * @return the cross section element with the given id, empty if not found
      */
-    public final CrossSectionElement getCrossSectionElement(final String id)
+    public final Optional<CrossSectionElement> getCrossSectionElement(final String id)
     {
         for (CrossSectionElement cse : this.crossSectionElementList)
         {
             if (cse.getId().equals(id))
             {
-                return cse;
+                return Optional.of(cse);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

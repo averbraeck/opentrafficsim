@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -20,15 +21,12 @@ import org.djutils.exceptions.Try;
 import org.djutils.math.AngleUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 /**
  * Builder for several often used operational plans. E.g., decelerate to come to a full stop at the end of a shape; accelerate
@@ -40,6 +38,7 @@ import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class LaneOperationalPlanBuilder
 {
@@ -117,8 +116,8 @@ public final class LaneOperationalPlanBuilder
             {
                 gtu.setLaneChangeDirection(simplePlan.getLaneChangeDirection());
                 deviative = true;
-                Lane lane = gtu.getPosition().lane().getAdjacentLane(simplePlan.getLaneChangeDirection(), gtu.getType());
-                Throw.when(lane == null, IllegalStateException.class, "Starting lane change without adjacent lane.");
+                Lane lane = gtu.getPosition().lane().getAdjacentLane(simplePlan.getLaneChangeDirection(), gtu.getType())
+                        .orElseThrow(() -> new IllegalStateException("Starting lane change without adjacent lane."));
                 double fraction = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
                         lane.getLink().getEndNode().getHeading(), gtu.getLocation().x, gtu.getLocation().y,
                         FractionalFallback.ENDPOINT);
@@ -236,7 +235,7 @@ public final class LaneOperationalPlanBuilder
                 lastPoint = point;
             }
             startDistance = Length.ZERO;
-            lane = gtu.getNextLaneForRoute(lane);
+            lane = gtu.getNextLaneForRoute(lane).orElse(null);
         }
         // Minimum length not reached, add extrapolated point to reach required length
         Point2d lastLastPoint = points.get(points.size() - 2);
@@ -595,12 +594,12 @@ public final class LaneOperationalPlanBuilder
             }
 
             // Move to next lane
-            Lane nextLane = gtu.getNextLaneForRoute(lane);
-            if (nextLane == null)
+            Optional<Lane> nextLane = gtu.getNextLaneForRoute(lane);
+            if (nextLane.isEmpty())
             {
                 return new LanePosition(lane, Length.ofSI(startPosition.lane().getCenterLine().getLength()));
             }
-            lane = nextLane;
+            lane = nextLane.get();
             laneCenter = lane.getCenterLine();
             distCumulLane = 0.0;
         }
@@ -613,7 +612,7 @@ public final class LaneOperationalPlanBuilder
 
     /**
      * Extrapolate target point further in its direction up to horizon, if it is closer than horizon. This can happen if the end
-     * of a route is reached
+     * of a route is reached.
      * @param gtu GTU
      * @param target target point
      * @param horizon horizon
@@ -632,15 +631,15 @@ public final class LaneOperationalPlanBuilder
         /*
          * {@formatter:off}
          * Relative to vehicle (A), we need a point P on the horizon at an
-         * angle 'a'. This point is 'x' extrapolated beyond target (B) at
-         * angle target.rotZ.
-         *  x = dx + x * cos(target.rotZ) = horizon * cos(a)       [1]
-         *  y = dy + x * sin(target.rotZ) = horizon * sin(a)       [2]
+         * angle 'a'. This point is 'h' extrapolated beyond target (B) at
+         * (dx, dy) at angle target.dirZ.
+         *  x = dx + h * cos(target.dirZ) = horizon * cos(a)       [1]
+         *  y = dy + h * sin(target.dirZ) = horizon * sin(a)       [2]
          * Solving a = f(...) for [2] and substituting in [1], and
-         * solving this for s, gives a large equation with two solutions.
+         * solving this for h, gives a large equation with two solutions.
          *
          *                 ..--''' <-- Horizon at horizon from A
-         * target.rotZ  .-'x
+         * target.dirZ  .-'h
          *     <-------P------B (dx, dy) <-- target
          *      (x, y)' ''-.  a\
          *           |      ''-.A <-- vehicle
@@ -651,8 +650,8 @@ public final class LaneOperationalPlanBuilder
         double sinTarget = Math.sin(target.dirZ);
         double c = cosTarget * dx;
         double s = sinTarget * dy;
-        double d = Math
-                .sqrt(-cosTarget * cosTarget * dy * dy + 2 * c * s - sinTarget * sinTarget * dx * dx + horizon.si * horizon.si);
+        double d = Math.sqrt(
+                -cosTarget * cosTarget * dy * dy + 2.0 * c * s - sinTarget * sinTarget * dx * dx + horizon.si * horizon.si);
         double x = Math.max(-c - s - d, -c - s + d); // positive solution
         return new DirectedPoint2d(target.x + x * cosTarget, target.y + x * sinTarget, target.dirZ);
     }
@@ -684,87 +683,6 @@ public final class LaneOperationalPlanBuilder
         Point2d p3 = new Point2d(target.x - rControl * Math.cos(target.dirZ), target.y - rControl * Math.sin(target.dirZ));
         BezierCubic2d bezier = new BezierCubic2d(gtu.getLocation(), p2, p3, target);
         return new OtsLine2d(bezier.toPolyLine(FLATTENER));
-    }
-
-    /**
-     * Creates a path along lane center lines.
-     * @param gtu gtu
-     * @param distance minimum distance
-     * @return path along lane center lines
-     */
-    @Deprecated
-    public static OtsLine2d createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance)
-    {
-        OtsLine2d path = null;
-        LanePosition ref = gtu.getPosition();
-        double f = ref.lane().fraction(ref.position());
-        if (f < 1.0)
-        {
-            path = ref.lane().getCenterLine().extractFractional(Math.max(f, 0.0), 1.0);
-        }
-        Lane prevFrom = null;
-        Lane from = ref.lane();
-        Length prevPos = null;
-        Length pos = ref.position();
-        int n = 1;
-        while (path == null || path.getLength() < distance.si + n * Lane.MARGIN.si)
-        {
-            n++;
-            prevFrom = from;
-            if (null == from)
-            {
-                Logger.ots().warn("About to die: GTU {} has null from value", gtu.getId());
-            }
-            from = gtu.getNextLaneForRoute(from);
-            // if (from != null && from.getType().equals(Lane.SHOULDER))
-            // {
-            // Logger.ots().warn("GTU {} on link {} will move on to shoulder.", gtu.getId(),
-            // ref.getLane().getLink().getId());
-            // }
-            prevPos = pos;
-            pos = Length.ZERO;
-            if (from == null)
-            {
-                // check sink detector
-                for (LaneDetector detector : prevFrom.getDetectors(prevPos, prevFrom.getLength(), gtu.getType()))
-                {
-                    if (detector instanceof SinkDetector && ((SinkDetector) detector).willDestroy(gtu))
-                    {
-                        // just add some length so the GTU is happy to go to the sink
-                        DirectedPoint2d end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
-                        List<Point2d> points = path.getPointList();
-                        points.add(end);
-                        return new OtsLine2d(points);
-                    }
-                }
-                // force lane change, and create path from there
-                for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
-                        LateralDirectionality.RIGHT})
-                {
-                    Lane latLane = prevFrom.getAdjacentLane(lat, gtu.getType());
-                    if (latLane != null && gtu.getNextLaneForRoute(latLane) != null)
-                    {
-                        gtu.changeLaneInstantaneously(lat);
-                        Logger.ots().warn("GTU {} on link {} is forced to change lane towards {}", gtu.getId(),
-                                ref.lane().getLink().getId(), lat);
-                        return createPathAlongCenterLine(gtu, distance);
-                    }
-                }
-                Logger.ots().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu.getId(),
-                        ref.lane().getLink().getId());
-                gtu.destroy();
-                return path;
-            }
-            if (path == null)
-            {
-                path = from.getCenterLine();
-            }
-            else
-            {
-                path = OtsLine2d.concatenate(Lane.MARGIN.si, path, from.getCenterLine());
-            }
-        }
-        return path;
     }
 
 }

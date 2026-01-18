@@ -72,7 +72,11 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
             List<TrajectoryGroup<?>> cache = new ArrayList<>();
             for (Section<? extends LaneData<?>> section : getPath().getSections())
             {
-                cache.add(this.samplerData.getTrajectoryGroup(section.getSource(series)));
+                TrajectoryGroup<?> trajectories = this.samplerData.getTrajectoryGroup(section.getSource(series)).orElse(null);
+                if (trajectories != null)
+                {
+                    cache.add(trajectories);
+                }
             }
             this.trajectoriesCache.set(series, cache);
             this.lastUpdateTime.set(series, getUpdateTime());

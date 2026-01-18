@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -309,10 +310,10 @@ public final class LmrsUtil implements LmrsParameters
      */
     private static void initHeadwayRelaxation(final Parameters params, final PerceivedGtu leader) throws ParameterException
     {
-        Double dlc = leader.getBehavior().getParameters().getParameterOrNull(DLC);
-        if (dlc != null)
+        Optional<Double> dlc = leader.getBehavior().getParameters().getOptionalParameter(DLC);
+        if (dlc.isPresent())
         {
-            setDesiredHeadway(params, dlc, false);
+            setDesiredHeadway(params, dlc.get(), false);
         }
         // else could not be perceived
     }

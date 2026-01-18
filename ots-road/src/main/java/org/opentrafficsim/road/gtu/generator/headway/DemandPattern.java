@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.generator.headway;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.vector.DurationVector;
@@ -30,16 +32,16 @@ public record DemandPattern(FrequencyVector demandVector, DurationVector timeVec
     }
 
     @Override
-    public Duration nextTimeSlice(final Duration time)
+    public Optional<Duration> nextTimeSlice(final Duration time)
     {
         for (Duration d : this.timeVector)
         {
             if (d.gt(time))
             {
-                return d;
+                return Optional.of(d);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
 }

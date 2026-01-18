@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.generator.headway;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -91,12 +92,12 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
         // initial slice times and frequencies
         Duration t1 = now;
         double f1 = this.arrivals.getFrequency(t1, true).si;
-        Duration t2 = this.arrivals.nextTimeSlice(t1);
-        if (t2 == null)
+        Optional<Duration> t2 = this.arrivals.nextTimeSlice(t1);
+        if (t2.isEmpty())
         {
             return null; // no new vehicle
         }
-        double f2 = this.arrivals.getFrequency(t2, false).si;
+        double f2 = this.arrivals.getFrequency(t2.get(), false).si;
         // next vehicle's random factor
         double rem = this.distribution.draw(this.stream);
         if (this.first)
@@ -109,7 +110,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
         while (rem > 0.0)
         {
             // extrapolate to find 'integration = rem' in this slice giving demand slope, this may be beyond the slice length
-            double dt = t2.si - t1.si;
+            double dt = t2.get().si - t1.si;
             double t;
             double slope = (f2 - f1) / dt;
             if (Math.abs(slope) < 1e-12) // no slope
@@ -140,14 +141,14 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             {
                 // next slice
                 rem -= dt * (f1 + f2) / 2; // subtract integral of this slice using trapezoidal rule
-                t1 = t2;
+                t1 = t2.get();
                 t2 = this.arrivals.nextTimeSlice(t1);
-                if (t2 == null)
+                if (t2.isEmpty())
                 {
                     return null; // no new vehicle
                 }
                 f1 = this.arrivals.getFrequency(t1, true).si; // we can't use f1 = f2 due to possible steps in demand
-                f2 = this.arrivals.getFrequency(t2, false).si;
+                f2 = this.arrivals.getFrequency(t2.get(), false).si;
             }
             else
             {

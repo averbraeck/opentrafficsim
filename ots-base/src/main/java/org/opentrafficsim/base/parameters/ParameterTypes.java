@@ -1,5 +1,7 @@
 package org.opentrafficsim.base.parameters;
 
+import java.util.Optional;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -101,10 +103,11 @@ public class ParameterTypes implements ConstraintInterface
             @Override
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
-                Acceleration b0 = params.getParameterOrNull(B0);
-                Throw.when(b0 != null && value.si <= b0.si, ParameterException.class, "Value of b is below or equal to b0");
-                Acceleration bCrit = params.getParameterOrNull(BCRIT);
-                Throw.when(bCrit != null && value.si >= bCrit.si, ParameterException.class,
+                Optional<Acceleration> b0 = params.getOptionalParameter(B0);
+                Throw.when(b0.isPresent() && value.si <= b0.get().si, ParameterException.class,
+                        "Value of b is below or equal to b0");
+                Optional<Acceleration> bCrit = params.getOptionalParameter(BCRIT);
+                Throw.when(bCrit.isPresent() && value.si >= bCrit.get().si, ParameterException.class,
                         "Value of b is above or equal to bCrit");
             }
         };
@@ -115,10 +118,12 @@ public class ParameterTypes implements ConstraintInterface
             @Override
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
-                Acceleration b0 = params.getParameterOrNull(B0);
-                Throw.when(b0 != null && value.si <= b0.si, ParameterException.class, "Value of bCrit is below or equal to b0");
-                Acceleration b = params.getParameterOrNull(B);
-                Throw.when(b != null && value.si <= b.si, ParameterException.class, "Value of bCrit is below or equal to b");
+                Optional<Acceleration> b0 = params.getOptionalParameter(B0);
+                Throw.when(b0.isPresent() && value.si <= b0.get().si, ParameterException.class,
+                        "Value of bCrit is below or equal to b0");
+                Optional<Acceleration> b = params.getOptionalParameter(B);
+                Throw.when(b.isPresent() && value.si <= b.get().si, ParameterException.class,
+                        "Value of bCrit is below or equal to b");
             }
         };
 
@@ -128,10 +133,11 @@ public class ParameterTypes implements ConstraintInterface
             @Override
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
-                Acceleration b = params.getParameterOrNull(B);
-                Throw.when(b != null && value.si >= b.si, ParameterException.class, "Value of b0 is above or equal to b");
-                Acceleration bCrit = params.getParameterOrNull(BCRIT);
-                Throw.when(bCrit != null && value.si >= bCrit.si, ParameterException.class,
+                Optional<Acceleration> b = params.getOptionalParameter(B);
+                Throw.when(b.isPresent() && value.si >= b.get().si, ParameterException.class,
+                        "Value of b0 is above or equal to b");
+                Optional<Acceleration> bCrit = params.getOptionalParameter(BCRIT);
+                Throw.when(bCrit.isPresent() && value.si >= bCrit.get().si, ParameterException.class,
                         "Value of b0 is above or equal to bCrit");
             }
         };
@@ -143,8 +149,8 @@ public class ParameterTypes implements ConstraintInterface
             @Override
             public void check(final Duration value, final Parameters params) throws ParameterException
             {
-                Duration tMax = params.getParameterOrNull(TMAX);
-                Throw.when(tMax != null && value.si >= tMax.si, ParameterException.class,
+                Optional<Duration> tMax = params.getOptionalParameter(TMAX);
+                Throw.when(tMax.isPresent() && value.si >= tMax.get().si, ParameterException.class,
                         "Value of Tmin is above or equal to Tmax");
             }
         };
@@ -154,8 +160,8 @@ public class ParameterTypes implements ConstraintInterface
             @Override
             public void check(final Duration value, final Parameters params) throws ParameterException
             {
-                Duration tMin = params.getParameterOrNull(TMIN);
-                Throw.when(tMin != null && value.si <= tMin.si, ParameterException.class,
+                Optional<Duration> tMin = params.getOptionalParameter(TMIN);
+                Throw.when(tMin.isPresent() && value.si <= tMin.get().si, ParameterException.class,
                         "Value of Tmax is below or equal to Tmin");
             }
         };

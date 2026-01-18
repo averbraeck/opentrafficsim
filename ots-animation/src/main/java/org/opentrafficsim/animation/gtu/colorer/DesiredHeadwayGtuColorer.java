@@ -46,7 +46,7 @@ public class DesiredHeadwayGtuColorer extends AbstractLegendBarColorer<Gtu, Dura
      */
     private DesiredHeadwayGtuColorer(final BoundsPaintScale boundPaintScale, final List<LegendEntry> legend)
     {
-        super((gtu) -> gtu.getParameters().getParameterOrNull(ParameterTypes.T),
+        super((gtu) -> gtu.getParameters().getOptionalParameter(ParameterTypes.T),
                 (t) -> t == null ? UNKNOWN : boundPaintScale.getPaint(t.si), legend, boundPaintScale);
     }
 

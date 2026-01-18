@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.naming.NamingException;
 
@@ -249,12 +250,15 @@ public class DefaultAnimationFactory implements EventListener
             if (event.getType().equals(Network.GTU_ADD_EVENT))
             {
                 // schedule the addition of the GTU to prevent it from not having an operational plan
-                LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) event.getContent());
-                this.simulator.scheduleEventNow(() -> animateGTU(gtu));
+                Optional<Gtu> gtu = this.network.getGTU((String) event.getContent());
+                if (gtu.isPresent() && gtu.get() instanceof LaneBasedGtu laneBasedGtu)
+                {
+                    this.simulator.scheduleEventNow(() -> animateGTU(laneBasedGtu));
+                }
             }
             else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
             {
-                LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) event.getContent());
+                LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) event.getContent()).get();
                 if (this.animatedGTUs.containsKey(gtu))
                 {
                     this.animatedGTUs.get(gtu).destroy(gtu.getSimulator());

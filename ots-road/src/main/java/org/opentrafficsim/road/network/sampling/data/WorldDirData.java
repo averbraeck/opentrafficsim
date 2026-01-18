@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
+import java.util.Optional;
+
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vfloat.scalar.FloatDirection;
 import org.djunits.value.vfloat.vector.FloatDirectionVector;
@@ -22,9 +24,9 @@ public class WorldDirData extends ExtendedDataFloat<DirectionUnit, FloatDirectio
     }
 
     @Override
-    public FloatDirection getValue(final GtuDataRoad gtu)
+    public Optional<FloatDirection> getValue(final GtuDataRoad gtu)
     {
-        return convertValue((float) gtu.getGtu().getLocation().dirZ);
+        return Optional.ofNullable(convertValue((float) gtu.getGtu().getLocation().dirZ));
     }
 
     @Override

@@ -101,7 +101,7 @@ public final class NetworkTest implements EventListener
         assertEquals(node1, network.getNodeMap().values().iterator().next(), "Node is node1");
         assertEquals(1, network.getRawNodeMap().size(), "Raw node map also contains one node");
         assertEquals(node1, network.getRawNodeMap().values().iterator().next(), "Raw node map also contains node1");
-        assertEquals(node1, network.getNode(node1.getId()), "Node can be retrieved by id");
+        assertEquals(node1, network.getNode(node1.getId()).get(), "Node can be retrieved by id");
         assertTrue(network.containsNode("node1"), "network contains a node with id node1");
         // Create a node that is NOT in this network; to do that we must create another network
         Network otherNetwork = new Network("other network", simulator);
@@ -154,7 +154,7 @@ public final class NetworkTest implements EventListener
         network.addNode(node1);
         assertEquals(1, network.getNodeMap().size(), "Node map now contains one node");
         assertEquals(node1, network.getNodeMap().values().iterator().next(), "Node is node1");
-        assertEquals(node1, network.getNode(node1.getId()), "Node can be retrieved by id");
+        assertEquals(node1, network.getNode(node1.getId()).get(), "Node can be retrieved by id");
         assertEquals(0, network.getLinkMap().size(), "LinkMap is empty");
         assertEquals(0, this.linkAddedCount, "link add event count is 0");
         assertEquals(0, this.linkRemovedCount, "link removed event count is 0");
@@ -210,8 +210,8 @@ public final class NetworkTest implements EventListener
         {
             // Ignore expected exception
         }
-        assertEquals(link1, network.getLink(node1, node3), "link1 is the link connecting node1 to node3");
-        assertEquals(link1, network.getLink("node1", "node3"),
+        assertEquals(link1, network.getLink(node1, node3).get(), "link1 is the link connecting node1 to node3");
+        assertEquals(link1, network.getLink("node1", "node3").get(),
                 "link1 is the link connecting node named node1 to node named node3");
         Node node4 = new Node(otherNetwork, "node4", new Point2d(-2, -3));
         Link otherLink = new Link(otherNetwork, "otherLink", node2, node4, DefaultsNl.ROAD,
@@ -271,14 +271,14 @@ public final class NetworkTest implements EventListener
         {
             // Ignore expected exception
         }
-        assertEquals(link1, network.getLink("node1", "node3"), "lookup link from node node1 to node node3");
-        assertEquals(link1, network.getLink(node1, node3), "lookup link from node1 to node3");
-        assertEquals(secondLink, network.getLink("node3", "node1"), "lookup link from node node3 to node node1");
-        assertEquals(secondLink, network.getLink(node3, node1), "lookup link from node3 to node1");
-        assertNull(network.getLink(node1, node1), "lookup link that does not exist but both nodes do exist");
-        assertNull(network.getLink("node1", "node1"), "lookup link that does not exist but both nodes do exist");
-        assertEquals(link1, network.getLink("link1"), "lookup link by name");
-        assertEquals(secondLink, network.getLink("reverseLink"), "lookup link by name");
+        assertEquals(link1, network.getLink("node1", "node3").get(), "lookup link from node node1 to node node3");
+        assertEquals(link1, network.getLink(node1, node3).get(), "lookup link from node1 to node3");
+        assertEquals(secondLink, network.getLink("node3", "node1").get(), "lookup link from node node3 to node node1");
+        assertEquals(secondLink, network.getLink(node3, node1).get(), "lookup link from node3 to node1");
+        assertNull(network.getLink(node1, node1).orElse(null), "lookup link that does not exist but both nodes do exist");
+        assertNull(network.getLink("node1", "node1").orElse(null), "lookup link that does not exist but both nodes do exist");
+        assertEquals(link1, network.getLink("link1").get(), "lookup link by name");
+        assertEquals(secondLink, network.getLink("reverseLink").get(), "lookup link by name");
         network.removeLink(link1);
         assertFalse(network.containsLink(link1), "Network no longer contains link1");
         assertFalse(network.containsLink("link1"), "Network no longer contains link with name link1");
@@ -308,8 +308,8 @@ public final class NetworkTest implements EventListener
         assertEquals(1, this.nodeRemovedCount, "node removed event count is 1");
         assertEquals(2, this.gtuAddedCount, "GTU add event count is 2");
         assertEquals(0, this.gtuRemovedCount, "GTU removed event count is 0");
-        assertEquals(gtu1, network.getGTU("gtu1"), "gtu1 can be retrieved");
-        assertEquals(gtu2, network.getGTU("gtu2"), "gtu2 can be retrieved");
+        assertEquals(gtu1, network.getGTU("gtu1").get(), "gtu1 can be retrieved");
+        assertEquals(gtu2, network.getGTU("gtu2").get(), "gtu2 can be retrieved");
         network.removeGTU(gtu1);
         assertEquals(2, this.linkAddedCount, "link add event count is 2");
         assertEquals(1, this.linkRemovedCount, "link removed event count is 1");
@@ -324,8 +324,8 @@ public final class NetworkTest implements EventListener
         assertEquals(1, this.nodeRemovedCount, "node removed event count is 1");
         assertEquals(2, this.gtuAddedCount, "GTU add event count is 2");
         assertEquals(2, this.gtuRemovedCount, "GTU removed event count is 2");
-        assertNull(network.getGTU("gtu1"), "gtu1 can no longer be retrieved");
-        assertNull(network.getGTU("gtu2"), "gtu2 can no longer be retrieved");
+        assertNull(network.getGTU("gtu1").orElse(null), "gtu1 can no longer be retrieved");
+        assertNull(network.getGTU("gtu2").orElse(null), "gtu2 can no longer be retrieved");
         assertTrue(network.toString().contains(network.getId()), "toString contains the name of the network");
     }
 
@@ -419,17 +419,17 @@ public final class NetworkTest implements EventListener
         assertEquals(0, network.getDefinedRouteMap(DefaultsNl.VEHICLE).size(), "initially the network has 0 routes");
         network.addRoute(carType, route1);
         assertEquals(1, network.getDefinedRouteMap(carType).size(), "list for carType contains one entry");
-        assertEquals(route1, network.getRoute(carType, "route1"), "route for carType route1 is route1");
-        assertNull(network.getRoute(bicycleType, "route1"), "route for bycicleType route1 is null");
+        assertEquals(route1, network.getRoute(carType, "route1").get(), "route for carType route1 is route1");
+        assertNull(network.getRoute(bicycleType, "route1").orElse(null), "route for bycicleType route1 is null");
         assertEquals(0, network.getDefinedRouteMap(bicycleType).size(), "list for bicycleType contains 0 routes");
         network.addRoute(carType, route2);
         network.addRoute(bicycleType, route3);
         assertEquals(2, network.getDefinedRouteMap(carType).size(), "list for carType contains two entries");
         assertEquals(1, network.getDefinedRouteMap(bicycleType).size(), "list for bicycleType contains one entry");
-        assertEquals(route1, network.getRoute(carType, "route1"), "route for carType route1 is route1");
-        assertEquals(route2, network.getRoute(carType, "route2"), "route for carType route2 is route2");
-        assertEquals(route3, network.getRoute(bicycleType, "route3"), "route for bicycle route3 is route3");
-        assertNull(network.getRoute(bicycleType, "route1"), "route for bicycle route1 is null");
+        assertEquals(route1, network.getRoute(carType, "route1").get(), "route for carType route1 is route1");
+        assertEquals(route2, network.getRoute(carType, "route2").get(), "route for carType route2 is route2");
+        assertEquals(route3, network.getRoute(bicycleType, "route3").get(), "route for bicycle route3 is route3");
+        assertNull(network.getRoute(bicycleType, "route1").orElse(null), "route for bicycle route1 is null");
         try
         {
             network.addRoute(carType, route2);
@@ -479,9 +479,9 @@ public final class NetworkTest implements EventListener
         network.removeRoute(carType, route1);
         assertEquals(1, network.getDefinedRouteMap(carType).size(), "list for carType now contains one entry");
         assertEquals(1, network.getDefinedRouteMap(bicycleType).size(), "list for bicycleType contains one entry");
-        assertNull(network.getRoute(carType, "route1"), "route for carType route1 is null");
-        assertEquals(route2, network.getRoute(carType, "route2"), "route for carType route2 is route2");
-        assertEquals(route3, network.getRoute(bicycleType, "route3"), "route for bicycle route3 is route3");
+        assertNull(network.getRoute(carType, "route1").orElse(null), "route for carType route1 is null");
+        assertEquals(route2, network.getRoute(carType, "route2").get(), "route for carType route2 is route2");
+        assertEquals(route3, network.getRoute(bicycleType, "route3").get(), "route for bicycle route3 is route3");
         assertTrue(network.containsRoute(carType, route2), "network contains route2 for carType");
         assertFalse(network.containsRoute(carType, route1), "network does not contain route1 for carType");
         assertTrue(network.containsRoute(carType, "route2"), "network contains route with name route2 for carType");
@@ -571,7 +571,7 @@ public final class NetworkTest implements EventListener
         int maxNode = nodes.size();
         for (int fromNodeIndex = 0; fromNodeIndex < maxNode; fromNodeIndex++)
         {
-            Node fromNode = network.getNode("node" + fromNodeIndex);
+            Node fromNode = network.getNode("node" + fromNodeIndex).get();
             for (int intermediateNodes = 0; intermediateNodes <= 2; intermediateNodes++)
             {
                 // Because the number of nodes is odd, and they are evenly spread out; there is never a tie
@@ -588,7 +588,7 @@ public final class NetworkTest implements EventListener
                         {
                             nextNodeIndex = (nextNodeIndex + 1) % maxNode;
                         }
-                        viaNodes.add(network.getNode("node" + nextNodeIndex));
+                        viaNodes.add(network.getNode("node" + nextNodeIndex).get());
                         prevNodeIndex = nextNodeIndex;
                         pathNumber /= (maxNode - 1);
                     }
@@ -604,12 +604,12 @@ public final class NetworkTest implements EventListener
                         // System.out.print(" " + node.getId());
                         // }
                         // System.out.println("");
-                        Node toNode = network.getNode("node" + toNodeIndex);
+                        Node toNode = network.getNode("node" + toNodeIndex).get();
                         Route route = network.getShortestRouteBetween(DefaultsNl.VEHICLE, fromNode, toNode, viaNodes);
                         // Now compute the expected path using our knowledge about the structure
                         List<Node> expectedPath = new ArrayList<>();
                         expectedPath.add(fromNode);
-                        viaNodes.add(network.getNode("node" + toNodeIndex));
+                        viaNodes.add(network.getNode("node" + toNodeIndex).get());
                         int from = fromNodeIndex;
                         for (int positionInPlan = 0; positionInPlan < viaNodes.size(); positionInPlan++)
                         {
@@ -624,7 +624,7 @@ public final class NetworkTest implements EventListener
                             while (from != to)
                             {
                                 from = (from + (clockWise ? 1 : maxNode - 1)) % maxNode;
-                                expectedPath.add(network.getNode("node" + from));
+                                expectedPath.add(network.getNode("node" + from).get());
                             }
                         }
                         assertEquals(expectedPath.size(), route.size(), "expected path should have same length as route");
@@ -769,7 +769,7 @@ public final class NetworkTest implements EventListener
                 // create links
                 if (j > 0)
                 {
-                    Node up = network.getNode("Node " + (nodeNumber - 1));
+                    Node up = network.getNode("Node " + (nodeNumber - 1)).get();
                     String id = "Link " + (nodeNumber - 1) + "-" + nodeNumber;
                     OtsLine2d designLine = new OtsLine2d(up.getPoint(), node.getPoint());
                     new Link(network, id, up, node, DefaultsNl.RURAL, designLine, null);
@@ -779,7 +779,7 @@ public final class NetworkTest implements EventListener
                 }
                 if (i > 0)
                 {
-                    Node left = network.getNode("Node " + (nodeNumber - gridSize));
+                    Node left = network.getNode("Node " + (nodeNumber - gridSize)).get();
                     String id = "Link " + (nodeNumber - gridSize) + "-" + nodeNumber;
                     OtsLine2d designLine = new OtsLine2d(left.getPoint(), node.getPoint());
                     new Link(network, id, left, node, DefaultsNl.RURAL, designLine, null);

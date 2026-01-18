@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.channel;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -33,8 +35,8 @@ public final class AdaptationUpdateTime implements BehavioralAdaptation, Statele
                 @Override
                 public void check(final Duration value, final Parameters params) throws ParameterException
                 {
-                    Duration dtMax = params.getParameterOrNull(DT_MAX);
-                    Throw.when(dtMax != null && value.si >= dtMax.si, ParameterException.class,
+                    Optional<Duration> dtMax = params.getOptionalParameter(DT_MAX);
+                    Throw.when(dtMax.isPresent() && value.si >= dtMax.get().si, ParameterException.class,
                             "Value of DT_MIN is above or equal to DT_MAX");
                 }
             };
@@ -46,8 +48,8 @@ public final class AdaptationUpdateTime implements BehavioralAdaptation, Statele
                 @Override
                 public void check(final Duration value, final Parameters params) throws ParameterException
                 {
-                    Duration dtMin = params.getParameterOrNull(DT_MIN);
-                    Throw.when(dtMin != null && value.si <= dtMin.si, ParameterException.class,
+                    Optional<Duration> dtMin = params.getOptionalParameter(DT_MIN);
+                    Throw.when(dtMin.isPresent() && value.si <= dtMin.get().si, ParameterException.class,
                             "Value of DT_MAX is below or equal to DT_MIN");
                 }
             };

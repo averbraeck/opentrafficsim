@@ -253,13 +253,13 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
             Duration start = startTime.gt(spaceTimeRegion.startTime()) ? startTime : spaceTimeRegion.startTime();
             Duration end = endTime.lt(spaceTimeRegion.endTime()) ? endTime : spaceTimeRegion.endTime();
             TrajectoryGroup<G> trajectoryGroup;
-            if (this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.lane()) == null)
+            if (this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.lane()).isEmpty())
             {
                 trajectoryGroup = new TrajectoryGroup<>(start, spaceTimeRegion.lane());
             }
             else
             {
-                trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.lane())
+                trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.lane()).get()
                         .getTrajectoryGroup(spaceTimeRegion.startPosition(), spaceTimeRegion.endPosition(), start, end);
             }
             for (Trajectory<G> trajectory : trajectoryGroup.getTrajectories())

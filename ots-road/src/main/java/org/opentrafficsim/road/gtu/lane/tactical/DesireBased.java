@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import java.util.Optional;
+
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 
@@ -19,8 +21,8 @@ public interface DesireBased
     /**
      * Returns the latest desire from the specified incentive.
      * @param incentiveClass incentive class
-     * @return latest desire from the specified incentive
+     * @return latest desire from the specified incentive, empty if this incentive is not active
      */
-    Desire getLatestDesire(Class<? extends Incentive> incentiveClass);
+    Optional<Desire> getLatestDesire(Class<? extends Incentive> incentiveClass);
 
 }

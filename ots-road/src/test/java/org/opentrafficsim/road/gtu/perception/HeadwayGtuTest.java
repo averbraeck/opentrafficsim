@@ -162,30 +162,30 @@ public final class HeadwayGtuTest
         assertEquals(objectType, perceivedGTU.getObjectType(), "Object type should be " + objectType);
         if (null == overlap)
         {
-            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlap(), "overlap should be null");
+            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlap().orElse(null), "overlap should be null");
         }
         else
         {
-            assertEquals(overlap.si, perceivedGTU.getKinematics().getOverlap().getOverlap().si, overlap.si / 99999,
+            assertEquals(overlap.si, perceivedGTU.getKinematics().getOverlap().getOverlap().get().si, overlap.si / 99999,
                     "overlap should be " + overlap);
         }
         if (null == overlapFront)
         {
-            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlapFront(), "overlapFront should be null");
+            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlapFront().orElse(null), "overlapFront should be null");
         }
         else
         {
-            assertEquals(overlapFront.si, perceivedGTU.getKinematics().getOverlap().getOverlapFront().si,
+            assertEquals(overlapFront.si, perceivedGTU.getKinematics().getOverlap().getOverlapFront().get().si,
                     overlapFront.si / 99999, "overlapFront should be " + overlapFront);
         }
         if (null == overlap)
         {
-            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlapRear(), "overlapRear should be null");
+            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlapRear().orElse(null), "overlapRear should be null");
         }
         else
         {
-            assertEquals(overlapRear.si, perceivedGTU.getKinematics().getOverlap().getOverlapRear().si, overlapRear.si / 99999,
-                    "overlapRear should be " + overlapRear);
+            assertEquals(overlapRear.si, perceivedGTU.getKinematics().getOverlap().getOverlapRear().get().si,
+                    overlapRear.si / 99999, "overlapRear should be " + overlapRear);
         }
         if (null == speed)
         {

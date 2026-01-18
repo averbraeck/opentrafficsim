@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -187,7 +188,7 @@ public class SamplerData<G extends GtuData> extends Table
      * @param lane lane direction
      * @param trajectoryGroup trajectory group for given lane direction
      */
-    protected final void putTrajectoryGroup(final LaneData<?> lane, final TrajectoryGroup<G> trajectoryGroup)
+    protected void putTrajectoryGroup(final LaneData<?> lane, final TrajectoryGroup<G> trajectoryGroup)
     {
         this.trajectories.put(lane, trajectoryGroup);
     }
@@ -196,7 +197,7 @@ public class SamplerData<G extends GtuData> extends Table
      * Returns the set of lanes.
      * @return lanes (safe copy)
      */
-    public final Set<LaneData<?>> getLanes()
+    public Set<LaneData<?>> getLanes()
     {
         return new LinkedHashSet<>(this.trajectories.keySet());
     }
@@ -206,7 +207,7 @@ public class SamplerData<G extends GtuData> extends Table
      * @param lane lane
      * @return whether there is data for the give lane
      */
-    public final boolean contains(final LaneData<?> lane)
+    public boolean contains(final LaneData<?> lane)
     {
         return this.trajectories.containsKey(lane);
     }
@@ -214,18 +215,18 @@ public class SamplerData<G extends GtuData> extends Table
     /**
      * Returns the trajectory group of given lane.
      * @param lane lane
-     * @return trajectory group of given lane, {@code null} if none
+     * @return trajectory group of given lane, empty if none
      */
-    public final TrajectoryGroup<G> getTrajectoryGroup(final LaneData<?> lane)
+    public Optional<TrajectoryGroup<G>> getTrajectoryGroup(final LaneData<?> lane)
     {
-        return this.trajectories.get(lane);
+        return Optional.ofNullable(this.trajectories.get(lane));
     }
 
     /**
      * Write the contents of the sampler in to a file. By default this is zipped.
      * @param file file
      */
-    public final void writeToFile(final String file)
+    public void writeToFile(final String file)
     {
         writeToFile(file, Compression.ZIP);
     }
@@ -235,7 +236,7 @@ public class SamplerData<G extends GtuData> extends Table
      * @param file file
      * @param compression how to compress the data
      */
-    public final void writeToFile(final String file, final Compression compression)
+    public void writeToFile(final String file, final Compression compression)
     {
         try
         {
@@ -281,7 +282,7 @@ public class SamplerData<G extends GtuData> extends Table
     /**
      * Iterator over the sampler data. It iterates over lanes, trajectories on a lane, and indices within the trajectory.
      */
-    private final class SamplerDataIterator implements Iterator<Row>
+    private class SamplerDataIterator implements Iterator<Row>
     {
         /** Iterator over the sampled lanes. */
         private Iterator<Entry<LaneData<?>, TrajectoryGroup<G>>> laneIterator =

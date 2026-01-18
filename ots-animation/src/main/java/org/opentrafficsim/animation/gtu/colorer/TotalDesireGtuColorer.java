@@ -1,5 +1,7 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
+import java.util.Optional;
+
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
@@ -22,9 +24,10 @@ public class TotalDesireGtuColorer extends DesireGtuColorer
     public TotalDesireGtuColorer()
     {
         super((gtu) -> gtu.getParameters().contains(LmrsParameters.DLEFT) && gtu.getParameters().contains(LmrsParameters.DRIGHT)
-                ? new Desire(gtu.getParameters().getParameterOrNull(LmrsParameters.DLEFT),
-                        gtu.getParameters().getParameterOrNull(LmrsParameters.DRIGHT))
-                : null);
+                ? Optional.of(new Desire(gtu.getParameters().getOptionalParameter(LmrsParameters.DLEFT)
+                        .get(),
+                        gtu.getParameters().getOptionalParameter(LmrsParameters.DRIGHT).get()))
+                : Optional.empty());
     }
 
     @Override

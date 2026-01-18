@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.Optional;
+
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -71,7 +73,8 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
         {
             return;
         }
-        BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
+        BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute().orElseThrow(
+                () -> new GtuException("Unable to determine acceleration for bus stops for bus without bus schedule."));
         Duration now = gtu.getSimulator().getSimulatorTime();
         Iterable<PerceivedBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
         {
@@ -86,7 +89,7 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
                 // check when to leave
                 boolean stoppedAtStop = stop.getRelativeLane().isCurrent() && stop.getDistance().le(STOP_DISTANCE)
                         && perception.getPerceptionCategory(EgoPerception.class).getSpeed().eq0();
-                if (busSchedule.getActualDepartureBusStop(busStopId) == null)
+                if (busSchedule.getActualDepartureBusStop(busStopId).isEmpty())
                 {
                     if (stoppedAtStop)
                     {
@@ -101,8 +104,8 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
                 }
 
                 // stop if not known yet, or before departure time
-                if (busSchedule.getActualDepartureBusStop(busStopId) == null
-                        || now.lt(busSchedule.getActualDepartureBusStop(busStopId)))
+                Optional<Duration> actualDeparture = busSchedule.getActualDepartureBusStop(busStopId);
+                if (actualDeparture.isEmpty() || now.lt(actualDeparture.get()))
                 {
                     if (stoppedAtStop)
                     {

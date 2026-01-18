@@ -80,7 +80,7 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
     @Override
     public void accept(final XsdTreeNode t)
     {
-        JLabel label = ((JLabel) this.editor.getTab("Route"));
+        JLabel label = ((JLabel) this.editor.getTab("Route").get());
         label.setText(LocalDateTime.now().toString());
         this.editor.focusTab("Route");
     }

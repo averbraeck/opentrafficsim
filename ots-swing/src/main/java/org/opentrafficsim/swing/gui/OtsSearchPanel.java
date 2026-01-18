@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Optional;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -59,26 +60,26 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     {
         this.otsAnimationPanel = otsAnimationPanel;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        this.add(new JLabel(OtsControlPanel.loadIcon("/View.png")));
+        this.add(new JLabel(OtsControlPanel.loadIcon("/View.png").get()));
         this.add(Box.createHorizontalStrut(5));
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {
             @Override
-            Gtu searchNetwork(final Network network, final String id)
+            Optional<Gtu> searchNetwork(final Network network, final String id)
             {
                 return network.getGTU(id);
             }
         }, new ObjectKind<Node>("Node")
         {
             @Override
-            Node searchNetwork(final Network network, final String id)
+            Optional<Node> searchNetwork(final Network network, final String id)
             {
                 return network.getNode(id);
             }
         }, new ObjectKind<Link>("Link")
         {
             @Override
-            Link searchNetwork(final Network network, final String id)
+            Optional<Link> searchNetwork(final Network network, final String id)
             {
                 return network.getLink(id);
             }
@@ -192,9 +193,9 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
          * Lookup an object of type T in an OTS network.
          * @param network the OTS network
          * @param id id of the object to return
-         * @return the object in the network of the correct type and matching id, or null if no matching object was found.
+         * @return the object in the network of the correct type and matching id, empty if no matching object was found.
          */
-        abstract T searchNetwork(Network network, String id);
+        abstract Optional<T> searchNetwork(Network network, String id);
 
         /**
          * Produce the text that will appear in the combo box. This method should be overridden to implement localization.

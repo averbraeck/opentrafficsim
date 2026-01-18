@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
@@ -174,7 +175,7 @@ public final class SamplerTest
         TestGtuData truck = new TestGtuData("4", "A", "B", "truck", "routeAB", Speed.ofSI(22.0));
 
         sampler.addGtuWithSnapshot(lane1, length.times(1.1), Speed.ofSI(25.0), Acceleration.ZERO, Duration.ZERO, car1);
-        assertTrue(sampler.getSamplerData().getTrajectoryGroup(lane1).getTrajectories().isEmpty(),
+        assertTrue(sampler.getSamplerData().getTrajectoryGroup(lane1).get().getTrajectories().isEmpty(),
                 "Add GTU beyond length of lane should not have added data.");
         assertTrue(sampler.getSamplerData().isEmpty());
 
@@ -481,7 +482,7 @@ public final class SamplerTest
     public void trajectoryAcceptListTest(final TestSampler sampler, final TestLaneData lane)
     {
         TrajectoryAcceptList trajectoryAcceptList = new TrajectoryAcceptList();
-        TrajectoryGroup<TestGtuData> group = sampler.getSamplerData().getTrajectoryGroup(lane);
+        TrajectoryGroup<TestGtuData> group = sampler.getSamplerData().getTrajectoryGroup(lane).get();
         List<Trajectory<TestGtuData>> trajectories = new ArrayList<>();
         for (Trajectory<TestGtuData> trajectory : group)
         {
@@ -558,9 +559,9 @@ public final class SamplerTest
         }
 
         @Override
-        public FloatDirection getValue(final TestGtuData gtu)
+        public Optional<FloatDirection> getValue(final TestGtuData gtu)
         {
-            return FloatDirection.ZERO;
+            return Optional.of(FloatDirection.ZERO);
         }
 
         @Override

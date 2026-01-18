@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -325,8 +326,8 @@ public class XsdTreeNode extends LocalEventProducer
         this.active = this.minOccurs > 0;
         this.pathString = buildPathLocation();
         this.isIncluded = parent.isIncluded;
-        this.value = referringXsdNode == null ? (xsdNode == null ? null : DocumentReader.getAttribute(xsdNode, "default"))
-                : DocumentReader.getAttribute(referringXsdNode, "default");
+        this.value = referringXsdNode == null ? DocumentReader.getAttribute(xsdNode, "default").orElse(null)
+                : DocumentReader.getAttribute(referringXsdNode, "default").orElse(null);
     }
 
     /**
@@ -803,11 +804,11 @@ public class XsdTreeNode extends LocalEventProducer
         this.attributeValues = new ArrayList<>();
         this.attributeValid = new ArrayList<>();
         this.attributeInvalidMessage = new ArrayList<>();
-        this.description = NodeAnnotation.DESCRIPTION.get(getRelevantNode());
+        this.description = NodeAnnotation.DESCRIPTION.get(getRelevantNode()).orElse(null);
         int descriptionSpecificity = this.description != null ? 0 : Integer.MIN_VALUE;
         Node complexType =
                 (this.xsdNode.getNodeName().equals("xsd:complexType") || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
-                        ? this.xsdNode : DocumentReader.getChild(this.xsdNode, "xsd:complexType");
+                        ? this.xsdNode : DocumentReader.getChild(this.xsdNode, "xsd:complexType").orElse(null);
         if (complexType != null && this.xsdNode.hasChildNodes())
         {
             findAttributesAndDescription(complexType, -1, descriptionSpecificity);
@@ -824,17 +825,17 @@ public class XsdTreeNode extends LocalEventProducer
      */
     private void findAttributesAndDescription(final Node node, final int nodeSpecificity, final int descriptionSpecificity)
     {
-        String descript = NodeAnnotation.DESCRIPTION.get(node);
+        Optional<String> descript = NodeAnnotation.DESCRIPTION.get(node);
         int updatedDescriptionSpecificity = descriptionSpecificity;
-        if (descript != null && descriptionSpecificity < nodeSpecificity)
+        if (descript.isPresent() && descriptionSpecificity < nodeSpecificity)
         {
             updatedDescriptionSpecificity = nodeSpecificity;
-            this.description = descript;
+            this.description = descript.get();
         }
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
             Node child = node.getChildNodes().item(childIndex);
-            if (child.getNodeName().equals("xsd:attribute") && DocumentReader.getAttribute(child, "name") != null)
+            if (child.getNodeName().equals("xsd:attribute") && DocumentReader.getAttribute(child, "name").isPresent())
             {
                 this.attributeNodes.add(child);
                 this.attributeValues.add(null);
@@ -843,25 +844,25 @@ public class XsdTreeNode extends LocalEventProducer
             }
             if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
             {
-                Node extension = DocumentReader.getChild(child, "xsd:extension");
-                if (extension != null)
+                Optional<Node> extension = DocumentReader.getChild(child, "xsd:extension");
+                if (extension.isPresent())
                 {
-                    findAttributesAndDescription(extension, nodeSpecificity - 1, updatedDescriptionSpecificity);
-                    String base = DocumentReader.getAttribute(extension, "base");
-                    Node baseNode = this.schema.getType(base);
-                    if (baseNode != null)
+                    findAttributesAndDescription(extension.get(), nodeSpecificity - 1, updatedDescriptionSpecificity);
+                    String base = DocumentReader.getAttribute(extension.get(), "base").get();
+                    Optional<Node> baseNode = this.schema.getType(base);
+                    if (baseNode.isPresent())
                     {
-                        findAttributesAndDescription(baseNode, nodeSpecificity - 2, updatedDescriptionSpecificity);
+                        findAttributesAndDescription(baseNode.get(), nodeSpecificity - 2, updatedDescriptionSpecificity);
                     }
                 }
-                Node restriction = DocumentReader.getChild(child, "xsd:restriction");
-                if (restriction != null)
+                Optional<Node> restriction = DocumentReader.getChild(child, "xsd:restriction");
+                if (restriction.isPresent())
                 {
-                    String base = DocumentReader.getAttribute(restriction, "base");
-                    Node baseNode = this.schema.getType(base);
-                    if (baseNode != null)
+                    String base = DocumentReader.getAttribute(restriction.get(), "base").get();
+                    Optional<Node> baseNode = this.schema.getType(base);
+                    if (baseNode.isPresent())
                     {
-                        findAttributesAndDescription(baseNode, nodeSpecificity - 2, descriptionSpecificity);
+                        findAttributesAndDescription(baseNode.get(), nodeSpecificity - 2, descriptionSpecificity);
                     }
                 }
             }
@@ -909,7 +910,7 @@ public class XsdTreeNode extends LocalEventProducer
         if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
         {
             boolean isDefaultBoolean = false;
-            if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type")))
+            if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type").orElse(null)))
             {
                 isDefaultBoolean = getDefaultAttributeValue(index).equals(value);
             }
@@ -928,10 +929,10 @@ public class XsdTreeNode extends LocalEventProducer
     /**
      * Returns the default value for the attribute.
      * @param index attribute index.
-     * @return default value for the attribute, or {@code null} if there is no default value.
+     * @return default value for the attribute, empty if there is no default value.
      * @throws IndexOutOfBoundsException when the index is not in the bounds for the number of attributes
      */
-    public String getDefaultAttributeValue(final int index)
+    public Optional<String> getDefaultAttributeValue(final int index)
     {
         assureAttributesAndDescription();
         Objects.checkIndex(index, attributeCount());
@@ -999,7 +1000,7 @@ public class XsdTreeNode extends LocalEventProducer
         for (int index = 0; index < this.attributeNodes.size(); index++)
         {
             Node attr = this.attributeNodes.get(index);
-            if (DocumentReader.getAttribute(attr, "name").equals(attribute))
+            if (attribute.equals(DocumentReader.getAttribute(attr, "name").orElse(null)))
             {
                 return index;
             }
@@ -1016,8 +1017,7 @@ public class XsdTreeNode extends LocalEventProducer
     public String getAttributeNameByIndex(final int index)
     {
         Objects.checkIndex(index, attributeCount());
-        String name = DocumentReader.getAttribute(this.attributeNodes.get(index), "name");
-        return name;
+        return DocumentReader.getAttribute(this.attributeNodes.get(index), "name").get();
     }
 
     /**
@@ -1031,7 +1031,7 @@ public class XsdTreeNode extends LocalEventProducer
         for (int index = 0; index < this.attributeNodes.size(); index++)
         {
             Node attr = this.attributeNodes.get(index);
-            if (DocumentReader.getAttribute(attr, "name").equals(attribute))
+            if (attribute.equals(DocumentReader.getAttribute(attr, "name").orElse(null)))
             {
                 return true;
             }
@@ -1134,7 +1134,7 @@ public class XsdTreeNode extends LocalEventProducer
             for (int index = 0; index < attributeCount(); index++)
             {
                 Node node = this.attributeNodes.get(index);
-                if (DocumentReader.getAttribute(node, "name").equals("Id"))
+                if ("Id".equals(DocumentReader.getAttribute(node, "name").orElse(null)))
                 {
                     this.isIdentifiable = true;
                     this.idIndex = index;
@@ -1332,9 +1332,9 @@ public class XsdTreeNode extends LocalEventProducer
     public boolean canContain(final XsdTreeNode copied)
     {
         return this.xsdNode == copied.xsdNode || (this.referringXsdNode != null && copied.referringXsdNode != null
-                && DocumentReader.getAttribute(this.referringXsdNode, "type") != null
-                && DocumentReader.getAttribute(this.referringXsdNode, "type")
-                        .equals(DocumentReader.getAttribute(copied.referringXsdNode, "type")));
+                && DocumentReader.getAttribute(this.referringXsdNode, "type").isPresent()
+                && DocumentReader.getAttribute(this.referringXsdNode, "type").get()
+                        .equals(DocumentReader.getAttribute(copied.referringXsdNode, "type").orElse(null)));
     }
 
     /**
@@ -1726,32 +1726,32 @@ public class XsdTreeNode extends LocalEventProducer
     public String getNodeName()
     {
         Node node = getRelevantNode();
-        String ref = DocumentReader.getAttribute(node, "ref");
-        if (ref != null)
+        Optional<String> ref = DocumentReader.getAttribute(node, "ref");
+        if (ref.isPresent())
         {
-            return ref.replace("ots:", "");
+            return ref.get().replace("ots:", "");
         }
-        String name = DocumentReader.getAttribute(node, "name");
-        if (name != null)
+        Optional<String> name = DocumentReader.getAttribute(node, "name");
+        if (name.isPresent())
         {
-            return name.replace("ots:", "");
+            return name.get().replace("ots:", "");
         }
         return node.getNodeName().replace("ots:", "");
     }
 
     /**
      * Returns the description of this node.
-     * @return description of this node, {@code null} if there is none.
+     * @return description of this node, empty if there is none.
      */
-    public String getDescription()
+    public Optional<String> getDescription()
     {
         assureAttributesAndDescription();
         if (this.description == null && isChoice())
         {
             this.choice.assureAttributesAndDescription();
-            return this.choice.description;
+            return Optional.ofNullable(this.choice.description);
         }
-        return this.description;
+        return Optional.ofNullable(this.description);
     }
 
     /**
@@ -1770,8 +1770,8 @@ public class XsdTreeNode extends LocalEventProducer
             // this name may appear as an option for an xsd:choice or xsd:all
             StringBuilder stringBuilder = new StringBuilder("{");
             Node relevantNode = getRelevantNode();
-            String annotation = NodeAnnotation.APPINFO_NAME.get(relevantNode);
-            if (annotation != null)
+            Optional<String> annotation = NodeAnnotation.APPINFO_NAME.get(relevantNode);
+            if (annotation.isPresent())
             {
                 stringBuilder.append(annotation);
             }
@@ -1895,7 +1895,7 @@ public class XsdTreeNode extends LocalEventProducer
      */
     public List<String> getValueRestrictions()
     {
-        if ("ots:boolean".equals(DocumentReader.getAttribute(getRelevantNode(), "type")))
+        if ("ots:boolean".equals(DocumentReader.getAttribute(getRelevantNode(), "type").orElse(null)))
         {
             return List.of("true", "false");
         }
@@ -1916,7 +1916,7 @@ public class XsdTreeNode extends LocalEventProducer
     public List<String> getAttributeRestrictions(final int index)
     {
         Objects.checkIndex(index, attributeCount());
-        if ("ots:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type")))
+        if ("ots:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type").orElse(null)))
         {
             return List.of("true", "false");
         }
@@ -1947,41 +1947,34 @@ public class XsdTreeNode extends LocalEventProducer
         for (Entry<ValueValidator, Object> entry : validators.entrySet())
         {
             ValueValidator validator = entry.getKey();
-            List<String> valueOptions = validator.getOptions(this, entry.getValue());
-            if (valueOptions != null && intersection != null)
+            Optional<List<String>> valueOptions = validator.getOptions(this, entry.getValue());
+            if (valueOptions.isPresent())
             {
-                intersection = intersection.stream().filter(valueOptions::contains).collect(Collectors.toList());
-            }
-            else if (valueOptions != null)
-            {
-                intersection = valueOptions;
+                intersection = intersection == null ? valueOptions.get()
+                        : intersection.stream().filter(valueOptions.get()::contains).collect(Collectors.toList());
             }
         }
-        if (intersection != null && !intersection.isEmpty())
-        {
-            return intersection;
-        }
-        return Collections.emptyList();
+        return intersection == null ? Collections.emptyList() : intersection;
     }
 
     // ====== Coupling ======
 
     /**
      * Returns the node to which the value refers via a {@link CoupledValidator}.
-     * @return node to which the value refers via a {@link CoupledValidator}, or {@code null} if no such node.
+     * @return node to which the value refers via a {@link CoupledValidator}, empty if no such node.
      */
-    public XsdTreeNode getCoupledNodeValue()
+    public Optional<XsdTreeNode> getCoupledNodeValue()
     {
-        return getCoupledNode(this.valueValidators.keySet());
+        return Optional.ofNullable(getCoupledNode(this.valueValidators.keySet()));
     }
 
     /**
      * Returns the node to which an attribute refers via a {@link CoupledValidator}.
      * @param index index of the attribute.
-     * @return node to which an attribute refers via a {@link CoupledValidator}, or {@code null} if no such node.
+     * @return node to which an attribute refers via a {@link CoupledValidator}, empty if no such node.
      * @throws IndexOutOfBoundsException when the index is not in the bounds for the number of attributes
      */
-    public XsdTreeNode getCoupledNodeAttribute(final int index)
+    public Optional<XsdTreeNode> getCoupledNodeAttribute(final int index)
     {
         Objects.checkIndex(index, attributeCount());
         return getCoupledNodeAttribute(getAttributeNameByIndex(index));
@@ -1990,15 +1983,15 @@ public class XsdTreeNode extends LocalEventProducer
     /**
      * Returns the node to which an attribute refers via a {@link CoupledValidator}.
      * @param attribute attribute name.
-     * @return node to which an attribute refers via a {@link CoupledValidator}, or {@code null} if no such node.
+     * @return node to which an attribute refers via a {@link CoupledValidator}, empty if no such node.
      */
-    public XsdTreeNode getCoupledNodeAttribute(final String attribute)
+    public Optional<XsdTreeNode> getCoupledNodeAttribute(final String attribute)
     {
         if (this.attributeValidators.containsKey(attribute))
         {
-            return getCoupledNode(this.attributeValidators.get(attribute));
+            return Optional.ofNullable(getCoupledNode(this.attributeValidators.get(attribute)));
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -2034,7 +2027,7 @@ public class XsdTreeNode extends LocalEventProducer
             {
                 this.isSelfValid = true;
             }
-            else if (reportInvalidNode() != null || reportInvalidValue() != null)
+            else if (reportInvalidNode().isPresent() || reportInvalidValue().isPresent())
             {
                 this.isSelfValid = false;
             }
@@ -2043,7 +2036,7 @@ public class XsdTreeNode extends LocalEventProducer
                 boolean attributesValid = true;
                 for (int index = 0; index < attributeCount(); index++)
                 {
-                    if (reportInvalidAttributeValue(index) != null)
+                    if (reportInvalidAttributeValue(index).isPresent())
                     {
                         attributesValid = false;
                         break;
@@ -2200,11 +2193,11 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns a message why the node is invalid, or {@code null} if it is valid. This only concerns validators on node level,
-     * i.e. not on attribute or value level. E.g. because the node is duplicate in its parent.
-     * @return message why the id is invalid, or {@code null} if it is valid.
+     * Returns a message why the node is invalid, empty if it is valid. This only concerns validators on node level, i.e. not on
+     * attribute or value level. E.g. because the node is duplicate in its parent.
+     * @return message why the id is invalid, empty if it is valid.
      */
-    public String reportInvalidNode()
+    public Optional<String> reportInvalidNode()
     {
         if (this.nodeValid == null)
         {
@@ -2215,32 +2208,32 @@ public class XsdTreeNode extends LocalEventProducer
                 {
                     this.nodeInvalidMessage = message;
                     this.nodeValid = false;
-                    return message;
+                    return Optional.of(message);
                 }
             }
             this.nodeValid = true;
         }
-        return this.nodeInvalidMessage;
+        return Optional.ofNullable(this.nodeInvalidMessage);
     }
 
     /**
-     * Returns a message why the id is invalid, or {@code null} if it is valid.
-     * @return message why the id is invalid, or {@code null} if it is valid.
+     * Returns a message why the id is invalid, empty if it is valid.
+     * @return message why the id is invalid, empty if it is valid.
      */
-    public String reportInvalidId()
+    public Optional<String> reportInvalidId()
     {
         if (!isActive())
         {
-            return null;
+            return Optional.empty();
         }
-        return isIdentifiable() ? reportInvalidAttributeValue(getAttributeIndexByName("Id")) : null;
+        return isIdentifiable() ? reportInvalidAttributeValue(getAttributeIndexByName("Id")) : Optional.empty();
     }
 
     /**
-     * Returns a message why the value is invalid, or {@code null} if it is valid.
-     * @return message why the value is invalid, or {@code null} if it is valid.
+     * Returns a message why the value is invalid, empty if it is valid.
+     * @return message why the value is invalid, empty if it is valid.
      */
-    public String reportInvalidValue()
+    public Optional<String> reportInvalidValue()
     {
         if (this.valueValid == null)
         {
@@ -2248,34 +2241,35 @@ public class XsdTreeNode extends LocalEventProducer
             {
                 this.valueInvalidMessage = null;
                 this.valueValid = true;
-                return null;
+                return Optional.empty();
             }
             if (this.value != null && !this.value.isEmpty())
             {
                 for (ValueValidator validator : this.valueValidators.keySet())
                 {
-                    String message = validator.validate(this);
-                    if (message != null)
+                    Optional<String> message = validator.validate(this);
+                    if (message.isPresent())
                     {
-                        this.valueInvalidMessage = message;
+                        this.valueInvalidMessage = message.get();
                         this.valueValid = false;
                         return message;
                     }
                 }
             }
-            this.valueInvalidMessage = ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
-            this.valueValid = this.valueInvalidMessage == null;
+            Optional<String> message = ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+            this.valueInvalidMessage = message.orElse(null);
+            this.valueValid = message.isEmpty();
         }
-        return this.valueInvalidMessage;
+        return Optional.ofNullable(this.valueInvalidMessage);
     }
 
     /**
-     * Returns a message why the attribute value is invalid, or {@code null} if it is valid.
+     * Returns a message why the attribute value is invalid, empty if it is valid.
      * @param index index of the attribute.
-     * @return message why the attribute value is invalid, or {@code null} if it is valid.
+     * @return message why the attribute value is invalid, empty if it is valid.
      * @throws IndexOutOfBoundsException when the index is not in the bounds for the number of attributes
      */
-    public String reportInvalidAttributeValue(final int index)
+    public Optional<String> reportInvalidAttributeValue(final int index)
     {
         Objects.checkIndex(index, attributeCount());
         if (this.attributeValid.get(index) == null)
@@ -2284,17 +2278,17 @@ public class XsdTreeNode extends LocalEventProducer
             {
                 this.attributeInvalidMessage.set(index, null);
                 this.attributeValid.set(index, true);
-                return null;
+                return Optional.empty();
             }
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
                 XsdTreeNode root = getPath().get(0);
                 if (root instanceof XsdTreeNodeRoot)
                 {
-                    String message = ValueValidator.reportInvalidInclude(((XsdTreeNodeRoot) root).getDirectory(),
+                    Optional<String> message = ValueValidator.reportInvalidInclude(((XsdTreeNodeRoot) root).getDirectory(),
                             this.attributeValues.get(0), this.attributeValues.get(1));
-                    this.attributeInvalidMessage.set(index, message);
-                    this.attributeValid.set(index, message == null);
+                    this.attributeInvalidMessage.set(index, message.orElse(null));
+                    this.attributeValid.set(index, message.isEmpty());
                     return message;
                 }
                 else
@@ -2302,27 +2296,27 @@ public class XsdTreeNode extends LocalEventProducer
                     // node is being deleted and has no parent anymore
                     this.attributeInvalidMessage.set(index, null);
                     this.attributeValid.set(index, true);
-                    return null;
+                    return Optional.empty();
                 }
             }
             String attribute = getAttributeNameByIndex(index);
             for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
             {
-                String message = validator.validate(this);
-                if (message != null)
+                Optional<String> message = validator.validate(this);
+                if (message.isPresent())
                 {
-                    this.attributeInvalidMessage.set(index, message);
+                    this.attributeInvalidMessage.set(index, message.orElse(null));
                     this.attributeValid.set(index, false);
                     return message;
                 }
             }
-            String message =
+            Optional<String> message =
                     ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
-            this.attributeInvalidMessage.set(index, message);
-            this.attributeValid.set(index, message == null);
+            this.attributeInvalidMessage.set(index, message.orElse(null));
+            this.attributeValid.set(index, message.isEmpty());
             return message;
         }
-        return this.attributeInvalidMessage.get(index);
+        return Optional.ofNullable(this.attributeInvalidMessage.get(index));
     }
 
     // ====== Save / load ======
@@ -2412,14 +2406,14 @@ public class XsdTreeNode extends LocalEventProducer
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             assureAttributesAndDescription();
-            setAttributeValue(0, DocumentReader.getAttribute(nodeXml, "href"));
-            Node fallback = DocumentReader.getChild(nodeXml, "xi:fallback");
-            if (fallback != null)
+            setAttributeValue(0, DocumentReader.getAttribute(nodeXml, "href").orElse(null));
+            Optional<Node> fallback = DocumentReader.getChild(nodeXml, "xi:fallback");
+            if (fallback.isPresent())
             {
-                Node fallbackInclude = DocumentReader.getChild(fallback, "xi:include");
-                if (fallbackInclude != null)
+                Optional<Node> fallbackInclude = DocumentReader.getChild(fallback.get(), "xi:include");
+                if (fallbackInclude.isPresent())
                 {
-                    setAttributeValue(1, DocumentReader.getAttribute(fallbackInclude, "href"));
+                    setAttributeValue(1, DocumentReader.getAttribute(fallbackInclude.get(), "href").orElse(null));
                 }
             }
             return;
@@ -2557,13 +2551,13 @@ public class XsdTreeNode extends LocalEventProducer
         int passes = 0;
         int maxPasses = 1;
         int loadedDuringPass = 0;
-        Node complexType = DocumentReader.getChild(this.xsdNode, "xsd:complexType");
-        if (complexType != null)
+        Optional<Node> complexType = DocumentReader.getChild(this.xsdNode, "xsd:complexType");
+        if (complexType.isPresent())
         {
-            Node sequence = DocumentReader.getChild(complexType, "xsd:sequence");
-            if (sequence != null)
+            Optional<Node> sequence = DocumentReader.getChild(complexType.get(), "xsd:sequence");
+            if (sequence.isPresent())
             {
-                maxPasses = Occurs.MAX.get(sequence);
+                maxPasses = Occurs.MAX.get(sequence.get());
             }
         }
 

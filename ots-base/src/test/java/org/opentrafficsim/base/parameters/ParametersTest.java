@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
@@ -276,8 +277,9 @@ public final class ParametersTest implements ConstraintInterface
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
-            Speed u2 = paramsa.getParameterOrNull(v2);
-            Throw.when(u2 != null && v.si > u2.si, ParameterException.class, "Value of v1 is larger than value of v2.");
+            Optional<Speed> u2 = paramsa.getOptionalParameter(v2);
+            Throw.when(u2.isPresent() && v.si > u2.get().si, ParameterException.class,
+                    "Value of v1 is larger than value of v2.");
         }
     };
 
@@ -287,8 +289,9 @@ public final class ParametersTest implements ConstraintInterface
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
-            Speed u1 = paramsa.getParameterOrNull(v1);
-            Throw.when(u1 != null && v.si < u1.si, ParameterException.class, "Value of v2 is smaller than value of v1.");
+            Optional<Speed> u1 = paramsa.getOptionalParameter(v1);
+            Throw.when(u1.isPresent() && v.si < u1.get().si, ParameterException.class,
+                    "Value of v2 is smaller than value of v1.");
         }
     };
 

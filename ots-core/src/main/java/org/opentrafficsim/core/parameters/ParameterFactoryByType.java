@@ -79,7 +79,7 @@ public class ParameterFactoryByType implements ParameterFactory
             {
                 break;
             }
-            parent = parent.getParent();
+            parent = parent.getParent().orElse(null);
         }
         return baseValues;
     }
@@ -112,7 +112,7 @@ public class ParameterFactoryByType implements ParameterFactory
             {
                 break;
             }
-            parent = parent.getParent();
+            parent = parent.getParent().orElse(null);
         }
         return correls;
     }
@@ -183,14 +183,14 @@ public class ParameterFactoryByType implements ParameterFactory
      * @return parameter value for correlation, {@code null} if no value is available
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getValue(final Parameters parameters, final Map<ParameterType<?>, ?> values,
+    private <T> T getValue(final Parameters parameters, final Map<ParameterType<?>, ?> values,
             final ParameterType<?> parameterType)
     {
         if (values.containsKey(parameterType))
         {
             return (T) values.get(parameterType);
         }
-        return parameters.getParameterOrNull((ParameterType<T>) parameterType);
+        return parameters.getOptionalParameter((ParameterType<T>) parameterType).orElse(null);
     }
 
     /**

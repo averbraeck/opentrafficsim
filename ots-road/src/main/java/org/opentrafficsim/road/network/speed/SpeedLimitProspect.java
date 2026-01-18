@@ -273,7 +273,7 @@ public class SpeedLimitProspect
      * end of corner), then {@code null} is returned.
      * @param distance distance where the info changed
      * @param speedLimitType speed limit type
-     * @return speed info of given speed limit type where it changed, {@code null} if speed limit type is removed
+     * @return speed info of given speed limit type where it changed
      * @throws IllegalArgumentException if the speed info did not change at the given distance for the speed limit type
      * @param <T> class of the speed limit type info
      */

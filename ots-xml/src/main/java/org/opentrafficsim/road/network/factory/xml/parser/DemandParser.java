@@ -114,14 +114,12 @@ public final class DemandParser
         for (org.opentrafficsim.xml.generated.Route routeTag : demand.getRoute())
         {
             String gtuTypeString = routeTag.getGtuType().get(eval);
-            GtuType gtuType = definitions.get(GtuType.class, gtuTypeString);
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeString);
             Route route = new Route(routeTag.getId(), gtuType);
-            Throw.when(gtuType == null, NetworkException.class, "GtuType %s not found in Route %s", gtuTypeString,
-                    routeTag.getId());
             for (StringType nodeTag : routeTag.getNode())
             {
-                Node node = otsNetwork.getNode(nodeTag.get(eval));
-                Throw.when(node == null, NetworkException.class, "Node %s not found in Route %s", nodeTag, routeTag.getId());
+                Node node = otsNetwork.getNode(nodeTag.get(eval))
+                        .orElseThrow(() -> new NetworkException("Node " + nodeTag + " not found in Route " + routeTag.getId()));
                 route.addNode(node);
             }
             otsNetwork.addRoute(gtuType, route);
@@ -142,25 +140,20 @@ public final class DemandParser
         for (ShortestRoute shortestRouteTag : demand.getShortestRoute())
         {
             String gtuTypeId = shortestRouteTag.getGtuType().get(eval);
-            GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
-            Throw.when(gtuType == null, NetworkException.class, "GtuType %s not found in ShortestRoute %s",
-                    shortestRouteTag.getGtuType(), shortestRouteTag.getId());
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeId);
             Route route = new Route(shortestRouteTag.getId(), gtuType);
             String nodeFromId = shortestRouteTag.getFrom().get(eval);
-            Node nodeFrom = otsNetwork.getNode(nodeFromId);
-            Throw.when(nodeFrom == null, NetworkException.class, "From Node %s not found in ShortestRoute", nodeFromId,
-                    shortestRouteTag.getId());
+            Node nodeFrom = otsNetwork.getNode(nodeFromId).orElseThrow(() -> new NetworkException(
+                    "From Node " + nodeFromId + " not found in ShortestRoute" + shortestRouteTag.getId()));
             String nodeToId = shortestRouteTag.getTo().get(eval);
-            Node nodeTo = otsNetwork.getNode(nodeToId);
-            Throw.when(nodeTo == null, NetworkException.class, "To Node %s not found in ShortestRoute", nodeToId,
-                    shortestRouteTag.getId());
+            Node nodeTo = otsNetwork.getNode(nodeToId).orElseThrow(() -> new NetworkException(
+                    "To Node " + nodeToId + " not found in ShortestRoute" + shortestRouteTag.getId()));
             List<Node> nodesVia = new ArrayList<>();
             for (StringType nodeViaValue : shortestRouteTag.getVia())
             {
                 String nodeViaId = nodeViaValue.get(eval);
-                Node nodeVia = otsNetwork.getNode(nodeViaId);
-                Throw.when(nodeTo == null, NetworkException.class, "Via Node %s not found in ShortestRoute", nodeViaId,
-                        shortestRouteTag.getId());
+                Node nodeVia = otsNetwork.getNode(nodeViaId).orElseThrow(() -> new NetworkException(
+                        "Via Node " + nodeViaId + " not found in ShortestRoute" + shortestRouteTag.getId()));
                 nodesVia.add(nodeVia);
             }
 
@@ -326,9 +319,7 @@ public final class DemandParser
             {
                 String routeName = mixRoute.getId().get(eval);
                 double weight = mixRoute.getWeight().get(eval);
-                Route route = otsNetwork.getRoute(routeName);
-                Throw.when(route == null, NetworkException.class, "Parsing RouteMix %s -- Route %s not found",
-                        routeMixTag.getId(), routeName);
+                Route route = NetworkParser.getRoute(otsNetwork, routeName);
                 probRoutes.add(new FrequencyAndObject<>(weight, route));
             }
             routeMixMap.put(routeMixTag.getId(), probRoutes);
@@ -355,9 +346,7 @@ public final class DemandParser
             {
                 String routeName = mixRoute.getId().get(eval);
                 double weight = mixRoute.getWeight().get(eval);
-                Route route = otsNetwork.getRoute(routeName);
-                Throw.when(route == null, NetworkException.class, "Parsing ShortestRouteMix %s -- ShortestRoute %s not found",
-                        routeMixTag.getId(), routeName);
+                Route route = NetworkParser.getRoute(otsNetwork, routeName);
                 probRoutes.add(new FrequencyAndObject<>(weight, route));
             }
             shortestRouteMixMap.put(routeMixTag.getId(), probRoutes);
@@ -414,8 +403,8 @@ public final class DemandParser
 
                 Supplier<Duration> headwayGenerator = new HeadwayGenerator(generatorTag.getFrequency().get(eval), stream);
 
-                CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkId);
-                Lane lane = (Lane) link.getCrossSectionElement(laneId);
+                CrossSectionLink link = NetworkParser.getLink(otsNetwork, linkId);
+                Lane lane = (Lane) link.getCrossSectionElement(laneId).orElseThrow();
                 Length position = ParseUtil.parseLengthBeginEnd(generatorTag.getPosition().get(eval), lane.getLength());
                 Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
                 initialLongitudinalPositions.add(new LanePosition(lane, position));
@@ -449,19 +438,19 @@ public final class DemandParser
      * @param eval evaluator
      * @return route generator
      * @throws XmlParserException when a referred element does no exist
+     * @throws NetworkException if route is not present
      */
     private static Supplier<Route> getRouteGenerator(final StringType routeType, final StringType routeMixType,
             final StringType shortestRouteType, final StringType shortestRouteMixType, final RoadNetwork otsNetwork,
             final Demand demand, final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation,
-            final String errorPre, final Eval eval) throws XmlParserException
+            final String errorPre, final Eval eval) throws XmlParserException, NetworkException
     {
         Supplier<Route> routeGenerator;
         if (routeType != null)
         {
             String routeId = routeType.get(eval);
-            Route route = otsNetwork.getRoute(routeId);
-            Throw.when(route == null, XmlParserException.class, "%sRoute %s not found", errorPre, routeId);
+            Route route = NetworkParser.getRoute(otsNetwork, routeId);
             routeGenerator = new FixedRouteGenerator(route);
         }
 
@@ -486,7 +475,7 @@ public final class DemandParser
         else if (shortestRouteType != null)
         {
             String shortestRouteId = shortestRouteType.get(eval);
-            Route shortestRoute = otsNetwork.getRoute(shortestRouteId);
+            Route shortestRoute = NetworkParser.getRoute(otsNetwork, shortestRouteId);
             Throw.when(shortestRoute == null, XmlParserException.class, "ShortestRoute %s not found", errorPre,
                     shortestRouteId);
             routeGenerator = new FixedRouteGenerator(shortestRoute);
@@ -671,9 +660,9 @@ public final class DemandParser
                 {
                     Throw.when(generatorTag.getPosition() == null, XmlParserException.class, "No position given to injection"
                             + " generator, and also not all position column (link, lane position) present.");
-                    CrossSectionLink link =
-                            (CrossSectionLink) otsNetwork.getLink(generatorTag.getPosition().getLink().get(eval));
-                    Lane lane = (Lane) link.getCrossSectionElement(generatorTag.getPosition().getLane().get(eval));
+                    CrossSectionLink link = NetworkParser.getLink(otsNetwork, generatorTag.getPosition().getLink().get(eval));
+                    Lane lane =
+                            (Lane) link.getCrossSectionElement(generatorTag.getPosition().getLane().get(eval)).orElseThrow();
                     Length position =
                             ParseUtil.parseLengthBeginEnd(generatorTag.getPosition().getPosition().get(eval), lane.getLength());
                     generatorPosition = GeneratorPositions.create(Set.of(new LanePosition(lane, position)), stream);
@@ -823,9 +812,7 @@ public final class DemandParser
             final LaneBasedStrategicalRoutePlannerFactory strategicalFactory, final Eval eval) throws XmlParserException
     {
         String gtuTypeId = templateTag.getGtuType().get(eval);
-        GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
-        Throw.when(gtuType == null, XmlParserException.class, "GtuType %s in GtuTemplate %s not defined", gtuTypeId,
-                gtuTemplateId);
+        GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeId);
         Supplier<Length> lengthGenerator = makeGenerator(streamInformation, templateTag.getLengthDist(),
                 templateTag.getLengthDist().getLengthUnit().get(eval), eval);
         Supplier<Length> widthGenerator = makeGenerator(streamInformation, templateTag.getWidthDist(),
@@ -885,16 +872,17 @@ public final class DemandParser
      * @param definitions type definitions.
      * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
+     * @throws XmlParserException if the detector type is not defined.
      */
     public static void parseSinks(final RoadNetwork otsNetwork, final Demand demand, final Definitions definitions,
-            final Eval eval) throws NetworkException
+            final Eval eval) throws NetworkException, XmlParserException
     {
         for (Sink sinkTag : demand.getSink())
         {
-            CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(sinkTag.getLink().get(eval));
-            Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLane().get(eval));
+            CrossSectionLink link = NetworkParser.getLink(otsNetwork, sinkTag.getLink().get(eval));
+            Lane lane = (Lane) link.getCrossSectionElement(sinkTag.getLane().get(eval)).orElseThrow();
             Length position = ParseUtil.parseLengthBeginEnd(sinkTag.getPosition().get(eval), lane.getLength());
-            DetectorType detectorType = definitions.get(DetectorType.class, sinkTag.getType().get(eval));
+            DetectorType detectorType = definitions.getOrThrow(DetectorType.class, sinkTag.getType().get(eval));
             if (sinkTag.getDestination().get(eval))
             {
                 new SinkDetector(lane, position, detectorType, SinkDetector.DESTINATION);

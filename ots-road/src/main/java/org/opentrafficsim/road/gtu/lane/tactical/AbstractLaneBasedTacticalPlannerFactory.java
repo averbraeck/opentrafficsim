@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -105,7 +107,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
     }
 
     @Override
-    public final Speed peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
+    public final Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
             final Parameters parameters) throws GtuException
     {
         try
@@ -113,7 +115,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
             SpeedLimitInfo sli = new SpeedLimitInfo();
             sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, maxGtuSpeed);
             sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, speedLimit);
-            return peekCarFollowingModel().desiredSpeed(parameters, sli);
+            return Optional.of(peekCarFollowingModel().desiredSpeed(parameters, sli));
         }
         catch (ParameterException exception)
         {
@@ -122,12 +124,12 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
     }
 
     @Override
-    public final Length peekDesiredHeadway(final GtuType gtuType, final Speed speed, final Parameters parameters)
+    public final Optional<Length> peekDesiredHeadway(final GtuType gtuType, final Speed speed, final Parameters parameters)
             throws GtuException
     {
         try
         {
-            return peekCarFollowingModel().desiredHeadway(parameters, speed);
+            return Optional.of(peekCarFollowingModel().desiredHeadway(parameters, speed));
         }
         catch (ParameterException exception)
         {

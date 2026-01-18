@@ -2,6 +2,7 @@ package org.opentrafficsim.draw.colorer.trajectory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentrafficsim.draw.colorer.IdColorer;
 import org.opentrafficsim.draw.graphs.OffsetTrajectory.TrajectorySection;
@@ -25,7 +26,7 @@ public class IdTrajectoryColorer extends IdColorer<TrajectorySection> implements
      */
     public IdTrajectoryColorer()
     {
-        super((traj) -> traj.trajectory().getGtuId());
+        super((traj) -> Optional.ofNullable(traj.trajectory().getGtuId()));
     }
 
     @Override

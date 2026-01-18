@@ -174,8 +174,9 @@ public interface GeneratorPositions
             {
                 GeneratorLinkPosition linkPosition =
                         position.draw(gtuType, stream, characteristics.getDestination(), characteristics.getRoute());
-                Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(gtuType,
-                        linkPosition.speedLimit(gtuType), characteristics.getMaximumSpeed());
+                Speed desiredSpeed = characteristics.getStrategicalPlannerFactory()
+                        .peekDesiredSpeed(gtuType, linkPosition.speedLimit(gtuType), characteristics.getMaximumSpeed())
+                        .orElseGet(() -> linkPosition.speedLimit(gtuType));
                 return linkPosition.draw(gtuType, unplaced.get(linkPosition.getLink()), desiredSpeed);
             }
 
@@ -445,7 +446,7 @@ public interface GeneratorPositions
                                     unplacedTemplates, desiredSpeed);
                             map.put(lanePosition, w);
                         }
-                        type = type.getParent();
+                        type = type.getParent().orElse(null);
                     }
                     if (!found)
                     {

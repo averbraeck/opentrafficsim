@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -106,7 +107,7 @@ public class AttributesTableModel extends AbstractTableModel
         Node attribute = this.node.getAttributeNode(rowIndex);
         if (columnIndex == PROPERTY_COLUMN)
         {
-            return XsdTreeNodeUtil.separatedName(DocumentReader.getAttribute(attribute, "name"));
+            return XsdTreeNodeUtil.separatedName(DocumentReader.getAttribute(attribute, "name").orElse(null));
         }
         else if (columnIndex == VALUE_COLUMN)
         {
@@ -115,12 +116,12 @@ public class AttributesTableModel extends AbstractTableModel
         }
         else if (columnIndex == USE_COLUMN)
         {
-            String use = DocumentReader.getAttribute(attribute, "use");
-            return use != null && use.equals("required") ? "*" : "";
+            Optional<String> use = DocumentReader.getAttribute(attribute, "use");
+            return use.isPresent() && use.get().equals("required") ? "*" : "";
         }
         else if (columnIndex == DESCRIPTION_COLUMN)
         {
-            return NodeAnnotation.DESCRIPTION.get(attribute) != null ? "i" : null;
+            return NodeAnnotation.DESCRIPTION.get(attribute).isPresent() ? "i" : null;
         }
         throw new IndexOutOfBoundsException();
     }

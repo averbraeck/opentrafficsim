@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.strategical;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -181,7 +182,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
         }
 
         // more than 2 links... We have to check the route!
-        if (getRoute() == null)
+        if (getRoute().isEmpty())
         {
             throw new NetworkException("LaneBasedStrategicalRoutePlanner does not have a route");
         }
@@ -230,16 +231,15 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
     }
 
     @Override
-    public final Route getRoute()
+    public final Optional<Route> getRoute()
     {
         assureRoute(getGtu().getType());
         // if assure route left the route null although there is a destination, we have no route generator, use shortest-path
-        if (this.route == null && this.destination != null)
+        if (this.route == null && this.destination != null && !getGtu().isRoaming())
         {
             try
             {
-                LanePosition pos = getGtu().getPosition();
-                CrossSectionLink link = pos.lane().getLink();
+                CrossSectionLink link = getGtu().getPosition().lane().getLink();
                 Node from = link.getStartNode();
                 this.route = link.getNetwork().getShortestRouteBetween(getGtu().getType(), from, this.destination);
             }
@@ -248,7 +248,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
                 throw new OtsRuntimeException("Route could not be determined.", exception);
             }
         }
-        return this.route;
+        return Optional.ofNullable(this.route);
     }
 
     /**
@@ -257,7 +257,8 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
      */
     private void assureRoute(final GtuType gtuType)
     {
-        if (this.route == null && this.destination != null && !this.routeGenerator.equals(RouteGenerator.NULL))
+        if (this.route == null && this.destination != null && !this.routeGenerator.equals(RouteGenerator.NULL)
+                && !getGtu().isRoaming())
         {
             LanePosition ref = Try.assign(() -> getGtu().getPosition(), "Could not retrieve GTU reference position.");
             List<Node> nodes = new ArrayList<>();
@@ -279,15 +280,15 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
     }
 
     @Override
-    public final Node getOrigin()
+    public final Optional<Node> getOrigin()
     {
-        return this.origin;
+        return Optional.ofNullable(this.origin);
     }
 
     @Override
-    public final Node getDestination()
+    public final Optional<Node> getDestination()
     {
-        return this.destination;
+        return Optional.ofNullable(this.destination);
     }
 
     @Override

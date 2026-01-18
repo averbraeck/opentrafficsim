@@ -2,6 +2,7 @@ package org.opentrafficsim.editor.decoration;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.djutils.event.EventListener;
@@ -55,8 +56,8 @@ public class LayoutCustomizer extends AbstractNodeDecoratorRemove implements Eve
     @Override
     public void accept(final XsdTreeNode node)
     {
-        XsdTreeNode defined = node.getChild(0).getCoupledNodeValue();
-        if (defined == null)
+        Optional<XsdTreeNode> defined = node.getChild(0).getCoupledNodeValue();
+        if (defined.isEmpty())
         {
             // do nothing if there is no coupled defined road layout
             return;
@@ -73,7 +74,7 @@ public class LayoutCustomizer extends AbstractNodeDecoratorRemove implements Eve
         }
         List<XsdTreeNode> formerChildren = custom.getChildren();
         this.editor.getUndo().startAction(ActionType.ACTION, node, null);
-        for (XsdTreeNode definedChild : defined.getChildren())
+        for (XsdTreeNode definedChild : defined.get().getChildren())
         {
             definedChild.duplicate(custom);
         }
@@ -81,7 +82,7 @@ public class LayoutCustomizer extends AbstractNodeDecoratorRemove implements Eve
         {
             formerChild.remove();
         }
-        custom.setAttributeValue("LaneKeeping", defined.getAttributeValue("LaneKeeping"));
+        custom.setAttributeValue("LaneKeeping", defined.get().getAttributeValue("LaneKeeping"));
         node.setOption(custom);
         this.editor.show(custom, null);
     }

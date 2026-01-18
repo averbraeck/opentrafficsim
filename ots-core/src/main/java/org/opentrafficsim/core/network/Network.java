@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.draw.bounds.Bounds2d;
@@ -87,7 +88,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     }
 
     @Override
-    public final String getId()
+    public String getId()
     {
         return this.id;
     }
@@ -109,7 +110,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Provide an immutable map of node ids to nodes in the network.
      * @return an immutable map of nodes.
      */
-    public final ImmutableMap<String, Node> getNodeMap()
+    public ImmutableMap<String, Node> getNodeMap()
     {
         return new ImmutableHashMap<>(this.nodeMap, Immutable.WRAP);
     }
@@ -128,7 +129,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param node the node to add to the network.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public final void addNode(final Node node) throws NetworkException
+    public void addNode(final Node node) throws NetworkException
     {
         if (containsNode(node))
         {
@@ -143,7 +144,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param node the node to remove from the network.
      * @throws NetworkException if node does not exist in the network.
      */
-    public final void removeNode(final Node node) throws NetworkException
+    public void removeNode(final Node node) throws NetworkException
     {
         if (!containsNode(node))
         {
@@ -158,7 +159,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param node the node to search for in the network.
      * @return whether the node is in this network
      */
-    public final boolean containsNode(final Node node)
+    public boolean containsNode(final Node node)
     {
         return this.nodeMap.keySet().contains(node.getId());
     }
@@ -168,7 +169,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param nodeId the id of the node to search for in the network.
      * @return whether the node is in this network
      */
-    public final boolean containsNode(final String nodeId)
+    public boolean containsNode(final String nodeId)
     {
         return this.nodeMap.keySet().contains(nodeId);
     }
@@ -176,11 +177,11 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     /**
      * Retrieve a node with a given id from the network, or null if the id cannot be found.
      * @param nodeId the id of the node to search for in the network.
-     * @return the node or null if not present
+     * @return the node, empty if not present
      */
-    public final Node getNode(final String nodeId)
+    public Optional<Node> getNode(final String nodeId)
     {
-        return this.nodeMap.get(nodeId);
+        return Optional.ofNullable(this.nodeMap.get(nodeId));
     }
 
     /**
@@ -228,7 +229,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Provide an immutable map of link ids to links in the network.
      * @return the an immutable map of links.
      */
-    public final ImmutableMap<String, Link> getLinkMap()
+    public ImmutableMap<String, Link> getLinkMap()
     {
         return new ImmutableHashMap<>(this.linkMap, Immutable.WRAP);
     }
@@ -237,7 +238,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Return link map.
      * @return only to be used in the 'network' package for cloning.
      */
-    final Map<String, Link> getRawLinkMap()
+    Map<String, Link> getRawLinkMap()
     {
         return this.linkMap;
     }
@@ -248,7 +249,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
-    public final void addLink(final Link link) throws NetworkException
+    public void addLink(final Link link) throws NetworkException
     {
         if (containsLink(link))
         {
@@ -272,7 +273,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param link the link to remove from the network.
      * @throws NetworkException if link does not exist in the network.
      */
-    public final void removeLink(final Link link) throws NetworkException
+    public void removeLink(final Link link) throws NetworkException
     {
         if (!containsLink(link))
         {
@@ -283,21 +284,21 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     }
 
     /**
-     * Find a link between node1 and node2 and return it if it exists in the network. If not, return null.
+     * Find a link between node1 and node2 and return it if it exists in the network.
      * @param node1 first node
      * @param node2 second node
-     * @return the link between node1 and node2 in the network or null if it does not exist.
+     * @return the link between node1 and node2 in the network, empty if it does not exist.
      */
-    public final Link getLink(final Node node1, final Node node2)
+    public Optional<Link> getLink(final Node node1, final Node node2)
     {
         for (Link link : this.linkMap.values())
         {
             if (link.getStartNode().equals(node1) && link.getEndNode().equals(node2))
             {
-                return link;
+                return Optional.of(link);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -305,7 +306,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param link the link to search for in the network.
      * @return whether the link is in this network
      */
-    public final boolean containsLink(final Link link)
+    public boolean containsLink(final Link link)
     {
         return this.linkMap.keySet().contains(link.getId());
     }
@@ -315,39 +316,33 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param linkId the id of the link to search for in the network.
      * @return whether the link is in this network
      */
-    public final boolean containsLink(final String linkId)
+    public boolean containsLink(final String linkId)
     {
         return this.linkMap.keySet().contains(linkId);
     }
 
     /**
-     * Find a link between node1 and node2 and return it if it exists in the network. If not, return null.
+     * Find a link between node1 and node2 and return it if it exists in the network.
      * @param nodeId1 id of the first node
      * @param nodeId2 id of the second node
-     * @return the link between node1 and node2 in the network or null if it does not exist.
+     * @return the link between node1 and node2 in the network, empty if it does not exist.
      * @throws NetworkException if the node(s) cannot be found by their id
      */
-    public final Link getLink(final String nodeId1, final String nodeId2) throws NetworkException
+    public Optional<Link> getLink(final String nodeId1, final String nodeId2) throws NetworkException
     {
-        if (!containsNode(nodeId1))
-        {
-            throw new NetworkException("Node " + nodeId1 + " not in network " + this.id);
-        }
-        if (!containsNode(nodeId2))
-        {
-            throw new NetworkException("Node " + nodeId2 + " not in network " + this.id);
-        }
-        return getLink(getNode(nodeId1), getNode(nodeId2));
+        return getLink(
+                getNode(nodeId1).orElseThrow(() -> new NetworkException("Node " + nodeId1 + " not in network " + this.id)),
+                getNode(nodeId2).orElseThrow(() -> new NetworkException("Node " + nodeId2 + " not in network " + this.id)));
     }
 
     /**
      * Retrieve a node with a given id from the network, or null if the id cannot be found.
      * @param linkId the id of the link to search for in the network.
-     * @return the link or null if not present
+     * @return the link, empty if not present
      */
-    public final Link getLink(final String linkId)
+    public Optional<Link> getLink(final String linkId)
     {
-        return this.linkMap.get(linkId);
+        return Optional.ofNullable(this.linkMap.get(linkId));
     }
 
     /***************************************************************************************/
@@ -358,7 +353,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Return an immutable map of all ObjectInterface implementing objects in the Network.
      * @return the immutable map of all ObjectInterface implementing objects in the Network
      */
-    public final ImmutableMap<String, LocatedObject> getObjectMap()
+    public ImmutableMap<String, LocatedObject> getObjectMap()
     {
         return new ImmutableHashMap<>(this.objectMap, Immutable.WRAP);
     }
@@ -367,7 +362,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Return object map.
      * @return only to be used in the 'network' package for cloning.
      */
-    final Map<String, LocatedObject> getRawObjectMap()
+    Map<String, LocatedObject> getRawObjectMap()
     {
         return this.objectMap;
     }
@@ -381,7 +376,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      *         any sub type thereof
      */
     @SuppressWarnings("unchecked")
-    public final <T extends LocatedObject> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
+    public <T extends LocatedObject> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
     {
         Map<String, T> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
@@ -400,19 +395,19 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param objectType object type class
      * @param objectId id of object
      * @param <T> object type
-     * @return object of given type with given id, {@code null} if no such object
+     * @return object of given type with given id, empty if no such object
      */
     @SuppressWarnings("unchecked")
-    public final <T extends LocatedObject> T getObject(final Class<T> objectType, final String objectId)
+    public <T extends LocatedObject> Optional<T> getObject(final Class<T> objectType, final String objectId)
     {
         for (Entry<String, LocatedObject> entry : this.objectMap.entrySet())
         {
             if (entry.getKey().equals(objectId) && objectType.isInstance(entry.getValue()))
             {
-                return (T) entry.getValue();
+                return Optional.of((T) entry.getValue());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -420,7 +415,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param object the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
      */
-    public final void addObject(final LocatedObject object) throws NetworkException
+    public void addObject(final LocatedObject object) throws NetworkException
     {
         if (containsObject(object))
         {
@@ -439,7 +434,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param object the object that implements ObjectInterface
      * @throws NetworkException if the object does not exist in the network.
      */
-    public final void removeObject(final LocatedObject object) throws NetworkException
+    public void removeObject(final LocatedObject object) throws NetworkException
     {
         if (!containsObject(object))
         {
@@ -454,7 +449,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param object the object that is tested for presence
      * @return whether the object is present in the Network
      */
-    public final boolean containsObject(final LocatedObject object)
+    public boolean containsObject(final LocatedObject object)
     {
         return this.objectMap.containsKey(object.getFullId());
     }
@@ -467,7 +462,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param objectId the id that is tested for presence
      * @return whether an object with the given id is present in the Network
      */
-    public final boolean containsObject(final String objectId)
+    public boolean containsObject(final String objectId)
     {
         return this.objectMap.containsKey(objectId);
     }
@@ -480,7 +475,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Return an immutable map of all NonLocatedObject implementing objects in the Network.
      * @return the immutable map of all NonLocatedObject implementing objects in the Network
      */
-    public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap()
+    public ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap()
     {
         return new ImmutableHashMap<>(this.nonLocatedObjectMap, Immutable.WRAP);
     }
@@ -489,7 +484,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Get non-located object map.
      * @return only to be used in the 'network' package for cloning.
      */
-    final Map<String, NonLocatedObject> getRawNonLocatedObjectMap()
+    Map<String, NonLocatedObject> getRawNonLocatedObjectMap()
     {
         return this.nonLocatedObjectMap;
     }
@@ -501,7 +496,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @return the immutable map of all NonLocatedObject implementing objects in the Network that are of the type objectType, or
      *         any sub type thereof
      */
-    public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(final Class<NonLocatedObject> objectType)
+    public ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(final Class<NonLocatedObject> objectType)
     {
         Map<String, NonLocatedObject> result = new LinkedHashMap<>();
         for (String key : this.objectMap.keySet())
@@ -520,7 +515,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param object the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
      */
-    public final void addNonLocatedObject(final NonLocatedObject object) throws NetworkException
+    public void addNonLocatedObject(final NonLocatedObject object) throws NetworkException
     {
         if (containsNonLocatedObject(object))
         {
@@ -540,7 +535,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param object the object that implements ObjectInterface
      * @throws NetworkException if the object does not exist in the network.
      */
-    public final void removeNonLocatedObject(final NonLocatedObject object) throws NetworkException
+    public void removeNonLocatedObject(final NonLocatedObject object) throws NetworkException
     {
         if (!containsNonLocatedObject(object))
         {
@@ -555,7 +550,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param object the object that is tested for presence
      * @return whether the invisible object is present in the Network
      */
-    public final boolean containsNonLocatedObject(final NonLocatedObject object)
+    public boolean containsNonLocatedObject(final NonLocatedObject object)
     {
         return this.nonLocatedObjectMap.containsKey(object.getFullId());
     }
@@ -568,7 +563,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param objectId the id that is tested for presence
      * @return whether an invisible object with the given id is present in the Network
      */
-    public final boolean containsNonLocatedObject(final String objectId)
+    public boolean containsNonLocatedObject(final String objectId)
     {
         return this.nonLocatedObjectMap.containsKey(objectId);
     }
@@ -583,7 +578,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @return an immutable map of routes in the network for the given GtuType, or an empty Map if no routes are defined for the
      *         given GtuType.
      */
-    public final ImmutableMap<String, Route> getDefinedRouteMap(final GtuType gtuType)
+    public ImmutableMap<String, Route> getDefinedRouteMap(final GtuType gtuType)
     {
         Map<String, Route> routes = new LinkedHashMap<>();
         if (this.routeMap.containsKey(gtuType))
@@ -600,7 +595,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @throws NetworkException if route already exists in the network, if name of the route is not unique, if one of the nodes
      *             of the route are not registered in the network.
      */
-    public final void addRoute(final GtuType gtuType, final Route route) throws NetworkException
+    public void addRoute(final GtuType gtuType, final Route route) throws NetworkException
     {
         if (containsRoute(gtuType, route))
         {
@@ -635,7 +630,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param route the route to remove from the network.
      * @throws NetworkException if route does not exist in the network.
      */
-    public final void removeRoute(final GtuType gtuType, final Route route) throws NetworkException
+    public void removeRoute(final GtuType gtuType, final Route route) throws NetworkException
     {
         if (!containsRoute(gtuType, route))
         {
@@ -652,7 +647,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param route the route to check for
      * @return whether the route exists in the network for the given GtuType
      */
-    public final boolean containsRoute(final GtuType gtuType, final Route route)
+    public boolean containsRoute(final GtuType gtuType, final Route route)
     {
         if (this.routeMap.containsKey(gtuType))
         {
@@ -667,7 +662,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param routeId the id of the route to check for
      * @return whether a route with the given id exists in the network for the given GtuType
      */
-    public final boolean containsRoute(final GtuType gtuType, final String routeId)
+    public boolean containsRoute(final GtuType gtuType, final String routeId)
     {
         if (this.routeMap.containsKey(gtuType))
         {
@@ -677,37 +672,36 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     }
 
     /**
-     * Returns the route with given id or {@code null} if no such route is available.
+     * Returns the route with given id, for any GTU type for which it is given.
      * @param routeId route id
-     * @return route with given id or {@code null} if no such route is available
+     * @return route with given id, empty if no such route is available
      */
-    public final Route getRoute(final String routeId)
+    public Optional<Route> getRoute(final String routeId)
     {
         for (GtuType gtuType : this.routeMap.keySet())
         {
             Route route = this.routeMap.get(gtuType).get(routeId);
             if (route != null)
             {
-                return route;
+                return Optional.of(route);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
-     * Return the route with the given id in the network for the given GtuType, or null if it the route with the id does not
-     * exist.
-     * @param gtuType the GtuType for which to retrieve a route based on its id.
+     * Return the route with the given id in the network for the given GTU type.
+     * @param gtuType the GTU type for which to retrieve a route based on its id.
      * @param routeId the route to search for in the network.
-     * @return the route or null if not present
+     * @return the route, empty if not present
      */
-    public final Route getRoute(final GtuType gtuType, final String routeId)
+    public Optional<Route> getRoute(final GtuType gtuType, final String routeId)
     {
         if (this.routeMap.containsKey(gtuType))
         {
-            return this.routeMap.get(gtuType).get(routeId);
+            return Optional.ofNullable(this.routeMap.get(gtuType).get(routeId));
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -718,7 +712,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @param nodeTo the end node.
      * @return if no route can be found, an empty set is returned.
      */
-    public final Set<Route> getRoutesBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo)
+    public Set<Route> getRoutesBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo)
     {
         Set<Route> routes = new LinkedHashSet<>();
         if (this.routeMap.containsKey(gtuType))
@@ -794,7 +788,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
+    public Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final LinkWeight linkWeight) throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, new ArrayList<>(), linkWeight);
@@ -813,7 +807,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      */
-    public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
+    public Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia) throws NetworkException
     {
         return getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, LinkWeight.LENGTH_NO_CONNECTORS);
@@ -834,7 +828,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      *             can be the case when the links in the network have changed, but the graph has not been rebuilt.
      * @throws IllegalArgumentException if the from and to node are equal
      */
-    public final Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
+    public Route getShortestRouteBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo,
             final List<Node> nodesVia, final LinkWeight linkWeight) throws NetworkException
     {
         Throw.whenNull(nodeFrom, "nodeFrom");
@@ -903,7 +897,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Get route map.
      * @return a defensive copy of the routeMap.
      */
-    public final ImmutableMap<GtuType, Map<String, Route>> getRouteMap()
+    public ImmutableMap<GtuType, Map<String, Route>> getRouteMap()
     {
         return new ImmutableHashMap<>(this.routeMap, Immutable.WRAP);
     }
@@ -912,7 +906,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Get route map.
      * @return only to be used in the 'network' package for cloning.
      */
-    final Map<GtuType, Map<String, Route>> getRawRouteMap()
+    Map<GtuType, Map<String, Route>> getRawRouteMap()
     {
         return this.routeMap;
     }
@@ -921,7 +915,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Set route map.
      * @param newRouteMap the routeMap to set, only to be used in the 'network' package for cloning.
      */
-    public final void setRawRouteMap(final Map<GtuType, Map<String, Route>> newRouteMap)
+    public void setRawRouteMap(final Map<GtuType, Map<String, Route>> newRouteMap)
     {
         this.routeMap = newRouteMap;
     }
@@ -931,7 +925,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     /***************************************************************************************/
 
     @Override
-    public final void addGTU(final Gtu gtu)
+    public void addGTU(final Gtu gtu)
     {
         this.gtuMap.put(gtu.getId(), gtu);
         // TODO verify that gtu.getSimulator() equals getSimulator() ?
@@ -939,33 +933,33 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     }
 
     @Override
-    public final void removeGTU(final Gtu gtu)
+    public void removeGTU(final Gtu gtu)
     {
         fireTimedEvent(Network.GTU_REMOVE_EVENT, gtu.getId(), getSimulator().getSimulatorTime());
         this.gtuMap.remove(gtu.getId());
     }
 
     @Override
-    public final boolean containsGTU(final Gtu gtu)
+    public boolean containsGTU(final Gtu gtu)
     {
         return this.gtuMap.containsValue(gtu);
     }
 
     @Override
-    public final Gtu getGTU(final String gtuId)
+    public Optional<Gtu> getGTU(final String gtuId)
     {
-        return this.gtuMap.get(gtuId);
+        return Optional.ofNullable(this.gtuMap.get(gtuId));
     }
 
     @Override
-    public final Set<Gtu> getGTUs()
+    public Set<Gtu> getGTUs()
     {
         // defensive copy
         return new LinkedHashSet<>(this.gtuMap.values());
     }
 
     @Override
-    public final boolean containsGtuId(final String gtuId)
+    public boolean containsGtuId(final String gtuId)
     {
         return this.gtuMap.containsKey(gtuId);
     }
@@ -974,7 +968,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      * Return GTU map.
      * @return gtuMap
      */
-    final Map<String, Gtu> getRawGtuMap()
+    Map<String, Gtu> getRawGtuMap()
     {
         return this.gtuMap;
     }
@@ -1036,7 +1030,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "Network [id=" + this.id + ", nodeMapSize=" + this.nodeMap.size() + ", linkMapSize=" + this.linkMap.size()
                 + ", objectMapSize=" + this.objectMap.size() + ", routeMapSize=" + this.routeMap.size() + ", gtuMapSize="

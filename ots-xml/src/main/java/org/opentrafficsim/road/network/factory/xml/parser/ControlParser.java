@@ -198,13 +198,13 @@ public final class ControlParser
                 {
                     // Handle single lane detector
                     SingleLane singleLaneDetector = detector.getSingleLane();
-                    CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(singleLaneDetector.getLink().get(eval));
-                    Lane lane = (Lane) link.getCrossSectionElement(singleLaneDetector.getLane().get(eval));
+                    CrossSectionLink link = NetworkParser.getLink(otsNetwork, singleLaneDetector.getLink().get(eval));
+                    Lane lane = (Lane) link.getCrossSectionElement(singleLaneDetector.getLane().get(eval)).orElseThrow();
                     Length entryPosition =
                             ParseUtil.parseLengthBeginEnd(singleLaneDetector.getEntryPosition().get(eval), lane.getLength());
                     Length exitPosition =
                             ParseUtil.parseLengthBeginEnd(singleLaneDetector.getExitPosition().get(eval), lane.getLength());
-                    DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(eval));
+                    DetectorType detectorType = definitions.getOrThrow(DetectorType.class, detector.getType().get(eval));
                     new TrafficLightDetector(detector.getId(), lane, entryPosition, lane, exitPosition, null,
                             RelativePosition.FRONT, RelativePosition.REAR, detectorType);
                 }
@@ -212,23 +212,24 @@ public final class ControlParser
                 {
                     // Handle detector spanning multiple lanes
                     MultipleLane multiLaneDetector = detector.getMultipleLane();
-                    CrossSectionLink entryLink =
-                            (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getEntryLink().get(eval));
-                    Lane entryLane = (Lane) entryLink.getCrossSectionElement(multiLaneDetector.getEntryLane().get(eval));
+                    CrossSectionLink entryLink = NetworkParser.getLink(otsNetwork, multiLaneDetector.getEntryLink().get(eval));
+                    Lane entryLane =
+                            (Lane) entryLink.getCrossSectionElement(multiLaneDetector.getEntryLane().get(eval)).orElseThrow();
                     Length entryPosition = ParseUtil.parseLengthBeginEnd(multiLaneDetector.getEntryPosition().get(eval),
                             entryLane.getLength());
-                    CrossSectionLink exitLink =
-                            (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getExitLink().get(eval));
-                    Lane exitLane = (Lane) exitLink.getCrossSectionElement(multiLaneDetector.getExitLane().get(eval));
+                    CrossSectionLink exitLink = NetworkParser.getLink(otsNetwork, multiLaneDetector.getExitLink().get(eval));
+                    Lane exitLane =
+                            (Lane) exitLink.getCrossSectionElement(multiLaneDetector.getExitLane().get(eval)).orElseThrow();
                     Length exitPosition =
                             ParseUtil.parseLengthBeginEnd(multiLaneDetector.getExitPosition().get(eval), exitLane.getLength());
                     List<Lane> intermediateLanes = new ArrayList<>();
                     for (LaneLinkType linkAndLane : multiLaneDetector.getIntermediateLanes())
                     {
-                        CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLink().get(eval));
-                        intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLane().get(eval)));
+                        CrossSectionLink link = NetworkParser.getLink(otsNetwork, linkAndLane.getLink().get(eval));
+                        intermediateLanes
+                                .add((Lane) link.getCrossSectionElement(linkAndLane.getLane().get(eval)).orElseThrow());
                     }
-                    DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(eval));
+                    DetectorType detectorType = definitions.getOrThrow(DetectorType.class, detector.getType().get(eval));
                     new TrafficLightDetector(detector.getId(), entryLane, entryPosition, exitLane, exitPosition,
                             intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, detectorType);
                 }

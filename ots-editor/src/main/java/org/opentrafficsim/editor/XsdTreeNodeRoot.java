@@ -145,7 +145,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         Set<KeyrefValidator> keyrefs = new LinkedHashSet<>();
         for (Entry<String, Node> entry : schema.keyrefs().entrySet())
         {
-            String keyName = DocumentReader.getAttribute(entry.getValue(), "refer").replace("ots:", "");
+            String keyName = DocumentReader.getAttribute(entry.getValue(), "refer").get().replace("ots:", "");
             for (KeyValidator key : keys)
             {
                 if (key.getKeyName().equals(keyName))

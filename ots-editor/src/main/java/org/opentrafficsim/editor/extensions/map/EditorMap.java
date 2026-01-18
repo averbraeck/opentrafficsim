@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Function;
@@ -488,8 +489,8 @@ public final class EditorMap extends JPanel implements EventListener
             final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
-        Icon icon = OtsControlPanel.loadIcon(iconPath);
-        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath);
+        Icon icon = OtsControlPanel.loadIcon(iconPath).get();
+        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath).get();
         button = new JCheckBox();
         button.setSelectedIcon(icon);
         button.setIcon(unIcon);
@@ -928,11 +929,11 @@ public final class EditorMap extends JPanel implements EventListener
     /**
      * Returns the map data of the given XSD node.
      * @param node node.
-     * @return map data of the given XSD node, {@code null} if no such data.
+     * @return map data of the given XSD node, empty if no such data.
      */
-    public MapData getData(final XsdTreeNode node)
+    public Optional<MapData> getData(final XsdTreeNode node)
     {
-        return this.datas.get(node);
+        return Optional.ofNullable(this.datas.get(node));
     }
 
     /**

@@ -39,24 +39,24 @@ public final class DefaultsTest
     public void testNl()
     {
         StreamInterface stream = new MersenneTwister(1L);
-        assertNotNull(Defaults.NL.apply(DefaultsNl.CAR, stream));
-        assertNotNull(Defaults.NL.apply(DefaultsNl.TRUCK, stream));
-        assertNotNull(Defaults.NL.apply(DefaultsNl.BUS, stream));
-        assertNotNull(Defaults.NL.apply(DefaultsNl.VAN, stream));
-        assertNotNull(Defaults.NL.apply(DefaultsNl.EMERGENCY_VEHICLE, stream));
-        assertNotNull(Defaults.NL.apply(DefaultsNl.MOTORCYCLE, stream));
-        assertNotNull(Defaults.NL.apply(DefaultsNl.BICYCLE, stream));
-        UnitTest.testFail(() -> Defaults.NL.apply(new GtuType("NEW"), stream), NullPointerException.class);
+        assertNotNull(Defaults.NL.apply(DefaultsNl.CAR, stream).get());
+        assertNotNull(Defaults.NL.apply(DefaultsNl.TRUCK, stream).get());
+        assertNotNull(Defaults.NL.apply(DefaultsNl.BUS, stream).get());
+        assertNotNull(Defaults.NL.apply(DefaultsNl.VAN, stream).get());
+        assertNotNull(Defaults.NL.apply(DefaultsNl.EMERGENCY_VEHICLE, stream).get());
+        assertNotNull(Defaults.NL.apply(DefaultsNl.MOTORCYCLE, stream).get());
+        assertNotNull(Defaults.NL.apply(DefaultsNl.BICYCLE, stream).get());
+        assertTrue(Defaults.NL.apply(new GtuType("NEW"), stream).isEmpty());
 
         assertEquals(Defaults.NL.getLocale().getCountry(), "NL");
-        assertNotNull(Defaults.getByName(GtuType.class, "NL.CAR"));
-        assertNotNull(Defaults.getByName(GtuType.class, "NL.TRUCK"));
-        assertNotNull(Defaults.getByName(GtuType.class, "NL.BUS"));
-        assertNotNull(Defaults.getByName(GtuType.class, "NL.VAN"));
-        assertNotNull(Defaults.getByName(GtuType.class, "NL.EMERGENCY_VEHICLE"));
-        assertNotNull(Defaults.getByName(GtuType.class, "NL.MOTORCYCLE"));
-        assertNotNull(Defaults.getByName(GtuType.class, "NL.BICYCLE"));
-        assertNull(Defaults.getByName(GtuType.class, "NL.NOT_A_TYPE"));
+        assertNotNull(Defaults.getByName(GtuType.class, "NL.CAR").get());
+        assertNotNull(Defaults.getByName(GtuType.class, "NL.TRUCK").get());
+        assertNotNull(Defaults.getByName(GtuType.class, "NL.BUS").get());
+        assertNotNull(Defaults.getByName(GtuType.class, "NL.VAN").get());
+        assertNotNull(Defaults.getByName(GtuType.class, "NL.EMERGENCY_VEHICLE").get());
+        assertNotNull(Defaults.getByName(GtuType.class, "NL.MOTORCYCLE").get());
+        assertNotNull(Defaults.getByName(GtuType.class, "NL.BICYCLE").get());
+        assertNull(Defaults.getByName(GtuType.class, "NL.NOT_A_TYPE").orElse(null));
     }
 
     /**
@@ -73,9 +73,9 @@ public final class DefaultsTest
 
         UnitTest.testFail(() -> defs.get(GtuType.class, null), NullPointerException.class);
         UnitTest.testFail(() -> defs.get(null, "NL.CAR"), NullPointerException.class);
-        assertEquals(DefaultsNl.CAR, defs.get(GtuType.class, "NL.CAR"));
-        assertNull(defs.get(GtuType.class, "NL.NOT_A_TYPE"));
-        assertNull(defs.get(LinkType.class, "NL.HIGHWAY"));
+        assertEquals(DefaultsNl.CAR, defs.get(GtuType.class, "NL.CAR").get());
+        assertNull(defs.get(GtuType.class, "NL.NOT_A_TYPE").orElse(null));
+        assertNull(defs.get(LinkType.class, "NL.HIGHWAY").orElse(null));
 
         assertFalse(defs.getAll(GtuType.class).isEmpty());
         assertTrue(defs.getAll(DetectorType.class).isEmpty());

@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -77,7 +78,7 @@ public final class StripeSynchronization<T>
         }
         if (stripe.getSynchronization().equals(StripePhaseSync.DOWNSTREAM))
         {
-            SynchronizableStripe<T> down = this.stripes.get(stripe.getDownstreamStripe());
+            SynchronizableStripe<T> down = this.stripes.get(stripe.getDownstreamStripe().get());
             if (down != null)
             {
                 if (stripesToDo.contains(down))
@@ -104,7 +105,7 @@ public final class StripeSynchronization<T>
         }
         else if (stripe.getSynchronization().equals(StripePhaseSync.UPSTREAM))
         {
-            SynchronizableStripe<T> up = this.stripes.get(stripe.getUpstreamStripe());
+            SynchronizableStripe<T> up = this.stripes.get(stripe.getUpstreamStripe().orElse(null));
             if (up != null)
             {
                 if (stripesToDo.contains(up))
@@ -166,13 +167,13 @@ public final class StripeSynchronization<T>
          * Returns the upstream stripe.
          * @return upstream stripe
          */
-        T getUpstreamStripe();
+        Optional<T> getUpstreamStripe();
 
         /**
          * Returns the downstream stripe.
          * @return downstream stripe
          */
-        T getDownstreamStripe();
+        Optional<T> getDownstreamStripe();
 
         /**
          * Returns the stripes in the same link that have the same period, and which are synchronized upstream or downstream in
@@ -242,7 +243,7 @@ public final class StripeSynchronization<T>
             }
 
             @Override
-            public Stripe getUpstreamStripe()
+            public Optional<Stripe> getUpstreamStripe()
             {
                 Stripe upstream = null;
                 for (Link upstreamLink : stripe.getLink().getStartNode().getLinks())
@@ -259,18 +260,18 @@ public final class StripeSynchronization<T>
                                 if (upstream != null)
                                 {
                                     // multiple upstream stripes, no point in synchronizing, make stripe an anchor
-                                    return null;
+                                    return Optional.empty();
                                 }
                                 upstream = upstreamStripe;
                             }
                         }
                     }
                 }
-                return upstream;
+                return Optional.ofNullable(upstream);
             }
 
             @Override
-            public Stripe getDownstreamStripe()
+            public Optional<Stripe> getDownstreamStripe()
             {
                 Stripe downstream = null;
                 for (Link downstreamLink : stripe.getLink().getEndNode().getLinks())
@@ -287,14 +288,14 @@ public final class StripeSynchronization<T>
                                 if (downstream != null)
                                 {
                                     // multiple downstream stripes, no point in synchronizing, make stripe an anchor
-                                    return null;
+                                    return Optional.empty();
                                 }
                                 downstream = downstreamStripe;
                             }
                         }
                     }
                 }
-                return downstream;
+                return Optional.ofNullable(downstream);
             }
 
             @Override

@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
@@ -13,6 +14,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.multikeymap.MultiKeyMap;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -108,20 +110,25 @@ public class StochasticDistractionModel implements EventListener
         String gtuId = gtu.getId();
         if (this.allowMultiTasking || !this.distractedGTUs.contains(gtuId))
         {
-            if (gtu.getTacticalPlanner().getPerception().getMental() instanceof Fuller fuller)
+            Optional<Mental> mental = gtu.getTacticalPlanner().getPerception().getMental();
+            if (mental.isEmpty())
+            {
+                return;
+            }
+            if (mental.get() instanceof Fuller fuller)
             {
                 // start the distraction now
                 if (!this.allowMultiTasking)
                 {
                     this.distractedGTUs.add(gtuId);
                 }
-                if (gtu.getTacticalPlanner().getPerception().getMental() instanceof SumFuller sumFuller)
+                if (mental.get() instanceof SumFuller sumFuller)
                 {
                     Task task = new ArTaskConstant(distraction.getId(), distraction.getTaskDemand());
                     ((SumFuller<Task>) sumFuller).addTask(task);
                     this.tasks.put(task, gtuId, distraction.getId());
                 }
-                else if (gtu.getTacticalPlanner().getPerception().getMental() instanceof ChannelFuller channelFuller)
+                else if (mental.get() instanceof ChannelFuller channelFuller)
                 {
                     boolean internal = !DefaultDistraction.EXTERNAL_DISTRACTION.getId().equals(distraction.getId());
                     ChannelTask task = new ChannelTaskConstant(distraction.getId(),
@@ -173,16 +180,22 @@ public class StochasticDistractionModel implements EventListener
         }
         boolean isFuller = false;
         String gtuId = gtu.getId();
-        if (gtu.getTacticalPlanner().getPerception().getMental() instanceof SumFuller sumFuller)
+        Optional<Mental> mental = gtu.getTacticalPlanner().getPerception().getMental();
+        if (mental.isPresent() && mental.get() instanceof SumFuller sumFuller)
         {
             ((SumFuller<Task>) sumFuller).removeTask((Task) this.tasks.clear(gtuId, distractionId));
             isFuller = true;
         }
-        else if (gtu.getTacticalPlanner().getPerception().getMental() instanceof ChannelFuller channelFuller)
+        else if (mental.isPresent() && mental.get() instanceof ChannelFuller channelFuller)
         {
             channelFuller.removeTaskSupplier(
                     (Function<LanePerception, Set<ChannelTask>>) this.taskSuppliers.clear(gtuId, distractionId));
             isFuller = true;
+        }
+        else
+        {
+            Logger.ots().warn("Disabling distraction " + distractionId + " on GTU " + gtuId
+                    + ", but it (no longer) has a tactical planner with mental module that can do this.");
         }
         if (isFuller)
         {
@@ -217,18 +230,19 @@ public class StochasticDistractionModel implements EventListener
         {
             // The GTU is not initialized yet, so we can't obtain the tactical planner
             String gtuId = (String) event.getContent();
-            Gtu gtu = this.network.getGTU(gtuId);
-            if (this.gtuTypes.contains(gtu.getType()))
+            Gtu gtu = this.network.getGTU(gtuId).orElseThrow(
+                    () -> new OtsRuntimeException("Distraction event for GTU " + gtuId + " which is not in the network."));
+            if (gtu instanceof LaneBasedGtu && this.gtuTypes.contains(gtu.getType()))
             {
-                gtu.addListener(this, Gtu.MOVE_EVENT);
+                gtu.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
             }
         }
-        else if (event.getType().equals(Gtu.MOVE_EVENT))
+        else if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))
         {
             String gtuId = (String) ((Object[]) event.getContent())[0];
-            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId);
-            Mental mental = gtu.getTacticalPlanner().getPerception().getMental();
-            if (mental != null && mental instanceof Fuller)
+            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId).get();
+            Optional<Mental> mental = gtu.getTacticalPlanner().getPerception().getMental();
+            if (mental.isPresent() && mental.get() instanceof Fuller)
             {
                 for (Distraction distraction : this.distractions)
                 {
@@ -239,7 +253,7 @@ public class StochasticDistractionModel implements EventListener
                     }
                 }
             }
-            gtu.removeListener(this, Gtu.MOVE_EVENT);
+            gtu.removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
         }
         else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
         {

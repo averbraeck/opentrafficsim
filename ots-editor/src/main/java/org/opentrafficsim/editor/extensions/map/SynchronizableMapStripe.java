@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -82,61 +83,63 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
     }
 
     @Override
-    public MapStripeData getUpstreamStripe()
+    public Optional<MapStripeData> getUpstreamStripe()
     {
-        XsdTreeNode fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeStart");
-        if (fromNode == null)
+        Optional<XsdTreeNode> fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeStart");
+        if (fromNode.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
-            if (networkChild.getNodeName().equals("Link") && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeEnd")))
+            if (networkChild.getNodeName().equals("Link")
+                    && fromNode.get().equals(networkChild.getCoupledNodeAttribute("NodeEnd").orElse(null)))
             {
-                MapLinkData otherLink = (MapLinkData) this.linkData.getMap().getData(networkChild);
-                if (otherLink == null)
+                Optional<MapData> otherLink = this.linkData.getMap().getData(networkChild);
+                if (otherLink.isEmpty())
                 {
-                    return null;
+                    return Optional.empty();
                 }
-                for (MapStripeData otherStripe : otherLink.getStripeData())
+                for (MapStripeData otherStripe : ((MapLinkData) otherLink.get()).getStripeData())
                 {
                     if (otherStripe.getCenterLine().getLast().distance(this.data.getCenterLine().getFirst()) < Lane.MARGIN.si)
                     {
-                        return otherStripe;
+                        return Optional.of(otherStripe);
                     }
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public MapStripeData getDownstreamStripe()
+    public Optional<MapStripeData> getDownstreamStripe()
     {
-        XsdTreeNode fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeEnd");
-        if (fromNode == null)
+        Optional<XsdTreeNode> fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeEnd");
+        if (fromNode.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
-            if (networkChild.getNodeName().equals("Link") && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeStart")))
+            if (networkChild.getNodeName().equals("Link")
+                    && fromNode.get().equals(networkChild.getCoupledNodeAttribute("NodeStart").orElse(null)))
             {
-                MapLinkData otherLink = (MapLinkData) this.linkData.getMap().getData(networkChild);
-                if (otherLink == null)
+                Optional<MapData> otherLink = this.linkData.getMap().getData(networkChild);
+                if (otherLink.isEmpty())
                 {
-                    return null;
+                    return Optional.empty();
                 }
-                for (MapStripeData otherStripe : otherLink.getStripeData())
+                for (MapStripeData otherStripe : ((MapLinkData) otherLink.get()).getStripeData())
                 {
                     if (otherStripe.getCenterLine().getFirst().distance(this.data.getCenterLine().getLast()) < Lane.MARGIN.si)
                     {
-                        return otherStripe;
+                        return Optional.of(otherStripe);
                     }
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

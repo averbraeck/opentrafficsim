@@ -44,8 +44,8 @@ public class AdaptationHeadway extends FactorAdaptation
     {
         if (this.t0Min == null)
         {
-            this.t0Min = parameters.getParameterOrNull(ParameterTypes.TMIN);
-            this.t0Max = parameters.getParameterOrNull(ParameterTypes.TMAX);
+            this.t0Min = parameters.getParameter(ParameterTypes.TMIN);
+            this.t0Max = parameters.getParameter(ParameterTypes.TMAX);
         }
         double factor = getFactor(parameters, BETA_T);
         Duration tMin = this.t0Min.times(factor);

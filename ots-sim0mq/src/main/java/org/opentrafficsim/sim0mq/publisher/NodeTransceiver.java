@@ -61,7 +61,7 @@ public class NodeTransceiver extends AbstractTransceiver
             returnWrapper.nack(bad);
             return null;
         }
-        Node node = this.network.getNode((String) address[0]);
+        Node node = this.network.getNode((String) address[0]).orElse(null);
         if (null == node)
         {
             returnWrapper.nack("Network does not contain a node with id " + address[0]);

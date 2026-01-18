@@ -61,8 +61,8 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
             int idColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.ID_COLUMN);
             int valueColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.VALUE_COLUMN);
             XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(row, treeColumn);
-            String message = node.isSelfValid() ? null : (column == idColumn ? node.reportInvalidId()
-                    : (column == valueColumn ? node.reportInvalidValue() : null));
+            String message = node.isSelfValid() ? null : (column == idColumn ? node.reportInvalidId().orElse(null)
+                    : (column == valueColumn ? node.reportInvalidValue().orElse(null) : null));
             if (this.treeTable.isCellEditable(row, column))
             {
                 if (message != null)

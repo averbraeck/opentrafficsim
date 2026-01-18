@@ -51,9 +51,9 @@ public class GtuDataRoad implements GtuData
     {
         try
         {
-            return this.gtu.getStrategicalPlanner().getRoute().originNode().getId();
+            return this.gtu.getStrategicalPlanner().getRoute().get().originNode().getId();
         }
-        catch (NetworkException exception)
+        catch (NetworkException | NullPointerException exception)
         {
             throw new OtsRuntimeException("Could not get origin node.", exception);
         }
@@ -64,9 +64,9 @@ public class GtuDataRoad implements GtuData
     {
         try
         {
-            return this.gtu.getStrategicalPlanner().getRoute().destinationNode().getId();
+            return this.gtu.getStrategicalPlanner().getRoute().get().destinationNode().getId();
         }
-        catch (NetworkException exception)
+        catch (NetworkException | NullPointerException exception)
         {
             throw new OtsRuntimeException("Could not get destination node.", exception);
         }
@@ -81,7 +81,8 @@ public class GtuDataRoad implements GtuData
     @Override
     public final String getRouteId()
     {
-        return this.gtu.getStrategicalPlanner().getRoute().getId();
+        return this.gtu.getStrategicalPlanner().getRoute()
+                .orElseThrow(() -> new OtsRuntimeException("Could not get id of route.")).getId();
     }
 
     @Override

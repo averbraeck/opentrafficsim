@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.unit.SpeedUnit;
@@ -727,7 +728,8 @@ public class ContourDataSource extends LocalEventProducer
                     List<TrajectoryGroup<?>> trajectories = new ArrayList<>();
                     for (Section<? extends LaneData<?>> section : getPath().getSections())
                     {
-                        TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
+                        TrajectoryGroup<?> trajectoryGroup =
+                                this.samplerData.getTrajectoryGroup(section.getSource(series)).orElse(null);
                         if (null == trajectoryGroup)
                         {
                             Logger.ots().error("trajectoryGroup {} is null", series);
@@ -851,17 +853,18 @@ public class ContourDataSource extends LocalEventProducer
                 quantities.add(contourDataType.getQuantity());
             }
             int skipSpace = this.path.isCircular() ? (int) Math.ceil(spaceKernelSize / spaceGranularity) : 0;
-            Filter filter = this.egtf.filterFastSI(spaceTicks[0] + (0.5 - skipSpace) * spaceGranularity, spaceGranularity,
-                    spaceTicks[0] + (-1.5 + spaceTicks.length + skipSpace) * spaceGranularity, tFromEgtf, timeGranularity, t.si,
-                    quantities.toArray(new Quantity<?, ?>[quantities.size()]));
-            if (filter != null) // null if interrupted
+            Optional<Filter> filter = this.egtf.filterFastSI(spaceTicks[0] + (0.5 - skipSpace) * spaceGranularity,
+                    spaceGranularity, spaceTicks[0] + (-1.5 + spaceTicks.length + skipSpace) * spaceGranularity, tFromEgtf,
+                    timeGranularity, t.si, quantities.toArray(new Quantity<?, ?>[quantities.size()]));
+            if (filter.isPresent()) // null if interrupted
             {
-                overwriteSmoothed(this.distance, nFromEgtf, filter.getSI(this.travelDistanceQuantity), skipTime, skipSpace);
-                overwriteSmoothed(this.time, nFromEgtf, filter.getSI(this.travelTimeQuantity), skipTime, skipSpace);
+                overwriteSmoothed(this.distance, nFromEgtf, filter.get().getSI(this.travelDistanceQuantity), skipTime,
+                        skipSpace);
+                overwriteSmoothed(this.time, nFromEgtf, filter.get().getSI(this.travelTimeQuantity), skipTime, skipSpace);
                 for (ContourDataType<?, ?> contourDataType : this.additionalData.keySet())
                 {
                     overwriteSmoothed(this.additionalData.get(contourDataType), nFromEgtf,
-                            filter.getSI(contourDataType.getQuantity()), skipTime, skipSpace);
+                            filter.get().getSI(contourDataType.getQuantity()), skipTime, skipSpace);
                 }
                 this.plots.forEach((plot) -> plot.notifyPlotChange());
             }

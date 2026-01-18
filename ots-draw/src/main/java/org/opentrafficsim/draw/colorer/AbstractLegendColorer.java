@@ -3,6 +3,7 @@ package org.opentrafficsim.draw.colorer;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -30,7 +31,7 @@ public abstract class AbstractLegendColorer<T, V> extends AbstractColorer<T, V> 
      * @param colorFunction color function
      * @param legend legend
      */
-    public AbstractLegendColorer(final Function<? super T, V> valueFunction, final Function<V, Color> colorFunction,
+    public AbstractLegendColorer(final Function<? super T, Optional<V>> valueFunction, final Function<V, Color> colorFunction,
             final List<LegendEntry> legend)
     {
         super(valueFunction, colorFunction);

@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling.data;
 
+import java.util.Optional;
+
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
@@ -51,7 +53,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
      * @return current value of the GTU
      */
     @Override
-    public abstract T getValue(G gtu);
+    public abstract Optional<T> getValue(G gtu);
 
     /**
      * Returns an updated list/array/vector of the storage type, including a new value at given index.

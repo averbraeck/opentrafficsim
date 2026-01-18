@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Optional;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -177,10 +178,10 @@ public class SwingPlot extends JFrame
                 }
             }
         };
-        ChartMouseListener chartListener = getChartMouseListener();
-        if (chartListener != null)
+        Optional<ChartMouseListener> chartListener = getChartMouseListener();
+        if (chartListener.isPresent())
         {
-            this.chartPanel.addChartMouseListener(chartListener);
+            this.chartPanel.addChartMouseListener(chartListener.get());
         }
 
         // pointer handler
@@ -263,11 +264,11 @@ public class SwingPlot extends JFrame
 
     /**
      * Overridable; may return a chart listener for additional functions.
-     * @return ChartMouseListener, {@code null} by default
+     * @return ChartMouseListener, empty by default
      */
-    protected ChartMouseListener getChartMouseListener()
+    protected Optional<ChartMouseListener> getChartMouseListener()
     {
-        return null;
+        return Optional.empty();
     }
 
     /**

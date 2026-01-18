@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.event.Event;
@@ -110,11 +111,11 @@ public class KeyValidator extends XPathValidator implements EventListener
     }
 
     @Override
-    public String validate(final XsdTreeNode node)
+    public Optional<String> validate(final XsdTreeNode node)
     {
         if (node.getParent() == null)
         {
-            return null; // Node was deleted, but is still visible in the GUI tree for a moment
+            return Optional.empty(); // Node was deleted, but is still visible in the GUI tree for a moment
         }
         List<String> values = gatherFieldValues(node);
         if (values.contains(null))
@@ -132,14 +133,14 @@ public class KeyValidator extends XPathValidator implements EventListener
                 }
                 if (missing.size() == 1)
                 {
-                    return "Insufficient number of values, missing " + missing.get(0) + ".";
+                    return Optional.of("Insufficient number of values, missing " + missing.get(0) + ".");
                 }
-                return "Insufficient number of values, missing " + missing + ".";
+                return Optional.of("Insufficient number of values, missing " + missing + ".");
             }
             else
             {
                 // xsd:unique with null value so this set of values is excluded from comparison (only full sets must be unique)
-                return null;
+                return Optional.empty();
             }
         }
         Collection<List<String>> set = gatherFieldValuesInContext(node).values();
@@ -148,12 +149,12 @@ public class KeyValidator extends XPathValidator implements EventListener
             if (getFields().size() == 1)
             {
                 String name = userFriendlyXPath(getFields().get(0).getFullFieldName());
-                return "Value " + values.get(0) + " for " + name + " is not unique within " + userFriendlyXPath(getKeyPath())
-                        + ".";
+                return Optional.of("Value " + values.get(0) + " for " + name + " is not unique within "
+                        + userFriendlyXPath(getKeyPath()) + ".");
             }
-            return "Values " + values + " are not unique within " + userFriendlyXPath(getKeyPath()) + ".";
+            return Optional.of("Values " + values + " are not unique within " + userFriendlyXPath(getKeyPath()) + ".");
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

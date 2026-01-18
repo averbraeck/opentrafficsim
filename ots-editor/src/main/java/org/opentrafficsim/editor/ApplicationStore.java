@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.djutils.exceptions.Throw;
@@ -93,12 +94,12 @@ public class ApplicationStore
     /**
      * Returns the property value.
      * @param key key.
-     * @return property value, or {@code null} if no value is given.
+     * @return property value, empty if no value is given.
      */
-    public synchronized String getProperty(final String key)
+    public synchronized Optional<String> getProperty(final String key)
     {
         Throw.whenNull(key, "Key may not be null.");
-        return (String) this.store.get(key);
+        return Optional.ofNullable((String) this.store.get(key));
     }
 
     /**

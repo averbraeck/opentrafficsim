@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 import java.awt.image.ImageObserver;
 import java.text.NumberFormat;
+import java.util.Optional;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
@@ -176,7 +177,7 @@ public class HtmlGridPanel implements ImageObserver
         if (!this.getSize().equals(this.lastDimension))
         {
             this.lastDimension = this.getSize();
-            setExtent(computeVisibleExtent(this.extent));
+            setExtent(computeVisibleExtent(this.extent).get());
         }
         if (this.showGrid)
         {
@@ -312,7 +313,7 @@ public class HtmlGridPanel implements ImageObserver
      */
     public final synchronized void home()
     {
-        setExtent(computeVisibleExtent(this.homeExtent));
+        setExtent(computeVisibleExtent(this.homeExtent).get());
         this.repaint();
     }
 
@@ -643,11 +644,12 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * Computes the visible extent, while preserving zoom scale, otherwise dragging the split screen may pump up the zoom factor
+     * Computes the visible extent, while preserving zoom scale, otherwise dragging the split screen may pump up the zoom
+     * factor.
      * @param extent the extent to use
-     * @return a new extent or null if parameters are null or screen is invalid (width / height &lt;= 0)
+     * @return a new extent or empty if parameters are null or screen is invalid (width / height &lt;= 0)
      */
-    public Bounds2d computeVisibleExtent(final Bounds2d extent)
+    public Optional<Bounds2d> computeVisibleExtent(final Bounds2d extent)
     {
         Dimension screen = getSize();
         double xScale = this.renderableScale.getXScale(extent, screen);
@@ -680,7 +682,7 @@ public class HtmlGridPanel implements ImageObserver
         this.lastXScale = xScale;
         this.lastYScale = yScale;
         this.lastScreen = screen;
-        return result;
+        return Optional.of(result);
     }
 
 }

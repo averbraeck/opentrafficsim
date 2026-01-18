@@ -1,5 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Speed;
@@ -21,7 +22,7 @@ public class SpeedGtuColorer extends SpeedColorer<Gtu>
 {
 
     /** Value function. */
-    private static final Function<Gtu, Speed> VALUE = (gtu) -> gtu.getSpeed();
+    private static final Function<Gtu, Optional<Speed>> VALUE = (gtu) -> Optional.ofNullable(gtu.getSpeed());
 
     /**
      * Constructor.

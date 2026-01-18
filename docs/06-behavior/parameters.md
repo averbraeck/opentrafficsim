@@ -59,8 +59,8 @@ If a parameter value needs to be checked relative to another parameter value, bo
     {
         public void check(final Double value, final Parameters params) 
         {
-            Double dSync = params.getParameterOrNull(DSYNC);
-            Throw.when(dSync != null && value >= dSync, ParameterException.class,
+            Optional<Double> dSync = params.getParameterOrNull(DSYNC);
+            Throw.when(dSync.isPresent() && value >= dSync.get(), ParameterException.class,
                 "Value of dFree is above or equal to dSync.");
         }
     };
@@ -69,8 +69,8 @@ If a parameter value needs to be checked relative to another parameter value, bo
     {
         public void check(final Double value, final Parameters params)
         {
-            Double dFree = params.getParameterOrNull(DFREE);
-            Throw.when(dFree != null && value <= dFree, ParameterException.class, 
+            Optional<Double> dFree = params.getParameterOrNull(DFREE);
+            Throw.when(dFree.isPresent() && value <= dFree.get(), ParameterException.class, 
                 "Value of dSync is below or equal to dFree.");
         }
     };

@@ -57,7 +57,7 @@ public class OdEditor implements EventListener
         // TODO: this is a dummy implementation
         if (event.getType().equals(OtsEditor.SELECTION_CHANGED))
         {
-            JLabel label = ((JLabel) this.editor.getTab("OD"));
+            JLabel label = ((JLabel) this.editor.getTab("OD").get());
             XsdTreeNode node = (XsdTreeNode) event.getContent();
             if (node.getPathString().startsWith("Ots.Demand.Od"))
             {

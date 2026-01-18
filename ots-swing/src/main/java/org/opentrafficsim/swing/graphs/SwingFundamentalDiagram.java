@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.opentrafficsim.swing.graphs;
 
@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -54,11 +55,11 @@ public class SwingFundamentalDiagram extends SwingPlot
     }
 
     @Override
-    protected ChartMouseListener getChartMouseListener()
+    protected Optional<ChartMouseListener> getChartMouseListener()
     {
         ChartMouseListener toggle = !getPlot().hasLineFD() && getPlot().getSource().getNumberOfSeries() < 2 ? null
                 : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
-        return new ChartMouseListener()
+        return Optional.of(new ChartMouseListener()
         {
             @SuppressWarnings("unchecked")
             @Override
@@ -190,7 +191,7 @@ public class SwingFundamentalDiagram extends SwingPlot
                     getPlot().setTimeInfo("");
                 }
             }
-        };
+        });
     }
 
     @Override

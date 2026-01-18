@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
@@ -87,15 +87,15 @@ public final class XsdTreeNodeUtil
                         break;
                     }
                     XsdTreeNode element;
-                    String ref = DocumentReader.getAttribute(child, "ref");
-                    String type = DocumentReader.getAttribute(child, "type");
-                    if (ref != null)
+                    Optional<String> ref = DocumentReader.getAttribute(child, "ref");
+                    Optional<String> type = DocumentReader.getAttribute(child, "type");
+                    if (ref.isPresent())
                     {
-                        element = new XsdTreeNode(parentNode, ref(child, ref, schema), append(hiddenNodes, node), child);
+                        element = new XsdTreeNode(parentNode, ref(child, ref.get(), schema), append(hiddenNodes, node), child);
                     }
-                    else if (type != null)
+                    else if (type.isPresent())
                     {
-                        Node typedNode = type(child, type, schema);
+                        Node typedNode = type(child, type.get(), schema);
                         if (typedNode == null)
                         {
                             // xsd:string or other basic type
@@ -186,9 +186,8 @@ public final class XsdTreeNodeUtil
         {
             return XiIncludeNode.XI_INCLUDE;
         }
-        Node refNode = schema.getElement(ref);
-        Throw.when(refNode == null, OtsRuntimeException.class, "Unable to load ref for %s from XSD schema.", ref);
-        return refNode;
+        return schema.getElement(ref)
+                .orElseThrow(() -> new OtsRuntimeException("Unable to load ref for " + ref + " from XSD schema."));
     }
 
     /**
@@ -219,9 +218,8 @@ public final class XsdTreeNodeUtil
         {
             return null;
         }
-        Node typeNode = schema.getType(type);
-        Throw.when(typeNode == null, OtsRuntimeException.class, "Unable to load type for %s from XSD schema.", type);
-        return typeNode;
+        return schema.getType(type)
+                .orElseThrow(() -> new OtsRuntimeException("Unable to load type for " + type + " from XSD schema."));
     }
 
     /**
@@ -237,7 +235,7 @@ public final class XsdTreeNodeUtil
             List<Node> enumerations = DocumentReader.getChildren(restriction, "xsd:enumeration");
             for (Node enumeration : enumerations)
             {
-                options.add(DocumentReader.getAttribute(enumeration, "value"));
+                options.add(DocumentReader.getAttribute(enumeration, "value").get());
             }
         }
         return options;
@@ -283,33 +281,34 @@ public final class XsdTreeNodeUtil
     static Map<Node, ImmutableList<Node>> getRelevantNodesWithChildren(final Node node, final ImmutableList<Node> hiddenNodes,
             final Schema schema)
     {
-        Node complexType =
-                node.getNodeName().equals("xsd:complexType") ? node : DocumentReader.getChild(node, "xsd:complexType");
+        Node complexType = node.getNodeName().equals("xsd:complexType") ? node
+                : DocumentReader.getChild(node, "xsd:complexType").orElse(null);
         if (complexType != null)
         {
-            Node sequence = DocumentReader.getChild(complexType, "xsd:sequence");
-            if (sequence != null)
+            Optional<Node> sequence = DocumentReader.getChild(complexType, "xsd:sequence");
+            if (sequence.isPresent())
             {
-                return Map.of(sequence, append(hiddenNodes, complexType));
+                return Map.of(sequence.get(), append(hiddenNodes, complexType));
             }
-            Node complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
-            if (complexContent != null)
+            Optional<Node> complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
+            if (complexContent.isPresent())
             {
-                Node extension = DocumentReader.getChild(complexContent, "xsd:extension");
-                if (extension != null)
+                Optional<Node> extension = DocumentReader.getChild(complexContent.get(), "xsd:extension");
+                if (extension.isPresent())
                 {
-                    ImmutableList<Node> hiddenExtension = append(append(hiddenNodes, complexType), complexContent);
+                    ImmutableList<Node> hiddenExtension = append(append(hiddenNodes, complexType), complexContent.get());
                     LinkedHashMap<Node, ImmutableList<Node>> elements = new LinkedHashMap<>();
-                    String base = DocumentReader.getAttribute(extension, "base");
-                    if (base != null)
+                    Optional<String> base = DocumentReader.getAttribute(extension.get(), "base");
+                    if (base.isPresent())
                     {
-                        Node baseNode = schema.getType(base);
-                        if (baseNode != null)
+                        Optional<Node> baseNode = schema.getType(base.get());
+                        if (baseNode.isPresent())
                         {
-                            elements.putAll(getRelevantNodesWithChildren(baseNode, append(hiddenExtension, extension), schema));
+                            elements.putAll(getRelevantNodesWithChildren(baseNode.get(),
+                                    append(hiddenExtension, extension.get()), schema));
                         }
                     }
-                    elements.put(extension, hiddenExtension);
+                    elements.put(extension.get(), hiddenExtension);
                     return elements;
                 }
             }
@@ -384,31 +383,31 @@ public final class XsdTreeNodeUtil
             // #text children only means a simple type
             return true;
         }
-        Node simpleType =
-                xsdNode.getNodeName().equals("xsd:simpleType") ? xsdNode : DocumentReader.getChild(xsdNode, "xsd:simpleType");
+        Node simpleType = xsdNode.getNodeName().equals("xsd:simpleType") ? xsdNode
+                : DocumentReader.getChild(xsdNode, "xsd:simpleType").orElse(null);
         if (simpleType != null)
         {
             return true;
         }
-        Node complexType =
-                xsdNode.getNodeName().equals("xsd:complexType") ? xsdNode : DocumentReader.getChild(xsdNode, "xsd:complexType");
+        Node complexType = xsdNode.getNodeName().equals("xsd:complexType") ? xsdNode
+                : DocumentReader.getChild(xsdNode, "xsd:complexType").orElse(null);
         boolean isComplex = complexType != null;
         while (complexType != null)
         {
-            Node simpleContent = DocumentReader.getChild(complexType, "xsd:simpleContent");
-            if (simpleContent != null)
+            Optional<Node> simpleContent = DocumentReader.getChild(complexType, "xsd:simpleContent");
+            if (simpleContent.isPresent())
             {
                 return true;
             }
-            Node complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
+            Optional<Node> complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
             complexType = null;
-            if (complexContent != null)
+            if (complexContent.isPresent())
             {
-                Node extension = DocumentReader.getChild(complexContent, "xsd:extension");
-                if (extension != null)
+                Optional<Node> extension = DocumentReader.getChild(complexContent.get(), "xsd:extension");
+                if (extension.isPresent())
                 {
-                    String base = DocumentReader.getAttribute(extension, "base");
-                    complexType = schema.getType(base);
+                    String base = DocumentReader.getAttribute(extension.get(), "base").orElse(null);
+                    complexType = schema.getType(base).orElse(null);
                 }
             }
         }
@@ -417,8 +416,8 @@ public final class XsdTreeNodeUtil
             // complex and never found simpleContent through extension
             return false;
         }
-        String type = DocumentReader.getAttribute(xsdNode, "type");
-        if (xsdNode.getNodeName().equals("xsd:element") && (type == null || type.startsWith("xsd:")))
+        Optional<String> type = DocumentReader.getAttribute(xsdNode, "type");
+        if (xsdNode.getNodeName().equals("xsd:element") && (type.isEmpty() || type.get().startsWith("xsd:")))
         {
             return true;
         }
@@ -515,16 +514,16 @@ public final class XsdTreeNodeUtil
          */
         public int get(final Node node)
         {
-            String occursValue = DocumentReader.getAttribute(node, this.attribute);
-            if (occursValue == null)
+            Optional<String> occursValue = DocumentReader.getAttribute(node, this.attribute);
+            if (occursValue.isEmpty())
             {
                 return 1;
             }
-            if ("unbounded".equals(occursValue))
+            if ("unbounded".equals(occursValue.orElse(null)))
             {
                 return -1;
             }
-            return Integer.valueOf(occursValue);
+            return Integer.valueOf(occursValue.get());
         }
     }
 

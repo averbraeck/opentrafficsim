@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -386,63 +388,63 @@ public class OdMatrix implements Identifiable
     }
 
     /**
-     * Returns demand data for given origin, destination and categorization, {@code null} if no data is given.
+     * Returns demand data for given origin, destination and categorization.
      * @param origin origin
      * @param destination destination
      * @param category category
-     * @return demand data for given origin, destination and categorization, {@code null} if no data is given
+     * @return demand data for given origin, destination and categorization, empty if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final FrequencyVector getDemandVector(final Node origin, final Node destination, final Category category)
+    public final Optional<FrequencyVector> getDemandVector(final Node origin, final Node destination, final Category category)
     {
-        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
-        if (demandPattern == null)
+        Optional<DemandPattern> demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
-        return demandPattern.demandVector();
+        return Optional.of(demandPattern.get().demandVector());
     }
 
     /**
-     * Returns interpolation for given origin, destination and categorization, {@code null} if no data is given.
+     * Returns interpolation for given origin, destination and categorization.
      * @param origin origin
      * @param destination destination
      * @param category category
-     * @return interpolation for given origin, destination and categorization, {@code null} if no data is given
+     * @return interpolation for given origin, destination and categorization, empty if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final DurationVector getDurationVector(final Node origin, final Node destination, final Category category)
+    public final Optional<DurationVector> getDurationVector(final Node origin, final Node destination, final Category category)
     {
-        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
-        if (demandPattern == null)
+        Optional<DemandPattern> demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
-        return demandPattern.timeVector();
+        return Optional.of(demandPattern.get().timeVector());
     }
 
     /**
-     * Returns interpolation for given origin, destination and categorization, {@code null} if no data is given.
+     * Returns interpolation for given origin, destination and categorization.
      * @param origin origin
      * @param destination destination
      * @param category category
-     * @return interpolation for given origin, destination and categorization, {@code null} if no data is given
+     * @return interpolation for given origin, destination and categorization, empty if no data is given
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final Interpolation getInterpolation(final Node origin, final Node destination, final Category category)
+    public final Optional<Interpolation> getInterpolation(final Node origin, final Node destination, final Category category)
     {
-        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
-        if (demandPattern == null)
+        Optional<DemandPattern> demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern.isEmpty())
         {
-            return null;
+            return Optional.empty();
         }
-        return demandPattern.interpolation();
+        return Optional.of(demandPattern.get().interpolation());
     }
 
     /**
@@ -462,12 +464,12 @@ public class OdMatrix implements Identifiable
             final boolean sliceStart)
     {
         Throw.whenNull(time, "Time may not be null.");
-        DemandPattern demandPattern = getDemandPattern(origin, destination, category);
-        if (demandPattern == null)
+        Optional<DemandPattern> demandPattern = getDemandPattern(origin, destination, category);
+        if (demandPattern.isEmpty())
         {
             return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO gives "Hz" which is not nice for flow
         }
-        return demandPattern.getFrequency(Duration.ofSI(time.si), sliceStart);
+        return demandPattern.get().getFrequency(Duration.ofSI(time.si), sliceStart);
     }
 
     /**
@@ -480,7 +482,7 @@ public class OdMatrix implements Identifiable
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public DemandPattern getDemandPattern(final Node origin, final Node destination, final Category category)
+    public Optional<DemandPattern> getDemandPattern(final Node origin, final Node destination, final Category category)
     {
         Throw.whenNull(origin, "Origin may not be null.");
         Throw.whenNull(destination, "Destination may not be null.");
@@ -491,7 +493,7 @@ public class OdMatrix implements Identifiable
                 "Destination '%s' is not part of the OD matrix.", destination);
         Throw.when(!this.categorization.equals(category.getCategorization()), IllegalArgumentException.class,
                 "Provided category %s does not belong to the categorization %s.", category, this.categorization);
-        return this.demandData.get(origin).get(destination).get(category);
+        return Optional.ofNullable(this.demandData.get(origin).get(destination).get(category));
     }
 
     /**
@@ -605,19 +607,19 @@ public class OdMatrix implements Identifiable
      */
     public final int[] getTripsVector(final Node origin, final Node destination, final Category category)
     {
-        FrequencyVector demand = getDemandVector(origin, destination, category);
-        if (demand == null)
+        Optional<FrequencyVector> demand = getDemandVector(origin, destination, category);
+        if (demand.isEmpty())
         {
             return null;
         }
-        int[] trips = new int[demand.size() - 1];
-        DurationVector time = getDurationVector(origin, destination, category);
-        Interpolation interpolation = getInterpolation(origin, destination, category);
+        int[] trips = new int[demand.get().size() - 1];
+        DurationVector time = getDurationVector(origin, destination, category).get();
+        Interpolation interpolation = getInterpolation(origin, destination, category).get();
         for (int i = 0; i < trips.length; i++)
         {
             try
             {
-                trips[i] = interpolation.integrate(demand.get(i), time.get(i), demand.get(i + 1), time.get(i + 1));
+                trips[i] = interpolation.integrate(demand.get().get(i), time.get(i), demand.get().get(i + 1), time.get(i + 1));
             }
             catch (ValueRuntimeException exception)
             {
@@ -642,19 +644,19 @@ public class OdMatrix implements Identifiable
      */
     public final int getTrips(final Node origin, final Node destination, final Category category, final int periodIndex)
     {
-        DurationVector time = getDurationVector(origin, destination, category);
-        if (time == null)
+        Optional<DurationVector> time = getDurationVector(origin, destination, category);
+        if (time.isEmpty())
         {
             return 0;
         }
-        Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IndexOutOfBoundsException.class,
+        Throw.when(periodIndex < 0 || periodIndex >= time.get().size() - 1, IndexOutOfBoundsException.class,
                 "Period index out of range.");
-        FrequencyVector demand = getDemandVector(origin, destination, category);
-        Interpolation interpolation = getInterpolation(origin, destination, category);
+        FrequencyVector demand = getDemandVector(origin, destination, category).get();
+        Interpolation interpolation = getInterpolation(origin, destination, category).get();
         try
         {
-            return interpolation.integrate(demand.get(periodIndex), time.get(periodIndex), demand.get(periodIndex + 1),
-                    time.get(periodIndex + 1));
+            return interpolation.integrate(demand.get(periodIndex), time.get().get(periodIndex), demand.get(periodIndex + 1),
+                    time.get().get(periodIndex + 1));
         }
         catch (ValueRuntimeException exception)
         {
@@ -671,22 +673,25 @@ public class OdMatrix implements Identifiable
      * @param category category
      * @param periodIndex index of time period
      * @param trips trips to add (may be negative)
+     * @throws NoSuchElementException if there is no demand data to increase
      * @throws IllegalArgumentException if origin or destination is not part of the OD matrix
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws IndexOutOfBoundsException if the period is outside of the specified range
-     * @throws UnsupportedOperationException if the interpolation of the data is not stepwise, or demand becomes negtive
+     * @throws UnsupportedOperationException if the interpolation of the data is not stepwise, or demand becomes negative
      * @throws NullPointerException if an input is null
      */
     public final void increaseTrips(final Node origin, final Node destination, final Category category, final int periodIndex,
             final int trips)
     {
-        Interpolation interpolation = getInterpolation(origin, destination, category);
+        Interpolation interpolation = getInterpolation(origin, destination, category)
+                .orElseThrow(() -> new NoSuchElementException("No data to increase for OD " + origin.getId() + ", "
+                        + destination.getId() + ", category " + category));
         Throw.when(!interpolation.equals(Interpolation.STEPWISE), UnsupportedOperationException.class,
                 "Can only increase the number of trips for data with stepwise interpolation.");
-        DurationVector time = getDurationVector(origin, destination, category);
+        DurationVector time = getDurationVector(origin, destination, category).get();
         Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IndexOutOfBoundsException.class,
                 "Period index out of range.");
-        FrequencyVector demand = getDemandVector(origin, destination, category);
+        FrequencyVector demand = getDemandVector(origin, destination, category).get();
         try
         {
             double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(DurationUnit.HOUR)
@@ -772,19 +777,23 @@ public class OdMatrix implements Identifiable
         int sum = 0;
         for (Category category : getCategories(origin, destination))
         {
-            DurationVector time = getDurationVector(origin, destination, category);
-            FrequencyVector demand = getDemandVector(origin, destination, category);
-            Interpolation interpolation = getInterpolation(origin, destination, category);
-            for (int i = 0; i < time.size() - 1; i++)
+            Optional<Interpolation> interpolation = getInterpolation(origin, destination, category);
+            if (interpolation.isPresent())
             {
-                try
+                DurationVector time = getDurationVector(origin, destination, category).get();
+                FrequencyVector demand = getDemandVector(origin, destination, category).get();
+                for (int i = 0; i < time.size() - 1; i++)
                 {
-                    sum += interpolation.integrate(demand.get(i), time.get(i), demand.get(i + 1), time.get(i + 1));
-                }
-                catch (ValueRuntimeException exception)
-                {
-                    // should not happen as we loop over the array length
-                    throw new OtsRuntimeException("Unexcepted exception while determining total trips over time.", exception);
+                    try
+                    {
+                        sum += interpolation.get().integrate(demand.get(i), time.get(i), demand.get(i + 1), time.get(i + 1));
+                    }
+                    catch (ValueRuntimeException exception)
+                    {
+                        // should not happen as we loop over the array length
+                        throw new OtsRuntimeException("Unexcepted exception while determining total trips over time.",
+                                exception);
+                    }
                 }
             }
         }

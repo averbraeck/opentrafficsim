@@ -144,7 +144,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                     {
                         continue; // lane is not part of this section, e.g. after a lane-drop
                     }
-                    TrajectoryGroup<?> trajectoryGroup = getSamplerData().getTrajectoryGroup(lane);
+                    TrajectoryGroup<?> trajectoryGroup = getSamplerData().getTrajectoryGroup(lane).orElse(null);
                     if (trajectoryGroup == null)
                     {
                         // recording of data not yet started

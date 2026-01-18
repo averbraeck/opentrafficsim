@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -82,14 +84,14 @@ public class LaneBasedStrategicalRoutePlannerFactory
     }
 
     @Override
-    public final Speed peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
+    public Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
             throws GtuException
     {
         return this.tacticalPlannerFactory.peekDesiredSpeed(gtuType, speedLimit, maxGtuSpeed, peekParameters(gtuType));
     }
 
     @Override
-    public final Length peekDesiredHeadway(final GtuType gtuType, final Speed speed) throws GtuException
+    public Optional<Length> peekDesiredHeadway(final GtuType gtuType, final Speed speed) throws GtuException
     {
         return this.tacticalPlannerFactory.peekDesiredHeadway(gtuType, speed, peekParameters(gtuType));
     }

@@ -58,9 +58,9 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
             final Anticipation anticipation)
     {
         super(perception);
-        Throw.when(!(getPerception().getMental() instanceof ChannelMental), IllegalArgumentException.class,
+        Throw.when(!(getPerception().getMental().get() instanceof ChannelMental), IllegalArgumentException.class,
                 "Mental module is not channel based.");
-        ChannelMental mental = (ChannelMental) getPerception().getMental();
+        ChannelMental mental = (ChannelMental) getPerception().getMental().get();
         this.perceivedGtuTypeLeft =
                 new AnticipationPerceivedGtuType(estimation, anticipation, () -> mental.getPerceptionDelay(ChannelTask.LEFT));
         this.perceivedGtuTypeRight =
@@ -127,7 +127,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(new RelativeLane(lat, 1),
                     RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT))
             {
-                set.add(perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), true));
+                set.add(perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), false));
             }
             return set;
         }
@@ -208,7 +208,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         return new PerceptionReiterable<>(getGtu(), iterable, (perceivedGtu, distance) ->
         {
             return Try.assign(() -> perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), perceivedGtu, distance, true),
-                    "ParameterException during perception of leader.");
+                    "Exception during perception of leader.");
         });
     }
 

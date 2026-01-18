@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.listeners;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JTable;
 
@@ -53,22 +54,23 @@ public class AttributesMouseListener extends MouseAdapter
         int col = this.attributesTable.columnAtPoint(e.getPoint());
         int row = this.attributesTable.rowAtPoint(e.getPoint());
         XsdTreeNode node = ((AttributesTableModel) this.attributesTable.getModel()).getNode();
-        String description = NodeAnnotation.DESCRIPTION.get(node.getAttributeNode(row));
-        if (this.attributesTable.convertColumnIndexToModel(col) == AttributesTableModel.DESCRIPTION_COLUMN
+        Optional<String> description = NodeAnnotation.DESCRIPTION.get(node.getAttributeNode(row));
+        if (description.isPresent()
+                && this.attributesTable.convertColumnIndexToModel(col) == AttributesTableModel.DESCRIPTION_COLUMN
                 && this.attributesTable.getModel().getValueAt(row, col) != null)
         {
-            this.editor.showDescription(description);
+            this.editor.showDescription(description.orElse(null));
         }
         // set status label to invalid message or description
         this.editor.removeStatusLabel();
         String status = null;
         if (!node.isSelfValid())
         {
-            status = node.reportInvalidAttributeValue(row);
+            status = node.reportInvalidAttributeValue(row).orElse(null);
         }
         if (status == null)
         {
-            status = DocumentReader.filterHtml(description);
+            status = DocumentReader.filterHtml(description.orElse(null));
         }
         if (status != null)
         {

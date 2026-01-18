@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
+import java.util.Optional;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -29,15 +31,16 @@ public class ReactionTime extends ExtendedDataDuration<GtuDataRoad>
     }
 
     @Override
-    public FloatDuration getValue(final GtuDataRoad gtu)
+    public Optional<FloatDuration> getValue(final GtuDataRoad gtu)
     {
         try
         {
-            return new FloatDuration(gtu.getGtu().getParameters().getParameter(ParameterTypes.TR).getSI(), DurationUnit.SI);
+            return Optional.ofNullable(
+                    new FloatDuration(gtu.getGtu().getParameters().getParameter(ParameterTypes.TR).getSI(), DurationUnit.SI));
         }
         catch (ParameterException exception)
         {
-            return FloatDuration.NaN;
+            return Optional.ofNullable(FloatDuration.NaN);
         }
     }
 

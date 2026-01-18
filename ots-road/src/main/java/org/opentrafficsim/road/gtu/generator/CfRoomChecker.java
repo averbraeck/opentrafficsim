@@ -46,17 +46,17 @@ public class CfRoomChecker implements RoomChecker
         Speed speedLimit = initialPosition.lane().getSpeedLimit(characteristics.getGtuType());
         Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
                 characteristics.getGtuType());
-        Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(characteristics.getGtuType(),
-                speedLimit, characteristics.getMaximumSpeed());
-        desiredSpeed = desiredSpeed != null ? desiredSpeed : speedLimit; // speed limit def.
+        Speed desiredSpeed = characteristics.getStrategicalPlannerFactory()
+                .peekDesiredSpeed(characteristics.getGtuType(), speedLimit, characteristics.getMaximumSpeed())
+                .orElse(speedLimit);
         if (leaders.isEmpty())
         {
             // no leaders: free
             return new Placement(desiredSpeed, initialPosition);
         }
         Length desiredHeadway =
-                characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGtuType(), desiredSpeed);
-        desiredHeadway = desiredHeadway != null ? desiredHeadway : desiredSpeed.times(Duration.ofSI(1.0)); // 1s def.
+                characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGtuType(), desiredSpeed)
+                        .orElseGet(() -> desiredSpeed.times(Duration.ofSI(1.0))); // 1s def.
         // loop leaders and determine most downstream location that would be ok
         Length move = Length.POSITIVE_INFINITY;
         Speed generationSpeed = desiredSpeed;
@@ -64,9 +64,9 @@ public class CfRoomChecker implements RoomChecker
         {
             Speed speed = Speed.min(desiredSpeed, leader.getSpeed());
             Length headway =
-                    characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGtuType(), speed);
-            headway = headway != null ? headway : speed.times(Duration.ofSI(1.0)); // 1s def.
-            double f = this.headwayFactor(desiredSpeed, desiredHeadway, speed, headway, leader.getLength());
+                    characteristics.getStrategicalPlannerFactory().peekDesiredHeadway(characteristics.getGtuType(), speed)
+                            .orElseGet(() -> desiredSpeed.times(Duration.ofSI(1.0))); // 1s def.
+            double f = headwayFactor(desiredSpeed, desiredHeadway, speed, headway, leader.getLength());
             headway = headway.times(f);
             if (leader.getDistance().lt(headway))
             {

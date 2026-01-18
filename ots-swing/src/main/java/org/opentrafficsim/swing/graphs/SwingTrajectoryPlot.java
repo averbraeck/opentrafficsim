@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Optional;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -156,12 +157,12 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
      * density, flow of speed of a line.
      */
     @Override
-    protected ChartMouseListener getChartMouseListener()
+    protected Optional<ChartMouseListener> getChartMouseListener()
     {
         // Second listener for legend clicks
         ChartMouseListener toggle = getPlot().getPath().getNumberOfSeries() < 2 ? null
                 : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
-        return new ChartMouseListener()
+        return Optional.of(new ChartMouseListener()
         {
             @Override
             public void chartMouseClicked(final ChartMouseEvent event)
@@ -229,7 +230,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
                 }
             }
 
-        };
+        });
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.control;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -64,13 +66,13 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
     }
 
     @Override
-    public Acceleration getAcceleration(final LaneBasedGtu gtu, final Parameters settings)
+    public Optional<Acceleration> getAcceleration(final LaneBasedGtu gtu, final Parameters settings)
     {
         try
         {
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = gtu.getTacticalPlanner().getPerception()
                     .getPerceptionCategory(LongitudinalControllerPerception.class).getLeaders();
-            return delayActuation(getDesiredAcceleration(gtu, leaders, settings), gtu);
+            return Optional.ofNullable(delayActuation(getDesiredAcceleration(gtu, leaders, settings), gtu));
         }
         catch (OperationalPlanException exception)
         {

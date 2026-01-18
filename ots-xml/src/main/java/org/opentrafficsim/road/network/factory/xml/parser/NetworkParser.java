@@ -44,6 +44,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -201,20 +202,12 @@ public final class NetworkParser
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : network.getConnector())
         {
             String nodeId = xmlConnector.getNode().get(eval);
-            Node node = (Node) otsNetwork.getNode(nodeId);
-            if (null == node)
-            {
-                Logger.ots().debug("No node (" + nodeId + ") for Connector " + xmlConnector.getId());
-            }
+            Node node = getNode(otsNetwork, nodeId);
             String centroidId = xmlConnector.getCentroid().get(eval);
-            Node centroid = (Node) otsNetwork.getNode(centroidId);
-            if (null == centroid)
-            {
-                Logger.ots().debug("No centroid (" + centroidId + ") for Connector " + xmlConnector.getId());
-            }
+            Node centroid = getNode(otsNetwork, centroidId);
             String id = xmlConnector.getId();
             double demandWeight = xmlConnector.getDemandWeight().get(eval);
-            LinkType linkType = definitions.get(LinkType.class, xmlConnector.getType().get(eval));
+            LinkType linkType = definitions.getOrThrow(LinkType.class, xmlConnector.getType().get(eval));
             Connector link = xmlConnector.getOutbound().get(eval) ? new Connector(otsNetwork, id, centroid, node, linkType)
                     : new Connector(otsNetwork, id, node, centroid, linkType);
             link.setDemandWeight(demandWeight);
@@ -224,8 +217,8 @@ public final class NetworkParser
                 network.getFlattener() == null ? new CurveFlattener(64) : getFlattener(null, network.getFlattener(), eval);
         for (Link xmlLink : network.getLink())
         {
-            Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart().get(eval));
-            Node endNode = (Node) otsNetwork.getNode(xmlLink.getNodeEnd().get(eval));
+            Node startNode = getNode(otsNetwork, xmlLink.getNodeStart().get(eval));
+            Node endNode = getNode(otsNetwork, xmlLink.getNodeEnd().get(eval));
             Point2d startPoint = startNode.getPoint();
             Point2d endPoint = endNode.getPoint();
             Point2d[] coordinates = null;
@@ -323,7 +316,7 @@ public final class NetworkParser
 
             PolyLine2d flattenedLine = designLine.toPolyLine(flattener);
             LaneKeepingPolicy laneKeepingPolicy = xmlLink.getLaneKeeping().get(eval);
-            LinkType linkType = definitions.get(LinkType.class, xmlLink.getType().get(eval));
+            LinkType linkType = definitions.getOrThrow(LinkType.class, xmlLink.getType().get(eval));
             // TODO: elevation data
             CrossSectionLink link = new CrossSectionLink(otsNetwork, xmlLink.getId(), startNode, endNode, linkType,
                     new OtsLine2d(flattenedLine), null, laneKeepingPolicy);
@@ -361,7 +354,7 @@ public final class NetworkParser
         Map<Stripe, SynchronizableStripe<Stripe>> stripesSync = new LinkedHashMap<>();
         for (Link xmlLink : network.getLink())
         {
-            CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getId());
+            CrossSectionLink csl = getLink(otsNetwork, xmlLink.getId());
             List<CrossSectionElement> cseList = new ArrayList<>();
             Map<String, Lane> lanes = new LinkedHashMap<>();
 
@@ -466,18 +459,18 @@ public final class NetworkParser
                 if (cseTag instanceof CseLane)
                 {
                     CseLane laneTag = (CseLane) cseTag;
-                    LaneType laneType = definitions.get(LaneType.class, laneTag.getLaneType().get(eval));
+                    LaneType laneType = definitions.getOrThrow(LaneType.class, laneTag.getLaneType().get(eval));
                     Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
                     LinkType linkType = csl.getType();
                     speedLimitMap.putAll(linkTypeSpeedLimitMap.computeIfAbsent(linkType, (l) -> new LinkedHashMap<>()));
                     for (SpeedLimit speedLimitTag : roadLayoutTag.getSpeedLimit())
                     {
-                        GtuType gtuType = definitions.get(GtuType.class, speedLimitTag.getGtuType().get(eval));
+                        GtuType gtuType = definitions.getOrThrow(GtuType.class, speedLimitTag.getGtuType().get(eval));
                         speedLimitMap.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(eval));
                     }
                     for (SpeedLimit speedLimitTag : laneTag.getSpeedLimit())
                     {
-                        GtuType gtuType = definitions.get(GtuType.class, speedLimitTag.getGtuType().get(eval));
+                        GtuType gtuType = definitions.getOrThrow(GtuType.class, speedLimitTag.getGtuType().get(eval));
                         speedLimitMap.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(eval));
                     }
                     Lane lane = new Lane(csl, laneTag.getId(), geometry, laneType, speedLimitMap);
@@ -508,7 +501,7 @@ public final class NetworkParser
                 TrafficLight obj = new TrafficLight(trafficLight.getId(), lane, position);
                 for (StringType nodeId : trafficLight.getTurnOnRed())
                 {
-                    obj.addTurnOnRed(otsNetwork.getNode(nodeId.get(eval)));
+                    obj.addTurnOnRed(getNode(otsNetwork, nodeId.get(eval)));
                 }
             }
         }
@@ -634,7 +627,7 @@ public final class NetworkParser
         for (StripeCompatibility compatibility : stripeTag.getCustom().getCompatibility())
         {
             String dir = compatibility.getDirection().get(eval);
-            GtuType gtuType = definitions.get(GtuType.class, compatibility.getGtuType().get(eval));
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, compatibility.getGtuType().get(eval));
             if ("LEFT".equals(dir) || "BOTH".equals(dir))
             {
                 stripe.addPermeability(gtuType, LateralDirectionality.LEFT);
@@ -675,8 +668,10 @@ public final class NetworkParser
      * @param network the Network tag
      * @param eval expression evaluator.
      * @throws XmlParserException if Conflicts tag contains no valid element
+     * @throws NetworkException if link cannot be found
      */
-    static void buildConflicts(final RoadNetwork otsNetwork, final Network network, final Eval eval) throws XmlParserException
+    static void buildConflicts(final RoadNetwork otsNetwork, final Network network, final Eval eval)
+            throws XmlParserException, NetworkException
     {
         if (network.getConflicts() != null && network.getConflicts().getNone() == null)
         {
@@ -708,7 +703,7 @@ public final class NetworkParser
                     {
                         conflictCandidateMap.put(link.getConflictId().get(eval), new LinkedHashSet<>());
                     }
-                    conflictCandidateMap.get(link.getConflictId().get(eval)).add(otsNetwork.getLink(link.getId()));
+                    conflictCandidateMap.get(link.getConflictId().get(eval)).add(getLink(otsNetwork, link.getId()));
                 }
             }
             Logger.ots().info("Map size of conflict candidate regions = {}", conflictCandidateMap.size());
@@ -786,6 +781,43 @@ public final class NetworkParser
     private static double getAngle(final Angle angle)
     {
         return angle.si < 0.01 ? 0.01 : angle.si;
+    }
+
+    /**
+     * Obtain node with id.
+     * @param otsNetwork network
+     * @param id id
+     * @return node with id
+     * @throws NetworkException if the node does not exist
+     */
+    public static Node getNode(final RoadNetwork otsNetwork, final String id) throws NetworkException
+    {
+        return otsNetwork.getNode(id).orElseThrow(() -> new NetworkException("Link with id " + id + " does not exist."));
+    }
+
+    /**
+     * Obtain link with id.
+     * @param otsNetwork network
+     * @param id id
+     * @return link with id
+     * @throws NetworkException if the link does not exist
+     */
+    public static CrossSectionLink getLink(final RoadNetwork otsNetwork, final String id) throws NetworkException
+    {
+        return (CrossSectionLink) otsNetwork.getLink(id)
+                .orElseThrow(() -> new NetworkException("Link with id " + id + " does not exist."));
+    }
+
+    /**
+     * Obtain route with id.
+     * @param otsNetwork network
+     * @param id id
+     * @return route with id
+     * @throws NetworkException if the route does not exist
+     */
+    public static Route getRoute(final RoadNetwork otsNetwork, final String id) throws NetworkException
+    {
+        return otsNetwork.getRoute(id).orElseThrow(() -> new NetworkException("Route with id " + id + " does not exist."));
     }
 
 }

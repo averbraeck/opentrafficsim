@@ -3,6 +3,8 @@ package org.opentrafficsim.core.definitions;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
@@ -47,18 +49,33 @@ public class Definitions
     }
 
     /**
-     * Obtain a type by its id. Returns {@code null} if it is not present.
+     * Obtain a type by its id.
      * @param <T> type type (e.g. GtuType).
      * @param typeClass class of type (e.g. GtuType.class).
      * @param id id of the class.
-     * @return instance with given id, or {@code null} if it is not present.
+     * @return instance with given id, empty if it is not present.
      */
     @SuppressWarnings("unchecked")
-    public <T extends HierarchicalType<T, ?>> T get(final Class<T> typeClass, final String id)
+    public <T extends HierarchicalType<T, ?>> Optional<T> get(final Class<T> typeClass, final String id)
     {
         Throw.whenNull(typeClass, "Type class may not be null.");
         Throw.whenNull(id, "Id may not be null.");
-        return (T) this.typeMap.computeIfAbsent(typeClass, (key) -> Collections.synchronizedMap(new LinkedHashMap<>())).get(id);
+        return Optional.ofNullable((T) this.typeMap
+                .computeIfAbsent(typeClass, (key) -> Collections.synchronizedMap(new LinkedHashMap<>())).get(id));
+    }
+
+    /**
+     * Obtain a type by its id.
+     * @param <T> type type (e.g. GtuType).
+     * @param typeClass class of type (e.g. GtuType.class).
+     * @param id id of the class.
+     * @return instance with given id, empty if it is not present.
+     * @throws NoSuchElementException when the type is not defined
+     */
+    public <T extends HierarchicalType<T, ?>> T getOrThrow(final Class<T> typeClass, final String id)
+    {
+        return get(typeClass, id).orElseThrow(
+                () -> new NoSuchElementException("Type " + typeClass.getSimpleName() + " not defined for id " + id));
     }
 
     /**

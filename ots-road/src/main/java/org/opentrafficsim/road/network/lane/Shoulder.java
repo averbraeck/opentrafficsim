@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Speed;
@@ -39,17 +40,17 @@ public class Shoulder extends Lane
      * Returns one adjacent lane.
      * @param laneChangeDirection lane change direction
      * @param gtuType GTU type.
-     * @return adjacent lane, {@code null} if none
+     * @return adjacent lane, empty if none
      */
     @Override
-    public Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
+    public Optional<Lane> getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
     {
         Set<Lane> adjLanes = accessibleAdjacentLanesPhysical(laneChangeDirection, gtuType);
         if (!adjLanes.isEmpty())
         {
-            return adjLanes.iterator().next();
+            return Optional.of(adjLanes.iterator().next());
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -66,10 +67,10 @@ public class Shoulder extends Lane
                 : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.RIGHT};
         for (LateralDirectionality lat : lats)
         {
-            Lane adjacentLane = getAdjacentLane(lat, gtuType);
-            if (adjacentLane != null)
+            Optional<Lane> adjacentLane = getAdjacentLane(lat, gtuType);
+            if (adjacentLane.isPresent())
             {
-                return adjacentLane.getSpeedLimit(gtuType);
+                return adjacentLane.get().getSpeedLimit(gtuType);
             }
         }
         return Speed.ZERO;

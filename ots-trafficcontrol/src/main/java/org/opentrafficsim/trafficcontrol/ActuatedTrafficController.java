@@ -1,6 +1,7 @@
 package org.opentrafficsim.trafficcontrol;
 
 import java.awt.Container;
+import java.util.Optional;
 
 /**
  * Interface for actuated traffic controllers.
@@ -24,8 +25,8 @@ public interface ActuatedTrafficController extends TrafficController
 
     /**
      * Retrieve the Swing (for now) container in which the controller displays its current state.
-     * @return the display of the current state; may return null!
+     * @return the display of the current state; may return empty
      */
-    Container getDisplayContainer();
+    Optional<Container> getDisplayContainer();
 
 }

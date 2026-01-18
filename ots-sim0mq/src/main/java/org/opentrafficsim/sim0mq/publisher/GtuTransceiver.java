@@ -74,7 +74,7 @@ public class GtuTransceiver extends AbstractEventTransceiver
             return null;
         }
 
-        Gtu gtu = this.network.getGTU((String) address[0]);
+        Gtu gtu = this.network.getGTU((String) address[0]).orElse(null);
         if (null == gtu)
         {
             returnWrapper.nack("No GTU found with id \"" + address[0] + "\"");

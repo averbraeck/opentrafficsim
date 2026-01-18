@@ -65,9 +65,9 @@ public class IntersectionPerceptionChannel extends AbstractPerceptionCategory<La
             final Anticipation anticipation)
     {
         super(perception);
-        Throw.when(!(getPerception().getMental() instanceof ChannelMental), IllegalArgumentException.class,
+        Throw.when(!(getPerception().getMental().get() instanceof ChannelMental), IllegalArgumentException.class,
                 "Mental module is not channel based.");
-        this.mental = (ChannelMental) getPerception().getMental();
+        this.mental = (ChannelMental) getPerception().getMental().get();
         this.estimation = estimation;
         this.anticipation = anticipation;
     }
@@ -110,7 +110,8 @@ public class IntersectionPerceptionChannel extends AbstractPerceptionCategory<La
             return getPerception().getLaneStructure().getDownstreamObjects(lane, TrafficLight.class, RelativePosition.FRONT,
                     true);
         }, "Unable to get downstream traffic lights from LaneStructure");
-        Route route = Try.assign(() -> getPerception().getGtu().getStrategicalPlanner().getRoute(), "Unable to obtain route");
+        Route route =
+                Try.assign(() -> getPerception().getGtu().getStrategicalPlanner().getRoute().get(), "Unable to obtain route");
         return new PerceptionReiterable<>(getGtu(), iterable, (trafficLight, distance) ->
         {
             return new PerceivedTrafficLightChannel(trafficLight, distance,

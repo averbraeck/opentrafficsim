@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
@@ -35,7 +36,8 @@ public class SynchronizationGtuColorer extends AbstractLegendColorer<Gtu, State>
      */
     public SynchronizationGtuColorer()
     {
-        super((gtu) -> gtu.getTacticalPlanner() instanceof Synchronizable sync ? sync.getSynchronizationState() : null,
+        super((gtu) -> gtu.getTacticalPlanner() instanceof Synchronizable sync
+                ? Optional.of(sync.getSynchronizationState()) : Optional.empty(),
                 (state) -> state == null ? NA : COLOR_MAP.getOrDefault(state, NA),
                 List.of(new LegendEntry(COLOR_MAP.get(State.NONE), "None", "None"),
                         new LegendEntry(COLOR_MAP.get(State.SYNCHRONIZING), "Synchronizing", "Synchonizing"),

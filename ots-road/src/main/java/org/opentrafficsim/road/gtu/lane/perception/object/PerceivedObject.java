@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.object;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -22,13 +24,13 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
 
     /**
      * Returns object type.
-     * @return the (perceived) object Type, can be null if no object type unknown.
+     * @return the (perceived) object Type
      */
     ObjectType getObjectType();
 
     /**
      * Returns length.
-     * @return the length of the other object; can be null if unknown.
+     * @return the length of the other object
      */
     Length getLength();
 
@@ -168,13 +170,13 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
 
         /**
          * Returns speed.
-         * @return the (perceived) speed of the other object; can be null if unknown
+         * @return the (perceived) speed of the other object
          */
         Speed getSpeed();
 
         /**
          * Returns acceleration.
-         * @return acceleration the (perceived) acceleration of the other object; can be null if unknown
+         * @return the (perceived) acceleration of the other object
          */
         Acceleration getAcceleration();
 
@@ -333,10 +335,10 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
         interface Overlap
         {
             /** Overlap information for objects ahead. */
-            Overlap AHEAD = new Record(null, null, null, true, false);
+            Overlap AHEAD = new Record((Length) null, null, null, true, false);
 
             /** Overlap information for objects behind. */
-            Overlap BEHIND = new Record(null, null, null, false, true);
+            Overlap BEHIND = new Record((Length) null, null, null, false, true);
 
             /**
              * Return the (perceived) overlap with the other object. This value should be null if there is no overlap. In the
@@ -352,9 +354,9 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
              * | a  | b |     c   |
              * </pre>
              *
-             * @return Length, the (perceived) overlap with the other object or null if there is no overlap
+             * @return the (perceived) overlap with the other object or empty if there is no overlap
              */
-            Length getOverlap();
+            Optional<Length> getOverlap();
 
             /**
              * Return the (perceived) front overlap to the other object. This value should be null if there is no overlap. In
@@ -370,9 +372,9 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
              * | a  | b |     c   |
              * </pre>
              *
-             * @return the (perceived) front overlap to the other object or null if there is no overlap
+             * @return the (perceived) front overlap to the other object or empty if there is no overlap
              */
-            Length getOverlapFront();
+            Optional<Length> getOverlapFront();
 
             /**
              * Return the (perceived) rear overlap to the other object. This value should be null if there is no overlap.In the
@@ -388,9 +390,9 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
              * | a  | b |     c   |
              * </pre>
              *
-             * @return the (perceived) rear overlap to the other object or null if there is no overlap
+             * @return the (perceived) rear overlap to the other object or empty if there is no overlap
              */
-            Length getOverlapRear();
+            Optional<Length> getOverlapRear();
 
             /**
              * Returns whether the object is fully ahead.
@@ -410,7 +412,7 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
              */
             default boolean isParallel()
             {
-                return getOverlap() != null;
+                return getOverlap().isPresent();
             }
 
             /**
@@ -422,8 +424,8 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
              * @param isAhead whether the object is ahead
              * @param isBehind whether the object is behind
              */
-            record Record(Length getOverlap, Length getOverlapFront, Length getOverlapRear, boolean isAhead, boolean isBehind)
-                    implements Overlap
+            record Record(Optional<Length> getOverlap, Optional<Length> getOverlapFront, Optional<Length> getOverlapRear,
+                    boolean isAhead, boolean isBehind) implements Overlap
             {
 
                 /**
@@ -437,8 +439,11 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
                  * @throws IllegalArgumentException when getOverlapFront or getOverlapRear is not null while getOverlap is null
                  * @throws IllegalArgumentException if isAhead or isBehind is true while overlap is specified
                  */
-                public Record
+                public Record(final Length getOverlap, final Length getOverlapFront, final Length getOverlapRear,
+                        final boolean isAhead, final boolean isBehind)
                 {
+                    this(Optional.ofNullable(getOverlap), Optional.ofNullable(getOverlapFront),
+                            Optional.ofNullable(getOverlapRear), isAhead, isBehind);
                     if (getOverlap == null)
                     {
                         Throw.when(getOverlapFront != null, IllegalArgumentException.class,
@@ -465,18 +470,6 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
     @Override
     default int compareTo(final PerceivedObject headway)
     {
-        if (getKinematics().getDistance() != null)
-        {
-            if (headway.getKinematics().getDistance() != null)
-            {
-                return getKinematics().getDistance().compareTo(headway.getKinematics().getDistance());
-            }
-            return 1;
-        }
-        else if (headway.getKinematics().getDistance() != null)
-        {
-            return -1;
-        }
-        return getKinematics().getOverlap().getOverlapFront().compareTo(headway.getKinematics().getOverlap().getOverlapFront());
+        return getKinematics().getDistance().compareTo(headway.getKinematics().getDistance());
     }
 }

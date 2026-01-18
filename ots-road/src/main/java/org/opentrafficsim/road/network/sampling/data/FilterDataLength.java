@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
@@ -24,9 +26,9 @@ public class FilterDataLength extends FilterDataType<Length, GtuDataRoad>
     }
 
     @Override
-    public Length getValue(final GtuDataRoad gtu)
+    public Optional<Length> getValue(final GtuDataRoad gtu)
     {
-        return gtu.getGtu().getLength();
+        return Optional.ofNullable(gtu.getGtu().getLength());
     }
 
 }

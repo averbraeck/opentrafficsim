@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ public class RoadNetwork extends Network
      * @param gtuType GTU Type.
      * @param range maximum range of info to consider, from the start of the given lane.
      * @param laneAccessLaw lane access law.
-     * @return lane change info from the given lane, or {@code null} if no path exists.
+     * @return lane change info from the given lane, or empty if no path exists.
      */
     public ImmutableSortedSet<LaneChangeInfo> getLaneChangeInfo(final Lane lane, final Route route, final GtuType gtuType,
             final Length range, final LaneAccessLaw laneAccessLaw)
@@ -88,7 +89,7 @@ public class RoadNetwork extends Network
         SortedSet<LaneChangeInfo> info = getCompleteLaneChangeInfo(lane, route, gtuType, laneAccessLaw);
         if (info == null)
         {
-            return null;
+            return new ImmutableTreeSet<>(Collections.emptySet());
         }
 
         // find first LaneChangeInfo beyond range, if any
@@ -297,7 +298,8 @@ public class RoadNetwork extends Network
             List<Node> nodes = route.getNodes();
             for (int i = nodes.size() - 1; i > 0; i--)
             {
-                Link link = getLink(nodes.get(i - 1), nodes.get(i));
+                Link link = getLink(nodes.get(i - 1), nodes.get(i))
+                        .orElseThrow(() -> new OtsRuntimeException("Unable to find link for two consecutive nodes in route."));
                 if (link instanceof CrossSectionLink && !((CrossSectionLink) link).getLanes().isEmpty())
                 {
                     destination = nodes.get(i);
@@ -498,7 +500,8 @@ public class RoadNetwork extends Network
                 }
                 catch (NetworkException ne)
                 {
-                    throw new OtsRuntimeException("Requesting lane change info from link that does not allow the GTU type.", ne);
+                    throw new OtsRuntimeException("Requesting lane change info from link that does not allow the GTU type.",
+                            ne);
                 }
             }
             return this.noRouteDestination;
@@ -519,7 +522,7 @@ public class RoadNetwork extends Network
      * @param laneChangeInfoEdgeType the type of lane to lane movement performed along this edge.
      * @param toLink to link (of the lane this edge moves to).
      */
-    private static record LaneChangeInfoEdge(Lane fromLane, LaneChangeInfoEdgeType laneChangeInfoEdgeType, Link toLink)
+    private record LaneChangeInfoEdge(Lane fromLane, LaneChangeInfoEdgeType laneChangeInfoEdgeType, Link toLink)
     {
     }
 

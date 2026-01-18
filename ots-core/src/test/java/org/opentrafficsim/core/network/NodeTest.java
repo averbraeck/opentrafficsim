@@ -141,22 +141,22 @@ public final class NodeTest
         // Prove that we can go from any neighborNode to any OTHER neighborNode including ourselves
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
-            Link fromLink = network.getLink("link from neighbor node " + fromIndex);
+            Link fromLink = network.getLink("link from neighbor node " + fromIndex).get();
             Set<Link> nextLinks = node.nextLinks(DefaultsNl.VEHICLE, fromLink);
             assertEquals(maxNeighbor, nextLinks.size(), "should be maxNeighbor nextLinks");
             assertFalse(nextLinks.contains(fromLink), "should not contain fromLink");
         }
         // Add an explicit connection for the link from neighbor 1 to neighbor 2
-        node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                network.getLink("link to neighbor node 2"));
+        node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(),
+                network.getLink("link to neighbor node 2").get());
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
-            Link fromLink = network.getLink("link from neighbor node " + fromIndex);
+            Link fromLink = network.getLink("link from neighbor node " + fromIndex).get();
             Set<Link> nextLinks = node.nextLinks(DefaultsNl.VEHICLE, fromLink);
             if (1 == fromIndex)
             {
                 assertEquals(1, nextLinks.size(), "should be 1");
-                assertEquals(network.getLink("link to neighbor node 2"), nextLinks.iterator().next(),
+                assertEquals(network.getLink("link to neighbor node 2").get(), nextLinks.iterator().next(),
                         "should only contain link to neighbor 2");
             }
             else
@@ -164,13 +164,13 @@ public final class NodeTest
                 assertEquals(0, nextLinks.size(), "should be 0");
             }
         }
-        Node n1 = network.getNode("neighbor node 1");
-        Node n2 = network.getNode("neighbor node 2");
+        Node n1 = network.getNode("neighbor node 1").get();
+        Node n2 = network.getNode("neighbor node 2").get();
         Link unrelatedLink =
                 new Link(network, "unrelated link", n1, n2, DefaultsNl.ROAD, new OtsLine2d(n1.getPoint(), n2.getPoint()), null);
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, unrelatedLink, network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, unrelatedLink, network.getLink("link from neighbor node 1").get());
             fail("attempt to connect from a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -179,7 +179,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), unrelatedLink);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), unrelatedLink);
             fail("attempt to connect to a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -189,7 +189,7 @@ public final class NodeTest
         GtuType unrelatedGtuType = new GtuType("junk");
         try
         {
-            node.nextLinks(unrelatedGtuType, network.getLink("link from neighbor node 1"));
+            node.nextLinks(unrelatedGtuType, network.getLink("link from neighbor node 1").get());
             fail("nextLinks for unsupported GtuType should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -203,7 +203,7 @@ public final class NodeTest
                 new OtsLine2d(n1.getPoint(), node.getPoint()), null);
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, oneWayFromNode, network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, oneWayFromNode, network.getLink("link from neighbor node 1").get());
             fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
                     + "NetworkException");
         }
@@ -213,7 +213,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), oneWayToNode);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), oneWayToNode);
             fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -225,7 +225,7 @@ public final class NodeTest
                 new OtsLine2d(n2.getPoint(), node.getPoint()), null);
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), noWay);
             fail("attempt to connect to a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -234,7 +234,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, noWay, network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, noWay, network.getLink("link from neighbor node 1").get());
             fail("attempt to connect from a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -245,7 +245,7 @@ public final class NodeTest
                 new OtsLine2d(node.getPoint(), n2.getPoint()), null);
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), noWay);
+            node.addConnection(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), noWay);
             fail("attempt to connect to a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -254,7 +254,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnection(DefaultsNl.VEHICLE, noWay, network.getLink("link from neighbor node 1"));
+            node.addConnection(DefaultsNl.VEHICLE, noWay, network.getLink("link from neighbor node 1").get());
             fail("attempt to connect from a no way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -285,21 +285,21 @@ public final class NodeTest
         // Prove that we can go from any neighborNode to any neighborNode (inlcuding ourselves, b/c of two links
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
-            Link fromLink = network.getLink("link from neighbor node " + fromIndex);
+            Link fromLink = network.getLink("link from neighbor node " + fromIndex).get();
             Set<Link> nextLinks = node.nextLinks(DefaultsNl.VEHICLE, fromLink);
             assertEquals(maxNeighbor, nextLinks.size(), "should be maxNeighbor nextLinks");
         }
         // Add an explicit connection for the link from neighbor 1 to neighbor 2
-        node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"),
-                wrap(network.getLink("link to neighbor node 2")));
+        node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(),
+                wrap(network.getLink("link to neighbor node 2").get()));
         for (int fromIndex = 0; fromIndex < maxNeighbor; fromIndex++)
         {
-            Link fromLink = network.getLink("link from neighbor node " + fromIndex);
+            Link fromLink = network.getLink("link from neighbor node " + fromIndex).get();
             Set<Link> nextLinks = node.nextLinks(DefaultsNl.VEHICLE, fromLink);
             if (1 == fromIndex)
             {
                 assertEquals(1, nextLinks.size(), "should be 1");
-                assertEquals(network.getLink("link to neighbor node 2"), nextLinks.iterator().next(),
+                assertEquals(network.getLink("link to neighbor node 2").get(), nextLinks.iterator().next(),
                         "should only contain link to neighbor 2");
             }
             else
@@ -307,13 +307,13 @@ public final class NodeTest
                 assertEquals(0, nextLinks.size(), "should be 0");
             }
         }
-        Node n1 = network.getNode("neighbor node 1");
-        Node n2 = network.getNode("neighbor node 2");
+        Node n1 = network.getNode("neighbor node 1").get();
+        Node n2 = network.getNode("neighbor node 2").get();
         Link unrelatedLink =
                 new Link(network, "unrelated link", n1, n2, DefaultsNl.ROAD, new OtsLine2d(n1.getPoint(), n2.getPoint()), null);
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, unrelatedLink, wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, unrelatedLink, wrap(network.getLink("link from neighbor node 1").get()));
             fail("attempt to connect from a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -322,7 +322,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(unrelatedLink));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), wrap(unrelatedLink));
             fail("attempt to connect to a link not connected to node should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -332,7 +332,7 @@ public final class NodeTest
         GtuType unrelatedGtuType = new GtuType("junk");
         try
         {
-            node.nextLinks(unrelatedGtuType, network.getLink("link from neighbor node 1"));
+            node.nextLinks(unrelatedGtuType, network.getLink("link from neighbor node 1").get());
             fail("nextLinks for unsupported GtuType should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -347,7 +347,8 @@ public final class NodeTest
                 new OtsLine2d(n1.getPoint(), node.getPoint()), null);
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, oneWayFromNodeOnly, wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, oneWayFromNodeOnly,
+                    wrap(network.getLink("link from neighbor node 1").get()));
             fail("attempt to connect from a link that does not allow traffic TO the node should have thrown a "
                     + "NetworkException");
         }
@@ -357,7 +358,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(oneWayToNodeOnly));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), wrap(oneWayToNodeOnly));
             fail("attempt to connect to a link that does not allow outbound traffic should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -369,7 +370,7 @@ public final class NodeTest
                 new OtsLine2d(n2.getPoint(), node.getPoint()), null);
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), wrap(noWay));
             fail("attempt to connect to a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -378,7 +379,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1").get()));
             fail("attempt to connect from a tail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -389,7 +390,7 @@ public final class NodeTest
                 new OtsLine2d(node.getPoint(), n2.getPoint()), null);
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1"), wrap(noWay));
+            node.addConnections(DefaultsNl.VEHICLE, network.getLink("link from neighbor node 1").get(), wrap(noWay));
             fail("attempt to connect to a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -398,7 +399,7 @@ public final class NodeTest
         }
         try
         {
-            node.addConnections(DefaultsNl.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1")));
+            node.addConnections(DefaultsNl.VEHICLE, noWay, wrap(network.getLink("link from neighbor node 1").get()));
             fail("attempt to connect from a rail way link should have thrown a NetworkException");
         }
         catch (NetworkException ne)

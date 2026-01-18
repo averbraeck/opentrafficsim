@@ -491,12 +491,12 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         if (Network.GTU_ADD_EVENT.equals(eventType))
         {
             Logger.ots().trace("A GTU was created (id " + (String) event.getContent() + ")");
-            this.knownGTUs.add(this.network.getGTU((String) event.getContent()));
+            this.network.getGTU((String) event.getContent()).ifPresent((g) -> this.knownGTUs.add(g));
         }
         else if (Network.GTU_REMOVE_EVENT.equals(eventType))
         {
             Logger.ots().trace("A GTU was removed (id " + ((String) event.getContent()) + ")");
-            this.knownGTUs.remove(this.network.getGTU((String) event.getContent()));
+            this.network.getGTU((String) event.getContent()).ifPresent((g) -> this.knownGTUs.remove(g));
         }
     }
 

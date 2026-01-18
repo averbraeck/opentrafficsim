@@ -14,6 +14,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
@@ -56,7 +57,7 @@ public class AppearanceApplication extends JFrame
     private static final long serialVersionUID = 20231017L;
 
     /** Font. */
-    private static final Font FONT = new Font("Dialog", Font.PLAIN, AppearanceControl.DEFAULT_FONT_SIZE);
+    private static final Font FONT = new Font("Dialog", Font.PLAIN, AppearanceControl.DEFAULT_FONT_SIZE.getAsInt());
 
     /** Map of font scales. */
     private static final Map<String, Double> FONT_SCALES = new LinkedHashMap<>();
@@ -283,7 +284,7 @@ public class AppearanceApplication extends JFrame
             {
                 changeFont(c, appear.getFont());
             }
-            if (ac.getFontSize() != null)
+            if (ac.getFontSize().isPresent())
             {
                 changeFontSize(c);
             }
@@ -348,9 +349,10 @@ public class AppearanceApplication extends JFrame
         if (c instanceof AppearanceControl)
         {
             AppearanceControl a = (AppearanceControl) c;
-            if (a.getFontSize() != null)
+            OptionalInt fontSize = a.getFontSize();
+            if (fontSize.isPresent())
             {
-                size = (int) (a.getFontSize() * FONT_SCALES.get(this.fontScaleName));
+                size = (int) (fontSize.getAsInt() * FONT_SCALES.get(this.fontScaleName));
             }
             else
             {
@@ -359,7 +361,7 @@ public class AppearanceApplication extends JFrame
         }
         else
         {
-            size = (int) (AppearanceControl.DEFAULT_FONT_SIZE * FONT_SCALES.get(this.fontScaleName));
+            size = (int) (AppearanceControl.DEFAULT_FONT_SIZE.getAsInt() * FONT_SCALES.get(this.fontScaleName));
         }
         c.setFont(new Font(prev.getFontName(), prev.getStyle(), size));
     }

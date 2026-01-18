@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.text.NumberFormat;
+import java.util.Optional;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -34,7 +35,7 @@ public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed>
      */
     public DesiredSpeedGtuColorer(final BoundsPaintScale boundsPaintScale)
     {
-        super((gtu) -> gtu instanceof LaneBasedGtu gtuLane ? gtuLane.getDesiredSpeed() : null,
+        super((gtu) -> gtu instanceof LaneBasedGtu gtuLane ? Optional.of(gtuLane.getDesiredSpeed()) : Optional.empty(),
                 (v) -> v == null ? Color.WHITE : boundsPaintScale.getPaint(v.getInUnit(SpeedUnit.KM_PER_HOUR)),
                 LegendColorer.fromBoundsPaintScale(boundsPaintScale, FORMAT.getDoubleFormat()), boundsPaintScale);
     }

@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -31,7 +32,7 @@ public class GtuTypeGtuColorer extends AbstractLegendColorer<Gtu, GtuType>
      */
     public GtuTypeGtuColorer(final Map<GtuType, Color> gtuTypeColors, final Color unknownColor)
     {
-        super((gtu) -> gtu.getType(), (gtuType) -> getColor(gtuType, gtuTypeColors, unknownColor),
+        super((gtu) -> Optional.of(gtu.getType()), (gtuType) -> getColor(gtuType, gtuTypeColors, unknownColor),
                 Stream.concat(
                         gtuTypeColors.entrySet().stream()
                                 .map((e) -> new LegendEntry(e.getValue(), e.getKey().getId(), e.getKey().getId())),
@@ -51,11 +52,12 @@ public class GtuTypeGtuColorer extends AbstractLegendColorer<Gtu, GtuType>
         {
             return gtuTypeColors.get(gtuType);
         }
-        if (gtuType.getParent() == null)
+        Optional<GtuType> parent = gtuType.getParent();
+        if (parent.isEmpty())
         {
             return unknownColor;
         }
-        return getColor(gtuType.getParent(), gtuTypeColors, unknownColor);
+        return getColor(parent.get(), gtuTypeColors, unknownColor);
     }
 
     /**
