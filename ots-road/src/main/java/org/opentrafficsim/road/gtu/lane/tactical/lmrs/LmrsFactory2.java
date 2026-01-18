@@ -13,8 +13,6 @@ import java.util.stream.Stream;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.cli.CliException;
-import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
