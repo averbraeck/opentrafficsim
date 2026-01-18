@@ -306,15 +306,6 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
         implements LaneBasedTacticalPlannerFactory<T>
 {
 
-    public static void main(final String[] args) throws NoSuchFieldException, CliException
-    {
-        LmrsFactory2<Lmrs> program = new LmrsFactory2(Lmrs::new);
-        CliUtil.changeOptionDefault(program, "gtuTypes", "NL.CAR|NL.VAN|NL.TRUCK");
-        CliUtil.execute(program, args);
-        program.set(Setting.ADAPTATION_SPEED, false); // set settings programmatically
-        System.out.println(program.gtuTypes);
-    }
-
     /** Remembered state to reset in one-shot mode. */
     private Map<Setting<?>, List<?>> state;
 
