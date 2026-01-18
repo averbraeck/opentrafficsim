@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djutils.cli.CliException;
+import org.djutils.cli.CliUtil;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -95,17 +97,19 @@ import picocli.CommandLine.Option;
  * type. Model components can be set through command line arguments, or through calling {@link #set(Setting, Object)}.
  * Parameters can be set through standard parameter factory methods.
  * <p>
- * <b>Initialization</b><br>
- * The factory can be created by:
+ * <b>Usage</b><br>
+ * The factory can be used as:
  *
  * <pre>
  * LmrsFactory&lt;Lmrs&gt; factory = new LmrsFactory&lt;&gt;(List.of(DefaultsNl.CAR, DefaultsNl.VAN), Lmrs::new);
+ *
+ * factory.set(Setting.ADAPTATION_SPEED, false);
  * </pre>
  *
  * The GTU list is optional (default is {@code List.of(DefaultsNl.CAR, DefaultsNl.TRUCK)}), and the second
  * {@link TacticalPlannerProvider} argument can also be given as a list to specifiy different providers per GTU type. All
  * settings must be provided either for all GTU types, or for a specific GTU type with which the factory was initialized. GTUs
- * of different types can be generated within the simulation, so long as any of their parent types is within the list of the
+ * of other types can be generated within the simulation, so long as any of their parent types is within the list of the
  * factory.
  * </p>
  * <p>
@@ -115,8 +119,20 @@ import picocli.CommandLine.Option;
  * <pre>
  * &#64;Mixin
  * private LmrsFactory&lt;Lmrs&gt; factory = new LmrsFactory&lt;&gt;(Lmrs::new);
+ *
+ * public static void main(String[] args)
+ * {
+ *     Program program = new Program();
+ *     CliUtil.changeOptionDefault(program, "gtuTypes", "NL.CAR|NL.VAN|NL.TRUCK");
+ *     CliUtil.execute(program, args);
+ * }
  * </pre>
  *
+ * <i>Note: command line arguments and programmatically setting settings (set method) should in principle not both be used
+ * within the same program. Default command line arguments should be changed by the option default as in the example above,
+ * before the input args are executed.</i>
+ * </p>
+ * <p>
  * Use command line argument {@code --help} to get a list of all available command line arguments. In the example the factory is
  * initialized using the constructor of {@link Lmrs} as a supplier of the tactical planner class. Within the context of a
  * program it may be necessary to use a supplier of an another implementation of a tactical planner instead. The supplier can be
@@ -135,8 +151,7 @@ import picocli.CommandLine.Option;
  * </pre>
  *
  * The pipe character ({@code |}) is used to separate values. If the pipe character is part of any value, values can be quoted.
- * If a quote is part of a any value, the value can be quoted and the quote of the value can be escaped with a backslash \. Note
- * that {@code CommandLine.setTrimQuotes(true)} needs to be called within the program before such arguments are processed. The
+ * If a quote is part of a any value, the value can be quoted and the quote of the value can be escaped with a backslash \. The
  * following code will set the {@code --gtuTypes} to {@code [NL.CAR, NL.VAN, NL.T|RUCK]}.
  *
  * <pre>
@@ -290,6 +305,15 @@ import picocli.CommandLine.Option;
 public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends ParameterFactoryOneShot
         implements LaneBasedTacticalPlannerFactory<T>
 {
+
+    public static void main(final String[] args) throws NoSuchFieldException, CliException
+    {
+        LmrsFactory2<Lmrs> program = new LmrsFactory2(Lmrs::new);
+        CliUtil.changeOptionDefault(program, "gtuTypes", "NL.CAR|NL.VAN|NL.TRUCK");
+        CliUtil.execute(program, args);
+        program.set(Setting.ADAPTATION_SPEED, false); // set settings programmatically
+        System.out.println(program.gtuTypes);
+    }
 
     /** Remembered state to reset in one-shot mode. */
     private Map<Setting<?>, List<?>> state;
