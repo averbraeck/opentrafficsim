@@ -95,6 +95,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveQueue;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
@@ -350,8 +351,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         od.putDemandVector(nodeE, nodeD, controlledCarCat, this.rampDemand, 0.4);
         OdOptions odOptions = new OdOptions();
         DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory factory =
-                new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(new LaneBasedStrategicalRoutePlannerFactory(
-                        new LmrsFactory.Factory().withDefaultIncentives().build(stream)));
+                new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(
+                        new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(stream)));
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
         odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.INSTANT);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));

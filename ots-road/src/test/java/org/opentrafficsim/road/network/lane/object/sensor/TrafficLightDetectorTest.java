@@ -35,7 +35,9 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -210,9 +212,11 @@ public final class TrafficLightDetectorTest implements EventListener
                 // initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
                 LanePosition initialLongitudinalPositions = new LanePosition(gtuPosition.lane(), gtuPosition.position());
                 Parameters parameters = DefaultTestParameters.create();
-                LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                        new LmrsFactory.Factory().setCarFollowingModelFactory(new FixedCarFollowing()).build(null).create(gtu),
-                        gtu);
+                LaneBasedStrategicalPlanner strategicalPlanner =
+                        new LaneBasedStrategicalRoutePlanner(
+                                new LmrsFactory<>(Lmrs::new)
+                                        .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing().get()).create(gtu),
+                                gtu);
                 gtu.setParameters(parameters);
                 Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
                 if (lanes.length == 6 && pos >= 103)

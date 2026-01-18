@@ -49,6 +49,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -133,18 +134,22 @@ public final class InjectionsTest
         UnitTest.testFail(() -> baseInjections(time, position).asGeneratorPositions().getAllPositions(),
                 IllegalArgumentException.class); // pos, lane, link?
         UnitTest.testFail(() -> baseInjections(time, position2), IllegalArgumentException.class);
-        UnitTest.testFail(() -> baseInjections(time, lane).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, lane).asGeneratorPositions().getAllPositions(),
+                IllegalArgumentException.class);
         UnitTest.testFail(() -> baseInjections(time, lane2), IllegalArgumentException.class);
-        UnitTest.testFail(() -> baseInjections(time, link).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, link).asGeneratorPositions().getAllPositions(),
+                IllegalArgumentException.class);
         UnitTest.testFail(() -> baseInjections(time, link2), IllegalArgumentException.class);
         // position types are defined
         assertTrue(baseInjections(time, id, position, lane, link).asGeneratorPositions().getAllPositions().isEmpty());
         // no speed
-        UnitTest.testFail(() -> baseInjections(time).asRoomChecker().canPlace(null, null, null, null), IllegalStateException.class);
+        UnitTest.testFail(() -> baseInjections(time).asRoomChecker().canPlace(null, null, null, null),
+                IllegalStateException.class);
         UnitTest.testFail(() -> baseInjections(time, speed).asRoomChecker().canPlace(null, null, null, null),
                 IllegalStateException.class); // no ttc
         UnitTest.testFail(() -> baseInjections(time, speed2), IllegalArgumentException.class);
-        UnitTest.testFail(() -> baseInjections(time, gtu), IllegalArgumentException.class); // need full Injections constructor input
+        UnitTest.testFail(() -> baseInjections(time, gtu), IllegalArgumentException.class); // need full Injections constructor
+                                                                                            // input
         UnitTest.testFail(() -> baseInjections(time, origin), IllegalArgumentException.class);
         UnitTest.testFail(() -> baseInjections(time, destination), IllegalArgumentException.class);
         UnitTest.testFail(() -> baseInjections(time, route), IllegalArgumentException.class);
@@ -240,7 +245,8 @@ public final class InjectionsTest
         // -- the test
         Injections full = fullInjections(arrivals, network);
         assertEquals(6, full.asGeneratorPositions().getAllPositions().size());
-        UnitTest.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // first headway
+        UnitTest.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // first
+                                                                                                                    // headway
         String[] lanes = new String[] {"Lane1", "Lane2"};
         int laneIndex = 0;
         for (int i = 0; i < 5; i++)
@@ -254,7 +260,8 @@ public final class InjectionsTest
             laneIndex = 1 - laneIndex;
             assertEquals((i + 1) * 10.0, p.getPosition().position().si, 1e-9);
         }
-        UnitTest.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec. draw
+        UnitTest.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec.
+                                                                                                                    // draw
     }
 
     /**
@@ -349,10 +356,11 @@ public final class InjectionsTest
         // Create the generator and its components
         ImmutableMap<String, GtuType> gtuTypes = new ImmutableLinkedHashMap<>(Map.of("NL.CAR", DefaultsNl.CAR));
         StreamInterface stream = new MersenneTwister();
-        LmrsFactory tacticalFactory = new LmrsFactory.Factory().build(stream);
+        LmrsFactory<Lmrs> tacticalFactory = new LmrsFactory<>(Lmrs::new).setStream(stream);
         LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
-        Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL, strategicalPlannerFactory, stream,
+        Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL,
+                strategicalPlannerFactory, stream,
                 Duration.ofSI(60.0));
         new LaneBasedGtuGenerator("id", injections.asArrivalsSupplier(), injections.asLaneBasedGtuCharacteristicsGenerator(),
                 injections.asGeneratorPositions(), network, simulator, injections.asRoomChecker(), injections.asIdSupplier());

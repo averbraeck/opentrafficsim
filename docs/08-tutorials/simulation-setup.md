@@ -196,7 +196,7 @@ Let us assume that for this simulation the GTU type and route are defined in the
 What remains to be defined is a `LaneBasedStrategicalPlannerFactory`. Defining components bottom up the following code uses some standard components by use of the `LmrsFactory.Factory` factory. In this factory many specific components can be defined. Note that the strategical planner factory can be defined once, for example as a property of the anonymous class, rather than for every call to the `draw()` method.
 
 ```java
-    LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
+    LmrsFactory<Lmrs> tactical = new LmrsFactory<>(Lmrs::new).setStream(randomStream);
     LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
 ```
 
@@ -211,8 +211,6 @@ Setup code like this is usually more elaborate as more specific, non-default cha
 * The GTU type and route may not be defined in the OD, but instead be drawn from a distribution or be derived by generators, or specifically for the route by a `RouteGenerator`. (The route can be determined in different places. If the OD matrix defines a route, it is used. A `LaneBasedStrategicalRoutePlannerFactory` can also be assigned a `RouteGenerator` in its constructor. It will be forwarded to all strategical planner instances it creates. It is used whenever the route turns out to be `null`, including ‘en-route’. For clarity it is preferred to prevent redundancy, i.e. it is advised to determine routes at one place, and rely on an exception to be thrown when routes are not properly defined.)
 * The GTU dimensions and maximum speed may be drawn from non-default distributions.
 * The vehicle model may be determined by a factory, varying e.g. vehicle mass.
-* The car-following factory could use lower-level factories for desired headway and desired speed models.
-* A perception factory may be required which includes specific perception categories in the perception.
 * The LMRS factory can be specified with many more choices.
 
 Another way to go about this process is to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd`, which is discussed in section [GTU characteristics](../04-demand/traffic-od.md#gtu-characteristics). It can be created by setting several optional elements with a factory. For example the lines below create a `DefaultLaneBasedGtuCharacteristicsGeneratorOd` with only a default LMRS model set. Besides the `create()` method, the `Factory` has many methods to set the elements. These methods allow method chaining, i.e. `Factory().setX(…).setY(…).setZ(…).create()`.
@@ -232,7 +230,7 @@ For clarity the rest of the example code does not use method chaining. It should
 Next, factories for model components are set up similar to how this was done before. A `ParameterFactory` is included to set a different acceleration value for trucks. The highest level factory (strategical) is used on the GTU characteristics generator factory. Note that this is a simple case. Depending on the GTU type, and possibly the origin or destination, the strategical planner factory may return various models, possibly based on a set of delegate strategical planner factories.
 
 ```java
-    LmrsFactory tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
+    LmrsFactory<Lmrs> tactical = new LmrsFactory<>(Lmrs::new).setStream(randomStream);
     ParameterFactoryByType params = new ParameterFactoryByType();
     params.addParameter(truck, ParameterTypes.A, Acceleration.ofSI(0.8));
     LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);

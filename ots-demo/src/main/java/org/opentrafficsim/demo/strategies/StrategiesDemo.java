@@ -6,9 +6,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
@@ -42,10 +40,7 @@ import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.base.OtsRuntimeException;
-import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -53,37 +48,21 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.draw.colorer.FixedColorer;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
-import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -96,7 +75,6 @@ import org.opentrafficsim.swing.gui.OtsAnimationPanel.DemoPanelPosition;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Option;
@@ -111,8 +89,8 @@ import picocli.CommandLine.Option;
  */
 public class StrategiesDemo extends AbstractSimulationScript
 {
-    /** Factories. */
-    private final Map<GtuType, LaneBasedStrategicalPlannerFactory<?>> factories = new LinkedHashMap<>();
+    /** Factory. */
+    private LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalRoutePlanner> factory;
 
     /** GTU id number. */
     private int gtuIdNum = 0;
@@ -506,43 +484,18 @@ public class StrategiesDemo extends AbstractSimulationScript
                 DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();
 
-        // Strategical factories
-        PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();
-        // random parameters
-        ParameterFactoryByType parameterFactory = new ParameterFactoryByType();
-        parameterFactory.addParameter(Tailgating.RHO, 0.0);
-        parameterFactory.addParameter(DefaultsNl.CAR, LmrsParameters.SOCIO, 0.5);
-        parameterFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.SOCIO, 1.0);
-        parameterFactory.addParameter(DefaultsNl.CAR, LmrsParameters.VGAIN, new Speed(35.0, SpeedUnit.KM_PER_HOUR));
-        parameterFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
-        parameterFactory.addParameter(ParameterTypes.TMAX, Duration.ofSI(1.6));
-        parameterFactory.addParameter(DefaultsNl.CAR, ParameterTypes.FSPEED,
-                new DistNormal(this.stream, 123.7 / 120.0, 12.0 / 120.0));
-        parameterFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.A, Acceleration.ofSI(0.4));
-        parameterFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.FSPEED, 1.0);
-        for (GtuType gtuType : new GtuType[] {DefaultsNl.CAR, DefaultsNl.TRUCK})
-        {
-            LmrsFactory.Factory factory =
-                    new LmrsFactory.Factory().setPerceptionFactory(perceptionFactory).setTailgating(Tailgating.PRESSURE);
+        LmrsFactory<Lmrs> lmrsFactory = new LmrsFactory<>(Lmrs::new).set(Setting.SOCIO_TAILGATING, true)
+                .set(Setting.SOCIO_LANE_CHANGE, true).set(Setting.SOCIO_SPEED, true)
+                .set(Setting.INCENTIVE_STAY_RIGHT, true, DefaultsNl.TRUCK).setStream(this.stream);
+        lmrsFactory.addParameter(DefaultsNl.CAR, LmrsParameters.SOCIO, 0.5);
+        lmrsFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.SOCIO, 1.0);
+        lmrsFactory.addParameter(DefaultsNl.CAR, LmrsParameters.VGAIN, new Speed(35.0, SpeedUnit.KM_PER_HOUR));
+        lmrsFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
+        lmrsFactory.addParameter(ParameterTypes.TMAX, Duration.ofSI(1.6));
+        lmrsFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.A, Acceleration.ofSI(0.4));
+        lmrsFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.FSPEED, 1.0);
+        this.factory = new LaneBasedStrategicalRoutePlannerFactory(lmrsFactory, lmrsFactory);
 
-            factory.addMandatoryIncentive(IncentiveRoute.SINGLETON);
-            factory.addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
-            factory.addVoluntaryIncentive(IncentiveKeep.SINGLETON);
-            factory.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
-            if (gtuType.equals(DefaultsNl.TRUCK))
-            {
-                factory.addVoluntaryIncentive(IncentiveStayRight.SINGLETON);
-            }
-
-            // trucks don't change their desired speed
-            factory.setCarFollowingModelFactory(
-                    gtuType.equals(DefaultsNl.CAR) ? new SocioIdmFactory() : new IdmPlusFactory(this.stream));
-
-            // strategical and tactical factory
-            LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(factory.build(null), parameterFactory);
-            this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
-        }
         for (int i = 0; i < lanes1.size(); i++)
         {
             Length pos = Length.ofSI(10.0);
@@ -609,7 +562,8 @@ public class StrategiesDemo extends AbstractSimulationScript
         gtu.setBookkeeping(LaneBookkeeping.INSTANT);
 
         // strategical planner
-        LaneBasedStrategicalPlanner strategicalPlanner = this.factories.get(gtuType).create(gtu, null, null, null);
+        LaneBasedStrategicalPlanner strategicalPlanner = this.factory.create(gtu, null, null, null);
+        // this.factories.get(gtuType).create(gtu, null, null, null);
 
         // init
         gtu.init(strategicalPlanner, new LanePosition(lane, pos).getLocation(), initialSpeed);
@@ -618,63 +572,6 @@ public class StrategiesDemo extends AbstractSimulationScript
         {
             Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT),
                     "Exception while adding lane change listener");
-        }
-    }
-
-    /** IDM factory with socio speed. */
-    class SocioIdmFactory implements CarFollowingModelFactory<IdmPlus>
-    {
-        /**
-         * Constructor.
-         */
-        SocioIdmFactory()
-        {
-            //
-        }
-
-        @Override
-        public Parameters getParameters(final GtuType gtuType) throws ParameterException
-        {
-            ParameterSet parameters = new ParameterSet();
-            parameters.setDefaultParameters(AbstractIdm.class);
-            return parameters;
-        }
-
-        @Override
-        public IdmPlus get()
-        {
-            return new IdmPlus(AbstractIdm.HEADWAY, new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED));
-        }
-    }
-
-    /** Perception factory. */
-    class LmrsStrategiesPerceptionFactory implements PerceptionFactory
-    {
-        /**
-         * Constructor.
-         */
-        LmrsStrategiesPerceptionFactory()
-        {
-            //
-        }
-
-        @Override
-        public LanePerception generatePerception(final LaneBasedGtu gtu)
-        {
-            LanePerception perception = new CategoricalLanePerception(gtu);
-            perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
-            perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
-            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, PerceivedGtuType.WRAP));
-            perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
-            return perception;
-        }
-
-        @Override
-        public Parameters getParameters(final GtuType gtuType) throws ParameterException
-        {
-            return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKAHEAD)
-                    .setDefaultParameter(ParameterTypes.LOOKBACKOLD).setDefaultParameter(ParameterTypes.PERCEPTION)
-                    .setDefaultParameter(ParameterTypes.LOOKBACK);
         }
     }
 

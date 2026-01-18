@@ -86,7 +86,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactoryOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -517,9 +519,8 @@ public class ModelParser
             else
             {
                 // default
-                tacticalPlannerFactory = new LmrsFactory.Factory()
-                        .setCarFollowingModelFactory(new IdmPlusFactory(streamInformation.getStream("generation")))
-                        .withDefaultIncentives().build(null);
+                tacticalPlannerFactory = new LmrsFactory<>(Lmrs::new).set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true)
+                        .set(Setting.ACCELERATION_CONFLICTS, true);
             }
 
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
@@ -552,7 +553,7 @@ public class ModelParser
             final org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs lmrs,
             final StreamInformation streamInformation, final Eval eval) throws XmlParserException
     {
-        LmrsFactory.Factory factory = new LmrsFactory.Factory();
+        LmrsFactoryOld.Factory factory = new LmrsFactoryOld.Factory();
 
         // Car-following model
         factory.setCarFollowingModelFactory(parseCarFollowingModel(lmrs.getCarFollowingModel(), streamInformation, eval));

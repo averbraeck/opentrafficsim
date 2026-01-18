@@ -40,7 +40,9 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplat
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -150,9 +152,9 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 80, 95), SpeedUnit.KM_PER_HOUR);
             Supplier<Route> routeGenerator = new FixedRouteGenerator(null);
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
+                    new LmrsFactory<>(Lmrs::new).setStream(this.stream).set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true));
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFctoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
+                    new LmrsFactory<>(Lmrs::new).setStream(this.stream).set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true));
             LaneBasedGtuTemplate carTemplate = new LaneBasedGtuTemplate(car, new ConstantSupplier<>(Length.ofSI(4.0)),
                     new ConstantSupplier<>(Length.ofSI(2.0)), speedCar, strategicalPlannerFactoryCars, routeGenerator);
             LaneBasedGtuTemplate truckTemplate = new LaneBasedGtuTemplate(truck, new ConstantSupplier<>(Length.ofSI(15.0)),

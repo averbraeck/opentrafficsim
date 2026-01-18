@@ -52,6 +52,7 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -188,10 +189,10 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             this.carProbability = (double) getInputParameter("generic.carProbability");
 
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());
-            this.strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream), params);
-            this.strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream), params);
+            this.strategicalPlannerFactoryCars =
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(this.stream), params);
+            this.strategicalPlannerFactoryTrucks =
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(this.stream), params);
 
             Point2d pFrom2a = new Point2d(0, -50);
             Point2d pFrom2b = new Point2d(490, -0.5);

@@ -25,7 +25,9 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -111,9 +113,9 @@ public final class DetectorTest implements UNITS
         // new LaneBasedBehavioralCharacteristics(fas, null);
         LaneBasedGtu car = new LaneBasedGtu(carID, gtuType, carLength, carWidth, maximumSpeed, carLength.times(0.5),
                 (RoadNetwork) network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory.Factory()
-                .setCarFollowingModelFactory(new FixedCarFollowing(new Acceleration(0.5, METER_PER_SECOND_2))).build(null)
-                .create(car), car);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory<>(Lmrs::new)
+                .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing(Acceleration.ofSI(0.5)).get()).create(car),
+                car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions.getLocation(), initialSpeed);
         simulator.runUpTo(Duration.ONE);

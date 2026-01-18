@@ -29,7 +29,6 @@ import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SynchronizationGtuColorer;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantSupplier;
@@ -67,17 +66,10 @@ import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
@@ -273,22 +265,12 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             TtcRoomChecker roomChecker = new TtcRoomChecker(new Duration(10.0, DurationUnit.SI));
             IdSupplier idGenerator = new IdSupplier("");
 
-            CarFollowingModelFactory<IdmPlus> idmPlusFactory = new IdmPlusFactory(streams.get("gtuClass"));
-            ParameterSet params = new ParameterSet();
-            params.setDefaultParameter(AbstractIdm.DELTA);
-
-            LmrsFactory.Factory factory = new LmrsFactory.Factory().setCarFollowingModelFactory(idmPlusFactory)
-                    .setSynchonization(SYNCHRONIZATION).setCooperation(COOPERATION);
-            factory.addMandatoryIncentive(IncentiveRoute.SINGLETON);
-            factory.addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
-            factory.addVoluntaryIncentive(IncentiveKeep.SINGLETON);
+            LmrsFactory<Lmrs> tacticalFactory = new LmrsFactory<Lmrs>(Lmrs::new).setStream(stream)
+                    .set(Setting.SYNCHRONIZATION, SYNCHRONIZATION).set(Setting.COOPERATION, COOPERATION);
             if (ADDITIONAL_INCENTIVES)
             {
-                factory.addVoluntaryIncentive(IncentiveCourtesy.SINGLETON);
-                factory.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
+                tacticalFactory.set(Setting.INCENTIVE_COURTESY, true);
             }
-
-            LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory = factory.build(null);
 
             GtuType car = DefaultsNl.CAR;
             GtuType truck = DefaultsNl.TRUCK;

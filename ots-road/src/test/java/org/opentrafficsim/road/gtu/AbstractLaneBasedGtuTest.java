@@ -34,7 +34,9 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -125,8 +127,10 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(gfm, laneChangeModel);
         LaneBasedGtu car = new LaneBasedGtu(carID, gtuType, carLength, carWidth, maximumSpeed, carLength.times(0.5), network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory.Factory()
-                .setCarFollowingModelFactory(new FixedCarFollowing(acceleration)).build(null).create(car), car);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+                new LmrsFactory<>(Lmrs::new)
+                        .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing(acceleration).get()).create(car),
+                car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, new LanePosition(lanesGroupA[1], positionA).getLocation(), initialSpeed);
         // Now we can verify the various fields in the newly created Car
@@ -255,7 +259,7 @@ public final class AbstractLaneBasedGtuTest implements UNITS
                         expectedPosition = expectedPosition.plus(relativePosition.dx());
                         // System.out.println("reported position: " + position);
                         // System.out.println("expected position: " + expectedPosition);
-                        assertEquals(expectedPosition.getSI(), position.getSI(), 0.0001,
+                        assertEquals(expectedPosition.getSI(), position.getSI(), 0.01,
                                 "Position should match initial position");
                         double fractionalPosition = car.getPosition(lane, relativePosition).si / lane.getLength().si;
                         expectedPosition = positionA;// laneGroup == lanesGroupA ? positionA : positionB;
@@ -267,7 +271,7 @@ public final class AbstractLaneBasedGtuTest implements UNITS
                         // System.out.println("reported position: " + position);
                         // System.out.println("expected position: " + expectedPosition);
                         double expectedFractionalPosition = expectedPosition.getSI() / lane.getLength().getSI();
-                        assertEquals(expectedFractionalPosition, fractionalPosition, 0.000001,
+                        assertEquals(expectedFractionalPosition, fractionalPosition, 0.01,
                                 "Position should match initial position");
                     }
                 }

@@ -234,8 +234,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
         };
         // GTU characteristics generator
-        LaneBasedTacticalPlannerFactory<Lmrs> tacticalPlannerFactory =
-                new LmrsFactory.Factory().withDefaultIncentives().build(stream);
+        LaneBasedTacticalPlannerFactory<Lmrs> tacticalPlannerFactory = new LmrsFactory<>(Lmrs::new).setStream(stream);
         DistNormal fSpeed = new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0);
         ParameterFactory parametersFactory = new ParameterFactory()
         {

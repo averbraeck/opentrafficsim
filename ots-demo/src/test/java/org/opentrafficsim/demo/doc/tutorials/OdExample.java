@@ -36,7 +36,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharact
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.VehicleModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -131,8 +131,7 @@ public class OdExample
                 GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get().get();
                 VehicleModel vehicleModel = VehicleModel.NONE;
 
-                LaneBasedTacticalPlannerFactory<?> tactical =
-                        new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
+                LmrsFactory<Lmrs> tactical = new LmrsFactory<>(Lmrs::new).setStream(randomStream);
                 LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
 
                 return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination,
@@ -159,7 +158,7 @@ public class OdExample
         GtuType car = DefaultsNl.CAR;
         GtuType truck = DefaultsNl.TRUCK;
 
-        LmrsFactory tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
+        LmrsFactory<Lmrs> tactical = new LmrsFactory<>(Lmrs::new).setStream(randomStream);
         ParameterFactoryByType params = new ParameterFactoryByType();
         params.addParameter(truck, ParameterTypes.A, Acceleration.ofSI(0.8));
         LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);

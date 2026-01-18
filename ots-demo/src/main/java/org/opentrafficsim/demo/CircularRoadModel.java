@@ -28,6 +28,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -196,10 +197,10 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
             this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
-            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
-            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
+            this.strategicalPlannerGeneratorCars =
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(this.stream));
+            this.strategicalPlannerGeneratorTrucks =
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(this.stream));
 
             GtuType gtuType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;

@@ -46,9 +46,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory2;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory2.Setting;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory2.TacticalPlannerProvider;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.TacticalPlannerProvider;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
@@ -69,11 +69,11 @@ public class LmrsFactoryTest
 
     /** Standard car provider. */
     @Mock
-    private LmrsFactory2.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> carProvider;
+    private LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> carProvider;
 
     /** Standard truck provider. */
     @Mock
-    private LmrsFactory2.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> truckProvider;
+    private LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> truckProvider;
 
     /** Standard car planner. */
     @Mock
@@ -100,7 +100,7 @@ public class LmrsFactoryTest
     private GtuType truckType;
 
     /** Standard factory for a bunch of tests. */
-    private LmrsFactory2<AbstractIncentivesTacticalPlanner> factory;
+    private LmrsFactory<AbstractIncentivesTacticalPlanner> factory;
 
     /** Mocks to reset. */
     private AutoCloseable mocks;
@@ -128,7 +128,7 @@ public class LmrsFactoryTest
                         .thenReturn(this.carPlanner);
 
         // Factory under test
-        this.factory = new LmrsFactory2<>(List.of(this.carType), this.carProvider);
+        this.factory = new LmrsFactory<>(List.of(this.carType), this.carProvider);
     }
 
     /**
@@ -151,9 +151,9 @@ public class LmrsFactoryTest
     {
         // Verifies defensive null checks in constructor
         assertThrows(NullPointerException.class,
-                () -> new LmrsFactory2<AbstractIncentivesTacticalPlanner>(List.of(this.carType),
+                () -> new LmrsFactory<AbstractIncentivesTacticalPlanner>(List.of(this.carType),
                         (TacticalPlannerProvider<AbstractIncentivesTacticalPlanner>) null));
-        assertThrows(NullPointerException.class, () -> new LmrsFactory2<AbstractIncentivesTacticalPlanner>(
+        assertThrows(NullPointerException.class, () -> new LmrsFactory<AbstractIncentivesTacticalPlanner>(
                 (TacticalPlannerProvider<AbstractIncentivesTacticalPlanner>) null));
     }
 
@@ -165,13 +165,13 @@ public class LmrsFactoryTest
     void constructorWithSingleProviderAppliesToAllGtuTypes() throws GtuException
     {
         // Shared provider
-        LmrsFactory2.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
         AbstractIncentivesTacticalPlanner planr = mock();
         when(provdr.from(any(), any(), any(), any(), any(), any(), any())).thenReturn(planr);
 
         // Factory with multiple GTU types, single provider
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact =
-                new LmrsFactory2<>(List.of(this.carType, this.truckType), provdr);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact =
+                new LmrsFactory<>(List.of(this.carType, this.truckType), provdr);
         fact.create(this.carGtu);
         fact.create(this.truckGtu);
 
@@ -190,8 +190,8 @@ public class LmrsFactoryTest
         when(this.truckProvider.from(any(), any(), any(), any(), any(), any(), any())).thenReturn(this.truckPlanner);
 
         // Factory with provider per GTU type
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact =
-                new LmrsFactory2<>(List.of(this.carType, this.truckType), List.of(this.carProvider, this.truckProvider));
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact =
+                new LmrsFactory<>(List.of(this.carType, this.truckType), List.of(this.carProvider, this.truckProvider));
         AbstractIncentivesTacticalPlanner carResult = fact.create(this.carGtu);
         AbstractIncentivesTacticalPlanner truckResult = fact.create(this.truckGtu);
 
@@ -208,11 +208,11 @@ public class LmrsFactoryTest
     @Test
     void constructorRejectsMismatchedGtuTypesAndProviders()
     {
-        LmrsFactory2.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
 
         // Size mismatch must throw
         assertThrows(IllegalArgumentException.class,
-                () -> new LmrsFactory2<>(List.of(this.carType, this.truckType), List.of(provdr)));
+                () -> new LmrsFactory<>(List.of(this.carType, this.truckType), List.of(provdr)));
     }
 
     /* -------------------- multi-GTU settings -------------------- */
@@ -224,16 +224,16 @@ public class LmrsFactoryTest
     void perGtuTypeSettingsAreIndependent() throws GtuException
     {
         // Provider
-        LmrsFactory2.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
         AbstractIncentivesTacticalPlanner planr = mock();
         when(provdr.from(any(), any(), any(), any(), any(), any(), any())).thenReturn(planr);
 
         // Factory
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact =
-                new LmrsFactory2<>(List.of(this.carType, this.truckType), provdr);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact =
+                new LmrsFactory<>(List.of(this.carType, this.truckType), provdr);
 
         // Disable incentive only for trucks
-        fact.set(LmrsFactory2.Setting.INCENTIVE_KEEP, false, this.truckType);
+        fact.set(LmrsFactory.Setting.INCENTIVE_KEEP, false, this.truckType);
         fact.create(this.carGtu);
         fact.create(this.truckGtu);
 
@@ -301,7 +301,7 @@ public class LmrsFactoryTest
     void setDisablesMandatoryIncentive() throws GtuException
     {
         // Disable a default-true setting
-        this.factory.set(LmrsFactory2.Setting.INCENTIVE_ROUTE, false);
+        this.factory.set(LmrsFactory.Setting.INCENTIVE_ROUTE, false);
         this.factory.create(this.carGtu);
 
         // Mandatory route incentive must not be added
@@ -316,7 +316,7 @@ public class LmrsFactoryTest
     void perGtuTypeSettingIsApplied() throws GtuException
     {
         // Disable speed-with-courtesy only for this GTU type
-        this.factory.set(LmrsFactory2.Setting.INCENTIVE_SPEED_WITH_COURTESY, false, this.carType);
+        this.factory.set(LmrsFactory.Setting.INCENTIVE_SPEED_WITH_COURTESY, false, this.carType);
         this.factory.create(this.carGtu);
 
         // Verify that the per-GTU override takes effect
@@ -338,7 +338,7 @@ public class LmrsFactoryTest
         this.factory.setStream(new MersenneTwister(1L));
 
         // Override a default setting
-        this.factory.set(LmrsFactory2.Setting.INCENTIVE_ROUTE, false);
+        this.factory.set(LmrsFactory.Setting.INCENTIVE_ROUTE, false);
         Duration t = Duration.ofSI(2.31);
         this.factory.addParameter(ParameterTypes.TMAX, t);
 
@@ -375,7 +375,7 @@ public class LmrsFactoryTest
 
         // Verify defensive check
         assertThrows(IllegalArgumentException.class,
-                () -> this.factory.set(LmrsFactory2.Setting.INCENTIVE_ROUTE, false, unknownType));
+                () -> this.factory.set(LmrsFactory.Setting.INCENTIVE_ROUTE, false, unknownType));
     }
 
     /* -------------------- parent GTU types -------------------- */
@@ -400,13 +400,13 @@ public class LmrsFactoryTest
         when(childGtu.getType()).thenReturn(child);
 
         // Provider
-        LmrsFactory2.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
         AbstractIncentivesTacticalPlanner planr = mock();
         when(provdr.from(any(), any(), any(), any(), any(), any(), any())).thenReturn(planr);
 
         // Factory knows both parent and child
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(List.of(parent, child), provdr);
-        fact.set(LmrsFactory2.Setting.INCENTIVE_ROUTE, false, parent);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(parent, child), provdr);
+        fact.set(LmrsFactory.Setting.INCENTIVE_ROUTE, false, parent);
         fact.create(childGtu);
 
         // Child must inherit parent value
@@ -475,12 +475,12 @@ public class LmrsFactoryTest
         when(accGtuVan.getType()).thenReturn(acc);
 
         // Provider
-        LmrsFactory2.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
         AbstractIncentivesTacticalPlanner planr = mock();
         when(provdr.from(any(), any(), any(), any(), any(), any(), any())).thenReturn(planr);
 
         // Factory receives only two incentiveRoute values
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(provdr);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(provdr);
         CliUtil.execute(fact,
                 new String[] {"--gtuTypes=NL.VEHICLE|NL.CAR|NL.TRUCK|NL.VAN|NL.BUS", "--incentiveRoute=false|true"});
         fact.set(Setting.INCENTIVE_ROUTE, true, van);
@@ -521,8 +521,8 @@ public class LmrsFactoryTest
     @Test
     void tailgatingEnablesTailgatingBehavior() throws GtuException
     {
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(List.of(this.carType), this.carProvider);
-        fact.set(LmrsFactory2.Setting.SOCIO_TAILGATING, true);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), this.carProvider);
+        fact.set(LmrsFactory.Setting.SOCIO_TAILGATING, true);
         fact.create(this.carGtu);
 
         // Tailgating does not add voluntary incentives directly
@@ -538,9 +538,9 @@ public class LmrsFactoryTest
     @Test
     void socioLaneChangeAddsSocioIncentive() throws GtuException
     {
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(List.of(this.carType), this.carProvider);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), this.carProvider);
 
-        fact.set(LmrsFactory2.Setting.SOCIO_LANE_CHANGE, true);
+        fact.set(LmrsFactory.Setting.SOCIO_LANE_CHANGE, true);
 
         fact.create(this.carGtu);
 
@@ -556,7 +556,7 @@ public class LmrsFactoryTest
     @Test
     void getParametersReturnsNonEmptyParameterSet() throws ParameterException
     {
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(List.of(this.carType), mock());
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), mock());
         fact.setStream(new MersenneTwister(1L));
         Parameters parameters = fact.getParameters(this.carType);
         assertNotNull(parameters);
@@ -570,9 +570,9 @@ public class LmrsFactoryTest
     @Test
     void fullerNoneDoesNotAddFullerParameters() throws ParameterException
     {
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(List.of(this.carType), mock());
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), mock());
 
-        fact.set(LmrsFactory2.Setting.FULLER_IMPLEMENTATION, LmrsFactory2.FullerImplementation.NONE);
+        fact.set(LmrsFactory.Setting.FULLER_IMPLEMENTATION, LmrsFactory.FullerImplementation.NONE);
         fact.setStream(new MersenneTwister(1L));
 
         Parameters parameters = fact.getParameters(this.carType);
@@ -588,10 +588,10 @@ public class LmrsFactoryTest
     @Test
     void attentionMatrixAddsTaskParameters() throws ParameterException
     {
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(List.of(this.carType), mock());
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), mock());
         fact.setStream(new MersenneTwister(1L));
 
-        fact.set(LmrsFactory2.Setting.FULLER_IMPLEMENTATION, LmrsFactory2.FullerImplementation.ATTENTION_MATRIX);
+        fact.set(LmrsFactory.Setting.FULLER_IMPLEMENTATION, LmrsFactory.FullerImplementation.ATTENTION_MATRIX);
 
         Parameters parameters = fact.getParameters(this.carType);
 
@@ -608,10 +608,10 @@ public class LmrsFactoryTest
     @Test
     void testArAndAm() throws GtuException
     {
-        createUsesMentalModel(LmrsFactory2.FullerImplementation.NONE, null);
-        createUsesMentalModel(LmrsFactory2.FullerImplementation.SUMMATIVE, SumFuller.class);
-        createUsesMentalModel(LmrsFactory2.FullerImplementation.ANTICIPATION_RELIANCE, ArFuller.class);
-        createUsesMentalModel(LmrsFactory2.FullerImplementation.ATTENTION_MATRIX, ChannelFuller.class);
+        createUsesMentalModel(LmrsFactory.FullerImplementation.NONE, null);
+        createUsesMentalModel(LmrsFactory.FullerImplementation.SUMMATIVE, SumFuller.class);
+        createUsesMentalModel(LmrsFactory.FullerImplementation.ANTICIPATION_RELIANCE, ArFuller.class);
+        createUsesMentalModel(LmrsFactory.FullerImplementation.ATTENTION_MATRIX, ChannelFuller.class);
     }
 
     /**
@@ -620,7 +620,7 @@ public class LmrsFactoryTest
      * @param clazz class of mental implementation
      * @throws GtuException exceptiono
      */
-    private void createUsesMentalModel(final LmrsFactory2.FullerImplementation implementation,
+    private void createUsesMentalModel(final LmrsFactory.FullerImplementation implementation,
             final Class<? extends Fuller> clazz) throws GtuException
     {
         // Capture LanePerception passed to provider
@@ -630,10 +630,10 @@ public class LmrsFactoryTest
                 .thenReturn(this.carPlanner);
 
         // Factory
-        LmrsFactory2<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory2<>(List.of(this.carType), this.carProvider);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), this.carProvider);
 
         // Enable Fuller attention matrix
-        fact.set(LmrsFactory2.Setting.FULLER_IMPLEMENTATION, implementation);
+        fact.set(LmrsFactory.Setting.FULLER_IMPLEMENTATION, implementation);
 
         // Act
         fact.create(this.carGtu);
