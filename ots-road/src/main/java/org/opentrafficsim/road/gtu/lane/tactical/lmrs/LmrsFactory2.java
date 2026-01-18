@@ -641,6 +641,7 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
     {
         Throw.whenNull(value, "value");
         final List<V> values = setting.getListFunction().apply(this);
+        saveState(setting, values);
         values.clear();
         values.add(value);
     }
@@ -662,10 +663,7 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
         Throw.when(gtuTypeIndex < 0, IllegalArgumentException.class, "GTU type %s not defined.", gtuType.getId());
 
         final List<V> values = setting.getListFunction().apply(this);
-        if (this.state != null && !this.state.containsKey(setting))
-        {
-            this.state.put(setting, new ArrayList<>(values));
-        }
+        saveState(setting, values);
 
         /*
          * Append with null values if not going from 1 to N but from M to N. This is a weird state with an incomplete command
@@ -673,12 +671,25 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
          * it, but when the setting is required for any GTU type M+1 through N an exception might arise later. This depends on
          * whether the setting will also be set for those GTU types, or whether the setting is known for a parent type.
          */
-        V defaultValue = values.size() == 1 ? values.get(0) : null;
         while (values.size() < this.gtuTypes.size())
         {
-            values.add(defaultValue);
+            values.add(null);
         }
         values.set(gtuTypeIndex, value);
+    }
+
+    /**
+     * Saves the state of given setting when in one-shot mode and the setting was not already saved.
+     * @param <V> value type
+     * @param setting setting
+     * @param values value list
+     */
+    private <V> void saveState(final Setting<V> setting, final List<V> values)
+    {
+        if (this.state != null && !this.state.containsKey(setting))
+        {
+            this.state.put(setting, new ArrayList<>(values));
+        }
     }
 
     /**
@@ -895,6 +906,10 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
         {
             tacticalPlanner.addVoluntaryIncentive(IncentiveKeep.SINGLETON);
         }
+        if (get(this.socioLaneChange, gtuType))
+        {
+            tacticalPlanner.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
+        }
 
         // Acceleration incentives
         if (get(this.accelerationSpeedLimitTransition, gtuType))
@@ -912,10 +927,6 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
         if (get(this.accelerationNoRightOvertake, gtuType))
         {
             tacticalPlanner.addAccelerationIncentive(AccelerationNoRightOvertake.SINGLETON);
-        }
-        if (get(this.socioLaneChange, gtuType))
-        {
-            tacticalPlanner.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
         }
 
         resetState();
