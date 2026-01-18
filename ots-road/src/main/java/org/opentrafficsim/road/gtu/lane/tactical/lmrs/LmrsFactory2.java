@@ -135,8 +135,9 @@ import picocli.CommandLine.Option;
  * </pre>
  *
  * The pipe character ({@code |}) is used to separate values. If the pipe character is part of any value, values can be quoted.
- * Note that {@code CommandLine.setTrimQuotes(true)} needs to be called within the program before such arguments are processed.
- * The following code will set the {@code --gtuTypes} to {@code [NL.CAR, NL.VAN, NL.T|RUCK]}.
+ * If a quote is part of a any value, the value can be quoted and the quote of the value can be escaped with a backslash \. Note
+ * that {@code CommandLine.setTrimQuotes(true)} needs to be called within the program before such arguments are processed. The
+ * following code will set the {@code --gtuTypes} to {@code [NL.CAR, NL.VAN, NL.T|RUCK]}.
  *
  * <pre>
  * CliUtil.execute(new CommandLine(myProgram).setTrimQuotes(true), new String[] {"--gtuTypes=NL.CAR|NL.VAN|\"NL.T|RUCK\""});
@@ -643,16 +644,26 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
     {
         Throw.whenNull(value, "value");
         Throw.whenNull(gtuType, "gtuType");
+
+        int gtuTypeIndex = this.gtuTypes.indexOf(gtuType.getId());
+        Throw.when(gtuTypeIndex < 0, IllegalArgumentException.class, "GTU type %s not defined.", gtuType.getId());
+
         final List<V> values = setting.getListFunction().apply(this);
         if (this.state != null && !this.state.containsKey(setting))
         {
             this.state.put(setting, new ArrayList<>(values));
         }
-        int gtuTypeIndex = this.gtuTypes.indexOf(gtuType.getId());
-        Throw.when(gtuTypeIndex < 0, IllegalArgumentException.class, "GTU type %s not defined.", gtuType.getId());
+
+        /*
+         * Append with null values if not going from 1 to N but from M to N. This is a weird state with an incomplete command
+         * line argument, and code setting a setting. In this state a default or global value is unknown. We try to deal with
+         * it, but when the setting is required for any GTU type M+1 through N an exception might arise later. This depends on
+         * whether the setting will also be set for those GTU types, or whether the setting is known for a parent type.
+         */
+        V defaultValue = values.size() == 1 ? values.get(0) : null;
         while (values.size() < this.gtuTypes.size())
         {
-            values.add(values.get(0));
+            values.add(defaultValue);
         }
         values.set(gtuTypeIndex, value);
     }
@@ -679,6 +690,19 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
      */
     private <V> V get(final List<V> values, final GtuType gtuType)
     {
+        return get(values, gtuType, gtuType);
+    }
+
+    /**
+     * Returns value from value array for the GTU type.
+     * @param <V> value type
+     * @param values values
+     * @param gtuType GTU type
+     * @param originalGtuType original GTU type (only for possible exception message)
+     * @return value from value array for the GTU type
+     */
+    private <V> V get(final List<V> values, final GtuType gtuType, final GtuType originalGtuType)
+    {
         Throw.when(values.size() > 1 && this.gtuTypes.size() > values.size(), IllegalArgumentException.class,
                 "Argument has %s values %s but %s GTU types are defined.", values.size(), values, this.gtuTypes.size());
         if (values.size() == 1)
@@ -686,12 +710,12 @@ public class LmrsFactory2<T extends AbstractIncentivesTacticalPlanner> extends P
             return values.get(0);
         }
         int index = this.gtuTypes.indexOf(gtuType.getId());
-        if (index < 0 || (index > 0 && values.get(index) == null))
+        if (index < 0 || values.get(index) == null)
         {
-            Throw.when(gtuType.getParent() == null, IllegalArgumentException.class,
-                    "Unable to obtain setting value for GTU type %s or a child type of it.", gtuType.getId());
-            // try for parent GTU type
-            return get(values, gtuType.getParent());
+            return get(values,
+                    gtuType.getParent().orElseThrow(() -> new IllegalArgumentException(
+                            "Unable to obtain setting value for GTU type " + originalGtuType.getId() + " or any parent.")),
+                    originalGtuType);
         }
         return values.get(index);
     }
