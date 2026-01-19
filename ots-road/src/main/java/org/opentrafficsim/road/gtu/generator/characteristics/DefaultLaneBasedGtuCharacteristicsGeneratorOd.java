@@ -22,6 +22,7 @@ import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.VehicleModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.od.Categorization;
@@ -132,7 +133,8 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
      */
     public static LaneBasedStrategicalRoutePlannerFactory defaultLmrs(final StreamInterface stream)
     {
-        return new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(stream));
+        return new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(stream)
+                .set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true).set(Setting.ACCELERATION_CONFLICTS, true));
     }
 
     /**
