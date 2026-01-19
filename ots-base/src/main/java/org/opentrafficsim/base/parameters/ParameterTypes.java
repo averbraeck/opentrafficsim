@@ -68,10 +68,6 @@ public class ParameterTypes implements ConstraintInterface
     /** Look-back distance. */
     public static final ParameterTypeLength LOOKBACK;
 
-    // TODO remove LOOKBACKOLD
-    /** Look-back distance, for old MOBIL code only. */
-    public static final ParameterTypeLength LOOKBACKOLD;
-
     /** Speed limit adherence factor. */
     public static final ParameterTypeDouble FSPEED;
 
@@ -82,7 +78,7 @@ public class ParameterTypes implements ConstraintInterface
     public static final ParameterTypeDuration LCDUR;
 
     /** Length of mental map ahead. */
-    public static final ParameterTypeLength PERCEPTION;
+    public static final ParameterTypeLength LANE_STRUCTURE;
 
     /** Reaction time. */
     public static final ParameterTypeDuration TR;
@@ -174,9 +170,6 @@ public class ParameterTypes implements ConstraintInterface
 
         LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance", Length.ofSI(200.0), POSITIVE);
 
-        LOOKBACKOLD = new ParameterTypeLength("Look-back old", "Look-back distance (old version for MOBIL code)",
-                Length.ofSI(-200.0), NEGATIVE);
-
         FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor", 1.0, POSITIVE);
 
         VCONG = new ParameterTypeSpeed("vCong", "Speed threshold below which traffic is considered congested",
@@ -184,8 +177,8 @@ public class ParameterTypes implements ConstraintInterface
 
         LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration", Duration.ofSI(3.0), POSITIVE);
 
-        PERCEPTION =
-                new ParameterTypeLength("perception", "Mental map length", new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
+        LANE_STRUCTURE = new ParameterTypeLength("lane-structure", "Length over which the lane structure ahead is known",
+                new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
 
         TR = new ParameterTypeDuration("Tr", "Reaction time", Duration.ofSI(0.5), POSITIVEZERO);
 

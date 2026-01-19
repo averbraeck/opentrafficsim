@@ -775,7 +775,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         parameters.setDefaultParameters(AbstractIdm.class);
         parameters.setDefaultParameters(ConflictUtil.class);
         parameters.setDefaultParameter(ParameterTypes.T0);
-        parameters.setDefaultParameter(ParameterTypes.PERCEPTION);
+        parameters.setDefaultParameter(ParameterTypes.LANE_STRUCTURE);
         parameters.setDefaultParameter(ParameterTypes.LOOKBACK);
         parameters.setDefaultParameter(ParameterTypes.LOOKAHEAD);
         parameters.setDefaultParameter(ParameterTypes.VCONG);

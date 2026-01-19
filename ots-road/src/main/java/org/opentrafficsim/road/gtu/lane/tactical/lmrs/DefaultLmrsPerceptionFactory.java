@@ -52,8 +52,8 @@ public class DefaultLmrsPerceptionFactory implements PerceptionFactory
     @Override
     public Parameters getParameters(final GtuType gtuType) throws ParameterException
     {
-        return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKAHEAD).setDefaultParameter(ParameterTypes.LOOKBACKOLD)
-                .setDefaultParameter(ParameterTypes.PERCEPTION).setDefaultParameter(ParameterTypes.LOOKBACK);
+        return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKBACK).setDefaultParameter(ParameterTypes.LOOKAHEAD)
+                .setDefaultParameter(ParameterTypes.LANE_STRUCTURE);
     }
 
 }

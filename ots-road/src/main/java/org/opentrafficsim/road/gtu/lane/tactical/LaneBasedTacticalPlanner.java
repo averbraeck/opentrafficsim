@@ -46,7 +46,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
     {
         Route route = getGtu().getStrategicalPlanner().getRoute()
                 .orElseThrow(() -> new OtsRuntimeException("Choosing lane at split without a route."));
-        Length perception = getGtu().getParameters().getParameter(ParameterTypes.PERCEPTION);
+        Length perception = getGtu().getParameters().getParameter(ParameterTypes.LANE_STRUCTURE);
         Set<Lane> bestRegardingRoute = new LinkedHashSet<>();
         LaneChangeInfo bestInfo = null;
         for (Lane lane : lanes)

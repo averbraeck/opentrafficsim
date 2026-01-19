@@ -45,7 +45,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 {
 
     /** Range of lane change info perception. */
-    public static final ParameterTypeLength PERCEPTION = ParameterTypes.PERCEPTION;
+    public static final ParameterTypeLength LANE_STRUCTURE = ParameterTypes.LANE_STRUCTURE;
 
     /** Range of lane change possibility perception. */
     public static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
@@ -129,8 +129,8 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         }
         else
         {
-            Length range =
-                    Try.assign(() -> getGtu().getParameters().getParameter(PERCEPTION), "Parameter PERCEPTION not available.");
+            Length range = Try.assign(() -> getGtu().getParameters().getParameter(LANE_STRUCTURE),
+                    "Parameter PERCEPTION not available.");
             Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
             ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route.get(), getGtu().getType(),
                     range.minus(record.getStartDistance()).plus(front), laneLaw);

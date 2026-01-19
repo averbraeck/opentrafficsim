@@ -184,7 +184,7 @@ public final class LaneBasedGtuTest implements UNITS
                 "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance");
         assertEquals(null, leader.getId(), "With one vehicle in the network forward headwayGTU should return null");
         // TODO see how we can ask the vehicle to look this far behind
-        Length reverseMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKBACKOLD);
+        Length reverseMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKBACK);
         PerceivedObject follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class)
                 .getFollowers(RelativeLane.CURRENT).first();
         assertTrue(Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0,
