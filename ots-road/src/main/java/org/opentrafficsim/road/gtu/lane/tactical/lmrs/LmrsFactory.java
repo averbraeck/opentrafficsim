@@ -448,11 +448,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> temporalAnticipation = listOf(true);
 
-    /** Fraction of drivers over-estimating speed and distance [0..1] (default: 0). */
+    /** Fraction of drivers over-estimating speed and distance [0..1] (default: 1). */
     @Option(names = {"--fractionOverEstimation"},
             description = "Fraction of drivers over-estimating speed and distance [0..1].", defaultValue = "0.0", split = "\\|",
             splitSynopsisLabel = "|")
-    private List<Double> fractionOverEstimation = listOf(0.0);
+    private List<Double> fractionOverEstimation = listOf(1.0);
 
     // Fuller -> Tasks
 
@@ -619,7 +619,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      * @param <V> setting value type
      */
     @SuppressWarnings("unchecked")
-    private <V> void resetState()
+    protected <V> void resetState()
     {
         if (this.state == null)
         {
@@ -706,7 +706,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      * @param setting setting
      * @param values value list
      */
-    private <V> void saveState(final Setting<V> setting, final List<V> values)
+    protected <V> void saveState(final Setting<V> setting, final List<V> values)
     {
         if (this.state != null && !this.state.containsKey(setting))
         {
@@ -724,7 +724,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     // This method is for sub classes, which cannot access the value lists directly
     protected <V> V get(final Setting<V> setting, final GtuType gtuType)
     {
-        return get(setting.getListFunction().apply(this), gtuType);
+        return get(setting.getListFunction().apply(this), gtuType, gtuType);
     }
 
     /**
@@ -734,7 +734,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      * @param gtuType GTU type
      * @return value from value array for the GTU type
      */
-    private <V> V get(final List<V> values, final GtuType gtuType)
+    protected <V> V get(final List<V> values, final GtuType gtuType)
     {
         return get(values, gtuType, gtuType);
     }
@@ -961,7 +961,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      * @param gtu GTU
      * @return perception for the GTU
      */
-    private LanePerception getPerception(final LaneBasedGtu gtu)
+    protected LanePerception getPerception(final LaneBasedGtu gtu)
     {
         GtuType gtuType = gtu.getType();
 
