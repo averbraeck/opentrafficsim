@@ -8,6 +8,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.w3c.dom.Node;
 
 import de.javagl.treetable.JTreeTable;
@@ -107,7 +108,7 @@ public class AttributesTableModel extends AbstractTableModel
         Node attribute = this.node.getAttributeNode(rowIndex);
         if (columnIndex == PROPERTY_COLUMN)
         {
-            return XsdTreeNodeUtil.separatedName(DocumentReader.getAttribute(attribute, "name").orElse(null));
+            return OtsAnimationPanel.separatedName(DocumentReader.getAttribute(attribute, "name").orElse(null));
         }
         else if (columnIndex == VALUE_COLUMN)
         {

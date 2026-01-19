@@ -43,6 +43,7 @@ import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyrefValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
+import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1814,7 +1815,7 @@ public class XsdTreeNode extends LocalEventProducer
         {
             return "Include";
         }
-        return XsdTreeNodeUtil.separatedName(getNodeName());
+        return OtsAnimationPanel.separatedName(getNodeName());
     }
 
     /**

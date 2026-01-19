@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -28,9 +27,6 @@ import org.w3c.dom.Node;
  */
 public final class XsdTreeNodeUtil
 {
-
-    /** Pattern to split string by upper case, with lower case adjacent, without disregarding the match itself. */
-    private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})(?<=\\p{Ll})|(?=\\p{Lu}\\p{Ll})");
 
     /** Validators for xsd:all option nodes. This is maintained per root object (i.e. per tree) and xsd:all node. */
     private static final Map<XsdTreeNodeRoot, Map<String, XsdAllValidator>> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
@@ -328,28 +324,6 @@ public final class XsdTreeNodeUtil
     {
         return (node1.referringXsdNode != null && node1.referringXsdNode.equals(node2.referringXsdNode))
                 || (node1.referringXsdNode == null && node1.xsdNode.equals(node2.xsdNode));
-    }
-
-    /**
-     * Adds a thin space before each capital character in a {@code String}, except the first.
-     * @param name name of node.
-     * @return input string but with a thin space before each capital character, except the first.
-     */
-    static String separatedName(final String name)
-    {
-        String[] parts = UPPER_PATTERN.split(name);
-        if (parts.length == 1)
-        {
-            return parts[0];
-        }
-        String separator = "";
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String part : parts)
-        {
-            stringBuilder.append(separator).append(part);
-            separator = "\u2009"; // thin space
-        }
-        return stringBuilder.toString();
     }
 
     /**

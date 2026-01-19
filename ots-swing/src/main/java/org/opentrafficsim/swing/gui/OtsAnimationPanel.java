@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -74,6 +75,12 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /** */
     private static final long serialVersionUID = 20150617L;
 
+    /** Pattern to split string by upper case, with lower case adjacent, without disregarding the match itself. */
+    private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})(?<=\\p{Ll})|(?=\\p{Lu}\\p{Ll})");
+
+    /** The formatter for the world coordinates. */
+    private static final NumberFormat COORD_FORMATTER = NumberFormat.getInstance();
+
     /** The animation panel on tab position 0. */
     private final AutoAnimationPanel animationPanel;
 
@@ -113,9 +120,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /** The animation buttons. */
     private final ArrayList<JButton> buttons = new ArrayList<>();
 
-    /** The formatter for the world coordinates. */
-    private static final NumberFormat FORMATTER = NumberFormat.getInstance();
-
     /** Has the window close handler been registered? */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected boolean closeHandlerRegistered = false;
@@ -136,10 +140,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /** Track auto on the next paintComponent operation; then copy state from autoPanTrack. */
     private boolean autoPanOnNextPaintComponent = false;
 
-    /** Initialize the formatter. */
+    /** Initialize the coordinate formatter. */
     static
     {
-        FORMATTER.setMaximumFractionDigits(3);
+        COORD_FORMATTER.setMaximumFractionDigits(3);
     }
 
     /**
@@ -308,7 +312,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         button.setToolTipText(toolTipText);
         button.addActionListener(this);
 
-        // place an Id button to the right of the corresponding content button
+        // place button to the right of the previous content button?
         if (nextToPrevious && this.togglePanel.getComponentCount() > 0)
         {
             JPanel lastToggleBox = (JPanel) this.togglePanel.getComponent(this.togglePanel.getComponentCount() - 1);
@@ -347,18 +351,16 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     {
         JToggleButton button;
         button = new JCheckBox(name);
-        button.setName(name);
+        button.setText(separatedName(name));
         button.setEnabled(true);
         button.setSelected(initiallyVisible);
         button.setActionCommand(name);
         button.setToolTipText(toolTipText);
         button.addActionListener(this);
+        button.setPreferredSize(new Dimension(113, 19)); // Can just fit "Generator Q" at largest Appearance Control font size
+        button.setMaximumSize(new Dimension(113, 19));
 
-        JPanel toggleBox = new JPanel();
-        toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
-        toggleBox.add(button);
-        this.togglePanel.add(toggleBox);
-        toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.togglePanel.add(button);
 
         if (initiallyVisible)
         {
@@ -617,8 +619,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      */
     protected final void updateWorldCoordinate()
     {
-        String worldPoint = "(x=" + FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
-                + FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
+        String worldPoint = "(x=" + COORD_FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
+                + COORD_FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
         this.coordinateField.setText("Mouse: " + worldPoint);
         int requiredWidth = this.coordinateField.getGraphics().getFontMetrics().stringWidth(this.coordinateField.getText());
         if (this.coordinateField.getPreferredSize().width < requiredWidth)
@@ -812,6 +814,28 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             return "UpdateTimer thread for OtsAnimationPanel";
         }
 
+    }
+
+    /**
+     * Adds a thin space before each capital character in a {@code String}, except the first.
+     * @param name name of node.
+     * @return input string but with a thin space before each capital character, except the first.
+     */
+    public static String separatedName(final String name)
+    {
+        String[] parts = UPPER_PATTERN.split(name);
+        if (parts.length == 1)
+        {
+            return parts[0];
+        }
+        String separator = "";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String part : parts)
+        {
+            stringBuilder.append(separator).append(part);
+            separator = "\u2009"; // thin space
+        }
+        return stringBuilder.toString();
     }
 
     /**
