@@ -66,6 +66,9 @@ public class OperationalPlan
     /** The drifting speed. Speeds under this value will be cropped to zero. */
     public static final Speed DRIFTING_SPEED = Speed.ofSI(0.001);
 
+    /** The drifting speed. Accelerations under this value will be cropped to zero. */
+    public static final Acceleration DRIFTING_ACCELERATION = Acceleration.ofSI(0.001);
+
     /** Minimum distance of an operational plan path; anything shorter will be truncated to 0. */
     public static final Length MINIMUM_CREDIBLE_PATH_LENGTH = Length.ofSI(0.001);
 
@@ -113,7 +116,7 @@ public class OperationalPlan
         }
         // Catch situation of very small speeds
         if (segmentsLength.lt(MINIMUM_CREDIBLE_PATH_LENGTH) && segments.get(0).startSpeed().lt(DRIFTING_SPEED)
-                && segments.get(0).acceleration().le0())
+                && segments.get(0).acceleration().lt(DRIFTING_ACCELERATION))
         {
             this.segments = Segments.standStill(segmentsDuration);
             this.segmentStartDurations = new double[] {0.0, segmentsDuration.si};
