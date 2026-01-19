@@ -411,9 +411,11 @@ public final class DemandParser
 
                 LaneBasedGtuTemplateDistribution characteristicsGenerator =
                         new LaneBasedGtuTemplateDistribution(gtuTypeDistribution);
-                generators.add(new LaneBasedGtuGenerator(lane.getFullId(), headwayGenerator, characteristicsGenerator,
-                        GeneratorPositions.create(initialLongitudinalPositions, stream), otsNetwork, simulator, roomChecker,
-                        idGenerator));
+                LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(lane.getFullId(), headwayGenerator,
+                        characteristicsGenerator, GeneratorPositions.create(initialLongitudinalPositions, stream), otsNetwork,
+                        simulator, roomChecker, idGenerator);
+                generator.setNoLaneChangeDistance(Length.ofSI(50.0));
+                generators.add(generator);
             }
         }
         catch (Exception exception)
@@ -700,6 +702,7 @@ public final class DemandParser
                 LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("Injections " + generatorNumber++,
                         injections.asArrivalsSupplier(), characteristicsGenerator, generatorPosition, otsNetwork, simulator,
                         roomChecker, idGeneratorInjections);
+                generator.setNoLaneChangeDistance(Length.ofSI(50.0));
                 generators.add(generator);
             }
         }

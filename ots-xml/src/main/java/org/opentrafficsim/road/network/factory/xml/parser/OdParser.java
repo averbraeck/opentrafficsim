@@ -430,7 +430,7 @@ public final class OdParser
             final Od od, final Categorization categorization, final Eval eval) throws XmlParserException, NetworkException
     {
         OdOptions odOptions = new OdOptions().set(OdOptions.GTU_ID, new IdSupplier(""))
-                .set(OdOptions.NO_LC_DIST, Length.ofSI(1.0)).set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
+                .set(OdOptions.NO_LC_DIST, Length.ofSI(50.0)).set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
 
         // default global option to integrate defined templates
         StreamInterface stream = streamMap.getStream("generation");
