@@ -1095,15 +1095,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public final Set<Lane> accessibleAdjacentLanesLegal(final LateralDirectionality lateralDirection, final GtuType gtuType)
     {
-        Set<Lane> candidates = new LinkedHashSet<>(1);
-        for (Lane lane : neighbors(lateralDirection, gtuType, true))
-        {
-            if (lane.getType().isCompatible(gtuType))
-            {
-                candidates.add(lane);
-            }
-        }
-        return candidates;
+        return neighbors(lateralDirection, gtuType, true);
     }
 
     /**
