@@ -280,18 +280,19 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     }
 
     /**
-     * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
-     * right of the previous button, which should be the corresponding button without the id. An example is an icon for
-     * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
+     * Add a button for toggling an animatable class on or off. Button icons for which 'nextToPrevious' is true will be placed
+     * to the right of the previous button, which should be the corresponding button for id buttons. An example is an icon for
+     * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids. Other buttons can be placed next to the
+     * previous too.
      * @param name the name of the button
      * @param locatableClass the class for which the button holds (e.g., GTU.class)
      * @param iconPath the path to the 24x24 icon to display
      * @param toolTipText the tool tip text to show when hovering over the button
      * @param initiallyVisible whether the class is initially shown or not
-     * @param idButton id button that needs to be placed next to the previous button
+     * @param nextToPrevious button that needs to be placed next to the previous button
      */
     public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
-            final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
+            final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean nextToPrevious)
     {
         JToggleButton button;
         Icon icon = OtsControlPanel.loadIcon(iconPath).get();
@@ -308,7 +309,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         button.addActionListener(this);
 
         // place an Id button to the right of the corresponding content button
-        if (idButton && this.togglePanel.getComponentCount() > 0)
+        if (nextToPrevious && this.togglePanel.getComponentCount() > 0)
         {
             JPanel lastToggleBox = (JPanel) this.togglePanel.getComponent(this.togglePanel.getComponentCount() - 1);
             lastToggleBox.add(button);

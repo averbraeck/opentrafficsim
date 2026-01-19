@@ -20,6 +20,7 @@ import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.AttentionGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
@@ -117,9 +118,10 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
                     new HistoryManagerDevs(simulator, Duration.ofSI(3.0), Duration.ofSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
-            List<Colorer<? super Gtu>> colorers = List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(),
-                    new AccelerationGtuColorer(), new SocialPressureGtuColorer(),
-                    new IncentiveGtuColorer(IncentiveSocioSpeed.class), new TaskSaturationGtuColorer());
+            List<Colorer<? super Gtu>> colorers =
+                    List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
+                            new SocialPressureGtuColorer(), new IncentiveGtuColorer(IncentiveSocioSpeed.class),
+                            new AttentionGtuColorer(), new TaskSaturationGtuColorer());
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
                     junctionModel, colorers, junctionModel.getNetwork());
             new HumanFactorsDemo(junctionModel, animationPanel);

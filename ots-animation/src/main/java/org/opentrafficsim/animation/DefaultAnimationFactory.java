@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.animation.PerceptionAnimation.ChannelAttention;
 import org.opentrafficsim.animation.data.AnimationBusStopData;
 import org.opentrafficsim.animation.data.AnimationConflictData;
 import org.opentrafficsim.animation.data.AnimationCrossSectionElementData;
@@ -104,6 +105,10 @@ public class DefaultAnimationFactory implements EventListener
     /** Rendered gtus. */
     private Map<LaneBasedGtu, Renderable2d<GtuData>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
+    /** Rendered gtus. */
+    private Map<LaneBasedGtu, Renderable2d<ChannelAttention>> animatedAttention =
+            Collections.synchronizedMap(new LinkedHashMap<>());
+
     /** Rendered located objects. */
     private Map<Locatable, Renderable2d<?>> animatedLocatedObjects = Collections.synchronizedMap(new LinkedHashMap<>());
 
@@ -183,6 +188,9 @@ public class DefaultAnimationFactory implements EventListener
                     this.gtuMarkers.getOrDefault(gtu.getType(), GtuMarker.CIRCLE));
             Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
             this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
+
+            Renderable2d<ChannelAttention> attentionAnimation = new PerceptionAnimation((LaneBasedGtu) gtu);
+            this.animatedAttention.put((LaneBasedGtu) gtu, attentionAnimation);
         }
 
         for (LocatedObject object : network.getObjectMap().values())
@@ -264,6 +272,11 @@ public class DefaultAnimationFactory implements EventListener
                     this.animatedGTUs.get(gtu).destroy(gtu.getSimulator());
                     this.animatedGTUs.remove(gtu);
                 }
+                if (this.animatedAttention.containsKey(gtu))
+                {
+                    this.animatedAttention.get(gtu).destroy(gtu.getSimulator());
+                    this.animatedAttention.remove(gtu);
+                }
             }
             else if (event.getType().equals(Network.OBJECT_ADD_EVENT))
             {
@@ -306,6 +319,9 @@ public class DefaultAnimationFactory implements EventListener
                 this.gtuMarkers.getOrDefault(gtu.getType(), GtuMarker.CIRCLE));
         Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
         this.animatedGTUs.put(gtu, gtuAnimation);
+
+        Renderable2d<ChannelAttention> attentionAnimation = new PerceptionAnimation((LaneBasedGtu) gtu);
+        this.animatedAttention.put((LaneBasedGtu) gtu, attentionAnimation);
     }
 
     /**
