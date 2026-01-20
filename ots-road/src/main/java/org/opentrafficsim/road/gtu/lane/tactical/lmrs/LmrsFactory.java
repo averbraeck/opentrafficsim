@@ -114,7 +114,6 @@ import picocli.CommandLine.Option;
  * settings must be provided either for all GTU types, or for a specific GTU type with which the factory was initialized. GTUs
  * of other types can be generated within the simulation, so long as any of their parent types is within the list of the
  * factory.
- * </p>
  * <p>
  * <b>Command line arguments</b><br>
  * This class can be mixed in with any program using command line arguments:
@@ -134,14 +133,12 @@ import picocli.CommandLine.Option;
  * <i>Note: command line arguments and programmatically setting settings (set method) should in principle not both be used
  * within the same program. Default command line arguments should be changed by the option default as in the example above,
  * before the input args are executed.</i>
- * </p>
  * <p>
  * Use command line argument {@code --help} to get a list of all available command line arguments. In the example the factory is
  * initialized using the constructor of {@link Lmrs} as a supplier of the tactical planner class. Within the context of a
  * program it may be necessary to use a supplier of an another implementation of a tactical planner instead. The supplier can be
  * any function that follows the {@link TacticalPlannerProvider} signature, supplying an extension of
  * {@link AbstractIncentivesTacticalPlanner}.
- * </p>
  * <p>
  * Command line arguments can be defined to contain values for specific GTU types. The following arguments allow a simulation
  * with GTU types {@code NL.CAR} and {@code NL.TRUCK}, or any of their sub types. All GTUs will not generally keep to the slow
@@ -160,7 +157,6 @@ import picocli.CommandLine.Option;
  * <pre>
  * CliUtil.execute(new CommandLine(myProgram).setTrimQuotes(true), new String[] {"--gtuTypes=NL.CAR|NL.VAN|\"NL.T|RUCK\""});
  * </pre>
- * </p>
  * <b>One-shot mode</b>
  * <p>
  * This class extends {@link ParameterFactoryOneShot} and can thus be used as a parameter factory. It supports one-shot mode.
@@ -168,18 +164,18 @@ import picocli.CommandLine.Option;
  * At any other moment parameters that are set are fixed. This class implements {@link #setOneShotMode()} to apply the same mode
  * on model settings, applying only to the next GTU generated, after which settings are reverted to the state when
  * {@link #setOneShotMode()} was called.
- * </p>
  * <p>
  * <b>Settings applicability</b><br>
- * Many settings on perception components may only apply to some implementations of Fuller, see table.<br>
+ * Many settings on perception components may only apply to some implementations of Fuller, see Table 1.<br>
  * <br>
- * <table border="1" padding="2" spacing="0" style="text-align:center">
+ * <table border="1" style="text-align:center; padding:2px; border-spacing:0px; border-width:1px; border-style:solid">
+ * <caption><i>Table 1: Perception components for Fuller implementations</i></caption>
  * <tr>
  * <td style="text-align:left"><b>Setting</b></td>
- * <td colspan="4" align="center"><b>Fuller implementation</b> (FULLER_IMPLEMENTATION)</td>
+ * <td colspan="4" style="text-align:center"><b>Fuller implementation</b> (FULLER_IMPLEMENTATION)</td>
  * </tr>
  * <tr>
- * <td />
+ * <td></td>
  * <td>NONE</td>
  * <td>SUMMATIVE</td>
  * <td>ANTICIPATION_RELIANCE</td>
@@ -207,9 +203,9 @@ import picocli.CommandLine.Option;
  * <td>&#10003;</td>
  * </tr>
  * <tr>
- * <tr>
  * <td colspan="5"><i>Tasks for mental model</i></td>
  * </tr>
+ * <tr>
  * <td style="text-align:left">TASK_CAR_FOLLOWING</td>
  * <td>-</td>
  * <td>&#10003;</td>
@@ -297,7 +293,6 @@ import picocli.CommandLine.Option;
  * <td>&#10003;</td>
  * </tr>
  * </table>
- * </p>
  * <p>
  * Copyright (c) 2026-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

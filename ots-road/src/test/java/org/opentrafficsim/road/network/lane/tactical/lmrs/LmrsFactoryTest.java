@@ -150,9 +150,8 @@ public class LmrsFactoryTest
     void constructorRejectsNullProvider()
     {
         // Verifies defensive null checks in constructor
-        assertThrows(NullPointerException.class,
-                () -> new LmrsFactory<AbstractIncentivesTacticalPlanner>(List.of(this.carType),
-                        (TacticalPlannerProvider<AbstractIncentivesTacticalPlanner>) null));
+        assertThrows(NullPointerException.class, () -> new LmrsFactory<AbstractIncentivesTacticalPlanner>(List.of(this.carType),
+                (TacticalPlannerProvider<AbstractIncentivesTacticalPlanner>) null));
         assertThrows(NullPointerException.class, () -> new LmrsFactory<AbstractIncentivesTacticalPlanner>(
                 (TacticalPlannerProvider<AbstractIncentivesTacticalPlanner>) null));
     }
@@ -170,8 +169,7 @@ public class LmrsFactoryTest
         when(provdr.from(any(), any(), any(), any(), any(), any(), any())).thenReturn(planr);
 
         // Factory with multiple GTU types, single provider
-        LmrsFactory<AbstractIncentivesTacticalPlanner> fact =
-                new LmrsFactory<>(List.of(this.carType, this.truckType), provdr);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType, this.truckType), provdr);
         fact.create(this.carGtu);
         fact.create(this.truckGtu);
 
@@ -229,8 +227,7 @@ public class LmrsFactoryTest
         when(provdr.from(any(), any(), any(), any(), any(), any(), any())).thenReturn(planr);
 
         // Factory
-        LmrsFactory<AbstractIncentivesTacticalPlanner> fact =
-                new LmrsFactory<>(List.of(this.carType, this.truckType), provdr);
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType, this.truckType), provdr);
 
         // Disable incentive only for trucks
         fact.set(LmrsFactory.Setting.INCENTIVE_KEEP, false, this.truckType);
@@ -556,7 +553,8 @@ public class LmrsFactoryTest
     @Test
     void getParametersReturnsNonEmptyParameterSet() throws ParameterException
     {
-        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), mock());
+        TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), provdr);
         fact.setStream(new MersenneTwister(1L));
         Parameters parameters = fact.getParameters(this.carType);
         assertNotNull(parameters);
@@ -570,7 +568,8 @@ public class LmrsFactoryTest
     @Test
     void fullerNoneDoesNotAddFullerParameters() throws ParameterException
     {
-        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), mock());
+        TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), provdr);
 
         fact.set(LmrsFactory.Setting.FULLER_IMPLEMENTATION, LmrsFactory.FullerImplementation.NONE);
         fact.setStream(new MersenneTwister(1L));
@@ -588,7 +587,8 @@ public class LmrsFactoryTest
     @Test
     void attentionMatrixAddsTaskParameters() throws ParameterException
     {
-        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), mock());
+        TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
+        LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), provdr);
         fact.setStream(new MersenneTwister(1L));
 
         fact.set(LmrsFactory.Setting.FULLER_IMPLEMENTATION, LmrsFactory.FullerImplementation.ATTENTION_MATRIX);

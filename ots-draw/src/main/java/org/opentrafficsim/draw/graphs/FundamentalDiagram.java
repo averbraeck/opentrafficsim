@@ -1,7 +1,6 @@
 package org.opentrafficsim.draw.graphs;
 
 import java.awt.Color;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -667,7 +666,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          * @param sampler Sampler<?, ?>; sampler
          * @param crossSection cross section
          * @param aggregateLanes whether to aggregate the lanes
-         * @param aggregationPeriod initial aggregation {@link Period}
+         * @param aggregationPeriod initial aggregation period
          * @param harmonic harmonic mean
          */
         CrossSectionSamplerFdSource(final Sampler<?, L> sampler, final S crossSection, final boolean aggregateLanes,
