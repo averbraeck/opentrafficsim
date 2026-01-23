@@ -166,7 +166,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     {
         Duration dt = getGtu().getParameters().getParameter(ParameterTypes.DT);
         SimpleOperationalPlan plan;
-        Boolean justCreated = (startTime.si < this.createTime.si + 2.0);
+        Boolean justCreated = (startTime.si < this.createTime.si + 1.0);
         if (getGtu().getFront() == null || getGtu().getReferencePosition() == null || getGtu().getOperationalPlan() == null
                 || justCreated) {
             // GTU noch nicht vollständig positioniert → überspringe diesen Takt
@@ -376,6 +376,18 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 
            }
         */
+        if (this.operationalPlan.getIndicatorIntent().isLeft())
+        {
+            getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
+            }
+        else if (this.operationalPlan.getIndicatorIntent().isRight())
+        {
+            getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
+            }
+        else
+        {
+            getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
+            }
 
         return this.operationalPlan;
     }

@@ -1,6 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -63,6 +65,12 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     public static final String CURRENT_FOLLOWER = "currentFollower";
     public static final String LEFT_FOLLOWER = "leftFollower";
     public static final String RIGHT_FOLLOWER = "rightFollower";
+    public static final String LEADERS_CURRENT = "leaders_CURRENT";
+    public static final String LEADERS_LEFT = "leaders_LEFT";
+    public static final String LEADERS_RIGHT = "leaders_RIGHT";
+    public static final String FOLLOWERS_CURRENT = "followers_CURRENT";
+    public static final String FOLLOWERS_LEFT = "followers_LEFT";
+    public static final String FOLLOWERS_RIGHT = "followers_RIGHT";
     public static final String REAR_GAP_DISTANCE_CURRENT = "rearGapDistanceCurrent";
     public static final String REAR_GAP_DISTANCE_LEFT = "rearGapDistanceLeft";
     public static final String REAR_GAP_DISTANCE_RIGHT = "rearGapDistanceRight";
@@ -317,70 +325,218 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
 
-    public HeadwayGtu getLeader(final LateralDirectionality dir) {
+ // ----------------------------------------------------------------------
+    // Cached List Accessors (Iterable)
+    // ----------------------------------------------------------------------
+
+    /**
+     * Returns a cached iterable of all leaders in the given direction.
+     * Computes (via Perception) and caches the result if not yet available.
+     *
+     * @param dir Direction to look for leaders
+     * @return Iterable of HeadwayGtu (empty if no perception available)
+     */
+    @SuppressWarnings("unchecked")
+    public Iterable<HeadwayGtu> getLeaders(final LateralDirectionality dir) {
+        String key;
+        RelativeLane lane;
         if (dir.isLeft()) {
-            return getLeftLeader();
+            key = LEADERS_LEFT;
+            lane = RelativeLane.LEFT;
         } else if (dir.isRight()) {
-            return getRightLeader();
+            key = LEADERS_RIGHT;
+            lane = RelativeLane.RIGHT;
         } else {
-            return getCurrentLeader();
+            key = LEADERS_CURRENT;
+            lane = RelativeLane.CURRENT;
+        }
+
+        Iterable<HeadwayGtu> cached = getCachedValue(key, Iterable.class);
+        if (cached != null) return cached;
+
+        try {
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> result =
+                    this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
+            cacheValue(key, result, true);
+            return result;
+        } catch (OperationalPlanException e) {
+            return Collections.emptyList();
         }
     }
 
+    /**
+     * Returns a cached iterable of all followers in the given direction.
+     * Computes (via Perception) and caches the result if not yet available.
+     *
+     * @param dir Direction to look for followers
+     * @return Iterable of HeadwayGtu (empty if no perception available)
+     */
+    @SuppressWarnings("unchecked")
+    public Iterable<HeadwayGtu> getFollowers(final LateralDirectionality dir) {
+        String key;
+        RelativeLane lane;
+        if (dir.isLeft()) {
+            key = FOLLOWERS_LEFT;
+            lane = RelativeLane.LEFT;
+        } else if (dir.isRight()) {
+            key = FOLLOWERS_RIGHT;
+            lane = RelativeLane.RIGHT;
+        } else {
+            key = FOLLOWERS_CURRENT;
+            lane = RelativeLane.CURRENT;
+        }
+
+        Iterable<HeadwayGtu> cached = getCachedValue(key, Iterable.class);
+        if (cached != null) return cached;
+
+        try {
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> result =
+                    this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class).getFollowers(lane);
+            cacheValue(key, result, true);
+            return result;
+        } catch (OperationalPlanException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Single Leader Accessors
+    // ----------------------------------------------------------------------
+
+    /**
+     * Returns the nearest leader in the specified direction.
+     * Delegates to the specific lane accessor methods.
+     *
+     * @param dir the lateral direction
+     * @return the nearest leader or null
+     */
+    public HeadwayGtu getLeader(final LateralDirectionality dir) {
+        if (dir.isLeft()) return getLeftLeader();
+        else if (dir.isRight()) return getRightLeader();
+        else return getCurrentLeader();
+    }
+
+    /**
+     * Returns the nearest leader on the current lane.
+     * Uses the cached leader list to extract the first element.
+     *
+     * @return the nearest leader or null
+     */
     public HeadwayGtu getCurrentLeader() {
         HeadwayGtu cached = getCachedValue(CURRENT_LEADER, HeadwayGtu.class);
         if (cached != null) return cached;
-        HeadwayGtu result = computeLeader(RelativeLane.CURRENT);
+
+        Iterable<HeadwayGtu> leaders = getLeaders(LateralDirectionality.NONE);
+        Iterator<HeadwayGtu> it = leaders.iterator();
+        HeadwayGtu result = it.hasNext() ? it.next() : null;
+
         cacheValue(CURRENT_LEADER, result, true);
         return result;
     }
 
+    /**
+     * Returns the nearest leader on the left lane.
+     * Uses the cached leader list to extract the first element.
+     *
+     * @return the nearest leader or null
+     */
     public HeadwayGtu getLeftLeader() {
         HeadwayGtu cached = getCachedValue(LEFT_LEADER, HeadwayGtu.class);
         if (cached != null) return cached;
-        HeadwayGtu result = computeLeader(RelativeLane.LEFT);
+
+        Iterable<HeadwayGtu> leaders = getLeaders(LateralDirectionality.LEFT);
+        Iterator<HeadwayGtu> it = leaders.iterator();
+        HeadwayGtu result = it.hasNext() ? it.next() : null;
+
         cacheValue(LEFT_LEADER, result, true);
         return result;
     }
 
+    /**
+     * Returns the nearest leader on the right lane.
+     * Uses the cached leader list to extract the first element.
+     *
+     * @return the nearest leader or null
+     */
     public HeadwayGtu getRightLeader() {
         HeadwayGtu cached = getCachedValue(RIGHT_LEADER, HeadwayGtu.class);
         if (cached != null) return cached;
-        HeadwayGtu result = computeLeader(RelativeLane.RIGHT);
+
+        Iterable<HeadwayGtu> leaders = getLeaders(LateralDirectionality.RIGHT);
+        Iterator<HeadwayGtu> it = leaders.iterator();
+        HeadwayGtu result = it.hasNext() ? it.next() : null;
+
         cacheValue(RIGHT_LEADER, result, true);
         return result;
     }
 
+    // ----------------------------------------------------------------------
+    // Single Follower Accessors
+    // ----------------------------------------------------------------------
+
+    /**
+     * Returns the nearest follower in the specified direction.
+     * Delegates to the specific lane accessor methods.
+     *
+     * @param dir the lateral direction
+     * @return the nearest follower or null
+     */
     public HeadwayGtu getFollower(final LateralDirectionality dir) {
-        if (dir.isLeft()) {
-            return getLeftFollower();
-        } else if (dir.isRight()) {
-            return getRightFollower();
-        } else {
-            return null;
-        }
+        if (dir.isLeft()) return getLeftFollower();
+        else if (dir.isRight()) return getRightFollower();
+        else return null;
     }
 
+    /**
+     * Returns the nearest follower on the current lane.
+     * Uses the cached follower list to extract the first element.
+     *
+     * @return the nearest follower or null
+     */
     public HeadwayGtu getCurrentFollower() {
         HeadwayGtu cached = getCachedValue(CURRENT_FOLLOWER, HeadwayGtu.class);
         if (cached != null) return cached;
-        HeadwayGtu result = computeFollower(RelativeLane.CURRENT);
+
+        Iterable<HeadwayGtu> followers = getFollowers(LateralDirectionality.NONE);
+        Iterator<HeadwayGtu> it = followers.iterator();
+        HeadwayGtu result = it.hasNext() ? it.next() : null;
+
         cacheValue(CURRENT_FOLLOWER, result, true);
         return result;
     }
 
+    /**
+     * Returns the nearest follower on the left lane.
+     * Uses the cached follower list to extract the first element.
+     *
+     * @return the nearest follower or null
+     */
     public HeadwayGtu getLeftFollower() {
         HeadwayGtu cached = getCachedValue(LEFT_FOLLOWER, HeadwayGtu.class);
         if (cached != null) return cached;
-        HeadwayGtu result = computeFollower(RelativeLane.LEFT);
+
+        Iterable<HeadwayGtu> followers = getFollowers(LateralDirectionality.LEFT);
+        Iterator<HeadwayGtu> it = followers.iterator();
+        HeadwayGtu result = it.hasNext() ? it.next() : null;
+
         cacheValue(LEFT_FOLLOWER, result, true);
         return result;
     }
 
+    /**
+     * Returns the nearest follower on the right lane.
+     * Uses the cached follower list to extract the first element.
+     *
+     * @return the nearest follower or null
+     */
     public HeadwayGtu getRightFollower() {
         HeadwayGtu cached = getCachedValue(RIGHT_FOLLOWER, HeadwayGtu.class);
         if (cached != null) return cached;
-        HeadwayGtu result = computeFollower(RelativeLane.RIGHT);
+
+        Iterable<HeadwayGtu> followers = getFollowers(LateralDirectionality.RIGHT);
+        Iterator<HeadwayGtu> it = followers.iterator();
+        HeadwayGtu result = it.hasNext() ? it.next() : null;
+
         cacheValue(RIGHT_FOLLOWER, result, true);
         return result;
     }
@@ -610,58 +766,6 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
 
-    // ----------------------------------------------------------------------
-    // Leader accessors
-    // ----------------------------------------------------------------------
-
-
-    /**
-     * Returns the current follower vehicle on a lane.
-     * <p>
-     * This is a convenience method that generalizes {@link #computeFollower(RelativeLane)}.
-     * </p>
-     * @param lane
-     *
-     * @return {@link HeadwayGtu} to the nearest follower behind, or {@code null} if none exists
-     * @throws OperationalPlanException if perception fails
-     */
-    public HeadwayGtu computeFollower(final RelativeLane lane) {
-        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = null;
-        try
-        {
-            followers = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class)
-                    .getFollowers(lane);
-        }
-        catch (OperationalPlanException exception)
-        {
-            exception.printStackTrace();
-        }
-        return followers.isEmpty() ? null : followers.first();
-    }
-
-    /**
-     * Returns the current leader vehicle on a lane.
-     * <p>
-     * This is a convenience method that generalizes {@link #computeLeader(RelativeLane)}.
-     * </p>
-     * @param lane
-     *
-     * @return {@link HeadwayGtu} to the nearest leader ahead, or {@code null} if none exists
-     * @throws OperationalPlanException if perception fails
-     */
-    public HeadwayGtu computeLeader(final RelativeLane lane) {
-        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = null;
-        try
-        {
-            leaders = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class)
-                    .getLeaders(lane);
-        }
-        catch (OperationalPlanException exception)
-        {
-            exception.printStackTrace();
-        }
-        return leaders.isEmpty() ? null : leaders.first();
-    }
 
     public Boolean getRightSideOvertakingAhead() {
         Boolean cached = getCachedValue(RIGHT_SIDE_OVERTAKING_AHEAD, Boolean.class);

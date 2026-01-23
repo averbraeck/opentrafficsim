@@ -105,4 +105,11 @@ public class MirovaParameters implements ConstraintInterface
                     "Maximum deceleration for ego vehicle in lc maneuvers",
                     Acceleration.instantiateSI(-5.0),
                     NEGATIVE);
+
+    // cooperation parameters
+    public static final ParameterTypeAcceleration cooperativeDecelerationThreshold =
+            new ParameterTypeAcceleration("COOPERATIVE_DECELERATION_THRESHOLD",
+                    "Deceleration threshold for cooperative maneuvers",
+                    Acceleration.instantiateSI(-5.0),
+                    NEGATIVE);
 }

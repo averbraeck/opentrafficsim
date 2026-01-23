@@ -63,8 +63,8 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
             planner.addKnowledgeChunk(new DiscretionaryLaneChangeChunk(planner));
             planner.addKnowledgeChunk(new MandatoryLaneChangeChunk(planner));
             planner.addKnowledgeChunk(new SocialInteractionsChunk(planner));
-//            planner.addKnowledgeChunk(new MergeCooperationChunk(planner));
-//            planner.addKnowledgeChunk(new CongestionChunk(planner));
+            planner.addKnowledgeChunk(new MergeCooperationChunk(planner));
+            planner.addKnowledgeChunk(new CongestionChunk(planner));
             return planner;
         }
         catch (Exception e)

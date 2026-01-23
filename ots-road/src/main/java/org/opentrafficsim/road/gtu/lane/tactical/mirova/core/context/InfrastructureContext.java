@@ -2,39 +2,44 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
 import java.util.SortedSet;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.*;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.*;
-import org.opentrafficsim.road.gtu.lane.perception.categories.*;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
-import org.opentrafficsim.road.network.*;
-import org.opentrafficsim.road.network.speed.*;
+import org.opentrafficsim.road.network.LaneChangeInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+
 /**
  * Context category providing infrastructure-related information relevant for
  * longitudinal control and tactical reasoning.
  * <p>
  * Computes and lazily caches the following values:
  * <ul>
- *   <li>Remaining distance to the end of the current lane</li>
- *   <li>Legal and upcoming speed limits</li>
- *   <li>Recommended deceleration for transitions such as curves and speed bumps</li>
+ * <li>Remaining distance to the end of the current and adjacent lanes</li>
+ * <li>Legal and upcoming speed limits</li>
+ * <li>Recommended deceleration for transitions such as curves and speed bumps</li>
  * </ul>
  * <p>
  * All values are computed on demand and cached per simulation tick to minimize
  * redundant perception processing.
  * </p>
+ * <p>
+ * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
-public class InfrastructureContext extends ContextCategory implements UpdatableContext {
+public class InfrastructureContext extends ContextCategory implements UpdatableContext
+{
 
-    /** Cache key for distance to lane end. */
-    private static final String DIST_TO_LANE_END = "distToLaneEnd";
+    /** Cache key prefix for distance to lane end. */
+    private static final String DIST_TO_LANE_END_PREFIX = "distToLaneEnd_";
     /** Cache key for lane-end urgency flag. */
     private static final String LANE_END_URGENT = "laneEndUrgent";
     /** Cache key for current speed limit information. */
@@ -48,7 +53,6 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
     /** Cache key for right lane availability. */
     private static final String RIGHT_LANE_AVAILABLE = "rightLaneAvailable";
 
-
     /** Distance threshold [m] below which a lane-end is considered critical. */
     private static final double LANE_END_THRESHOLD = 200.0;
 
@@ -61,7 +65,8 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      *
      * @param vehicle the ego vehicle associated with this context
      */
-    public InfrastructureContext(final MirovaTacticalPlanner vehicle) {
+    public InfrastructureContext(final MirovaTacticalPlanner vehicle)
+    {
         super("Infrastructure", vehicle);
     }
 
@@ -71,18 +76,34 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
 
     /**
      * Returns the remaining distance to the end of the current lane.
+     *
+     * @return remaining distance until the current lane ends [m]
+     */
+    public Length getDistanceToLaneEnd()
+    {
+        return getDistanceToLaneEnd(RelativeLane.CURRENT);
+    }
+
+    /**
+     * Returns the remaining distance to the end of the specified lane.
      * <p>
      * The value is lazily computed from {@link InfrastructurePerception}
      * and cached per simulation tick.
      * </p>
      *
-     * @return remaining distance until the lane end [m]
+     * @param lane the relative lane to check (e.g., CURRENT, LEFT, RIGHT)
+     * @return remaining distance until the lane ends [m]
      */
-    public Length getDistanceToLaneEnd() {
-        Length cached = getCachedValue(DIST_TO_LANE_END, Length.class);
-        if (cached != null) return cached;
-        Length result = computeSafeLaneEndDistance();
-        cacheValue(DIST_TO_LANE_END, result, true);
+    public Length getDistanceToLaneEnd(final RelativeLane lane)
+    {
+        String key = DIST_TO_LANE_END_PREFIX + lane.toString();
+        Length cached = getCachedValue(key, Length.class);
+        if (cached != null)
+        {
+            return cached;
+        }
+        Length result = computeSafeLaneEndDistance(lane);
+        cacheValue(key, result, true);
         return result;
     }
 
@@ -95,10 +116,14 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      *
      * @return {@code true} if the lane end is closer than {@value #LANE_END_THRESHOLD} m, else {@code false}
      */
-    public Boolean isLaneEndUrgent() {
+    public Boolean isLaneEndUrgent()
+    {
         Boolean cached = getCachedValue(LANE_END_URGENT, Boolean.class);
-        if (cached != null) return cached;
-        boolean urgent = getDistanceToLaneEnd().si < LANE_END_THRESHOLD;
+        if (cached != null)
+        {
+            return cached;
+        }
+        boolean urgent = getDistanceToLaneEnd(RelativeLane.CURRENT).si < LANE_END_THRESHOLD;
         cacheValue(LANE_END_URGENT, urgent, true);
         return urgent;
     }
@@ -108,9 +133,13 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      *
      * @return current speed limit information object
      */
-    public SpeedLimitInfo getCurrentSpeedLimit() {
+    public SpeedLimitInfo getCurrentSpeedLimit()
+    {
         SpeedLimitInfo cached = getCachedValue(CURRENT_SPEED_LIMIT, SpeedLimitInfo.class);
-        if (cached != null) return cached;
+        if (cached != null)
+        {
+            return cached;
+        }
         SpeedLimitInfo info = computeSafeCurrentSpeedLimit();
         cacheValue(CURRENT_SPEED_LIMIT, info, true);
         return info;
@@ -124,9 +153,13 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      *
      * @return speed limit information 200 meters ahead
      */
-    public SpeedLimitInfo getNextSpeedLimit() {
+    public SpeedLimitInfo getNextSpeedLimit()
+    {
         SpeedLimitInfo cached = getCachedValue(NEXT_SPEED_LIMIT, SpeedLimitInfo.class);
-        if (cached != null) return cached;
+        if (cached != null)
+        {
+            return cached;
+        }
         SpeedLimitInfo info = computeSafeNextSpeedLimit();
         cacheValue(NEXT_SPEED_LIMIT, info, true);
         return info;
@@ -141,127 +174,16 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      *
      * @return effective legal speed limit [m/s]
      */
-    public Speed getLegalSpeedLimit() {
+    public Speed getLegalSpeedLimit()
+    {
         Speed cached = getCachedValue(LEGAL_SPEED_LIMIT, Speed.class);
-        if (cached != null) return cached;
+        if (cached != null)
+        {
+            return cached;
+        }
         Speed limit = SpeedLimitUtil.getLegalSpeedLimit(getCurrentSpeedLimit());
         cacheValue(LEGAL_SPEED_LIMIT, limit, true);
         return limit;
-    }
-
-
-    // ----------------------------------------------------------------------
-    // Safe computation wrappers
-    // ----------------------------------------------------------------------
-
-    /**
-     * Wrapper for lane-end distance computation with exception safety.
-     *
-     * @return computed distance to lane end or {@link Length#POSITIVE_INFINITY} on error
-     */
-    private Length computeSafeLaneEndDistance() {
-        try {
-            return computeDistanceToLaneEnd();
-        } catch (Exception e) {
-            return Length.POSITIVE_INFINITY;
-        }
-    }
-
-    /**
-     * Wrapper for current speed limit lookup with exception safety.
-     *
-     * @return current {@link SpeedLimitInfo} or {@code null} if unavailable
-     */
-    private SpeedLimitInfo computeSafeCurrentSpeedLimit() {
-        try {
-            return computeSpeedLimitInfo(Length.ZERO);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Wrapper for next (look-ahead) speed limit lookup with exception safety.
-     *
-     * @return next {@link SpeedLimitInfo} or {@code null} if unavailable
-     */
-    private SpeedLimitInfo computeSafeNextSpeedLimit() {
-        try {
-            return computeSpeedLimitInfo(new Length(200.0, LengthUnit.SI));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
-    // ----------------------------------------------------------------------
-    // Core computation methods
-    // ----------------------------------------------------------------------
-
-    /**
-     * Computes the remaining distance to the end of the current lane.
-     * <p>
-     * Uses {@link InfrastructurePerception#getLegalLaneChangeInfo(RelativeLane)} to
-     * find the first relevant {@link LaneChangeInfo} instance and its remaining distance.
-     * </p>
-     *
-     * @return distance to lane end [m]
-     * @throws ParameterException if perception parameters are missing
-     * @throws OperationalPlanException if lane information retrieval fails
-     */
-    private Length computeDistanceToLaneEnd() throws ParameterException, OperationalPlanException {
-        InfrastructurePerception infra =
-                this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
-
-        SortedSet<LaneChangeInfo> laneInfo = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
-        if (!laneInfo.isEmpty()) {
-            LaneChangeInfo first = laneInfo.first();
-            return first.remainingDistance();
-
-        }
-        return Length.POSITIVE_INFINITY;
-    }
-
-    /**
-     * Computes the speed limit information at a given look-ahead distance.
-     *
-     * @param lookAhead distance ahead along the lane centerline
-     * @return {@link SpeedLimitInfo} valid at the specified look-ahead position
-     * @throws OperationalPlanException
-     */
-    private SpeedLimitInfo computeSpeedLimitInfo(final Length lookAhead) throws OperationalPlanException {
-        InfrastructurePerception infra =
-                this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
-        return infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(lookAhead);
-    }
-
-    /**
-     * Checks whether a lane change is currently legally permitted in the specified direction.
-     *
-     * @param laneChangeDirection direction of the lane change
-     * @return {@code true} if a lane change is allowed, else {@code false}
-     * @throws OperationalPlanException
-     * @throws ParameterException
-     */
-    private boolean checkLaneAvailable(final LateralDirectionality laneChangeDirection)  {
-        InfrastructurePerception infra = null;
-        try
-        {
-            infra = this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
-        }
-        catch (OperationalPlanException exception)
-        {
-            exception.printStackTrace();
-        }
-        if (infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, laneChangeDirection).si <= 0.0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-
     }
 
     /**
@@ -273,14 +195,142 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      * @param laneChangeDirection direction of the lane change
      * @return {@code true} if a lane change is allowed, else {@code false}
      */
-    public boolean getIfLaneAvailable(final LateralDirectionality laneChangeDirection) {
+    public boolean getIfLaneAvailable(final LateralDirectionality laneChangeDirection)
+    {
         String cacheKey = laneChangeDirection == LateralDirectionality.LEFT ? LEFT_LANE_AVAILABLE : RIGHT_LANE_AVAILABLE;
         Boolean cached = getCachedValue(cacheKey, Boolean.class);
-        if (cached != null) return cached;
+        if (cached != null)
+        {
+            return cached;
+        }
         boolean available = checkLaneAvailable(laneChangeDirection);
         cacheValue(cacheKey, available, true);
         return available;
     }
+
+    // ----------------------------------------------------------------------
+    // Safe computation wrappers
+    // ----------------------------------------------------------------------
+
+    /**
+     * Wrapper for lane-end distance computation with exception safety.
+     *
+     * @param lane the relative lane
+     * @return computed distance to lane end or {@link Length#POSITIVE_INFINITY} on error
+     */
+    private Length computeSafeLaneEndDistance(final RelativeLane lane)
+    {
+        try
+        {
+            return computeDistanceToLaneEnd(lane);
+        }
+        catch (Exception e)
+        {
+            return Length.POSITIVE_INFINITY;
+        }
+    }
+
+    /**
+     * Wrapper for current speed limit lookup with exception safety.
+     *
+     * @return current {@link SpeedLimitInfo} or {@code null} if unavailable
+     */
+    private SpeedLimitInfo computeSafeCurrentSpeedLimit()
+    {
+        try
+        {
+            return computeSpeedLimitInfo(Length.ZERO);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Wrapper for next (look-ahead) speed limit lookup with exception safety.
+     *
+     * @return next {@link SpeedLimitInfo} or {@code null} if unavailable
+     */
+    private SpeedLimitInfo computeSafeNextSpeedLimit()
+    {
+        try
+        {
+            return computeSpeedLimitInfo(new Length(200.0, LengthUnit.SI));
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Core computation methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Computes the remaining distance to the end of the specified lane.
+     * <p>
+     * Uses {@link InfrastructurePerception#getLegalLaneChangeInfo(RelativeLane)} to
+     * find the first relevant {@link LaneChangeInfo} instance and its remaining distance.
+     * </p>
+     *
+     * @param lane the relative lane
+     * @return distance to lane end [m]
+     * @throws ParameterException if perception parameters are missing
+     * @throws OperationalPlanException if lane information retrieval fails
+     */
+    private Length computeDistanceToLaneEnd(final RelativeLane lane) throws ParameterException, OperationalPlanException
+    {
+        InfrastructurePerception infra =
+                this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+
+        SortedSet<LaneChangeInfo> laneInfo = infra.getLegalLaneChangeInfo(lane);
+        if (laneInfo != null && !laneInfo.isEmpty())
+        {
+            LaneChangeInfo first = laneInfo.first();
+            return first.remainingDistance();
+        }
+        return Length.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Computes the speed limit information at a given look-ahead distance.
+     *
+     * @param lookAhead distance ahead along the lane centerline
+     * @return {@link SpeedLimitInfo} valid at the specified look-ahead position
+     * @throws OperationalPlanException if perception fails
+     */
+    private SpeedLimitInfo computeSpeedLimitInfo(final Length lookAhead) throws OperationalPlanException
+    {
+        InfrastructurePerception infra =
+                this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        return infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(lookAhead);
+    }
+
+    /**
+     * Checks whether a lane change is currently legally permitted in the specified direction.
+     *
+     * @param laneChangeDirection direction of the lane change
+     * @return {@code true} if a lane change is allowed, else {@code false}
+     */
+    private boolean checkLaneAvailable(final LateralDirectionality laneChangeDirection)
+    {
+        InfrastructurePerception infra = null;
+        try
+        {
+            infra = this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        }
+        catch (OperationalPlanException exception)
+        {
+            exception.printStackTrace();
+            return false;
+        }
+        // Check if the possibility distance is non-negative (meaning we are not past the allowed point)
+        // and if the lane actually exists in the cross section.
+        return infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, laneChangeDirection).si > 0.0;
+    }
+
 
     /**
      * Updates the cache validity for this context category.
@@ -292,10 +342,12 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      * @param vehicle the ego vehicle (unused)
      */
     @Override
-    public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
+    public void updateFromPerception(final MirovaTacticalPlanner vehicle)
+    {
         // Lazy: recomputed only when requested
         markCacheValid();
     }
+
 
     /**
      * Returns a compact textual summary of the currently cached values.
@@ -303,12 +355,11 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      * @return a short summary string
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "InfrastructureContext[" +
-                "distToLaneEnd=" + getCachedValue(DIST_TO_LANE_END, Length.class) +
+                "distToLaneEnd=" + getCachedValue(DIST_TO_LANE_END_PREFIX + RelativeLane.CURRENT, Length.class) +
                 ", legalSpeedLimit=" + getCachedValue(LEGAL_SPEED_LIMIT, Speed.class) +
-                ", leftLaneAvailable=" + getCachedValue(LEFT_LANE_AVAILABLE, Boolean.class) +
-                ", rightLaneAvailable=" + getCachedValue(RIGHT_LANE_AVAILABLE, Boolean.class) +
                 "]";
     }
 }

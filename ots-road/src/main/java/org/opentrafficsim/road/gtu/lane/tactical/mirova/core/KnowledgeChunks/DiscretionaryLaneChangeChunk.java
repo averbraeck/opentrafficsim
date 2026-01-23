@@ -19,7 +19,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.AutobahnFreeDrivingPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePattern.DiscretionaryLaneChangePattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.PreventUndercuttingPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
@@ -56,6 +57,29 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
             }
             return null;
         });
+        this.addManeuverPattern(() -> {
+            try
+            {
+                return new PreventUndercuttingPattern(this);
+            }
+            catch (ParameterException exception)
+            {
+                exception.printStackTrace();
+            }
+            return null;
+        });
+        this.addManeuverPattern(() -> {
+            try
+            {
+                return new DiscretionaryLaneChangePattern(this);
+            }
+            catch (ParameterException exception)
+            {
+                exception.printStackTrace();
+            }
+            return null;
+        });
+
     }
 
     @Override

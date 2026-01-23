@@ -10,7 +10,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePattern.ActionStateCompleteLaneChange;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePatternOld.ActionStateCompleteLaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -45,9 +45,7 @@ public class AutobahnFreeDrivingPattern extends ManeuverPattern {
     public AutobahnFreeDrivingPattern(final KnowledgeChunk kc) throws ParameterException {
         super(PatternType.COOPERATIVE, kc);
         this.initialActionState = new FreeDrivingState(this);
-        this.requiredContextKeys.add("Ego");
-        this.requiredContextKeys.add("Neighbors");
-        this.requiredContextKeys.add("Infrastructure");
+
     }
 
     @Override
@@ -84,7 +82,7 @@ public class AutobahnFreeDrivingPattern extends ManeuverPattern {
         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
             InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-
+            Speed congestionThreshold = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
             // Basic car-following
             Acceleration acc = ego.getCurrentCarFollowingAcceleration();
 
@@ -92,22 +90,13 @@ public class AutobahnFreeDrivingPattern extends ManeuverPattern {
             // Falling behind left-lane vehicle when side-by-side
             NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
 
-            if (neigh.checkRightSideOvertakingAhead()) {
+            if (neigh.checkRightSideOvertakingAhead() && ego.getEgoSpeed().gt(congestionThreshold)) {
                 LateralDirectionality leftDir = LateralDirectionality.LEFT;
                 Length leftDistHeadway = neigh.getFrontGapDistance(leftDir); //.plus(Length.instantiateSI(4.0));
                 HeadwayGtu leftLeader = neigh.getLeader(leftDir);
                 Speed leftLeaderSpeed = leftLeader.getSpeed();
                 SpeedLimitInfo speedLimit = infra.getCurrentSpeedLimit();
 
-                /*
-                Acceleration aLeft = CarFollowingUtil.approachTargetSpeed(
-                        this.vehicle.getCarFollowingModel(),
-                        this.vehicle.getParameters(),
-                        ego.getEgoSpeed(),
-                        speedLimit,
-                        leftDistHeadway,
-                        leftLeaderSpeed);
-                */
                 Acceleration aLeftCf = CarFollowingUtil.followSingleLeader(
                         this.vehicle.getCarFollowingModel(),
                         this.vehicle.getParameters(),
@@ -124,7 +113,8 @@ public class AutobahnFreeDrivingPattern extends ManeuverPattern {
                 }
 
             }
-
+            // sets running maneuver flag to false because this is not a real maneuver state
+            this.vehicle.setRunningManeuver(false);
             return new SimpleOperationalPlan(
                     acc,
                     this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT)
@@ -168,7 +158,9 @@ public class AutobahnFreeDrivingPattern extends ManeuverPattern {
             }
 
             // check for potential upcoming right-side overtaking
-            if (neigh.getRightSideOvertakingAhead() && this.vehicle.getMandatoryLaneChangeDesire().getLeft() >= 0.0) {
+            if (neigh.getRightSideOvertakingAhead()
+                    && this.vehicle.getMandatoryLaneChangeDesire().getLeft() >= 0.0
+                    && ego.getEgoSpeed().gt(this.vehicle.getParameters().getParameter(ParameterTypes.VCONG))) {
                 // check lane change to left to prevent right-side overtaking
 
                 if (neigh.getIfLaneChangePossible(LateralDirectionality.LEFT)) {

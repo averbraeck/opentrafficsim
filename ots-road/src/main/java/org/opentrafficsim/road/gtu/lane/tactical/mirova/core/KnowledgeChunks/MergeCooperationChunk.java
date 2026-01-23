@@ -1,73 +1,70 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-
-import java.util.function.Supplier;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.MergeCooperationPattern;
 
 /**
- * KnowledgeChunk representing cooperative behavior near merging areas.
+ * KnowledgeChunk designed to handle cooperative merging scenarios.
  * <p>
- * When an adjacent lane (left or right) ends within the look-ahead distance,
- * the vehicle is encouraged to clear that lane by moving away from it
- * (i.e. leftward if the right lane ends, rightward if the left lane ends).
+ * This chunk is responsible for identifying situations where cooperation with merging vehicles
+ * is beneficial or necessary. It registers the {@link MergeCooperationPattern} which executes
+ * the cooperative behavior (e.g., opening a gap).
  * </p>
+ * <p>
+ * Currently, this chunk does not contribute to the global desire vector (returns neutral desire),
+ * as the cooperative behavior is primarily triggered reactively via the pattern's context check,
+ * rather than through a proactive lane change desire.
+ * </p>
+ * <p>
+ * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
-public class MergeCooperationChunk extends KnowledgeChunk
-{
+public class MergeCooperationChunk extends KnowledgeChunk {
 
-    public MergeCooperationChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
-    {
+    /**
+     * Constructor.
+     * @param vehicle the tactical planner
+     * @throws OperationalPlanException if pattern instantiation fails
+     */
+    public MergeCooperationChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException {
         super(vehicle);
-
-
+        // Register the specific maneuver pattern for this chunk
+        this.addManeuverPattern(() -> new MergeCooperationPattern(this));
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This chunk is always applicable in principle, as merge situations can occur dynamically.
+     * Specific applicability is determined by the pattern's checkContext() method.
+     * </p>
+     */
     @Override
-    public boolean isApplicable() throws ParameterException
-    {
-        // TODO: check adjacent lanes for indicating -> indicating vehicle requests cooperation? -> ego only checks requests?
-        InfrastructurePerception infra = getInfrastructurePerception();
-        Length lookAheadDistance = getParameters().getParameter(ParameterTypes.LOOKAHEAD);
-        if (infra.getPhysicalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).lt(lookAheadDistance)
-                || infra.getPhysicalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).lt(lookAheadDistance))
-
-        {
-            return true;
-        }
-        else {
-            return false;
-        }
+    public boolean isApplicable() throws ParameterException {
+        return true;
     }
 
+    /**
+     * Computes the desire to change lanes based on cooperation needs.
+     * <p>
+     * Currently implemented to return a neutral desire (0.0 for both directions).
+     * Future implementations could increase lane change desire to the left to proactively
+     * vacate the lane for merging traffic (Courtesy Lane Change).
+     * </p>
+     *
+     * @return Desire(0, 0) - Neutral desire.
+     * @throws ParameterException if parameters are missing
+     */
     @Override
-    public Desire computeDesire() throws ParameterException
-    {
-     // TODO: check adjacent lanes for indicating -> indicating vehicle requests cooperation? -> ego only checks requests?
-        InfrastructurePerception infra = getInfrastructurePerception();
-        Length lookAheadDistance = getParameters().getParameter(ParameterTypes.LOOKAHEAD);
-        double dLeft = 0.0;
-        double dRight = 0.0;
-        if (infra.getPhysicalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).lt(lookAheadDistance))
-        {
-            dRight = getMirovaTacticalPlanner().getDFree();
-        }
-        if (infra.getPhysicalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).lt(lookAheadDistance))
-        {
-            dLeft = getMirovaTacticalPlanner().getDFree();
-        }
-
-        this.desire = new Desire(dLeft, dRight, false);
-        return this.desire;
+    public Desire computeDesire() throws ParameterException {
+        // Currently, we do not influence the desire vector.
+        // The cooperation is handled procedurally by the PatternSelector invoking the MergeCooperationPattern
+        // based on the pattern's specific context checks (infrastructure & neighbors).
+        return new Desire(0.0, 0.0, false);
     }
-
-
 }

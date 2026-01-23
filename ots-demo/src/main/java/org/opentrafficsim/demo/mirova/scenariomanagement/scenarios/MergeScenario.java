@@ -101,6 +101,8 @@ import org.opentrafficsim.road.od.Interpolation;
 import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdOptions;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -231,7 +233,7 @@ public class MergeScenario extends ScenarioGenerator
         };
 
         MirovaTacticalPlannerFactory mirovaTacticalPlannerFactoryCars =
-                new MirovaTacticalPlannerFactory(w99CarFactory, new DefaultMirovaPerceptionFactory())
+                new MirovaTacticalPlannerFactory(new IdmPlusFactory(this.stream), new DefaultMirovaPerceptionFactory())
         {
             @Override
             public Parameters getParameters() throws ParameterException {
@@ -265,7 +267,7 @@ public class MergeScenario extends ScenarioGenerator
         };
 
         MirovaTacticalPlannerFactory mirovaTacticalPlannerFactoryTrucks =
-                new MirovaTacticalPlannerFactory(w99TruckFactory, new DefaultMirovaPerceptionFactory())
+                new MirovaTacticalPlannerFactory(new IdmPlusFactory(this.stream), new DefaultMirovaPerceptionFactory())
         {
             @Override
             public Parameters getParameters() throws ParameterException {
@@ -477,7 +479,7 @@ public class MergeScenario extends ScenarioGenerator
                 .registerExtendedDataType(new ExtendedDataFrontGapTimeHeadway())
                 .registerExtendedDataType(new ExtendedDataFrontGapDeltaSpeed())
                 .registerExtendedDataType(new ExtendedDataFrontGapDistance())
-                .registerExtendedDataType(new ExtendedDataW99DrivingMode())
+                //.registerExtendedDataType(new ExtendedDataW99DrivingMode())
                 .registerExtendedDataType(new ExtendedDataFollowerDecelRight())
                 .registerExtendedDataType(new ExtendedDataFollowerDecelLeft())
                 .registerExtendedDataType(new ExtendedDataEgoDecelRight())
