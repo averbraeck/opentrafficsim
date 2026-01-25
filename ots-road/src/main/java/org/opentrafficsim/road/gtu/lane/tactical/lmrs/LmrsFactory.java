@@ -365,7 +365,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private List<Boolean> incentiveGetInLane = listOf(false);
 
     /** Custom mandatory incentives. */
-    private List<Set<Supplier<MandatoryIncentive>>> customMandatoryIncentives = List.of(new LinkedHashSet<>());
+    private List<Set<Supplier<MandatoryIncentive>>> customMandatoryIncentives = listOf(new LinkedHashSet<>());
 
     // LMRS -> Voluntary incentives
 
@@ -396,7 +396,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private List<Boolean> incentiveKeep = listOf(true);
 
     /** Custom voluntary incentives. */
-    private List<Set<Supplier<VoluntaryIncentive>>> customVoluntaryIncentives = List.of(new LinkedHashSet<>());
+    private List<Set<Supplier<VoluntaryIncentive>>> customVoluntaryIncentives = listOf(new LinkedHashSet<>());
 
     // LMRS -> Acceleration incentives
 
@@ -423,7 +423,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private List<Boolean> accelerationNoRightOvertake = listOf(false);
 
     /** Custom acceleration incentives. */
-    private List<Set<Supplier<AccelerationIncentive>>> customAccelerationIncentives = List.of(new LinkedHashSet<>());
+    private List<Set<Supplier<AccelerationIncentive>>> customAccelerationIncentives = listOf(new LinkedHashSet<>());
 
     // Fuller
 
