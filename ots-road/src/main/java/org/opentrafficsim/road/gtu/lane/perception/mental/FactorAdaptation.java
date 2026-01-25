@@ -30,7 +30,7 @@ public abstract class FactorAdaptation implements BehavioralAdaptation
     {
         double ts = parameters.getParameter(Fuller.TS);
         double tsCrit = parameters.contains(SumFuller.TS_CRIT) ? parameters.getParameter(SumFuller.TS_CRIT) : 1.0;
-        return ts < tsCrit ? 1.0 : 1.0 + parameters.getParameter(beta) * (ts - tsCrit);
+        return ts < tsCrit ? 1.0 : Math.max(0, 1.0 + parameters.getParameter(beta) * (ts - tsCrit));
     }
 
 }
