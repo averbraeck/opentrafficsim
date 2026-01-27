@@ -1081,7 +1081,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 }
             }
             searchLane = to.le0() ? null : getNextLaneForRoute(searchLane).orElse(null);
-            from = Length.ZERO;
+            from = Length.max(Length.ZERO, getFront().dx().minus(searchedDistanceAtFrom));
         }
         return searchedDistanceAtFromOnPendingLink;
     }
