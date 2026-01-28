@@ -251,6 +251,12 @@ public class PerceptionAnimation extends OtsRenderable<ChannelAttention>
             return this.gtu.getRelativeContour();
         }
 
+        @Override
+        public String toString()
+        {
+            return "ChannelAttention [gtu=" + this.gtu.getId() + "]";
+        }
+
     }
 
 }
