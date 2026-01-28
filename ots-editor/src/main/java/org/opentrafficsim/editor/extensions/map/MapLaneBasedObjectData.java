@@ -279,7 +279,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         this.relativeContour = new Polygon2d(PolyLine2d.concatenate(this.line, this.line.reverse()).getPointList());
         this.bounds = LaneBasedObjectData.super.getRelativeBounds();
         this.absoluteContour =
-                new Polygon2d(OtsShape.toAbsoluteTransform(this.location).transform(this.relativeContour.iterator()));
+                new Polygon2d(0.0, OtsShape.toAbsoluteTransform(this.location).transform(this.relativeContour.iterator()));
         setValid();
     }
 

@@ -240,7 +240,7 @@ public class CrossSectionLink extends Link
             // Note: right is negative so same sign before cos and sin
             Point2d leftPoint = new Point2d(start.x + cosHeading * left, start.y + sinHeading * left);
             Point2d rightPoint = new Point2d(start.x + cosHeading * right, start.y + sinHeading * right);
-            this.startLine = new PolyLine2d(leftPoint, rightPoint);
+            this.startLine = new PolyLine2d(0.0, leftPoint, rightPoint);
         }
         return this.startLine;
     }
@@ -275,7 +275,7 @@ public class CrossSectionLink extends Link
             double sinHeading = Math.sin(heading);
             Point2d leftPoint = new Point2d(start.x + cosHeading * left, start.y + sinHeading * left);
             Point2d rightPoint = new Point2d(start.x + cosHeading * right, start.y + sinHeading * right);
-            this.endLine = new PolyLine2d(leftPoint, rightPoint);
+            this.endLine = new PolyLine2d(0.0, leftPoint, rightPoint);
         }
         return this.endLine;
     }

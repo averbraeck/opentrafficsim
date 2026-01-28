@@ -66,7 +66,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public OtsLine2d(final Point2d... points)
     {
-        super(points);
+        super(0.0, points);
         this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 
@@ -76,7 +76,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public OtsLine2d(final PolyLine2d line2d)
     {
-        super(line2d.iterator());
+        super(0.0, line2d.iterator());
         this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 
@@ -86,7 +86,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public OtsLine2d(final Iterator<Point2d> line2d)
     {
-        super(line2d);
+        super(0.0, line2d);
         this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 
@@ -96,7 +96,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public OtsLine2d(final List<Point2d> pointList)
     {
-        super(pointList);
+        super(0.0, pointList);
         this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 

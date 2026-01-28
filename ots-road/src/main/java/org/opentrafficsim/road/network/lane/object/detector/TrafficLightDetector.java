@@ -155,7 +155,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
                     pathPoints.addAll(intermediateLane.getCenterLine().getPointList());
                 }
                 pathPoints.addAll(laneB.getCenterLine().extract(Length.ZERO, positionB).getPointList());
-                path = new OtsLine2d(new PolyLine2d(pathPoints));
+                path = new OtsLine2d(new PolyLine2d(0.0, pathPoints));
             }
             OtsLine2d left = path.offsetLine(0.5);
             OtsLine2d right = path.offsetLine(-0.5);
@@ -173,14 +173,14 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             {
                 geometryPoints.add(new Point2d(p.x - dx, p.y - dy));
             }
-            this.absoluteContour = new Polygon2d(geometryPoints);
+            this.absoluteContour = new Polygon2d(0.0, geometryPoints);
         }
         catch (IndexOutOfBoundsException exception)
         {
             throw new NetworkException("Points A and B may be the same.", exception);
         }
         this.relativeContour =
-                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
+                new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         this.network.addObject(this);
     }
 

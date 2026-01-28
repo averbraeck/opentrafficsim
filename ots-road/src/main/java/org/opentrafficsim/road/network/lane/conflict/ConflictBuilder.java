@@ -665,7 +665,7 @@ public final class ConflictBuilder
         List<Point2d> points = new ArrayList<>(left.size() + right.size());
         points.addAll(left.getPointList());
         points.addAll(right.getPointList());
-        return new Polygon2d(points);
+        return new Polygon2d(0.0, points);
     }
 
     /**

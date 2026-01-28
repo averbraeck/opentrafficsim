@@ -38,7 +38,7 @@ public interface OtsShape extends Locatable
     default Polygon2d getAbsoluteContour()
     {
         Transform2d transform = toAbsoluteTransform(getLocation());
-        return new Polygon2d(transform.transform(getRelativeContour().iterator()));
+        return new Polygon2d(0.0, transform.transform(getRelativeContour().iterator()));
     }
 
     /**
@@ -142,7 +142,8 @@ public interface OtsShape extends Locatable
      */
     static Polygon2d boundsAsAbsoluteContour(final OtsShape locatable)
     {
-        return new Polygon2d(toAbsoluteTransform(locatable.getLocation()).transform(locatable.getRelativeBounds().iterator()));
+        return new Polygon2d(0.0,
+                toAbsoluteTransform(locatable.getLocation()).transform(locatable.getRelativeBounds().iterator()));
     }
 
     /**
@@ -153,7 +154,7 @@ public interface OtsShape extends Locatable
      */
     static PolyLine2d transformLine(final PolyLine2d line, final Point2d location)
     {
-        return new PolyLine2d(toRelativeTransform(location).transform(line.iterator()));
+        return new PolyLine2d(0.0, toRelativeTransform(location).transform(line.iterator()));
     }
 
     /**

@@ -896,7 +896,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     {
         try
         {
-            return new Polygon2d(OtsShape.toAbsoluteTransform(this.operationalPlan.get(time).getLocation(time))
+            return new Polygon2d(0.0, OtsShape.toAbsoluteTransform(this.operationalPlan.get(time).getLocation(time))
                     .transform(getRelativeContour().iterator()));
         }
         catch (OperationalPlanException exception)
@@ -931,7 +931,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
             List<Point2d> swath = new ArrayList<>();
             swath.addAll(extendedPath.offsetLine(getWidth().si / 2.0).getPointList());
             swath.addAll(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPointList());
-            Polygon2d s = new Polygon2d(swath);
+            Polygon2d s = new Polygon2d(0.0, swath);
             return s;
         }
         catch (Exception e)

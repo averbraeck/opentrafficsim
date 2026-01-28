@@ -51,7 +51,7 @@ public class DirectionalPolyLine extends OtsLine2d
         List<Point2d> points = offsetLine.getPointList();
         points.set(0, OtsGeometryUtil.offsetPoint(start, offset));
         points.set(points.size() - 1, OtsGeometryUtil.offsetPoint(end, offset));
-        return new DirectionalPolyLine(new PolyLine2d(points), this.startDirection, this.endDirection);
+        return new DirectionalPolyLine(new PolyLine2d(0.0, points), this.startDirection, this.endDirection);
     }
 
     /**

@@ -127,8 +127,8 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         // scale dx, dy so that size is this.width
         dx *= this.width / length;
         dy *= this.width / length;
-        PolyLine2d line =
-                new PolyLine2d(new Point2d(endPoint.x - dy, endPoint.y + dx), new Point2d(endPoint.x + dy, endPoint.y - dx));
+        PolyLine2d line = new PolyLine2d(0.0, new Point2d(endPoint.x - dy, endPoint.y + dx),
+                new Point2d(endPoint.x + dy, endPoint.y - dx));
         return PaintLine.getPath(getSource().getLocation(), line);
     }
 

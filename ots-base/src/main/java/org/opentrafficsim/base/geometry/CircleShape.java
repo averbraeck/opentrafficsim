@@ -73,11 +73,11 @@ public abstract class CircleShape implements OtsShape
         {
             if (this.radius == 0.0)
             {
-                this.polygon = new Polygon2d(new double[] {0.0}, new double[] {0.0});
+                this.polygon = new Polygon2d(0.0, new double[] {0.0}, new double[] {0.0});
             }
             else
             {
-                this.polygon = new Polygon2d(new Iterator<Point2d>()
+                this.polygon = new Polygon2d(0.0, new Iterator<Point2d>()
                 {
                     /** Step. */
                     private int step = 0;

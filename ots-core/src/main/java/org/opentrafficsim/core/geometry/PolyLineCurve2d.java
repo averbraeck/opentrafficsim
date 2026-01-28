@@ -103,7 +103,7 @@ public class PolyLineCurve2d implements OffsetCurve2d
         List<Point2d> points = offsetLine.getPointList();
         points.set(0, start);
         points.set(points.size() - 1, end);
-        return new PolyLine2d(points);
+        return new PolyLine2d(0.0, points);
     }
 
 }

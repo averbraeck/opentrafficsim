@@ -52,16 +52,16 @@ public final class OtsGeometryUtil
     {
         /*-
          * Geometric derivation from a right-angled half pizza slice:
-         * b = adjacent side of triangle = line from center of circle to middle of straight line arc segment 
-         * r = radius = hypotenuse 
-         * a = maxDeviation; 
-         * r = a + b (middle of straight line segment has largest deviation) 
-         * phi = |endAng - startAng| / 2n = angle at center of circle in right-angled half pizza slice = half angle of slice 
-         * n = number of segments 
-         * 
-         * r - a = b = r * cos(phi) 
-         * => 1 - (a / r) = cos(phi) 
-         * => phi = acos(1 - (a / r)) = |endAng - startAng| / 2n 
+         * b = adjacent side of triangle = line from center of circle to middle of straight line arc segment
+         * r = radius = hypotenuse
+         * a = maxDeviation;
+         * r = a + b (middle of straight line segment has largest deviation)
+         * phi = |endAng - startAng| / 2n = angle at center of circle in right-angled half pizza slice = half angle of slice
+         * n = number of segments
+         *
+         * r - a = b = r * cos(phi)
+         * => 1 - (a / r) = cos(phi)
+         * => phi = acos(1 - (a / r)) = |endAng - startAng| / 2n
          * => n = |endAng - startAng| / 2 * acos(1 - (a / r))
          */
         return (int) Math.ceil(angle.si / (2.0 * Math.acos(1.0 - maxSpatialError / r)));
@@ -159,7 +159,7 @@ public final class OtsGeometryUtil
                 }
             }
         }
-        return new PolyLine2d(out.toArray(new Point2d[out.size()]));
+        return new PolyLine2d(0.0, out.toArray(new Point2d[out.size()]));
     }
 
 }

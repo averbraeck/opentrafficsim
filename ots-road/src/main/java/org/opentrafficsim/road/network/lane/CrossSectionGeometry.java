@@ -89,7 +89,7 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d absoluteConto
      */
     public Polygon2d getRelativeContour()
     {
-        return new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(absoluteContour().iterator()));
+        return new Polygon2d(0.0, OtsShape.toRelativeTransform(getLocation()).transform(absoluteContour().iterator()));
     }
 
 }

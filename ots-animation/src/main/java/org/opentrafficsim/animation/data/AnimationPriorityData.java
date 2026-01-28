@@ -39,7 +39,7 @@ public class AnimationPriorityData implements PriorityData
         this.link = link;
         this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
         this.relativeContour =
-                new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(this.absoluteContour.iterator()));
+                new Polygon2d(0.0, OtsShape.toRelativeTransform(getLocation()).transform(this.absoluteContour.iterator()));
     }
 
     @Override

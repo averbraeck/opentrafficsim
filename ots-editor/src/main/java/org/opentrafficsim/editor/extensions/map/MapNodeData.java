@@ -65,7 +65,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         }
         this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
         this.relativeContour =
-                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
+                new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
     }
 
     @Override
@@ -152,7 +152,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         this.location = new DirectedPoint2d(this.coordinate, this.direction == null ? 0.0 : this.direction.si);
         this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
         this.relativeContour =
-                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
+                new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         setValid();
     }
 

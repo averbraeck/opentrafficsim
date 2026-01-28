@@ -119,7 +119,7 @@ public class Link extends LocalEventProducer implements HierarchicallyTyped<Link
         this.absoluteContour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).iterator());
         this.location = this.designLine.getLocationPointFractionExtended(0.5);
         this.relativeContour =
-                new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(this.absoluteContour.iterator()));
+                new Polygon2d(0.0, OtsShape.toRelativeTransform(getLocation()).transform(this.absoluteContour.iterator()));
         this.network.addLink(this);
     }
 

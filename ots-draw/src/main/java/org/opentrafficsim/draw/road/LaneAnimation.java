@@ -120,8 +120,8 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         {
             if (this.relativeContour == null)
             {
-                this.relativeContour =
-                        new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(getAbsoluteContour().iterator()));
+                this.relativeContour = new Polygon2d(0.0,
+                        OtsShape.toRelativeTransform(getLocation()).transform(getAbsoluteContour().iterator()));
             }
             return this.relativeContour;
         }

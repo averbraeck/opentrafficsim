@@ -92,7 +92,7 @@ public interface LaneBasedObject extends LocatedObject
         double a = c.getDirZ();
         Point2d p1 = new Point2d(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2));
         Point2d p2 = new Point2d(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2));
-        return new PolyLine2d(p1, p2);
+        return new PolyLine2d(0.0, p1, p2);
     }
 
 }

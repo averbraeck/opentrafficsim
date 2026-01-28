@@ -53,7 +53,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
 
         this.id = id;
         this.location = location;
-        this.relativeContour = new Polygon2d(OtsShape.toRelativeTransform(location).transform(absoluteContour.iterator()));
+        this.relativeContour = new Polygon2d(0.0, OtsShape.toRelativeTransform(location).transform(absoluteContour.iterator()));
         this.absoluteContour = absoluteContour;
         this.height = height;
     }

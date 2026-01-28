@@ -253,7 +253,7 @@ public final class NetworkParser
                 {
                     coordinates[p + 1] = xmlLink.getPolyline().getCoordinate().get(p).get(eval);
                 }
-                designLine = new PolyLineCurve2d(new PolyLine2d(coordinates), startHeading, endHeading);
+                designLine = new PolyLineCurve2d(new PolyLine2d(0.0, coordinates), startHeading, endHeading);
             }
             else if (xmlLink.getArc() != null)
             {

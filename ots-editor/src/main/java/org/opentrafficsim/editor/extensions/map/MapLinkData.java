@@ -554,7 +554,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.absoluteContour =
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).iterator());
         this.relativeContour =
-                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
+                new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);
@@ -1305,7 +1305,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         return null;
                     }
-                    return new PolyLineCurve2d(new PolyLine2d(list), from.dirZ, to.dirZ);
+                    return new PolyLineCurve2d(new PolyLine2d(0.0, list), from.dirZ, to.dirZ);
                 case "Bezier":
                     double shape = this.shape == null ? 1.0 : this.shape;
                     boolean weighted = this.weighted == null ? false : this.weighted;
