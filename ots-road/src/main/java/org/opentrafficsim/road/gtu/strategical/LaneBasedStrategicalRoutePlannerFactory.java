@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.strategical;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -40,7 +42,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
     private final ParameterFactory parameterFactory;
 
     /** Peeked parameters. */
-    private Parameters peekedParameters = null;
+    private Map<GtuType, Parameters> peekedParameters = new LinkedHashMap<>();
 
     /**
      * Constructor with factory for tactical planners.
@@ -104,20 +106,21 @@ public class LaneBasedStrategicalRoutePlannerFactory
      */
     private Parameters peekParameters(final GtuType gtuType) throws GtuException
     {
-        if (this.peekedParameters != null)
+        if (this.peekedParameters.containsKey(gtuType))
         {
-            return this.peekedParameters;
+            return this.peekedParameters.get(gtuType);
         }
         try
         {
-            this.peekedParameters = this.tacticalPlannerFactory.getParameters(gtuType);
-            this.parameterFactory.setValues(this.peekedParameters, gtuType);
+            Parameters parameters = this.tacticalPlannerFactory.getParameters(gtuType);
+            this.parameterFactory.setValues(parameters, gtuType);
+            this.peekedParameters.put(gtuType, parameters);
+            return parameters;
         }
         catch (ParameterException exception)
         {
             throw new GtuException("Parameter was set to illegal value.", exception);
         }
-        return this.peekedParameters;
     }
 
     @Override
@@ -139,7 +142,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
     protected final Parameters nextParameters(final GtuType gtuType) throws GtuException
     {
         Parameters parameters = peekParameters(gtuType);
-        this.peekedParameters = null;
+        this.peekedParameters.remove(gtuType);
         return parameters;
     }
 
