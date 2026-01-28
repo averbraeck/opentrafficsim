@@ -26,7 +26,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.data.Column;
 import org.djutils.data.Row;
 import org.djutils.data.Table;
@@ -208,7 +207,7 @@ public class LoopDetector extends LaneDetector
     private Duration currentAggregation;
 
     /** First aggregation. */
-    private final Time firstAggregation;
+    private final Duration firstAggregation;
 
     /** Detector length. */
     private final Length length;
@@ -237,8 +236,8 @@ public class LoopDetector extends LaneDetector
             throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, new LanePosition(lane, longitudinalPosition), Length.ZERO, detectorType, Time.ofSI(60.0), Duration.ofSI(60.0),
-                MEAN_SPEED);
+        this(id, new LanePosition(lane, longitudinalPosition), Length.ZERO, detectorType, Duration.ofSI(60.0),
+                Duration.ofSI(60.0), MEAN_SPEED);
     }
 
     /**
@@ -253,7 +252,7 @@ public class LoopDetector extends LaneDetector
      * @throws NetworkException on network exception
      */
     public LoopDetector(final String id, final LanePosition position, final Length length, final DetectorType detectorType,
-            final Time firstAggregation, final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements)
+            final Duration firstAggregation, final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements)
             throws NetworkException
     {
         super(id, position.lane(), position.position(), RelativePosition.FRONT, detectorType);
@@ -404,7 +403,7 @@ public class LoopDetector extends LaneDetector
             }
         }
         this.currentAggregation = this.aggregation; // after first possibly irregular period, all periods regular
-        Duration time = Duration.ofSI(this.firstAggregation.si).plus(this.aggregation.times(this.period++));
+        Duration time = this.firstAggregation.plus(this.aggregation.times(this.period++));
         Try.execute(() -> getSimulator().scheduleEventAbs(time, () -> aggregate()), "");
     }
 

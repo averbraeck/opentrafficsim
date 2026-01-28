@@ -16,7 +16,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djutils.cli.CliUtil;
@@ -298,7 +297,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         // detectors
-        Time first = Time.ofSI(60.0);
+        Duration first = Duration.ofSI(60.0);
         Duration agg = Duration.ofSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
