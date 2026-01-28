@@ -352,6 +352,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                         getSimulator().getSimulatorTime());
             }
         }
+
+        // Clear cache of old lane that getPosition() above created (or something else previously at this time)
+        this.cachedPositionTime = null;
+        this.cachedPosition = null;
     }
 
     /**
