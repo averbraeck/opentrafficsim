@@ -390,11 +390,14 @@ public class LaneStructure
             final RelativeLane relativeLane)
     {
         Collection<LaneRecord> collection = new LinkedHashSet<>();
-        for (LaneRecord record : LaneStructure.this.crossSection.computeIfAbsent(relativeLane, (l) -> new LinkedHashSet<>()))
+        if (this.crossSection.containsKey(relativeLane))
         {
-            for (LaneRecord start : starter.apply(record))
+            for (LaneRecord record : this.crossSection.get(relativeLane))
             {
-                collection.add(start);
+                for (LaneRecord start : starter.apply(record))
+                {
+                    collection.add(start);
+                }
             }
         }
         return collection;
