@@ -125,6 +125,51 @@ public final class CarFollowingUtil
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
     }
 
+    /*-
+     * Matlab code testing the functionality of the method below:
+     *
+     * % Initialization
+     * vTar = 0:0.1:(120/3.6);
+     * vInit = 0:0.1:(120/3.6);
+     * result = zeros(length(vTar), length(vInit));
+     * dt = 0.01;
+     *
+     * % Loop grid
+     * for i = 1:length(vTar)
+     *     for j = 1:length(vInit)
+     *         s = 300;
+     *         v = vInit(j);
+     *         aMin = inf;
+     *         % Model loop
+     *         while s > 0
+     *             if v > 0
+     *                 vVirt = vTar(i)^2/v;
+     *             else
+     *                 vVirt = inf;
+     *             end
+     *             sVirt = s + 3 + vVirt * 1.2;
+     *             a = idm(sVirt, v, vVirt);
+     *             s = s - v*dt - 0.5*a*dt^2;
+     *             v = max(0, v + a*dt);
+     *             aMin = min(aMin, a);
+     *         end
+     *         result(i,j) = aMin;
+     *     end
+     * end
+     *
+     * % Plot init-speed vs. target speed surface
+     * surf(vTars, vInit, result, 'EdgeColor', 'none');
+     * xlabel('Initial speed [m/s]')
+     * ylabel('Target speed [m/s]')
+     * set(colorbar().Label, 'String', 'Maximum deceleration [m/s^2]')
+     *
+     * % IDM+ model with fixed parameters
+     * function a = idm(s, v, vLead)
+     *     ss = 3 + max(0, v * 1.2 + v * (v-vLead) / (2 * sqrt(1.25 * 2.09)));
+     *     a = 1.25 * min(1 - (v/(120.0/3.6))^4, 1 - (ss/s)^2);
+     * end
+     */
+
     /**
      * Returns an acceleration based on the car-following model in order to adjust the speed to a given value at some location
      * ahead. This is done by placing a virtual vehicle somewhere near the location. Both the location and speed of this virtual
