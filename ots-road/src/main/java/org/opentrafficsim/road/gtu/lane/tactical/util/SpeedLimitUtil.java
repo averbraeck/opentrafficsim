@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
+import java.util.Optional;
+
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -8,6 +11,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -38,19 +42,18 @@ public final class SpeedLimitUtil
 
     /** Maximum comfortable acceleration in the lateral direction. */
     public static final ParameterTypeAcceleration A_LAT = new ParameterTypeAcceleration("aLat",
-            "Maximum comfortable lateral acceleration", new Acceleration(1.0, AccelerationUnit.SI));
+            "Maximum comfortable lateral acceleration", Acceleration.ofSI(1.0), NumericConstraint.POSITIVE);
 
     /**
      * Returns the minimum speed of the applicable speed limit types MAX_LEGAL_VEHICLE_SPEED, ROAD_CLASS, FIXED_SIGN and
-     * DYNAMIC_SIGN. ROAD_CLASS is only used if FIXED_SIGN and DYNAMIC_SIGN are not present. This method may be overridden by
-     * subclasses to implement additional behavior regarding legal speed limits.
+     * DYNAMIC_SIGN. ROAD_CLASS is only used if FIXED_SIGN and DYNAMIC_SIGN are not present.
      * @param speedLimitInfo speed limit info
      * @return minimum of speed of speed limit types
      * @throws NullPointerException if speed limit info is null
      */
     public static Speed getLegalSpeedLimit(final SpeedLimitInfo speedLimitInfo)
     {
-        Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
+        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
         SpeedLimitTypeSpeedLegal[] speedLimitTypes;
         if (speedLimitInfo.containsType(SpeedLimitTypes.FIXED_SIGN)
                 || speedLimitInfo.containsType(SpeedLimitTypes.DYNAMIC_SIGN))
@@ -76,22 +79,55 @@ public final class SpeedLimitUtil
     }
 
     /**
-     * Returns the speed of speed limit type MAX_VEHICLE_SPEED. This method may be overridden by subclasses to implement
-     * additional behavior regarding maximum vehicle speed limits.
+     * Returns the speed of speed limit type MAX_VEHICLE_SPEED.
      * @param speedLimitInfo speed limit info
      * @return speed of speed limit type MAX_VEHICLE_SPEED
      * @throws NullPointerException if speed limit info is null
      */
     public static Speed getMaximumVehicleSpeed(final SpeedLimitInfo speedLimitInfo)
     {
-        Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
+        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
         return speedLimitInfo.getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED);
     }
 
     /**
+     * Return the radius of the curvature speed limit type.
+     * @param speedLimitInfo speed limit info
+     * @return radius of the curvature speed limit type, empty if no such speed limit type
+     * @throws NullPointerException if speed limit info is null
+     */
+    public static Optional<Length> getCurveRadius(final SpeedLimitInfo speedLimitInfo)
+    {
+        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
+        if (!speedLimitInfo.containsType(SpeedLimitTypes.CURVATURE))
+        {
+            return Optional.empty();
+        }
+        return Optional.of(speedLimitInfo.getSpeedInfo(SpeedLimitTypes.CURVATURE).radius());
+    }
+
+    /**
+     * Returns the speed for which the given lateral acceleration follows in the curve.
+     * @param radius curve radius
+     * @param acceleration acceleration to result from speed in curve
+     * @return speed for which the given lateral acceleration follows in the curve
+     * @throws NullPointerException if radius or acceleration is null
+     * @throws IllegalArgumentException if radius or acceleration is negative or zero
+     */
+    public static Speed getSpeedForLateralAcceleration(final Length radius, final Acceleration acceleration)
+    {
+        Throw.whenNull(radius, "radius");
+        Throw.whenNull(acceleration, "acceleration");
+        Throw.when(radius.le0(), IllegalArgumentException.class, "Radius mus be greater than zero.");
+        Throw.when(acceleration.le0(), IllegalArgumentException.class, "Radius mus be greater than zero.");
+        // a=v*v/r => v=sqrt(a*r)
+        return new Speed(Math.sqrt(acceleration.si * radius.si), SpeedUnit.SI);
+    }
+
+    /**
      * Acceleration for speed limit transitions. This implementation decelerates before curves and speed bumps. For this it uses
-     * {@code approachTargetSpeed()} of the abstract car-following model implementation. All remaining transitions happen in the
-     * default manner, i.e. deceleration and acceleration after the speed limit change and governed by the car-following model.
+     * {@code approachTargetSpeed()} of the car-following utility. All remaining transitions happen in the default manner, i.e.
+     * deceleration and acceleration after the speed limit change and governed by the car-following model.
      * @param parameters parameters
      * @param speed current speed
      * @param speedLimitProspect speed limit prospect

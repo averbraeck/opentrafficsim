@@ -13,7 +13,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
@@ -71,7 +70,7 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final PerceivedGtu leader) throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final PerceivedObject leader) throws ParameterException
     {
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, new PerceptionIterableSet<>(leader));
     }
@@ -100,11 +99,16 @@ public final class CarFollowingUtil
      * @param speed current speed
      * @param distance distance to stop over
      * @return constant acceleration in order to stop in specified distance
+     * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException on missing parameter
      */
     public static Acceleration constantAccelerationStop(final CarFollowingModel carFollowingModel, final Parameters parameters,
             final Speed speed, final Length distance) throws ParameterException
     {
+        Throw.whenNull(carFollowingModel, "carFollowingModel");
+        Throw.whenNull(parameters, "parameters");
+        Throw.whenNull(speed, "speed");
+        Throw.whenNull(distance, "distance");
         Length s0 = carFollowingModel.desiredHeadway(parameters, Speed.ZERO);
         return new Acceleration(-0.5 * speed.si * speed.si / (distance.si - s0.si), AccelerationUnit.SI);
     }
@@ -116,11 +120,16 @@ public final class CarFollowingUtil
      * @param speed current speed
      * @param speedLimitInfo speed limit info
      * @return acceleration free acceleration
+     * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel, final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
+        Throw.whenNull(carFollowingModel, "carFollowingModel");
+        Throw.whenNull(parameters, "parameters");
+        Throw.whenNull(speed, "speed");
+        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
         PerceptionIterableSet<PerceivedObject> leaders = new PerceptionIterableSet<>();
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
     }
@@ -222,20 +231,20 @@ public final class CarFollowingUtil
      * @param targetSpeed target speed
      * @return acceleration acceleration based on the car-following model in order to adjust the speed
      * @throws ParameterException if parameter exception occurs
-     * @throws NullPointerException if any input is null
+     * @throws NullPointerException if any input is {@code null}
      * @throws IllegalArgumentException if the distance or target speed is not at least 0
      */
     public static Acceleration approachTargetSpeed(final CarFollowingModel carFollowingModel, final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedLimitInfo, final Length distance, final Speed targetSpeed)
             throws ParameterException
     {
-        Throw.whenNull(parameters, "Parameters may not be null.");
-        Throw.whenNull(speed, "Speed may not be null.");
-        Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
-        Throw.whenNull(distance, "Distance may not be null");
-        Throw.whenNull(targetSpeed, "Target speed may not be null");
-        Throw.when(distance.si < 0, IllegalArgumentException.class, "Distance must be at least 0.");
-        Throw.when(targetSpeed.si < 0, IllegalArgumentException.class, "Target speed must be at least 0.");
+        Throw.whenNull(parameters, "parameters");
+        Throw.whenNull(speed, "speed");
+        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
+        Throw.whenNull(distance, "distance");
+        Throw.whenNull(targetSpeed, "targetSpeed");
+        Throw.when(distance.lt0(), IllegalArgumentException.class, "Distance must be at least 0.");
+        Throw.when(targetSpeed.lt0(), IllegalArgumentException.class, "Target speed must be at least 0.");
         // adjust speed of virtual vehicle to add deceleration incentive as the virtual vehicle does not move
         Speed virtualSpeed;
         if (speed.si > 0)

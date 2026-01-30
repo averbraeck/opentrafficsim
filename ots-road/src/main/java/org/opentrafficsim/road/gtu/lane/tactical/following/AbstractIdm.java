@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -50,6 +52,9 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
 
     /** Speed limit adherence factor parameter type. */
     protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
+
+    /** Maximum comfortable acceleration in the lateral direction. */
+    protected static final ParameterTypeAcceleration A_LAT = SpeedLimitUtil.A_LAT;
 
     /** Acceleration flattening. */
     // @docs/06-behavior/parameters.md
@@ -221,7 +226,17 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         {
             Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).times(parameters.getParameter(FSPEED));
             Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
-            return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
+            Optional<Acceleration> aLat = parameters.getOptionalParameter(A_LAT);
+            if (aLat.isPresent())
+            {
+                Optional<Length> radius = SpeedLimitUtil.getCurveRadius(speedInfo);
+                if (radius.isPresent())
+                {
+                    Speed radiusSpeed = SpeedLimitUtil.getSpeedForLateralAcceleration(radius.get(), aLat.get());
+                    return Speed.min(consideredSpeed, maxVehicleSpeed, radiusSpeed);
+                }
+            }
+            return Speed.min(consideredSpeed, maxVehicleSpeed);
         }
     }
 

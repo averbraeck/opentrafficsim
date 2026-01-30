@@ -7,9 +7,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -24,8 +24,12 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  */
 public final class TrafficLightUtil
 {
+
     /** Maximum deceleration for stopping for yellow traffic light. */
     public static final ParameterTypeAcceleration BCRIT = ParameterTypes.BCRIT;
+
+    /** Car-following stopping distance. */
+    public static final ParameterTypeLength S0 = ParameterTypes.S0;
 
     /**
      * Do not instantiate.
@@ -99,10 +103,10 @@ public final class TrafficLightUtil
                 && !headwayTrafficLight.canTurnOnRed())
         {
             // deceleration from car-following model
-            Acceleration a = carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo,
-                    new PerceptionIterableSet<>(headwayTrafficLight));
+            Acceleration a = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, speed, speedLimitInfo,
+                    headwayTrafficLight);
             // compare to constant deceleration
-            Length s0 = parameters.getParameter(ParameterTypes.S0);
+            Length s0 = parameters.getParameter(S0);
             if (headwayTrafficLight.getDistance().gt(s0)) // constant acceleration not applicable if within s0
             {
                 // constant acceleration is -.5*v^2/s, where s = distance-s0 > 0
@@ -110,7 +114,7 @@ public final class TrafficLightUtil
                         headwayTrafficLight.getDistance());
                 a = Acceleration.max(a, aConstant);
             }
-            // return a if a > -b
+            // return a if a > -bCrit
             if (a.gt(parameters.getParameter(BCRIT).neg()))
             {
                 return a;

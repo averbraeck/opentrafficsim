@@ -1,9 +1,6 @@
 package org.opentrafficsim.road.network.speed;
 
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 
 /**
@@ -26,20 +23,7 @@ public record SpeedInfoCurvature(Length radius)
      */
     public SpeedInfoCurvature
     {
-        Throw.whenNull(radius, "Radius may not be null.");
-    }
-
-    /**
-     * Returns the speed for which the current lateral acceleration follows in the corner.
-     * @param acceleration acceleration to result from speed in corner
-     * @return speed for which the current lateral acceleration follows in the corner
-     * @throws NullPointerException if acceleration is null
-     */
-    public final Speed getSpeedForLateralAcceleration(final Acceleration acceleration)
-    {
-        Throw.whenNull(acceleration, "Acceleration may not be null.");
-        // a=v*v/r => v=sqrt(a*r)
-        return new Speed(Math.sqrt(acceleration.si * this.radius.si), SpeedUnit.SI);
+        Throw.whenNull(radius, "radius");
     }
 
 }
