@@ -24,6 +24,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.parameters.ParameterFactoryOneShot;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
@@ -77,6 +78,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredHeadwayModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.Idm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusMulti;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -157,6 +159,7 @@ import picocli.CommandLine.Option;
  * <pre>
  * CliUtil.execute(new CommandLine(myProgram).setTrimQuotes(true), new String[] {"--gtuTypes=NL.CAR|NL.VAN|\"NL.T|RUCK\""});
  * </pre>
+ *
  * <b>One-shot mode</b>
  * <p>
  * This class extends {@link ParameterFactoryOneShot} and can thus be used as a parameter factory. It supports one-shot mode.
@@ -190,6 +193,13 @@ import picocli.CommandLine.Option;
  * </tr>
  * <tr>
  * <td style="text-align:left">TEMPORAL_ANTICIPATION</td>
+ * <td>-</td>
+ * <td>&#10003;</td>
+ * <td>&#10003;</td>
+ * <td>&#10003;</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left">ESTIMATION</td>
  * <td>-</td>
  * <td>&#10003;</td>
  * <td>&#10003;</td>
@@ -329,11 +339,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
     // LMRS
 
-    /** Car-following model: IDM or IDM_PLUS (default). */
-    @Option(names = {"--carFollowingModel"}, description = "Car-following model: IDM or IDM_PLUS.", defaultValue = "IDM_PLUS",
-            split = "\\|", splitSynopsisLabel = "|", converter = CarFollowingModelConverter.class)
+    /** Car-following model: IDM, IDM_PLUS (default) or IDM_PLUS_MULTI. */
+    @Option(names = {"--carFollowingModel"}, description = "Car-following model: IDM, IDM_PLUS or IDM_PLUS_MULTI.",
+            defaultValue = "IDM_PLUS", split = "\\|", splitSynopsisLabel = "|", converter = CarFollowingModelConverter.class)
     private List<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> carFollowingModel =
-            listOf((h, v) -> new IdmPlus(h, v));
+            listOf(IdmPlus::new);
 
     /** Lane change synchronization: PASSIVE (default), PASSIVE_MOVING, ALIGN_GAP or ACTIVE. */
     @Option(names = {"--synchronization"},
@@ -442,6 +452,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     @Option(names = {"--anticipation"}, description = "Enables temporal constant-speed anticipation.", defaultValue = "true",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> temporalAnticipation = listOf(true);
+
+    /** Enables estimation of neighboring vehicles (default: true). */
+    @Option(names = {"--estimation"}, description = "Enables estimation of neighboring vehicles.", defaultValue = "true",
+            split = "\\|", splitSynopsisLabel = "|", negatable = true)
+    private List<Boolean> neighborEstimation = listOf(true);
 
     /** Fraction of drivers over-estimating speed and distance [0..1] (default: 1). */
     @Option(names = {"--fractionOverEstimation"},
@@ -775,6 +790,10 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         parameters.setDefaultParameter(ParameterTypes.LOOKAHEAD);
         parameters.setDefaultParameter(ParameterTypes.VCONG);
         parameters.setDefaultParameter(ParameterTypes.LCDUR);
+        if (IdmPlusMultiFunction.SINGLETON.equals(get(this.carFollowingModel, gtuType)))
+        {
+            parameters.setDefaultParameter(IdmPlusMulti.NLEADERS);
+        }
 
         // Fuller
         if (!FullerImplementation.NONE.equals(get(this.fullerImplementation, gtuType)))
@@ -1001,7 +1020,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
             mental = new ChannelFuller(taskSuppliers, behavioralAdapatations);
 
-            estimation = FactorEstimation.SINGLETON;
+            estimation = get(this.neighborEstimation, gtuType) ? FactorEstimation.SINGLETON : Estimation.NONE;
             anticipation = get(this.temporalAnticipation, gtuType) ? Anticipation.CONSTANT_SPEED : Anticipation.NONE;
         }
         else if (FullerImplementation.NONE.equals(get(this.fullerImplementation, gtuType)))
@@ -1072,7 +1091,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
                 throw new IllegalArgumentException("Unable to load Fuller model from setting " + fullerImpl);
             }
 
-            estimation = FactorEstimation.SINGLETON;
+            estimation = get(this.neighborEstimation, gtuType) ? FactorEstimation.SINGLETON : Estimation.NONE;
             anticipation = get(this.temporalAnticipation, gtuType) ? Anticipation.CONSTANT_SPEED : Anticipation.NONE;
         }
 
@@ -1152,7 +1171,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     {
         // LMRS
 
-        /** Car-following model: IDM or IDM_PLUS (default). */
+        /** Car-following model: IDM, IDM_PLUS (default) or IDM_PLUS_MULTI. */
         public static final Setting<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> CAR_FOLLOWING_MODEL =
                 new Setting<>((factory) -> factory.carFollowingModel);
 
@@ -1231,6 +1250,9 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
         /** Enables temporal constant-speed anticipation (default: true). */
         public static final Setting<Boolean> TEMPORAL_ANTICIPATION = new Setting<>((factory) -> factory.temporalAnticipation);
+
+        /** Enables estimation of neighboring vehicles. */
+        public static final Setting<Boolean> ESTIMATION = new Setting<>((factory) -> factory.neighborEstimation);
 
         /** Fraction of drivers over-estimating speed and distance [0..1] (default: 0). */
         public static final Setting<Double> FRACTION_OVERESTIMATION =
@@ -1358,16 +1380,36 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> convert(final String value)
                 throws Exception
         {
-            switch (value.toLowerCase())
+            return switch (value.toLowerCase())
             {
-                case "idm":
-                    return (h, v) -> new Idm(h, v);
-                case "idm_plus":
-                    return (h, v) -> new IdmPlus(h, v);
-                default:
-                    throw new IllegalArgumentException(
-                            "Unable to parse car following model " + value + ". Use any of IDM or IDM_PLUS.");
-            }
+                case "idm" -> Idm::new;
+                case "idm_plus" -> IdmPlus::new;
+                case "idm_plus_multi" -> IdmPlusMultiFunction.SINGLETON;
+                default -> throw new IllegalArgumentException(
+                        "Unable to parse car following model " + value + ". Use any of IDM, IDM_PLUS or IDM_PLUS_MULTI.");
+            };
+        }
+    }
+
+    /**
+     * Recognition interface to add nLeaders parameter.
+     */
+    public static final class IdmPlusMultiFunction
+            implements BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>, Stateless<IdmPlusMultiFunction>
+    {
+        /** Singleton instance. */
+        public static final IdmPlusMultiFunction SINGLETON = new IdmPlusMultiFunction();
+
+        @Override
+        public CarFollowingModel apply(final DesiredHeadwayModel t, final DesiredSpeedModel u)
+        {
+            return new IdmPlusMulti(t, u);
+        }
+
+        @Override
+        public IdmPlusMultiFunction get()
+        {
+            return SINGLETON;
         }
     }
 

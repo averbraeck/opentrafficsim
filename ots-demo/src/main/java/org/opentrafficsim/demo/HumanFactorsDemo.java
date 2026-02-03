@@ -49,6 +49,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.FullerImplementation;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.IdmPlusMultiFunction;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
@@ -187,6 +188,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
 
             LmrsFactory<Lmrs> tacticalFactory = new LmrsFactory<>(List.of(DefaultsNl.CAR, DefaultsNl.TRUCK), Lmrs::new);
             tacticalFactory.setStream(getSimulator().getModel().getStream("generation"));
+            tacticalFactory.set(Setting.CAR_FOLLOWING_MODEL, IdmPlusMultiFunction.SINGLETON);
 
             if (social)
             {
