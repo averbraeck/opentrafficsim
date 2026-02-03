@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -84,8 +85,20 @@ public class PerceptionAnimation extends OtsRenderable<ChannelAttention>
             boolean hasInVehicle = channels.contains(ChannelTask.IN_VEHICLE);
             for (Object channel : channels)
             {
-                double attention = fuller.getAttention(channel);
-                Duration perceptionDelay = fuller.getPerceptionDelay(channel);
+                double attention;
+                Duration perceptionDelay;
+                try
+                {
+                    attention = fuller.getAttention(channel);
+                    perceptionDelay = fuller.getPerceptionDelay(channel);
+                }
+                catch (NoSuchElementException ex)
+                {
+                    // Perception model just cleared its internal state
+                    attention = 0.0;
+                    perceptionDelay = Duration.ZERO;
+                }
+
                 double angle;
                 double radius = CENTER_RADIUS;
                 boolean drawLine = !hasInVehicle;
