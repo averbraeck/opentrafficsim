@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -15,6 +16,8 @@ import java.util.stream.Stream;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -88,6 +91,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormalTrunc;
@@ -336,6 +341,9 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     @Option(names = {"--gtuTypes"}, description = "GTU type IDs in order of multi-valued arguments.",
             defaultValue = "NL.CAR|NL.TRUCK", split = "\\|", splitSynopsisLabel = "|")
     private final List<String> gtuTypes;
+
+    /** Peeked car-following model per GTU type. */
+    private Map<GtuType, CarFollowingModel> peekedCarFollowingModel = new LinkedHashMap<>();
 
     // LMRS
 
@@ -776,6 +784,40 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         return values.get(index);
     }
 
+    /**
+     * Peek car-following model to support peeked desired speed and desired headway.
+     * @param gtuType GTU type
+     * @return next car-following model
+     */
+    private CarFollowingModel peekCarFollowingModel(final GtuType gtuType)
+    {
+        return this.peekedCarFollowingModel.computeIfAbsent(gtuType, (gt) ->
+        {
+            DesiredSpeedModel desiredSpeedModel = get(this.socioSpeed, gtuType)
+                    ? new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED) : AbstractIdm.DESIRED_SPEED;
+            return get(this.carFollowingModel, gtuType).apply(AbstractIdm.HEADWAY, desiredSpeedModel);
+        });
+    }
+
+    @Override
+    public Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
+            final Parameters parameters) throws GtuException
+    {
+        SpeedLimitInfo sli = new SpeedLimitInfo();
+        sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, maxGtuSpeed);
+        sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, speedLimit);
+        return Try.assign(() -> Optional.of(peekCarFollowingModel(gtuType).desiredSpeed(parameters, sli)),
+                IllegalStateException.class, "Parameter for desired speed missing.");
+    }
+
+    @Override
+    public Optional<Length> peekDesiredHeadway(final GtuType gtuType, final Speed speed, final Parameters parameters)
+            throws GtuException
+    {
+        return Try.assign(() -> Optional.of(peekCarFollowingModel(gtuType).desiredHeadway(parameters, speed)),
+                IllegalStateException.class, "Parameter for desired headway missing.");
+    }
+
     @Override
     public Parameters getParameters(final GtuType gtuType) throws ParameterException
     {
@@ -884,9 +926,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         GtuType gtuType = gtu.getType();
 
         // Car-following model
-        DesiredSpeedModel desiredSpeedModel =
-                get(this.socioSpeed, gtuType) ? new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED) : AbstractIdm.DESIRED_SPEED;
-        CarFollowingModel cfModel = get(this.carFollowingModel, gtuType).apply(AbstractIdm.HEADWAY, desiredSpeedModel);
+        CarFollowingModel cfModel = peekCarFollowingModel(gtuType);
+        this.peekedCarFollowingModel.remove(gtuType);
 
         // Perception
         LanePerception perception = getPerception(gtu);
