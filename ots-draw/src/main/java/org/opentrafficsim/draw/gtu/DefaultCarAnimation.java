@@ -105,11 +105,13 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
             this.marker = gtu.getMarker();
         }
 
-        double scale = graphics.getTransform().getDeterminant();
-        // Math.sqrt(Math.pow(graphics.getTransform()..getScaleX(), 2)
-        // Math.pow(graphics.getTransform().getScaleY(), 2));
-        if (scale > 1)
+        double scaleX = graphics.getTransform().getScaleX();
+        double scaleY = graphics.getTransform().getScaleY();
+        if (scaleX > 1 && scaleY > 1)
         {
+            // Rotate as isRotate() returns falls for when zoomed out and drawing dots
+            graphics.rotate(-gtu.getDirZ());
+
             Color color = gtu.getColor();
             graphics.setColor(color);
             BasicStroke saveStroke = (BasicStroke) graphics.getStroke();
@@ -161,42 +163,27 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
                 }
             }
 
-            // path is absolute, so need to rotate
-            /*-
-            graphics.setStroke(new BasicStroke(0.10f));
-            graphics.setColor(Color.MAGENTA);
-            Transform2d transform = OtsLocatable.toBoundsTransform(gtu.getLocation());
-            Path2D.Float path = new Path2D.Float();
-            boolean started = false;
-            for (Point2d point : gtu.getPath())
-            {
-                Point2d p = transform.transform(point);
-                if (!started)
-                {
-                    path.moveTo(p.x, -p.y);
-                }
-                else
-                {
-                    path.lineTo(p.x, -p.y);
-                }
-                started = true;
-            }
-            graphics.draw(path);
-            */
-
             graphics.setStroke(saveStroke);
         }
         else
         {
             // zoomed out, draw as marker with 7px diameter
             graphics.setColor(gtu.getColor());
-            double w = 7.0 / Math.sqrt(scale);
+            double w = 7.0 / scaleX;
+            double h = 7.0 / scaleY;
             double x = -w / 2.0;
-            this.marker.setFrame(x, x, w, w);
+            double y = -h / 2.0;
+            this.marker.setFrame(x, y, w, h);
             graphics.fill(this.marker);
         }
 
         resetRendering(graphics);
+    }
+
+    @Override
+    public boolean isRotate()
+    {
+        return false;
     }
 
     @Override
