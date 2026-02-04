@@ -15,7 +15,6 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.MandatoryLaneChangePattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.network.LaneChangeInfo;
@@ -45,7 +44,7 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
     public MandatoryLaneChangeChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
     {
         super(vehicle);
-        this.addManeuverPattern(() -> new MandatoryLaneChangePattern(this));
+        //this.addManeuverPattern(() -> new MandatoryLaneChangePattern(this));
     }
 
     /**

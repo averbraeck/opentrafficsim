@@ -2,8 +2,10 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern.PatternType;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -32,9 +34,32 @@ public final class PatternSelector {
      * @return the best-fitting pattern, or {@code null} if none match
      * @throws ParameterException if context or parameter lookup fails
      */
-    public static ManeuverPattern select(final Collection<KnowledgeChunk> chunks, final ManeuverPattern.PatternType type)
+    public static ManeuverPattern select(final ArrayList<ManeuverPattern> patterns)
             throws ParameterException {
-        return strategy.select(chunks, type);
+        return strategy.select(patterns);
+    }
+
+
+    /**
+     * Filters a list of patterns to those that are currently running or contextually relevant and physically feasible.
+     *
+     * @param listPatterns the list of patterns to evaluate
+     * @return a list of patterns that pass both context and ability checks
+     * @throws ParameterException if a perception or parameter lookup fails during checks
+     */
+    public static ArrayList<ManeuverPattern> getAllRelevantPatterns(final ArrayList<ManeuverPattern> listPatterns)
+            throws ParameterException {
+        ArrayList<ManeuverPattern> listRelevantPatterns = new ArrayList<>();
+
+        for (ManeuverPattern p : listPatterns) {
+            if (p.isRunning()) {
+                listRelevantPatterns.add(p);
+            }
+            else if (p.checkContext() && p.checkAbility()) {
+                listRelevantPatterns.add(p);
+            }
+        }
+        return listRelevantPatterns;
     }
 
     /**

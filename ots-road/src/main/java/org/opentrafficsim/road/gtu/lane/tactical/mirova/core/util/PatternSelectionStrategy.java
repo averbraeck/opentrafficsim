@@ -4,6 +4,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -26,6 +27,6 @@ public interface PatternSelectionStrategy {
      * @return the best-fitting pattern, or {@code null} if none are valid
      * @throws ParameterException if a parameter lookup or context evaluation fails
      */
-    ManeuverPattern select(Collection<KnowledgeChunk> chunks, ManeuverPattern.PatternType type)
+    ManeuverPattern select(ArrayList<ManeuverPattern> patterns)
             throws ParameterException;
 }

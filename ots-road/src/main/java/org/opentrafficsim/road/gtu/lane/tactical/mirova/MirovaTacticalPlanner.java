@@ -83,6 +83,10 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     // ----------------------------------------------------------------------
     /** Declarative knowledge base for this vehicle. */
     protected final List<KnowledgeChunk> knowledgeChunks = new ArrayList<>();
+    /** Procedural knowledge: available exclusive maneuver patterns. */
+    protected final List<ManeuverPattern> exclusiveManeuverPatterns = new ArrayList<>();
+    /** Procedural knowledge: available parallel maneuver patterns. */
+    protected final List<ManeuverPattern> parallelManeuverPatterns = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Context Manager Integration
@@ -194,7 +198,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
      * and tactical decision making.
      * </p>
      *
-     * <h3>Process overview</h3>
+     * <h3>Process overview THIS IS PROBABLY OUTDATED</h3>
      * <ol>
      *   <li><b>Perception update:</b> The {@link VehicleContextManager} updates all contextual
      *       information (e.g., traffic state, neighboring vehicles, infrastructure).</li>
@@ -263,72 +267,132 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         // 5️. Reset operational plan for this time step
         this.operationalPlan = null;
 
-        // 6️. If a maneuver is already running → continue executing it
-        if (this.runningManeuver && this.currentActionState != null)
+        // 6. determine operational plan
+        // 6.1 check if maneuver is running and continue if so
+        if (this.runningManeuver)
         {
             this.operationalPlan = this.currentActionState.update();
         }
-        else
-        {
-            // 7️. Hierarchical pattern selection based on Desire → Context → Ability
-            // Pattern selection is delegated to PatternSelector for modular context evaluation.
+        else {
+            // 6.2 check if situation requires new exclusive maneuver
             ManeuverPattern selectedPattern = null;
-
-            double dFree = this.getDFree();       // threshold for free lane changes
-            double dTactical = this.getDMand();   // threshold for tactical lane changes
-
-            // --- 7.1️. Tactical lane change (highest priority) ---
-            if (this.laneChangeDesire.magnitude() >= dTactical)
-            {
-                selectedPattern = selectPatternByType(PatternType.TACTICAL_LC);
+            selectedPattern = selectPatternByType(getExclusiveManeuverPatterns());
+            // Execute exclusive maneuver if selected
+            if (selectedPattern != null) {
+                this.operationalPlan = selectedPattern.update();
+                this.currentActionState = selectedPattern.getCurrentActionState();
             }
 
-            // --- 7.2️. Free lane change ---
-            else if (this.laneChangeDesire.magnitude() >= dFree)
-            {
-                // Try a standard free lane change first
-                selectedPattern = selectPatternByType(PatternType.FREE_LC);
+            // 6.3 if exclusive maneuver not necessary, proceed with parallel maneuver patterns
+            else {
+                ArrayList<ManeuverPattern> parallelPatterns = PatternSelector.getAllRelevantPatterns(getParallelManeuverPatterns());
 
-                // If not feasible → fall back to cooperative patterns
-                if (selectedPattern == null)
-                {
-                    selectedPattern = selectPatternByType(PatternType.COOPERATIVE);
+                // Evaluate all applicable parallel patterns and select the one with the most restrictive acceleration
+                for (ManeuverPattern pattern : parallelPatterns) {
+                    SimpleOperationalPlan plan = pattern.update();
+                    if (this.operationalPlan == null) {
+                        this.operationalPlan = plan;
+                        this.currentActionState = pattern.getCurrentActionState();
+
+                    } else {
+                        if (this.operationalPlan.isLaneChange() && !plan.isLaneChange()) {
+                            // keep lane change over non-lane change
+                            continue;
+                        }
+                        else if (!this.operationalPlan.isLaneChange() && plan.isLaneChange()) {
+                            // prefer lane change over non-lane change
+                            this.operationalPlan = plan;
+                            this.currentActionState = pattern.getCurrentActionState();
+                        }
+                        else if (plan.getAcceleration().lt(this.operationalPlan.getAcceleration())) {
+                            // prefer more restrictive acceleration
+                            this.operationalPlan = plan;
+                            this.currentActionState = pattern.getCurrentActionState();
+                        }
+                    }
+                }
+
+                // If no parallel pattern produced a plan, fall back to car-following
+                EgoContext egoContext = getContextManager().getCategory("Ego", EgoContext.class);
+                Acceleration cfAcceleration = egoContext.getCurrentCarFollowingAcceleration();
+                if (this.operationalPlan == null || this.operationalPlan.getAcceleration().gt(cfAcceleration)) {
+                    // Default: continue standard following (no tactical action)
+                    this.operationalPlan = new SimpleOperationalPlan(
+                            cfAcceleration,
+                            this.getGtu().getParameters().getParameter(ParameterTypes.DT),
+                            LateralDirectionality.NONE
+                    );
                 }
             }
-
-            // --- 7.3️. Cooperative behavior (no strong desire or fallback) ---
-            else
-            {
-                selectedPattern = selectPatternByType(PatternType.COOPERATIVE);
-            }
-
-            // 8️. Execute selected pattern or continue with default car-following
-            if (selectedPattern != null)
-            {
-                this.currentActionState = selectedPattern.getInitialActionState();
-                this.operationalPlan = this.currentActionState.update();
-            }
-
         }
 
-        if (this.operationalPlan == null)
-        {
-             // Default: continue standard following (no tactical action)
-                this.operationalPlan = new SimpleOperationalPlan(
-                        //computeLongitudinalAcceleration()
-                        getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration(),
-                    this.getGtu().getParameters().getParameter(ParameterTypes.DT),
-                    LateralDirectionality.NONE
-                );
-        }
-
-        else
-        {
-            getContextManager().getCategory("Ego", EgoContext.class).cacheValue(EgoContext.CURRENT_CF_ACCELERATION, this.operationalPlan.getAcceleration(), true);
-        }
-
-
-
+//
+//        // 6️. If a maneuver is already running → continue executing it
+//        if (this.runningManeuver && this.currentActionState != null)
+//        {
+//            this.operationalPlan = this.currentActionState.update();
+//        }
+//        else
+//        {
+//            // 7️. Hierarchical pattern selection based on Desire → Context → Ability
+//            // Pattern selection is delegated to PatternSelector for modular context evaluation.
+//            ManeuverPattern selectedPattern = null;
+//
+//            double dFree = this.getDFree();       // threshold for free lane changes
+//            double dTactical = this.getDMand();   // threshold for tactical lane changes
+//
+//            // --- 7.1️. Tactical lane change (highest priority) ---
+//            if (this.laneChangeDesire.magnitude() >= dTactical)
+//            {
+//                selectedPattern = selectPatternByType(PatternType.TACTICAL_LC);
+//            }
+//
+//            // --- 7.2️. Free lane change ---
+//            else if (this.laneChangeDesire.magnitude() >= dFree)
+//            {
+//                // Try a standard free lane change first
+//                selectedPattern = selectPatternByType(PatternType.FREE_LC);
+//
+//                // If not feasible → fall back to cooperative patterns
+//                if (selectedPattern == null)
+//                {
+//                    selectedPattern = selectPatternByType(PatternType.COOPERATIVE);
+//                }
+//            }
+//
+//            // --- 7.3️. Cooperative behavior (no strong desire or fallback) ---
+//            else
+//            {
+//                selectedPattern = selectPatternByType(PatternType.COOPERATIVE);
+//            }
+//
+//            // 8️. Execute selected pattern or continue with default car-following
+//            if (selectedPattern != null)
+//            {
+//                this.currentActionState = selectedPattern.getInitialActionState();
+//                this.operationalPlan = this.currentActionState.update();
+//            }
+//
+//        }
+//
+//        if (this.operationalPlan == null)
+//        {
+//             // Default: continue standard following (no tactical action)
+//                this.operationalPlan = new SimpleOperationalPlan(
+//                        //computeLongitudinalAcceleration()
+//                        getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration(),
+//                    this.getGtu().getParameters().getParameter(ParameterTypes.DT),
+//                    LateralDirectionality.NONE
+//                );
+//        }
+//
+//        else
+//        {
+//            getContextManager().getCategory("Ego", EgoContext.class).cacheValue(EgoContext.CURRENT_CF_ACCELERATION, this.operationalPlan.getAcceleration(), true);
+//        }
+//
+//
+//
 //        if (getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration().si < -8.0  || getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration().eq(Acceleration.NEGATIVE_INFINITY)
 //                || getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration().le(Acceleration.NEG_MAXVALUE)
 //                )
@@ -389,30 +453,26 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
             getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
             }
 
+        Acceleration planAcc = this.operationalPlan.getAcceleration();
+        if (planAcc.si < -8.0)
+        {
+            System.out.println("GTU " + getGtu().getId() + " extreme deceleration: " + planAcc.toDisplayString() + " with currentActionState: " + this.currentActionState
+            );
+        }
+
         return this.operationalPlan;
     }
 
     /**
-     * Selects the most suitable {@link ManeuverPattern} of a given {@link PatternType}
-     * using the centralized {@link PatternSelector} utility.
+     * Selects a maneuver pattern of the specified type using the {@link PatternSelector}.
      *
-     * <p>This method delegates the selection process to the {@link PatternSelector}
-     * class, which encapsulates the contextual evaluation logic. The selector ensures
-     * that only patterns with all context requirements satisfied are considered and
-     * prefers the most specific applicable pattern based on contextual dependencies.</p>
-     *
-     * <p>By outsourcing the logic to {@link PatternSelector}, this class remains
-     * focused on tactical execution while keeping the pattern evaluation modular
-     * and easily replaceable.</p>
-     *
-     * @param type the {@link PatternType} to be evaluated (e.g., COOPERATIVE, FREE_LC)
-     * @return the most suitable maneuver pattern for the given type, or {@code null} if none match
+     * @param patterns the list of candidate maneuver patterns
+     * @return the selected maneuver pattern, or null if none is applicable
+     * @throws ParameterException if pattern selection fails due to parameter issues
      */
-    protected ManeuverPattern selectPatternByType(final PatternType type) throws ParameterException {
-        return PatternSelector.select(this.knowledgeChunks, type);
+    protected ManeuverPattern selectPatternByType(final ArrayList<ManeuverPattern> patterns) throws ParameterException {
+        return PatternSelector.select(patterns);
     }
-
-
 
     /**
      * Returns all {@link KnowledgeChunk}s currently assigned to this vehicle.
@@ -435,6 +495,50 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
             this.knowledgeChunks.add(chunk);
         }
     }
+    /**
+     * Registers a new exclusive {@link ManeuverPattern} to this vehicle.
+     * Exclusive patterns represent maneuvers that cannot be combined with others.
+     * This method is typically called in the constructor of the concrete vehicle class.
+     *
+     * @param pattern the exclusive maneuver pattern to add
+     */
+    public void addExclusiveManeuverPattern(final ManeuverPattern pattern) {
+        if (pattern != null && !this.exclusiveManeuverPatterns.contains(pattern)) {
+            this.exclusiveManeuverPatterns.add(pattern);
+        }
+    }
+
+    /**
+     * Registers a new parallel {@link ManeuverPattern} to this vehicle.
+     * Parallel patterns represent maneuvers that can be combined with others.
+     * This method is typically called in the constructor of the concrete vehicle class.
+     *
+     * @param pattern the parallel maneuver pattern to add
+     */
+    public void addParallelManeuverPattern(final ManeuverPattern pattern) {
+        if (pattern != null && !this.parallelManeuverPatterns.contains(pattern)) {
+            this.parallelManeuverPatterns.add(pattern);
+        }
+        }
+
+    /**
+     * Returns all registered exclusive {@link ManeuverPattern}s for this vehicle.
+     *
+     * @return list of exclusive maneuver patterns
+     */
+    public ArrayList<ManeuverPattern> getParallelManeuverPatterns() {
+        return new ArrayList<>(this.parallelManeuverPatterns);
+        }
+
+
+    /**
+     * Returns all registered exclusive {@link ManeuverPattern}s for this vehicle.
+     * @return list of exclusive maneuver patterns
+     */
+    public ArrayList<ManeuverPattern> getExclusiveManeuverPatterns() {
+        return new ArrayList<>(this.exclusiveManeuverPatterns);
+        }
+
 
      // ----------------------------------------------------------------------
      // LMRS Desire Integration

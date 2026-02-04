@@ -8,6 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlannerFactory;
@@ -19,6 +20,10 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.Dis
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.MandatoryLaneChangeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.MergeCooperationChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.SocialInteractionsChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive.GapSearchPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive.SimpleLaneChangePattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel.MergeCooperationPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel.PreventUndercuttingPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
@@ -60,11 +65,8 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
         {
             gtu.setParameters(getParameters());
             MirovaTacticalPlanner planner = new MirovaTacticalPlanner(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu));
-            planner.addKnowledgeChunk(new DiscretionaryLaneChangeChunk(planner));
-            planner.addKnowledgeChunk(new MandatoryLaneChangeChunk(planner));
-            planner.addKnowledgeChunk(new SocialInteractionsChunk(planner));
-            planner.addKnowledgeChunk(new MergeCooperationChunk(planner));
-            planner.addKnowledgeChunk(new CongestionChunk(planner));
+            addKnowledgeChunks(planner);
+            addManeuverPatterns(planner);
             return planner;
         }
         catch (Exception e)
@@ -108,6 +110,24 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
 
 
         return parameters;
+    }
+
+    protected void addKnowledgeChunks(final MirovaTacticalPlanner planner) throws ParameterException, OperationalPlanException
+    {
+        planner.addKnowledgeChunk(new DiscretionaryLaneChangeChunk(planner));
+        planner.addKnowledgeChunk(new MandatoryLaneChangeChunk(planner));
+        planner.addKnowledgeChunk(new SocialInteractionsChunk(planner));
+        planner.addKnowledgeChunk(new MergeCooperationChunk(planner));
+        planner.addKnowledgeChunk(new CongestionChunk(planner));
+    }
+
+    protected void addManeuverPatterns(final MirovaTacticalPlanner planner) throws ParameterException
+    {
+        planner.addExclusiveManeuverPattern(new GapSearchPattern(planner));
+        planner.addExclusiveManeuverPattern(new SimpleLaneChangePattern(planner));
+
+        planner.addParallelManeuverPattern(new MergeCooperationPattern(planner));
+        planner.addParallelManeuverPattern(new PreventUndercuttingPattern(planner));
     }
 
 

@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -26,7 +26,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern.PatternType;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.MandatoryLaneChangePattern.MatchTargetLaneSpeedState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
@@ -53,9 +52,9 @@ public class MergeCooperationPattern extends ManeuverPattern {
 
     private ArrayList<LateralDirectionality> listLanesWithCooperationNeeds = new ArrayList<>();
 
-    public MergeCooperationPattern(final KnowledgeChunk kc) {
-        super(PatternType.COOPERATIVE, kc);
-        this.initialActionState = new OpenGapState(this);
+    public MergeCooperationPattern(final MirovaTacticalPlanner vehicle) {
+        super(PatternType.PARALLEL, vehicle);
+        this.initialActionState = () -> new OpenGapState(this);
         this.requiredContextKeys.add("Ego");
         this.requiredContextKeys.add("Neighbors");
         this.requiredContextKeys.add("Infrastructure");
@@ -129,10 +128,10 @@ public class MergeCooperationPattern extends ManeuverPattern {
                     {
                         if (potentialLeaderDeceleration.si > this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold).si) {
                             leaderSuitable = true;
-                            System.out.println("GTU " + this.vehicle.getGtu().getId()
-                                    + " MergeCooperationPattern: Leader " + egoLeader.getId()
-                                    + " can handle merge from candidate " + candidate.getId()
-                                    + " with deceleration " + potentialLeaderDeceleration.toString(AccelerationUnit.SI));
+//                            System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                                    + " MergeCooperationPattern: Leader " + egoLeader.getId()
+//                                    + " can handle merge from candidate " + candidate.getId()
+//                                    + " with deceleration " + potentialLeaderDeceleration.toString(AccelerationUnit.SI));
                         }
 
                     }
@@ -164,10 +163,10 @@ public class MergeCooperationPattern extends ManeuverPattern {
                                 ego.getEgoSpeed(),
                                 infrastructure.getCurrentSpeedLimit(),
                                 candidate);
-                        System.out.println("GTU " + this.vehicle.getGtu().getId()
-                                + " MergeCooperationPattern: Required deceleration to cooperate with candidate "
-                                + candidate.getId() + " is " + requiredDeceleration.toString(AccelerationUnit.SI)
-                                + ". Ego speed: " + ego.getEgoSpeed().toString()+ ", Candidate speed: " + candidate.getSpeed().toString() + ", Distance: " + candidate.getDistance());
+//                        System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                                + " MergeCooperationPattern: Required deceleration to cooperate with candidate "
+//                                + candidate.getId() + " is " + requiredDeceleration.toString(AccelerationUnit.SI)
+//                                + ". Ego speed: " + ego.getEgoSpeed().toString()+ ", Candidate speed: " + candidate.getSpeed().toString() + ", Distance: " + candidate.getDistance());
                         this.vehicle.getParameters().resetParameter(ParameterTypes.T);
                     }
                     catch (ParameterException exception)
@@ -180,8 +179,7 @@ public class MergeCooperationPattern extends ManeuverPattern {
                         if (requiredDeceleration.si > this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold).si) {
                             // All checks passed. We are the chosen one.
                             this.activeMergeCandidateId = candidate.getId();
-                            System.out.println("GTU " + this.vehicle.getGtu().getId()
-                                    + "MergeCooperationPattern: Candidate passed all checks, cooperation initiated: " + candidate.toString());
+                            //System.out.println("GTU " + this.vehicle.getGtu().getId()                                    + "MergeCooperationPattern: Candidate passed all checks, cooperation initiated: " + candidate.toString());
                             return true;
                         }
                     }
@@ -270,13 +268,13 @@ public class MergeCooperationPattern extends ManeuverPattern {
             if (leaders != null) {
                 for (HeadwayGtu gtu : leaders) {
                     if (gtu.getId().equals(this.activeMergeCandidateId)) {
-                        System.out.println("GTU " + this.vehicle.getGtu().getId()
-                                + "MergeCooperationPattern: Active merge candidate located in leaders: " + gtu.toString());
+//                        System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                                + "MergeCooperationPattern: Active merge candidate located in leaders: " + gtu.toString());
                         return gtu;
                     }
                 }
-                System.out.println("GTU " + this.vehicle.getGtu().getId()
-                        + "MergeCooperationPattern: Active merge candidate NOT found in leaders for direction " + dir.toString());
+//                System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                        + "MergeCooperationPattern: Active merge candidate NOT found in leaders for direction " + dir.toString());
             }
         }
         return null; // Lost contact
@@ -302,6 +300,9 @@ public class MergeCooperationPattern extends ManeuverPattern {
         public SimpleOperationalPlan executeControl()
                 throws ParameterException, OperationalPlanException, GtuException, NetworkException
         {
+            this.maneuverPattern.setRunning(true);
+            this.maneuverPattern.setCurrentActionState(this);
+
             EgoContext ego = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
 
             Acceleration aCF = ego.getCurrentCarFollowingAcceleration();
@@ -310,8 +311,8 @@ public class MergeCooperationPattern extends ManeuverPattern {
             // Choose the more conservative (lower) acceleration
             Acceleration chosenAcceleration = aCF.lt(this.aCoop) ? aCF : this.aCoop;
 
-            System.out.println("GTU " + this.vehicle.getGtu().getId()
-                    + "MergeCooperationPattern: Executing OpenGapState with chosen acceleration: " + chosenAcceleration.toString(AccelerationUnit.SI));
+//            System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                    + "MergeCooperationPattern: Executing OpenGapState with chosen acceleration: " + chosenAcceleration.toString(AccelerationUnit.SI));
 
             return new SimpleOperationalPlan(chosenAcceleration, this.vehicle.getParameters().getParameter(ParameterTypes.DT));
         }
@@ -323,9 +324,9 @@ public class MergeCooperationPattern extends ManeuverPattern {
             this.mergeCandidate = this.maneuverPattern.getActiveMergeCandidate();
 
             if (this.mergeCandidate.isLeftTurnIndicatorOn() == false && this.mergeCandidate.isRightTurnIndicatorOn() == false) {
-                System.out.println("GTU " + this.vehicle.getGtu().getId()
-                        + " MergeCooperationPattern: Merge candidate no longer indicates, ending cooperation: " + this.mergeCandidate.toString());
-                this.vehicle.setRunningManeuver(false);
+//                System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                        + " MergeCooperationPattern: Merge candidate no longer indicates, ending cooperation: " + this.mergeCandidate.toString());
+                return finishManeuver();
             }
 
             return null;
@@ -333,22 +334,14 @@ public class MergeCooperationPattern extends ManeuverPattern {
 
         @Override
         public SimpleOperationalPlan abort()
-                throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException
+                throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
         {
             EgoContext ego = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
             this.mergeCandidate = this.maneuverPattern.getActiveMergeCandidate();
             if (this.mergeCandidate == null) {
-                System.out.println("GTU " + this.vehicle.getGtu().getId()
-                        + " MergeCooperationPattern: Merge candidate lost, aborting cooperation.");
-                this.vehicle.setRunningManeuver(false);
-                try
-                {
-                    return new SimpleOperationalPlan(ego.getCurrentCarFollowingAcceleration(),  this.vehicle.getParameters().getParameter(ParameterTypes.DT));
-                }
-                catch (ParameterException | GtuException | NetworkException exception)
-                {
-                    exception.printStackTrace();
-                }
+//                System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                        + " MergeCooperationPattern: Merge candidate lost, aborting cooperation.");
+                return finishManeuver();
             }
 
 
@@ -362,10 +355,10 @@ public class MergeCooperationPattern extends ManeuverPattern {
                     this.mergeCandidate);
 
             if (this.aCoop.si < this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold).si) {
-                this.vehicle.setRunningManeuver(false);
+                this.maneuverPattern.setRunning(false);
                 this.aCoop = Acceleration.POSITIVE_INFINITY;
-                System.out.println("GTU " + this.vehicle.getGtu().getId()
-                        + " MergeCooperationPattern: Cannot maintain cooperation without excessive braking, aborting.");
+//                System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                        + " MergeCooperationPattern: Cannot maintain cooperation without excessive braking, aborting.");
             }
 
             return null;

@@ -333,7 +333,7 @@ public class GapCandidate
         // xF: Follower Front Position (Negative, behind Ego)
         // OTS getDistance() returns the net gap from Ego Rear to Follower Front.
         // In the paper's coordinate system (origin at Ego Front), xF is at: -(EgoLength + NetGap).
-        Length xF = this.follower.getDistance().plus(lM).neg();
+        Length xF = this.follower.getDistance().plus(lM);//.neg();
 
         // Paper Parameters
         Duration tauLC = params.getParameter(ParameterTypes.LCDUR);
@@ -351,11 +351,16 @@ public class GapCandidate
         {
             return null;
         }
-
+//        System.out.println("GTU " + this.vehicle.getGtu().getId()
+//                + " xF=" + xF + ", xL=" + xL + ", xE=" + xE + ", egoSpeed=" + vM + ", leaderSpeed=" + this.leader.getSpeed() + ", followerSpeed=" + this.follower.getSpeed()
+//                + " Computed Taus for Gap (" + this.leaderId + ", " + this.followerId + "): "
+//                + "TauELeader=" + tauELeader + ", TauEFollower=" + tauEFollower);
         // 4. Compute Acceleration aM
         // Minimum of Leader constraints, Follower constraints, and current Car-Following limit.
         Acceleration calculatedAM = computeMergeAcceleration(xE, xM, vM, this.leader, this.follower,
                 tauELeader, tauEFollower, dxMin, Tdes, tauLC, ego.getCurrentCarFollowingAcceleration());
+
+//        System.out.println("Calculated aM for Gap (" + this.leaderId + ", " + this.followerId + "): " + calculatedAM);
 
         // 5. Check Realism of Acceleration
         if (!isAccelerationRealizable(calculatedAM, params)) {

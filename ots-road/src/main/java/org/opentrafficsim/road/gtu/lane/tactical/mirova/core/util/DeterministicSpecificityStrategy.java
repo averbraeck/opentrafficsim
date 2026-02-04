@@ -44,32 +44,24 @@ public class DeterministicSpecificityStrategy implements PatternSelectionStrateg
      * @throws ParameterException if a perception or parameter lookup fails during context or ability checks
      */
     @Override
-    public ManeuverPattern select(final Collection<KnowledgeChunk> chunks, final ManeuverPattern.PatternType type)
+    public ManeuverPattern select(final ArrayList<ManeuverPattern> patterns)
             throws ParameterException {
 
         ManeuverPattern best = null;
         int maxKeys = -1;
 
-        for (KnowledgeChunk chunk : chunks) {
-            for (var supplier : chunk.getManeuverPatterns()) {
-                ManeuverPattern p = supplier.get();
-//                System.out.printf("Evaluating pattern: " + p.toString() + "\n");
-                if (p.getType() != type) continue;
-//                System.out.printf(" - Type matches (%s)\n", type);
+        for (ManeuverPattern p : patterns)  {
                 if (p.checkContext() && p.checkAbility()) {
                     int specificity = p.getRequiredContextKeys().size();
-//                    System.out.printf(" - Applicable with specificity %d\n", specificity);
                     if (specificity > maxKeys) {
                         best = p;
                         maxKeys = specificity;
-//                        System.out.printf(" --> New best pattern selected.\n");
                     } else if (specificity == maxKeys) {
                         best = resolveTie(best, p);
-//                        System.out.printf(" --> Tie resolved, selected pattern: %s\n", best.toString());
                     }
                 }
             }
-        }
+
         return best;
     }
 

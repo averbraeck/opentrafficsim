@@ -6,6 +6,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 
 /**
  * Abstract base class representing an executable action state within a maneuver pattern.
@@ -40,7 +41,9 @@ public abstract class ActionState {
 
     public ActionState(final ManeuverPattern maneuverPattern) {
         this.maneuverPattern = maneuverPattern;
-        this.vehicle = maneuverPattern.getKnowledgeChunk().getMirovaTacticalPlanner();
+        this.vehicle = maneuverPattern.getMirovaTacticalPlanner();
+        this.maneuverPattern.setCurrentActionState(this);
+        this.maneuverPattern.setRunning(true);
     }
 
     // ----------------------------------------------------------------------
@@ -60,8 +63,6 @@ public abstract class ActionState {
      */
     public SimpleOperationalPlan update()
             throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException {
-
-        this.vehicle.setRunningManeuver(true);
 
         // 1. Abort check
         this.operationalPlan = this.abort();
@@ -109,9 +110,11 @@ public abstract class ActionState {
 
     /**
      * Checks whether this state should be aborted (e.g. if the maneuver became infeasible).
+     * @throws NetworkException
+     * @throws GtuException
      */
     public abstract SimpleOperationalPlan abort()
-            throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException;
+            throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException, GtuException, NetworkException;
 
     // ----------------------------------------------------------------------
     // Helper and lifecycle methods
@@ -132,6 +135,19 @@ public abstract class ActionState {
         nextState.active = true;
         this.vehicle.setCurrentActionState(nextState);
         return nextState.update();
+    }
+
+    /**
+     * Finalizes the maneuver, resetting vehicle state and stopping the maneuver pattern.
+     * @return operational plan resuming normal driving behavior
+     * @throws NetworkException
+     * @throws GtuException
+     */
+    protected SimpleOperationalPlan finishManeuver() throws ParameterException, GtuException, NetworkException {
+        this.vehicle.setRunningManeuver(false);
+        this.maneuverPattern.setRunning(false);
+        EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
+        return new SimpleOperationalPlan(egoCtx.getCurrentCarFollowingAcceleration(), this.maneuverPattern.getPatternSpecificTimestep());
     }
 
     /** Returns whether this state is currently active.

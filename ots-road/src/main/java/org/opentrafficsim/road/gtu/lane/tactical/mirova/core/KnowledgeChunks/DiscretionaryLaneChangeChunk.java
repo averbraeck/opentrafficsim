@@ -18,9 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.AutobahnFreeDrivingPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.PreventUndercuttingPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel.PreventUndercuttingPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
@@ -45,40 +43,40 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
     {
         super(vehicle);
 
-        // procedural maneuvers possibly triggered by discretionary desires
-        this.addManeuverPattern(() -> {
-            try
-            {
-                return new AutobahnFreeDrivingPattern(this);
-            }
-            catch (ParameterException exception)
-            {
-                exception.printStackTrace();
-            }
-            return null;
-        });
-        this.addManeuverPattern(() -> {
-            try
-            {
-                return new PreventUndercuttingPattern(this);
-            }
-            catch (ParameterException exception)
-            {
-                exception.printStackTrace();
-            }
-            return null;
-        });
-        this.addManeuverPattern(() -> {
-            try
-            {
-                return new DiscretionaryLaneChangePattern(this);
-            }
-            catch (ParameterException exception)
-            {
-                exception.printStackTrace();
-            }
-            return null;
-        });
+//        // procedural maneuvers possibly triggered by discretionary desires
+//        this.addManeuverPattern(() -> {
+//            try
+//            {
+//                return new AutobahnFreeDrivingPattern(this);
+//            }
+//            catch (ParameterException exception)
+//            {
+//                exception.printStackTrace();
+//            }
+//            return null;
+//        });
+//        this.addManeuverPattern(() -> {
+//            try
+//            {
+//                return new PreventUndercuttingPattern(this);
+//            }
+//            catch (ParameterException exception)
+//            {
+//                exception.printStackTrace();
+//            }
+//            return null;
+//        });
+//        this.addManeuverPattern(() -> {
+//            try
+//            {
+//                return new DiscretionaryLaneChangePattern(this);
+//            }
+//            catch (ParameterException exception)
+//            {
+//                exception.printStackTrace();
+//            }
+//            return null;
+//        });
 
     }
 

@@ -4,7 +4,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.MergeCooperationPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel.MergeCooperationPattern;
 
 /**
  * KnowledgeChunk designed to handle cooperative merging scenarios.
@@ -34,7 +34,7 @@ public class MergeCooperationChunk extends KnowledgeChunk {
     public MergeCooperationChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException {
         super(vehicle);
         // Register the specific maneuver pattern for this chunk
-        this.addManeuverPattern(() -> new MergeCooperationPattern(this));
+        //this.addManeuverPattern(() -> new MergeCooperationPattern(this));
     }
 
     /**
