@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationSpeed.SpeedSet;
 
 /**
- * Collector of leaders which derives an set of anticipation speeds from a lane. This includes all GTUs on the lane (current),
+ * Collector of leaders which derives a set of anticipation speeds from a lane. This includes all GTUs on the lane (current),
  * all GTUs indicating left (left) and all GTUs indicating right (right).
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -54,7 +54,6 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
     {
         return new Supplier<SpeedSet>()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public SpeedSet get()
             {
@@ -72,16 +71,14 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
     {
         return new PerceptionAccumulator<LaneBasedGtu, SpeedSet>()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public Intermediate<SpeedSet> accumulate(final Intermediate<SpeedSet> intermediate, final LaneBasedGtu object,
                     final Length distance)
             {
-                double v = anticipateSingle(object, distance);
                 if (AnticipationSpeed.this.lane.getNumLanes() < 2)
                 {
                     intermediate.getObject().current =
-                            intermediate.getObject().current < v ? intermediate.getObject().current : v;
+                            Math.min(intermediate.getObject().current, anticipateSingle(object, distance));
                 }
                 if (!AnticipationSpeed.this.lane.isCurrent())
                 {
@@ -90,7 +87,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
                         if (object.getTurnIndicatorStatus().isLeft())
                         {
                             intermediate.getObject().left =
-                                    intermediate.getObject().left < v ? intermediate.getObject().left : v;
+                                    Math.min(intermediate.getObject().left, anticipateSingle(object, distance));
                         }
                     }
                     else
@@ -98,7 +95,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
                         if (object.getTurnIndicatorStatus().isRight())
                         {
                             intermediate.getObject().right =
-                                    intermediate.getObject().right < v ? intermediate.getObject().right : v;
+                                    Math.min(intermediate.getObject().right, anticipateSingle(object, distance));
                         }
                     }
                 }
@@ -114,7 +111,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
      * @param distance distance to GTU
      * @return possibly lowered anticipation speed
      */
-    final double anticipateSingle(final Gtu gtu, final Length distance)
+    private double anticipateSingle(final Gtu gtu, final Length distance)
     {
         Speed speed = gtu.getSpeed();
         double v = speed == null ? 0.0 : speed.si;
@@ -142,14 +139,6 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
     /**
      * Class to contain info from 1 lane, regarding 3 lanes.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class SpeedSet
     {
