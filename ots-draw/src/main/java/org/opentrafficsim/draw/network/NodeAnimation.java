@@ -59,7 +59,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         setRendering(graphics);
-        double scale = Math.sqrt(graphics.getTransform().getDeterminant());
+        double scale = Math.min(graphics.getTransform().getScaleX(), graphics.getTransform().getScaleY());
         double factor = 3.0 / Math.min(scale, 3.0); // do not make smaller when zooming out below scale 3
         graphics.setColor(Color.BLACK);
         graphics.setStroke(new BasicStroke((float) (factor * 0.5), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
