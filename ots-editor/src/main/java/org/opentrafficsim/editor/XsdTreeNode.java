@@ -1769,15 +1769,16 @@ public class XsdTreeNode extends LocalEventProducer
         if (this.xsdNode.getNodeName().equals("xsd:sequence"))
         {
             // this name may appear as an option for an xsd:choice or xsd:all
-            StringBuilder stringBuilder = new StringBuilder("{");
+            StringBuilder stringBuilder = new StringBuilder();
             Node relevantNode = getRelevantNode();
             Optional<String> annotation = NodeAnnotation.APPINFO_NAME.get(relevantNode);
             if (annotation.isPresent())
             {
-                stringBuilder.append(annotation);
+                stringBuilder.append(annotation.get());
             }
             else
             {
+                stringBuilder.append("{");
                 // no name for sequence specified in XSD, build one from child elements (per type to prevent repetition).
                 Set<String> coveredTypes = new LinkedHashSet<>();
                 String separator = "";
@@ -1803,8 +1804,8 @@ public class XsdTreeNode extends LocalEventProducer
                     }
                 }
                 this.active = preActive;
+                stringBuilder.append("}");
             }
-            stringBuilder.append("}");
             if (stringBuilder.length() > MAX_OPTIONNAME_LENGTH)
             {
                 return stringBuilder.substring(0, MAX_OPTIONNAME_LENGTH - 3) + "..}";

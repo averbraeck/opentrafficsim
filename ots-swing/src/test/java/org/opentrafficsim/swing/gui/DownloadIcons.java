@@ -65,6 +65,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "cog", "Application");
         downloadIcon("mdi", "database-outline", "Database");
         downloadIcon("mdi", "file-outline", "File");
+        downloadIcon("mdi", "file-import-outline", "Import");
         downloadIcon("mdi", "file-report-outline", "Output");
         downloadIcon("mdi", "filmstrip-box-multiple", "Scenario");
         downloadIcon("mdi", "folder-open-outline", "FolderOpen");

@@ -180,7 +180,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 super.setExtent(extent);
             }
-        
+
             @Override
             public synchronized void zoomAll()
             {
@@ -197,7 +197,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 EditorMap.this.ignoreKeepScale = false;
             }
-        
+
             @Override
             public synchronized void home()
             {
@@ -468,7 +468,6 @@ public final class EditorMap extends JPanel implements EventListener
         addToggle("Stripe", StripeData.class, "Stripe24.png", "Show/hide stripes", true, false);
         addToggle("LaneCenter", CenterLine.class, "CenterLine24.png", "Show/hide lane center lines", false, true);
         addToggle("Shoulder", ShoulderData.class, "Shoulder24.png", "Show/hide shoulders", true, false);
-        // TODO: perhaps a specific data type for generators?
         addToggle("Generator", GtuGeneratorPositionData.class, "Generator24.png", "Show/hide generators", true, false);
         addToggle("Sink", SinkData.class, "Sink24.png", "Show/hide sinks", true, true);
         addToggle("Detector", LoopDetectorData.class, "Detector24.png", "Show/hide loop detectors", true, false);

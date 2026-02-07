@@ -514,7 +514,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public void addCoordinate(final XsdTreeNode node)
     {
-        if (this.shapeListener.shapeNode.equals(node.getParent()))
+        if (this.shapeListener.shapeNode != null && this.shapeListener.shapeNode.equals(node.getParent()))
         {
             this.shapeListener.coordinates.put(node, orNull(node.getValue(), Adapters.get(Point2d.class)));
             buildDesignLine();
@@ -1214,6 +1214,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             this.radius = null;
             this.direction = null;
             this.coordinates.clear();
+            if (this.shapeNode == null)
+            {
+                return;
+            }
             switch (this.shapeNode.getNodeName())
             {
                 case "Straight":

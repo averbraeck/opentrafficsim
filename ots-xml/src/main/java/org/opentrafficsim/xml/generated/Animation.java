@@ -26,8 +26,8 @@ import jakarta.xml.bind.annotation.XmlType;
  *         <element name="LinkType" type="{http://www.opentrafficsim.org/ots}LinkTypeAnimationType" maxOccurs="unbounded" minOccurs="0"/>
  *         <element name="LaneType" type="{http://www.opentrafficsim.org/ots}LaneTypeAnimationType" maxOccurs="unbounded" minOccurs="0"/>
  *         <element name="RoadLayout" type="{http://www.opentrafficsim.org/ots}RoadLayoutAnimationType" maxOccurs="unbounded" minOccurs="0"/>
- *         <element name="Connector" type="{http://www.opentrafficsim.org/ots}ConnectorAnimationType" maxOccurs="unbounded" minOccurs="0"/>
  *         <element name="Link" type="{http://www.opentrafficsim.org/ots}LinkAnimationType" maxOccurs="unbounded" minOccurs="0"/>
+ *         <element name="Connector" type="{http://www.opentrafficsim.org/ots}ConnectorAnimationType" maxOccurs="unbounded" minOccurs="0"/>
  *         <element name="Layer" type="{http://www.opentrafficsim.org/ots}LayerToggleType" maxOccurs="unbounded" minOccurs="0"/>
  *       </sequence>
  *     </restriction>
@@ -44,8 +44,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "linkType",
     "laneType",
     "roadLayout",
-    "connector",
     "link",
+    "connector",
     "layer"
 })
 @XmlRootElement(name = "Animation")
@@ -64,10 +64,10 @@ import jakarta.xml.bind.annotation.XmlType;
     protected List<LaneTypeAnimationType> laneType;
     @XmlElement(name = "RoadLayout")
     protected List<RoadLayoutAnimationType> roadLayout;
-    @XmlElement(name = "Connector")
-    protected List<ConnectorAnimationType> connector;
     @XmlElement(name = "Link")
     protected List<LinkAnimationType> link;
+    @XmlElement(name = "Connector")
+    protected List<ConnectorAnimationType> connector;
     @XmlElement(name = "Layer")
     protected List<LayerToggleType> layer;
 
@@ -216,38 +216,6 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Gets the value of the connector property.
-     * 
-     * <p>This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the connector property.</p>
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * </p>
-     * <pre>
-     * getConnector().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ConnectorAnimationType }
-     * </p>
-     * 
-     * 
-     * @return
-     *     The value of the connector property.
-     */
-    public List<ConnectorAnimationType> getConnector() {
-        if (connector == null) {
-            connector = new ArrayList<>();
-        }
-        return this.connector;
-    }
-
-    /**
      * Gets the value of the link property.
      * 
      * <p>This accessor method returns a reference to the live list,
@@ -277,6 +245,38 @@ import jakarta.xml.bind.annotation.XmlType;
             link = new ArrayList<>();
         }
         return this.link;
+    }
+
+    /**
+     * Gets the value of the connector property.
+     * 
+     * <p>This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the connector property.</p>
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * </p>
+     * <pre>
+     * getConnector().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link ConnectorAnimationType }
+     * </p>
+     * 
+     * 
+     * @return
+     *     The value of the connector property.
+     */
+    public List<ConnectorAnimationType> getConnector() {
+        if (connector == null) {
+            connector = new ArrayList<>();
+        }
+        return this.connector;
     }
 
     /**

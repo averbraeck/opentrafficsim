@@ -74,8 +74,8 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
     }
 
     /**
-     * Notified when a node has been removed.
-     * @param node removed node.
+     * Notified when an attribute has changed.
+     * @param node node on which the attribute was changed.
      * @param attribute attribute that has changed.
      */
     public abstract void notifyAttributeChanged(XsdTreeNode node, String attribute);

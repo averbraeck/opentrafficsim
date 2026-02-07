@@ -57,16 +57,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
  *             </complexContent>
  *           </complexType>
  *         </element>
- *         <element name="NoTrafficLane">
- *           <complexType>
- *             <complexContent>
- *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}string" />
- *                 <attribute name="Color" use="required" type="{http://www.opentrafficsim.org/ots}ColorType" />
- *               </restriction>
- *             </complexContent>
- *           </complexType>
- *         </element>
  *       </choice>
  *     </extension>
  *   </complexContent>
@@ -88,8 +78,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlElements({
         @XmlElement(name = "Stripe", type = LinkAnimationType.Stripe.class),
         @XmlElement(name = "Lane", type = LinkAnimationType.Lane.class),
-        @XmlElement(name = "Shoulder", type = LinkAnimationType.Shoulder.class),
-        @XmlElement(name = "NoTrafficLane", type = LinkAnimationType.NoTrafficLane.class)
+        @XmlElement(name = "Shoulder", type = LinkAnimationType.Shoulder.class)
     })
     protected List<Serializable> stripeOrLaneOrShoulder;
 
@@ -112,7 +101,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link LinkAnimationType.Lane }
-     * {@link LinkAnimationType.NoTrafficLane }
      * {@link LinkAnimationType.Shoulder }
      * {@link LinkAnimationType.Stripe }
      * </p>
@@ -150,88 +138,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
     public static class Lane implements Serializable
-    {
-
-        private static final long serialVersionUID = 10102L;
-        @XmlAttribute(name = "Id", required = true)
-        @XmlJavaTypeAdapter(StringAdapter.class)
-        protected StringType id;
-        @XmlAttribute(name = "Color", required = true)
-        @XmlJavaTypeAdapter(ColorAdapter.class)
-        protected ColorType color;
-
-        /**
-         * Gets the value of the id property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public StringType getId() {
-            return id;
-        }
-
-        /**
-         * Sets the value of the id property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setId(StringType value) {
-            this.id = value;
-        }
-
-        /**
-         * Gets the value of the color property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public ColorType getColor() {
-            return color;
-        }
-
-        /**
-         * Sets the value of the color property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setColor(ColorType value) {
-            this.color = value;
-        }
-
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type</p>.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
-     * 
-     * <pre>{@code
-     * <complexType>
-     *   <complexContent>
-     *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}string" />
-     *       <attribute name="Color" use="required" type="{http://www.opentrafficsim.org/ots}ColorType" />
-     *     </restriction>
-     *   </complexContent>
-     * </complexType>
-     * }</pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class NoTrafficLane implements Serializable
     {
 
         private static final long serialVersionUID = 10102L;

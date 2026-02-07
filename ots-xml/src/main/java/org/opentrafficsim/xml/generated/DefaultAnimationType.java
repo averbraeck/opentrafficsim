@@ -34,6 +34,16 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
  *             </complexContent>
  *           </complexType>
  *         </element>
+ *         <element name="Connector" minOccurs="0">
+ *           <complexType>
+ *             <complexContent>
+ *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 <attribute name="Color" use="required" type="{http://www.opentrafficsim.org/ots}ColorType" />
+ *                 <attribute name="Width" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
+ *               </restriction>
+ *             </complexContent>
+ *           </complexType>
+ *         </element>
  *         <element name="Lane" minOccurs="0">
  *           <complexType>
  *             <complexContent>
@@ -61,15 +71,6 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
  *             </complexContent>
  *           </complexType>
  *         </element>
- *         <element name="NoTrafficLane" minOccurs="0">
- *           <complexType>
- *             <complexContent>
- *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 <attribute name="Color" use="required" type="{http://www.opentrafficsim.org/ots}ColorType" />
- *               </restriction>
- *             </complexContent>
- *           </complexType>
- *         </element>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
@@ -81,10 +82,10 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DefaultAnimationType", propOrder = {
     "link",
+    "connector",
     "lane",
     "stripe",
-    "shoulder",
-    "noTrafficLane"
+    "shoulder"
 })
 @SuppressWarnings("all") public class DefaultAnimationType
     implements Serializable
@@ -93,14 +94,14 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     private static final long serialVersionUID = 10102L;
     @XmlElement(name = "Link")
     protected DefaultAnimationType.Link link;
+    @XmlElement(name = "Connector")
+    protected DefaultAnimationType.Connector connector;
     @XmlElement(name = "Lane")
     protected DefaultAnimationType.Lane lane;
     @XmlElement(name = "Stripe")
     protected DefaultAnimationType.Stripe stripe;
     @XmlElement(name = "Shoulder")
     protected DefaultAnimationType.Shoulder shoulder;
-    @XmlElement(name = "NoTrafficLane")
-    protected DefaultAnimationType.NoTrafficLane noTrafficLane;
 
     /**
      * Gets the value of the link property.
@@ -124,6 +125,30 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
      */
     public void setLink(DefaultAnimationType.Link value) {
         this.link = value;
+    }
+
+    /**
+     * Gets the value of the connector property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DefaultAnimationType.Connector }
+     *     
+     */
+    public DefaultAnimationType.Connector getConnector() {
+        return connector;
+    }
+
+    /**
+     * Sets the value of the connector property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DefaultAnimationType.Connector }
+     *     
+     */
+    public void setConnector(DefaultAnimationType.Connector value) {
+        this.connector = value;
     }
 
     /**
@@ -198,28 +223,87 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
         this.shoulder = value;
     }
 
-    /**
-     * Gets the value of the noTrafficLane property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DefaultAnimationType.NoTrafficLane }
-     *     
-     */
-    public DefaultAnimationType.NoTrafficLane getNoTrafficLane() {
-        return noTrafficLane;
-    }
 
     /**
-     * Sets the value of the noTrafficLane property.
+     * <p>Java class for anonymous complex type</p>.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link DefaultAnimationType.NoTrafficLane }
-     *     
+     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * 
+     * <pre>{@code
+     * <complexType>
+     *   <complexContent>
+     *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       <attribute name="Color" use="required" type="{http://www.opentrafficsim.org/ots}ColorType" />
+     *       <attribute name="Width" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
+     *     </restriction>
+     *   </complexContent>
+     * </complexType>
+     * }</pre>
+     * 
+     * 
      */
-    public void setNoTrafficLane(DefaultAnimationType.NoTrafficLane value) {
-        this.noTrafficLane = value;
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
+    public static class Connector
+        implements Serializable
+    {
+
+        private static final long serialVersionUID = 10102L;
+        @XmlAttribute(name = "Color", required = true)
+        @XmlJavaTypeAdapter(ColorAdapter.class)
+        protected ColorType color;
+        @XmlAttribute(name = "Width")
+        @XmlJavaTypeAdapter(PositiveLengthAdapter.class)
+        protected LengthType width;
+
+        /**
+         * Gets the value of the color property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public ColorType getColor() {
+            return color;
+        }
+
+        /**
+         * Sets the value of the color property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setColor(ColorType value) {
+            this.color = value;
+        }
+
+        /**
+         * Gets the value of the width property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public LengthType getWidth() {
+            return width;
+        }
+
+        /**
+         * Sets the value of the width property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setWidth(LengthType value) {
+            this.width = value;
+        }
+
     }
 
 
@@ -356,61 +440,6 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
          */
         public void setWidth(LengthType value) {
             this.width = value;
-        }
-
-    }
-
-
-    /**
-     * <p>Java class for anonymous complex type</p>.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
-     * 
-     * <pre>{@code
-     * <complexType>
-     *   <complexContent>
-     *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       <attribute name="Color" use="required" type="{http://www.opentrafficsim.org/ots}ColorType" />
-     *     </restriction>
-     *   </complexContent>
-     * </complexType>
-     * }</pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class NoTrafficLane
-        implements Serializable
-    {
-
-        private static final long serialVersionUID = 10102L;
-        @XmlAttribute(name = "Color", required = true)
-        @XmlJavaTypeAdapter(ColorAdapter.class)
-        protected ColorType color;
-
-        /**
-         * Gets the value of the color property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public ColorType getColor() {
-            return color;
-        }
-
-        /**
-         * Sets the value of the color property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setColor(ColorType value) {
-            this.color = value;
         }
 
     }

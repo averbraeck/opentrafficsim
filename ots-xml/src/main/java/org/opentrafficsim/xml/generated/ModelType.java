@@ -1240,7 +1240,8 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected CorrelationParameterType then;
             /**
              * Expression with a local context. Use 'first' and 'then' to refer
-             *                       to the two base parameter values. The expression result will become the value for 'then'.
+             *                       to the two base parameter values. The expression result will become the value for 'then'. Argument 'first'
+             *                       may be empty. For example "then + 0.2*first" increases the 'then' value by 20% of 'first'.
              * 
              */
             @XmlAttribute(name = "Expression")
@@ -1296,7 +1297,8 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
             /**
              * Expression with a local context. Use 'first' and 'then' to refer
-             *                       to the two base parameter values. The expression result will become the value for 'then'.
+             *                       to the two base parameter values. The expression result will become the value for 'then'. Argument 'first'
+             *                       may be empty. For example "then + 0.2*first" increases the 'then' value by 20% of 'first'.
              * 
              * @return
              *     possible object is

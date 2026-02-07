@@ -89,6 +89,12 @@
           <xsd:attribute name="Width" type="ots:PositiveLengthType" use="optional" />
         </xsd:complexType>
       </xsd:element>
+      <xsd:element name="Connector" minOccurs="0" maxOccurs="1">
+        <xsd:complexType>
+          <xsd:attribute name="Color" type="ots:ColorType" use="required" />
+          <xsd:attribute name="Width" type="ots:PositiveLengthType" use="optional" />
+        </xsd:complexType>
+      </xsd:element>
       <xsd:element name="Lane" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
@@ -100,11 +106,6 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="Shoulder" minOccurs="0" maxOccurs="1">
-        <xsd:complexType>
-          <xsd:attribute name="Color" type="ots:ColorType" use="required" />
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="NoTrafficLane" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
@@ -142,12 +143,6 @@
           <xsd:attribute name="Color" type="ots:ColorType" use="required" />
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="NoTrafficLane">
-        <xsd:complexType>
-          <xsd:attribute name="Id" type="ots:string" use="required" />
-          <xsd:attribute name="Color" type="ots:ColorType" use="required" />
-        </xsd:complexType>
-      </xsd:element>
     </xsd:choice>
     <xsd:attribute name="Id" type="ots:string" use="required" />
   </xsd:complexType>
@@ -180,12 +175,6 @@
               <xsd:attribute name="Color" type="ots:ColorType" use="required" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="NoTrafficLane">
-            <xsd:complexType>
-              <xsd:attribute name="Id" type="ots:string" use="required" />
-              <xsd:attribute name="Color" type="ots:ColorType" use="required" />
-            </xsd:complexType>
-          </xsd:element>
         </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>
@@ -212,8 +201,8 @@
         <xsd:element name="LinkType" type="ots:LinkTypeAnimationType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="LaneType" type="ots:LaneTypeAnimationType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="RoadLayout" type="ots:RoadLayoutAnimationType" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="Connector" type="ots:ConnectorAnimationType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="Link" type="ots:LinkAnimationType" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="Connector" type="ots:ConnectorAnimationType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="Layer" type="ots:LayerToggleType" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>

@@ -1171,13 +1171,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link Connector }
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Connector }
      * 
      * @return
-     *     the new instance of {@link Connector }
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Connector }
      */
-    public Connector createConnector() {
-        return new Connector();
+    public org.opentrafficsim.xml.generated.Connector createConnector() {
+        return new org.opentrafficsim.xml.generated.Connector();
     }
 
     /**
@@ -2351,16 +2351,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link LinkAnimationType.NoTrafficLane }
-     * 
-     * @return
-     *     the new instance of {@link LinkAnimationType.NoTrafficLane }
-     */
-    public LinkAnimationType.NoTrafficLane createLinkAnimationTypeNoTrafficLane() {
-        return new LinkAnimationType.NoTrafficLane();
-    }
-
-    /**
      * Create an instance of {@link RoadLayoutAnimationType.Stripe }
      * 
      * @return
@@ -2391,16 +2381,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link RoadLayoutAnimationType.NoTrafficLane }
-     * 
-     * @return
-     *     the new instance of {@link RoadLayoutAnimationType.NoTrafficLane }
-     */
-    public RoadLayoutAnimationType.NoTrafficLane createRoadLayoutAnimationTypeNoTrafficLane() {
-        return new RoadLayoutAnimationType.NoTrafficLane();
-    }
-
-    /**
      * Create an instance of {@link DefaultAnimationType.Link }
      * 
      * @return
@@ -2408,6 +2388,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public DefaultAnimationType.Link createDefaultAnimationTypeLink() {
         return new DefaultAnimationType.Link();
+    }
+
+    /**
+     * Create an instance of {@link DefaultAnimationType.Connector }
+     * 
+     * @return
+     *     the new instance of {@link DefaultAnimationType.Connector }
+     */
+    public DefaultAnimationType.Connector createDefaultAnimationTypeConnector() {
+        return new DefaultAnimationType.Connector();
     }
 
     /**
@@ -2438,16 +2428,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public DefaultAnimationType.Shoulder createDefaultAnimationTypeShoulder() {
         return new DefaultAnimationType.Shoulder();
-    }
-
-    /**
-     * Create an instance of {@link DefaultAnimationType.NoTrafficLane }
-     * 
-     * @return
-     *     the new instance of {@link DefaultAnimationType.NoTrafficLane }
-     */
-    public DefaultAnimationType.NoTrafficLane createDefaultAnimationTypeNoTrafficLane() {
-        return new DefaultAnimationType.NoTrafficLane();
     }
 
     /**

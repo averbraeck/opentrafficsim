@@ -23,11 +23,11 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 
 /**
- * Validates that an attribute 'X', or attribute Id on an element named 'X', matches any Id of a road layout element named 'X'
- * within a coupled road layout. For example, LaneOverride.Lane and Ots.Animation.RoadLayout.Lane.Id (both attributes) should
- * refer to a Lane.Id within a coupled road layout. The road layout can be coupled in different ways as described in
- * {@code LayoutCoupling}. In many cases this is via a Link, within which either a road layout is defined, or a defined road
- * layout is referred to. Example usage is:
+ * Validates that an attribute <i>X</i>, or attribute <i>Id</i> on an element named <i>X</i>, matches any <i>Id</i> of a road
+ * layout element named <i>X</i> within a coupled road layout. For example, LaneOverride.<i>Lane</i> and
+ * Ots.Animation.RoadLayout.Lane.<i>Id</i> (both attributes) should refer to a Lane.<i>Id</i> within a coupled road layout. The
+ * road layout can be coupled in different ways as described in {@link LayoutCoupling}. In many cases this is via a Link, within
+ * which either a road layout is defined, or a defined road layout is referred to. Example usage is:
  *
  * <pre>
  * new RoadLayoutElementValidator(editor, "Ots.Network.Link.LaneOverride", LayoutCoupling.PARENT_IS_LINK,
@@ -324,7 +324,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             case LAYOUT_BY_PARENT_ID:
             {
                 linkNode = null;
-                layoutNode = node.getParent().getCoupledNodeAttribute("Id").get();
+                layoutNode = node.getParent().getCoupledNodeAttribute("Id").orElse(null);
                 break;
             }
             case LINK_BY_PARENT_ID:
@@ -516,7 +516,8 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     }
 
     /**
-     * Defines how the node is coupled to a road layout.
+     * Defines how the node is coupled to a road layout. For example the <i>Id</i> of the parent node refers to the <i>Id</i> of
+     * a defined road layout.
      */
     public enum LayoutCoupling
     {
@@ -537,20 +538,21 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     }
 
     /**
-     * Defines the attribute pointing to the road layout element.
+     * Defines the attribute pointing to the road layout element. For example the <i>Lane</i> attribute equaling
+     * RoadLayout.Lane.Id.
      */
     public enum RoadLayoutElementAttribute
     {
-        /** SomeWhere.{Node}.Id = RoadLayout.{Node}.Id, where 'Node' is either Lane, Stripe or Shoulder. */
+        /** {SomeWhere}.{Node}.Id = RoadLayout.{Node}.Id, where 'Node' is either Lane, Stripe or Shoulder. */
         ID("Id"),
 
-        /** Node.Lane = RoadLayout.Lane.Id. */
+        /** {Node}.Lane = RoadLayout.Lane.Id. */
         LANE("Lane"),
 
-        /** Node.Stripe = RoadLayout.Stripe.Id. */
+        /** {Node}.Stripe = RoadLayout.Stripe.Id. */
         STRIPE("Stripe"),
 
-        /** Node.Shoulder = RoadLayout.Shoulder.Id. */
+        /** {Node}.Shoulder = RoadLayout.Shoulder.Id. */
         SHOULDER("Shoulder");
 
         /** Attribute. */
