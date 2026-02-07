@@ -197,23 +197,10 @@ public final class LmrsUtil implements LmrsParameters
             }
         }
 
-        if (initiatedOrContinuedLaneChange.isLeft())
+        params.setClaimedParameter(DLEFT, desire.left(), PARAMETER_KEY);
+        params.setClaimedParameter(DRIGHT, desire.right(), PARAMETER_KEY);
+        if (initiatedOrContinuedLaneChange.isNone())
         {
-            // Let surrounding GTUs respond fully to our movement
-            params.setClaimedParameter(DLEFT, 1.0, PARAMETER_KEY);
-            params.setClaimedParameter(DRIGHT, 0.0, PARAMETER_KEY);
-        }
-        else if (initiatedOrContinuedLaneChange.isRight())
-        {
-            // Let surrounding GTUs respond fully to our movement
-            params.setClaimedParameter(DLEFT, 0.0, PARAMETER_KEY);
-            params.setClaimedParameter(DRIGHT, 1.0, PARAMETER_KEY);
-        }
-        else
-        {
-            params.setClaimedParameter(DLEFT, desire.left(), PARAMETER_KEY);
-            params.setClaimedParameter(DRIGHT, desire.right(), PARAMETER_KEY);
-
             // take action if we cannot change lane
             Acceleration aSync;
 
@@ -455,7 +442,8 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // safe regarding neighbors?
-        if (!gapAcceptance.acceptGap(perception, params, sli, cfm, desire, ownSpeed, ownAcceleration, lat))
+        double consideredDesire = perception.getGtu().getLaneChangeDirection().equals(lat) ? 1.0 : desire;
+        if (!gapAcceptance.acceptGap(perception, params, sli, cfm, consideredDesire, ownSpeed, ownAcceleration, lat))
         {
             return false;
         }

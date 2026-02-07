@@ -50,9 +50,8 @@ public interface Cooperation extends LmrsParameters
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             for (PerceivedGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
-                double desire = leader.getManeuver().isChangingLane(lat.flip()) ? 1.0
-                        : (lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
-                                : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0);
+                double desire = lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
+                        : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
@@ -93,9 +92,8 @@ public interface Cooperation extends LmrsParameters
             boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
             for (PerceivedGtu leader : neighbours.getLeaders(relativeLane))
             {
-                double desire = leader.getManeuver().isChangingLane(lat.flip()) ? 1.0
-                        : (lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
-                                : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0);
+                double desire = lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
+                        : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
                 // TODO: only cooperate if merger still quite fast or there's congestion downstream anyway (which we can better
                 // estimate than only considering the direct leader
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
