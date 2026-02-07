@@ -52,7 +52,7 @@ public class OdOptions
     public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
 
     /** Lane bookkeeping. */
-    public static final Option<LaneBookkeeping> BOOKKEEPING = new Option<>("bookkeeping", LaneBookkeeping.EDGE);
+    public static final Option<LaneBookkeeping> BOOKKEEPING = new Option<>("bookkeeping", LaneBookkeeping.START);
 
     /** Error handler when GTU exceptions occur. */
     public static final Option<GtuErrorHandler> ERROR_HANDLER = new Option<>("error handler", GtuErrorHandler.THROW);

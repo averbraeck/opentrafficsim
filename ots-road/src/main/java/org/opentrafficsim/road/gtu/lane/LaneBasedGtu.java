@@ -151,7 +151,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     private VehicleModel vehicleModel = VehicleModel.MINMAX;
 
     /** Lane bookkeeping. */
-    private LaneBookkeeping bookkeeping = LaneBookkeeping.EDGE;
+    private LaneBookkeeping bookkeeping = LaneBookkeeping.START;
 
     /** Distance over which the GTU should not change lane after being created. */
     private Length noLaneChangeDistance;

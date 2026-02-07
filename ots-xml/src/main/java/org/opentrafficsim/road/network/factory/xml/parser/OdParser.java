@@ -41,7 +41,6 @@ import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -429,8 +428,8 @@ public final class OdParser
             final StreamInformation streamMap, final Map<String, org.opentrafficsim.xml.generated.OdOptions> odOptionsMap,
             final Od od, final Categorization categorization, final Eval eval) throws XmlParserException, NetworkException
     {
-        OdOptions odOptions = new OdOptions().set(OdOptions.GTU_ID, new IdSupplier(""))
-                .set(OdOptions.NO_LC_DIST, Length.ofSI(50.0)).set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
+        OdOptions odOptions =
+                new OdOptions().set(OdOptions.GTU_ID, new IdSupplier("")).set(OdOptions.NO_LC_DIST, Length.ofSI(50.0));
 
         // default global option to integrate defined templates
         StreamInterface stream = streamMap.getStream("generation");

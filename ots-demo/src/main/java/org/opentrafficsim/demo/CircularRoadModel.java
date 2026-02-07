@@ -274,7 +274,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setBookkeeping(
-                ((boolean) getInputParameter("generic.gradualLaneChange")) ? LaneBookkeeping.EDGE : LaneBookkeeping.INSTANT);
+                ((boolean) getInputParameter("generic.gradualLaneChange")) ? LaneBookkeeping.START : LaneBookkeeping.INSTANT);
         gtu.setMaximumAcceleration(Acceleration.ofSI(3.0));
         gtu.setMaximumDeceleration(Acceleration.ofSI(-8.0));
 

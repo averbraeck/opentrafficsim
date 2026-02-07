@@ -43,7 +43,7 @@ public class GtuSpawner
     private Length noLaneChangeDistance = Length.ofSI(100.0);
 
     /** Lane bookkeeping. */
-    private LaneBookkeeping bookkeeping = LaneBookkeeping.EDGE;
+    private LaneBookkeeping bookkeeping = LaneBookkeeping.START;
 
     /** Error handler. */
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;

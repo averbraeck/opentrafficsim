@@ -306,7 +306,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             odOptions.set(OdOptions.NO_LC_DIST, Length.ofSI(150.0));
             odOptions.set(OdOptions.GTU_TYPE, this.characteristics);
             odOptions.set(OdOptions.LANE_BIAS, DefaultsRoadNl.LANE_BIAS_CAR_TRUCK);
-            odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
             OdApplier.applyOd(this.network, od, odOptions, DefaultsNl.VEHICLES);
         }
     }

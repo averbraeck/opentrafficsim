@@ -117,8 +117,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         {
             if (lane.isCurrent())
             {
-                for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
-                        LateralDirectionality.RIGHT})
+                for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
                 {
                     if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
                     {

@@ -408,7 +408,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                     GeneratorPositions.create(initialLongitudinalPositions, stream), getNetwork(), getSimulator(), roomChecker,
                     idSupplier);
             generator.setNoLaneChangeDistance(Length.ofSI(100.0));
-            generator.setBookkeeping(LaneBookkeeping.START);
         }
 
     }

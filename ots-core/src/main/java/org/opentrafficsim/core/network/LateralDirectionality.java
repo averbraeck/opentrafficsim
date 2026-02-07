@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network;
 
+import java.util.List;
+
 /**
  * Directionality in lateral direction. LEFT is the direction to the left of the longitudinal orientation of the GTU, relative
  * to the forward driving direction. RIGHT is the direction to the right of the longitudinal orientation of the GTU, relative to
@@ -16,10 +18,15 @@ public enum LateralDirectionality
 {
     /** Direction to the left of the longitudinal orientation of the GTU, relative to the forward driving direction. */
     LEFT,
+
     /** Direction to the right of the longitudinal orientation of the GTU, relative to the forward driving direction. */
     RIGHT,
+
     /** Absence of a lateral direction. */
     NONE;
+
+    /** List of LEFT and RIGHT that can be looped over. */
+    public static final List<LateralDirectionality> LEFT_AND_RIGHT = List.of(LEFT, RIGHT);
 
     /**
      * Determine whether the direction is the left direction.
@@ -54,7 +61,7 @@ public enum LateralDirectionality
      */
     public LateralDirectionality flip()
     {
-        return this.equals(NONE) ? NONE : this.equals(LEFT) ? RIGHT : LEFT;
+        return this.equals(LEFT) ? RIGHT : this.equals(RIGHT) ? LEFT : NONE;
     }
 
 }

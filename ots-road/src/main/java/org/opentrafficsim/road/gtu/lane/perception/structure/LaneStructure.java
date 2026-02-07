@@ -596,8 +596,7 @@ public class LaneStructure
             latQueue = latUpQueue;
         }
         LaneRecord record = latQueue.poll();
-        for (LateralDirectionality latDirection : new LateralDirectionality[] {LateralDirectionality.LEFT,
-                LateralDirectionality.RIGHT})
+        for (LateralDirectionality latDirection : LateralDirectionality.LEFT_AND_RIGHT)
         {
             for (Lane lane : record.getLane().accessibleAdjacentLanesPhysical(latDirection, null))
             {

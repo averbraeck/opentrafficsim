@@ -117,7 +117,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     private Length noLaneChangeDistance = null;
 
     /** Lane bookkeeping. */
-    private LaneBookkeeping bookkeeping = LaneBookkeeping.EDGE;
+    private LaneBookkeeping bookkeeping = LaneBookkeeping.START;
 
     /** GTU error handler. */
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;

@@ -74,11 +74,8 @@ public final class RelativeLaneTest
             // Ignore expected exception
         }
 
-        // TODO Wait for Wouter to indicate whether numLanes == 0 is really permitted when lat != LateralDirectionality.NONE
-        for (LateralDirectionality ld : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.NONE,
-                LateralDirectionality.RIGHT})
+        for (LateralDirectionality ld : LateralDirectionality.values())
         {
-            // TODO fix if 0 is only permitted for LateralDirectionality.NONE
             int startAt = ld == LateralDirectionality.NONE ? 0 : 1;
             int endAt = ld == LateralDirectionality.NONE ? 1 : 4;
             for (int numLanes = startAt; numLanes < endAt; numLanes++)
