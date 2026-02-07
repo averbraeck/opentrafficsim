@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -10,7 +11,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -48,13 +48,12 @@ public final class AccelerationSpeedLimitTransition
     }
 
     @Override
-    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
-            final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
-            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws OperationalPlanException, ParameterException
+    public Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException
     {
         SpeedLimitProspect slp = perception.getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane);
-        simplePlan.minimizeAcceleration(SpeedLimitUtil.considerSpeedLimitTransitions(params, speed, slp, carFollowingModel));
+        return SpeedLimitUtil.considerSpeedLimitTransitions(params, speed, slp, carFollowingModel);
     }
 
     @Override

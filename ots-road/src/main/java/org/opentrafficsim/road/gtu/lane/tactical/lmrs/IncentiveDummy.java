@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
@@ -39,7 +40,8 @@ public final class IncentiveDummy implements MandatoryIncentive, Stateless<Incen
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
+            final CarFollowingModel carFollowingModel,
+            final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         return new Desire(0, 0);

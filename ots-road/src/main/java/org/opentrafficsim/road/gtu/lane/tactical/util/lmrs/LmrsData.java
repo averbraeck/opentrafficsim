@@ -1,15 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 
 /**
@@ -22,7 +18,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class LmrsData implements DesireBased, Synchronizable
+public final class LmrsData implements Synchronizable
 {
 
     /** Form of synchronization. */
@@ -42,9 +38,6 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /** Current leaders. */
     private final Set<String> tempLeaders = new LinkedHashSet<>();
-
-    /** Latest desire value for visualization. */
-    private final Map<Class<? extends Incentive>, Desire> desireMap = new LinkedHashMap<>();
 
     /** Synchronization state. */
     private Synchronizable.State synchronizationState = Synchronizable.State.NONE;
@@ -167,21 +160,6 @@ public final class LmrsData implements DesireBased, Synchronizable
     Tailgating getTailgating()
     {
         return this.tailgating;
-    }
-
-    @Override
-    public Optional<Desire> getLatestDesire(final Class<? extends Incentive> incentiveClass)
-    {
-        return Optional.ofNullable(this.desireMap.get(incentiveClass));
-    }
-
-    /**
-     * Returns the desire map.
-     * @return desire map
-     */
-    Map<Class<? extends Incentive>, Desire> getDesireMap()
-    {
-        return this.desireMap;
     }
 
     /**

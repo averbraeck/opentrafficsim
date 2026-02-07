@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -33,6 +32,7 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AbstractIncentivesTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
@@ -105,8 +105,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param carFollowingModel car-following model
      * @param lmrsData LMRS data
      * @param perception perception
-     * @param mandatoryIncentives set of mandatory lane change incentives
-     * @param voluntaryIncentives set of voluntary lane change incentives
+     * @param incentives planner with set of incentives
      * @return simple operational plan
      * @throws GtuException gtu exception
      * @throws NetworkException network exception
@@ -115,8 +114,8 @@ public final class LmrsUtil implements LmrsParameters
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static SimpleOperationalPlan determinePlan(final LaneBasedGtu gtu, final CarFollowingModel carFollowingModel,
-            final LmrsData lmrsData, final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,
-            final Iterable<VoluntaryIncentive> voluntaryIncentives) throws GtuException, NetworkException, ParameterException
+            final LmrsData lmrsData, final LanePerception perception, final AbstractIncentivesTacticalPlanner incentives)
+            throws GtuException, NetworkException, ParameterException
     {
 
         // obtain objects to get info
@@ -146,8 +145,7 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // determine lane change desire based on incentives
-        Desire desire = getLaneChangeDesire(params, perception, carFollowingModel, mandatoryIncentives, voluntaryIncentives,
-                lmrsData.getDesireMap());
+        Desire desire = getLaneChangeDesire(params, perception, carFollowingModel, incentives);
 
         // lane change decision
         LateralDirectionality initiatedOrContinuedLaneChange;
@@ -326,16 +324,13 @@ public final class LmrsUtil implements LmrsParameters
      * @param parameters parameters
      * @param perception perception
      * @param carFollowingModel car-following model
-     * @param mandatoryIncentives mandatory incentives
-     * @param voluntaryIncentives voluntary incentives
-     * @param desireMap map where calculated desires are stored in
+     * @param incentives planner with set of incentives
      * @return lane change desire for gtu
      * @throws ParameterException if a parameter is not defined
      * @throws GtuException if there is no mandatory incentive, the model requires at least one
      */
     public static Desire getLaneChangeDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Iterable<MandatoryIncentive> mandatoryIncentives,
-            final Iterable<VoluntaryIncentive> voluntaryIncentives, final Map<Class<? extends Incentive>, Desire> desireMap)
+            final CarFollowingModel carFollowingModel, final AbstractIncentivesTacticalPlanner incentives)
             throws ParameterException, GtuException
     {
         if (perception.getGtu().getLaneChangeDirection().isLeft())
@@ -350,61 +345,40 @@ public final class LmrsUtil implements LmrsParameters
         double dSync = parameters.getParameter(DSYNC);
         double dCoop = parameters.getParameter(DCOOP);
 
-        // Mandatory desire
-        double dLeftMandatory = 0.0;
-        double dRightMandatory = 0.0;
-        Desire mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
-        for (MandatoryIncentive incentive : mandatoryIncentives)
-        {
-            Desire d = incentive.determineDesire(parameters, perception, carFollowingModel, mandatoryDesire);
-            desireMap.put(incentive.getClass(), d);
-            dLeftMandatory = Math.abs(d.left()) > Math.abs(dLeftMandatory) ? d.left() : dLeftMandatory;
-            dRightMandatory = Math.abs(d.right()) > Math.abs(dRightMandatory) ? d.right() : dRightMandatory;
-            mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
-        }
-
-        // Voluntary desire
-        double dLeftVoluntary = 0;
-        double dRightVoluntary = 0;
-        Desire voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
-        for (VoluntaryIncentive incentive : voluntaryIncentives)
-        {
-            Desire d = incentive.determineDesire(parameters, perception, carFollowingModel, mandatoryDesire, voluntaryDesire);
-            desireMap.put(incentive.getClass(), d);
-            dLeftVoluntary += d.left();
-            dRightVoluntary += d.right();
-            voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
-        }
-
-        // Total desire
+        Desire mandatoryDesire = incentives.getMandatoryDesire(parameters, perception, carFollowingModel);
+        Desire voluntaryDesire = incentives.getVoluntaryDesire(parameters, perception, carFollowingModel);
         double thetaA = parameters.getParameter(LAMBDA_V);
+        double leftThetaV = getThetaV(mandatoryDesire.left(), voluntaryDesire.left(), dSync, dCoop);
+        double rightThetaV = getThetaV(mandatoryDesire.right(), voluntaryDesire.right(), dSync, dCoop);
+        return new Desire(mandatoryDesire.left() + thetaA * leftThetaV * voluntaryDesire.left(),
+                mandatoryDesire.right() + thetaA * rightThetaV * voluntaryDesire.right());
+    }
+
+    /**
+     * Obtains theta, which is the level by which voluntary incentives are considered, given the prevalence of mandatory desire.
+     * @param mandatoryDesire mandatory desire
+     * @param voluntaryDesire voluntary desire
+     * @param dSync synchronization threshold
+     * @param dCoop cooperation threshold
+     * @return theta
+     */
+    private static double getThetaV(final double mandatoryDesire, final double voluntaryDesire, final double dSync,
+            final double dCoop)
+    {
         double leftThetaV = 0;
-        double dLeftMandatoryAbs = Math.abs(dLeftMandatory);
-        double dRightMandatoryAbs = Math.abs(dRightMandatory);
-        if (dLeftMandatoryAbs <= dSync || dLeftMandatory * dLeftVoluntary >= 0)
+        double dLeftMandatoryAbs = Math.abs(mandatoryDesire);
+
+        if (dLeftMandatoryAbs <= dSync || mandatoryDesire * voluntaryDesire >= 0)
         {
             // low mandatory desire, or same sign
             leftThetaV = 1;
         }
-        else if (dSync < dLeftMandatoryAbs && dLeftMandatoryAbs < dCoop && dLeftMandatory * dLeftVoluntary < 0)
+        else if (dSync < dLeftMandatoryAbs && dLeftMandatoryAbs < dCoop && mandatoryDesire * voluntaryDesire < 0)
         {
             // linear from 1 at dSync to 0 at dCoop
             leftThetaV = (dCoop - dLeftMandatoryAbs) / (dCoop - dSync);
         }
-        double rightThetaV = 0;
-        if (dRightMandatoryAbs <= dSync || dRightMandatory * dRightVoluntary >= 0)
-        {
-            // low mandatory desire, or same sign
-            rightThetaV = 1;
-        }
-        else if (dSync < dRightMandatoryAbs && dRightMandatoryAbs < dCoop && dRightMandatory * dRightVoluntary < 0)
-        {
-            // linear from 1 at dSync to 0 at dCoop
-            rightThetaV = (dCoop - dRightMandatoryAbs) / (dCoop - dSync);
-        }
-        return new Desire(dLeftMandatory + thetaA * leftThetaV * dLeftVoluntary,
-                dRightMandatory + thetaA * rightThetaV * dRightVoluntary);
-
+        return leftThetaV;
     }
 
     /**

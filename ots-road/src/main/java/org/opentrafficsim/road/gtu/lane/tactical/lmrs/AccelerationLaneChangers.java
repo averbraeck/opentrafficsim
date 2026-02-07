@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -12,7 +13,6 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -41,10 +41,9 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
     }
 
     @Override
-    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
-            final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
-            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws ParameterException, GtuException
+    public Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
     {
         for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
         {
@@ -54,12 +53,11 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
             {
                 if (leader.getManeuver().isChangingLane(flip))
                 {
-                    simplePlan.minimizeAcceleration(
-                            CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo, leader));
-                    break;
+                    return CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo, leader);
                 }
             }
         }
+        return NO_REASON;
     }
 
     @Override

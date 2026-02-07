@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.Optional;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -14,7 +15,6 @@ import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedLaneBasedObject;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -32,9 +32,11 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public interface AccelerationIncentive
 {
 
+    /** Field to return when there is no reason to accelerate/decelerate. */
+    Acceleration NO_REASON = Acceleration.POS_MAXVALUE;
+
     /**
      * Determine acceleration.
-     * @param simplePlan simple plan to set the acceleration
      * @param lane lane on which to consider the acceleration
      * @param mergeDistance distance over which a lane change is impossible
      * @param gtu gtu
@@ -43,12 +45,13 @@ public interface AccelerationIncentive
      * @param speed current speed
      * @param params parameters
      * @param speedLimitInfo speed limit info
+     * @return acceleration
      * @throws ParameterException on missing parameter
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
      */
-    void accelerate(SimpleOperationalPlan simplePlan, RelativeLane lane, Length mergeDistance, LaneBasedGtu gtu,
-            LanePerception perception, CarFollowingModel carFollowingModel, Speed speed, Parameters params,
-            SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException;
+    Acceleration accelerate(RelativeLane lane, Length mergeDistance, LaneBasedGtu gtu, LanePerception perception,
+            CarFollowingModel carFollowingModel, Speed speed, Parameters params, SpeedLimitInfo speedLimitInfo)
+            throws ParameterException, GtuException;
 
     /**
      * Returns an iterable with only those lane-based objects that are on the route, accounting for longitudinal direction of

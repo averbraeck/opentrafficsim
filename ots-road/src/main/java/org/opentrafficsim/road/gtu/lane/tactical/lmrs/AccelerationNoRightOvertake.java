@@ -17,7 +17,6 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -59,10 +58,9 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
     }
 
     @Override
-    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
-            final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
-            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws ParameterException, GtuException
+    public Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
     {
         // TODO ignore incentive if we need to change lane for the route
         if (lane.isCurrent() && perception.getLaneStructure().exists(RelativeLane.LEFT))
@@ -70,6 +68,7 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
             Speed vCong = params.getParameter(VCONG);
             if (perception.getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT).si > vCong.si)
             {
+                // TODO depends on left/right traffic
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                         perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
@@ -82,11 +81,12 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
                         // TODO only sensible if the left leader can change right; add this info to HeadwayGtu?
                         Acceleration a =
                                 CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo, leader);
-                        simplePlan.minimizeAcceleration(a.si < -b0.si ? b0.neg() : a);
+                        return a.si < -b0.si ? b0.neg() : a;
                     }
                 }
             }
         }
+        return NO_REASON;
     }
 
 }

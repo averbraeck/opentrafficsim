@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.util.Optional;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -20,13 +18,10 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
-import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsData;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
@@ -48,7 +43,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBased, Synchronizable, Blockable
+public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchronizable, Blockable
 {
 
     /** LMRS data. */
@@ -83,8 +78,8 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         Parameters params = getGtu().getParameters();
 
         // LMRS
-        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), getCarFollowingModel(), this.lmrsData,
-                getPerception(), getMandatoryIncentives(), getVoluntaryIncentives());
+        SimpleOperationalPlan simplePlan =
+                LmrsUtil.determinePlan(getGtu(), getCarFollowingModel(), this.lmrsData, getPerception(), this);
 
         // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -109,16 +104,12 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
             if (getPerception().getLaneStructure().getRootCrossSection().contains(lane))
             {
                 // On the current lane, consider all incentives. On adjacent lanes only consider incentives beyond the distance
-                // over
-                // which a lane change is not yet possible, i.e. the merge distance.
+                // over which a lane change is not yet possible, i.e. the merge distance.
                 // TODO: consider route in incentives (only if not on current lane?)
                 Length mergeDistance = lane.isCurrent() ? Length.ZERO
                         : Synchronization.getMergeDistance(getPerception(), lane.getLateralDirectionality());
-                for (AccelerationIncentive incentive : getAccelerationIncentives())
-                {
-                    incentive.accelerate(simplePlan, lane, mergeDistance, getGtu(), getPerception(), getCarFollowingModel(),
-                            speed, params, sli);
-                }
+                simplePlan.minimizeAcceleration(getAcceleration(lane, mergeDistance, getGtu(), getPerception(),
+                        getCarFollowingModel(), speed, params, sli));
             }
         }
 
@@ -129,12 +120,6 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan,
                 getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
 
-    }
-
-    @Override
-    public final Optional<Desire> getLatestDesire(final Class<? extends Incentive> incentiveClass)
-    {
-        return this.lmrsData.getLatestDesire(incentiveClass);
     }
 
     @Override

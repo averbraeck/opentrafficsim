@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -66,10 +67,10 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-
         double dLeftYes = 0;
         double dRightYes = 0;
         double dLeftNo = 0;

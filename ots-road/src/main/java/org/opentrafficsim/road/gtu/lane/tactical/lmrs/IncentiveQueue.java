@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -59,7 +60,8 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
         if (!perception.contains(IntersectionPerception.class))

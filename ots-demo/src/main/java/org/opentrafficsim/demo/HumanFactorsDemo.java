@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,6 @@ import org.opentrafficsim.draw.colorer.FixedColorer;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
-import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
@@ -121,7 +119,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                     new HistoryManagerDevs(simulator, Duration.ofSI(3.0), Duration.ofSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
             List<Colorer<? super Gtu>> colorers =
-                    List.of(new FixedColorer<>(Colors.OTS_BLUE.darker(), "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
+                    List.of(new FixedColorer<>(Colors.OTS_BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
                             new SocialPressureGtuColorer(), new IncentiveGtuColorer(IncentiveSocioSpeed.class),
                             new AttentionGtuColorer(), new TaskSaturationGtuColorer());
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,

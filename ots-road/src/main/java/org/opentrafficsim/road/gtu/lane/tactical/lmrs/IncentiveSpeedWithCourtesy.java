@@ -5,6 +5,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
@@ -75,14 +76,14 @@ public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Sta
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-
         // zero if no lane change is possible
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         TrafficPerception traffic = perception.getPerceptionCategory(TrafficPerception.class);
-        EgoPerception ego = perception.getPerceptionCategory(EgoPerception.class);
+        EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
         double leftDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si;
         double rightDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
 

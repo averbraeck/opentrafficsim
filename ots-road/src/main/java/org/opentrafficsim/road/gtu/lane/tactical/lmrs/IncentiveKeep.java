@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -47,10 +48,12 @@ public final class IncentiveKeep implements VoluntaryIncentive, Stateless<Incent
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-        if (mandatoryDesire.right() < 0 || voluntaryDesire.right() < 0
+        Desire voluntarySpeed = voluntaryDesire.get(IncentiveSpeedWithCourtesy.class);
+        if ((voluntarySpeed != null && voluntarySpeed.right() < 0) || mandatoryDesire.right() < 0
                 || !perception.getLaneStructure().exists(RelativeLane.RIGHT))
         {
             // no desire to go right if more dominant incentives provide a negative desire to go right

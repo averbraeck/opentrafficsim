@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -31,6 +32,7 @@ public interface VoluntaryIncentive extends Incentive
      * @throws OperationalPlanException in case of a perception exception
      */
     Desire determineDesire(Parameters parameters, LanePerception perception, CarFollowingModel carFollowingModel,
-            Desire mandatoryDesire, Desire voluntaryDesire) throws ParameterException, OperationalPlanException;
+            Desire mandatoryDesire, ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
+            throws ParameterException, OperationalPlanException;
 
 }

@@ -19,7 +19,6 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedBusStop;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
@@ -62,16 +61,15 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
 
     @Override
     @SuppressWarnings("checkstyle:parameternumber")
-    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
-            final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
-            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws ParameterException, GtuException
+    public Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
     {
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
                 perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
         if (stops.isEmpty())
         {
-            return;
+            return NO_REASON;
         }
         BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute().orElseThrow(
                 () -> new GtuException("Unable to determine acceleration for bus stops for bus without bus schedule."));
@@ -110,17 +108,17 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
                     if (stoppedAtStop)
                     {
                         // stand still at location where stop was initiated
-                        simplePlan.minimizeAcceleration(Acceleration.ZERO);
+                        return Acceleration.ZERO;
                     }
                     else
                     {
                         // decelerate to initiate stop
-                        simplePlan.minimizeAcceleration(
-                                CarFollowingUtil.stop(carFollowingModel, params, speed, speedLimitInfo, stop.getDistance()));
+                        return CarFollowingUtil.stop(carFollowingModel, params, speed, speedLimitInfo, stop.getDistance());
                     }
                 }
             }
         }
+        return NO_REASON;
     }
 
     @Override

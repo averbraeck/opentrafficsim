@@ -1,8 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -43,8 +45,9 @@ public final class IncentiveSpeed implements VoluntaryIncentive, Stateless<Incen
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
-            throws ParameterException
+            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
+            throws ParameterException, OperationalPlanException
     {
         // TODO: SpeedWithCourtesy now uses TrafficPerception, which embeds the courtesy part. How to do this?
         return new Desire(0, 0);

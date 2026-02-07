@@ -16,7 +16,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPercep
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
@@ -50,10 +49,9 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
     }
 
     @Override
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
-            final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
-            final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws ParameterException, GtuException
+    public final Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
+            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
+            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
     {
         EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();
@@ -73,15 +71,16 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
         conflicts = onRoute(conflicts, gtu);
         Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, width, speed,
                 acceleration, speedLimitInfo, this.conflictPlans, gtu, lane);
-        simplePlan.minimizeAcceleration(a);
-        if (this.conflictPlans.getIndicatorIntent().isLeft())
-        {
-            simplePlan.setIndicatorIntentLeft(this.conflictPlans.getIndicatorObjectDistance());
-        }
-        else if (this.conflictPlans.getIndicatorIntent().isRight())
-        {
-            simplePlan.setIndicatorIntentRight(this.conflictPlans.getIndicatorObjectDistance());
-        }
+        // TODO: set the following in a new input relating to indicator intent
+        // if (this.conflictPlans.getIndicatorIntent().isLeft())
+        // {
+        // simplePlan.setIndicatorIntentLeft(this.conflictPlans.getIndicatorObjectDistance());
+        // }
+        // else if (this.conflictPlans.getIndicatorIntent().isRight())
+        // {
+        // simplePlan.setIndicatorIntentRight(this.conflictPlans.getIndicatorObjectDistance());
+        // }
+        return a;
     }
 
     @Override

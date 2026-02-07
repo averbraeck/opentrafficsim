@@ -4,6 +4,7 @@ import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -61,7 +62,8 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
+            final CarFollowingModel carFollowingModel,
+            final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();

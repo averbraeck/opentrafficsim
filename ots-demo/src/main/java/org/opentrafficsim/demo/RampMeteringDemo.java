@@ -84,7 +84,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AbstractIncentivesTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
@@ -96,7 +95,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -558,9 +556,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         /** Lane change system. */
         private AutomaticLaneChangeSystem laneChangeSystem;
 
-        /** Map that {@code getLaneChangeDesire} writes current desires in. This is not used here. */
-        private Map<Class<? extends Incentive>, Desire> dummyMap = new LinkedHashMap<>();
-
         /**
          * Constructor.
          * @param gtu gtu
@@ -607,8 +602,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
             SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
 
             // LMRS desire
-            Desire desire = LmrsUtil.getLaneChangeDesire(getGtu().getParameters(), getPerception(), getCarFollowingModel(),
-                    getMandatoryIncentives(), getVoluntaryIncentives(), this.dummyMap);
+            Desire desire =
+                    LmrsUtil.getLaneChangeDesire(getGtu().getParameters(), getPerception(), getCarFollowingModel(), this);
 
             // other vehicles respond to these 'interpreted' levels of lane change desire
             getGtu().getParameters().setClaimedParameter(LmrsParameters.DLEFT, desire.left(), this);
@@ -628,11 +623,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
             // compose human plan
             SimpleOperationalPlan simplePlan =
                     new SimpleOperationalPlan(a, getGtu().getParameters().getParameter(ParameterTypes.DT));
-            for (AccelerationIncentive incentive : getAccelerationIncentives())
-            {
-                incentive.accelerate(simplePlan, RelativeLane.CURRENT, Length.ZERO, getGtu(), getPerception(),
-                        getCarFollowingModel(), speed, getGtu().getParameters(), sli);
-            }
+            simplePlan.minimizeAcceleration(getAcceleration(RelativeLane.CURRENT, Length.ZERO, getGtu(), getPerception(),
+                    getCarFollowingModel(), speed, getGtu().getParameters(), sli));
 
             // add lane change control
             double dFree = getGtu().getParameters().getParameter(LmrsParameters.DFREE);
