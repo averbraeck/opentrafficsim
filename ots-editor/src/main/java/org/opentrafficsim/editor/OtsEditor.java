@@ -381,6 +381,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         UIManager.put("Tree.collapsedIcon", IconUtil.of("Collapsed24.png").imageSize(18, 18).get());
         UIManager.put("Tree.expandedIcon", IconUtil.of("Expanded24.png").imageSize(18, 18).get());
         UIManager.put("Tree.paintLines", false);
+        UIManager.put("Tree.rightChildIndent", 7);
 
         // empty tree table
         this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null));
