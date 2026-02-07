@@ -22,6 +22,7 @@ import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.plot.XYPlot;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.trajectory.AccelerationTrajectoryColorer;
 import org.opentrafficsim.draw.colorer.trajectory.FixedTrajectoryColorer;
 import org.opentrafficsim.draw.colorer.trajectory.IdTrajectoryColorer;
@@ -91,7 +92,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
         {
             if (defaultColorers)
             {
-                addColorer(new FixedTrajectoryColorer(Color.BLUE, "Blue"), true);
+                addColorer(new FixedTrajectoryColorer(Colors.OTS_BLUE, "Blue"), true);
                 addColorer(new IdTrajectoryColorer(), false);
                 addColorer(new SpeedTrajectoryColorer(), false);
                 addColorer(new AccelerationTrajectoryColorer(), false);
@@ -99,7 +100,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
             else
             {
                 // Make sure a single-lane plot has some colorer, even if non will be set through addColorer()
-                plot.setColorer(new FixedTrajectoryColorer(Color.BLUE, "Blue"));
+                plot.setColorer(new FixedTrajectoryColorer(Colors.OTS_BLUE, "Blue"));
             }
         }
     }
