@@ -18,7 +18,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
- * Accelerate to follow lane-chaning leaders from adjacent lanes towards the current lane.
+ * Accelerate to follow lane-changing leaders from adjacent lanes towards the current lane. This is only relevant when
+ * {@code LaneBookkeeping.EDGE} is used.
  * <p>
  * Copyright (c) 2026-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
