@@ -1,9 +1,8 @@
-package org.opentrafficsim.road.gtu.lane.tactical;
+package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 
 /**
  * Interface for tactical planners that can return acceleration information.

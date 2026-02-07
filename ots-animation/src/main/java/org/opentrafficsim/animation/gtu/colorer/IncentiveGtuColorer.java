@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.util.Optional;
 
-import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DesireBased;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 
 /**

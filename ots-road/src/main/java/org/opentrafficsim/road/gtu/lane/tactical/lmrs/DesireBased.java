@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical;
+package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.util.Optional;
 
