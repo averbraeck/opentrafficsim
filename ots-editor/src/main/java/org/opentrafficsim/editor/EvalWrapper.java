@@ -26,7 +26,7 @@ import org.opentrafficsim.xml.bindings.ExpressionAdapter;
  * object via the editor and be notified of any change. In particular, changes involve changes in the input parameters. This
  * wrapper makes sure that it returns an evaluator based on the current input parameters and selected scenario in the editor.
  * <p>
- * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
@@ -314,7 +314,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     /**
      * Interface for listeners that need to know when evaluation results may have changed.
      * <p>
-     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>

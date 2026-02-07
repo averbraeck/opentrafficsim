@@ -11,7 +11,7 @@ import org.djutils.exceptions.Throw;
  * lines. For example, this can entail a complicated road marking consisting of a continuous line, a narrow gap, a colored wide
  * area (included as a wide line), a narrow gap, and a dashed line.
  * <p>
- * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

@@ -13,7 +13,7 @@ import org.opentrafficsim.editor.extensions.Adapters;
  * Listener for flattener nodes, either under the network or at a link (shape). This class can also calculate a flattener
  * representing the information under a flattener node.
  * <p>
- * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

@@ -26,7 +26,7 @@ import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.
  * GTUs.</li>
  * </ul>
  * <p>
- * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
@@ -172,7 +172,7 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
     /**
      * Iterator over objects on a {@code LaneRecordInterface}. This is used by {@code NavigatingIterable} to find object.
      * <p>
-     * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
@@ -256,7 +256,7 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
      * Container for a perceived object with the distance towards it and the distance until the road of the object and the road
      * of the perceiving GTU merge.
      * <p>
-     * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>

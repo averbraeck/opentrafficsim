@@ -26,7 +26,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
  * queue. This is defined as the maximum of {@code max(0,-dv)/v0 * (1-s/x0)}, where {@code dv} is the approaching speed to a
  * leader, {@code v0} is the desired speed, {@code s} is the distance to the leader and {@code x0} is the look-ahead distance.
  * <p>
- * Copyright (c) 2024-2025 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

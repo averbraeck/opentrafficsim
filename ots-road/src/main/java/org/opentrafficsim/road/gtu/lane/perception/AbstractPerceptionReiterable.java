@@ -18,7 +18,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * iterates over the linked list. If an iterator runs to the end of the linked list, the primary iterator is requested to add an
  * element if it has one.
  * <p>
- * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -245,7 +245,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
      * same linked list of {@code SecondaryIteratorEntry}. Whenever an iterator runs to the end of this list, the primary
      * iterator is requested to find the next object, if it has a next object.
      * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
@@ -324,7 +324,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
     /**
      * Entries that make up a linked list of values for secondary iterators to iterate over.
      * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>

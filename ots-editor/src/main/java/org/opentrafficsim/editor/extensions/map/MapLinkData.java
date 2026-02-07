@@ -73,7 +73,7 @@ import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
  * LinkData for the editor Map. This class will also listen to any changes that may affect the link shape, maintain the drawn
  * layout, and maintain the priority animation.
  * <p>
- * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
@@ -1020,7 +1020,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /**
      * Listener to events that affect the shape. This class can also deliver the resulting line.
      * <p>
-     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>

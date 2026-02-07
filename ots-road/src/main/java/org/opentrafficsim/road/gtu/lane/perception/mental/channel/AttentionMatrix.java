@@ -10,7 +10,7 @@ import Jama.Matrix;
  * demand is above 1, this means that the probability of switching to another channel is reduced. All transition probabilities
  * together result in an overall steady-state, which describes what fraction of time is spent on what channel.
  * <p>
- * Copyright (c) 2024-2025 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

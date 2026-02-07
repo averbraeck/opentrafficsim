@@ -18,7 +18,7 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
  * value are equal, where null values are also considered. This validator should not be used on {@code xsd:all} types as those
  * are checked automatically and the value is not relevant in that case.
  * <p>
- * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

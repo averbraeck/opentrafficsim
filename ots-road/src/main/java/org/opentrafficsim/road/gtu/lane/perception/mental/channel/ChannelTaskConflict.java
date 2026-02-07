@@ -39,7 +39,7 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
  * {@code exp(-max(T_ego, min(T_conf))/h)} where {@code T_ego} is the ego time until the first conflict, {@code T_conf} is the
  * time until the respective conflict of a conflicting vehicle and {@code h} is the car-following task parameter that scales it.
  * <p>
- * Copyright (c) 2024-2025 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

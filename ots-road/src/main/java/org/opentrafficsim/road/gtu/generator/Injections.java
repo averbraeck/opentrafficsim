@@ -73,7 +73,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * simply return information from the current row in the injections table. Function 4 and 5 are tracked independently and
  * asynchronous with the rest, as these occur at later times when GTUs are (attempted to be) placed.
  * <p>
- * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2022-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>

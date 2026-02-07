@@ -19,7 +19,7 @@ import org.w3c.dom.Node;
  * Validator for xsd:keyref, which allows to define multiple fields. This class will maintain a list of nodes (fed automatically
  * by an external listener) and validate that the field values are, as a set, within the given {@code KeyValidator}.
  * <p>
- * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

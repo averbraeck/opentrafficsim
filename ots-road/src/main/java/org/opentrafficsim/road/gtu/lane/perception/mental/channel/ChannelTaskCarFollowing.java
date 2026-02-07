@@ -20,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTaskCarFollowingE
  * Task demand for car-following. This is defined as {@code exp(-T/h)} where {@code T} is the time headway to the leader and
  * {@code h} is the car-following task parameter that scales it.
  * <p>
- * Copyright (c) 2024-2025 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>

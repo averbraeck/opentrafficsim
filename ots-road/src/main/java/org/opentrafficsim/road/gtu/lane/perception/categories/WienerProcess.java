@@ -19,7 +19,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * Treiber, M., A. Kesting, D. Helbing (2006) "Delays, Inaccuracies and Anticipation in Microscopic Traffic Models", Physica A –
  * Statistical Mechanics and its Applications, Vol. 360, Issue 1, pp. 71-88.
  * <p>
- * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>

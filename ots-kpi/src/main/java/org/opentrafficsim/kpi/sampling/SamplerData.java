@@ -46,7 +46,7 @@ import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
  * guaranteed read-only class. Any type can obtain the lane directions and with those the coupled trajectory groups.
  * Trajectories can be added to these trajectory groups. Data can also be added to the trajectories themselves.
  * <p>
- * Copyright (c) 2020-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2020-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
