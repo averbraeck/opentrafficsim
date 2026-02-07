@@ -10,6 +10,7 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.OtsRenderable;
@@ -68,7 +69,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         this.text = new Text(link, link::getId, 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 RenderableTextSource.RENDERWHEN10);
         setPath();
-        this.color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
+        this.color = getSource().isConnector() ? Color.PINK.darker() : Colors.OTS_BLUE;
     }
 
     /**

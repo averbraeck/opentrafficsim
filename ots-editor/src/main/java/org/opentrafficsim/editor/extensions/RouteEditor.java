@@ -12,6 +12,7 @@ import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.swing.gui.IconUtil;
 
 /**
  * Editor for route.
@@ -33,7 +34,7 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
      */
     public RouteEditor(final OtsEditor editor) throws RemoteException
     {
-        editor.addTab("Route", null, buildRoutePane(), null);
+        editor.addTab("Route", IconUtil.of("Route24.png").imageSize(18, 18).get(), buildRoutePane(), null);
         editor.addListener(this, OtsEditor.NEW_FILE);
         this.editor = editor;
     }

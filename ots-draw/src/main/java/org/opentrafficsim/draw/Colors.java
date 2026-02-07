@@ -14,6 +14,9 @@ import java.awt.Color;
 public final class Colors
 {
 
+    /** OTS blue (#0066c4). */
+    public static final Color OTS_BLUE = new Color(0, 102, 196);
+
     /** 3-color scale from green to red. */
     public static final Color[] GREEN_RED = new Color[] {Color.GREEN, Color.YELLOW, Color.RED};
 

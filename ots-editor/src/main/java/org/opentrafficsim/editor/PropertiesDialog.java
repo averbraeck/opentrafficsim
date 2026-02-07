@@ -6,7 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.List;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -41,7 +41,7 @@ public class PropertiesDialog extends JDialog
      * @param properties list of properties (keys even indices, values at uneven)
      * @param questionMark question mark icon
      */
-    public PropertiesDialog(final OtsEditor owner, final List<String> properties, final ImageIcon questionMark)
+    public PropertiesDialog(final OtsEditor owner, final List<String> properties, final Icon questionMark)
     {
         super(owner, "Properties", true);
 

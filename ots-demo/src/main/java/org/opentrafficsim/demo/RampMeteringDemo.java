@@ -26,10 +26,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.CompressedFileWriter;
-import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.GtuTypeGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -126,6 +123,7 @@ import org.opentrafficsim.road.od.Interpolation;
 import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdOptions;
+import org.opentrafficsim.swing.gui.OtsSwingApplication;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -259,8 +257,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         this.definitions.add(GtuType.class, car);
         this.definitions.add(GtuType.class, controlledCar);
 
-        List<Colorer<? super Gtu>> colorers = List.of(new IdGtuColorer(), new SpeedGtuColorer(), new AccelerationGtuColorer(),
-                new GtuTypeGtuColorer(car, controlledCar));
+        List<Colorer<? super Gtu>> colorers = new ArrayList<>(OtsSwingApplication.DEFAULT_GTU_COLORERS);
+        colorers.add(new GtuTypeGtuColorer(car, controlledCar));
         setGtuColorers(colorers);
 
         // parameters

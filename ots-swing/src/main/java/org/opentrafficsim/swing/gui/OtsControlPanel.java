@@ -18,7 +18,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -27,18 +26,14 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
-import javax.swing.GrayFilter;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -58,7 +53,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -125,6 +119,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     /** Has cleanup taken place? */
     private boolean isCleanUp = false;
 
+    /** Pause icon. */
+    private final Icon pause = IconUtil.of("Pause24.png").get();
+
+    /** Play icon. */
+    private final Icon play = IconUtil.of("Play24.png").get();
+
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator the simulator
@@ -143,10 +143,11 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.add(makeButton("stepButton", "/Last_recor.png", "Step", "Execute one event", true));
-        buttonPanel.add(makeButton("nextTimeButton", "/NextTrack.png", "NextTime",
+        buttonPanel.add(makeButton("stepButton", "Next24.png", "Step", "Execute one event", true));
+        buttonPanel.add(makeButton("nextTimeButton", "Step24.png", "NextTime",
                 "Execute all events scheduled for the current time", true));
-        buttonPanel.add(makeButton("runPauseButton", "/Play.png", "RunPause", "XXX", true));
+        buttonPanel.add(makeButton("runPauseButton", "Play24.png", "RunPause", "XXX", true));
+
         this.timeWarpPanel = new TimeWarpPanel(0.1, 1000, 1, 3, simulator);
         buttonPanel.add(this.timeWarpPanel);
         // buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
@@ -236,33 +237,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
             final boolean enabled)
     {
-        /** Button with appearance control. */
-        class AppearanceControlButton extends JButton implements AppearanceControl
-        {
-            /** */
-            private static final long serialVersionUID = 20180206L;
-
-            /**
-             * @param loadIcon icon
-             */
-            AppearanceControlButton(final Icon loadIcon)
-            {
-                super(loadIcon);
-            }
-
-            @Override
-            public boolean isFont()
-            {
-                return true;
-            }
-
-            @Override
-            public String toString()
-            {
-                return "AppearanceControlButton []";
-            }
-        }
-        JButton result = new AppearanceControlButton(loadIcon(iconPath).get());
+        JButton result = new AppearanceControlButton(IconUtil.of(iconPath).get());
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
@@ -270,43 +245,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         result.addActionListener(this);
         this.buttons.add(result);
         return result;
-    }
-
-    /**
-     * Attempt to load and return an icon.
-     * @param iconPath the path that is used to load the icon
-     * @return icon or empty if loading failed
-     */
-    public static final Optional<Icon> loadIcon(final String iconPath)
-    {
-        try
-        {
-            return Optional.of(new ImageIcon(ImageIO.read(ResourceResolver.resolve(iconPath).openStream())));
-        }
-        catch (NullPointerException | IOException npe)
-        {
-            Logger.ots().error("Could not load icon from path {}", iconPath);
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Attempt to load and return an icon, which will be made gray-scale.
-     * @param iconPath the path that is used to load the icon
-     * @return icon or empty if loading failed
-     */
-    public static final Optional<Icon> loadGrayscaleIcon(final String iconPath)
-    {
-        try
-        {
-            return Optional.of(new ImageIcon(
-                    GrayFilter.createDisabledImage(ImageIO.read(ResourceResolver.resolve(iconPath).openStream()))));
-        }
-        catch (NullPointerException | IOException e)
-        {
-            Logger.ots().error("Could not load icon from path {}", iconPath);
-            return Optional.empty();
-        }
     }
 
     /**
@@ -538,12 +476,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 if (this.simulator.isStartingOrRunning())
                 {
                     button.setToolTipText("Pause the simulation");
-                    button.setIcon(OtsControlPanel.loadIcon("/Pause.png").get());
+                    button.setIcon(this.pause);
                 }
                 else
                 {
                     button.setToolTipText("Run the simulation at the indicated speed");
-                    button.setIcon(loadIcon("/Play.png").get());
+                    button.setIcon(this.play);
                 }
                 button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }

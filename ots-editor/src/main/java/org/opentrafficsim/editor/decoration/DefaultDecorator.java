@@ -1,17 +1,12 @@
 package org.opentrafficsim.editor.decoration;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.naming.NamingException;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -33,6 +28,7 @@ import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
 import org.opentrafficsim.editor.extensions.TrafCodEditor;
 import org.opentrafficsim.editor.extensions.map.EditorMap;
+import org.opentrafficsim.swing.gui.IconUtil;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
@@ -61,36 +57,36 @@ public final class DefaultDecorator
      */
     public static void decorate(final OtsEditor editor) throws IOException, NamingException
     {
-        ImageIcon roadIcon = loadIcon("./OTS_road.png", -1, -1, -1, -1);
-        ImageIcon networkIcon = loadIcon("./OTS_network.png", -1, -1, -1, -1);
-        ImageIcon nodeIcon = loadIcon("./OTS_node.png", -1, -1, -1, -1);
+        Icon roadIcon = IconUtil.of("RoadLayout24.png").imageSize(16, 16).get();
+        Icon nodeIcon = IconUtil.of("Node24.png").imageSize(16, 16).get();
 
-        editor.setCustomIcon("Ots", loadIcon("./OTS_merge.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Definitions", loadIcon("./Database.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots", IconUtil.of("Ots32.png").imageSize(14, 14).iconSize(16, 16).get());
+        editor.setCustomIcon("Ots.Definitions", IconUtil.of("Database24.png").imageSize(16, 16).get());
         editor.setCustomIcon(".RoadLayout", roadIcon);
         editor.setCustomIcon("Ots.Network.Link.DefinedLayout", roadIcon);
-        editor.setCustomIcon("Ots.Network", networkIcon);
+        editor.setCustomIcon("Ots.Network", IconUtil.of("Network24.png").imageSize(16, 16).get());
         editor.setCustomIcon(".Node", nodeIcon);
-        editor.setCustomIcon(".Centroid", loadIcon("./OTS_centroid.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Network.Connector", loadIcon("./OTS_connector.png", -1, -1, -1, -1));
-        editor.setCustomIcon(".Link", loadIcon("./OTS_link.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Demand", loadIcon("./Calendar.png", 16, 16, -1, -1));
+        editor.setCustomIcon(".Centroid", IconUtil.of("Centroid24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Network.Connector", IconUtil.of("Connector24.png").imageSize(16, 16).get());
+        editor.setCustomIcon(".Link", IconUtil.of("Link24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Demand", IconUtil.of("Calendar24.png").imageSize(16, 16).get());
         editor.setCustomIcon("Ots.Demand.ShortestRoute.From", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.To", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.Via", nodeIcon);
         editor.setCustomIcon("Ots.Demand.OdOptions.OdOptionsItem.Origin", nodeIcon);
-        editor.setCustomIcon("Ots.Demand.Od", loadIcon("./Table_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Models", loadIcon("./Component_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Scenarios", loadIcon("./Film.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Control", loadIcon("./OTS_control.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Run", loadIcon("./Stopwatch.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Animation", loadIcon("./Play.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Animation.Connector", loadIcon("./OTS_connector.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Output", loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
+        editor.setCustomIcon("Ots.Demand.Od", IconUtil.of("Table24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Models", IconUtil.of("Component24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Scenarios", IconUtil.of("Scenario24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Control", IconUtil.of("TrafficLight24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Run", IconUtil.of("Run24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Animation", IconUtil.of("Play24.png").imageSize(16, 16).get());
+        editor.setCustomIcon("Ots.Animation.Connector", IconUtil.of("Connector24.png").imageSize(16, 16).get());
+        // does not exist yet
+        editor.setCustomIcon("Ots.Output", IconUtil.of("./Output24.png").imageSize(16, 16).get());
 
-        editor.addTab("Map", networkIcon, EditorMap.build(editor), "Map editor");
-        editor.addTab("Parameters", null, buildParameterPane(), null);
-        editor.addTab("Text", null, buildTextPane(), null);
+        editor.addTab("Map", IconUtil.of("Network24.png").imageSize(18, 18).get(), EditorMap.build(editor), "Map editor");
+        editor.addTab("Parameters", IconUtil.of("Parameter24.png").imageSize(18, 18).get(), buildParameterPane(), null);
+        editor.addTab("Text", IconUtil.of("Text24.png").imageSize(18, 18).get(), buildTextPane(), null);
 
         // string functions
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
@@ -186,36 +182,6 @@ public final class DefaultDecorator
         text.setOpaque(true);
         text.setHorizontalAlignment(JLabel.CENTER);
         return text;
-    }
-
-    /**
-     * Loads an icon, possibly rescaled.
-     * @param image image filename, relative in resources.
-     * @param width width to resize to, may be -1 to leave as is.
-     * @param height width to resize to, may be -1 to leave as is.
-     * @param bgWidth background image width icon will be centered in, may be -1 to leave as is.
-     * @param bgHeight background image height icon will be centered in, may be -1 to leave as is.
-     * @return image icon.
-     * @throws IOException if the file is not in resources.
-     */
-    public static ImageIcon loadIcon(final String image, final int width, final int height, final int bgWidth,
-            final int bgHeight) throws IOException
-    {
-        Image im = ImageIO.read(ResourceResolver.resolve(image).openStream());
-        if (width > 0 || height > 0)
-        {
-            im = im.getScaledInstance(width > 0 ? width : im.getWidth(null), height > 0 ? height : im.getHeight(null),
-                    Image.SCALE_SMOOTH);
-        }
-        if (bgWidth > 0 && bgHeight > 0)
-        {
-            BufferedImage bg = new BufferedImage(bgWidth > 0 ? bgWidth : im.getWidth(null),
-                    bgHeight > 0 ? bgHeight : im.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            Graphics g = bg.getGraphics();
-            g.drawImage(im, (bg.getWidth() - im.getWidth(null)) / 2, (bg.getHeight() - im.getHeight(null)) / 2, null);
-            im = bg;
-        }
-        return new ImageIcon(im);
     }
 
     /**

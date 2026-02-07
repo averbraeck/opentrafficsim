@@ -39,13 +39,11 @@ import java.util.TimerTask;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.CellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -92,12 +90,10 @@ import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Try;
-import org.djutils.io.ResourceResolver;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.Undo.ActionType;
-import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.opentrafficsim.editor.listeners.AttributesListSelectionListener;
 import org.opentrafficsim.editor.listeners.AttributesMouseListener;
 import org.opentrafficsim.editor.listeners.ChangesListener;
@@ -112,7 +108,9 @@ import org.opentrafficsim.editor.render.XsdTreeCellRenderer;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.swing.gui.Appearance;
 import org.opentrafficsim.swing.gui.AppearanceApplication;
+import org.opentrafficsim.swing.gui.AppearanceControlButton;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
+import org.opentrafficsim.swing.gui.IconUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -200,7 +198,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private Map<String, Icon> customIcons = new LinkedHashMap<>();
 
     /** Icon for in question dialog. */
-    private final ImageIcon questionIcon;
+    private final Icon questionIcon;
+
+    /** Icon for in description dialog. */
+    private final Icon descriptionIcon;
+
+    /** Icon for in warning dialog. */
+    private final Icon warningIcon;
 
     /** Root node of the XSD file. */
     private Document xsdDocument;
@@ -331,26 +335,23 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         });
         controlsContainer.add(this.scenario);
         controlsContainer.add(Box.createHorizontalStrut(2));
-        JButton playRun = new JButton();
+        JButton playRun = new AppearanceControlButton(IconUtil.of("Play24.png").imageSize(18, 18).get());
         playRun.setToolTipText("Run single run");
-        playRun.setIcon(DefaultDecorator.loadIcon("./Play.png", 18, 18, -1, -1));
         Dimension iconDimension = new Dimension(24, 24);
         playRun.setMinimumSize(iconDimension);
         playRun.setMaximumSize(iconDimension);
         playRun.setPreferredSize(iconDimension);
         playRun.addActionListener((a) -> runSingle());
         controlsContainer.add(playRun);
-        JButton playScenario = new JButton();
+        JButton playScenario = new AppearanceControlButton(IconUtil.of("Next24.png").imageSize(18, 18).get());
         playScenario.setToolTipText("Run scenario (batch)");
-        playScenario.setIcon(DefaultDecorator.loadIcon("./NextTrack.png", 18, 18, -1, -1));
         playScenario.setMinimumSize(iconDimension);
         playScenario.setMaximumSize(iconDimension);
         playScenario.setPreferredSize(iconDimension);
         playScenario.addActionListener((a) -> runBatch(false));
         controlsContainer.add(playScenario);
-        JButton playAll = new JButton();
+        JButton playAll = new AppearanceControlButton(IconUtil.of("Step24.png").imageSize(18, 18).get());
         playAll.setToolTipText("Run all (batch)");
-        playAll.setIcon(DefaultDecorator.loadIcon("./Last_recor.png", 18, 18, -1, -1));
         playAll.setMinimumSize(iconDimension);
         playAll.setMaximumSize(iconDimension);
         playAll.setPreferredSize(iconDimension);
@@ -362,7 +363,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         rightContainer.add(this.rightSplitPane);
         this.leftRightSplitPane.setRightComponent(rightContainer);
 
-        this.questionIcon = DefaultDecorator.loadIcon("./Question.png", -1, -1, -1, -1);
+        this.questionIcon = IconUtil.of("Question24.png").get();
+        this.descriptionIcon = IconUtil.of("Information24.png").get();
+        this.warningIcon = IconUtil.of("Warning24.png").get();
 
         // visualization pane
         UIManager.getInsets("TabbedPane.contentBorderInsets").set(-1, -1, 1, -1);
@@ -375,10 +378,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // expanded. Also in that case after removal of a node, the tree appearance gets reset and java default icons appear.
         // This happens to the leaf/open/closed icons that can be set on the tree. This needs to be done before the JTreeTable
         // is created, otherwise it loads normal default icons.
-        UIManager.put("Tree.collapsedIcon",
-                new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_collapsed.png").openStream())));
-        UIManager.put("Tree.expandedIcon",
-                new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_expanded.png").openStream())));
+        UIManager.put("Tree.collapsedIcon", IconUtil.of("Collapsed24.png").imageSize(18, 18).get());
+        UIManager.put("Tree.expandedIcon", IconUtil.of("Expanded24.png").imageSize(18, 18).get());
 
         // empty tree table
         this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null));
@@ -398,7 +399,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
         this.attributesTable.setDefaultRenderer(String.class,
-                new AttributeCellRenderer(DefaultDecorator.loadIcon("./Info.png", 12, 12, 16, 16)));
+                new AttributeCellRenderer(IconUtil.of("Information24.png").imageSize(16, 16).get()));
         AttributesCellEditor editor = new AttributesCellEditor(this.attributesTable, this);
         this.attributesTable.setDefaultEditor(String.class, editor);
         this.attributesTable.addMouseListener(new AttributesMouseListener(this, this.attributesTable));
@@ -1069,7 +1070,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      * @param path path.
      * @param icon image icon.
      */
-    public void setCustomIcon(final String path, final ImageIcon icon)
+    public void setCustomIcon(final String path, final Icon icon)
     {
         this.customIcons.put(path, icon);
     }
@@ -1216,7 +1217,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public void showDescription(final String description)
     {
         JOptionPane.showMessageDialog(OtsEditor.this,
-                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>");
+                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>", "Description",
+                JOptionPane.INFORMATION_MESSAGE, this.descriptionIcon);
     }
 
     /**
@@ -1225,7 +1227,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public void showInvalidToRunMessage()
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "The setup is not valid. Make sure no red nodes remain.",
-                "Setup is not valid", JOptionPane.INFORMATION_MESSAGE);
+                "Setup is not valid", JOptionPane.INFORMATION_MESSAGE, this.descriptionIcon);
     }
 
     /**
@@ -1235,7 +1237,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public void showCircularInputParameters(final String message)
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency: " + message,
-                "Circular input parameter", JOptionPane.INFORMATION_MESSAGE);
+                "Circular input parameter", JOptionPane.INFORMATION_MESSAGE, this.warningIcon);
     }
 
     /**
@@ -1245,7 +1247,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public void showInvalidExpression(final String message)
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "An expression is not valid: " + message, "Expression not valid",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE, this.warningIcon);
     }
 
     /**
@@ -1254,7 +1256,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public void showUnableToRunFromTempFile()
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "Unable to run, temporary file could not be saved.", "Unable to run",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE, this.warningIcon);
     }
 
     /**

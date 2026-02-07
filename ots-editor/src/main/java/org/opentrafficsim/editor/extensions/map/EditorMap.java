@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,11 +23,13 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -65,9 +66,8 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
-import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
-import org.opentrafficsim.swing.gui.OtsControlPanel;
+import org.opentrafficsim.swing.gui.IconUtil;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
@@ -95,8 +95,8 @@ public final class EditorMap extends JPanel implements EventListener
     private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
     /** All types that are valid to show in the map. */
-    private static final Set<String> TYPES = Set.of(XsdPaths.NODE, XsdPaths.LINK, XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK,
-            XsdPaths.GENERATOR, XsdPaths.LIST_GENERATOR);
+    private static final Set<String> TYPES = Set.of(XsdPaths.CENTROID, XsdPaths.CONNECTOR, XsdPaths.NODE, XsdPaths.LINK,
+            XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK, XsdPaths.GENERATOR, XsdPaths.LIST_GENERATOR);
 
     /** Context provider. */
     private final Contextualized contextualized;
@@ -180,7 +180,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 super.setExtent(extent);
             }
-
+        
             @Override
             public synchronized void zoomAll()
             {
@@ -197,7 +197,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 EditorMap.this.ignoreKeepScale = false;
             }
-
+        
             @Override
             public synchronized void home()
             {
@@ -305,7 +305,7 @@ public final class EditorMap extends JPanel implements EventListener
         };
 
         Dimension buttonSize = new Dimension(24, 24);
-        JToggleButton nodeButton = new JToggleButton(loadIcon("./OTS_node.png"));
+        JToggleButton nodeButton = new JToggleButton(IconUtil.of("Node24.png").imageSize(18, 18).get());
         nodeButton.setPreferredSize(buttonSize);
         nodeButton.setMinimumSize(buttonSize);
         nodeButton.setMaximumSize(buttonSize);
@@ -313,7 +313,7 @@ public final class EditorMap extends JPanel implements EventListener
         group.add(nodeButton);
         this.toolPanel.add(nodeButton);
 
-        JToggleButton linkButton = new JToggleButton(loadIcon("./OTS_link.png"));
+        JToggleButton linkButton = new JToggleButton(IconUtil.of("Link24.png").imageSize(18, 18).get());
         linkButton.setPreferredSize(buttonSize);
         linkButton.setMinimumSize(buttonSize);
         linkButton.setMaximumSize(buttonSize);
@@ -321,7 +321,7 @@ public final class EditorMap extends JPanel implements EventListener
         group.add(linkButton);
         this.toolPanel.add(linkButton);
 
-        JToggleButton centroidButton = new JToggleButton(loadIcon("./OTS_centroid.png"));
+        JToggleButton centroidButton = new JToggleButton(IconUtil.of("Centroid24.png").imageSize(18, 18).get());
         centroidButton.setPreferredSize(buttonSize);
         centroidButton.setMinimumSize(buttonSize);
         centroidButton.setMaximumSize(buttonSize);
@@ -329,7 +329,7 @@ public final class EditorMap extends JPanel implements EventListener
         group.add(centroidButton);
         this.toolPanel.add(centroidButton);
 
-        JToggleButton connectorButton = new JToggleButton(loadIcon("./OTS_connector.png"));
+        JToggleButton connectorButton = new JToggleButton(IconUtil.of("Connector24.png").imageSize(18, 18).get());
         connectorButton.setPreferredSize(buttonSize);
         connectorButton.setMinimumSize(buttonSize);
         connectorButton.setMaximumSize(buttonSize);
@@ -340,10 +340,33 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(Box.createHorizontalStrut(5));
         JComboBox<String> shape = new AppearanceControlComboBox<>();
         shape.setModel(new DefaultComboBoxModel<>(new String[] {"Straight", "Bezier", "Clothoid", "Arc", "PolyLine"}));
-        shape.setMinimumSize(new Dimension(50, 22));
-        shape.setMaximumSize(new Dimension(90, 22));
-        shape.setPreferredSize(new Dimension(90, 22));
+        shape.setMinimumSize(new Dimension(80, 22));
+        shape.setMaximumSize(new Dimension(100, 22));
+        shape.setPreferredSize(new Dimension(100, 22));
         shape.setToolTipText("Standard shape for new links");
+        // Renderer to combine icon and text
+        Map<String, Icon> shapeIcons = Map.of("straight", IconUtil.of("Straight24.png").imageSize(18, 18).get(), "bezier",
+                IconUtil.of("Bezier24.png").imageSize(18, 18).get(), "clothoid",
+                IconUtil.of("Clothoid24.png").imageSize(18, 18).get(), "arc", IconUtil.of("Arc24.png").imageSize(18, 18).get(),
+                "polyline", IconUtil.of("PolyLine24.png").imageSize(18, 18).get());
+        shape.setRenderer(new DefaultListCellRenderer()
+        {
+            /** */
+            private static final long serialVersionUID = 20260206L;
+
+            @Override
+            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
+                    final boolean isSelected, final boolean cellHasFocus)
+            {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                String shapeId = label.getText().toLowerCase();
+                if (shapeIcons.containsKey(shapeId))
+                {
+                    label.setIcon(shapeIcons.get(shapeId));
+                }
+                return label;
+            }
+        });
         this.toolPanel.add(shape);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
@@ -375,7 +398,7 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(new JLabel("Show:"));
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
-        JButton resetY = new JButton(loadIcon("./Up-down.png"));
+        JButton resetY = new JButton(IconUtil.of("UpDown24.png").imageSize(18, 18).get());
         resetY.setMinimumSize(buttonSize);
         resetY.setMaximumSize(buttonSize);
         resetY.setPreferredSize(buttonSize);
@@ -383,7 +406,7 @@ public final class EditorMap extends JPanel implements EventListener
         resetY.addActionListener((e) -> this.visualizationPanel.resetZoomY());
         this.toolPanel.add(resetY);
 
-        JButton extent = new JButton(loadIcon("./Expand.png"));
+        JButton extent = new JButton(IconUtil.of("ZoomAll24.png").imageSize(18, 18).get());
         extent.setMinimumSize(buttonSize);
         extent.setMaximumSize(buttonSize);
         extent.setPreferredSize(buttonSize);
@@ -391,7 +414,7 @@ public final class EditorMap extends JPanel implements EventListener
         extent.addActionListener((e) -> safeZoomAll());
         this.toolPanel.add(extent);
 
-        JButton grid = new JButton(loadIcon("./Grid.png"));
+        JButton grid = new JButton(IconUtil.of("Grid24.png").imageSize(18, 18).get());
         grid.setMinimumSize(buttonSize);
         grid.setMaximumSize(buttonSize);
         grid.setPreferredSize(buttonSize);
@@ -431,47 +454,29 @@ public final class EditorMap extends JPanel implements EventListener
     }
 
     /**
-     * Loads an icon from the given file. Returns {@code null} if the file can not be found.
-     * @param file file.
-     * @return icon.
-     */
-    private Icon loadIcon(final String file)
-    {
-        try
-        {
-            return DefaultDecorator.loadIcon(file, 16, 16, -1, -1);
-        }
-        catch (IOException ioe)
-        {
-            // skip loading icon
-            return null;
-        }
-    }
-
-    /**
      * Sets the animation toggles as useful for in the editor.
      */
     private void setAnimationToggles()
     {
-        addToggle("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
-        addToggle("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node ids", false, true);
-        addToggle("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
-        addToggle("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link ids", false, true);
-        addToggle("Priority", PriorityData.class, "/icons/Priority24.png", "Show/hide link priority", true, false);
-        addToggle("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
-        addToggle("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane ids", false, true);
-        addToggle("LaneCenter", CenterLine.class, "/icons/CenterLine24.png", "Show/hide lane center lines", false, false);
-        addToggle("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        addToggle("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true, false);
+        addToggle("Node", NodeData.class, "Node24.png", "Show/hide nodes", true, false);
+        addToggle("NodeId", NodeAnimation.Text.class, "Id24.png", "Show/hide node ids", false, true);
+        addToggle("Link", LinkData.class, "Link24.png", "Show/hide links", true, false);
+        addToggle("LinkId", LinkAnimation.Text.class, "Id24.png", "Show/hide link ids", false, true);
+        addToggle("Priority", PriorityData.class, "Priority24.png", "Show/hide link priority", true, false);
+        addToggle("Lane", LaneData.class, "Lane24.png", "Show/hide lanes", true, false);
+        addToggle("LaneId", LaneAnimation.Text.class, "Id24.png", "Show/hide lane ids", false, true);
+        addToggle("Stripe", StripeData.class, "Stripe24.png", "Show/hide stripes", true, false);
+        addToggle("LaneCenter", CenterLine.class, "CenterLine24.png", "Show/hide lane center lines", false, true);
+        addToggle("Shoulder", ShoulderData.class, "Shoulder24.png", "Show/hide shoulders", true, false);
         // TODO: perhaps a specific data type for generators?
-        addToggle("Generator", GtuGeneratorPositionData.class, "/icons/Generator24.png", "Show/hide generators", true, false);
-        addToggle("Sink", SinkData.class, "/icons/Sink24.png", "Show/hide sinks", true, true);
-        addToggle("Detector", LoopDetectorData.class, "/icons/Detector24.png", "Show/hide loop detectors", true, false);
-        addToggle("DetectorId", LoopDetectorData.Text.class, "/icons/Id24.png", "Show/hide loop detector ids", false, true);
-        addToggle("Light", TrafficLightData.class, "/icons/TrafficLight24.png", "Show/hide traffic lights", true, false);
-        addToggle("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png", "Show/hide traffic light ids", false, true);
-        addToggle("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true, false);
-        addToggle("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stop ids", false, true);
+        addToggle("Generator", GtuGeneratorPositionData.class, "Generator24.png", "Show/hide generators", true, false);
+        addToggle("Sink", SinkData.class, "Sink24.png", "Show/hide sinks", true, true);
+        addToggle("Detector", LoopDetectorData.class, "Detector24.png", "Show/hide loop detectors", true, false);
+        addToggle("DetectorId", LoopDetectorData.Text.class, "Id24.png", "Show/hide loop detector ids", false, true);
+        addToggle("Light", TrafficLightData.class, "TrafficLight24.png", "Show/hide traffic lights", true, false);
+        addToggle("LightId", TrafficLightAnimation.Text.class, "Id24.png", "Show/hide traffic light ids", false, true);
+        addToggle("Bus", BusStopData.class, "BusStop24.png", "Show/hide bus stops", true, false);
+        addToggle("BusId", BusStopAnimation.Text.class, "Id24.png", "Show/hide bus stop ids", false, true);
     }
 
     /**
@@ -489,8 +494,8 @@ public final class EditorMap extends JPanel implements EventListener
             final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
-        Icon icon = OtsControlPanel.loadIcon(iconPath).get();
-        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath).get();
+        Icon icon = IconUtil.of(iconPath).get();
+        Icon unIcon = IconUtil.of(iconPath).gray().get();
         button = new JCheckBox();
         button.setSelectedIcon(icon);
         button.setIcon(unIcon);
@@ -785,11 +790,11 @@ public final class EditorMap extends JPanel implements EventListener
             return;
         }
         Renderable2d<?> animation;
-        if (node.getPathString().equals(XsdPaths.NODE))
+        if (node.getPathString().equals(XsdPaths.NODE) || node.getPathString().equals(XsdPaths.CENTROID))
         {
             animation = new NodeAnimation((MapNodeData) data, this.contextualized);
         }
-        else if (node.getPathString().equals(XsdPaths.LINK))
+        else if (node.getPathString().equals(XsdPaths.LINK) || node.getPathString().equals(XsdPaths.CONNECTOR))
         {
             animation = Try.assign(() -> new LinkAnimation((MapLinkData) data, this.contextualized, 0.5f).setDynamic(true), "");
         }
@@ -838,12 +843,12 @@ public final class EditorMap extends JPanel implements EventListener
         {
             return; // activated choice
         }
-        if (node.getPathString().equals(XsdPaths.NODE))
+        if (node.getPathString().equals(XsdPaths.NODE) || node.getPathString().equals(XsdPaths.CENTROID))
         {
             data = new MapNodeData(this, node, this.editor);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
-        else if (node.getPathString().equals(XsdPaths.LINK))
+        else if (node.getPathString().equals(XsdPaths.LINK) || node.getPathString().equals(XsdPaths.CONNECTOR))
         {
             MapLinkData linkData = new MapLinkData(this, node, this.editor);
             data = linkData;

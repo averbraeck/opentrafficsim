@@ -157,6 +157,15 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /** Priority animation. */
     private PriorityAnimation priorityAnimation;
 
+    /** Whether this is a connector. */
+    private final boolean isConnector;
+
+    /** Centroid node of this connector, if it is a connector. */
+    private XsdTreeNode centroid;
+
+    /** Regular node of this connector, if it is a connector. */
+    private XsdTreeNode connectorNode;
+
     /**
      * Constructor.
      * @param map map.
@@ -167,6 +176,20 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         super(map, linkNode, editor);
         linkNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+        this.isConnector = "Connector".equals(linkNode.getNodeName());
+        if (this.isConnector)
+        {
+            SwingUtilities.invokeLater(() ->
+            {
+                // this is for 1) when delete is undone, as some children are recovered later, and 2) when the centroid or node
+                // is later in a loaded xml
+                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
+                this.centroid = replaceNode(this.centroid, linkNode.getCoupledNodeAttribute("Centroid").orElse(null));
+                this.connectorNode = replaceNode(this.connectorNode, linkNode.getCoupledNodeAttribute("Node").orElse(null));
+                buildDesignLine();
+            });
+            return;
+        }
         linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
         linkNode.getChild(1).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
         this.shapeListener.shapeNode = linkNode.getChild(0);
@@ -186,7 +209,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             SwingUtilities.invokeLater(() ->
             {
-                // this is for when delete is undone, as some children are recovered later, including the shape node
+                // this is for 1) when delete is undone, as some children are recovered later, including the shape node, and 2)
+                // when the start or end node are later in a loaded xml
                 this.shapeListener.shapeNode = linkNode.getChild(0);
                 linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
 
@@ -197,6 +221,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
                 XsdTreeNode shape = linkNode.getChild(0);
                 this.shapeListener.notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
+
+                buildDesignLine();
             });
         }
     }
@@ -259,7 +285,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     @Override
     public boolean isConnector()
     {
-        return false;
+        return this.isConnector;
     }
 
     @Override
@@ -386,6 +412,14 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         else if ("NodeEnd".equals(attribute))
         {
             this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
+        }
+        else if ("Centroid".equals(attribute))
+        {
+            this.centroid = replaceNode(this.centroid, getNode().getCoupledNodeAttribute("Centroid").orElse(null));
+        }
+        else if ("Node".equals(attribute))
+        {
+            this.connectorNode = replaceNode(this.connectorNode, getNode().getCoupledNodeAttribute("Node").orElse(null));
         }
         else if ("OffsetStart".equals(attribute))
         {
@@ -517,6 +551,24 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     private void buildDesignLine()
     {
+        // Connector
+        if (this.isConnector)
+        {
+            if (this.centroid == null || this.connectorNode == null)
+            {
+                setInvalid();
+                return;
+            }
+            setValue((v) -> this.from = v, Adapters.get(Point2d.class), this.centroid, "Coordinate");
+            setValue((v) -> this.to = v, Adapters.get(Point2d.class), this.connectorNode, "Coordinate");
+            DirectedPoint2d fromPoint = new DirectedPoint2d(this.from, this.from.directionTo(this.to));
+            this.designLine = new Straight2d(fromPoint, this.from.distance(this.to));
+            setGeometry();
+            setValid();
+            return;
+        }
+
+        // Node
         if (this.nodeStart == null || this.nodeEnd == null || this.nodeStart.equals(this.nodeEnd))
         {
             setInvalid();
@@ -548,13 +600,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             return;
         }
-        this.flattenedDesignLine = this.designLine.toPolyLine(getFlattener());
-        DirectedPoint2d point = this.flattenedDesignLine.getLocationFractionExtended(0.5);
-        this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
-        this.absoluteContour =
-                new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).iterator());
-        this.relativeContour =
-                new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
+        setGeometry();
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);
@@ -562,6 +608,20 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.priorityAnimation = new PriorityAnimation(new MapPriorityData(this), getMap().getContextualized());
         buildLayout();
         setValid();
+    }
+
+    /**
+     * Based on the design line, sets the flattened line, location, absolute contour and relative contour.
+     */
+    private void setGeometry()
+    {
+        this.flattenedDesignLine = this.designLine.toPolyLine(getFlattener());
+        DirectedPoint2d point = this.flattenedDesignLine.getLocationFractionExtended(0.5);
+        this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
+        this.absoluteContour =
+                new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).iterator());
+        this.relativeContour =
+                new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
     }
 
     /**
@@ -1425,7 +1485,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     @Override
     public String toString()
     {
-        return "Link " + this.id;
+        return (this.isConnector ? "Connector" : "Link ") + this.id;
     }
 
 }

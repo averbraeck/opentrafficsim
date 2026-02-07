@@ -37,6 +37,12 @@ public class AnimationNodeData extends AnimationIdentifiableShape<Node> implemen
     }
 
     @Override
+    public boolean isCentroid()
+    {
+        return getObject().isCentroid();
+    }
+
+    @Override
     public String toString()
     {
         return "Node " + getId();

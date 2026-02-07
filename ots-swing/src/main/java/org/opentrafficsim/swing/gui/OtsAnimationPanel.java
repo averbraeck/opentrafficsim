@@ -189,10 +189,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         // add the buttons for home, zoom all, grid, and mouse coordinates
         buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(makeButton("yZoomButton", "/Up-down.png", "Reset Y-zoom", "Reset Y-zoom to match X-zoom", true));
-        buttonPanel.add(makeButton("allButton", "/Expand.png", "ZoomAll", "Zoom whole network", true));
-        buttonPanel.add(makeButton("homeButton", "/Home.png", "Home", "Zoom to original extent", true));
-        buttonPanel.add(makeButton("gridButton", "/Grid.png", "Grid", "Toggle grid on/off", true));
+        buttonPanel.add(makeButton("yZoomButton", "UpDown24.png", "Reset Y-zoom", "Reset Y-zoom to match X-zoom", true));
+        buttonPanel.add(makeButton("allButton", "ZoomAll24.png", "ZoomAll", "Zoom whole network", true));
+        buttonPanel.add(makeButton("homeButton", "Home24.png", "Home", "Zoom to original extent", true));
+        buttonPanel.add(makeButton("gridButton", "Grid24.png", "Grid", "Toggle grid on/off", true));
         buttonPanel.add(Box.createHorizontalStrut(10));
 
         // add info labels next to buttons
@@ -271,8 +271,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
             final boolean enabled)
     {
-        // JButton result = new JButton(new ImageIcon(this.getClass().getResource(iconPath)));
-        JButton result = new JButton(OtsControlPanel.loadIcon(iconPath).get());
+        JButton result = new JButton(IconUtil.of(iconPath).get());
         result.setPreferredSize(new Dimension(34, 32));
         result.setName(name);
         result.setEnabled(enabled);
@@ -299,8 +298,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean nextToPrevious)
     {
         JToggleButton button;
-        Icon icon = OtsControlPanel.loadIcon(iconPath).get();
-        Icon unIcon = OtsControlPanel.loadGrayscaleIcon(iconPath).get();
+        Icon icon = IconUtil.of(iconPath).get();
+        Icon unIcon = IconUtil.of(iconPath).gray().get();
         button = new JCheckBox();
         button.setSelectedIcon(icon);
         button.setIcon(unIcon);

@@ -115,44 +115,44 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesFull(final OtsAnimationPanel panel)
     {
-        panel.addToggleAnimationButtonIcon("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", true, false);
-        panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node ids", false,
+        panel.addToggleAnimationButtonIcon("Node", NodeData.class, "Node24.png", "Show/hide nodes", true, false);
+        panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "Id24.png", "Show/hide node ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", true, false);
-        panel.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link ids", false,
+        panel.addToggleAnimationButtonIcon("Link", LinkData.class, "Link24.png", "Show/hide links", true, false);
+        panel.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "Id24.png", "Show/hide link ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Priority", PriorityData.class, "/icons/Priority24.png", "Show/hide link priority",
+        panel.addToggleAnimationButtonIcon("Priority", PriorityData.class, "Priority24.png", "Show/hide link priority",
                 true, false);
-        panel.addToggleAnimationButtonIcon("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
-        panel.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane ids", false,
+        panel.addToggleAnimationButtonIcon("Lane", LaneData.class, "Lane24.png", "Show/hide lanes", true, false);
+        panel.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "Id24.png", "Show/hide lane ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
+        panel.addToggleAnimationButtonIcon("Stripe", StripeData.class, "Stripe24.png", "Show/hide stripes", true, false);
+        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "CenterLine24.png",
                 "Show/hide lane center lines", false, true);
-        panel.addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
+        panel.addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "Shoulder24.png", "Show/hide shoulders", true,
                 false);
-        panel.addToggleAnimationButtonIcon("GTU", GtuData.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
-        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU ids",
+        panel.addToggleAnimationButtonIcon("GTU", GtuData.class, "Gtu24.png", "Show/hide GTUs", true, false);
+        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "Id24.png", "Show/hide GTU ids",
                 false, true);
-        panel.addToggleAnimationButtonIcon("Perception", PerceptionAnimation.ChannelAttention.class, "/icons/Perception24.png",
+        panel.addToggleAnimationButtonIcon("Perception", PerceptionAnimation.ChannelAttention.class, "Perception24.png",
                 "Show/hide perception (circle = attention, color = perception delay)", false, false);
-        panel.addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors", true,
+        panel.addToggleAnimationButtonIcon("Detector", DetectorData.class, "Detector24.png", "Show/hide detectors", true,
                 false);
-        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector ids",
+        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "Id24.png", "Show/hide detector ids",
                 false, true);
-        panel.addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png",
+        panel.addToggleAnimationButtonIcon("Light", TrafficLightData.class, "TrafficLight24.png",
                 "Show/hide traffic lights", true, false);
-        panel.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
+        panel.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "Id24.png",
                 "Show/hide traffic light ids", false, true);
-        panel.addToggleAnimationButtonIcon("Conflict", ConflictData.class, "/icons/Conflict24.png", "Show/hide conflicts", true,
+        panel.addToggleAnimationButtonIcon("Conflict", ConflictData.class, "Conflict24.png", "Show/hide conflicts", true,
                 false);
-        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorPositionData.class, "/icons/Generator24.png",
+        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorPositionData.class, "Generator24.png",
                 "Show/hide generators", true, false);
-        panel.addToggleAnimationButtonIcon("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "/icons/Queue24.png",
+        panel.addToggleAnimationButtonIcon("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "Queue24.png",
                 "Show/hide generator queues", false, true);
-        panel.addToggleAnimationButtonIcon("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", true,
+        panel.addToggleAnimationButtonIcon("Bus", BusStopData.class, "BusStop24.png", "Show/hide bus stops", true,
                 false);
-        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stop ids",
+        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "Id24.png", "Show/hide bus stop ids",
                 false, true);
     }
 
@@ -162,44 +162,44 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesStandard(final OtsAnimationPanel panel)
     {
-        panel.addToggleAnimationButtonIcon("Node", NodeData.class, "/icons/Node24.png", "Show/hide nodes", false, false);
-        panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "/icons/Id24.png", "Show/hide node ids", false,
+        panel.addToggleAnimationButtonIcon("Node", NodeData.class, "Node24.png", "Show/hide nodes", false, false);
+        panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "Id24.png", "Show/hide node ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Link", LinkData.class, "/icons/Link24.png", "Show/hide links", false, false);
-        panel.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "/icons/Id24.png", "Show/hide link ids", false,
+        panel.addToggleAnimationButtonIcon("Link", LinkData.class, "Link24.png", "Show/hide links", false, false);
+        panel.addToggleAnimationButtonIcon("LinkId", LinkAnimation.Text.class, "Id24.png", "Show/hide link ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Priority", PriorityData.class, "/icons/Priority24.png", "Show/hide link priority",
+        panel.addToggleAnimationButtonIcon("Priority", PriorityData.class, "Priority24.png", "Show/hide link priority",
                 false, false);
-        panel.addToggleAnimationButtonIcon("Lane", LaneData.class, "/icons/Lane24.png", "Show/hide lanes", true, false);
-        panel.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "/icons/Id24.png", "Show/hide lane ids", false,
+        panel.addToggleAnimationButtonIcon("Lane", LaneData.class, "Lane24.png", "Show/hide lanes", true, false);
+        panel.addToggleAnimationButtonIcon("LaneId", LaneAnimation.Text.class, "Id24.png", "Show/hide lane ids", false,
                 true);
-        panel.addToggleAnimationButtonIcon("Stripe", StripeData.class, "/icons/Stripe24.png", "Show/hide stripes", true, false);
-        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "/icons/CenterLine24.png",
+        panel.addToggleAnimationButtonIcon("Stripe", StripeData.class, "Stripe24.png", "Show/hide stripes", true, false);
+        panel.addToggleAnimationButtonIcon("LaneCenter", CenterLine.class, "CenterLine24.png",
                 "Show/hide lane center lines", false, true);
-        panel.addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "/icons/Shoulder24.png", "Show/hide shoulders", true,
+        panel.addToggleAnimationButtonIcon("Shoulder", ShoulderData.class, "Shoulder24.png", "Show/hide shoulders", true,
                 false);
-        panel.addToggleAnimationButtonIcon("GTU", GtuData.class, "/icons/Gtu24.png", "Show/hide GTUs", true, false);
-        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "/icons/Id24.png", "Show/hide GTU ids",
+        panel.addToggleAnimationButtonIcon("GTU", GtuData.class, "Gtu24.png", "Show/hide GTUs", true, false);
+        panel.addToggleAnimationButtonIcon("GTUId", DefaultCarAnimation.Text.class, "Id24.png", "Show/hide GTU ids",
                 false, true);
-        panel.addToggleAnimationButtonIcon("Perception", PerceptionAnimation.ChannelAttention.class, "/icons/Perception24.png",
+        panel.addToggleAnimationButtonIcon("Perception", PerceptionAnimation.ChannelAttention.class, "Perception24.png",
                 "Show/hide perception (circle = attention, color = perception delay)", false, false);
-        panel.addToggleAnimationButtonIcon("Detector", DetectorData.class, "/icons/Detector24.png", "Show/hide detectors",
+        panel.addToggleAnimationButtonIcon("Detector", DetectorData.class, "Detector24.png", "Show/hide detectors",
                 false, false);
-        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "/icons/Id24.png", "Show/hide detector ids",
+        panel.addToggleAnimationButtonIcon("DetectorId", DetectorData.Text.class, "Id24.png", "Show/hide detector ids",
                 false, true);
-        panel.addToggleAnimationButtonIcon("Light", TrafficLightData.class, "/icons/TrafficLight24.png",
+        panel.addToggleAnimationButtonIcon("Light", TrafficLightData.class, "TrafficLight24.png",
                 "Show/hide traffic lights", true, false);
-        panel.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "/icons/Id24.png",
+        panel.addToggleAnimationButtonIcon("LightId", TrafficLightAnimation.Text.class, "Id24.png",
                 "Show/hide traffic light ids", false, true);
-        panel.addToggleAnimationButtonIcon("Conflict", ConflictData.class, "/icons/Conflict24.png", "Show/hide conflicts",
+        panel.addToggleAnimationButtonIcon("Conflict", ConflictData.class, "Conflict24.png", "Show/hide conflicts",
                 false, false);
-        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorPositionData.class, "/icons/Generator24.png",
+        panel.addToggleAnimationButtonIcon("Generator", GtuGeneratorPositionData.class, "Generator24.png",
                 "Show/hide generators", false, false);
-        panel.addToggleAnimationButtonIcon("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "/icons/Queue24.png",
+        panel.addToggleAnimationButtonIcon("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "Queue24.png",
                 "Show/hide generator queues", false, true);
-        panel.addToggleAnimationButtonIcon("Bus", BusStopData.class, "/icons/BusStop24.png", "Show/hide bus stops", false,
+        panel.addToggleAnimationButtonIcon("Bus", BusStopData.class, "BusStop24.png", "Show/hide bus stops", false,
                 false);
-        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "/icons/Id24.png", "Show/hide bus stop ids",
+        panel.addToggleAnimationButtonIcon("BusId", BusStopAnimation.Text.class, "Id24.png", "Show/hide bus stop ids",
                 false, true);
     }
 

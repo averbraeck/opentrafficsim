@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -14,7 +14,7 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
-import org.opentrafficsim.editor.decoration.DefaultDecorator;
+import org.opentrafficsim.swing.gui.IconUtil;
 
 /**
  * Editor for road layouts.
@@ -37,7 +37,7 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
      */
     public RoadLayoutEditor(final OtsEditor editor) throws IOException
     {
-        ImageIcon roadIcon = DefaultDecorator.loadIcon("./OTS_road.png", -1, -1, -1, -1);
+        Icon roadIcon = IconUtil.of("RoadLayout24.png").imageSize(18, 18).get();
         editor.addTab("Road layout", roadIcon, buildRoadLayoutPane(), null);
         editor.addListener(this, OtsEditor.NEW_FILE);
         this.editor = editor;

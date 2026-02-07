@@ -194,33 +194,6 @@ public class PerceptionAnimation extends OtsRenderable<ChannelAttention>
     }
 
     /**
-     * Paints the icon (Attention24.png).
-     * @param args not used
-     * @throws IOException if icon cannot be written
-     */
-    public static void main(final String[] args) throws IOException
-    {
-        BufferedImage im = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) im.getGraphics();
-        g.setStroke(new BasicStroke(LINE_WIDTH));
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.translate(12.0, 12.0);
-        g.scale(3.2, 3.2);
-        AffineTransform transform = g.getTransform();
-        drawAttentionCircle(g, 0.0, 0.8, Duration.ZERO, 0.25 * Math.PI, CENTER_RADIUS, true); // front
-        g.setTransform(transform);
-        drawAttentionCircle(g, 0.0, 0.4, Duration.ofSI(0.2), 0.75 * Math.PI, CENTER_RADIUS, true); // left
-        g.setTransform(transform);
-        drawAttentionCircle(g, 0.0, 0.2, Duration.ofSI(0.4), -0.25 * Math.PI, CENTER_RADIUS, true); // right
-        g.setTransform(transform);
-        drawAttentionCircle(g, 0.0, 0.1, Duration.ofSI(0.8), -0.75 * Math.PI, CENTER_RADIUS, true); // rear
-        File outputFile = new File(".." + File.separator + "ots-swing" + File.separator + "src" + File.separator + "main"
-                + File.separator + "resources" + File.separator + "icons" + File.separator + "Perception24.png");
-        ImageIO.write(im, "png", outputFile);
-        System.out.println("Icon written to: " + outputFile.getAbsolutePath());
-    }
-
-    /**
      * Locatable for GTU in attention context.
      */
     public static class ChannelAttention implements OtsShape

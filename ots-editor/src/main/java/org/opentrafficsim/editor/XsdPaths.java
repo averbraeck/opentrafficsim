@@ -22,6 +22,9 @@ public final class XsdPaths
     /** Network path. */
     public static final String NETWORK = "Ots.Network";
 
+    /** Centroid path. */
+    public static final String CENTROID = NETWORK + ".Centroid";
+
     /** Connector path. */
     public static final String CONNECTOR = NETWORK + ".Connector";
 

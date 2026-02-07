@@ -60,7 +60,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     {
         this.otsAnimationPanel = otsAnimationPanel;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        this.add(new JLabel(OtsControlPanel.loadIcon("/View.png").get()));
+        this.add(new JLabel(IconUtil.of("Find24.png").imageSize(18, 18).get()));
         this.add(Box.createHorizontalStrut(5));
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {

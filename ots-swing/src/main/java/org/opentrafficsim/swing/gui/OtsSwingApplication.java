@@ -1,6 +1,5 @@
 package org.opentrafficsim.swing.gui;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -15,6 +14,7 @@ import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.draw.colorer.FixedColorer;
 
@@ -42,8 +42,9 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends Appearance
     protected boolean closed = false;
 
     /** Default GTU colorers. */
-    public static final List<Colorer<? super Gtu>> DEFAULT_GTU_COLORERS = List.of(new FixedColorer<>(Color.BLUE, "Blue"),
-            new IdGtuColorer(), new SpeedGtuColorer(), new AccelerationGtuColorer());
+    public static final List<Colorer<? super Gtu>> DEFAULT_GTU_COLORERS =
+            List.of(new FixedColorer<>(Colors.OTS_BLUE, "Blue"), new IdGtuColorer(), new SpeedGtuColorer(),
+                    new AccelerationGtuColorer());
 
     /**
      * Wrap an OtsModel in a JFrame. Uses a default GTU colorer.

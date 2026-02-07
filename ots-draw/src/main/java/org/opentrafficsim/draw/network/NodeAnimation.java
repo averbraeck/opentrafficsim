@@ -60,18 +60,21 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     {
         setRendering(graphics);
         double scale = Math.min(graphics.getTransform().getScaleX(), graphics.getTransform().getScaleY());
-        double factor = 3.0 / Math.min(scale, 3.0); // do not make smaller when zooming out below scale 3
+        double factor = 4.0 / Math.min(scale, 4.0); // do not make smaller when zooming out below scale 3
         graphics.setColor(Color.BLACK);
         graphics.setStroke(new BasicStroke((float) (factor * 0.5), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         graphics.draw(new Ellipse2D.Double(-0.5 * factor, -0.5 * factor, 1.0 * factor, 1.0 * factor));
-        double direction = getSource().getLocation().getDirZ();
-        if (!Double.isNaN(direction))
+        if (!getSource().isCentroid())
         {
-            GeneralPath arrow = new GeneralPath(Path2D.WIND_EVEN_ODD, 3);
-            arrow.moveTo(0.5 * factor, -0.5 * factor);
-            arrow.lineTo(2.0 * factor, 0.0);
-            arrow.lineTo(0.5 * factor, 0.5 * factor);
-            graphics.draw(arrow);
+            double direction = getSource().getLocation().getDirZ();
+            if (!Double.isNaN(direction))
+            {
+                GeneralPath arrow = new GeneralPath(Path2D.WIND_EVEN_ODD, 3);
+                arrow.moveTo(0.5 * factor, -0.5 * factor);
+                arrow.lineTo(2.0 * factor, 0.0);
+                arrow.lineTo(0.5 * factor, 0.5 * factor);
+                graphics.draw(arrow);
+            }
         }
         resetRendering(graphics);
     }
@@ -143,6 +146,12 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     {
         @Override
         DirectedPoint2d getLocation();
+
+        /**
+         * Returns whether this node is a centroid.
+         * @return whether this node is a centroid
+         */
+        boolean isCentroid();
 
         @Override
         default double signedDistance(final Point2d point)

@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -20,6 +19,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.swing.gui.IconUtil;
 
 /**
  * Renderer for the nodes in the tree.
@@ -58,15 +58,16 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
     public XsdTreeCellRenderer(final OtsEditor editor) throws IOException
     {
         this.editor = editor;
-        this.consumer = ImageIO.read(ResourceResolver.resolve("./Application.png").openStream()).getScaledInstance(12, 12,
+        this.consumer = ImageIO.read(ResourceResolver.resolve("Application24.png").openStream()).getScaledInstance(12, 12,
                 Image.SCALE_SMOOTH);
-        this.description =
-                ImageIO.read(ResourceResolver.resolve("./Info.png").openStream()).getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-        this.dropdown = ImageIO.read(ResourceResolver.resolve("./dropdown.png").openStream());
+        this.description = ImageIO.read(ResourceResolver.resolve("Information24.png").openStream()).getScaledInstance(12, 12,
+                Image.SCALE_SMOOTH);
+        this.dropdown = ImageIO.read(ResourceResolver.resolve("Dropdown24.png").openStream()).getScaledInstance(16, 16,
+                Image.SCALE_SMOOTH);
 
-        this.leafIcon = new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_file.png").openStream()));
-        this.openIcon = new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_folder_open.png").openStream()));
-        this.closedIcon = new ImageIcon(ImageIO.read(ResourceResolver.resolve("/Eclipse_folder.png").openStream()));
+        this.leafIcon = IconUtil.of("File24.png").imageSize(16, 16).get();
+        this.openIcon = IconUtil.of("FolderOpen24.png").imageSize(16, 16).get();
+        this.closedIcon = IconUtil.of("Folder24.png").imageSize(16, 16).get();
     }
 
     @Override
@@ -158,7 +159,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         dy = (h - iconImage.getHeight(null)) / 2;
         x = prepend ? 0 : base.getIconWidth() + ICON_MARGIN;
         g.drawImage(iconImage, x, dy, null);
-        setIcon(new ImageIcon(image));
+        setIcon(new IconUtil.InterpolatedImageIcon(image));
     }
 
 }

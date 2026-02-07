@@ -61,7 +61,10 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         {
             notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
             notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Coordinate", null}));
-            notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Direction", null}));
+            if (!isCentroid())
+            {
+                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Direction", null}));
+            }
         }
         this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
         this.relativeContour =
@@ -103,6 +106,12 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     public DirectedPoint2d getLocation()
     {
         return this.location;
+    }
+
+    @Override
+    public boolean isCentroid()
+    {
+        return getNode().getNodeName().equals("Centroid");
     }
 
     @Override
