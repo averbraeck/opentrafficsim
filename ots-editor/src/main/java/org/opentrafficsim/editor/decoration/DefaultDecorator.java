@@ -144,6 +144,7 @@ public final class DefaultDecorator
         new AttributesStringFunction(editor, "Ots.Control.FixedTime.Cycle", "SignalGroupId", "Offset", "PreGreen", "Green",
                 "Yellow");
         new AttributesStringFunction(editor, ".LaneBias", "GtuType");
+        new AttributesStringFunction(editor, ".Compatibility", "GtuType", "Compatible");
         new OdOptionsItemStringFunction(editor);
         new ClassNameTypeStringFunction(editor);
         new XiIncludeStringFunction(editor);
