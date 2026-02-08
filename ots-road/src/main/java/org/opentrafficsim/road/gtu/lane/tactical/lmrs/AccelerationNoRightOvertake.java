@@ -10,10 +10,13 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.Stateless;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
@@ -62,7 +65,18 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
             final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
             final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
     {
-        // TODO ignore incentive if we need to change lane for the route
+        // Ignore incentive if we need to change lane for the route
+        if (!lane.isCurrent() || !perception.getLaneStructure().exists(lane.getLeft())
+                || (gtu.getTacticalPlanner() instanceof AbstractIncentivesTacticalPlanner planner
+                        && planner.getLatestMandatoryDesire().right() > 0.0))
+        {
+            return NO_REASON;
+        }
+
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        Length legal = infra.getLegalLaneChangePossibility(RelativeLane.LEFT, LateralDirectionality.RIGHT);
+        Length ignore = legal.lt0() ? legal.neg() : Length.ZERO;
+
         if (lane.isCurrent() && perception.getLaneStructure().exists(RelativeLane.LEFT))
         {
             Speed vCong = params.getParameter(VCONG);
@@ -73,15 +87,21 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
                         perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
-                    PerceivedGtu leader = leaders.first();
-                    Speed desiredSpeed = perception.getGtu().getDesiredSpeed();
-                    if (desiredSpeed.si > leader.getSpeed().si)
+                    for (PerceivedGtu leader : ignore.le0() ? leaders
+                            : new FilteredIterable<>(leaders, (leader) -> leader.getDistance().gt(ignore)))
                     {
-                        Acceleration b0 = params.getParameter(B0);
-                        // TODO only sensible if the left leader can change right; add this info to HeadwayGtu?
-                        Acceleration a =
-                                CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo, leader);
-                        return a.si < -b0.si ? b0.neg() : a;
+                        if (speed.si > leader.getSpeed().si && leader.getDistance().gt0())
+                        {
+                            Acceleration b0 = params.getParameter(B0);
+                            Acceleration a = CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed,
+                                    speedLimitInfo, leader);
+                            return a.si < -b0.si ? b0.neg() : a;
+                        }
+                        else
+                        {
+                            // Stop when leader is faster than desired speed
+                            return NO_REASON;
+                        }
                     }
                 }
             }
