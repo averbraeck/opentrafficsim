@@ -70,9 +70,10 @@ public class NodeAnimation extends OtsRenderable<NodeData>
             if (!Double.isNaN(direction))
             {
                 GeneralPath arrow = new GeneralPath(Path2D.WIND_EVEN_ODD, 3);
-                arrow.moveTo(0.5 * factor, -0.5 * factor);
-                arrow.lineTo(2.0 * factor, 0.0);
-                arrow.lineTo(0.5 * factor, 0.5 * factor);
+                arrow.moveTo(0.7 * factor, -0.7 * factor);
+                arrow.lineTo(1.4 * factor, 0.0);
+                arrow.lineTo(0.7 * factor, 0.7 * factor);
+                graphics.setStroke(new BasicStroke((float) (factor * 0.25), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                 graphics.draw(arrow);
             }
         }
