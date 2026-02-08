@@ -206,33 +206,36 @@ public final class LaneOperationalPlanBuilder
         double cumulDist = 0.0;
         while (lane != null)
         {
-            OtsLine2d centerLine =
-                    startDistance.gt0() ? lane.getCenterLine().extract(startDistance, lane.getLength()) : lane.getCenterLine();
-            if (lastPoint != null && lastPoint.distance(centerLine.getFirst()) > SNAP.si)
+            if (startDistance.lt(lane.getLength()))
             {
-                // It is not appropriate to follow the lane center lines due to a lane gap
-                Length laneGap = Length.ofSI(lastPoint.distance(centerLine.getFirst()));
-                HorizonSpace horizonSpace =
-                        getHorizonSpace(gtu, nearestPosition, acceleration, timeStep, tManeuver, deviation, laneGap);
-                return bezierToHorizon(gtu, nearestPosition, deviation, horizonSpace);
-            }
-            for (Point2d point : centerLine)
-            {
-                if (lastPoint != null)
+                OtsLine2d centerLine = startDistance.gt0() ? lane.getCenterLine().extract(startDistance, lane.getLength())
+                        : lane.getCenterLine();
+                if (lastPoint != null && lastPoint.distance(centerLine.getFirst()) > SNAP.si)
                 {
-                    double d = lastPoint.distance(point);
-                    if (d < SNAP.si)
+                    // It is not appropriate to follow the lane center lines due to a lane gap
+                    Length laneGap = Length.ofSI(lastPoint.distance(centerLine.getFirst()));
+                    HorizonSpace horizonSpace =
+                            getHorizonSpace(gtu, nearestPosition, acceleration, timeStep, tManeuver, deviation, laneGap);
+                    return bezierToHorizon(gtu, nearestPosition, deviation, horizonSpace);
+                }
+                for (Point2d point : centerLine)
+                {
+                    if (lastPoint != null)
                     {
-                        continue;
+                        double d = lastPoint.distance(point);
+                        if (d < SNAP.si)
+                        {
+                            continue;
+                        }
+                        cumulDist += d;
                     }
-                    cumulDist += d;
+                    points.add(point);
+                    if (cumulDist >= length.si)
+                    {
+                        return new OtsLine2d(points);
+                    }
+                    lastPoint = point;
                 }
-                points.add(point);
-                if (cumulDist >= length.si)
-                {
-                    return new OtsLine2d(points);
-                }
-                lastPoint = point;
             }
             startDistance = Length.ZERO;
             lane = gtu.getNextLaneForRoute(lane).orElse(null);
