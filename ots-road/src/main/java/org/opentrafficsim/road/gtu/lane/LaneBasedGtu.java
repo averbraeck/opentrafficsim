@@ -401,8 +401,20 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      */
     public synchronized Lane getLane(final Duration time)
     {
-        return this.pendingLanesToEnter.isEmpty() || this.pendingLanesToEnter.firstKey().ge(time) ? this.lane.get(time)
-                : this.pendingLanesToEnter.floorEntry(time).getValue();
+        return getLane(time, true);
+    }
+
+    /**
+     * Returns the lane at the given time. This may be in the future during the plan, in which case it is a prospective lane.
+     * @param time simulation time to get the lane for
+     * @param firstEpisode return current lane when time is exactly the start of the second episode
+     * @return lane at given time
+     */
+    private Lane getLane(final Duration time, final boolean firstEpisode)
+    {
+        return this.pendingLanesToEnter.isEmpty() || this.pendingLanesToEnter.firstKey().gt(time)
+                || (firstEpisode && this.pendingLanesToEnter.firstKey().eq(time)) ? this.lane.get(time)
+                        : this.pendingLanesToEnter.floorEntry(time).getValue();
     }
 
     /**
@@ -459,11 +471,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * Returns the projected position of the GTU on the given lane, which should be on the same link.
+     * Returns the projected position of the GTU on the given lane.
      * @param lane lane
      * @return projected position of the GTU on the given lane
-     * @throws IllegalStateException when the GTU is not on a lane
-     * @throws IllegalArgumentException when the lane is not in the link the GTU is on
      */
     @SuppressWarnings("hiddenfield")
     public synchronized Length getPosition(final Lane lane)
@@ -472,12 +482,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * Returns the projected position of the GTU on the given lane, which should be on the same link.
+     * Returns the projected position of the GTU on the given lane.
      * @param lane lane
      * @param time simulation time
      * @return projected position of the GTU on the given lane
-     * @throws IllegalStateException when the GTU is not on a lane
-     * @throws IllegalArgumentException when the lane is not in the link the GTU is on
      */
     @SuppressWarnings("hiddenfield")
     public synchronized Length getPosition(final Lane lane, final Duration time)
@@ -486,13 +494,11 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * Returns the projected position of the GTU on the given lane, which should be on the same link. The relative position is
-     * calculated by shifting the position of the reference by {@code dx} of the relative position.
+     * Returns the projected position of the GTU on the given lane. The relative position is calculated by shifting the position
+     * of the reference by {@code dx} of the relative position.
      * @param lane lane
      * @param relativePosition relative position
      * @return projected position of the GTU on the given lane
-     * @throws IllegalStateException when the GTU is not on a lane
-     * @throws IllegalArgumentException when the lane is not in the link the GTU is on
      */
     @SuppressWarnings("hiddenfield")
     public synchronized Length getPosition(final Lane lane, final RelativePosition relativePosition)
@@ -507,22 +513,16 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * Returns the projected position of the GTU on the given lane, which should be on the same link. The relative position is
-     * calculated by shifting the position of the reference by {@code dx} of the relative position.
+     * Returns the projected position of the GTU on the given lane. The relative position is calculated by shifting the position
+     * of the reference by {@code dx} of the relative position.
      * @param lane lane
      * @param relativePosition relative position
      * @param time simulation time
      * @return projected position of the GTU on the given lane
-     * @throws IllegalStateException when the GTU is not on a lane
-     * @throws IllegalArgumentException when the lane is not in the link the GTU is on
      */
     @SuppressWarnings("hiddenfield")
     public synchronized Length getPosition(final Lane lane, final RelativePosition relativePosition, final Duration time)
     {
-        Throw.when(getLane() == null, IllegalStateException.class, "Requesting position on lane but GTU has no lane.");
-        Throw.when(!lane.getLink().equals(getLane(time).getLink()), IllegalArgumentException.class,
-                "Requesting position on lane on link %s but the GTU is on link %s.", lane.getLink().getId(),
-                getLane().getLink().getId());
         DirectedPoint2d p = Try.assign(() -> getOperationalPlan(time).getLocation(time, getReference()),
                 "Operational plan at time is not valid at time.");
         double f = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
@@ -990,7 +990,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
              */
             Duration time1 = this.pendingLanesToEnter.higherKey(time0) == null ? getOperationalPlan().getEndTime()
                     : this.pendingLanesToEnter.higherKey(time0);
-            LanePosition position1 = getPosition(time1); // note: could be on adjacent lane due to a lane change
+            // Cannot invoke getPosition(time1) as it might return a position on the lane of the first episode
+            // false argument: make sure we always get the -next- lane at the given timestamp, so we get clean episodes
+            Lane laneAtTime = getLane(time1, false);
+            LanePosition position1 = new LanePosition(laneAtTime, getPosition(laneAtTime, getReference(), time1));
             searchedDistanceAtFrom = findDetectorTriggersInEpisode(searchedDistanceAtFrom, position0, position1, schedule);
             time0 = time1;
             position0 = position1;
@@ -1025,44 +1028,47 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     private Length findDetectorTriggersInEpisode(final Length searchedDistance, final LanePosition position0,
             final LanePosition position1, final boolean schedule)
     {
-        // The following values all apply to the reference point
         Lane searchLane = position0.lane();
         Length from = position0.position();
-        Length to = searchLane.getLength();
-        Length searchedDistanceAtFrom = searchedDistance;
-        Length searchedDistanceAtFromOnPendingLink = Length.ZERO; // value will be overwritten
-        boolean encounteredPendingLink = false;
+        Length to;
         Length delta = getFront().dx();
+
+        // Bound 'to' by enter position of next pending lane
+        if (searchLane.getLink().equals(position1.lane().getLink()))
+        {
+            if (searchLane.equals(position1.lane()))
+            {
+                // Same link, same lane: use position of next pending lane
+                to = position1.position();
+            }
+            else
+            {
+                // Same link, different lane: lane change so project position on target lane (position1) to searchLane
+                Point2d point = position1.getLocation();
+                double fraction = searchLane.getCenterLine().projectFractional(searchLane.getLink().getStartNode().getHeading(),
+                        searchLane.getLink().getEndNode().getHeading(), point.x, point.y, FractionalFallback.ENDPOINT);
+                to = searchLane.getLength().times(fraction);
+            }
+        }
+        else
+        {
+            // End of the lane if position1 is on a different link
+            to = searchLane.getLength();
+        }
+
+        // We now have from and to on the same lane, with which we can calculate the episode length and what to return
+        Length out = searchedDistance.plus(to).minus(from);
+
         while (searchLane != null)
         {
-            // Bound 'to' by enter position of next pending lane
-            if (!encounteredPendingLink && searchLane.getLink().equals(position1.lane().getLink()))
-            {
-                encounteredPendingLink = true;
-                searchedDistanceAtFromOnPendingLink = searchedDistanceAtFrom;
-                if (searchLane.equals(position1.lane()))
-                {
-                    // Same link, same lane: use position of next pending lane
-                    to = position1.position();
-                }
-                else
-                {
-                    // Same link, different lane: lane change so project position on target lane (position1) to searchLane
-                    Point2d point = position1.getLocation();
-                    double fraction = searchLane.getCenterLine().projectFractional(
-                            searchLane.getLink().getStartNode().getHeading(), searchLane.getLink().getEndNode().getHeading(),
-                            point.x, point.y, FractionalFallback.ENDPOINT);
-                    to = searchLane.getLength().times(fraction);
-                }
-            }
-            // Find all detectors in range [from ... to] + dx
+            // Find all detectors in range [from ... to] + delta
             for (LaneDetector detector : searchLane.getDetectors(from.plus(delta), to.plus(delta), getType()))
             {
                 if (schedule)
                 {
                     Length dxTrigger = getRelativePositions().get(detector.getPositionType()).dx();
                     Length detectorLocation = detector.getLongitudinalPosition();
-                    Length deltaOdometer = searchedDistanceAtFrom.plus(detectorLocation).minus(from).minus(dxTrigger);
+                    Length deltaOdometer = searchedDistance.plus(detectorLocation).minus(from).minus(dxTrigger);
                     this.detectorTriggers.put(detector, getOdometer().plus(deltaOdometer));
                 }
                 else
@@ -1070,24 +1076,21 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     this.detectorTriggers.remove(detector);
                 }
             }
-            // Search further as the GTU up to the nose is possibly on downstream lanes, but adjust relevant range
-            searchedDistanceAtFrom = searchedDistanceAtFrom.plus(to.minus(from));
-            if (encounteredPendingLink)
+
+            // Shift 'from' and 'to', to the next lane, reaching beyond 'to' up to where the nose might be on downstream lanes
+            if (to.plus(delta).gt(searchLane.getLength()))
             {
-                if (to.plus(getFront().dx()).gt(searchLane.getLength()))
-                {
-                    to = to.plus(getFront().dx()).minus(searchLane.getLength());
-                    delta = Length.ZERO;
-                }
-                else
-                {
-                    to = to.minus(searchLane.getLength());
-                }
+                // Need to consider the next lane, update 'from' and 'to' to coordinates on that lane
+                from = from.minus(searchLane.getLength());
+                to = to.minus(searchLane.getLength());
+                searchLane = getNextLaneForRoute(searchLane).orElse(null);
             }
-            searchLane = to.le0() ? null : getNextLaneForRoute(searchLane).orElse(null);
-            from = Length.max(Length.ZERO, getFront().dx().minus(searchedDistanceAtFrom));
+            else
+            {
+                return out;
+            }
         }
-        return searchedDistanceAtFromOnPendingLink;
+        return out;
     }
 
     /**
