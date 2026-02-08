@@ -63,7 +63,6 @@ import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
-import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
