@@ -99,7 +99,7 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
                         }
                         else
                         {
-                            // Stop when leader is faster than desired speed
+                            // Stop looking for further leaders when a leader is faster
                             return NO_REASON;
                         }
                     }
