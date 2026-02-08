@@ -9,7 +9,6 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
-import org.opentrafficsim.road.gtu.lane.perception.mental.SumFuller;
 
 /**
  * Displays task saturation.
@@ -31,7 +30,7 @@ public class TaskSaturationGtuColorer implements LegendColorer<Gtu>
     static final Color MID = Color.YELLOW;
 
     /** Zero. */
-    static final Color SUBCRIT = Color.GREEN;
+    static final Color LOW = Color.GREEN;
 
     /** Not available. */
     static final Color NA = Color.WHITE;
@@ -42,9 +41,9 @@ public class TaskSaturationGtuColorer implements LegendColorer<Gtu>
     static
     {
         LEGEND = new ArrayList<>();
-        LEGEND.add(new LegendEntry(SUBCRIT, "sub-critical", "sub-critical task saturation"));
-        LEGEND.add(new LegendEntry(MID, "medium", "medium task saturation"));
-        LEGEND.add(new LegendEntry(MAX, "max", "max task saturation"));
+        LEGEND.add(new LegendEntry(LOW, "0.5", "sub-critical task saturation"));
+        LEGEND.add(new LegendEntry(MID, "1.0", "medium task saturation"));
+        LEGEND.add(new LegendEntry(MAX, "2.0", "max task saturation"));
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
@@ -60,27 +59,23 @@ public class TaskSaturationGtuColorer implements LegendColorer<Gtu>
     public Color getColor(final Gtu gtu)
     {
         Optional<Double> ts = gtu.getParameters().getOptionalParameter(Fuller.TS);
-        double tsCrit = gtu.getParameters().getOptionalParameter(SumFuller.TS_CRIT).orElse(1.0);
-        double tsMax = gtu.getParameters().getOptionalParameter(SumFuller.TS_MAX).orElse(2.0);
         if (ts.isEmpty())
         {
             return NA;
         }
-        if (ts.get() < tsCrit)
+        if (ts.get() < 0.5)
         {
-            return SUBCRIT;
+            return LOW;
         }
-        else if (ts.get() > tsMax)
+        else if (ts.get() > 2.0)
         {
             return MAX;
         }
-        double range = .5 * (tsMax - tsCrit);
-        double mid = tsCrit + range;
-        if (ts.get() < mid)
+        if (ts.get() < 1.0)
         {
-            return ColorInterpolator.interpolateColor(SUBCRIT, MID, Math.max(0.0, Math.min(1.0, (ts.get() - tsCrit) / range)));
+            return ColorInterpolator.interpolateColor(LOW, MID, (ts.get() - 0.5) / 0.5);
         }
-        return ColorInterpolator.interpolateColor(MAX, MID, Math.max(0.0, Math.min(1.0, (tsMax - ts.get()) / range)));
+        return ColorInterpolator.interpolateColor(MAX, MID, (2.0 - ts.get()) / 1.0);
     }
 
     @Override
