@@ -2,20 +2,12 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Acceleration incentive for traffic lights.
@@ -48,21 +40,10 @@ public final class AccelerationTrafficLights implements AccelerationIncentive, S
     }
 
     @Override
-    public Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, OperationalPlanException
+    public Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
+            throws ParameterException, OperationalPlanException
     {
-        Iterable<PerceivedTrafficLight> it =
-                perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane);
-        if (!lane.isCurrent() && mergeDistance.gt0())
-        {
-            it = new FilteredIterable<>(it, (trafficLight) ->
-            {
-                return trafficLight.getDistance().gt(mergeDistance);
-            });
-        }
-        it = onRoute(it, gtu);
-        return TrafficLightUtil.respondToTrafficLights(params, it, carFollowingModel, speed, speedLimitInfo);
+        return TrafficLightUtil.respondToTrafficLights(context, lane, mergeDistance, true);
     }
 
     @Override

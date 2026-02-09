@@ -2,23 +2,20 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
@@ -27,8 +24,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 /**
  * Implementation of the LMRS (Lane change Model with Relaxation and Synchronization). See Schakel, W.J., Knoop, V.L., and Van
@@ -71,22 +66,17 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
     public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
     {
-        // obtain objects to get info
-        SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
-                .getSpeedLimitProspect(RelativeLane.CURRENT);
-        SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
-        Parameters params = getGtu().getParameters();
+        // Create tactical context
+        TacticalContextEgo context = new TacticalContextEgo(getGtu());
 
         // LMRS
-        SimpleOperationalPlan simplePlan =
-                LmrsUtil.determinePlan(getGtu(), getCarFollowingModel(), this.lmrsData, getPerception(), this);
+        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(context, this.lmrsData, this);
 
         // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
-        Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
         RelativeLane[] lanes;
-        double dLeft = params.getParameter(LmrsParameters.DLEFT);
-        double dRight = params.getParameter(LmrsParameters.DRIGHT);
-        double dSync = params.getParameter(LmrsParameters.DSYNC);
+        double dLeft = context.getParameters().getParameter(LmrsParameters.DLEFT);
+        double dRight = context.getParameters().getParameter(LmrsParameters.DRIGHT);
+        double dSync = context.getParameters().getParameter(LmrsParameters.DSYNC);
         if (dLeft >= dSync && dLeft >= dRight)
         {
             lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.LEFT};
@@ -108,8 +98,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
                 // TODO: consider route in incentives (only if not on current lane?)
                 Length mergeDistance = lane.isCurrent() ? Length.ZERO
                         : Synchronization.getMergeDistance(getPerception(), lane.getLateralDirectionality());
-                simplePlan.minimizeAcceleration(getAcceleration(lane, mergeDistance, getGtu(), getPerception(),
-                        getCarFollowingModel(), speed, params, sli));
+                simplePlan.minimizeAcceleration(getAcceleration(context, lane, mergeDistance));
             }
         }
 

@@ -1,30 +1,24 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Determines lane change desire for courtesy lane changes, which are performed to supply space for other drivers. In case
@@ -66,8 +60,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+    public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
             final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -75,12 +68,10 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
         double dRightYes = 0;
         double dLeftNo = 0;
         double dRightNo = 0;
-        double socio = parameters.getParameter(SOCIO);
-        Acceleration b = parameters.getParameter(B);
-        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        SpeedLimitInfo sli = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+        double socio = context.getParameters().getParameter(SOCIO);
+        Acceleration b = context.getParameters().getParameter(B);
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
         boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
         for (LateralDirectionality dir : LateralDirectionality.LEFT_AND_RIGHT)
@@ -95,8 +86,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                     if (desire > 0)
                     {
                         // TODO factor -a/b as influence factor is heavy in calculation, consider v<vEgo & 1-s/x0
-                        Acceleration a =
-                                CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ownSpeed, sli, leader);
+                        Acceleration a = CarFollowingUtil.followSingleLeader(context, leader);
                         if (a.lt0())
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0);
@@ -120,12 +110,10 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
             {
                 for (PerceivedGtu follower : followers)
                 {
-                    Parameters params = follower.getBehavior().getParameters();
                     double desire = dir.isLeft() ? follower.getBehavior().rightLaneChangeDesire()
                             : follower.getBehavior().leftLaneChangeDesire();
                     Acceleration a = follower.getDistance().lt0() ? b.neg()
-                            : LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire, params,
-                                    follower.getBehavior().getSpeedLimitInfo(), follower.getBehavior().getCarFollowingModel());
+                            : LmrsUtil.singleAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
                     if (a.lt0())
                     {
                         if (desire > 0)
@@ -155,13 +143,11 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
             {
                 for (PerceivedGtu leader : leaders)
                 {
-                    Parameters params = leader.getBehavior().getParameters();
                     double desire = dir.isLeft() ? leader.getBehavior().rightLaneChangeDesire()
                             : leader.getBehavior().leftLaneChangeDesire();
                     if (desire > 0)
                     {
-                        Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,
-                                params, sli, carFollowingModel);
+                        Acceleration a = LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                         if (a.lt0())
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0); // (1 - leader.getDistance().si / x0.si) * desire;

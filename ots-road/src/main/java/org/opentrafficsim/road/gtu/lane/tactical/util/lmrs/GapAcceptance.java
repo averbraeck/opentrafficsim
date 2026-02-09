@@ -4,19 +4,16 @@ import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Interface for LMRS gap-acceptance models.
@@ -35,24 +32,18 @@ public interface GapAcceptance
     GapAcceptance INFORMED = new GapAcceptance()
     {
         @Override
-        public boolean acceptGap(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final Acceleration ownAcceleration,
-                final LateralDirectionality lat) throws ParameterException, OperationalPlanException
+        public boolean acceptGap(final TacticalContextEgo context, final double desire, final LateralDirectionality lat)
+                throws ParameterException, OperationalPlanException
         {
-            NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
             if (neighbors.isGtuAlongside(lat))
             {
                 // gtu alongside
                 return false;
             }
 
-            Acceleration threshold = params.getParameter(ParameterTypes.B).times(-desire);
-            if (threshold.gt(ownAcceleration))
-            {
-                return false;
-            }
-
-            if (!acceptEgoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat, threshold))
+            Acceleration threshold = context.getParameters().getParameter(ParameterTypes.B).times(-desire);
+            if (!acceptEgoAcceleration(context, desire, lat, threshold))
             {
                 return false;
             }
@@ -75,9 +66,8 @@ public interface GapAcceptance
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0() || follower.getDistance().si < 1.0)
                 {
-                    Acceleration aFollow = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed,
-                            desire, follower.getBehavior().getParameters(), follower.getBehavior().getSpeedLimitInfo(),
-                            follower.getBehavior().getCarFollowingModel());
+                    Acceleration aFollow =
+                            LmrsUtil.singleAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
                     if (threshold.gt(aFollow))
                     {
                         return false;
@@ -85,7 +75,7 @@ public interface GapAcceptance
                 }
             }
 
-            if (!acceptLaneChangers(perception, params, sli, cfm, ownSpeed, lat, threshold))
+            if (!acceptLaneChangers(context, lat, threshold))
             {
                 return false;
             }
@@ -104,19 +94,18 @@ public interface GapAcceptance
     GapAcceptance EGO_HEADWAY = new GapAcceptance()
     {
         @Override
-        public boolean acceptGap(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-                final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final Acceleration ownAcceleration,
-                final LateralDirectionality lat) throws ParameterException, OperationalPlanException
+        public boolean acceptGap(final TacticalContextEgo context, final double desire, final LateralDirectionality lat)
+                throws ParameterException, OperationalPlanException
         {
-            NeighborsPerception neigbors = perception.getPerceptionCategory(NeighborsPerception.class);
+            NeighborsPerception neigbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
             if (neigbors.isGtuAlongside(lat))
             {
                 // gtu alongside
                 return false;
             }
 
-            Acceleration threshold = params.getParameter(ParameterTypes.B).times(-desire);
-            if (!acceptEgoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat, threshold))
+            Acceleration threshold = context.getParameters().getParameter(ParameterTypes.B).times(-desire);
+            if (!acceptEgoAcceleration(context, desire, lat, threshold))
             {
                 return false;
             }
@@ -127,14 +116,12 @@ public interface GapAcceptance
                 {
                     // Change headway parameter
                     Parameters folParams = follower.getBehavior().getParameters();
-                    // safe copy, so no need to set/reset
-                    folParams.setParameter(ParameterTypes.TMIN, params.getParameter(ParameterTypes.TMIN));
-                    folParams.setParameter(ParameterTypes.TMAX, params.getParameter(ParameterTypes.TMAX));
-                    Acceleration aFollow = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed,
-                            desire, folParams, follower.getBehavior().getSpeedLimitInfo(),
-                            follower.getBehavior().getCarFollowingModel());
-                    // folParams.resetParameter(ParameterTypes.TMIN);
-                    // folParams.resetParameter(ParameterTypes.TMAX);
+                    folParams.setParameter(ParameterTypes.TMIN, context.getParameters().getParameter(ParameterTypes.TMIN));
+                    folParams.setParameter(ParameterTypes.TMAX, context.getParameters().getParameter(ParameterTypes.TMAX));
+                    Acceleration aFollow =
+                            LmrsUtil.singleAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
+                    folParams.resetParameter(ParameterTypes.TMIN);
+                    folParams.resetParameter(ParameterTypes.TMAX);
                     if (threshold.gt(aFollow))
                     {
                         return false;
@@ -142,7 +129,7 @@ public interface GapAcceptance
                 }
             }
 
-            if (!acceptLaneChangers(perception, params, sli, cfm, ownSpeed, lat, threshold))
+            if (!acceptLaneChangers(context, lat, threshold))
             {
                 return false;
             }
@@ -159,28 +146,23 @@ public interface GapAcceptance
 
     /**
      * Determine whether a gap is acceptable.
-     * @param perception perception
-     * @param params parameters
-     * @param sli speed limit info
-     * @param cfm car-following model
+     * @param context tactical information such as parameters and car-following model
      * @param desire level of lane change desire
-     * @param ownSpeed own speed
      * @param lat lateral direction for synchronization
      * @param threshold threshold value
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    private static boolean acceptEgoAcceleration(final LanePerception perception, final Parameters params,
-            final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
+    private static boolean acceptEgoAcceleration(final TacticalContextEgo context, final double desire,
             final LateralDirectionality lat, final Acceleration threshold) throws ParameterException, OperationalPlanException
     {
-        if (ownSpeed.gt0())
+        if (context.getSpeed().gt0())
         {
-            for (PerceivedGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
+            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
+                    .getFirstLeaders(lat))
             {
-                Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, params,
-                        sli, cfm);
+                Acceleration a = LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                 if (threshold.gt(a))
                 {
                     return false;
@@ -192,24 +174,19 @@ public interface GapAcceptance
 
     /**
      * Determine whether a gap is acceptable regarding lane changers from the second adjacent lane to the first adjacent lane.
-     * @param perception perception
-     * @param params parameters
-     * @param sli speed limit info
-     * @param cfm car-following model
-     * @param ownSpeed own speed
+     * @param context tactical information such as parameters and car-following model
      * @param lat lateral direction for synchronization
      * @param threshold threshold value
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    private static boolean acceptLaneChangers(final LanePerception perception, final Parameters params,
-            final SpeedLimitInfo sli, final CarFollowingModel cfm, final Speed ownSpeed, final LateralDirectionality lat,
+    private static boolean acceptLaneChangers(final TacticalContextEgo context, final LateralDirectionality lat,
             final Acceleration threshold) throws ParameterException, OperationalPlanException
     {
-        if (ownSpeed.gt0())
+        if (context.getSpeed().gt0())
         {
-            NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
             // Only potential lane changers in the gap to the leader in the target lane are relevant
             SortedSet<PerceivedGtu> firstLeaders = neighbors.getFirstLeaders(lat);
             Length range = Length.POS_MAXVALUE;
@@ -229,8 +206,7 @@ public interface GapAcceptance
                 }
                 if (leader.getManeuver().isChangingLane(lat.flip()))
                 {
-                    Acceleration a = CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, leader.getDistance(),
-                            leader.getSpeed());
+                    Acceleration a = CarFollowingUtil.followSingleLeader(context, leader.getDistance(), leader.getSpeed());
                     return a.ge(threshold);
                 }
             }
@@ -240,20 +216,14 @@ public interface GapAcceptance
 
     /**
      * Determine whether a gap is acceptable.
-     * @param perception perception
-     * @param params parameters
-     * @param sli speed limit info
-     * @param cfm car-following model
+     * @param context tactical information such as parameters and car-following model
      * @param desire level of lane change desire
-     * @param ownSpeed own speed
-     * @param ownAcceleration current car-following acceleration
      * @param lat lateral direction for synchronization
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    boolean acceptGap(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm, double desire,
-            Speed ownSpeed, Acceleration ownAcceleration, LateralDirectionality lat)
+    boolean acceptGap(TacticalContextEgo context, double desire, LateralDirectionality lat)
             throws ParameterException, OperationalPlanException;
 
 }

@@ -7,13 +7,11 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
@@ -50,22 +48,20 @@ public final class IncentiveStayRight implements VoluntaryIncentive, Stateless<I
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+    public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
             final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         // start at left-most lane
-        SortedSet<RelativeLane> rootCrossSection = perception.getLaneStructure().getRootCrossSection();
+        SortedSet<RelativeLane> rootCrossSection = context.getPerception().getLaneStructure().getRootCrossSection();
         RelativeLane lane = rootCrossSection.first();
         // move right until we find 'the right-hand lane', which is defined by the last lane where the urgency does not increase
-        Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-        double curUrgency = urgency(infra.getLegalLaneChangeInfo(lane), parameters, speed);
+        double curUrgency = urgency(infra.getLegalLaneChangeInfo(lane), context.getParameters(), context.getSpeed());
         double rightUrgency;
         RelativeLane right;
-        while (rootCrossSection.contains(right = lane.getRight())
-                && (rightUrgency = urgency(infra.getLegalLaneChangeInfo(right), parameters, speed)) <= curUrgency)
+        while (rootCrossSection.contains(right = lane.getRight()) && (rightUrgency =
+                urgency(infra.getLegalLaneChangeInfo(right), context.getParameters(), context.getSpeed())) <= curUrgency)
         {
             curUrgency = rightUrgency;
             lane = right;
@@ -74,7 +70,7 @@ public final class IncentiveStayRight implements VoluntaryIncentive, Stateless<I
         if (lane.getLateralDirectionality().isRight() && lane.getNumLanes() > 1)
         {
             // must change right
-            return new Desire(legalLeft ? -1.0 : 0.0, parameters.getParameter(LmrsParameters.DSYNC));
+            return new Desire(legalLeft ? -1.0 : 0.0, context.getParameters().getParameter(LmrsParameters.DSYNC));
         }
         if (lane.isRight())
         {

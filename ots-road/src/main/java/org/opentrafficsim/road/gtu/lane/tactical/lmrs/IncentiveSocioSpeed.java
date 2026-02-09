@@ -2,26 +2,23 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
@@ -76,20 +73,19 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+    public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
             final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
         double dLeft = 0;
         double dRight = 0;
-        Speed vCong = parameters.getParameter(VCONG);
-        Speed ownSpeed = perception.getPerceptionCategoryOrNull(EgoPerception.class).getSpeed();
+        Speed vCong = context.getParameters().getParameter(VCONG);
+        Speed ownSpeed = context.getPerception().getPerceptionCategoryOrNull(EgoPerception.class).getSpeed();
         if (ownSpeed.gt(vCong))
         {
-            double sigma = parameters.getParameter(SOCIO);
-            NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-            InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+            double sigma = context.getParameters().getParameter(SOCIO);
+            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+            InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
             boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
             boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
             // change right to get out of the way
@@ -98,7 +94,7 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT);
                 if (!followers.isEmpty())
                 {
-                    double rho = parameters.getParameter(RHO);
+                    double rho = context.getParameters().getParameter(RHO);
                     PerceivedGtu follower = followers.first();
                     double rhoFollower = follower.getBehavior().getParameters().getParameter(RHO);
                     if (rhoFollower * sigma > rho)
@@ -118,10 +114,9 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
                     if (leaders != null && !leaders.isEmpty())
                     {
                         PerceivedGtu leader = leaders.first();
-                        Speed vDes = Try.assign(() -> perception.getGtu().getDesiredSpeed(),
-                                "Could not obtain GTU from perception.");
-                        Speed vGain = parameters.getParameter(VGAIN);
-                        Length x0 = parameters.getParameter(LOOKAHEAD);
+                        Speed vDes = context.getGtu().getDesiredSpeed();
+                        Speed vGain = context.getParameters().getParameter(VGAIN);
+                        Length x0 = context.getParameters().getParameter(LOOKAHEAD);
                         rho = Tailgating.socialPressure(ownSpeed, vCong, vDes, leader.getSpeed(), vGain, leader.getDistance(),
                                 x0);
                     }

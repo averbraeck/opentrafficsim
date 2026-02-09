@@ -16,6 +16,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.GtuTypeAssumptions;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -31,7 +32,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface PerceivedGtu extends PerceivedObject
+public interface PerceivedGtu extends PerceivedObject, TacticalContext
 {
 
     /**
@@ -39,12 +40,6 @@ public interface PerceivedGtu extends PerceivedObject
      * @return gtuType
      */
     GtuType getGtuType();
-
-    /**
-     * Returns the width of the GTU.
-     * @return width of the GTU
-     */
-    Length getWidth();
 
     /**
      * Returns information on the signals. This includes indicators and braking lights.
@@ -64,6 +59,40 @@ public interface PerceivedGtu extends PerceivedObject
      * @return information on the behavior
      */
     Behavior getBehavior();
+
+    // getSpeed() and getAcceleration() implemented to solve duplicate methods in PerceivedObject and TacticalContext
+
+    @Override
+    default Speed getSpeed()
+    {
+        return getKinematics().getSpeed();
+    }
+
+    @Override
+    default Acceleration getAcceleration()
+    {
+        return getKinematics().getAcceleration();
+    }
+
+    // getParameters(), getCarFollowingModel() and getSpeedLimitInfo() implemented as TacticalContext requires it at this level
+
+    @Override
+    default Parameters getParameters()
+    {
+        return getBehavior().getParameters();
+    }
+
+    @Override
+    default CarFollowingModel getCarFollowingModel()
+    {
+        return getBehavior().getCarFollowingModel();
+    }
+
+    @Override
+    default SpeedLimitInfo getSpeedLimitInfo()
+    {
+        return getBehavior().getSpeedLimitInfo();
+    }
 
     /**
      * Signal information.

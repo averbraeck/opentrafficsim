@@ -42,7 +42,6 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -79,19 +78,18 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuil
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AbstractIncentivesTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveQueue;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -114,7 +112,6 @@ import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
@@ -347,7 +344,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         OdOptions odOptions = new OdOptions();
         DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory factory =
                 new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(
-                        new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(stream)));
+                        new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(stream)
+                                .set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true, DefaultsNl.CAR)));
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
         odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.INSTANT);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
@@ -567,10 +565,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             addMandatoryIncentive(IncentiveRoute.SINGLETON);
             addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
             addVoluntaryIncentive(IncentiveKeep.SINGLETON);
-            addVoluntaryIncentive(IncentiveQueue.SINGLETON);
-            addAccelerationIncentive(AccelerationSpeedLimitTransition.SINGLETON);
             addAccelerationIncentive(AccelerationTrafficLights.SINGLETON);
-            addAccelerationIncentive(new AccelerationConflicts());
             this.laneChangeSystem = laneChangeSystem;
         }
 
@@ -595,15 +590,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
         public OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
                 throws GtuException, NetworkException, ParameterException
         {
-            // get some general input
-            Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-            SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
-                    .getSpeedLimitProspect(RelativeLane.CURRENT);
-            SpeedLimitInfo sli = slp.getSpeedLimitInfo(Length.ZERO);
+            // Create tactical context
+            TacticalContextEgo context = new TacticalContextEgo(getGtu());
 
             // LMRS desire
-            Desire desire =
-                    LmrsUtil.getLaneChangeDesire(getGtu().getParameters(), getPerception(), getCarFollowingModel(), this);
+            Desire desire = LmrsUtil.getLaneChangeDesire(context, this);
 
             // other vehicles respond to these 'interpreted' levels of lane change desire
             getGtu().getParameters().setClaimedParameter(LmrsParameters.DLEFT, desire.left(), this);
@@ -613,18 +604,15 @@ public class RampMeteringDemo extends AbstractSimulationScript
             Acceleration a = getGtu().getCarFollowingAcceleration();
 
             // cooperation
-            Acceleration aCoop = Cooperation.PASSIVE.cooperate(getPerception(), getGtu().getParameters(), sli,
-                    getCarFollowingModel(), LateralDirectionality.LEFT, desire);
+            Acceleration aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.LEFT, desire);
             a = Acceleration.min(a, aCoop);
-            aCoop = Cooperation.PASSIVE.cooperate(getPerception(), getGtu().getParameters(), sli, getCarFollowingModel(),
-                    LateralDirectionality.RIGHT, desire);
+            aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.RIGHT, desire);
             a = Acceleration.min(a, aCoop);
 
             // compose human plan
             SimpleOperationalPlan simplePlan =
                     new SimpleOperationalPlan(a, getGtu().getParameters().getParameter(ParameterTypes.DT));
-            simplePlan.minimizeAcceleration(getAcceleration(RelativeLane.CURRENT, Length.ZERO, getGtu(), getPerception(),
-                    getCarFollowingModel(), speed, getGtu().getParameters(), sli));
+            simplePlan.minimizeAcceleration(getAcceleration(context, RelativeLane.CURRENT, Length.ZERO));
 
             // add lane change control
             double dFree = getGtu().getParameters().getParameter(LmrsParameters.DFREE);
@@ -647,7 +635,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                     this.laneChangeSystem.initiateLaneChange(LateralDirectionality.NONE);
                 }
             }
-            simplePlan = this.laneChangeSystem.operate(simplePlan, getGtu().getParameters());
+            simplePlan = this.laneChangeSystem.operate(context, simplePlan, getGtu().getParameters());
             simplePlan.setTurnIndicator(getGtu());
 
             // create plan
@@ -662,13 +650,14 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Update operational plan with actions to change lane. This method should be called by the tactical planner always.
+         * @param context tactical information such as parameters and car-following model
          * @param simplePlan plan
          * @param parameters parameters
          * @return adapted plan
          * @throws OperationalPlanException if the system runs in to an error
          * @throws ParameterException if a parameter is missing
          */
-        SimpleOperationalPlan operate(SimpleOperationalPlan simplePlan, Parameters parameters)
+        SimpleOperationalPlan operate(TacticalContextEgo context, SimpleOperationalPlan simplePlan, Parameters parameters)
                 throws OperationalPlanException, ParameterException;
 
         /**
@@ -725,8 +714,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         }
 
         @Override
-        public SimpleOperationalPlan operate(final SimpleOperationalPlan simplePlan, final Parameters parameters)
-                throws OperationalPlanException, ParameterException
+        public SimpleOperationalPlan operate(final TacticalContextEgo context, final SimpleOperationalPlan simplePlan,
+                final Parameters parameters) throws OperationalPlanException, ParameterException
         {
             // active?
             if (this.direction.isNone())

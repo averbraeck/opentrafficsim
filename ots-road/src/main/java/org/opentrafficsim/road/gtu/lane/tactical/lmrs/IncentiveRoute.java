@@ -14,10 +14,9 @@ import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.network.LaneChangeInfo;
@@ -61,34 +60,33 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel,
+    public Desire determineDesire(final TacticalContextEgo context,
             final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
-        Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        Speed speed = context.getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
 
         // desire to leave current lane
         SortedSet<LaneChangeInfo> currentInfo = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         Length currentFirst = currentInfo.isEmpty() || currentInfo.first().numberOfLaneChanges() == 0 ? Length.POSITIVE_INFINITY
                 : currentInfo.first().remainingDistance();
-        double dCurr = getDesireToLeave(parameters, infra, RelativeLane.CURRENT, speed);
+        double dCurr = getDesireToLeave(context.getParameters(), infra, RelativeLane.CURRENT, speed);
         double dLeft = 0;
-        if (perception.getLaneStructure().exists(RelativeLane.LEFT)
+        if (context.getPerception().getLaneStructure().exists(RelativeLane.LEFT)
                 && infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).neg().lt(currentFirst))
         {
             // desire to leave left lane
-            dLeft = getDesireToLeave(parameters, infra, RelativeLane.LEFT, speed);
+            dLeft = getDesireToLeave(context.getParameters(), infra, RelativeLane.LEFT, speed);
             // desire to leave from current to left lane
             dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0;
         }
         double dRigh = 0;
-        if (perception.getLaneStructure().exists(RelativeLane.RIGHT) && infra
+        if (context.getPerception().getLaneStructure().exists(RelativeLane.RIGHT) && infra
                 .getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).neg().lt(currentFirst))
         {
             // desire to leave right lane
-            dRigh = getDesireToLeave(parameters, infra, RelativeLane.RIGHT, speed);
+            dRigh = getDesireToLeave(context.getParameters(), infra, RelativeLane.RIGHT, speed);
             // desire to leave from current to right lane
             dRigh = dRigh < dCurr ? dCurr : dRigh > dCurr ? -dRigh : 0;
         }

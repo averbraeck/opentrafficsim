@@ -2,20 +2,15 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Accelerate to follow lane-changing leaders from adjacent lanes towards the current lane. This is only relevant when
@@ -41,19 +36,18 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
     }
 
     @Override
-    public Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
+    public Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
+            throws ParameterException, GtuException
     {
         for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
         {
             LateralDirectionality flip = lat.flip();
-            for (PerceivedGtu leader : perception.getPerceptionCategory(NeighborsPerception.class)
+            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
                     .getLeaders(new RelativeLane(lat, 1)))
             {
                 if (leader.getManeuver().isChangingLane(flip))
                 {
-                    return CarFollowingUtil.followSingleLeader(carFollowingModel, params, speed, speedLimitInfo, leader);
+                    return CarFollowingUtil.followSingleLeader(context, leader);
                 }
             }
         }

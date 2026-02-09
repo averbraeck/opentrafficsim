@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
+import org.djutils.exceptions.Throw;
+
 /**
  * Returns only those elements that comply with the predicate.
  * <p>
@@ -31,8 +33,8 @@ public class FilteredIterable<T> implements Iterable<T>
      */
     public FilteredIterable(final Iterable<T> iterable, final Predicate<T> predicate)
     {
-        this.iterable = iterable;
-        this.predicate = predicate;
+        this.iterable = Throw.whenNull(iterable, "iterable");
+        this.predicate = Throw.whenNull(predicate, "predicate");
     }
 
     @Override

@@ -4,22 +4,18 @@ import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
@@ -75,21 +71,19 @@ public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Sta
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+    public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
             final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
         // zero if no lane change is possible
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        TrafficPerception traffic = perception.getPerceptionCategory(TrafficPerception.class);
-        EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        TrafficPerception traffic = context.getPerception().getPerceptionCategory(TrafficPerception.class);
         double leftDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si;
         double rightDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
 
         // gather some info
         Speed vCur = traffic.getSpeed(RelativeLane.CURRENT);
-        Speed vGain = parameters.getParameter(VGAIN);
+        Speed vGain = context.getParameters().getParameter(VGAIN);
 
         // calculate aGain (default 1; lower as acceleration is higher than 0)
         Dimensionless aGain;
@@ -98,16 +92,16 @@ public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Sta
          * consistent with possible lane change incentives pertaining to speed (which used to be only vehicles in the original
          * LMRS, but can be any number of reasons here. E.g. traffic lights, conflicts, etc.)
          */
-        Acceleration aCur = ego.getAcceleration();
+        Acceleration aCur = context.getAcceleration();
 
         /*
          * The idea to let aCur simply be the current acceleration is wrong; aCur -should- only describe the car-following
          * relation, as this describes a sense of sticking to a lane as the leader is getting away.
          */
-        aCur = Try.assign(() -> perception.getGtu().getCarFollowingAcceleration(), "Could not obtain the GTU.");
+        aCur = context.getGtu().getCarFollowingAcceleration();
         if (aCur.si > 0)
         {
-            Acceleration a = parameters.getParameter(A);
+            Acceleration a = context.getParameters().getParameter(A);
             aGain = a.minus(aCur).divide(a);
         }
         else
@@ -132,7 +126,7 @@ public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Sta
         if (rightDist > 0.0 && infra.getCrossSection().contains(RelativeLane.RIGHT))
         {
             Speed vRight = traffic.getSpeed(RelativeLane.RIGHT);
-            if (vCur.si >= parameters.getParameter(VCONG).si)
+            if (vCur.si >= context.getParameters().getParameter(VCONG).si)
             {
                 dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
             }

@@ -7,26 +7,24 @@ import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Tactical planner with mandatory lane change incentives, voluntary lane change incentives, and acceleration incentives. The
@@ -165,21 +163,18 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Determines level of lane change desire for mandatory lane change incentives.
-     * @param parameters parameters
-     * @param perception perception
-     * @param carFollowingModel car-following model
+     * @param context tactical information such as parameters and car-following model
      * @return level of lane change desire for this incentive
      * @throws ParameterException if a parameter is not given or out of bounds
      * @throws OperationalPlanException in case of a perception exception
      */
-    public Desire getMandatoryDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel) throws OperationalPlanException, ParameterException
+    public Desire getMandatoryDesire(final TacticalContextEgo context) throws OperationalPlanException, ParameterException
     {
         double dLeftMandatory = 0.0;
         double dRightMandatory = 0.0;
         for (MandatoryIncentive incentive : this.mandatoryIncentives)
         {
-            Desire d = incentive.determineDesire(parameters, perception, carFollowingModel, this.mandatoryDesireImmutable);
+            Desire d = incentive.determineDesire(context, this.mandatoryDesireImmutable);
             this.mandatoryDesire.put(incentive.getClass(), d);
             dLeftMandatory = Math.abs(d.left()) > Math.abs(dLeftMandatory) ? d.left() : dLeftMandatory;
             dRightMandatory = Math.abs(d.right()) > Math.abs(dRightMandatory) ? d.right() : dRightMandatory;
@@ -190,22 +185,18 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Determines level of lane change desire for voluntary lane change incentives.
-     * @param parameters parameters
-     * @param perception perception
-     * @param carFollowingModel car-following model
+     * @param context tactical information such as parameters and car-following model
      * @return level of lane change desire for this incentive
      * @throws ParameterException if a parameter is not given or out of bounds
      * @throws OperationalPlanException in case of a perception exception
      */
-    public Desire getVoluntaryDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel) throws OperationalPlanException, ParameterException
+    public Desire getVoluntaryDesire(final TacticalContextEgo context) throws OperationalPlanException, ParameterException
     {
         double dLeftVoluntary = 0;
         double dRightVoluntary = 0;
         for (VoluntaryIncentive incentive : this.voluntaryIncentives)
         {
-            Desire d = incentive.determineDesire(parameters, perception, carFollowingModel, this.mandatory,
-                    this.voluntaryDesireImmutable);
+            Desire d = incentive.determineDesire(context, this.mandatory, this.voluntaryDesireImmutable);
             this.voluntaryDesire.put(incentive.getClass(), d);
             dLeftVoluntary += d.left();
             dRightVoluntary += d.right();
@@ -244,27 +235,20 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Determine acceleration.
+     * @param context tactical information such as parameters and car-following model
      * @param lane lane on which to consider the acceleration
      * @param mergeDistance distance over which a lane change is impossible towards the lane, zero if current lane
-     * @param gtu gtu
-     * @param perception perception
-     * @param carFollowingModel car-following model
-     * @param speed current speed
-     * @param params parameters
-     * @param speedLimitInfo speed limit info
      * @return acceleration
      * @throws ParameterException on missing parameter
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
      */
-    public Acceleration getAcceleration(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
+    public Acceleration getAcceleration(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
+            throws ParameterException, GtuException
     {
         Acceleration a = Acceleration.POS_MAXVALUE;
         for (AccelerationIncentive incentive : this.accelerationIncentives)
         {
-            Acceleration aIncentive = incentive.accelerate(lane, mergeDistance, gtu, perception, carFollowingModel, speed,
-                    params, speedLimitInfo);
+            Acceleration aIncentive = incentive.accelerate(context, lane, mergeDistance);
             this.acceleration.put(incentive.getClass(), aIncentive);
             a = Acceleration.min(a, aIncentive);
         }

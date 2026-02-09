@@ -3,16 +3,17 @@ package org.opentrafficsim.road.gtu.lane.tactical.util;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 
 /**
  * Static methods regarding traffic lights for composition in tactical planners.
@@ -47,26 +48,31 @@ public final class TrafficLightUtil
      * model and the constant deceleration, it is ensured that comfortable deceleration is applied if approaching a red traffic
      * light from far away, while strong deceleration is only applied if required and appropriately represents stopping for
      * yellow.
-     * @param parameters parameters
-     * @param headwayTrafficLights set of headway traffic lights
-     * @param carFollowingModel car following model
-     * @param speed speed
-     * @param speedLimitInfo speed limit info
+     * @param context tactical information such as parameters and car-following model
+     * @param lane lane
+     * @param mergeDistance distance along which no lane changes can be performed towards the lane
+     * @param onRoute filter conflicts to only include conflict on the route
      * @return acceleration as response to a traffic light, being positive infinity if ignored
      * @throws ParameterException if a parameter is not defined
-     * @throws NullPointerException if any input is null
+     * @throws OperationalPlanException if intersection perception category does not exist
+     * @throws NullPointerException if any input is {@code null}
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
-    public static Acceleration respondToTrafficLights(final Parameters parameters,
-            final Iterable<PerceivedTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
+    public static Acceleration respondToTrafficLights(final TacticalContextEgo context, final RelativeLane lane,
+            final Length mergeDistance, final boolean onRoute) throws ParameterException, OperationalPlanException
     {
-        Throw.whenNull(headwayTrafficLights, "Traffic light set may not be null.");
+        Throw.whenNull(context, "context");
+        Iterable<PerceivedTrafficLight> headwayTrafficLights = context.getPerception()
+                .getPerceptionCategory(IntersectionPerception.class).getTrafficLights(RelativeLane.CURRENT);
+        headwayTrafficLights = AccelerationIncentive.onRoad(headwayTrafficLights, lane, mergeDistance);
+        if (onRoute)
+        {
+            headwayTrafficLights = AccelerationIncentive.onRoute(headwayTrafficLights, context.getGtu());
+        }
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         for (PerceivedTrafficLight headwayTrafficLight : headwayTrafficLights)
         {
-            Acceleration aLight =
-                    respondToTrafficLight(parameters, headwayTrafficLight, carFollowingModel, speed, speedLimitInfo);
+            Acceleration aLight = respondToTrafficLight(context, headwayTrafficLight);
             a = Acceleration.min(a, aLight);
         }
         return a;
@@ -79,43 +85,34 @@ public final class TrafficLightUtil
      * which usually occurs only during the yellow phase. By using the highest acceleration of the car-following model and the
      * constant deceleration, it is ensured that comfortable deceleration is applied if approaching a red traffic light from far
      * away, while strong deceleration is only applied if required and appropriately represents stopping for yellow.
-     * @param parameters parameters
+     * @param context tactical information such as parameters and car-following model
      * @param headwayTrafficLight headway traffic light
-     * @param carFollowingModel car following model
-     * @param speed speed
-     * @param speedLimitInfo speed limit info
      * @return acceleration as response to a traffic light, being positive infinity if ignored
      * @throws ParameterException if a parameter is not defined
-     * @throws NullPointerException if any input is null
+     * @throws NullPointerException if any input is {@code null}
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
     // @docs/06-behavior/tactical-planner/#modular-utilities
-    public static Acceleration respondToTrafficLight(final Parameters parameters,
-            final PerceivedTrafficLight headwayTrafficLight, final CarFollowingModel carFollowingModel, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo) throws ParameterException
+    public static Acceleration respondToTrafficLight(final TacticalContextEgo context,
+            final PerceivedTrafficLight headwayTrafficLight) throws ParameterException
     {
-        Throw.whenNull(parameters, "Parameters may not be null.");
-        Throw.whenNull(headwayTrafficLight, "Traffic light may not be null.");
-        Throw.whenNull(carFollowingModel, "Car-following model may not be null.");
-        Throw.whenNull(speed, "Speed may not be null.");
-        Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
+        Throw.whenNull(context, "context");
+        Throw.whenNull(headwayTrafficLight, "headwayTrafficLight");
         if ((headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
                 && !headwayTrafficLight.canTurnOnRed())
         {
             // deceleration from car-following model
-            Acceleration a = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, speed, speedLimitInfo,
-                    headwayTrafficLight);
+            Acceleration a = CarFollowingUtil.followSingleLeader(context, headwayTrafficLight);
             // compare to constant deceleration
-            Length s0 = parameters.getParameter(S0);
+            Length s0 = context.getParameters().getParameter(S0);
             if (headwayTrafficLight.getDistance().gt(s0)) // constant acceleration not applicable if within s0
             {
                 // constant acceleration is -.5*v^2/s, where s = distance-s0 > 0
-                Acceleration aConstant = CarFollowingUtil.constantAccelerationStop(carFollowingModel, parameters, speed,
-                        headwayTrafficLight.getDistance());
+                Acceleration aConstant = CarFollowingUtil.constantAccelerationStop(context, headwayTrafficLight.getDistance());
                 a = Acceleration.max(a, aConstant);
             }
             // return a if a > -bCrit
-            if (a.gt(parameters.getParameter(BCRIT).neg()))
+            if (a.gt(context.getParameters().getParameter(BCRIT).neg()))
             {
                 return a;
             }

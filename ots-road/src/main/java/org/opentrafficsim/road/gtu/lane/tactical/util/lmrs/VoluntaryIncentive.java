@@ -2,10 +2,8 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 
 /**
  * Interface for voluntary incentives.
@@ -22,17 +20,15 @@ public interface VoluntaryIncentive extends Incentive
 
     /**
      * Determines level of lane change desire for a lane change incentive.
-     * @param parameters parameters
-     * @param perception perception
-     * @param carFollowingModel car-following model
+     * @param context tactical information such as parameters and car-following model
      * @param mandatoryDesire level of mandatory desire at current time
      * @param voluntaryDesire level of voluntary desire at current time, of voluntary incentives calculated before
      * @return level of lane change desire for this incentive
      * @throws ParameterException if a parameter is not given or out of bounds
      * @throws OperationalPlanException in case of a perception exception
      */
-    Desire determineDesire(Parameters parameters, LanePerception perception, CarFollowingModel carFollowingModel,
-            Desire mandatoryDesire, ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
+    Desire determineDesire(TacticalContextEgo context, Desire mandatoryDesire,
+            ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException;
 
 }

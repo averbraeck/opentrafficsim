@@ -10,9 +10,11 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitType;
@@ -128,18 +130,18 @@ public final class SpeedLimitUtil
      * Acceleration for speed limit transitions. This implementation decelerates before curves and speed bumps. For this it uses
      * {@code approachTargetSpeed()} of the car-following utility. All remaining transitions happen in the default manner, i.e.
      * deceleration and acceleration after the speed limit change and governed by the car-following model.
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitProspect speed limit prospect
-     * @param carFollowingModel car following model
+     * @param context tactical information such as parameters and car-following model
+     * @param lane lane to consider
      * @return acceleration for speed limit transitions
      * @throws ParameterException if a required parameter is not found
+     * @throws OperationalPlanException if there is no infrastructure perception
      */
-    public static Acceleration considerSpeedLimitTransitions(final Parameters parameters, final Speed speed,
-            final SpeedLimitProspect speedLimitProspect, final CarFollowingModel carFollowingModel) throws ParameterException
+    public static Acceleration considerSpeedLimitTransitions(final TacticalContextEgo context, final RelativeLane lane)
+            throws ParameterException, OperationalPlanException
     {
+        SpeedLimitProspect speedLimitProspect =
+                context.getPerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane);
         Acceleration out = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        SpeedLimitInfo currentSpeedLimitInfo = speedLimitProspect.getSpeedLimitInfo(Length.ZERO);
 
         // decelerate for curves and speed bumps
         for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] {SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP})
@@ -147,9 +149,8 @@ public final class SpeedLimitUtil
             for (Length distance : speedLimitProspect.getDownstreamDistances(speedLimitType))
             {
                 SpeedLimitInfo speedLimitInfo = speedLimitProspect.buildSpeedLimitInfo(distance, speedLimitType);
-                Speed targetSpeed = carFollowingModel.desiredSpeed(parameters, speedLimitInfo);
-                Acceleration a = CarFollowingUtil.approachTargetSpeed(carFollowingModel, parameters, speed,
-                        currentSpeedLimitInfo, distance, targetSpeed);
+                Speed targetSpeed = context.getCarFollowingModel().desiredSpeed(context.getParameters(), speedLimitInfo);
+                Acceleration a = CarFollowingUtil.approachTargetSpeed(context, distance, targetSpeed);
                 if (a.lt(out))
                 {
                     out = a;

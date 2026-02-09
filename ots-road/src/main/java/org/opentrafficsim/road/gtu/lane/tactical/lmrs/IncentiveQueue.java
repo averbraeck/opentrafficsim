@@ -1,17 +1,13 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
@@ -20,13 +16,12 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Neighbor
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Incentive to join the shortest queue near intersection.
@@ -59,23 +54,21 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel, final Desire mandatoryDesire,
+    public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
             final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-        if (!perception.contains(IntersectionPerception.class))
+        if (!context.getPerception().contains(IntersectionPerception.class))
         {
             return Desire.ZERO;
         }
-        EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
-        double aCur = Try.assign(() -> perception.getGtu().getCarFollowingAcceleration().si, OperationalPlanException.class,
-                "Could not obtain the car-following acceleration.");
-        if (aCur <= 0.0 && ego.getSpeed().eq0())
+        double aCur = Try.assign(() -> context.getPerception().getGtu().getCarFollowingAcceleration().si,
+                OperationalPlanException.class, "Could not obtain the car-following acceleration.");
+        if (aCur <= 0.0 && context.getSpeed().eq0())
         {
             return Desire.ZERO;
         }
-        IntersectionPerception inter = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
+        IntersectionPerception inter = context.getPerception().getPerceptionCategoryOrNull(IntersectionPerception.class);
         PerceptionCollectable<PerceivedConflict, Conflict> conflicts = inter.getConflicts(RelativeLane.CURRENT);
         PerceptionCollectable<PerceivedTrafficLight, TrafficLight> lights = inter.getTrafficLights(RelativeLane.CURRENT);
         // TODO: a ramp-metering traffic light triggers this incentive with possible cooperation from the main line
@@ -83,11 +76,9 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
         {
             return Desire.ZERO;
         }
-        Acceleration a = parameters.getParameter(ParameterTypes.A);
-        NeighborsPerception neigbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-
-        SpeedLimitInfo sli = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+        Acceleration a = context.getParameters().getParameter(ParameterTypes.A);
+        NeighborsPerception neigbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
 
         double dLeft = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.LEFT))
@@ -95,8 +86,7 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.LEFT);
             if (!leaders.isEmpty())
             {
-                Acceleration acc = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ego.getSpeed(), sli,
-                        leaders.first());
+                Acceleration acc = CarFollowingUtil.followSingleLeader(context, leaders.first());
                 dLeft = (acc.si - aCur) / a.si;
             }
         }
@@ -106,8 +96,7 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.RIGHT);
             if (!leaders.isEmpty())
             {
-                Acceleration acc = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ego.getSpeed(), sli,
-                        leaders.first());
+                Acceleration acc = CarFollowingUtil.followSingleLeader(context, leaders.first());
                 dRight = (acc.si - aCur) / a.si;
             }
         }

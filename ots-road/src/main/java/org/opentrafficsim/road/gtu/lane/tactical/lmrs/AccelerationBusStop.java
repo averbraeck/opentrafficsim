@@ -6,24 +6,18 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedBusStop;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.lane.object.BusStop;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Bus stop acceleration incentive.
@@ -61,19 +55,18 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
 
     @Override
     @SuppressWarnings("checkstyle:parameternumber")
-    public Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
+    public Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
+            throws ParameterException, GtuException
     {
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
-                perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
+                context.getPerception().getPerceptionCategory(BusStopPerception.class).getBusStops();
         if (stops.isEmpty())
         {
             return NO_REASON;
         }
-        BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute().orElseThrow(
+        BusSchedule busSchedule = (BusSchedule) context.getRoute().orElseThrow(
                 () -> new GtuException("Unable to determine acceleration for bus stops for bus without bus schedule."));
-        Duration now = gtu.getSimulator().getSimulatorTime();
+        Duration now = context.getTime();
         Iterable<PerceivedBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
         {
             return busStop.getDistance().gt(mergeDistance);
@@ -85,8 +78,8 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
             {
 
                 // check when to leave
-                boolean stoppedAtStop = stop.getRelativeLane().isCurrent() && stop.getDistance().le(STOP_DISTANCE)
-                        && perception.getPerceptionCategory(EgoPerception.class).getSpeed().eq0();
+                boolean stoppedAtStop =
+                        stop.getRelativeLane().isCurrent() && stop.getDistance().le(STOP_DISTANCE) && context.getSpeed().eq0();
                 if (busSchedule.getActualDepartureBusStop(busStopId).isEmpty())
                 {
                     if (stoppedAtStop)
@@ -113,7 +106,7 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
                     else
                     {
                         // decelerate to initiate stop
-                        return CarFollowingUtil.stop(carFollowingModel, params, speed, speedLimitInfo, stop.getDistance());
+                        return CarFollowingUtil.stop(context, stop.getDistance());
                     }
                 }
             }

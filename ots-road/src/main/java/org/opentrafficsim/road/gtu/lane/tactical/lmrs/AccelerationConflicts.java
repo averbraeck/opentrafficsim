@@ -2,25 +2,13 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Conflicts acceleration incentive.
@@ -49,28 +37,10 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
     }
 
     @Override
-    public final Acceleration accelerate(final RelativeLane lane, final Length mergeDistance, final LaneBasedGtu gtu,
-            final LanePerception perception, final CarFollowingModel carFollowingModel, final Speed speed,
-            final Parameters params, final SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException
+    public final Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
+            throws ParameterException, GtuException
     {
-        EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
-        Acceleration acceleration = ego.getAcceleration();
-        Length length = ego.getLength();
-        Length width = ego.getWidth();
-        Iterable<PerceivedConflict> conflicts =
-                perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
-        if (!lane.isCurrent())
-        {
-            conflicts = new FilteredIterable<>(conflicts, (conflict) ->
-            {
-                return conflict.getDistance().gt(mergeDistance);
-            });
-        }
-        conflicts = onRoute(conflicts, gtu);
-        Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, carFollowingModel, length, width, speed,
-                acceleration, speedLimitInfo, this.conflictPlans, gtu, lane);
+        Acceleration a = ConflictUtil.approachConflicts(context, this.conflictPlans, lane, mergeDistance, true);
         // TODO: set the following in a new input relating to indicator intent
         // if (this.conflictPlans.getIndicatorIntent().isLeft())
         // {

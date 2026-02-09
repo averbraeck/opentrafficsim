@@ -8,15 +8,13 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
@@ -60,15 +58,14 @@ public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<I
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel,
+    public Desire determineDesire(final TacticalContextEgo context,
             final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
-        Speed vCong = parameters.getParameter(VCONG);
-        double socio = parameters.getParameter(SOCIO);
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+        Speed vCong = context.getParameters().getParameter(VCONG);
+        double socio = context.getParameters().getParameter(SOCIO);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
         SortedSet<LaneChangeInfo> info = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         double dCur = info.isEmpty() ? Double.POSITIVE_INFINITY
                 : info.first().remainingDistance().si / info.first().numberOfLaneChanges();

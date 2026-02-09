@@ -18,6 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinema
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.ObjectType;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObjectBase;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -42,96 +43,133 @@ public final class CarFollowingUtil
     }
 
     /**
-     * Follow a set of headway GTUs.
+     * Follow some object.
+     * @param context tactical information such as parameters and car-following model
+     * @param distance distance
+     * @param leaderSpeed speed of the leader
+     * @return acceleration for following the object
+     * @throws NullPointerException if any input is {@code null}
+     * @throws ParameterException if a parameter is not given or out of bounds
+     */
+    public static Acceleration followSingleLeader(final TacticalContext context, final Length distance, final Speed leaderSpeed)
+            throws ParameterException
+    {
+        Throw.whenNull(context, "context");
+        return followSingleLeader(context.getCarFollowingModel(), context.getParameters(), context.getSpeed(),
+                context.getSpeedLimitInfo(), distance, leaderSpeed);
+    }
+
+    /**
+     * Follow some object.
+     * @param context tactical information such as parameters and car-following model
+     * @param leader leader
+     * @return acceleration for following the object
+     * @throws NullPointerException if any input is {@code null}
+     * @throws ParameterException if a parameter is not given or out of bounds
+     */
+    public static Acceleration followSingleLeader(final TacticalContext context, final PerceivedObject leader)
+            throws ParameterException
+    {
+        Throw.whenNull(context, "context");
+        return followSingleLeader(context.getCarFollowingModel(), context.getParameters(), context.getSpeed(),
+                context.getSpeedLimitInfo(), leader);
+    }
+
+    /**
+     * Follow some object.
      * @param carFollowingModel car-following model
      * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo speed limit info
      * @param distance distance
      * @param leaderSpeed speed of the leader
-     * @return acceleration for following the leader
+     * @return acceleration for following the object
+     * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedLimitInfo, final Length distance, final Speed leaderSpeed)
             throws ParameterException
     {
+        Throw.whenNull(carFollowingModel, "carFollowingModel");
+        Throw.whenNull(parameters, "parameters");
+        Throw.whenNull(speed, "speed");
+        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
+        Throw.whenNull(distance, "distance");
+        Throw.whenNull(leaderSpeed, "leaderSpeed");
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, createLeader(distance, leaderSpeed));
     }
 
     /**
-     * Follow a set of headway GTUs.
+     * Follow some object.
      * @param carFollowingModel car-following model
      * @param parameters parameters
      * @param speed current speed
      * @param speedLimitInfo speed limit info
      * @param leader leader
-     * @return acceleration for following the leader
+     * @return acceleration for following the object
+     * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedLimitInfo, final PerceivedObject leader) throws ParameterException
     {
+        Throw.whenNull(carFollowingModel, "carFollowingModel");
+        Throw.whenNull(parameters, "parameters");
+        Throw.whenNull(speed, "speed");
+        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
+        Throw.whenNull(leader, "leader");
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, new PerceptionIterableSet<>(leader));
     }
 
     /**
      * Stop within given distance.
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
+     * @param context tactical information such as parameters and car-following model
      * @param distance distance to stop over
      * @return acceleration to stop over distance
+     * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException if a parameter is not given or out of bounds
      */
-    public static Acceleration stop(final CarFollowingModel carFollowingModel, final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo, final Length distance) throws ParameterException
+    public static Acceleration stop(final TacticalContext context, final Length distance) throws ParameterException
     {
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, createLeader(distance, Speed.ZERO));
+        Throw.whenNull(context, "context");
+        return context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
+                context.getSpeedLimitInfo(), createLeader(distance, Speed.ZERO));
     }
 
     /**
      * Return constant acceleration in order to stop in specified distance. The car-following model is used to determine the
      * stopping distance (i.e. distance remaining at stand still, e.g. 1-3m).
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
+     * @param context tactical information such as parameters and car-following model
      * @param distance distance to stop over
      * @return constant acceleration in order to stop in specified distance
      * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException on missing parameter
      */
-    public static Acceleration constantAccelerationStop(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final Length distance) throws ParameterException
+    public static Acceleration constantAccelerationStop(final TacticalContext context, final Length distance)
+            throws ParameterException
     {
-        Throw.whenNull(carFollowingModel, "carFollowingModel");
-        Throw.whenNull(parameters, "parameters");
-        Throw.whenNull(speed, "speed");
+        Throw.whenNull(context, "context");
         Throw.whenNull(distance, "distance");
-        Length s0 = carFollowingModel.desiredHeadway(parameters, Speed.ZERO);
-        return new Acceleration(-0.5 * speed.si * speed.si / (distance.si - s0.si), AccelerationUnit.SI);
+        Length s0 = context.getCarFollowingModel().desiredHeadway(context.getParameters(), Speed.ZERO);
+        return new Acceleration(-0.5 * context.getSpeed().si * context.getSpeed().si / (distance.si - s0.si),
+                AccelerationUnit.SI);
     }
 
     /**
      * Calculate free acceleration.
-     * @param carFollowingModel car-following model
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo speed limit info
+     * @param context tactical information such as parameters and car-following model
+     * @param speed speed to accelerate from, which may be different from the current speed to anticipate ego movement
      * @return acceleration free acceleration
      * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException if a parameter is not given or out of bounds
      */
-    public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
+    public static Acceleration freeAcceleration(final TacticalContext context, final Speed speed) throws ParameterException
     {
-        Throw.whenNull(carFollowingModel, "carFollowingModel");
-        Throw.whenNull(parameters, "parameters");
-        Throw.whenNull(speed, "speed");
-        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
+        Throw.whenNull(context, "context");
         PerceptionIterableSet<PerceivedObject> leaders = new PerceptionIterableSet<>();
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
+        return context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
+                context.getSpeedLimitInfo(), leaders);
     }
 
     /*-
@@ -140,19 +178,19 @@ public final class CarFollowingUtil
      * % Initialization
      * vTar = 0:0.1:(120/3.6);
      * vInit = 0:0.1:(120/3.6);
-     * result = zeros(length(vTar), length(vInit));
+     * result = zeros(length(vInit), length(vTar));
      * dt = 0.01;
      *
      * % Loop grid
-     * for i = 1:length(vTar)
-     *     for j = 1:length(vInit)
+     * for i = 1:length(vInit)
+     *     for j = 1:length(vTar)
      *         s = 300;
-     *         v = vInit(j);
+     *         v = vInit(i);
      *         aMin = inf;
      *         % Model loop
      *         while s > 0
      *             if v > 0
-     *                 vVirt = vTar(i)^2/v;
+     *                 vVirt = vTar(j)^2/v;
      *             else
      *                 vVirt = inf;
      *             end
@@ -167,10 +205,12 @@ public final class CarFollowingUtil
      * end
      *
      * % Plot init-speed vs. target speed surface
-     * surf(vTars, vInit, result, 'EdgeColor', 'none');
-     * xlabel('Initial speed [m/s]')
-     * ylabel('Target speed [m/s]')
-     * set(colorbar().Label, 'String', 'Maximum deceleration [m/s^2]')
+     * surf(vTar, vInit, result, 'EdgeColor', 'none');
+     * xlabel('Target speed [m/s]');
+     * ylabel('Initial speed [m/s]');
+     * zlabel('Maximum deceleration [m/s^2]');
+     * set(gca, 'XLim', [vTar(1) vTar(end)], 'YLim', [vInit(1) vInit(end)]);
+     * set(colorbar().Label, 'String', 'Maximum deceleration [m/s^2]');
      *
      * % IDM+ model with fixed parameters
      * function a = idm(s, v, vLead)
@@ -206,7 +246,7 @@ public final class CarFollowingUtil
      * <li>if {@code vTar ~ 0} then {@code vTar' ~ 0}, as car-following models are suitable for stopping and need no additional
      * incentive to decelerate in such cases</li>
      * <li>if {@code 0 < vTar < v} then {@code vTar' < vTar}, introducing additional deceleration to compensate for the fact
-     * that the virtual vehicle does not move
+     * that the virtual vehicle does not actually move by {@code vTar}
      * </ul>
      * These requirements are met by {@code vTar' = vTar * (vTar/v) = vTar^2/v}.<br>
      * <br>
@@ -223,10 +263,7 @@ public final class CarFollowingUtil
      * Throughout the plane the maximum deceleration of each scenario is close to this value, unless the initial speed is so
      * low, and the target speed is so high, that such levels of deceleration are never required.<br>
      * <br>
-     * @param carFollowingModel car-following model to use
-     * @param parameters parameters
-     * @param speed current speed
-     * @param speedLimitInfo info regarding the desired speed for car-following
+     * @param context tactical information such as parameters and car-following model
      * @param distance distance to the location of the target speed
      * @param targetSpeed target speed
      * @return acceleration acceleration based on the car-following model in order to adjust the speed
@@ -234,32 +271,30 @@ public final class CarFollowingUtil
      * @throws NullPointerException if any input is {@code null}
      * @throws IllegalArgumentException if the distance or target speed is not at least 0
      */
-    public static Acceleration approachTargetSpeed(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final Length distance, final Speed targetSpeed)
-            throws ParameterException
+    public static Acceleration approachTargetSpeed(final TacticalContext context, final Length distance,
+            final Speed targetSpeed) throws ParameterException
     {
-        Throw.whenNull(parameters, "parameters");
-        Throw.whenNull(speed, "speed");
-        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
+        Throw.whenNull(context, "context");
         Throw.whenNull(distance, "distance");
         Throw.whenNull(targetSpeed, "targetSpeed");
         Throw.when(distance.lt0(), IllegalArgumentException.class, "Distance must be at least 0.");
         Throw.when(targetSpeed.lt0(), IllegalArgumentException.class, "Target speed must be at least 0.");
         // adjust speed of virtual vehicle to add deceleration incentive as the virtual vehicle does not move
         Speed virtualSpeed;
-        if (speed.si > 0)
+        if (context.getSpeed().si > 0)
         {
-            virtualSpeed = new Speed(targetSpeed.si * targetSpeed.si / speed.si, SpeedUnit.SI);
+            virtualSpeed = new Speed(targetSpeed.si * targetSpeed.si / context.getSpeed().si, SpeedUnit.SI);
         }
         else
         {
             virtualSpeed = new Speed(Double.MAX_VALUE, SpeedUnit.SI);
         }
         // set distance in line with equilibrium headway at virtual speed
-        Length virtualDistance = distance.plus(carFollowingModel.desiredHeadway(parameters, virtualSpeed));
+        Length virtualDistance =
+                distance.plus(context.getCarFollowingModel().desiredHeadway(context.getParameters(), virtualSpeed));
         // calculate acceleration towards virtual vehicle with car-following model
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo,
-                createLeader(virtualDistance, virtualSpeed));
+        return context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
+                context.getSpeedLimitInfo(), createLeader(virtualDistance, virtualSpeed));
     }
 
     /**

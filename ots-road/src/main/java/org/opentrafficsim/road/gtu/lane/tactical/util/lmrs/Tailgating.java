@@ -8,15 +8,13 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 
 /**
  * Interface for LMRS tailgating behavior.
@@ -38,7 +36,7 @@ public interface Tailgating
     Tailgating NONE = new Tailgating()
     {
         @Override
-        public void tailgate(final LanePerception perception, final Parameters parameters)
+        public void tailgate(final TacticalContextEgo context)
         {
             //
         }
@@ -54,24 +52,24 @@ public interface Tailgating
     Tailgating RHO_ONLY = new Tailgating()
     {
         @Override
-        public void tailgate(final LanePerception perception, final Parameters parameters)
+        public void tailgate(final TacticalContextEgo context)
         {
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                    perception.getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = context.getPerception()
+                    .getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
             if (leaders == null || leaders.isEmpty())
             {
                 return;
             }
             try
             {
-                Speed speed = perception.getPerceptionCategoryOrNull(EgoPerception.class).getSpeed();
-                Speed vCong = parameters.getParameter(ParameterTypes.VCONG);
-                Length x0 = parameters.getParameter(ParameterTypes.LOOKAHEAD);
-                Speed vGain = parameters.getParameter(LmrsParameters.VGAIN);
+                Speed speed = context.getSpeed();
+                Speed vCong = context.getParameters().getParameter(ParameterTypes.VCONG);
+                Length x0 = context.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
+                Speed vGain = context.getParameters().getParameter(LmrsParameters.VGAIN);
                 PerceivedGtu leader = leaders.first();
-                Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
+                Speed desiredSpeed = Try.assign(() -> context.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
-                parameters.setClaimedParameter(RHO, rho, this);
+                context.getParameters().setClaimedParameter(RHO, rho, this);
             }
             catch (ParameterException exception)
             {
@@ -90,31 +88,31 @@ public interface Tailgating
     Tailgating PRESSURE = new Tailgating()
     {
         @Override
-        public void tailgate(final LanePerception perception, final Parameters parameters)
+        public void tailgate(final TacticalContextEgo context)
         {
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                    perception.getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = context.getPerception()
+                    .getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
             if (leaders == null || leaders.isEmpty())
             {
                 return;
             }
             try
             {
-                Speed speed = perception.getPerceptionCategoryOrNull(EgoPerception.class).getSpeed();
-                Speed vCong = parameters.getParameter(ParameterTypes.VCONG);
-                Duration t = parameters.getParameter(ParameterTypes.T);
-                Duration tMin = parameters.getParameter(ParameterTypes.TMIN);
-                Duration tMax = parameters.getParameter(ParameterTypes.TMAX);
-                Length x0 = parameters.getParameter(ParameterTypes.LOOKAHEAD);
-                Speed vGain = parameters.getParameter(LmrsParameters.VGAIN);
+                Speed speed = context.getSpeed();
+                Speed vCong = context.getParameters().getParameter(ParameterTypes.VCONG);
+                Duration t = context.getParameters().getParameter(ParameterTypes.T);
+                Duration tMin = context.getParameters().getParameter(ParameterTypes.TMIN);
+                Duration tMax = context.getParameters().getParameter(ParameterTypes.TMAX);
+                Length x0 = context.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
+                Speed vGain = context.getParameters().getParameter(LmrsParameters.VGAIN);
                 PerceivedGtu leader = leaders.first();
-                Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
+                Speed desiredSpeed = Try.assign(() -> context.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
-                parameters.setClaimedParameter(RHO, rho, this);
+                context.getParameters().setClaimedParameter(RHO, rho, this);
                 double tNew = rho * tMin.si + (1.0 - rho) * tMax.si;
                 if (tNew < t.si)
                 {
-                    parameters.setClaimedParameter(ParameterTypes.T, Duration.ofSI(tNew), LmrsUtil.T_KEY);
+                    context.getParameters().setClaimedParameter(ParameterTypes.T, Duration.ofSI(tNew), LmrsUtil.T_KEY);
                 }
             }
             catch (ParameterException exception)
@@ -154,9 +152,8 @@ public interface Tailgating
 
     /**
      * Apply tailgating.
-     * @param perception perception
-     * @param parameters parameters
+     * @param context tactical information such as parameters and car-following model
      */
-    void tailgate(LanePerception perception, Parameters parameters);
+    void tailgate(TacticalContextEgo context);
 
 }

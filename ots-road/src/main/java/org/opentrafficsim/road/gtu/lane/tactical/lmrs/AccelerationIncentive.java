@@ -4,19 +4,16 @@ import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedLaneBasedObject;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 
 /**
  * Interface for acceleration incentives.
@@ -37,32 +34,53 @@ public interface AccelerationIncentive
 
     /**
      * Determine acceleration.
+     * @param context tactical information such as parameters and car-following model
      * @param lane lane on which to consider the acceleration
      * @param mergeDistance distance over which a lane change is impossible
-     * @param gtu gtu
-     * @param perception perception
-     * @param carFollowingModel car-following model
-     * @param speed current speed
-     * @param params parameters
-     * @param speedLimitInfo speed limit info
      * @return acceleration
      * @throws ParameterException on missing parameter
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
      */
-    Acceleration accelerate(RelativeLane lane, Length mergeDistance, LaneBasedGtu gtu, LanePerception perception,
-            CarFollowingModel carFollowingModel, Speed speed, Parameters params, SpeedLimitInfo speedLimitInfo)
+    Acceleration accelerate(TacticalContextEgo context, RelativeLane lane, Length mergeDistance)
             throws ParameterException, GtuException;
+
+    /**
+     * Returns an iterable with only those lane-based objects that are on the same road, i.e. only downstream of a possible
+     * merge.
+     * @param <T> type of lane-based object
+     * @param iterable iterable
+     * @param lane lane of objects
+     * @param mergeDistance distance within which the lane and current lane merge
+     * @return iterable with only those lane-based objects that are on the route
+     * @throws NullPointerException when any input is {@code null}
+     */
+    static <T extends PerceivedLaneBasedObject> Iterable<T> onRoad(final Iterable<T> iterable, final RelativeLane lane,
+            final Length mergeDistance)
+    {
+        Throw.whenNull(lane, "lane");
+        Throw.whenNull(mergeDistance, "mergeDistance");
+        if (!lane.isCurrent() && mergeDistance.gt0())
+        {
+            return new FilteredIterable<>(iterable, (trafficLight) ->
+            {
+                return trafficLight.getDistance().gt(mergeDistance);
+            });
+        }
+        return iterable;
+    }
 
     /**
      * Returns an iterable with only those lane-based objects that are on the route, accounting for longitudinal direction of
      * the GTU type.
+     * @param <T> type of lane-based object
      * @param iterable iterable
      * @param gtu gtu
-     * @param <T> type of lane-based object
      * @return iterable with only those lane-based objects that are on the route
+     * @throws NullPointerException when any input is {@code null}
      */
-    default <T extends PerceivedLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
+    static <T extends PerceivedLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
     {
+        Throw.whenNull(gtu, "gtu");
         Optional<Route> route = gtu.getStrategicalPlanner().getRoute();
         return new FilteredIterable<>(iterable, (t) ->
         {

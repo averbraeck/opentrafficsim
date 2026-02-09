@@ -8,9 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContext;
 
 /**
  * Utility class that stores duration and end-speed for a given anticipated movement.
@@ -88,29 +86,25 @@ public record AnticipationInfo(Duration duration, Speed endSpeed)
 
     /**
      * Returns info of the anticipation using free acceleration from car-following model.
+     * @param context tactical information such as parameters and car-following model
      * @param distance distance to cover
-     * @param initialSpeed initial speed
-     * @param parameters parameters of the anticipated GTU
-     * @param carFollowingModel car-following model of the anticipated GTU
-     * @param speedLimitInfo speed limit info of the anticipated GTU
      * @param timeStep time step to use
      * @return info regarding anticipation of movement
      * @throws ParameterException if parameter is not defined
      */
-    public static AnticipationInfo anticipateMovementFreeAcceleration(final Length distance, final Speed initialSpeed,
-            final Parameters parameters, final CarFollowingModel carFollowingModel, final SpeedLimitInfo speedLimitInfo,
+    public static AnticipationInfo anticipateMovementFreeAcceleration(final TacticalContext context, final Length distance,
             final Duration timeStep) throws ParameterException
     {
         Duration out = Duration.ZERO;
         if (distance.lt0())
         {
-            return new AnticipationInfo(out, initialSpeed);
+            return new AnticipationInfo(out, context.getSpeed());
         }
         Length xCumul = Length.ZERO;
-        Speed speed = initialSpeed;
+        Speed speed = context.getSpeed();
         while (xCumul.lt(distance))
         {
-            Acceleration a = CarFollowingUtil.freeAcceleration(carFollowingModel, parameters, speed, speedLimitInfo);
+            Acceleration a = CarFollowingUtil.freeAcceleration(context, speed);
             Length add = new Length(speed.si * timeStep.si + .5 * a.si * timeStep.si * timeStep.si, LengthUnit.SI);
             Length remain = distance.minus(xCumul);
             if (add.lt(remain))

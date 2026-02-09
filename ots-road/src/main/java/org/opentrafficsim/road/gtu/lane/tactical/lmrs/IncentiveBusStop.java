@@ -1,18 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedBusStop;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
@@ -49,18 +45,17 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
     }
 
     @Override
-    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
-            final CarFollowingModel carFollowingModel,
+    public Desire determineDesire(final TacticalContextEgo context,
             final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         PerceivedBusStop firstStop = null;
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
-                perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
-        Duration now = perception.getGtu().getSimulator().getSimulatorTime();
+                context.getPerception().getPerceptionCategory(BusStopPerception.class).getBusStops();
+        Duration now = context.getPerception().getGtu().getSimulator().getSimulatorTime();
         for (PerceivedBusStop stop : stops)
         {
-            BusSchedule busSchedule = (BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()
+            BusSchedule busSchedule = (BusSchedule) context.getPerception().getGtu().getStrategicalPlanner().getRoute()
                     .orElseThrow(() -> new OperationalPlanException(
                             "Unable to determine lane change desire for bus stops for bus without bus schedule."));
             if (busSchedule.isLineStop(stop.getId(), now))
@@ -74,17 +69,18 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
         {
             return new Desire(0, 0);
         }
-        Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
         if (firstStop.getRelativeLane().isCurrent())
         {
-            double d = -IncentiveRoute.getDesireToLeave(parameters, firstStop.getDistance(), 1, speed);
+            double d =
+                    -IncentiveRoute.getDesireToLeave(context.getParameters(), firstStop.getDistance(), 1, context.getSpeed());
             return new Desire(d, d);
         }
 
         int n = firstStop.getRelativeLane().getNumLanes();
 
-        double dNotGood = -IncentiveRoute.getDesireToLeave(parameters, firstStop.getDistance(), n + 1, speed);
-        double dGood = IncentiveRoute.getDesireToLeave(parameters, firstStop.getDistance(), n, speed);
+        double dNotGood =
+                -IncentiveRoute.getDesireToLeave(context.getParameters(), firstStop.getDistance(), n + 1, context.getSpeed());
+        double dGood = IncentiveRoute.getDesireToLeave(context.getParameters(), firstStop.getDistance(), n, context.getSpeed());
         return firstStop.getRelativeLane().getLateralDirectionality().isRight() ? new Desire(dNotGood, dGood)
                 : new Desire(dGood, dNotGood);
 
