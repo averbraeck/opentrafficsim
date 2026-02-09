@@ -1,11 +1,10 @@
-package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
+package org.opentrafficsim.road.gtu.lane.perception.object;
 
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 

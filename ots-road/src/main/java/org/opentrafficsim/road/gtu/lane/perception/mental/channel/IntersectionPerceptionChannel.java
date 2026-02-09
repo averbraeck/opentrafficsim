@@ -25,8 +25,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Perceive
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType.AnticipationPerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLightChannel;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.PerceivedTrafficLightChannel;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
