@@ -75,7 +75,13 @@ public class SimpleLaneChangePattern extends ManeuverPattern
     {
     try
     {
-        if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DFREE)){
+        InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+        EgoContext ego = this.vehicle.getContext(EgoContext.class);
+        Speed speedLimit = infra.getLegalSpeedLimit();
+        Speed egoSpeed = ego.getEgoSpeed();
+        if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DFREE)
+               // && egoSpeed.gt(speedLimit.times(0.25))
+                ){
             return true;
         }
     }
@@ -91,8 +97,17 @@ public class SimpleLaneChangePattern extends ManeuverPattern
     {
         this.targetDirection = this.vehicle.getLaneChangeDesire().dominantDirection();
         NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
-        if (neigh.getIfLaneChangePossible(this.targetDirection)) {
-            return true;
+
+        try
+        {
+            if (neigh.getIfLaneChangePossible(this.targetDirection))
+            {
+                return true;
+            }
+        }
+        catch (GtuException | NetworkException exception)
+        {
+            exception.printStackTrace();
         }
         return false;
     }
@@ -106,6 +121,8 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
         /** Cached origin lane to detect completion. */
         private final Lane originLane;
+
+        private Boolean startCondition = true;
 
 
         // ----------------------------------------------------------------------
@@ -187,6 +204,22 @@ public class SimpleLaneChangePattern extends ManeuverPattern
                     this.maneuverPattern.getPatternSpecificTimestep(),
                     this.direction);
 
+            if (!this.vehicle.getLaneChange().isChangingLane()) {
+                Speed resultingSpeed = egoSpeed.plus(minAcc.times(this.maneuverPattern.getPatternSpecificTimestep()));
+                this.startCondition = (resultingSpeed.gt(Speed.instantiateSI(5.0)) || neighborsCtx.checkIfLaneChangeIsPossible(this.direction));
+            }
+
+            if (!this.startCondition) {
+                plan = new SimpleOperationalPlan(
+                        minAcc,
+                        this.maneuverPattern.getPatternSpecificTimestep(),
+                        LateralDirectionality.NONE);
+            }
+
+//            System.out.println("GTU " + this.vehicle.getGtu().getId() + " performing lane change to " + this.direction
+//                    + " with lateral position " + this.vehicle.getGtu().getLateralPosition(this.vehicle.getGtu().getLane())
+//                    + " with acceleration " + minAcc);
+
             if (this.direction == LateralDirectionality.LEFT) {
                 plan.setIndicatorIntentLeft();
             } else if (this.direction == LateralDirectionality.RIGHT) {
@@ -225,7 +258,18 @@ public class SimpleLaneChangePattern extends ManeuverPattern
          */
         @Override
         public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException {
-              return null;
+
+            if (!this.startCondition) {
+                try
+                {
+                    return finishManeuver();
+                }
+                catch (ParameterException | GtuException | NetworkException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+            return null;
         }
 
         @Override

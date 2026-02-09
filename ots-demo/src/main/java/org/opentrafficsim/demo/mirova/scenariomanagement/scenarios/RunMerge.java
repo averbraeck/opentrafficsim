@@ -15,7 +15,7 @@ public class RunMerge
         outputDir.mkdirs();
         scenario.setOutputDirectory(outputDir);
         ScenarioSimulationScript script = scenario.buildSimulationScript();
-        script.setSimulationTime(Duration.instantiateSI(600));
+        script.setSimulationTime(Duration.instantiateSI(3600));
         script.setGuiEnabled(true);
         script.start();
 

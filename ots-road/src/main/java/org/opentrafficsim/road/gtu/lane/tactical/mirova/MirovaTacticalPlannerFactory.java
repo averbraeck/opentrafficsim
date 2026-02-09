@@ -93,6 +93,7 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
         parameters.setDefaultParameter(ParameterTypes.T0);
         parameters.setDefaultParameter(ParameterTypes.LCDUR);
         parameters.setDefaultParameter(ParameterTypes.DT);
+        parameters.setParameter(ParameterTypes.DT, Duration.instantiateSI(0.5));
         parameters.setDefaultParameter(ParameterTypes.A);
         parameters.setDefaultParameter(ParameterTypes.B);
         parameters.setDefaultParameter(ParameterTypes.BCRIT);
@@ -116,7 +117,7 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
     {
         planner.addKnowledgeChunk(new DiscretionaryLaneChangeChunk(planner));
         planner.addKnowledgeChunk(new MandatoryLaneChangeChunk(planner));
-        planner.addKnowledgeChunk(new SocialInteractionsChunk(planner));
+        //planner.addKnowledgeChunk(new SocialInteractionsChunk(planner));
         planner.addKnowledgeChunk(new MergeCooperationChunk(planner));
         planner.addKnowledgeChunk(new CongestionChunk(planner));
     }

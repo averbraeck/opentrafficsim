@@ -90,6 +90,9 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
 
         // Define relevant lanes to check
         RelativeLane[] lanesToCheck = new RelativeLane[]{RelativeLane.LEFT, RelativeLane.CURRENT, RelativeLane.RIGHT};
+        double lookAheadParam = p.getParameter(ParameterTypes.LOOKAHEAD).si;
+        double t0Param = p.getParameter(ParameterTypes.T0).si;
+
 
         for (RelativeLane lane : lanesToCheck)
         {
@@ -112,8 +115,6 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
                         // Prevent division by zero if n=0 (should not happen for mandatory info, but safety first)
                         n = n == 0 ? 1 : n;
 
-                        double lookAheadParam = p.getParameter(ParameterTypes.LOOKAHEAD).si;
-                        double t0Param = p.getParameter(ParameterTypes.T0).si;
 
                         double d1 = 1.0 - x.si / (n * lookAheadParam);
                         double d2 = 1.0 - (x.si / v) / (n * t0Param);
@@ -127,7 +128,6 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
                     // Fallback: If no explicit LaneChangeInfo is present, but the lane physically ends
                     // shortly, we must generate a high desire to leave it.
                     Length directDistToEnd = infraCtx.getDistanceToLaneEnd(lane);
-                    double lookAheadParam = p.getParameter(ParameterTypes.LOOKAHEAD).si;
 
                     if (directDistToEnd.si < lookAheadParam)
                     {
@@ -149,6 +149,7 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
                 : currentInfo.first().remainingDistance();
 
         Double dCurr = dLeave.getOrDefault(RelativeLane.CURRENT, 0.0);
+        InfrastructureContext infraContext = this.getMirovaTacticalPlanner().getContext(InfrastructureContext.class);
 
         double dLeft = 0.0;
         // Check Left Validity
@@ -157,12 +158,19 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
         {
              // Check if we are allowed to change (not past the "must change" point of the target?)
              // Usually we check if we are allowed to leave CURRENT.
-             if (infraPerc.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).neg().lt(currentReqDist))
-             {
-                 double dLeaveLeft = dLeave.getOrDefault(RelativeLane.LEFT, 0.0);
-                 // Schakel formula: desire to change = (DesireLeaveTarget < DesireLeaveCurrent) ? DesireLeaveCurrent : -DesireLeaveTarget
-                 dLeft = dLeaveLeft < dCurr ? dCurr : -dLeaveLeft;
-             }
+            if (infraContext.getDistanceToLaneEnd(RelativeLane.LEFT).si > lookAheadParam) {
+                 if (infraPerc.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).neg().lt(currentReqDist))
+                 {
+                     double dLeaveLeft = dLeave.getOrDefault(RelativeLane.LEFT, 0.0);
+                     // Schakel formula: desire to change = (DesireLeaveTarget < DesireLeaveCurrent) ? DesireLeaveCurrent : -DesireLeaveTarget
+                     dLeft = dLeaveLeft < dCurr ? dCurr : -dLeaveLeft;
+                 }
+            }
+             else {
+                     // Cannot leave current lane anymore, so no desire to go left
+                     dLeft = -1.0;
+                 }
+
         }
 
         double dRight = 0.0;
@@ -170,11 +178,17 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
         if (perception.getLaneStructure().exists(RelativeLane.RIGHT)
                 && infraCtx.getIfLaneAvailable(LateralDirectionality.RIGHT))
         {
+            if (infraContext.getDistanceToLaneEnd(RelativeLane.RIGHT).si > lookAheadParam) {
              if (infraPerc.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).neg().lt(currentReqDist))
              {
                  double dLeaveRight = dLeave.getOrDefault(RelativeLane.RIGHT, 0.0);
                  dRight = dLeaveRight < dCurr ? dCurr : -dLeaveRight;
              }
+             }
+             else {
+                     // Cannot leave current lane anymore, so no desire to go right
+                     dRight = -1.0;
+                 }
         }
 
         // --- Build Desire vector ------------------------------------------------

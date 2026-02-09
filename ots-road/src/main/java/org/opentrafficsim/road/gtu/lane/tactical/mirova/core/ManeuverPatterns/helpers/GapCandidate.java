@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -317,10 +318,16 @@ public class GapCandidate
         Length lM = this.vehicle.getGtu().getLength();
 
         // xE: Distance to effective end of lane (Physical end minus buffer)
-        Length xE = infra.getDistanceToLaneEnd().minus(emergencyBuffer);
+        //Length xE = infra.getDistanceToLaneEnd().minus(emergencyBuffer);
+        Length[] positions = getPositions();
+        Length xE = positions[0];
+        Length xM = positions[1];
+        Length xL = positions[2];
+        Length xF = positions[3];
+
 
         // xM: Ego Front position
-        Length xM = Length.ZERO;
+        //Length xM = Length.ZERO;
         Speed vM = ego.getEgoSpeed();
 
         // Abort if we have already passed the effective merge point (Model invalid for negative distances)
@@ -328,12 +335,12 @@ public class GapCandidate
 
         // xL: Leader Rear Position (Positive, ahead of Ego)
         // OTS getDistance() returns the net gap from Ego Front to Leader Rear.
-        Length xL = this.leader.getDistance();
+        //Length xL = this.leader.getDistance();
 
         // xF: Follower Front Position (Negative, behind Ego)
         // OTS getDistance() returns the net gap from Ego Rear to Follower Front.
         // In the paper's coordinate system (origin at Ego Front), xF is at: -(EgoLength + NetGap).
-        Length xF = this.follower.getDistance().plus(lM);//.neg();
+        //Length xF = this.follower.getDistance().plus(lM);//.neg();
 
         // Paper Parameters
         Duration tauLC = params.getParameter(ParameterTypes.LCDUR);
@@ -386,6 +393,48 @@ public class GapCandidate
         }
     }
 
+    /**
+     * Computes the key positions in the absolute coordinate system.
+     *
+     * @return Array of positions: [xE, xM, xL, xF]
+     * @throws ParameterException if parameters are missing.
+     * @throws GtuException if GTU state cannot be accessed.
+     * @throws NetworkException if network topology is inconsistent.
+     */
+    private Length[] getPositions() throws ParameterException, GtuException, NetworkException {
+        InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+        Length emergencyBuffer = this.vehicle.getParameters().getParameter(MirovaParameters.emergencyStoppingDistance);
+        Length lM = this.vehicle.getGtu().getLength();
+        Length lF = this.follower.getLength();
+        Length lL = this.leader.getLength();
+        Length xE = infra.getDistanceToLaneEnd().minus(emergencyBuffer);
+        Length xM = Length.ZERO;
+        Length deltaxL = this.leader.getDistance();
+        Length deltaxF = this.follower.getDistance().plus(lM);
+
+        Length xL;
+        Length xF;
+
+        switch (this.lastKnownLocation) {
+            case DOWNSTREAM:
+                xL = Length.instantiateSI(xM.si + deltaxL.si + lL.si/2.0 + lM.si/2.0);
+                xF = Length.instantiateSI(xM.si + deltaxF.si + lF.si/2.0 + lM.si/2.0);
+                break;
+            case UPSTREAM:
+                xL = Length.instantiateSI(xM.si - deltaxL.si - lL.si/2.0 - lM.si/2.0);
+                xF = Length.instantiateSI(xM.si - deltaxF.si - lF.si/2.0 - lM.si/2.0);
+                break;
+            case STRADDLE:
+                xL = Length.instantiateSI(xM.si + deltaxL.si + lL.si/2.0 + lM.si/2.0);
+                xF = Length.instantiateSI(xM.si - deltaxF.si - lF.si/2.0 - lM.si/2.0);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported gap location: " + this.lastKnownLocation);
+        }
+
+        return new Length[] {xE, xM, xL, xF};
+        }
+
     // ----------------------------------------------------------------------
     // Math Helpers (Berghaus & Oeser Implementation)
     // ----------------------------------------------------------------------
@@ -410,13 +459,14 @@ public class GapCandidate
         double vLsi = Math.max(vL.si, 0.1); // Avoid division by zero
 
         // Term alpha from Eq. (12)
-        double alpha = xL.si - xE.si - dxMin.si + (Tdes.si * vM.si);
-
+        //double alpha = xL.si - xE.si - dxMin.si + (Tdes.si * vM.si);
+        double alpha = xL.si - xE.si - this.leader.getLength().si/2.0 - this.vehicle.getGtu().getLength().si/2.0 - dxMin.si + (Tdes.si * vM.si);
         // Discriminant
         double inside = alpha * alpha + 8.0 * vLsi * Tdes.si * (xE.si - xM.si);
         double sqrtTerm = Math.sqrt(Math.max(0.0, inside));
 
-        double base = -xL.si + xE.si + dxMin.si - (Tdes.si * vM.si);
+        //double base = -xL.si + xE.si + dxMin.si - (Tdes.si * vM.si);
+        double base = -alpha;
 
         // Select the smallest positive solution
         double numerator = (base - sqrtTerm > 0.0) ? Math.min(base + sqrtTerm, base - sqrtTerm) : base + sqrtTerm;
@@ -440,9 +490,11 @@ public class GapCandidate
      * @return The time horizon Tau.
      */
     private Duration computeTauEFollower(final Length xE, final Length xM, final Length xF, final Speed vF, final Length dxMin, final Duration Tdes) {
-        double vFsi = Math.max(vF.si, 0.1);
+        //double vFsi = Math.max(vF.si, 0.1);
         // Eq (24): (xE - xF - s0) / vF - T
-        return Duration.instantiateSI((xE.si - xF.si - dxMin.si - this.vehicle.getGtu().getLength().si) / vFsi - Tdes.si);
+        Double tauEFollowerSI = (xE.si - xF.si - dxMin.si - this.vehicle.getGtu().getLength().si/2.0 - this.follower.getLength().si/2.0) / vF.si - Tdes.si;
+        //return Duration.instantiateSI((xE.si - xF.si - dxMin.si - this.vehicle.getGtu().getLength().si) / vFsi - Tdes.si);
+        return Duration.instantiateSI(tauEFollowerSI);
     }
 
     /**
@@ -458,28 +510,53 @@ public class GapCandidate
      * </p>
      *
      * @return The instantiated acceleration.
+     * @throws ParameterException
      */
     private Acceleration computeMergeAcceleration(final Length xE, final Length xM, final Speed vM, final HeadwayGtu leader, final HeadwayGtu follower,
-                                                  final Duration tauELeader, final Duration tauEFollower, final Length dxMin, final Duration Tdes, final Duration tauLC, final Acceleration aCF) {
+                                                  final Duration tauELeader, final Duration tauEFollower, final Length dxMin, final Duration Tdes, final Duration tauLC, final Acceleration aCF) throws ParameterException {
+
+        double vF = follower.getSpeed().si;
         // --- Leader Constraint ---
-        double tauEL = Math.max(tauELeader.si, 0.1);
+        double tauEL = tauELeader.si; //Math.max(tauELeader.si, 0.1);
         // Eq (10): aDesired (Acceleration to reach Tdes at merge)
-        double aDesired = 2.0 * ((xE.si - xM.si) - vM.si * tauEL) / (tauEL * tauEL);
+        //double aDesired = 2.0 * ((xE.si - xM.si) - vM.si * tauEL) / (tauEL * tauEL);
+        double aMDesiredHeadway = 2.0 * (xE.si - vM.si * tauEL - xM.si) / (tauEL * tauEL);
+
 
         // Eq (14): aZeroHeadway (Acceleration to just barely respect s0 -> more aggressive)
-        double tauZero = Math.max(tauELeader.si - tauLC.si, 0.1);
-        double aZero = ((leader.getSpeed().si - vM.si) * tauZero + (leader.getDistance().si - dxMin.si)) / (0.5 * tauZero * tauZero);
+        //double tauZero = Math.max(tauELeader.si - tauLC.si, 0.1);
+        //double aZero = ((leader.getSpeed().si - vM.si) * tauZero + (leader.getDistance().si - dxMin.si)) / (0.5 * tauZero * tauZero);
+
+        double deltaXLeader = leader.getDistance().si;
+        if (this.leader.isAhead()) {
+            deltaXLeader += this.vehicle.getGtu().getLength().si / 2.0 + leader.getLength().si / 2.0;
+        } else {
+            deltaXLeader = - deltaXLeader - this.vehicle.getGtu().getLength().si / 2.0 - leader.getLength().si / 2.0;
+        }
+
+        double tauZero = tauELeader.si - tauLC.si;
+        double aMZeroHeadway = ((leader.getSpeed().si - vM.si) * tauZero + (deltaXLeader)) / (0.5 * tauZero * tauZero);
+
+        // We use acceleration bounds for feasibility checking
+        //double aMax = this.vehicle.getParameters().getParameter(ParameterTypes.A).si;
+        //double aMin = this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold).si;
+        InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+        double speedLimit = infra.getLegalSpeedLimit().si;
+        double aFollowerbound = (speedLimit - vF) / tauZero;
+
+        double aMerger = Math.max(Math.min(Math.min(aMDesiredHeadway, aMZeroHeadway),aFollowerbound),vF/tauZero);
 
         // Conservative approach: take the minimum
-        double aLeader = Math.min(aDesired, aZero);
+        //double aLeader = Math.min(aDesired, aZero);
 
         // --- Follower Constraint ---
         // Eq (25): Acceleration to ensure the follower isn't forced to breach safety distance
-        double tauEF = Math.max(tauEFollower.si, 0.1);
-        double aFollower = 2.0 * ((xE.si - xM.si) - vM.si * tauEF) / (tauEF * tauEF);
+        //double tauEF = Math.max(tauEFollower.si, 0.1);
+        //double aFollower = 2.0 * ((xE.si - xM.si) - vM.si * tauEF) / (tauEF * tauEF);
 
         // Global Minimum: Apply constraints from Leader, Follower and the current CF model (own leader)
-        return Acceleration.instantiateSI(Math.min(aLeader, Math.min(aFollower, aCF.si)));
+        //return Acceleration.instantiateSI(Math.min(aLeader, Math.min(aFollower, aCF.si)));
+        return Acceleration.instantiateSI(aMerger);
     }
 
     /**

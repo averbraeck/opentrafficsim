@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.storage.StorageType;
@@ -93,6 +94,7 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.road.od.Categorization;
@@ -106,6 +108,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
+import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -143,11 +146,13 @@ public class MergeScenario extends ScenarioGenerator
         this.stream = new MersenneTwister(params.getSeed());
 
         buildNetwork(sim);
+        getOutputConfiguration().setRoadNetwork(this.network);
         buildRoutes();
         buildGtuTemplates(sim);
         buildRoadSamplers();
         buildOutputConfiguration();
-        createVehiclesFromGenerator(params, sim);
+        //createVehiclesFromGenerator(params, sim);
+        createVehiclesFromODMatrix(params, sim);
         return this.network;
     }
 
@@ -220,17 +225,17 @@ public class MergeScenario extends ScenarioGenerator
      */
     public LaneBasedStrategicalPlannerFactory<?> buildStrategicalPlannerFactoryCar()
     {
-        CarFollowingModelFactory<Wiedemann99> w99CarFactory = new Wiedemann99Factory(this.stream) {
-            @Override
-            public Parameters getParameters() throws ParameterException {
-                ParameterSet parameters = new ParameterSet();
-                parameters.setDefaultParameters(W99ParameterTypes.class);
-                //parameters.setParameter(ParameterTypes.T, Duration.instantiateSI(1.0)); // desired time headway
-                DistContinuous fSpeed = new DistNormal(MergeScenario.this.stream, 123.7 / 120.0, 0.1);
-                parameters.setParameter(AbstractWiedemannModel.FSPEED, fSpeed.draw());
-                return parameters;
-            }
-        };
+//        CarFollowingModelFactory<Wiedemann99> w99CarFactory = new Wiedemann99Factory(this.stream) {
+//            @Override
+//            public Parameters getParameters() throws ParameterException {
+//                ParameterSet parameters = new ParameterSet();
+//                parameters.setDefaultParameters(W99ParameterTypes.class);
+//                //parameters.setParameter(ParameterTypes.T, Duration.instantiateSI(1.0)); // desired time headway
+//                DistContinuous fSpeed = new DistNormal(MergeScenario.this.stream, 123.7 / 120.0, 0.1);
+//                parameters.setParameter(AbstractWiedemannModel.FSPEED, fSpeed.draw());
+//                return parameters;
+//            }
+//        };
 
         MirovaTacticalPlannerFactory mirovaTacticalPlannerFactoryCars =
                 new MirovaTacticalPlannerFactory(new IdmPlusFactory(this.stream), new DefaultMirovaPerceptionFactory())
@@ -238,11 +243,12 @@ public class MergeScenario extends ScenarioGenerator
             @Override
             public Parameters getParameters() throws ParameterException {
                 Parameters parameters = getDefaultParameters();
-                //DistContinuous cooldown = new DistUniform(SimpleHighwayScenario.this.stream, 3.0, 6.0);
-                //parameters.setParameter(MirovaParameters.socialInteractionCooldown, Duration.instantiateSI(cooldown.draw()));
+
                 parameters.setParameter(ParameterTypes.TMAX, new Duration(1.0, DurationUnit.SI));
                 parameters.setParameter(ParameterTypes.TMIN, new Duration(0.5, DurationUnit.SI));
                 parameters.setParameter(MirovaParameters.socioSpeedSensitivity, 0.75);
+                DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 50, 90);
+                parameters.setParameter(MirovaParameters.vGain, new Speed(vGain.draw(), SpeedUnit.KM_PER_HOUR));
                 return parameters;
             }
         };
@@ -255,16 +261,16 @@ public class MergeScenario extends ScenarioGenerator
 
     public LaneBasedStrategicalPlannerFactory<?> buildStrategicalPlannerFactoryTruck()
     {
-        CarFollowingModelFactory<Wiedemann99> w99TruckFactory = new Wiedemann99Factory(this.stream) {
-            @Override
-            public Parameters getParameters() throws ParameterException {
-                ParameterSet parameters = new ParameterSet();
-                parameters.setDefaultParameters(W99ParameterTypes.class);
-                DistContinuous fSpeed = new DistNormal(MergeScenario.this.stream, 123.7 / 120.0, 0.1);
-                parameters.setParameter(AbstractWiedemannModel.FSPEED, fSpeed.draw());
-                return parameters;
-            }
-        };
+//        CarFollowingModelFactory<Wiedemann99> w99TruckFactory = new Wiedemann99Factory(this.stream) {
+//            @Override
+//            public Parameters getParameters() throws ParameterException {
+//                ParameterSet parameters = new ParameterSet();
+//                parameters.setDefaultParameters(W99ParameterTypes.class);
+//                DistContinuous fSpeed = new DistNormal(MergeScenario.this.stream, 123.7 / 120.0, 0.1);
+//                parameters.setParameter(AbstractWiedemannModel.FSPEED, fSpeed.draw());
+//                return parameters;
+//            }
+//        };
 
         MirovaTacticalPlannerFactory mirovaTacticalPlannerFactoryTrucks =
                 new MirovaTacticalPlannerFactory(new IdmPlusFactory(this.stream), new DefaultMirovaPerceptionFactory())
@@ -274,10 +280,10 @@ public class MergeScenario extends ScenarioGenerator
                 Parameters parameters = getDefaultParameters();
                 parameters.setParameter(ParameterTypes.TMAX, new Duration(1.6, DurationUnit.SI));
                 parameters.setParameter(ParameterTypes.TMIN, new Duration(1.2, DurationUnit.SI));
-                //DistContinuous cooldown = new DistUniform(SimpleHighwayScenario.this.stream, 3.0, 6.0);
-                //parameters.setParameter(MirovaParameters.socialInteractionCooldown, Duration.instantiateSI(cooldown.draw()));
-                parameters.setParameter(MirovaParameters.vGain, new Speed(80.0, SpeedUnit.KM_PER_HOUR)); // higher vGain for trucks to reduce discretionary lane changes
+                DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 90, 110);
+                parameters.setParameter(MirovaParameters.vGain, new Speed(vGain.draw(), SpeedUnit.KM_PER_HOUR)); // higher vGain for trucks to reduce discretionary lane changes
                 parameters.setParameter(MirovaParameters.socioSpeedSensitivity, 0.75); // more conservative lane changes for trucks
+                parameters.setParameter(MirovaParameters.cooperativeLaneChangesEnabled, false); // disable cooperative lane changes for trucks
                 return parameters;
             }
         };
@@ -303,8 +309,8 @@ public class MergeScenario extends ScenarioGenerator
                 Route route = null;
                 try
                 {
-                    route = new Route("ODRoute", gtuType,
-                            List.of(origin, destination));
+                    route = MergeScenario.this.network.getShortestRouteBetween(gtuType, origin, destination);
+
                 }
                 catch (NetworkException exception)
                 {
@@ -344,16 +350,39 @@ public class MergeScenario extends ScenarioGenerator
      * @throws Exception
      */
     public void createVehiclesFromODMatrix(final ScenarioParameters params, final OtsSimulatorInterface sim) throws Exception {
-        int steps = 2;
-        double[] time = new double[steps];
+        double intervalVolume = 3500.0; // vehicles per hour
+        double endVolume = params.getDemand(); // vehicles per hour
+        double volumeStep = 250.0; // vehicles per hour
+        double steps = Math.ceil((endVolume - intervalVolume) / volumeStep) + 1;
+        double relativeTimeStep = 1.0 / steps;
+        int i = 0;
+        double[] time = new double[(int)steps];
+        double[] carDemandMain   = new double[(int)steps];
+        double[] carDemandOnRamp = new double[(int)steps];
+        double[] truckDemandMain = new double[(int)steps];
+        double[] truckDemandOnRamp = new double[(int)steps];
 
-        time[0] = 0.0;
-        time[1] = 1.0;
+        for (i = 0; i < steps; i++) {
+            time[i] = relativeTimeStep * i * 4.0; // 4 hours total simulation time
+            carDemandMain[i]   = intervalVolume * (1.0 - params.getTruckShare()) * (1.0 - this.defaultParameters.getMergeShare());
+            truckDemandMain[i] = intervalVolume *   params.getTruckShare()  * (1.0 - this.defaultParameters.getMergeShare());
+            carDemandOnRamp[i]   = intervalVolume * (1.0 - params.getTruckShare()) * this.defaultParameters.getMergeShare();
+            truckDemandOnRamp[i] = intervalVolume *   params.getTruckShare()  * this.defaultParameters.getMergeShare();
+
+            intervalVolume += volumeStep;
+        }
 
         TimeVector timeVector = new TimeVector(
                 DoubleVectorData.instantiate(time, TimeUnit.BASE_HOUR.getScale(), StorageType.DENSE),
                 TimeUnit.BASE_HOUR
         );
+
+        System.out.println("Time vector: " + timeVector.toString());
+        System.out.println("Car main: " + java.util.Arrays.toString(carDemandMain));
+        System.out.println("Truck main: " + java.util.Arrays.toString(truckDemandMain));
+        System.out.println("Car on-ramp: " + java.util.Arrays.toString(carDemandOnRamp));
+        System.out.println("Truck on-ramp: " + java.util.Arrays.toString(truckDemandOnRamp));
+
 
         Categorization categorization = new Categorization("MyCategorization", GtuType.class);
 
@@ -374,36 +403,27 @@ public class MergeScenario extends ScenarioGenerator
         LaneBasedGtuCharacteristicsGeneratorOd characteristicsGenerator =
                 buildOdsCharacteristicsGenerator(sim);
 
-        double[] carDemandMain   = new double[steps];
-        double[] carDemandOnRamp = new double[steps];
-        double[] truckDemandMain = new double[steps];
-        double[] truckDemandOnRamp = new double[steps];
-
-
-        for (int i = 0; i < steps; i++) {
-            carDemandMain[i]   = params.getDemand() * (1.0 - params.getTruckShare()) * (1.0 - this.defaultParameters.getMergeShare());
-            truckDemandMain[i] = params.getDemand() *   params.getTruckShare()  * (1.0 - this.defaultParameters.getMergeShare());
-            carDemandOnRamp[i]   = params.getDemand() * (1.0 - params.getTruckShare()) * this.defaultParameters.getMergeShare();
-            truckDemandOnRamp[i] = params.getDemand() *   params.getTruckShare()  * this.defaultParameters.getMergeShare();
-        }
 
         FrequencyVector carFreqMain = new FrequencyVector(
                 DoubleVectorData.instantiate(carDemandMain, FrequencyUnit.PER_HOUR.getScale(), StorageType.DENSE),
                 FrequencyUnit.PER_HOUR
         );
+        System.out.println("Car freq main: " + carFreqMain.toString());
         FrequencyVector truckFreqMain = new FrequencyVector(
                 DoubleVectorData.instantiate(truckDemandMain, FrequencyUnit.PER_HOUR.getScale(), StorageType.DENSE),
                 FrequencyUnit.PER_HOUR
         );
+        System.out.println("Truck freq main: " + truckFreqMain.toString());
         FrequencyVector carFreqOnRamp = new FrequencyVector(
                 DoubleVectorData.instantiate(carDemandOnRamp, FrequencyUnit.PER_HOUR.getScale(), StorageType.DENSE),
                 FrequencyUnit.PER_HOUR
         );
+        System.out.println("Car freq on-ramp: " + carFreqOnRamp.toString());
         FrequencyVector truckFreqOnRamp = new FrequencyVector(
                 DoubleVectorData.instantiate(truckDemandOnRamp, FrequencyUnit.PER_HOUR.getScale(), StorageType.DENSE),
                 FrequencyUnit.PER_HOUR
         );
-
+        System.out.println("Truck freq on-ramp: " + truckFreqOnRamp.toString());
 
         Category carCat   = new Category(odMatrix.getCategorization(), DefaultsNl.CAR);
         Category truckCat = new Category(odMatrix.getCategorization(), DefaultsNl.TRUCK);
@@ -418,6 +438,8 @@ public class MergeScenario extends ScenarioGenerator
         odOptions.set(OdOptions.GTU_TYPE, characteristicsGenerator);
         odOptions.set(OdOptions.ERROR_HANDLER, GtuErrorHandler.DELETE);
         odOptions.set(OdOptions.LANE_BIAS, getLaneBiases());
+
+        System.out.println("Applying OD matrix: \n" + odMatrix);
 
         OdApplier.applyOd(this.network, odMatrix, odOptions, new DetectorType("NL.VEHICLES"));
     }
@@ -442,8 +464,8 @@ public class MergeScenario extends ScenarioGenerator
 
     @Override
     public void setDefaultParameters() {
-        this.defaultParameters.setDemand(4000.0); // vehicles per hour
-        this.defaultParameters.setTruckShare(0.1); // 10% trucks
+        this.defaultParameters.setDemand(4500.0); // vehicles per hour
+        this.defaultParameters.setTruckShare(0.05); // 5% trucks
         this.defaultParameters.setSeed(42L); // random see
         this.defaultParameters.setMergeShare(0.15); // 15% of overall demand merges from on-ramp
     }
@@ -490,21 +512,42 @@ public class MergeScenario extends ScenarioGenerator
                 .create();
 
         ImmutableMap<String, Link> linkMap = this.network.getLinkMap();
+        ArrayList<Lane> lanesDetector = new ArrayList<>();
         ImmutableIterator<Link> links = linkMap.values().iterator();
         this.listAllLanes = new ArrayList<Lane>();
         while (links.hasNext()) {
             CrossSectionLink link = (CrossSectionLink) links.next();
             for (Lane lane : link.getLanes()) {
                 this.listAllLanes.add(lane);
+                if (lane.getId().equals("AB.FORWARD1") || lane.getId().equals("AB.FORWARD2"))
+                    {
+                    this.listLoopDetectors.add(new LoopDetector("det_"+lane.getId(), new LanePosition(lane, Length.instantiateSI(1300)), Length.ZERO, DefaultsNl.LOOP_DETECTOR, Time.instantiateSI(60.0),
+                            Duration.instantiateSI(60.0), LoopDetector.HARMONIC_MEAN_SPEED));
+                }
+                if (lane.getId().equals("F2B.FORWARD1"))
+                {
+                    this.listLoopDetectors.add(new LoopDetector("det_"+lane.getId(), new LanePosition(lane, lane.getLength().times(0.5)), Length.ZERO, DefaultsNl.LOOP_DETECTOR, Time.instantiateSI(60.0),
+                            Duration.instantiateSI(60.0), LoopDetector.HARMONIC_MEAN_SPEED));
+                }
+                if (lane.getId().equals("DE.FORWARD1") || lane.getId().equals("DE.FORWARD2"))
+                {
+                    this.listLoopDetectors.add(new LoopDetector("det_"+lane.getId(), new LanePosition(lane, Length.instantiateSI(200)), Length.ZERO, DefaultsNl.LOOP_DETECTOR, Time.instantiateSI(60.0),
+                            Duration.instantiateSI(60.0), LoopDetector.HARMONIC_MEAN_SPEED));
+                }
+                if (lane.getId().equals("BC.FORWARD1") || lane.getId().equals("BC.FORWARD2") || lane.getId().equals("BC.FORWARD3"))
+                {
+                    GraphPath<LaneDataRoad> path = GraphLaneUtil.createPath("path", lane);
+                    sampler.scheduleStartRecording(Time.instantiateSI(0), path.get(0).getSource(0));
+                }
             }
         }
 
         // activates sampling on all lanes for the entire simulation duration
-        for (Lane lane : this.listAllLanes) {
-            GraphPath<LaneDataRoad> path = GraphLaneUtil.createPath("path", lane);
-            sampler.scheduleStartRecording(Time.instantiateSI(0), path.get(0).getSource(0));
-
-        }
+//        for (Lane lane : this.listAllLanes) {
+//            GraphPath<LaneDataRoad> path = GraphLaneUtil.createPath("path", lane);
+//            sampler.scheduleStartRecording(Time.instantiateSI(0), path.get(0).getSource(0));
+//
+//        }
 
         this.listRoadSamplers.add(sampler);
 

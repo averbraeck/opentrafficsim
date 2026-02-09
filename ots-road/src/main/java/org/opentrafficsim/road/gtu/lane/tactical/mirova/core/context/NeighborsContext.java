@@ -8,6 +8,7 @@ import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.Relative;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -15,8 +16,10 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -30,7 +33,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTrafficContext;
 /**
  * Context category describing the dynamic interaction between the ego vehicle
  * and neighboring vehicles on adjacent lanes.
@@ -790,7 +793,8 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
             Speed leftSpeedDelta = getFrontGapDeltaSpeed(LateralDirectionality.LEFT);
             Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
-
+            MacroTrafficContext macroCtx = this.vehicle.getContextManager().getCategory("MacroTraffic", MacroTrafficContext.class);
+            Speed leftLaneSpeed = macroCtx.getAverageSpeed(RelativeLane.LEFT);
             // german law allows right-side overtaking only if the left vehicle is at least 20 km/h slower and ego is not exceeding 60 km/h (StVO §5(4))
             // for now, we assume strict adherence to this rule (because we are german)
             if (leftSpeedDelta.le(new Speed(20.0, SpeedUnit.KM_PER_HOUR)) && egoSpeed.le(new Speed(60.0, SpeedUnit.KM_PER_HOUR))) {
@@ -798,9 +802,11 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
             }
 
             Length leftDistance = getFrontGapDistance(LateralDirectionality.LEFT);
-            Length currentDistance = getFrontGapDistance(LateralDirectionality.NONE);
-
-            if (leftSpeedDelta.gt(Speed.ZERO) && leftDistance.lt(currentDistance)) {
+            Duration leftTTC = leftDistance.divide(leftSpeedDelta.abs());
+            //Length currentDistance = getFrontGapDistance(LateralDirectionality.NONE);
+            Duration thresholdTTC = this.vehicle.getParameters().getParameter(MirovaParameters.undercuttingTTCThreshold);
+            if (leftSpeedDelta.gt(Speed.ZERO) & leftTTC.lt(thresholdTTC)
+                    ) {
                 return true;
             }
             else {
@@ -823,8 +829,10 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
      * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
      * @return true if the lane change is feasible, false otherwise
      * @throws ParameterException if parameter retrieval fails
+     * @throws NetworkException
+     * @throws GtuException
      */
-    public Boolean checkIfLaneChangeIsPossible(final LateralDirectionality laneChangeDirection) throws ParameterException {
+    public Boolean checkIfLaneChangeIsPossible(final LateralDirectionality laneChangeDirection) throws ParameterException, GtuException, NetworkException {
 
         EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
         InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
@@ -837,20 +845,58 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         Acceleration egoDecel = getEgoDeceleration(laneChangeDirection);
         Acceleration followerDecel = getFollowerDeceleration(laneChangeDirection);
 
+        Length vehicleLength = this.vehicle.getGtu().getLength();
+
         Length desiredRearHeadway = egoCtx.getDesiredRearHeadway(laneChangeDirection).times(reductionFactor);
+        //Length.max(egoCtx.getDesiredRearHeadway(laneChangeDirection).times(reductionFactor), vehicleLength);
         Length rearHeadway = getRearGapDistance(laneChangeDirection);
 
-        Length desiredFrontHeadway = egoCtx.getDesiredFrontHeadway(laneChangeDirection).times(reductionFactor);
+        Length desiredFrontHeadway = Length.max(egoCtx.getDesiredFrontHeadway(laneChangeDirection).times(reductionFactor), vehicleLength) ;
         Length frontHeadway = getFrontGapDistance(laneChangeDirection);
 
-        return egoDecel.gt(egoDecelThreshold)
+        Boolean laneChangePossible = laneChangeLegal
+                && egoDecel.gt(egoDecelThreshold)
                 && followerDecel.gt(followerDecelThreshold)
                 && rearHeadway.gt(desiredRearHeadway)
-                && frontHeadway.gt(desiredFrontHeadway)
-                && infraCtx.getIfLaneAvailable(laneChangeDirection);
+                && frontHeadway.gt(desiredFrontHeadway);
+
+        if (laneChangePossible) {
+            // laneChange is possible based on current gaps and decelerations,
+            // but we also want to check if the follower would still have a safe gap
+            // after ego enters the lane (considering its acceleration during lane change)
+            HeadwayGtu follower = getFollower(laneChangeDirection);
+
+            if (follower != null) {
+                Acceleration followerAcc = follower.getAcceleration();
+                Acceleration egoAcc = egoCtx.getCurrentCarFollowingAcceleration();
+                if (egoAcc != null && followerAcc != null) {
+                    // if ego is currently accelerating, we can be a bit more lenient on the follower deceleration, and vice versa
+                    if (egoAcc.lt(followerAcc)) {
+                        // check if gap would be still valid when ego enters target lane (tLC/2)
+                        Duration laneChangeDuration = this.vehicle.getParameters().getParameter(ParameterTypes.LCDUR).times(0.5);
+                        Speed followerSpeedDelta = getRearGapDeltaSpeed(laneChangeDirection);
+                        Length expectedFollowerGapReduction = Length.instantiateSI(
+                                followerSpeedDelta.si *laneChangeDuration.si
+                                + 0.5 * followerAcc.si * Math.pow(laneChangeDuration.si, 2)
+                                );
+                        rearHeadway = rearHeadway.minus(expectedFollowerGapReduction);
+//                        System.out.println("GTU " + this.vehicle.getGtu().getId() + " checking lane change to " + laneChangeDirection + ": "
+//                                + "Ego decel: " + egoDecel + " (acc: " + egoAcc + "), Follower decel: " + followerDecel
+//                                + " (acc: " + followerAcc + "), rear headway: " + rearHeadway);
+//                        System.out.println("Adjusted rear headway considering follower acceleration: " + rearHeadway
+//                                + " (expected reduction: " + expectedFollowerGapReduction + ")");
+                    }
+                }
+            }
+            return laneChangePossible && rearHeadway.gt(desiredRearHeadway);
+        }
+        else {
+            return laneChangePossible;
+        }
+
     }
 
-    public Boolean getIfLaneChangePossible(final LateralDirectionality dir) {
+    public Boolean getIfLaneChangePossible(final LateralDirectionality dir) throws GtuException, NetworkException {
         String name;
         if (dir.isLeft()) {
             name = LANE_CHANGE_POSSIBLE_LEFT;

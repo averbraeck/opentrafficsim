@@ -124,7 +124,7 @@ public final class Desire {
         double rightCombined = mandatoryDesire.right + wDisRight * discretionaryDesire.right;
 
         // Mandatory flag: true if either component contains mandatory motivation
-        boolean combinedMandatory = mandatoryDesire.isMandatory() || discretionaryDesire.isMandatory();
+        boolean combinedMandatory = mandatoryDesire.left > 0 || mandatoryDesire.right > 0;
 
         return new Desire(leftCombined, rightCombined, combinedMandatory);
     }

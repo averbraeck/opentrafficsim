@@ -69,7 +69,9 @@ public class GapSearchPattern extends ManeuverPattern {
     public boolean checkContext() {
         try
         {
-            if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)) {
+            if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)
+                    //& this.vehicle.getLaneChangeDesire().isMandatory()
+                    ) {
                 return true;
             }
         }
@@ -186,7 +188,24 @@ public class GapSearchPattern extends ManeuverPattern {
         }
 
         @Override
-        public SimpleOperationalPlan abort() { return null; }
+        public SimpleOperationalPlan abort() {
+            try
+            {
+                if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)
+                        & this.vehicle.getLaneChangeDesire().isMandatory()
+                        ) {
+                    return null;
+                }
+                else {
+                    return finishManeuver();
+                }
+            }
+            catch (ParameterException | GtuException | NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+
+            return null; }
 
         @Override
         public String toString() {
@@ -330,8 +349,8 @@ public class GapSearchPattern extends ManeuverPattern {
                     infra.getCurrentSpeedLimit(),
                     infra.getDistanceToLaneEnd().minus(GapSearchPattern.RAMP_END_BUFFER));
 
-            System.out.println("GTU " + this.vehicle.getGtu().getId() +
-                    " GapSearchPattern - SearchForGapState - Next(): Required stop accel: " + requiredStopAccel);
+//            System.out.println("GTU " + this.vehicle.getGtu().getId() +
+//                    " GapSearchPattern - SearchForGapState - Next(): Required stop accel: " + requiredStopAccel);
 
             // Panic Threshold: If we need to brake harder than -5.0 m/s^2 to respect the buffer,
             // we stop searching and switch to dedicated emergency braking.
@@ -344,7 +363,24 @@ public class GapSearchPattern extends ManeuverPattern {
         }
 
         @Override
-        public SimpleOperationalPlan abort() { return null; }
+        public SimpleOperationalPlan abort() {
+            try
+            {
+                if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)
+                        & this.vehicle.getLaneChangeDesire().isMandatory()
+                        ) {
+                    return null;
+                }
+                else {
+                    return finishManeuver();
+                }
+            }
+            catch (ParameterException | GtuException | NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+
+            return null; }
 
         /**
          * Iterates through the target lane to find a gap that satisfies the Berghaus & Oeser kinematic constraints.
@@ -653,7 +689,24 @@ public class GapSearchPattern extends ManeuverPattern {
         }
 
         @Override
-        public SimpleOperationalPlan abort() { return null; }
+        public SimpleOperationalPlan abort() {
+        try
+        {
+            if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)
+                    & this.vehicle.getLaneChangeDesire().isMandatory()
+                    ) {
+                return null;
+            }
+            else {
+                return finishManeuver();
+            }
+        }
+        catch (ParameterException | GtuException | NetworkException exception)
+        {
+            exception.printStackTrace();
+        }
+
+        return null; }
 
         @Override
         public String toString() {
@@ -782,7 +835,32 @@ public class GapSearchPattern extends ManeuverPattern {
          */
         @Override
         public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException {
-              return null;
+            try
+            {
+                NeighborsContext neighborsCtx = this.vehicle.getContext(NeighborsContext.class);
+                if (this.vehicle.getLaneChange().isChangingLane()) {
+                    return null; // Don't abort while actively changing lanes
+                }
+                else if (
+                        (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)
+                         & this.vehicle.getLaneChangeDesire().isMandatory()
+                        )
+                        ) {
+                    return null;
+                }
+                else if (neighborsCtx.getIfLaneChangePossible(this.direction)) {
+                    return null;
+                }
+                else {
+                    return finishManeuver();
+                }
+            }
+            catch (ParameterException | GtuException | NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+
+            return null;
         }
 
         @Override

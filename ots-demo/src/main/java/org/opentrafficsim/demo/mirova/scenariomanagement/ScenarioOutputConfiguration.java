@@ -345,7 +345,7 @@ public class ScenarioOutputConfiguration {
             }
         }
 
-        /*
+
         try
         {
             LoopDetector detector = this.detectors.get(0);
@@ -361,7 +361,7 @@ public class ScenarioOutputConfiguration {
             System.err.println("[ERROR] Failed to write loop detector output: " + exception.getMessage());
             exception.printStackTrace();
         }
-        */
+
 
         // ---------------------------------------------------------
         // Write additional scenario-level custom exports (optional)

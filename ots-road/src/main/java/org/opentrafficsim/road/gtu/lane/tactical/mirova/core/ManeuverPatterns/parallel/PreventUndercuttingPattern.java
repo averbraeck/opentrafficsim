@@ -12,6 +12,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
@@ -23,6 +24,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.ex
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTrafficContext;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -85,7 +87,7 @@ public class PreventUndercuttingPattern extends ManeuverPattern
             if (isFreeFlow == true)
             {
                 // 2. Check Perception for Undercutting situation
-                boolean potentialUndercut = neighbors.checkRightSideOvertakingAhead();
+                boolean potentialUndercut = neighbors.getRightSideOvertakingAhead();
 
                 if (potentialUndercut)
                 {
@@ -134,7 +136,7 @@ public class PreventUndercuttingPattern extends ManeuverPattern
             NeighborsContext neighbors = this.vehicle.getContext(NeighborsContext.class);
 
             // 1. Base Acceleration: Follow own leader (Safety first)
-            Acceleration acc = ego.getCurrentCarFollowingAcceleration();
+            //Acceleration acc = ego.getCurrentCarFollowingAcceleration();
 
             // 2. Calculate Regulatory Acceleration (Shadowing left leader)
             LateralDirectionality leftDir = LateralDirectionality.LEFT;
@@ -159,13 +161,30 @@ public class PreventUndercuttingPattern extends ManeuverPattern
                         leftDistHeadway,
                         leftLeaderSpeed);
                 this.vehicle.getParameters().resetParameter(ParameterTypes.T);
+                System.out.println("GTU " + this.vehicle.getGtu().getId() + " is shadowing left leader with acc " + aShadow);
 
+                if (aShadow.lt(Acceleration.instantiateSI(-6.0)))
+                {
+                    MacroTrafficContext macroCtx = this.vehicle.getContext(MacroTrafficContext.class);
+                    Speed leftLaneSpeed = macroCtx.getAverageSpeed(RelativeLane.LEFT);
+                    aShadow = CarFollowingUtil.approachTargetSpeed(
+                            this.vehicle.getCarFollowingModel(),
+                            this.vehicle.getParameters(),
+                            ego.getEgoSpeed(),
+                            infra.getCurrentSpeedLimit(),
+                            Length.instantiateSI(10.0),
+                            leftLaneSpeed
+                            );
+                    System.out.println("GTU " + this.vehicle.getGtu().getId() + " is applying emergency braking with acc " + aShadow);
+                }
+
+                return new SimpleOperationalPlan(
+                        aShadow,
+                        this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT));
 
             }
+            return null; // No left leader, should not happen as pattern should not be active, but safety first
 
-            return new SimpleOperationalPlan(
-                    acc,
-                    this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT));
         }
 
         @Override

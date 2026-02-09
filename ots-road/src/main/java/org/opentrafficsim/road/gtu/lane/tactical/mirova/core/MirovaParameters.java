@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -51,7 +52,7 @@ public class MirovaParameters implements ConstraintInterface
     public static final ParameterTypeSpeed vGain =
             new ParameterTypeSpeed("VGAIN",
                     "Speed gain threshold for lane change desire",
-                    new Speed(35.0, SpeedUnit.KM_PER_HOUR),
+                    new Speed(69.6, SpeedUnit.KM_PER_HOUR),
                     POSITIVE);
     public static final ParameterTypeSpeed vCrit =
             new ParameterTypeSpeed("VCRIT",
@@ -112,4 +113,20 @@ public class MirovaParameters implements ConstraintInterface
                     "Deceleration threshold for cooperative maneuvers",
                     Acceleration.instantiateSI(-5.0),
                     NEGATIVE);
+    public static final ParameterTypeAcceleration preemptiveCooperativeDeceleration =
+            new ParameterTypeAcceleration("PREEMPTIVE_COOPERATIVE_DECELERATION",
+                    "Deceleration for preemptive cooperative maneuvers",
+                    Acceleration.instantiateSI(-1.0),
+                    NEGATIVE);
+    public static final ParameterTypeBoolean cooperativeLaneChangesEnabled =
+            new ParameterTypeBoolean("COOPERATIVE_LANE_CHANGES_ENABLED",
+                    "Enable cooperative lane changes",
+                    true);
+
+    // prevent uncercutting parameters
+    public static final ParameterTypeDuration undercuttingTTCThreshold =
+            new ParameterTypeDuration("UNDERCUTTING_TIME_HEADWAY",
+                    "TTC to prevent undercutting",
+                    Duration.instantiateSI(5.0),
+                    POSITIVE);
 }

@@ -440,6 +440,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 
            }
         */
+
         if (this.operationalPlan.getIndicatorIntent().isLeft())
         {
             getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
@@ -448,18 +449,33 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         {
             getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
             }
+        else if (getLaneChangeDesire().magnitude() > getDFree()) {
+            // if strong desire but no explicit indicator intent, use desire direction for indicators
+            if (getLaneChangeDesire().dominantDirection() == LateralDirectionality.LEFT)
+            {
+                getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.LEFT);
+            }
+            else if (getLaneChangeDesire().dominantDirection() == LateralDirectionality.RIGHT)
+            {
+            getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.RIGHT);
+            }
+        }
         else
         {
             getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
             }
 
-        Acceleration planAcc = this.operationalPlan.getAcceleration();
-        if (planAcc.si < -8.0)
-        {
-            System.out.println("GTU " + getGtu().getId() + " extreme deceleration: " + planAcc.toDisplayString() + " with currentActionState: " + this.currentActionState
-            );
-        }
 
+        Acceleration planAcc = this.operationalPlan.getAcceleration();
+
+            if (planAcc.si < -8.0  || planAcc.eq(Acceleration.NEGATIVE_INFINITY)
+                    || planAcc.le(Acceleration.NEG_MAXVALUE))
+            {
+                System.out.printf("GTU: %s @simsec: %s -> Plan acceleration: %s, ActionState: %s%n",
+                        getGtu().getId(),
+                        getGtu().getSimulator().getSimulatorTime().toDisplayString(),
+                        planAcc.toDisplayString(), (this.currentActionState != null) ? this.currentActionState.toString() : "none");
+            }
         return this.operationalPlan;
     }
 

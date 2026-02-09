@@ -90,7 +90,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
     public Desire computeDesire() throws ParameterException, GtuException, NetworkException
     {
         Speed vGain = getMirovaTacticalPlanner().getVGain();
-
+        Speed vCong = getParameters().getParameter(ParameterTypes.VCONG);
         MacroTrafficContext macroContext = getMirovaTacticalPlanner().getContext(MacroTrafficContext.class);
         EgoContext egoContext = getMirovaTacticalPlanner().getContext(EgoContext.class);
 
@@ -101,9 +101,15 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         Dimensionless aGain;
         Speed vCur = macroContext.getAverageSpeed(RelativeLane.CURRENT);
 
+        if (vCur.si < getParameters().getParameter(ParameterTypes.VCONG).si)
+        {
+            // lower speed gain incentive in congested situations
+            vGain = vGain.times(1.3);
+        }
+
 
         Acceleration aCur = egoContext.getCurrentCarFollowingAcceleration();
-        if (aCur.si > 0)
+        if (aCur.si > 0 & egoContext.getEgoSpeed().si > vCong.si)
         {
             Acceleration a = getParameters().getParameter(ParameterTypes.A);
             aGain = a.minus(aCur).divide(a);
@@ -119,6 +125,11 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         {
             Speed vLeft = macroContext.getAverageSpeed(RelativeLane.LEFT);
             dLeft = aGain.si * (vLeft.si - vCur.si) / vGain.si;
+            if (vLeft.si >= vCong.si)
+            {
+                // lower speed gain incentive if target lane is congested
+                dLeft = dLeft * 0.7;
+            }
         }
         else
         {
@@ -129,8 +140,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
          if (rightDist > 0.0 && getInfrastructurePerception().getCrossSection().contains(RelativeLane.RIGHT))
          {
              Speed vRight = macroContext.getAverageSpeed(RelativeLane.RIGHT);
-             dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
-             /* why should we do this?
+             // no speed gain incentive to the right lane in non-congested situations
              if (vCur.si >= getParameters().getParameter(ParameterTypes.VCONG).si)
              {
                  dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
@@ -139,7 +149,6 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
              {
                  dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
              }
-             */
          }
          else
              {
@@ -158,13 +167,14 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 
          if (rightDist > 0.0)
          {
-             if (macroContext.getAverageSpeed(RelativeLane.RIGHT).ge(getMirovaTacticalPlanner().getGtu().getDesiredSpeed()) && Length.instantiateSI(rightDist)
-                     .ge(params.getParameter(ParameterTypes.LOOKAHEAD)))
+             Speed rightSpeed = macroContext.getAverageSpeed(RelativeLane.RIGHT);
+             if (rightSpeed.ge(getMirovaTacticalPlanner().getGtu().getDesiredSpeed())
+                     && Length.instantiateSI(rightDist).ge(params.getParameter(ParameterTypes.LOOKAHEAD))
+                     && rightSpeed.gt(vCong))
              {
-                 dRight = dRight +
-                         (this.vehicle.getParameters().getParameter(MirovaParameters.DFREE) *
-                                 this.vehicle.getTimeSinceLastLaneChange().si /
-                                 this.vehicle.getParameters().getParameter(MirovaParameters.socialInteractionCooldown).si);
+                 dRight = dRight + this.vehicle.getParameters().getParameter(MirovaParameters.DFREE);
+                                 //*  this.vehicle.getTimeSinceLastLaneChange().si / this.vehicle.getParameters().getParameter(MirovaParameters.socialInteractionCooldown).si)
+
              }
 
          }
