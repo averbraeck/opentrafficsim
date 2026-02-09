@@ -462,11 +462,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     private void runSingle()
     {
-        if (!((XsdTreeNode) this.treeTable.getTree().getModel().getRoot()).isValid())
+        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
+        if (!root.isValid())
         {
             showInvalidToRunMessage();
             return;
         }
+        autosave(root);
         int index = this.scenario.getSelectedIndex();
         try
         {
@@ -491,7 +493,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             showUnableToRunFromTempFile();
             return;
         }
-        save(file, (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot(), false);
+        save(file, root, false);
 
         if (index == 0)
         {
@@ -511,11 +513,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     protected void runBatch(final boolean all)
     {
-        if (!((XsdTreeNode) this.treeTable.getTree().getModel().getRoot()).isValid())
+        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
+        if (!root.isValid())
         {
             showInvalidToRunMessage();
             return;
         }
+        autosave(root);
         // TODO should probably create a utility to run from XML as demo fromXML, but with batch function too
         if (all)
         {
@@ -972,19 +976,28 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             @Override
             public void run()
             {
-                if (OtsEditor.this.unsavedChanges)
-                {
-                    setStatusLabel("Autosaving...");
-                    File file = new File(System.getProperty("java.io.tmpdir") + "ots" + File.separator
-                            + (OtsEditor.this.lastFile == null ? "autosave.xml" : "autosave_" + OtsEditor.this.lastFile));
-                    save(file, root, false);
-                    file.deleteOnExit();
-                    setStatusLabel("Autosaved");
-                }
+                autosave(root);
             }
         };
         new Timer().scheduleAtFixedRate(this.autosave, AUTOSAVE_PERIOD_MS, AUTOSAVE_PERIOD_MS);
         setAppearance(getAppearance()); // because of new AppearanceControlTreeTable
+    }
+
+    /**
+     * Autosave current state.
+     * @param root root node
+     */
+    private void autosave(final XsdTreeNodeRoot root)
+    {
+        if (OtsEditor.this.unsavedChanges)
+        {
+            setStatusLabel("Autosaving...");
+            File file = new File(System.getProperty("java.io.tmpdir") + "ots" + File.separator
+                    + (OtsEditor.this.lastFile == null ? "autosave.xml" : "autosave_" + OtsEditor.this.lastFile));
+            save(file, root, false);
+            file.deleteOnExit();
+            setStatusLabel("Autosaved");
+        }
     }
 
     /**
