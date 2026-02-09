@@ -1,7 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
+import java.util.NoSuchElementException;
+
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -46,8 +47,8 @@ public final class ArTaskCarFollowingExp extends AbstractArTask implements State
     {
         LaneBasedGtu gtu = perception.getGtu();
         Parameters parameters = gtu.getParameters();
-        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
-                IllegalStateException.class, "No NeighborsPerception in perception");
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("No NeighborsPerception in perception"));
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
         Duration headway = leaders.collect(new TaskHeadwayCollector(gtu.getSpeed()));
         return headway == null ? 0.0 : Math.exp(-headway.si / parameters.getParameter(HEXP).si);

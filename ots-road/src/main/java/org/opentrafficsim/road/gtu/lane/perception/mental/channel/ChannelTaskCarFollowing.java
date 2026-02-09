@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.channel;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -50,8 +51,8 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
     {
         this((perception) ->
         {
-            NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
-                    "NeighborsPerception not present.");
+            NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+                    .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
             Iterator<UnderlyingDistance<LaneBasedGtu>> leader =
                     neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
             if (!leader.hasNext())
@@ -92,8 +93,8 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
         {
             return 0.0;
         }
-        EgoPerception<?, ?> ego =
-                Try.assign(() -> perception.getPerceptionCategory(EgoPerception.class), "EgoPerception not present.");
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Duration headway = leader.distance().divide(ego.getSpeed());
         Duration h = Try.assign(() -> perception.getGtu().getParameters().getParameter(HEXP), "Parameter h_exp not present.");
         return headway.si <= 0.0 ? 0.999 : Math.exp(-headway.si / h.si);

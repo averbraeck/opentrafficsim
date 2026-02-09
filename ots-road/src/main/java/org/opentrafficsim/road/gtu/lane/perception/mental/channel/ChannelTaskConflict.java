@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
@@ -131,8 +132,8 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
         }
 
         // Get own approaching time
-        EgoPerception<?, ?> ego =
-                Try.assign(() -> perception.getPerceptionCategory(EgoPerception.class), "EgoPerception not present.");
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Duration egoHeadway = this.conflicts.first().distance().divide(ego.getSpeed());
 
         // Find least critical
@@ -150,8 +151,8 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
      */
     private static Set<SortedSet<UnderlyingDistance<Conflict>>> findConflictGroups(final LanePerception perception)
     {
-        IntersectionPerception intersection =
-                Try.assign(() -> perception.getPerceptionCategory(IntersectionPerception.class), "No intersection perception.");
+        IntersectionPerception intersection = perception.getPerceptionCategoryOptional(IntersectionPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("No intersection perception."));
         Iterator<UnderlyingDistance<Conflict>> conflicts =
                 intersection.getConflicts(RelativeLane.CURRENT).underlyingWithDistance();
 

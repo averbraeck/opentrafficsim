@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.channel;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -64,16 +65,16 @@ public class ChannelTaskTrafficLight extends AbstractTask implements ChannelTask
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        IntersectionPerception intersection = Try.assign(() -> perception.getPerceptionCategory(IntersectionPerception.class),
-                "IntersectionPerception not present.");
+        IntersectionPerception intersection = perception.getPerceptionCategoryOptional(IntersectionPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("IntersectionPerception not present."));
         Iterator<UnderlyingDistance<TrafficLight>> trafficLights =
                 intersection.getTrafficLights(RelativeLane.CURRENT).underlyingWithDistance();
         if (!trafficLights.hasNext())
         {
             return 0.0;
         }
-        EgoPerception<?, ?> ego =
-                Try.assign(() -> perception.getPerceptionCategory(EgoPerception.class), "EgoPerception not present.");
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Duration headway = trafficLights.next().distance().divide(ego.getSpeed());
         Duration h = Try.assign(() -> perception.getGtu().getParameters().getParameter(HEXP), "Parameter h_exp not present.");
         return Math.exp(-headway.si / h.si);

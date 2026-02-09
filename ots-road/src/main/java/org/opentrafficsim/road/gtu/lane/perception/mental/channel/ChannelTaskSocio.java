@@ -1,10 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.channel;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -59,8 +59,8 @@ public class ChannelTaskSocio extends AbstractTask implements ChannelTask, State
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
-                "NeighborsPerception not present.");
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
         Iterator<LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT).underlying();
         if (!followers.hasNext())
         {

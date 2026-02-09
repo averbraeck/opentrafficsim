@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.channel;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -72,10 +73,10 @@ public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
-                "NeighborsPerception not present.");
-        EgoPerception<?, ?> ego =
-                Try.assign(() -> perception.getPerceptionCategory(EgoPerception.class), "EgoPerception not present.");
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Speed v = ego.getSpeed();
         Speed vCong = Try.assign(() -> perception.getGtu().getParameters().getParameter(VCONG), "Parameter VCONG not present");
         Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(X0), "Parameter LOOKAHEAD not present.");

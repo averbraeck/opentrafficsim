@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
+import java.util.NoSuchElementException;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -40,8 +42,8 @@ public final class ArTaskLaneChanging extends ArTaskHeadwayBased implements Stat
     protected Duration getHeadway(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException
     {
-        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
-                "NeighborsPerception not available.");
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not available."));
         double lat = Try.assign(() -> getConsideration(perception, gtu, parameters), "Exception during lateral consideration.");
         RelativeLane lane;
         if (Math.abs(lat) < 1e-9)

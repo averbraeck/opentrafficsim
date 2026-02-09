@@ -1,7 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
+import java.util.NoSuchElementException;
+
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -33,8 +34,8 @@ public final class ArTaskCarFollowing extends ArTaskHeadwayBased implements Stat
     @Override
     protected Duration getHeadway(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
     {
-        NeighborsPerception neighbors = Try.assign(() -> perception.getPerceptionCategory(NeighborsPerception.class),
-                "NeighborsPerception not available.");
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+                .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not available."));
         return neighbors.getLeaders(RelativeLane.CURRENT).collect(new TaskHeadwayCollector(getSpeed()));
     }
 
