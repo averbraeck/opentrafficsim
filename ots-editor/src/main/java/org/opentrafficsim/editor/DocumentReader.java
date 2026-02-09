@@ -194,7 +194,7 @@ public final class DocumentReader
                         for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
                         {
                             Node appInfo = annotation.getChildNodes().item(appIndex);
-                            if (appInfo.getNodeName().equals("#text"))
+                            if (appInfo.getNodeName().equals("#text") || appInfo.getNodeName().equals("#cdata-section"))
                             {
                                 str.append(appInfo.getNodeValue());
                             }

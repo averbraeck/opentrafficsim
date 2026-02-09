@@ -107,8 +107,8 @@
   <xsd:element name="LaneBias">
     <xsd:annotation>
       <xsd:documentation source="description">Sets the preferred lateral position for vehicle generation for the given GTU
-        type either based on speed, or a fixed lateral position (between 0 for right and 1 for left of the road width, in terms
-        of lanes).
+        type either based on speed, or a fixed lateral position (between 0 and 1 covering the width of the road, in terms of
+        lanes).
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
@@ -121,8 +121,20 @@
         <xsd:element name="FromRight" type="ots:DoubleUnitInterval" />
       </xsd:choice>
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
-      <xsd:attribute name="Bias" type="ots:float" use="required" />
-      <xsd:attribute name="StickyLanes" type="ots:positiveInteger" use="optional" />
+      <xsd:attribute name="Bias" type="ots:float" use="required">
+        <xsd:annotation>
+          <xsd:documentation source="description"><![CDATA[Bias strength value. For a lane that is <i>d</i> lanes away from the 
+            desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a 
+            GTU will be generated there.]]></xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="StickyLanes" type="ots:positiveInteger" use="optional">
+        <xsd:annotation>
+          <xsd:documentation source="description">Limits GTUs to be generated on lanes at most this number of lanes away
+            from the desired lateral lane position on the road.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 

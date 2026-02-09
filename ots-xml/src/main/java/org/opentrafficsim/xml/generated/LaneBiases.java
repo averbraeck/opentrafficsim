@@ -41,8 +41,8 @@ import jakarta.xml.bind.annotation.XmlType;
     private static final long serialVersionUID = 10102L;
     /**
      * Sets the preferred lateral position for vehicle generation for the given GTU
-     *         type either based on speed, or a fixed lateral position (between 0 for right and 1 for left of the road width, in terms
-     *         of lanes).
+     *         type either based on speed, or a fixed lateral position (between 0 and 1 covering the width of the road, in terms of
+     *         lanes).
      * 
      */
     @XmlElement(name = "LaneBias")
@@ -50,8 +50,8 @@ import jakarta.xml.bind.annotation.XmlType;
 
     /**
      * Sets the preferred lateral position for vehicle generation for the given GTU
-     *         type either based on speed, or a fixed lateral position (between 0 for right and 1 for left of the road width, in terms
-     *         of lanes).
+     *         type either based on speed, or a fixed lateral position (between 0 and 1 covering the width of the road, in terms of
+     *         lanes).
      * 
      * Gets the value of the laneBias property.
      * 

@@ -74,9 +74,20 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlAttribute(name = "GtuType", required = true)
     @XmlJavaTypeAdapter(StringAdapter.class)
     protected StringType gtuType;
+    /**
+     * Bias strength value. For a lane that is <i>d</i> lanes away from the 
+     *             desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a 
+     *             GTU will be generated there.
+     * 
+     */
     @XmlAttribute(name = "Bias", required = true)
     @XmlJavaTypeAdapter(DoubleAdapter.class)
     protected org.opentrafficsim.xml.bindings.types.DoubleType bias;
+    /**
+     * Limits GTUs to be generated on lanes at most this number of lanes away
+     *             from the desired lateral lane position on the road.
+     * 
+     */
     @XmlAttribute(name = "StickyLanes")
     @XmlJavaTypeAdapter(PositiveIntegerAdapter.class)
     protected IntegerType stickyLanes;
@@ -202,7 +213,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the bias property.
+     * Bias strength value. For a lane that is <i>d</i> lanes away from the 
+     *             desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a 
+     *             GTU will be generated there.
      * 
      * @return
      *     possible object is
@@ -220,13 +233,15 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      *     allowed object is
      *     {@link String }
      *     
+     * @see #getBias()
      */
     public void setBias(org.opentrafficsim.xml.bindings.types.DoubleType value) {
         this.bias = value;
     }
 
     /**
-     * Gets the value of the stickyLanes property.
+     * Limits GTUs to be generated on lanes at most this number of lanes away
+     *             from the desired lateral lane position on the road.
      * 
      * @return
      *     possible object is
@@ -244,6 +259,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      *     allowed object is
      *     {@link String }
      *     
+     * @see #getStickyLanes()
      */
     public void setStickyLanes(IntegerType value) {
         this.stickyLanes = value;
