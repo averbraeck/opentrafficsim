@@ -2,7 +2,9 @@ package org.opentrafficsim.core.gtu.perception;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 
@@ -79,22 +81,19 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
     public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(final Class<T> category)
             throws OperationalPlanException
     {
-        T cat = getPerceptionCategoryOrNull(category);
-        if (cat != null)
-        {
-            return cat;
-        }
-        throw new OperationalPlanException("Perception category" + category + " is not present.");
+        Optional<T> cat = getPerceptionCategoryOptional(category);
+        Throw.when(cat.isEmpty(), NullPointerException.class, "Perception category %s is not present.", category);
+        return cat.orElseThrow(() -> new NullPointerException("Perception category " + category + " is not present."));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategoryOrNull(final Class<T> category)
+    public final <T extends PerceptionCategory<?, ?>> Optional<T> getPerceptionCategoryOptional(final Class<T> category)
     {
         T implementation = (T) this.cachedCategories.get(category);
         if (implementation != null)
         {
-            return implementation;
+            return Optional.of(implementation);
         }
         for (Class<?> clazz : this.perceptionCategories.keySet())
         {
@@ -104,10 +103,10 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
                 // isAssignableFrom takes care of implementation of the category
                 implementation = (T) this.perceptionCategories.get(clazz);
                 this.cachedCategories.put(category, implementation);
-                return implementation;
+                return Optional.of(implementation);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

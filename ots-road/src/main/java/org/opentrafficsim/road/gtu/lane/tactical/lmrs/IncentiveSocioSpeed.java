@@ -9,7 +9,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -79,9 +78,7 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
     {
         double dLeft = 0;
         double dRight = 0;
-        Speed vCong = context.getParameters().getParameter(VCONG);
-        Speed ownSpeed = context.getPerception().getPerceptionCategoryOrNull(EgoPerception.class).getSpeed();
-        if (ownSpeed.gt(vCong))
+        if (context.getSpeed().gt(context.getParameters().getParameter(VCONG)))
         {
             double sigma = context.getParameters().getParameter(SOCIO);
             NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
@@ -117,8 +114,7 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
                         Speed vDes = context.getGtu().getDesiredSpeed();
                         Speed vGain = context.getParameters().getParameter(VGAIN);
                         Length x0 = context.getParameters().getParameter(LOOKAHEAD);
-                        rho = Tailgating.socialPressure(ownSpeed, vCong, vDes, leader.getSpeed(), vGain, leader.getDistance(),
-                                x0);
+                        rho = Tailgating.socialPressure(vDes, leader.getSpeed(), vGain, leader.getDistance(), x0);
                     }
                     else
                     {
@@ -127,9 +123,8 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
                     PerceivedGtu follower = followers.first();
                     Speed vGainFollower = follower.getBehavior().getParameters().getParameter(VGAIN);
                     Length x0Follower = follower.getBehavior().getParameters().getParameter(LOOKAHEAD);
-                    double rhoFollower =
-                            Tailgating.socialPressure(follower.getSpeed(), vCong, follower.getBehavior().getDesiredSpeed(),
-                                    ownSpeed, vGainFollower, follower.getDistance(), x0Follower);
+                    double rhoFollower = Tailgating.socialPressure(follower.getBehavior().getDesiredSpeed(), context.getSpeed(),
+                            vGainFollower, follower.getDistance(), x0Follower);
                     if (rhoFollower * sigma > rho)
                     {
                         dLeft = -rhoFollower * sigma;

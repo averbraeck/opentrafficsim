@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.perception;
 
+import java.util.Optional;
+
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -60,12 +62,12 @@ public interface Perception<G extends Gtu>
     <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(Class<T> category) throws OperationalPlanException;
 
     /**
-     * Returns the given perception category, or {@code null} if not present.
+     * Returns the given perception category.
      * @param category perception category class
      * @param <T> perception category
-     * @return given perception category
+     * @return given perception category, empty if not present
      */
-    <T extends PerceptionCategory<?, ?>> T getPerceptionCategoryOrNull(Class<T> category);
+    <T extends PerceptionCategory<?, ?>> Optional<T> getPerceptionCategoryOptional(Class<T> category);
 
     /**
      * Remove give perception category.

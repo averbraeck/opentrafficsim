@@ -394,8 +394,9 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // intersection causes for deceleration
-        IntersectionPerception intersection = context.getPerception().getPerceptionCategoryOrNull(IntersectionPerception.class);
-        if (intersection != null)
+        Optional<IntersectionPerception> intersection =
+                context.getPerception().getPerceptionCategoryOptional(IntersectionPerception.class);
+        if (intersection.isPresent())
         {
             RelativeLane lane = new RelativeLane(lat, 1);
 
@@ -411,7 +412,7 @@ public final class LmrsUtil implements LmrsParameters
             // }
 
             // conflicts
-            PerceptionCollectable<PerceivedConflict, Conflict> conflicts = intersection.getConflicts(lane);
+            PerceptionCollectable<PerceivedConflict, Conflict> conflicts = intersection.get().getConflicts(lane);
             try
             {
                 Acceleration a = ConflictUtil.approachConflicts(context, new ConflictPlans(), lane, Length.ZERO, false);
@@ -442,7 +443,7 @@ public final class LmrsUtil implements LmrsParameters
             {
                 throw new OperationalPlanException(exception);
             }
-            conflicts = intersection.getConflicts(RelativeLane.CURRENT);
+            conflicts = intersection.get().getConflicts(RelativeLane.CURRENT);
             for (PerceivedConflict conflict : conflicts)
             {
                 if (conflict.getLane().getLink().equals(conflict.getConflictingLink()))
@@ -461,7 +462,7 @@ public final class LmrsUtil implements LmrsParameters
             }
 
             // traffic lights
-            Iterable<PerceivedTrafficLight> trafficLights = intersection.getTrafficLights(lane);
+            Iterable<PerceivedTrafficLight> trafficLights = intersection.get().getTrafficLights(lane);
             for (PerceivedTrafficLight trafficLight : trafficLights)
             {
                 if (trafficLight.getTrafficLightColor().isRedOrYellow())

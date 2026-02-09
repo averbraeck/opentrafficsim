@@ -41,7 +41,7 @@ public abstract class ArTaskHeadwayBased extends AbstractArTask
         double b = parameters.getParameter(ParameterTypes.B).si;
         double tMin = parameters.getParameter(ParameterTypes.TMIN).si;
         double hMin = a < -b ? (1.0 - (a + b) / (8.0 - b)) * tMin : tMin;
-        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class).orElseThrow();
         this.speed = ego.getSpeed();
         Duration h = getHeadway(perception, gtu, parameters);
         if (h == null)

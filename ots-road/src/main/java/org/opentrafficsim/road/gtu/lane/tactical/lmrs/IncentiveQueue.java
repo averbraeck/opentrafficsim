@@ -24,7 +24,7 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 /**
- * Incentive to join the shortest queue near intersection.
+ * Incentive to join the shortest queue near intersections.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -62,16 +62,17 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
         {
             return Desire.ZERO;
         }
-        double aCur = Try.assign(() -> context.getPerception().getGtu().getCarFollowingAcceleration().si,
-                OperationalPlanException.class, "Could not obtain the car-following acceleration.");
+        double aCur = Try.assign(() -> context.getGtu().getCarFollowingAcceleration().si, OperationalPlanException.class,
+                "Could not obtain the car-following acceleration.");
         if (aCur <= 0.0 && context.getSpeed().eq0())
         {
             return Desire.ZERO;
         }
-        IntersectionPerception inter = context.getPerception().getPerceptionCategoryOrNull(IntersectionPerception.class);
+        IntersectionPerception inter = context.getPerception().getPerceptionCategory(IntersectionPerception.class);
         PerceptionCollectable<PerceivedConflict, Conflict> conflicts = inter.getConflicts(RelativeLane.CURRENT);
         PerceptionCollectable<PerceivedTrafficLight, TrafficLight> lights = inter.getTrafficLights(RelativeLane.CURRENT);
         // TODO: a ramp-metering traffic light triggers this incentive with possible cooperation from the main line
+        // possible solution: make this a state-full class using Lane/LinkTypes to recognize intersections
         if (conflicts.isEmpty() && lights.isEmpty())
         {
             return Desire.ZERO;

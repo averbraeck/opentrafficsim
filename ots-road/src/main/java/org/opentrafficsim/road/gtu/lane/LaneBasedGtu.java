@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -1347,10 +1348,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         Duration simTime = getSimulator().getSimulatorTime();
         if (this.desiredSpeedTime == null || this.desiredSpeedTime.si < simTime.si)
         {
-            InfrastructurePerception infra =
-                    getTacticalPlanner().getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class);
+            Optional<InfrastructurePerception> infra =
+                    getTacticalPlanner().getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class);
             SpeedLimitInfo speedInfo;
-            if (infra == null)
+            if (infra.isEmpty())
             {
                 speedInfo = new SpeedLimitInfo();
                 speedInfo.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, getMaximumSpeed());
@@ -1358,7 +1359,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             else
             {
                 // Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
-                speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+                speedInfo = infra.get().getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
             }
             this.cachedDesiredSpeed =
                     Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
@@ -1380,16 +1381,18 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         {
             LanePerception perception = getTacticalPlanner().getPerception();
             // speed
-            EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
-            Throw.whenNull(ego, "EgoPerception is required to determine the speed.");
+            EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+                    .orElseThrow(() -> new NoSuchElementException("EgoPerception is required to determine the speed."));
             Speed speed = ego.getSpeed();
             // speed limit info
-            InfrastructurePerception infra = perception.getPerceptionCategoryOrNull(InfrastructurePerception.class);
-            Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
+            InfrastructurePerception infra = perception.getPerceptionCategoryOptional(InfrastructurePerception.class)
+                    .orElseThrow(() -> new NoSuchElementException(
+                            "InfrastructurePerception is required to determine the desired speed."));
             SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
             // leaders
-            NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
-            Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
+            NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+                    .orElseThrow(() -> new NoSuchElementException(
+                            "NeighborsPerception is required to determine the car-following acceleration."));
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
             // obtain
             this.cachedCarFollowingAcceleration =

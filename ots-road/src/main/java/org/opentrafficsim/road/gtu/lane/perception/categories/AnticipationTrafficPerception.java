@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.LinearDensity;
@@ -70,7 +71,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     @Override
     public Speed getSpeed(final RelativeLane lane) throws ParameterException
     {
-        Duration now = Try.assign(() -> getTimestamp(), "");
+        Duration now = Try.assign(() -> getTimestamp(), "GTU not initialized.");
         if (this.lastSpeedTime == null || this.lastSpeedTime.si < now.si)
         {
             // due to lane interdependency, we clear all
@@ -83,11 +84,14 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         Speed vAnt = this.speed.get(lane);
         if (vAnt == null)
         {
-            LaneBasedGtu gtu = Try.assign(() -> getPerception().getGtu(), "");
+            LaneBasedGtu gtu = getPerception().getGtu();
             Speed desiredSpeed = gtu.getDesiredSpeed();
             vAnt = anticipationSpeed(lane, gtu.getParameters(),
-                    getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class),
-                    getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class), desiredSpeed);
+                    getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                            .orElseThrow(() -> new NoSuchElementException("No neighbors perception category")),
+                    getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class).orElseThrow(
+                            () -> new NoSuchElementException("No infrastructure perception category")),
+                    desiredSpeed);
             this.speed.put(lane, vAnt);
         }
         return vAnt;
@@ -158,8 +162,9 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         TimeStampedObject<LinearDensity> tK = this.density.get(lane);
         if (tK == null || tK.timestamp().si < now.si)
         {
-            LinearDensity k =
-                    getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(lane).collect(DENSITY);
+            LinearDensity k = getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                    .orElseThrow(() -> new NoSuchElementException("No neighbors perception category")).getLeaders(lane)
+                    .collect(DENSITY);
             this.density.put(lane, new TimeStampedObject<>(k, now));
             return k;
         }

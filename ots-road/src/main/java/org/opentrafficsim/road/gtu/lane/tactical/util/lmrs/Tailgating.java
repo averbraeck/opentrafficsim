@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import java.util.NoSuchElementException;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -54,21 +56,21 @@ public interface Tailgating
         @Override
         public void tailgate(final TacticalContextEgo context)
         {
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = context.getPerception()
-                    .getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+            PerceptionCollectable<PerceivedGtu,
+                    LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                            .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
+                            .getLeaders(RelativeLane.CURRENT);
             if (leaders == null || leaders.isEmpty())
             {
                 return;
             }
             try
             {
-                Speed speed = context.getSpeed();
-                Speed vCong = context.getParameters().getParameter(ParameterTypes.VCONG);
                 Length x0 = context.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
                 Speed vGain = context.getParameters().getParameter(LmrsParameters.VGAIN);
                 PerceivedGtu leader = leaders.first();
                 Speed desiredSpeed = Try.assign(() -> context.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
-                double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
+                double rho = Tailgating.socialPressure(desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 context.getParameters().setClaimedParameter(RHO, rho, this);
             }
             catch (ParameterException exception)
@@ -90,16 +92,16 @@ public interface Tailgating
         @Override
         public void tailgate(final TacticalContextEgo context)
         {
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = context.getPerception()
-                    .getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
+            PerceptionCollectable<PerceivedGtu,
+                    LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                            .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
+                            .getLeaders(RelativeLane.CURRENT);
             if (leaders == null || leaders.isEmpty())
             {
                 return;
             }
             try
             {
-                Speed speed = context.getSpeed();
-                Speed vCong = context.getParameters().getParameter(ParameterTypes.VCONG);
                 Duration t = context.getParameters().getParameter(ParameterTypes.T);
                 Duration tMin = context.getParameters().getParameter(ParameterTypes.TMIN);
                 Duration tMax = context.getParameters().getParameter(ParameterTypes.TMAX);
@@ -107,7 +109,7 @@ public interface Tailgating
                 Speed vGain = context.getParameters().getParameter(LmrsParameters.VGAIN);
                 PerceivedGtu leader = leaders.first();
                 Speed desiredSpeed = Try.assign(() -> context.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
-                double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
+                double rho = Tailgating.socialPressure(desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 context.getParameters().setClaimedParameter(RHO, rho, this);
                 double tNew = rho * tMin.si + (1.0 - rho) * tMax.si;
                 if (tNew < t.si)
@@ -130,8 +132,6 @@ public interface Tailgating
 
     /**
      * Returns a normalized social pressure, equal to (vDesired - vLead) / vGain.
-     * @param speed speed
-     * @param vCong speed indicating congestion
      * @param desiredSpeed desired speed
      * @param leaderSpeed leader speed
      * @param vGain vGain parameter
@@ -139,8 +139,8 @@ public interface Tailgating
      * @param x0 anticipation distance
      * @return normalized social pressure
      */
-    static double socialPressure(final Speed speed, final Speed vCong, final Speed desiredSpeed, final Speed leaderSpeed,
-            final Speed vGain, final Length headway, final Length x0)
+    static double socialPressure(final Speed desiredSpeed, final Speed leaderSpeed, final Speed vGain, final Length headway,
+            final Length x0)
     {
         double dv = desiredSpeed.si - leaderSpeed.si;
         if (dv < 0 || headway.gt(x0)) // larger headway may happen due to perception errors

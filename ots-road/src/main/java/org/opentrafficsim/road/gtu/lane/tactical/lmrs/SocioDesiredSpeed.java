@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -7,7 +9,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
@@ -62,12 +63,11 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
         {
             return desiredSpeed;
         }
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers;
         LanePerception perception = this.gtu.getTacticalPlanner().getPerception();
-        NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
-        if (neighbors != null)
+        Optional<NeighborsPerception> neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class);
+        if (neighbors.isPresent())
         {
-            followers = neighbors.getFollowers(RelativeLane.CURRENT);
+            var followers = neighbors.get().getFollowers(RelativeLane.CURRENT);
             if (!followers.isEmpty())
             {
                 double sigma = parameters.getParameter(SOCIO);

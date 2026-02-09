@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -138,7 +139,8 @@ public class TacticalContextEgo implements TacticalContext
     {
         if (this.speedLimitInfo == null)
         {
-            this.speedLimitInfo = getPerception().getPerceptionCategoryOrNull(InfrastructurePerception.class)
+            this.speedLimitInfo = getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class)
+                    .orElseThrow(() -> new NoSuchElementException("No infrastructure perception category."))
                     .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
         }
         return this.speedLimitInfo;
@@ -179,7 +181,8 @@ public class TacticalContextEgo implements TacticalContext
     {
         if (this.length == null)
         {
-            EgoPerception<?, ?> ego = getPerception().getPerceptionCategoryOrNull(EgoPerception.class);
+            EgoPerception<?, ?> ego = getPerception().getPerceptionCategoryOptional(EgoPerception.class)
+                    .orElseThrow(() -> new NoSuchElementException("No ego perception category."));
             this.length = ego.getLength();
             this.width = ego.getWidth();
             this.speed = ego.getSpeed();
