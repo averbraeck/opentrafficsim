@@ -4,6 +4,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.perception.Perception;
+import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
 
 /**
  * Utility to make debugging on a specific GTU more convenient. There is a method {@code on()} for a GTU and for perception.
@@ -141,6 +142,19 @@ public final class Break
     {
         Try.execute(() -> on(perception.getGtu(), id, time, additionalCondition),
                 "Trying to break on gtu, but gtu could not be obtained from perception.");
+    }
+
+    /**
+     * Break on perception and double time.
+     * @param context tactical information such as parameters and car-following model
+     * @param id GTU id to break on
+     * @param time time to break at (or after)
+     * @param additionalCondition additional condition
+     */
+    public static void on(final TacticalContextEgo context, final String id, final double time,
+            final boolean additionalCondition)
+    {
+        on(context.getGtu(), id, time, additionalCondition);
     }
 
     /**
