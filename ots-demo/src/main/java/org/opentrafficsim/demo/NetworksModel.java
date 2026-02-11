@@ -387,7 +387,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
         LaneBasedGtuTemplateDistribution templateDistribution = new LaneBasedGtuTemplateDistribution(distribution);
         LaneBasedGtuGenerator.RoomChecker roomChecker = new CfRoomChecker();
-        return new LaneBasedGtuGenerator(lane.getId(), new Supplier<Duration>()
+        LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(lane.getId(), new Supplier<Duration>()
         {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -397,6 +397,8 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             }
         }, templateDistribution, GeneratorPositions.create(initialPositions, this.stream), this.network, this.simulator,
                 roomChecker, this.idSupplier);
+        generator.setNoLaneChangeDistance(Length.ofSI(100.0));
+        return generator;
     }
 
     /**
