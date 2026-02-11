@@ -53,7 +53,7 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
                 }
             }
         }
-        return NO_REASON;
+        return a;
     }
 
     @Override
