@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
@@ -33,9 +32,7 @@ public class Connector extends Link
     public Connector(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType)
             throws NetworkException
     {
-        super(network, id, startNode, endNode, linkType,
-                Try.assign(() -> new OtsLine2d(startNode.getPoint(), endNode.getPoint()), "Could not create connector line."),
-                null);
+        super(network, id, startNode, endNode, linkType, new OtsLine2d(startNode.getPoint(), endNode.getPoint()), null);
         Throw.when(!startNode.isCentroid() && !endNode.isCentroid(), NetworkException.class,
                 "At least on node connected to a Connector should be a centroid.");
     }

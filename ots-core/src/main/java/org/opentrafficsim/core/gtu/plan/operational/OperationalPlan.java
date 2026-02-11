@@ -84,7 +84,7 @@ public class OperationalPlan
             final Duration duration)
     {
         Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
-        OtsLine2d path = Try.assign(() -> new OtsLine2d(point, p2), "Unexpected geometry exception.");
+        OtsLine2d path = new OtsLine2d(point, p2);
         return new OperationalPlan(gtu, path, startTime, Segments.standStill(duration));
     }
 
@@ -125,7 +125,7 @@ public class OperationalPlan
             this.totalLength = Length.ZERO;
             DirectedPoint2d point = path.getLocation(0.0);
             Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
-            this.path = Try.assign(() -> new OtsLine2d(point, p2), "Unexpected geometry exception.");
+            this.path = new OtsLine2d(point, p2);
             return;
         }
         this.segments = segments;
