@@ -177,6 +177,7 @@ public interface Tailgating
         if (context.getParameters().getOptionalParameter(DEV_RHO).orElse(false))
         {
             LanePosition position = context.getGtu().getPosition();
+            // TODO: direction depends on left/right traffic
             Length deviation = position.lane().getWidth(position.position()).minus(context.getWidth()).times(0.5 * rho);
             context.addIntent(deviation, Length.ZERO);
         }
