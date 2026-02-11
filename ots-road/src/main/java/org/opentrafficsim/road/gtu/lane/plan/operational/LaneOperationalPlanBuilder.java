@@ -22,6 +22,7 @@ import org.djutils.math.AngleUtil;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -100,6 +101,22 @@ public final class LaneOperationalPlanBuilder
     {
         Throw.when(gtu.getLane() == null, IllegalStateException.class,
                 "Requested to build plan from simple plan for roaming GTU.");
+
+        Duration now = gtu.getSimulator().getSimulatorTime();
+
+        if (gtu.getSpeed().lt(OperationalPlan.DRIFTING_SPEED)
+                && simplePlan.getAcceleration().lt(OperationalPlan.DRIFTING_ACCELERATION))
+        {
+            DirectedPoint2d location = gtu.getLocation();
+            Point2d next = new Point2d(location.x + Math.cos(location.dirZ), location.y + Math.sin(location.dirZ));
+            OtsLine2d path = new OtsLine2d(location, next);
+            LanePosition nearestPosition = gtu.getPosition();
+            boolean deviative = nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
+            Segments segments = Segments.standStill(simplePlan.getDuration());
+            return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, deviative),
+                    "Building operational plan produced inconsistent LaneBasedOperationalPlan.");
+        }
+
         boolean deviative = false;
         LanePosition nearestPosition;
         if (simplePlan.isLaneChange())
@@ -138,7 +155,6 @@ public final class LaneOperationalPlanBuilder
         deviative = deviative || targetDeviation.abs().gt(SNAP);
         PathResults pathResults = getPath(gtu, nearestPosition, simplePlan.getAcceleration(), simplePlan.getDuration(),
                 tManeuver, targetDeviation, deviative);
-        Duration now = gtu.getSimulator().getSimulatorTime();
         Segments segments = Segments.off(gtu.getSpeed(), simplePlan.getDuration(), simplePlan.getAcceleration());
         boolean finalDeviative = deviative || pathResults.neededDeviation();
         return Try.assign(() -> new LaneBasedOperationalPlan(gtu, pathResults.path(), now, segments, finalDeviative),
