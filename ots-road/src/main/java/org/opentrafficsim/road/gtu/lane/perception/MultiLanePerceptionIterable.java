@@ -8,6 +8,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
@@ -31,7 +32,7 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
 {
 
     /** Set of iterators per lane. */
-    private final Map<RelativeLane, Iterator<UnderlyingDistance<U>>> iterators = new LinkedHashMap<>();
+    private final Map<RelativeLane, Iterator<DistancedObject<U>>> iterators = new LinkedHashMap<>();
 
     /** Map of lane per object. */
     private final Map<U, RelativeLane> laneMap = new LinkedHashMap<>();
@@ -60,7 +61,7 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
     }
 
     @Override
-    public Iterator<UnderlyingDistance<U>> primaryIterator()
+    public Iterator<DistancedObject<U>> primaryIterator()
     {
         return new MultiLaneIterator();
     }
@@ -76,11 +77,11 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    private class MultiLaneIterator implements Iterator<UnderlyingDistance<U>>
+    private class MultiLaneIterator implements Iterator<DistancedObject<U>>
     {
 
         /** Sorted elements per lane. */
-        private SortedMap<UnderlyingDistance<U>, RelativeLane> elements;
+        private SortedMap<DistancedObject<U>, RelativeLane> elements;
 
         /** Constructor. */
         MultiLaneIterator()
@@ -97,7 +98,7 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public UnderlyingDistance<U> next()
+        public DistancedObject<U> next()
         {
             assureNext();
             if (this.elements.isEmpty())
@@ -106,12 +107,12 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
             }
 
             // get and remove next
-            UnderlyingDistance<U> next = this.elements.firstKey();
+            DistancedObject<U> next = this.elements.firstKey();
             RelativeLane lane = this.elements.get(next);
             this.elements.remove(next);
 
             // prepare next
-            Iterator<UnderlyingDistance<U>> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
+            Iterator<DistancedObject<U>> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
             if (laneIterator != null)
             {
                 if (laneIterator.hasNext())
@@ -140,7 +141,7 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
                 this.elements = new TreeMap<>();
                 for (RelativeLane lane : MultiLanePerceptionIterable.this.iterators.keySet())
                 {
-                    Iterator<UnderlyingDistance<U>> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
+                    Iterator<DistancedObject<U>> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
                     if (laneIterator.hasNext())
                     {
                         this.elements.put(laneIterator.next(), lane);

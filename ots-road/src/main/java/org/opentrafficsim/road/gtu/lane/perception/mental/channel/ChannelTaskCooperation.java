@@ -7,12 +7,12 @@ import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
@@ -70,14 +70,14 @@ public final class ChannelTaskCooperation extends AbstractTask implements Channe
     {
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
-        Iterator<UnderlyingDistance<LaneBasedGtu>> leaders =
+        Iterator<DistancedObject<LaneBasedGtu>> leaders =
                 neighbors.getLeaders(this.left ? RelativeLane.LEFT : RelativeLane.RIGHT).underlyingWithDistance();
         ParameterTypeDouble param = this.left ? LmrsParameters.DRIGHT : LmrsParameters.DLEFT;
         Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(X0_D), "Parameter x0_d not present.");
         double dMax = 0.0;
         while (leaders.hasNext())
         {
-            UnderlyingDistance<LaneBasedGtu> leader = leaders.next();
+            DistancedObject<LaneBasedGtu> leader = leaders.next();
             if (leader.distance().gt(x0))
             {
                 break;

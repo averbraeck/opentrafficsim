@@ -7,11 +7,11 @@ import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
@@ -42,7 +42,7 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
     public static final Function<LanePerception, Set<ChannelTask>> SUPPLIER = (p) -> SET;
 
     /** Leader supplier. */
-    private final Function<LanePerception, UnderlyingDistance<LaneBasedGtu>> leaderSupplier;
+    private final Function<LanePerception, DistancedObject<LaneBasedGtu>> leaderSupplier;
 
     /**
      * Constructor that will use the first leader from NeighborsPerception in the current lane.
@@ -53,7 +53,7 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
         {
             NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
                     .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
-            Iterator<UnderlyingDistance<LaneBasedGtu>> leader =
+            Iterator<DistancedObject<LaneBasedGtu>> leader =
                     neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
             if (!leader.hasNext())
             {
@@ -67,7 +67,7 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
      * Constructor that provides a supplier for a leader that follows a non-default logic.
      * @param leaderSupplier leader supplier
      */
-    public ChannelTaskCarFollowing(final Function<LanePerception, UnderlyingDistance<LaneBasedGtu>> leaderSupplier)
+    public ChannelTaskCarFollowing(final Function<LanePerception, DistancedObject<LaneBasedGtu>> leaderSupplier)
     {
         super("car-following (front)");
         this.leaderSupplier = leaderSupplier;
@@ -88,7 +88,7 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        UnderlyingDistance<LaneBasedGtu> leader = this.leaderSupplier.apply(perception);
+        DistancedObject<LaneBasedGtu> leader = this.leaderSupplier.apply(perception);
         if (leader == null)
         {
             return 0.0;

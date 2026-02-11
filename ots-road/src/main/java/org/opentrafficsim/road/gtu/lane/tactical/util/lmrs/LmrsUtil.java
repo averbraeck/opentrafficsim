@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import java.util.Iterator;
 import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -13,7 +12,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -135,17 +134,16 @@ public final class LmrsUtil implements LmrsParameters
 
         // lane change decision
         LateralDirectionality initiatedOrContinuedLaneChange;
-        TurnIndicatorIntent turnIndicatorStatus = TurnIndicatorIntent.NONE;
+        TurnIndicatorStatus turnIndicatorStatus = null;
         double dFree = context.getParameters().getParameter(DFREE);
         initiatedOrContinuedLaneChange = LateralDirectionality.NONE;
-        turnIndicatorStatus = TurnIndicatorIntent.NONE;
         if (desire.leftIsLargerOrEqual() && desire.left() >= dFree)
         {
             if (acceptLaneChange(context, desire.left(), LateralDirectionality.LEFT, lmrsData.getGapAcceptance()))
             {
                 // change left
                 initiatedOrContinuedLaneChange = LateralDirectionality.LEFT;
-                turnIndicatorStatus = TurnIndicatorIntent.LEFT;
+                turnIndicatorStatus = TurnIndicatorStatus.LEFT;
                 context.getParameters().setClaimedParameter(DLC, desire.left(), PARAMETER_KEY);
                 setDesiredHeadway(context.getParameters(), desire.left(), false);
                 leaders = neighbors.getLeaders(RelativeLane.LEFT);
@@ -165,7 +163,7 @@ public final class LmrsUtil implements LmrsParameters
             {
                 // change right
                 initiatedOrContinuedLaneChange = LateralDirectionality.RIGHT;
-                turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
+                turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
                 context.getParameters().setClaimedParameter(DLC, desire.right(), PARAMETER_KEY);
                 setDesiredHeadway(context.getParameters(), desire.right(), false);
                 leaders = neighbors.getLeaders(RelativeLane.RIGHT);
@@ -195,7 +193,7 @@ public final class LmrsUtil implements LmrsParameters
                 if (desire.left() >= context.getParameters().getParameter(DCOOP))
                 {
                     // switch on left indicator
-                    turnIndicatorStatus = TurnIndicatorIntent.LEFT;
+                    turnIndicatorStatus = TurnIndicatorStatus.LEFT;
                     state = Synchronizable.State.INDICATING;
                 }
                 else
@@ -212,7 +210,7 @@ public final class LmrsUtil implements LmrsParameters
                 if (desire.right() >= context.getParameters().getParameter(DCOOP))
                 {
                     // switch on right indicator
-                    turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
+                    turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
                     state = Synchronizable.State.INDICATING;
                 }
                 else
@@ -238,13 +236,9 @@ public final class LmrsUtil implements LmrsParameters
 
         SimpleOperationalPlan simplePlan =
                 new SimpleOperationalPlan(a, context.getParameters().getParameter(DT), initiatedOrContinuedLaneChange);
-        if (turnIndicatorStatus.isLeft())
+        if (turnIndicatorStatus != null)
         {
-            simplePlan.setIndicatorIntentLeft();
-        }
-        else if (turnIndicatorStatus.isRight())
-        {
-            simplePlan.setIndicatorIntentRight();
+            context.addIntent(turnIndicatorStatus, Length.ZERO);
         }
         return simplePlan;
 
@@ -426,12 +420,12 @@ public final class LmrsUtil implements LmrsParameters
                 {
                     if (conflict.isMerge() && conflict.getDistance().si < 10.0)
                     {
-                        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> down = conflict.getDownstreamConflictingGTUs();
+                        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> down = conflict.getDownstreamConflictingGtus();
                         if (!down.isEmpty() && down.first().getKinematics().getOverlap().isParallel())
                         {
                             return false; // GTU on conflict
                         }
-                        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> up = conflict.getUpstreamConflictingGTUs();
+                        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> up = conflict.getUpstreamConflictingGtus();
                         if (!up.isEmpty() && up.first().getKinematics().getOverlap().isParallel())
                         {
                             return false; // GTU on conflict
@@ -499,6 +493,7 @@ public final class LmrsUtil implements LmrsParameters
      * @return a quickly determined acceleration to consider on an adjacent lane, following from conflicts and traffic lights
      * @throws ParameterException if a parameter is not defined
      */
+    /*-
     private static Acceleration quickIntersectionScan(final TacticalContextEgo context, final LateralDirectionality lat,
             final IntersectionPerception intersection) throws ParameterException
     {
@@ -529,6 +524,7 @@ public final class LmrsUtil implements LmrsParameters
         }
         return a;
     }
+    */
 
     /**
      * Sets value for T depending on level of lane change desire.

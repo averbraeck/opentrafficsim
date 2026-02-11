@@ -19,6 +19,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.math.AngleUtil;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
@@ -77,7 +78,7 @@ public final class LaneOperationalPlanBuilder
         LanePosition nearestPosition = gtu.getRoamingPosition();
         Length deviation = Length.ZERO;
         boolean deviative = true;
-        OtsLine2d path = getPath(gtu, nearestPosition, acceleration, duration, tManeuver, deviation, deviative);
+        OtsLine2d path = getPath(gtu, nearestPosition, acceleration, duration, tManeuver, deviation, deviative).path();
         Duration now = gtu.getSimulator().getSimulatorTime();
         Segments segments = Segments.off(gtu.getSpeed(), duration, acceleration);
         return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, deviative),
@@ -85,15 +86,17 @@ public final class LaneOperationalPlanBuilder
     }
 
     /**
-     * Build operational plan from a simple plan. Sets or resets the GTU lane change direction.
+     * Build operational plan from a simple plan. Sets or resets the GTU lane change direction. Deviation is applied if it is
+     * within a reasonable maneuver range.
      * @param gtu GTU
      * @param simplePlan simple operational plan
      * @param tManeuver maneuver time, e.g. lane change
+     * @param deviation desired lateral deviation
      * @return plan from position on a lane
      * @throws IllegalStateException if the GTU is not on a lane
      */
     public static LaneBasedOperationalPlan buildPlanFromSimplePlan(final LaneBasedGtu gtu,
-            final SimpleOperationalPlan simplePlan, final Duration tManeuver)
+            final SimpleOperationalPlan simplePlan, final Duration tManeuver, final DistancedObject<Length> deviation)
     {
         Throw.when(gtu.getLane() == null, IllegalStateException.class,
                 "Requested to build plan from simple plan for roaming GTU.");
@@ -130,13 +133,15 @@ public final class LaneOperationalPlanBuilder
             nearestPosition = gtu.getPosition();
             deviative = deviative || nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
         }
-        deviative = deviative || simplePlan.getDeviation().si > SNAP.si;
-        OtsLine2d path = getPath(gtu, nearestPosition, simplePlan.getAcceleration(), simplePlan.getDuration(), tManeuver,
-                simplePlan.getDeviation(), deviative);
+        Length deviationHorizon = Length.max(tManeuver.times(gtu.getSpeed()), gtu.getVehicleModel().getTurnRadius(gtu));
+        Length targetDeviation = deviation.distance().gt(deviationHorizon) ? Length.ZERO : deviation.object();
+        deviative = deviative || targetDeviation.abs().gt(SNAP);
+        PathResults pathResults = getPath(gtu, nearestPosition, simplePlan.getAcceleration(), simplePlan.getDuration(),
+                tManeuver, targetDeviation, deviative);
         Duration now = gtu.getSimulator().getSimulatorTime();
         Segments segments = Segments.off(gtu.getSpeed(), simplePlan.getDuration(), simplePlan.getAcceleration());
-        boolean finalDeviative = deviative;
-        return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, finalDeviative),
+        boolean finalDeviative = deviative || pathResults.neededDeviation();
+        return Try.assign(() -> new LaneBasedOperationalPlan(gtu, pathResults.path(), now, segments, finalDeviative),
                 "Building operational plan produced inconsistent LaneBasedOperationalPlan.");
     }
 
@@ -152,7 +157,7 @@ public final class LaneOperationalPlanBuilder
      * @param deviative true if the GTU will not strictly follow the center line
      * @return path towards a target point that is found by moving along the lanes from the start position
      */
-    private static OtsLine2d getPath(final LaneBasedGtu gtu, final LanePosition nearestPosition,
+    private static PathResults getPath(final LaneBasedGtu gtu, final LanePosition nearestPosition,
             final Acceleration acceleration, final Duration timeStep, final Duration tManeuver, final Length deviation,
             final boolean deviative)
     {
@@ -175,12 +180,12 @@ public final class LaneOperationalPlanBuilder
      * @param horizonSpace information regarding the considered horizon
      * @return path as a Bezier to a target point that will be on the horizon
      */
-    private static OtsLine2d bezierToHorizon(final LaneBasedGtu gtu, final LanePosition nearestPosition, final Length deviation,
-            final HorizonSpace horizonSpace)
+    private static PathResults bezierToHorizon(final LaneBasedGtu gtu, final LanePosition nearestPosition,
+            final Length deviation, final HorizonSpace horizonSpace)
     {
         DirectedPoint2d target = getTargetPoint(gtu, nearestPosition, deviation, horizonSpace);
         target = extrapolateToHorizon(gtu, target, horizonSpace.horizon());
-        return bezierToTarget(gtu, target);
+        return new PathResults(bezierToTarget(gtu, target), false);
     }
 
     /**
@@ -196,8 +201,9 @@ public final class LaneOperationalPlanBuilder
      * @param deviation desired deviation from lane center
      * @return path constructed from lane center lines, or a bezier path in case of a lane gap between center lines
      */
-    private static OtsLine2d getCenterLinePath(final LaneBasedGtu gtu, final LanePosition nearestPosition, final Length length,
-            final Acceleration acceleration, final Duration timeStep, final Duration tManeuver, final Length deviation)
+    private static PathResults getCenterLinePath(final LaneBasedGtu gtu, final LanePosition nearestPosition,
+            final Length length, final Acceleration acceleration, final Duration timeStep, final Duration tManeuver,
+            final Length deviation)
     {
         Length startDistance = nearestPosition.position();
         Lane lane = nearestPosition.lane();
@@ -216,7 +222,7 @@ public final class LaneOperationalPlanBuilder
                     Length laneGap = Length.ofSI(lastPoint.distance(centerLine.getFirst()));
                     HorizonSpace horizonSpace =
                             getHorizonSpace(gtu, nearestPosition, acceleration, timeStep, tManeuver, deviation, laneGap);
-                    return bezierToHorizon(gtu, nearestPosition, deviation, horizonSpace);
+                    return new PathResults(bezierToHorizon(gtu, nearestPosition, deviation, horizonSpace).path(), true);
                 }
                 for (Point2d point : centerLine)
                 {
@@ -232,7 +238,7 @@ public final class LaneOperationalPlanBuilder
                     points.add(point);
                     if (cumulDist >= length.si)
                     {
-                        return new OtsLine2d(points);
+                        return new PathResults(new OtsLine2d(points), false);
                     }
                     lastPoint = point;
                 }
@@ -245,7 +251,7 @@ public final class LaneOperationalPlanBuilder
         double direction = lastLastPoint.directionTo(lastPoint);
         double r = length.si - cumulDist + SNAP.si;
         points.add(lastPoint.translate(r * Math.cos(direction), r * Math.sin(direction)));
-        return new OtsLine2d(points);
+        return new PathResults(new OtsLine2d(points), false);
     }
 
     /**
@@ -255,7 +261,8 @@ public final class LaneOperationalPlanBuilder
      * <li>At least the GTU turn radius (=diameter)</li>
      * <li>At least several factors on tManeuver at the current speed:
      * <ul>
-     * <li>[0...1] for a deviation from the desired deviation of [0...3.5]m, or 1 for larger deviation</li>
+     * <li>[0...1] for a deviation from the desired deviation of [0...3.5]m (with a quarter sine shape), or 1 for larger
+     * deviation</li>
      * <li>[0...1] for an angle of [0...pi/4] between the direction of the GTU and the direction at the target, or 1 for larger
      * angles</li>
      * <li>[2...0] for an angle of [0...pi/2] between the direction of the GTU and the direction towards the target, or 0 for
@@ -304,8 +311,9 @@ public final class LaneOperationalPlanBuilder
         }
         Length distanceToNearest = Length.ofSI(Math.abs(deviation.si - leftOfLane * dCenterLine));
 
-        // Lateral deviation: 0 to 1 within first {LANE_WIDTH}m (also applies to lane gap)
-        double fLatDeviation = Math.min(1.0, Math.max(distanceToNearest.si, laneGap.si) / LANE_WIDTH.si);
+        // Lateral deviation: 0 to 1 within first {LANE_WIDTH}m with sine shape (also applies to lane gap)
+        double fLatDeviation =
+                Math.sin(.5 * Math.PI * Math.min(1.0, Math.max(distanceToNearest.si, laneGap.si) / LANE_WIDTH.si));
 
         // Difference direction at target point and vehicle direction: 0 to 1 within pi/4
         double dDirection = Math.abs(AngleUtil.normalizeAroundZero(nearestPoint.dirZ - gtu.getLocation().dirZ));
@@ -484,7 +492,16 @@ public final class LaneOperationalPlanBuilder
         LanePosition endPosition = getTargetLanePosition(gtu, nearestPosition, horizonSpace.horizon(), Angle.ofSI(alpha));
         if (endPosition != null)
         {
-            return endPosition.getLocation();
+            DirectedPoint2d targetPoint = endPosition.getLocation();
+            if (deviation.eq0())
+            {
+                return targetPoint;
+            }
+            // translate laterally by deviation
+            double angle = targetPoint.dirZ + Math.PI / 4.0;
+            double dx = deviation.si * Math.cos(angle);
+            double dy = deviation.si * Math.sin(angle);
+            return targetPoint.translate(dx, dy);
         }
 
         // Make turn
@@ -687,5 +704,14 @@ public final class LaneOperationalPlanBuilder
         BezierCubic2d bezier = new BezierCubic2d(gtu.getLocation(), p2, p3, target);
         return new OtsLine2d(bezier.toPolyLine(FLATTENER));
     }
+
+    /**
+     * Record to return results of path building.
+     * @param path path
+     * @param neededDeviation needed to revert back to a deviative path due to gaps between lanes
+     */
+    private record PathResults(OtsLine2d path, boolean neededDeviation)
+    {
+    };
 
 }

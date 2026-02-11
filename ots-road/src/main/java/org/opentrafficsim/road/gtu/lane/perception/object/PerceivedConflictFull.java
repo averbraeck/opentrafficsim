@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -66,6 +67,9 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
     /** Stop line on the conflicting lane. */
     private final PerceivedObject conflictingStopLine;
 
+    /** Turn direction. */
+    private final LateralDirectionality turn;
+
     /** Type of conflict rule. */
     private final Class<? extends ConflictRule> conflictRuleType;
 
@@ -95,6 +99,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
      * @param width width progression of conflict
      * @param stopLine stop line on the own lane
      * @param conflictingStopLine stop line on the conflicting lane
+     * @param turn turn direction relative to other conflict
      * @param lane the lane
      */
     @SuppressWarnings("parameternumber")
@@ -103,7 +108,8 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
             final Length conflictingLength, final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> upstreamConflictingGTUs,
             final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> downstreamConflictingGTUs,
             final Length conflictingVisibility, final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink,
-            final Width width, final PerceivedObject stopLine, final PerceivedObject conflictingStopLine, final Lane lane)
+            final Width width, final PerceivedObject stopLine, final PerceivedObject conflictingStopLine,
+            final LateralDirectionality turn, final Lane lane)
     {
         super(id, ObjectType.CONFLICT, length, Kinematics.staticAhead(distance), lane);
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -115,6 +121,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
         Throw.whenNull(width, "Width may not be null.");
         Throw.whenNull(conflictingVisibility, "Conflict visibility may not be null.");
         Throw.whenNull(conflictingSpeedLimit, "Conflict speed limit may not be null.");
+        Throw.whenNull(turn, "turn");
         this.conflictType = conflictType;
         this.conflictPriority = conflictPriority;
         this.conflictRuleType = conflictRuleType;
@@ -127,166 +134,105 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
         this.width = width;
         this.stopLine = stopLine;
         this.conflictingStopLine = conflictingStopLine;
+        this.turn = turn;
     }
 
-    /**
-     * Returns the conflict type.
-     * @return conflict type
-     */
     @Override
     public ConflictType getConflictType()
     {
         return this.conflictType;
     }
 
-    /**
-     * Returns whether this is a crossing conflict.
-     * @return whether this is a crossing conflict
-     */
     @Override
     public boolean isCrossing()
     {
         return this.conflictType.equals(ConflictType.CROSSING);
     }
 
-    /**
-     * Returns whether this is a merge conflict.
-     * @return whether this is a merge conflict
-     */
     @Override
     public boolean isMerge()
     {
         return this.conflictType.equals(ConflictType.MERGE);
     }
 
-    /**
-     * Returns whether this is a split conflict.
-     * @return whether this is a split conflict
-     */
     @Override
     public boolean isSplit()
     {
         return this.conflictType.equals(ConflictType.SPLIT);
     }
 
-    /**
-     * Returns the conflict priority.
-     * @return conflict priority
-     */
     @Override
     public ConflictPriority getConflictPriority()
     {
         return this.conflictPriority;
     }
 
-    /**
-     * Returns the length of the conflict on the conflicting lane.
-     * @return length of the conflict on the conflicting lane
-     */
     @Override
     public Length getConflictingLength()
     {
         return this.conflictingLength;
     }
 
-    /**
-     * Returns a set of conflicting GTU's upstream of the <i>start</i> of the conflict ordered close to far from the conflict.
-     * @return set of conflicting GTU's upstream of the <i>start</i> of the conflict ordered close to far from the conflict
-     */
     @Override
-    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGTUs()
+    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGtus()
     {
         return this.upstreamConflictingGTUs;
     }
 
-    /**
-     * Returns a set of conflicting GTU's downstream of the <i>start</i> of the conflict ordered close to far from the conflict.
-     * Distance is given relative to the <i>end</i> of the conflict, or null for conflicting vehicles on the conflict. In the
-     * latter case the overlap is used.
-     * @return set of conflicting GTU's downstream of the <i>start</i> of the conflict ordered close to far from the conflict
-     */
     @Override
-    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGTUs()
+    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGtus()
     {
         return this.downstreamConflictingGTUs;
     }
 
-    /**
-     * Returns the visibility on the conflicting lane within which conflicting vehicles are visible. All upstream conflicting
-     * GTUs have a distance smaller than the visibility. Depending on a limited visibility, a certain (lower) speed may be
-     * required while approaching the conflict.
-     * @return visibility on the conflicting lane within which conflicting vehicles are visible
-     */
     @Override
     public Length getConflictingVisibility()
     {
         return this.conflictingVisibility;
     }
 
-    /**
-     * Returns the speed limit on the conflicting lane.
-     * @return speed limit on the conflicting lane
-     */
     @Override
     public Speed getConflictingSpeedLimit()
     {
         return this.conflictingSpeedLimit;
     }
 
-    /**
-     * Returns the conflicting link.
-     * @return the conflicting link
-     */
     @Override
     public CrossSectionLink getConflictingLink()
     {
         return this.conflictingLink;
     }
 
-    /**
-     * Returns the stop line.
-     * @return stop line
-     */
     @Override
     public PerceivedObject getStopLine()
     {
         return this.stopLine;
     }
 
-    /**
-     * Returns the stop line on the conflicting lane.
-     * @return stop line
-     */
     @Override
     public PerceivedObject getConflictingStopLine()
     {
         return this.conflictingStopLine;
     }
 
-    /**
-     * Returns the conflict rule type.
-     * @return conflict rule type
-     */
+    @Override
+    public LateralDirectionality getTurn()
+    {
+        return this.turn;
+    }
+
     @Override
     public Class<? extends ConflictRule> getConflictRuleType()
     {
         return this.conflictRuleType;
     }
 
-    /**
-     * Returns the distance of a traffic light upstream on the conflicting lane.
-     * @return distance of a traffic light upstream on the conflicting lane, empty if no traffic light
-     */
     @Override
     public Optional<Length> getConflictingTrafficLightDistance()
     {
         return Optional.of(this.conflictingTrafficLightDistance);
     }
 
-    /**
-     * Whether the conflict is permitted by the traffic light.
-     * @return whether the conflict is permitted by the traffic light
-     */
     @Override
     public boolean isPermitted()
     {
@@ -304,11 +250,6 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
         this.permitted = permittedConflict;
     }
 
-    /**
-     * Returns the width at the given fraction.
-     * @param fraction fraction from 0 to 1
-     * @return width at the given fraction
-     */
     @Override
     public Length getWidthAtFraction(final double fraction)
     {

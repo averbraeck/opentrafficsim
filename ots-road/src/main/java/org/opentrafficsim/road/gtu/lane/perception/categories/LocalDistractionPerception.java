@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 import java.util.Iterator;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -54,7 +55,7 @@ public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneB
         return new AbstractPerceptionReiterable<>(getGtu())
         {
             @Override
-            protected Iterator<UnderlyingDistance<LocalDistraction>> primaryIterator()
+            protected Iterator<DistancedObject<LocalDistraction>> primaryIterator()
             {
                 Iterator<Entry<LocalDistraction>> iterator = iterable.iterator();
                 return new Iterator<>()
@@ -66,10 +67,10 @@ public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneB
                     }
 
                     @Override
-                    public UnderlyingDistance<LocalDistraction> next()
+                    public DistancedObject<LocalDistraction> next()
                     {
                         Entry<LocalDistraction> entry = iterator.next();
-                        return new UnderlyingDistance<>(entry.object(), entry.distance());
+                        return new DistancedObject<>(entry.object(), entry.distance());
                     }
                 };
             }

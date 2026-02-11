@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -16,7 +17,6 @@ import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
@@ -80,7 +80,7 @@ public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask
         Speed v = ego.getSpeed();
         Speed vCong = Try.assign(() -> perception.getGtu().getParameters().getParameter(VCONG), "Parameter VCONG not present");
         Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(X0), "Parameter LOOKAHEAD not present.");
-        Iterator<UnderlyingDistance<LaneBasedGtu>> leaders =
+        Iterator<DistancedObject<LaneBasedGtu>> leaders =
                 neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
         /*
          * We limit this search by a first conflict. Traffic from other directions on the intersection should not let the
@@ -102,7 +102,7 @@ public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask
         double td = 0.0;
         while (leaders.hasNext())
         {
-            UnderlyingDistance<LaneBasedGtu> leader = leaders.next();
+            DistancedObject<LaneBasedGtu> leader = leaders.next();
             if (leader.distance().gt(limit))
             {
                 break;

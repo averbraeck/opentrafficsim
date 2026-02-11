@@ -40,17 +40,7 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
     public final Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
             throws ParameterException, GtuException
     {
-        Acceleration a = ConflictUtil.approachConflicts(context, this.conflictPlans, lane, mergeDistance, true);
-        // TODO: set the following in a new input relating to indicator intent
-        // if (this.conflictPlans.getIndicatorIntent().isLeft())
-        // {
-        // simplePlan.setIndicatorIntentLeft(this.conflictPlans.getIndicatorObjectDistance());
-        // }
-        // else if (this.conflictPlans.getIndicatorIntent().isRight())
-        // {
-        // simplePlan.setIndicatorIntentRight(this.conflictPlans.getIndicatorObjectDistance());
-        // }
-        return a;
+        return ConflictUtil.approachConflicts(context, this.conflictPlans, lane, mergeDistance, true);
     }
 
     @Override

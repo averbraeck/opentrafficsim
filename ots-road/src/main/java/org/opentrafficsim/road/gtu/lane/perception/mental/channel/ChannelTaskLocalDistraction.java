@@ -4,12 +4,12 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.categories.LocalDistractionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 import org.opentrafficsim.road.network.lane.object.LocalDistraction;
@@ -69,11 +69,11 @@ public class ChannelTaskLocalDistraction extends AbstractTask implements Channel
         double td = 0.0;
         try
         {
-            Iterator<UnderlyingDistance<LocalDistraction>> distractions = perception
+            Iterator<DistancedObject<LocalDistraction>> distractions = perception
                     .getPerceptionCategory(LocalDistractionPerception.class).getDistractions().underlyingWithDistance();
             while (distractions.hasNext())
             {
-                UnderlyingDistance<LocalDistraction> distraction = distractions.next();
+                DistancedObject<LocalDistraction> distraction = distractions.next();
                 if (distraction.distance().le(distraction.object().getRange()) && distraction.distance().ge0()
                         && distraction.object().getSide().equals(this.side))
                 {

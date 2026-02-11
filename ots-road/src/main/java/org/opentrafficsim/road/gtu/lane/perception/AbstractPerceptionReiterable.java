@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
@@ -39,7 +40,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
     private SecondaryIteratorEntry last;
 
     /** Primary iterator. */
-    private Iterator<UnderlyingDistance<U>> primaryIterator;
+    private Iterator<DistancedObject<U>> primaryIterator;
 
     /** Perceiving object. */
     private final O perceivingObject;
@@ -66,7 +67,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
      * Returns the primary iterator.
      * @return primary iterator
      */
-    final Iterator<UnderlyingDistance<U>> getPrimaryIterator()
+    final Iterator<DistancedObject<U>> getPrimaryIterator()
     {
         if (this.primaryIterator == null)
         {
@@ -79,7 +80,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
      * Returns the primary iterator. This method is called once by AbstractPerceptionReiterable.
      * @return primary iterator
      */
-    protected abstract Iterator<UnderlyingDistance<U>> primaryIterator();
+    protected abstract Iterator<DistancedObject<U>> primaryIterator();
 
     /**
      * Returns a perceived version of the underlying object.
@@ -117,7 +118,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
      * Adds an iterator entry to the internal linked list.
      * @param next next object with distance
      */
-    final void addNext(final UnderlyingDistance<U> next)
+    final void addNext(final DistancedObject<U> next)
     {
         SecondaryIteratorEntry entry = new SecondaryIteratorEntry(next);
         if (AbstractPerceptionReiterable.this.last == null)
@@ -209,11 +210,11 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
     }
 
     @Override
-    public Iterator<UnderlyingDistance<U>> underlyingWithDistance()
+    public Iterator<DistancedObject<U>> underlyingWithDistance()
     {
         assureFirst();
         SecondaryIteratorEntry firstInContext = this.first;
-        return new Iterator<UnderlyingDistance<U>>()
+        return new Iterator<DistancedObject<U>>()
         {
             /** Last returned iterator entry. */
             private SecondaryIteratorEntry lastReturned = null;
@@ -229,12 +230,12 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
             }
 
             @Override
-            public UnderlyingDistance<U> next()
+            public DistancedObject<U> next()
             {
                 this.lastReturned = this.next;
                 this.next = this.lastReturned.next;
                 this.next = assureNext(this.next, this.lastReturned);
-                return new UnderlyingDistance<>(this.lastReturned.underlyingDistance.object(),
+                return new DistancedObject<>(this.lastReturned.underlyingDistance.object(),
                         this.lastReturned.underlyingDistance.distance());
             }
         };
@@ -335,7 +336,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
     private class SecondaryIteratorEntry
     {
         /** Value. */
-        private final UnderlyingDistance<U> underlyingDistance;
+        private final DistancedObject<U> underlyingDistance;
 
         /** Value. */
         private P value;
@@ -347,7 +348,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
          * Constructor.
          * @param underlyingDistance object with distance to object
          */
-        SecondaryIteratorEntry(final UnderlyingDistance<U> underlyingDistance)
+        SecondaryIteratorEntry(final DistancedObject<U> underlyingDistance)
         {
             this.underlyingDistance = underlyingDistance;
         }

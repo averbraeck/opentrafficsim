@@ -11,10 +11,10 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <C> the time stamped object class.
+ * @param <T> the time stamped object class.
  * @param object the object.
  * @param timestamp the simulation time stamp.
  */
-public record TimeStampedObject<C>(C object, Duration timestamp)
+public record TimeStampedObject<T>(T object, Duration timestamp)
 {
 }

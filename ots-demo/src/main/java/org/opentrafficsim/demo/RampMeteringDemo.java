@@ -27,6 +27,7 @@ import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.CompressedFileWriter;
 import org.opentrafficsim.animation.gtu.colorer.GtuTypeGtuColorer;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -41,6 +42,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.Perception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -636,11 +638,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 }
             }
             simplePlan = this.laneChangeSystem.operate(context, simplePlan, getGtu().getParameters());
-            simplePlan.setTurnIndicator(getGtu());
+            context.getIntent(TurnIndicatorStatus.class).ifPresent((d) -> getGtu().setTurnIndicatorStatus(d.object()));
 
             // create plan
             return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan,
-                    getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
+                    getGtu().getParameters().getParameter(ParameterTypes.LCDUR),
+                    context.getIntent(Length.class).orElseGet(() -> new DistancedObject<>(Length.ZERO, Length.ZERO)));
         }
     }
 
@@ -765,11 +768,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
             {
                 if (this.direction.isLeft())
                 {
-                    simplePlan.setIndicatorIntentLeft();
+                    context.addIntent(TurnIndicatorStatus.LEFT, Length.ZERO);
                 }
                 else
                 {
-                    simplePlan.setIndicatorIntentRight();
+                    context.addIntent(TurnIndicatorStatus.RIGHT, Length.ZERO);
                 }
             }
 

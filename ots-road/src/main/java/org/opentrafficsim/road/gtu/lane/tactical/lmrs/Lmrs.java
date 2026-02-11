@@ -3,9 +3,11 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.DirectedPoint2d;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -40,6 +42,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
  */
 public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchronizable, Blockable
 {
+
+    /** Deviation object in case of no desired deviation. */
+    private static final DistancedObject<Length> NO_DEVIATION = new DistancedObject<>(Length.ZERO, Length.ZERO);
 
     /** LMRS data. */
     private final LmrsData lmrsData;
@@ -103,11 +108,12 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
         }
 
         // set turn indicator
-        simplePlan.setTurnIndicator(getGtu());
+        context.getIntent(TurnIndicatorStatus.class).ifPresent((d) -> getGtu().setTurnIndicatorStatus(d.object()));
 
         // create plan
         return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan,
-                getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
+                getGtu().getParameters().getParameter(ParameterTypes.LCDUR),
+                context.getIntent(Length.class).orElse(NO_DEVIATION));
 
     }
 

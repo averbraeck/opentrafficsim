@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
@@ -69,7 +70,7 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
      * Returns a set of conflicting GTU's upstream of the <i>start</i> of the conflict ordered close to far from the conflict.
      * @return set of conflicting GTU's upstream of the <i>start</i> of the conflict ordered close to far from the conflict
      */
-    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGTUs();
+    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGtus();
 
     /**
      * Returns a set of conflicting GTU's downstream of the <i>start</i> of the conflict ordered close to far from the conflict.
@@ -77,7 +78,7 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
      * latter case the overlap is used.
      * @return set of conflicting GTU's downstream of the <i>start</i> of the conflict ordered close to far from the conflict
      */
-    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGTUs();
+    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGtus();
 
     /**
      * Returns the visibility on the conflicting lane within which conflicting vehicles are visible. All upstream conflicting
@@ -104,6 +105,12 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
      * @return stop line
      */
     PerceivedObject getStopLine();
+
+    /**
+     * Returns the turn direction of this conflict relative to the other conflict. This is NONE for crossing conflicts.
+     * @return turn direction of this conflict relative to the other conflict
+     */
+    LateralDirectionality getTurn();
 
     /**
      * Returns the stop line on the conflicting lane.
@@ -249,13 +256,13 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
             }
 
             @Override
-            public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGTUs()
+            public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getUpstreamConflictingGtus()
             {
                 return upstreamConflictingGTUs;
             }
 
             @Override
-            public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGTUs()
+            public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getDownstreamConflictingGtus()
             {
                 return downstreamConflictingGTUs;
             }
@@ -282,6 +289,12 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
             public PerceivedObject getStopLine()
             {
                 return stopLine;
+            }
+
+            @Override
+            public LateralDirectionality getTurn()
+            {
+                return conflict.getTurn();
             }
 
             @Override

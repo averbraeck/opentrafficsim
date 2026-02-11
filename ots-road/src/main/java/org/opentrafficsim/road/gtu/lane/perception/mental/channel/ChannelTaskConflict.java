@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableSet;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -26,7 +27,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
@@ -68,7 +68,7 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
         Set<ChannelTask> tasks = new LinkedHashSet<>();
         Optional<Mental> mental = perception.getMental();
         ChannelMental channelMental = (mental.isPresent() && mental.get() instanceof ChannelMental m) ? m : null;
-        for (SortedSet<UnderlyingDistance<Conflict>> group : findConflictGroups(perception))
+        for (SortedSet<DistancedObject<Conflict>> group : findConflictGroups(perception))
         {
             splitCarFollowing(tasks, group, channelMental);
             if (!group.isEmpty())
@@ -86,13 +86,13 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
     };
 
     /** Conflicts in the group. */
-    private final SortedSet<UnderlyingDistance<Conflict>> conflicts;
+    private final SortedSet<DistancedObject<Conflict>> conflicts;
 
     /**
      * Constructor.
      * @param conflicts conflicts in the group.
      */
-    private ChannelTaskConflict(final SortedSet<UnderlyingDistance<Conflict>> conflicts)
+    private ChannelTaskConflict(final SortedSet<DistancedObject<Conflict>> conflicts)
     {
         super("conflicts");
         this.conflicts = conflicts;
@@ -119,7 +119,7 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
         Duration conflictHeadway = Duration.POSITIVE_INFINITY;
         LaneBasedGtu gtu = Try.assign(() -> perception.getGtu(), "Gtu not initialized.");
         Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(LOOKAHEAD), "No x0 parameter.");
-        for (UnderlyingDistance<Conflict> conflict : this.conflicts)
+        for (DistancedObject<Conflict> conflict : this.conflicts)
         {
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> conflictingGtus =
                     conflict.object().getOtherConflict().getUpstreamGtus(gtu, PerceivedGtuType.WRAP, x0);
@@ -149,26 +149,26 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
      * @param perception perception
      * @return conflict groups
      */
-    private static Set<SortedSet<UnderlyingDistance<Conflict>>> findConflictGroups(final LanePerception perception)
+    private static Set<SortedSet<DistancedObject<Conflict>>> findConflictGroups(final LanePerception perception)
     {
         IntersectionPerception intersection = perception.getPerceptionCategoryOptional(IntersectionPerception.class)
                 .orElseThrow(() -> new NoSuchElementException("No intersection perception."));
-        Iterator<UnderlyingDistance<Conflict>> conflicts =
+        Iterator<DistancedObject<Conflict>> conflicts =
                 intersection.getConflicts(RelativeLane.CURRENT).underlyingWithDistance();
 
         // Find groups of conflicts when their upstream nodes are intersecting sets
-        Map<SortedSet<UnderlyingDistance<Conflict>>, Set<Node>> groups = new LinkedHashMap<>();
+        Map<SortedSet<DistancedObject<Conflict>>, Set<Node>> groups = new LinkedHashMap<>();
         Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(LOOKAHEAD), "No x0 parameter.");
         while (conflicts.hasNext())
         {
-            UnderlyingDistance<Conflict> conflict = conflicts.next();
+            DistancedObject<Conflict> conflict = conflicts.next();
             Set<Node> nodes = getUpstreamNodes(conflict.object().getOtherConflict(), x0);
             // find overlap
-            Entry<SortedSet<UnderlyingDistance<Conflict>>, Set<Node>> group = null;
-            Iterator<Entry<SortedSet<UnderlyingDistance<Conflict>>, Set<Node>>> groupIterator = groups.entrySet().iterator();
+            Entry<SortedSet<DistancedObject<Conflict>>, Set<Node>> group = null;
+            Iterator<Entry<SortedSet<DistancedObject<Conflict>>, Set<Node>>> groupIterator = groups.entrySet().iterator();
             while (groupIterator.hasNext())
             {
-                Entry<SortedSet<UnderlyingDistance<Conflict>>, Set<Node>> entry = groupIterator.next();
+                Entry<SortedSet<DistancedObject<Conflict>>, Set<Node>> entry = groupIterator.next();
                 if (entry.getValue().stream().anyMatch(nodes::contains))
                 {
                     // overlap with this entry
@@ -191,7 +191,7 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
             if (group == null)
             {
                 // no overlap found, make new group
-                SortedSet<UnderlyingDistance<Conflict>> key = new TreeSet<>();
+                SortedSet<DistancedObject<Conflict>> key = new TreeSet<>();
                 key.add(conflict);
                 groups.put(key, nodes);
             }
@@ -255,13 +255,13 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
      * @param group group of conflicts
      * @param channelMental mental module, can be {@code null}
      */
-    private static void splitCarFollowing(final Set<ChannelTask> tasks, final SortedSet<UnderlyingDistance<Conflict>> group,
+    private static void splitCarFollowing(final Set<ChannelTask> tasks, final SortedSet<DistancedObject<Conflict>> group,
             final ChannelMental channelMental)
     {
-        Iterator<UnderlyingDistance<Conflict>> iterator = group.iterator();
+        Iterator<DistancedObject<Conflict>> iterator = group.iterator();
         while (iterator.hasNext())
         {
-            UnderlyingDistance<Conflict> conflict = iterator.next();
+            DistancedObject<Conflict> conflict = iterator.next();
             if (conflict.object().getConflictType().isSplit())
             {
                 iterator.remove();
@@ -275,8 +275,8 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
                     {
                         return null;
                     }
-                    UnderlyingDistance<LaneBasedGtu> leader = conflictingGtus.underlyingWithDistance().next();
-                    return new UnderlyingDistance<LaneBasedGtu>(leader.object(), conflict.distance().plus(leader.distance()));
+                    DistancedObject<LaneBasedGtu> leader = conflictingGtus.underlyingWithDistance().next();
+                    return new DistancedObject<LaneBasedGtu>(leader.object(), conflict.distance().plus(leader.distance()));
                 }));
                 // make sure the channel (key is front) can be found for the split conflict
                 if (channelMental != null)

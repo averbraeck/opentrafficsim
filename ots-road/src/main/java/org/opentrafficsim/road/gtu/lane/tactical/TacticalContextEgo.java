@@ -1,12 +1,19 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.network.route.Route;
@@ -39,6 +46,9 @@ public class TacticalContextEgo implements TacticalContext
 
     /** Route. */
     private Optional<Route> route;
+
+    /** Intents. */
+    private Map<Class<?>, NavigableMap<Length, Object>> intents = new LinkedHashMap<>();
 
     /** Parameters. */
     private Parameters parameters;
@@ -112,6 +122,54 @@ public class TacticalContextEgo implements TacticalContext
     public Duration getTime()
     {
         return getGtu().getSimulator().getSimulatorTime();
+    }
+
+    /**
+     * Add value for intent. The type (class) of the value determines the type of intent.
+     * @param intent intent value
+     * @param distance distance at which the intent applies
+     */
+    public void addIntent(final Object intent, final Length distance)
+    {
+        this.intents.computeIfAbsent(intent.getClass(), (clazz) -> new TreeMap<>()).put(distance, intent);
+    }
+
+    /**
+     * Returns the nearest value of intent of type given by the class.
+     * @param <T> value type
+     * @param clazz class of type
+     * @return nearest value of intent of type given by the class, empty if no such intent
+     * @throws NullPointerException when any input is {@code null}
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Optional<DistancedObject<T>> getIntent(final Class<T> clazz)
+    {
+        Throw.whenNull(clazz, "clazz");
+        if (this.intents.containsKey(clazz))
+        {
+            Entry<Length, Object> entry = this.intents.get(clazz).firstEntry();
+            return Optional.of(new DistancedObject<>((T) entry.getValue(), entry.getKey()));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Returns the nearest value of intent of type given by the class, if within a distance.
+     * @param <T> value type
+     * @param clazz class of type
+     * @param horizon obtain intent only within this distance
+     * @return nearest value of intent of type given by the class, empty if no such intent
+     * @throws NullPointerException when any input is {@code null}
+     */
+    public <T> Optional<DistancedObject<T>> getIntent(final Class<T> clazz, final Length horizon)
+    {
+        Throw.whenNull(horizon, "horizon");
+        Optional<DistancedObject<T>> intent = getIntent(clazz);
+        if (intent.isPresent() && intent.get().distance().le(horizon))
+        {
+            return intent;
+        }
+        return Optional.empty();
     }
 
     @Override

@@ -7,11 +7,11 @@ import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
@@ -67,7 +67,7 @@ public class ChannelTaskTrafficLight extends AbstractTask implements ChannelTask
     {
         IntersectionPerception intersection = perception.getPerceptionCategoryOptional(IntersectionPerception.class)
                 .orElseThrow(() -> new NoSuchElementException("IntersectionPerception not present."));
-        Iterator<UnderlyingDistance<TrafficLight>> trafficLights =
+        Iterator<DistancedObject<TrafficLight>> trafficLights =
                 intersection.getTrafficLights(RelativeLane.CURRENT).underlyingWithDistance();
         if (!trafficLights.hasNext())
         {

@@ -12,13 +12,13 @@ import org.djutils.exceptions.Try;
 import org.djutils.math.AngleUtil;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
@@ -62,12 +62,12 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
             NeighborsPerception neighbors =
                     gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class);
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-            Iterator<UnderlyingDistance<LaneBasedGtu>> gtus = leaders.underlyingWithDistance();
+            Iterator<DistancedObject<LaneBasedGtu>> gtus = leaders.underlyingWithDistance();
             if (!gtus.hasNext())
             {
                 return;
             }
-            UnderlyingDistance<LaneBasedGtu> leader = gtus.next();
+            DistancedObject<LaneBasedGtu> leader = gtus.next();
             if (leader.distance().lt0())
             {
                 fireEvent(COLLISION, new Object[] {gtu, leader.object()});

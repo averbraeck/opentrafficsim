@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
@@ -55,7 +56,7 @@ public interface PerceptionCollectable<P extends PerceivedObject, U> extends Per
      * Returns an iterator over the underlying objects coupled with the distance.
      * @return iterator
      */
-    Iterator<UnderlyingDistance<U>> underlyingWithDistance();
+    Iterator<DistancedObject<U>> underlyingWithDistance();
 
     /**
      * Combination of an accumulator and a finalizer.
@@ -176,38 +177,6 @@ public interface PerceptionCollectable<P extends PerceivedObject, U> extends Per
         public boolean isStop()
         {
             return this.stop;
-        }
-    }
-
-    /**
-     * Wrapper for object and its distance.
-     * @param object underlying object
-     * @param distance distance to object
-     * @param <U> underlying object type
-     */
-    record UnderlyingDistance<U>(U object, Length distance) implements Comparable<UnderlyingDistance<U>>
-    {
-        @Override
-        public int compareTo(final UnderlyingDistance<U> o)
-        {
-            int out = this.distance.compareTo(o.distance);
-            if (out != 0)
-            {
-                return out;
-            }
-            if (this.object == null)
-            {
-                if (o.object == null)
-                {
-                    return 0;
-                }
-                return -1;
-            }
-            if (o.object == null)
-            {
-                return 1;
-            }
-            return Integer.compare(this.object.hashCode(), o.object.hashCode());
         }
     }
 

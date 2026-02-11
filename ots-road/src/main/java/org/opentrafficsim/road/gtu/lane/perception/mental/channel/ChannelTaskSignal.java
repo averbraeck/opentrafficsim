@@ -8,12 +8,12 @@ import java.util.function.Predicate;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.UnderlyingDistance;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
@@ -100,10 +100,10 @@ public class ChannelTaskSignal extends AbstractTask implements ChannelTask
     {
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
-        Iterator<UnderlyingDistance<LaneBasedGtu>> leaders = neighbors.getLeaders(this.lane).underlyingWithDistance();
+        Iterator<DistancedObject<LaneBasedGtu>> leaders = neighbors.getLeaders(this.lane).underlyingWithDistance();
         while (leaders.hasNext())
         {
-            UnderlyingDistance<LaneBasedGtu> leader = leaders.next();
+            DistancedObject<LaneBasedGtu> leader = leaders.next();
             if (this.predicate.test(leader.object()))
             {
                 Length x0 =

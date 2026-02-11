@@ -23,6 +23,7 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
+import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -31,7 +32,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -111,6 +112,10 @@ public final class ConflictUtil
     public static final ParameterTypeDuration TI = new ParameterTypeDuration("ti", "Indicator time before bus departure",
             Duration.ofSI(3.0), ConstraintInterface.POSITIVE);
 
+    /** Parameter to deviate laterally at splits. */
+    public static final ParameterTypeBoolean DEV_SPLIT =
+            new ParameterTypeBoolean("dev_split", "Deviate laterally at splits.", false);
+
     /** Time step for free acceleration anticipation. */
     private static final Duration TIME_STEP = Duration.ofSI(0.5);
 
@@ -154,7 +159,6 @@ public final class ConflictUtil
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                 context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
 
-        conflictPlans.cleanPlans();
         boolean blocking = false;
 
         // Ignore conflicts if we are beyond a stopping distance
@@ -192,6 +196,10 @@ public final class ConflictUtil
                     // this is probably evaluation for a lane-change as this it not on the current lane
                     a = Acceleration.min(a, avoidMergeCollision(context, conflict));
                 }
+
+                // lateral deviation intent on split
+                lateralDeviationAtSplit(context, conflict, leaders, availableSpace);
+
                 // follow leading GTUs on merge or split
                 a = Acceleration.min(a, followConflictingLeaderOnMergeOrSplit(context, conflict));
             }
@@ -211,7 +219,7 @@ public final class ConflictUtil
                             && actualDeparture.get().si < context.getTime().si + context.getParameters().getParameter(TI).si)
                     {
                         // TODO depending on left/right-hand traffic
-                        conflictPlans.setIndicatorIntent(TurnIndicatorIntent.LEFT, conflict.getDistance());
+                        context.addIntent(TurnIndicatorStatus.LEFT, conflict.getDistance());
                     }
                 }
             }
@@ -232,8 +240,8 @@ public final class ConflictUtil
             boolean stop = false;
             if (conflict.isMerge() && conflict.getConflictPriority().isPriority())
             {
-                if (conflict.getUpstreamConflictingGTUs().isEmpty()
-                        || !conflictPlans.isZipGtu(conflict.getUpstreamConflictingGTUs().first().getId()))
+                if (conflict.getUpstreamConflictingGtus().isEmpty()
+                        || !conflictPlans.isZipGtu(conflict.getUpstreamConflictingGtus().first().getId()))
                 {
                     conflictPlans.clearZipGtu();
                 }
@@ -260,9 +268,9 @@ public final class ConflictUtil
                  * priority behavior results. This may cause the non-priority direction to never flow.
                  */
                 if (stop && conflict.isMerge() && conflict.getConflictPriority().isPriority() && conflict.getDistance().gt0()
-                        && !conflict.getUpstreamConflictingGTUs().isEmpty())
+                        && !conflict.getUpstreamConflictingGtus().isEmpty())
                 {
-                    conflictPlans.setZipGtu(conflict.getUpstreamConflictingGTUs().first().getId());
+                    conflictPlans.setZipGtu(conflict.getUpstreamConflictingGtus().first().getId());
                 }
             }
 
@@ -385,18 +393,18 @@ public final class ConflictUtil
             final PerceivedConflict conflict) throws ParameterException
     {
         // ignore if no conflicting GTU's, or if first is downstream of conflict
-        PerceptionIterable<PerceivedGtu> downstreamGTUs = conflict.getDownstreamConflictingGTUs();
+        PerceptionIterable<PerceivedGtu> downstreamGTUs = conflict.getDownstreamConflictingGtus();
         if (downstreamGTUs.isEmpty() || downstreamGTUs.first().getKinematics().getOverlap().isAhead())
         {
             return Acceleration.POS_MAXVALUE;
         }
         // get the most upstream GTU to consider
         PerceivedGtu c = null;
-        Length virtualHeadway = null;
+        Length virtualDistance = null;
         if (conflict.getDistance().gt0())
         {
             c = downstreamGTUs.first();
-            virtualHeadway = conflict.getDistance().plus(c.getKinematics().getOverlap().getOverlapRear().get());
+            virtualDistance = getVirtualDistance(c, conflict);
         }
         else
         {
@@ -408,21 +416,14 @@ public final class ConflictUtil
                     return Acceleration.POS_MAXVALUE;
                 }
                 // conflict GTU (partially) on the conflict
-                // {@formatter:off}
-                // ______________________________________________
-                //   ___      virtual headway   |  ___  |
-                //  |___|(-----------------------)|___|(vehicle from south, on lane from south)
-                // _____________________________|_______|________
-                //                              /       /
-                //                             /       /
-                // {@formatter:on}
-                virtualHeadway = conflict.getDistance().plus(con.getKinematics().getOverlap().getOverlapRear().get());
-                if (virtualHeadway.gt0())
+                virtualDistance = getVirtualDistance(con, conflict);
+                if (virtualDistance.gt0())
                 {
+                    // on split, ignore leader if combined vehicle widths fit within the width of the conflict
                     if (conflict.isSplit())
                     {
                         double conflictWidth = conflict.getWidthAtFraction(
-                                (-conflict.getDistance().si + virtualHeadway.si) / conflict.getConflictingLength().si).si;
+                                (-conflict.getDistance().si + virtualDistance.si) / conflict.getConflictingLength().si).si;
                         double gtuWidth = con.getWidth().si + context.getWidth().si;
                         if (conflictWidth > gtuWidth)
                         {
@@ -441,13 +442,12 @@ public final class ConflictUtil
             return Acceleration.POS_MAXVALUE;
         }
         // follow leader
-        Acceleration a = CarFollowingUtil.followSingleLeader(context, virtualHeadway, c.getSpeed());
+        Acceleration a = CarFollowingUtil.followSingleLeader(context, virtualDistance, c.getSpeed());
         // if conflicting GTU is partially upstream of the conflict and at (near) stand-still, stop for the conflict rather than
         // following the tail of the conflicting GTU
-        if (conflict.isMerge() && virtualHeadway.lt(conflict.getDistance()))
+        if (conflict.isMerge() && virtualDistance.lt(conflict.getDistance()))
         {
-            // {@formatter:off}
-            /*
+            /*-
              * ______________________________________________
              *    ___    stop for conflict  |       |
              *   |___|(--------------------)|   ___ |
@@ -455,13 +455,99 @@ public final class ConflictUtil
              *                              / /__/  /
              *                             /       /
              */
-            // {@formatter:on}
             context.getParameters().setParameterResettable(S0, context.getParameters().getParameter(S0_CONF));
             Acceleration aStop = CarFollowingUtil.stop(context, conflict.getDistance());
             context.getParameters().resetParameter(S0);
             a = Acceleration.max(a, aStop); // max, which ever allows the largest acceleration
         }
         return a;
+    }
+
+    /**
+     * Set lateral deviation intent when appropriate.
+     * @param context tactical information such as parameters and car-following model
+     * @param conflict conflict (need not be a split, this is checked)
+     * @param leaders leaders
+     * @param availableSpace distance over which movement is expected to be possible
+     */
+    private static void lateralDeviationAtSplit(final TacticalContextEgo context, final PerceivedConflict conflict,
+            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Length availableSpace)
+    {
+        // 1) This only concerns splits
+        // 2) In rare cases it might be geometrically ambiguous which side to move to, so skip then
+        // 3) Only if DEV_SPLIT enabled
+        // 4) Upstream of conflict-pair on same link it would arbitrarily result in deviating left or right, so skip then
+        // (this is due to both conflicts being perceived as they are both on the current lane and on the route)
+        if (conflict.isSplit() && !conflict.getTurn().isNone()
+                && context.getParameters().getOptionalParameter(DEV_SPLIT).orElse(false)
+                && (!conflict.getLane().getLink().equals(conflict.getConflictingLink()) || conflict.getDistance().lt0()))
+        {
+
+            // distance at which the deviation should be achieved
+            Length relevantDistance = null;
+
+            // first leader in ego-direction (but beyond start of the conflict)
+            if (!leaders.isEmpty() && leaders.first().getDistance().gt(conflict.getDistance()))
+            {
+                relevantDistance = leaders.first().getDistance();
+            }
+            // or first conflicting vehicle
+            var conflictingLeaders = conflict.getDownstreamConflictingGtus();
+            if (!conflictingLeaders.isEmpty())
+            {
+                Length virtualDistance = getVirtualDistance(conflictingLeaders.first(), conflict);
+                relevantDistance = relevantDistance == null ? virtualDistance : Length.min(relevantDistance, virtualDistance);
+            }
+
+            // 1) there must be at least some leading vehicle somewhere
+            // 2a) standstill on the conflict is likely, or
+            // 2b) for the case the other direction might cause a vehicle to stand still (which we know nothing about), deviate
+            // if the relevant distance (distance to some leading vehicle)
+            if (relevantDistance != null && (conflict.getDistance().plus(conflict.getLength()).gt(availableSpace)
+                    || (relevantDistance.lt(availableSpace) && !conflictingLeaders.isEmpty()
+                            && conflictingLeaders.first().getSpeed().eq0())))
+            {
+                // deviation based on lane and vehicle width
+                Length positionAtWidthToConsider = Length.max(Length.ZERO, conflict.getDistance().neg());
+                Length laneWidth = conflict.getLane().getWidth(positionAtWidthToConsider);
+                Length deviation = laneWidth.times(0.5).minus(context.getWidth().times(0.5));
+                if (conflict.getTurn().isRight())
+                {
+                    deviation = deviation.neg();
+                }
+
+                // never before conflict itself
+                context.addIntent(deviation, Length.max(Length.ZERO, relevantDistance));
+            }
+        }
+    }
+
+    /**
+     * Returns the virtual distance towards a conflicting vehicle on a merge or split conflict. Results on a crossing conflict
+     * make no sense and this method should not be called on such conflicts.
+     * @param conflictingVehicle conflicting vehicle
+     * @param conflict conflict
+     * @return virtual distance towards a conflicting vehicle on a merge or split conflict
+     */
+    private static Length getVirtualDistance(final PerceivedGtu conflictingVehicle, final PerceivedConflict conflict)
+    {
+        if (conflictingVehicle.getKinematics().getOverlap().isAhead())
+        {
+            return conflict.getDistance().plus(conflict.getLength()).plus(conflictingVehicle.getDistance());
+        }
+        if (conflictingVehicle.getKinematics().getOverlap().isBehind())
+        {
+            return conflict.getDistance().minus(conflictingVehicle.getDistance()).minus(conflictingVehicle.getLength());
+        }
+        /*-
+         * ______________________________________________
+         *   ___      virtual headway   |  ___  |
+         *  |___|(-----------------------)|___|(vehicle from south, on lane from south, but virtually on lane from west)
+         * _____________________________|_______|________
+         *                              /       /
+         *                             /       /
+         */
+        return conflict.getDistance().plus(conflictingVehicle.getKinematics().getOverlap().getOverlapRear().get());
     }
 
     /**
@@ -476,7 +562,7 @@ public final class ConflictUtil
     {
         // gather relevant GTUs (first up, and downstream on)
         List<PerceivedGtu> conflictingGTUs = new ArrayList<>();
-        for (PerceivedGtu gtu : conflict.getUpstreamConflictingGTUs())
+        for (PerceivedGtu gtu : conflict.getUpstreamConflictingGtus())
         {
             if (conflict.getConflictingVisibility().lt(gtu.getDistance()))
             {
@@ -489,7 +575,7 @@ public final class ConflictUtil
                 break;
             }
         }
-        for (PerceivedGtu gtu : conflict.getDownstreamConflictingGTUs())
+        for (PerceivedGtu gtu : conflict.getDownstreamConflictingGtus())
         {
             if (gtu.getKinematics().getOverlap().isParallel())
             {
@@ -568,7 +654,7 @@ public final class ConflictUtil
     private static Acceleration avoidMergeCollision(final TacticalContext context, final PerceivedConflict conflict)
             throws ParameterException
     {
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> conflicting = conflict.getUpstreamConflictingGTUs();
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> conflicting = conflict.getUpstreamConflictingGtus();
         // parallel, followConflictingLeaderOnMergeOrSplit?
         if (conflicting.isEmpty() || conflicting.first().getKinematics().getOverlap().isParallel())
         {
@@ -601,7 +687,7 @@ public final class ConflictUtil
     {
         // Account for limited visibility and traffic light
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> conflictingVehiclesCollectable =
-                conflict.getUpstreamConflictingGTUs();
+                conflict.getUpstreamConflictingGtus();
         Iterable<PerceivedGtu> conflictingVehicles;
         if (conflictingVehiclesCollectable.isEmpty())
         {
@@ -846,12 +932,6 @@ public final class ConflictUtil
         /** Estimated arrival times of vehicles at all-stop intersection. */
         private final LinkedHashMap<String, Time> arrivalTimes = new LinkedHashMap<>();
 
-        /** Indicator intent. */
-        private TurnIndicatorIntent indicatorIntent = TurnIndicatorIntent.NONE;
-
-        /** Distance to object causing turn indicator intent. */
-        private Length indicatorObjectDistance = null;
-
         /** Whether the GTU is blocking conflicts. */
         private boolean blocking;
 
@@ -864,15 +944,6 @@ public final class ConflictUtil
         public ConflictPlans()
         {
             //
-        }
-
-        /**
-         * Clean any yield plan that was no longer kept active in the last evaluation of conflicts.
-         */
-        void cleanPlans()
-        {
-            this.indicatorIntent = TurnIndicatorIntent.NONE;
-            this.indicatorObjectDistance = null;
         }
 
         /**
@@ -960,38 +1031,6 @@ public final class ConflictUtil
         boolean isStopPhaseRun(final PerceivedObject stopLine)
         {
             return this.stopPhases.containsKey(stopLine.getId()) && this.stopPhases.get(stopLine.getId()).equals(StopPhase.RUN);
-        }
-
-        /**
-         * Return indicator intent.
-         * @return indicatorIntent.
-         */
-        public TurnIndicatorIntent getIndicatorIntent()
-        {
-            return this.indicatorIntent;
-        }
-
-        /**
-         * Returns distance to indicator determining object.
-         * @return distance to indicator determining object.
-         */
-        public Length getIndicatorObjectDistance()
-        {
-            return this.indicatorObjectDistance;
-        }
-
-        /**
-         * Set indicator intent.
-         * @param intent indicator intent
-         * @param distance distance to object pertaining to the turn indicator intent
-         */
-        public void setIndicatorIntent(final TurnIndicatorIntent intent, final Length distance)
-        {
-            if (this.indicatorObjectDistance == null || this.indicatorObjectDistance.gt(distance))
-            {
-                this.indicatorIntent = intent;
-                this.indicatorObjectDistance = distance;
-            }
         }
 
         @Override

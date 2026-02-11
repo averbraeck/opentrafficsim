@@ -14,15 +14,18 @@ import java.util.UUID;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
@@ -81,6 +84,9 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /** Maximum maximum search distance. */
     private Length maxMaxTrafficLightDistance;
+
+    /** Turn direction of merge and split conflicts. */
+    private LateralDirectionality turn;
 
     /////////////////////////////////////////////////////////////////
     // Properties regarding upstream and downstream GTUs provision //
@@ -149,8 +155,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         // Create conflict end
         if (conflictType.equals(ConflictType.SPLIT) || conflictType.equals(ConflictType.MERGE))
         {
-            Length position = conflictType.equals(ConflictType.SPLIT) ? length : lane.getLength();
-            this.end = new ConflictEnd(this, lane, position);
+            /*
+             * This is skipped in the current implementation because LaneStructure.getDownstreamObjects() accounts for the
+             * object length. That does not work across lane boundaries, but that does not work for Conflicts anyway. No code
+             * in OTS actually searches for ConflictEnd objects. (skl - 2026.02.10)
+             */
+            // Length position = conflictType.equals(ConflictType.SPLIT) ? length : lane.getLength();
+            this.end = null; // new ConflictEnd(this, lane, position);
         }
         else
         {
@@ -486,6 +497,59 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
+     * Returns the turn direction of this conflict relative to the other conflict. This is NONE for crossing conflicts.
+     * @return turn direction of this conflict relative to the other conflict
+     */
+    public LateralDirectionality getTurn()
+    {
+        if (this.turn == null)
+        {
+            if (getConflictType().isCrossing())
+            {
+                this.turn = LateralDirectionality.NONE;
+                return this.turn;
+            }
+            Point2d pStart1 = getLocation();
+            Point2d pEnd1 = getLane().getCenterLine().getLocationExtended(getLongitudinalPosition().plus(getLength()));
+            Point2d pStart2 = getOtherConflict().getLocation();
+            Point2d pEnd2 = getOtherConflict().getLane().getCenterLine()
+                    .getLocationExtended(getOtherConflict().getLongitudinalPosition().plus(getOtherConflict().getLength()));
+            double dx1 = pEnd1.x - pStart1.x;
+            double dy1 = pEnd1.y - pStart1.y;
+            double h = Math.hypot(dx1, dy1);
+            dx1 /= h;
+            dy1 /= h;
+            double dx2 = pEnd2.x - pStart2.x;
+            double dy2 = pEnd2.y - pStart2.y;
+            h = Math.hypot(dx2, dy2);
+            dx2 /= h;
+            dy2 /= h;
+            double cross = dx1 * dy2 - dy1 * dx2;
+            if (getConflictType().isMerge())
+            {
+                cross = -cross;
+            }
+            double eps = 1e-9;
+            if (cross > eps)
+            {
+                this.turn = LateralDirectionality.RIGHT;
+                getOtherConflict().turn = LateralDirectionality.LEFT;
+            }
+            else if (cross < -eps)
+            {
+                this.turn = LateralDirectionality.LEFT;
+                getOtherConflict().turn = LateralDirectionality.RIGHT;
+            }
+            else
+            {
+                this.turn = LateralDirectionality.NONE;
+                getOtherConflict().turn = LateralDirectionality.NONE;
+            }
+        }
+        return this.turn;
+    }
+
+    /**
      * Creates a pair of conflicts.
      * @param conflictType conflict type, i.e. crossing, merge or split
      * @param conflictRule conflict rule
@@ -604,15 +668,15 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         }
 
         @Override
-        protected Iterator<UnderlyingDistance<LaneBasedGtu>> primaryIterator()
+        protected Iterator<DistancedObject<LaneBasedGtu>> primaryIterator()
         {
             /**
              * Iterator that iterates over PrimaryIteratorEntry objects.
              */
-            class ConflictGtuIterator implements Iterator<UnderlyingDistance<LaneBasedGtu>>
+            class ConflictGtuIterator implements Iterator<DistancedObject<LaneBasedGtu>>
             {
                 /** Next entry. */
-                private UnderlyingDistance<LaneBasedGtu> next;
+                private DistancedObject<LaneBasedGtu> next;
 
                 @Override
                 public boolean hasNext()
@@ -635,7 +699,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             }
                             if (gtu.distance() == null || gtu.distance().le(ConflictGtuIterable.this.visibility))
                             {
-                                this.next = new UnderlyingDistance<>(gtu.object(), gtu.distance());
+                                this.next = new DistancedObject<>(gtu.object(), gtu.distance());
                             }
                         }
                     }
@@ -643,11 +707,11 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 }
 
                 @Override
-                public UnderlyingDistance<LaneBasedGtu> next()
+                public DistancedObject<LaneBasedGtu> next()
                 {
                     if (hasNext())
                     {
-                        UnderlyingDistance<LaneBasedGtu> out = this.next;
+                        DistancedObject<LaneBasedGtu> out = this.next;
                         this.next = null;
                         return out;
                     }

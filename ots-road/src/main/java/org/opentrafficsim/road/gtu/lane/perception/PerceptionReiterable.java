@@ -5,6 +5,7 @@ import java.util.function.BiFunction;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
@@ -51,7 +52,7 @@ public class PerceptionReiterable<O extends LaneBasedObject, P extends Perceived
     }
 
     @Override
-    protected Iterator<UnderlyingDistance<U>> primaryIterator()
+    protected Iterator<DistancedObject<U>> primaryIterator()
     {
         return new Iterator<>()
         {
@@ -62,10 +63,10 @@ public class PerceptionReiterable<O extends LaneBasedObject, P extends Perceived
             }
 
             @Override
-            public UnderlyingDistance<U> next()
+            public DistancedObject<U> next()
             {
                 Entry<U> entry = PerceptionReiterable.this.iterator.next();
-                return new UnderlyingDistance<>(entry.object(), entry.distance());
+                return new DistancedObject<>(entry.object(), entry.distance());
             }
         };
     }

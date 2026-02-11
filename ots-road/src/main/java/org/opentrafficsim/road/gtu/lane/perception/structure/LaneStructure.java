@@ -75,10 +75,12 @@ public class LaneStructure
      * Returns an iterator over objects perceived on a relative lane, ordered close to far. This can be objects on different
      * roads, e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two
      * on-ramps that are very close by, or even the shoulder. Objects that are partially downstream are also included.
+     * <p>
+     * This method does not support finding objects that start at upstream lanes, but who's length reach the GTU.
      * @param <T> type of {@code LaneBasedObject}.
      * @param relativeLane lane.
      * @param clazz class of lane-based object type.
-     * @param position RelativePosition.Type; position relative to which objects are found and distances are given.
+     * @param position relative position relative to which objects are found and distances are given.
      * @param onRoute whether the objects have to be on-route.
      * @return iterator over objects.
      */
@@ -125,7 +127,7 @@ public class LaneStructure
      * @param <T> type of {@code LaneBasedObject}.
      * @param relativeLane lane.
      * @param clazz class of lane-based object type.
-     * @param position RelativePosition.Type; position relative to which objects are found and distances are given.
+     * @param position relative position relative to which objects are found and distances are given.
      * @return iterator over objects.
      */
     public <T extends LaneBasedObject> Iterable<Entry<T>> getUpstreamObjects(final RelativeLane relativeLane,
@@ -407,7 +409,7 @@ public class LaneStructure
      * Recursively move to upstream records if the relative position is upstream of the record, to start a downstream search
      * from these upstream records.
      * @param record current record in search.
-     * @param position RelativePosition.Type; relative position type.
+     * @param position relative position type.
      * @return records to start from.
      */
     private Collection<LaneRecord> startDownstream(final LaneRecord record, final RelativePosition.Type position)
@@ -428,7 +430,7 @@ public class LaneStructure
      * Recursively move to downstream records if the relative position is downstream of the record, to start an upstream search
      * from these downstream records.
      * @param record current record in search.
-     * @param position RelativePosition.Type; relative position type.
+     * @param position relative position type.
      * @return records to start from.
      */
     private Collection<LaneRecord> startUpstream(final LaneRecord record, final RelativePosition.Type position)
@@ -449,7 +451,7 @@ public class LaneStructure
      * Returns the position of the GTU on the lane of the given record.
      * @param gtu gtu.
      * @param record lane record.
-     * @param positionType RelativePosition.Type; relative position type.
+     * @param positionType relative position type.
      * @return position of the GTU on the lane of the given record.
      */
     private Length position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
