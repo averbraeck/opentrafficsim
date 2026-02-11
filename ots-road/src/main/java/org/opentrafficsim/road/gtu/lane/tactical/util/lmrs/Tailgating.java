@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
@@ -17,6 +18,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * Interface for LMRS tailgating behavior.
@@ -33,6 +35,9 @@ public interface Tailgating
 
     /** Social pressure applied to the leader. */
     ParameterTypeDouble RHO = new ParameterTypeDouble("rho", "Social pressure", 0.0, ConstraintInterface.UNITINTERVAL);
+
+    /** Parameter to deviate laterally for social pressure. */
+    ParameterTypeBoolean DEV_RHO = new ParameterTypeBoolean("dev_split", "Deviate laterally for social pressure.", false);
 
     /** No tailgating. */
     Tailgating NONE = new Tailgating()
@@ -60,18 +65,21 @@ public interface Tailgating
                     LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
                             .getLeaders(RelativeLane.CURRENT);
-            if (leaders == null || leaders.isEmpty())
-            {
-                return;
-            }
             try
             {
+                if (leaders == null || leaders.isEmpty())
+                {
+                    context.getParameters().setClaimedParameter(RHO, 0.0, this);
+                    Tailgating.deviate(context, 0.0);
+                    return;
+                }
                 Length x0 = context.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
                 Speed vGain = context.getParameters().getParameter(LmrsParameters.VGAIN);
                 PerceivedGtu leader = leaders.first();
                 Speed desiredSpeed = Try.assign(() -> context.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = Tailgating.socialPressure(desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 context.getParameters().setClaimedParameter(RHO, rho, this);
+                Tailgating.deviate(context, rho);
             }
             catch (ParameterException exception)
             {
@@ -96,12 +104,14 @@ public interface Tailgating
                     LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
                             .getLeaders(RelativeLane.CURRENT);
-            if (leaders == null || leaders.isEmpty())
-            {
-                return;
-            }
             try
             {
+                if (leaders == null || leaders.isEmpty())
+                {
+                    context.getParameters().setClaimedParameter(RHO, 0.0, this);
+                    Tailgating.deviate(context, 0.0);
+                    return;
+                }
                 Duration t = context.getParameters().getParameter(ParameterTypes.T);
                 Duration tMin = context.getParameters().getParameter(ParameterTypes.TMIN);
                 Duration tMax = context.getParameters().getParameter(ParameterTypes.TMAX);
@@ -116,6 +126,7 @@ public interface Tailgating
                 {
                     context.getParameters().setClaimedParameter(ParameterTypes.T, Duration.ofSI(tNew), LmrsUtil.T_KEY);
                 }
+                Tailgating.deviate(context, rho);
             }
             catch (ParameterException exception)
             {
@@ -155,5 +166,20 @@ public interface Tailgating
      * @param context tactical information such as parameters and car-following model
      */
     void tailgate(TacticalContextEgo context);
+
+    /**
+     * Add lateral deviation intent based on level of social pressure.
+     * @param context tactical information such as parameters and car-following model
+     * @param rho level of social pressure
+     */
+    static void deviate(final TacticalContextEgo context, final double rho)
+    {
+        if (context.getParameters().getOptionalParameter(DEV_RHO).orElse(false))
+        {
+            LanePosition position = context.getGtu().getPosition();
+            Length deviation = position.lane().getWidth(position.position()).minus(context.getWidth()).times(0.5 * rho);
+            context.addIntent(deviation, Length.ZERO);
+        }
+    }
 
 }
