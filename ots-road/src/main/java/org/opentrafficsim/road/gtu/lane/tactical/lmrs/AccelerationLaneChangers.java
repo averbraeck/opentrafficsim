@@ -39,6 +39,7 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
     public Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
             throws ParameterException, GtuException
     {
+        Acceleration a = NO_REASON;
         for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
         {
             LateralDirectionality flip = lat.flip();
@@ -47,7 +48,8 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
             {
                 if (leader.getManeuver().isChangingLane(flip))
                 {
-                    return CarFollowingUtil.followSingleLeader(context, leader);
+                    a = Acceleration.min(a, CarFollowingUtil.followSingleLeader(context, leader));
+                    break;
                 }
             }
         }
