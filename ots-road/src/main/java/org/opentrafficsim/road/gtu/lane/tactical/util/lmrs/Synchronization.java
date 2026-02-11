@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
 import java.util.SortedSet;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -11,7 +10,6 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -38,49 +36,6 @@ import org.opentrafficsim.road.network.LaneChangeInfo;
 public interface Synchronization extends LmrsParameters
 {
 
-    /** Synchronization that only includes stopping for a dead-end. */
-    Synchronization DEADEND = new Synchronization()
-    {
-        @Override
-        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
-        {
-            Acceleration a = Acceleration.POSITIVE_INFINITY;
-            // stop for end
-            Length remainingDist = Length.POSITIVE_INFINITY;
-            Speed speed = context.getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-            Acceleration bCrit = context.getParameters().getParameter(ParameterTypes.BCRIT);
-            remainingDist = remainingDist.minus(context.getParameters().getParameter(ParameterTypes.S0));
-            if (remainingDist.le0())
-            {
-                if (speed.gt0())
-                {
-                    a = Acceleration.min(a, bCrit.neg());
-                }
-                else
-                {
-                    a = Acceleration.ONE; // prevent dead-lock
-                }
-            }
-            else
-            {
-                Acceleration bMin = new Acceleration(.5 * speed.si * speed.si / remainingDist.si, AccelerationUnit.SI);
-                if (bMin.ge(bCrit))
-                {
-                    a = Acceleration.min(a, bMin.neg());
-                }
-            }
-            return a;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "DEADEND";
-        }
-    };
-
     /** Synchronization where current leaders are taken. */
     Synchronization PASSIVE = new Synchronization()
     {
@@ -89,11 +44,7 @@ public interface Synchronization extends LmrsParameters
                 final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
-            Acceleration a = DEADEND.synchronize(context, desire, lat, lmrsData, initiatedLaneChange);
-            if (a.lt(context.getParameters().getParameter(ParameterTypes.BCRIT).neg()))
-            {
-                return a;
-            }
+            Acceleration a = Acceleration.POS_MAXVALUE;
             double dCoop = context.getParameters().getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
@@ -165,7 +116,7 @@ public interface Synchronization extends LmrsParameters
                 final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
-            Acceleration a = Acceleration.POSITIVE_INFINITY;
+            Acceleration a = Acceleration.POS_MAXVALUE;
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                     context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane);
@@ -188,7 +139,7 @@ public interface Synchronization extends LmrsParameters
                 // limit deceleration based on desire
                 a = Synchronization.gentleUrgency(a, desire, context.getParameters());
             }
-            a = Acceleration.min(a, DEADEND.synchronize(context, desire, lat, lmrsData, initiatedLaneChange));
+            // a = Acceleration.min(a, DEADEND.synchronize(context, desire, lat, lmrsData, initiatedLaneChange));
             // never stop before we can actually merge
             Length xMerge = Synchronization.getMergeDistance(context.getPerception(), lat);
             if (xMerge.gt0())
@@ -218,7 +169,7 @@ public interface Synchronization extends LmrsParameters
             if (desire < dCoop && context.getSpeed().si < context.getParameters().getParameter(ParameterTypes.LOOKAHEAD).si
                     / context.getParameters().getParameter(ParameterTypes.T0).si)
             {
-                return DEADEND.synchronize(context, desire, lat, lmrsData, initiatedLaneChange);
+                return Acceleration.POS_MAXVALUE;
             }
             return PASSIVE.synchronize(context, desire, lat, lmrsData, initiatedLaneChange);
         }
@@ -345,7 +296,7 @@ public interface Synchronization extends LmrsParameters
             lmrsData.setSyncVehicle(syncVehicle);
 
             // actual synchronization
-            Acceleration a = DEADEND.synchronize(context, desire, lat, lmrsData, initiatedLaneChange);
+            Acceleration a = Acceleration.POS_MAXVALUE;
             if (syncVehicle != null)
             {
                 a = Synchronization.gentleUrgency(Synchronization.tagAlongAcceleration(context, syncVehicle, tagSpeed, desire),
