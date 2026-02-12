@@ -407,7 +407,7 @@
 
     <!-- TrafficLight.TurnOnRed = Node.Id -->
     <xsd:keyref name="turnOnRedIdRef" refer="ots:nodeKey">
-      <xsd:selector xpath=".//ots:TrafficLight/ots:TurnOnRed" />
+      <xsd:selector xpath="ots:Network/ots:Link/ots:TrafficLight/ots:TurnOnRed" />
       <xsd:field xpath="." />
     </xsd:keyref>
 

@@ -304,10 +304,7 @@ public abstract class XPathValidator implements ValueValidator
                         int attr = fieldPath.indexOf("@");
                         if (attr < 0 || fieldPath.equals("."))
                         {
-                            if (node.isEditable())
-                            {
-                                return i;
-                            }
+                            return i;
                         }
                         else
                         {
