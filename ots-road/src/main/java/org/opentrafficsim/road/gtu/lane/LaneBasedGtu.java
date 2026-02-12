@@ -324,7 +324,14 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     protected synchronized void enterLane(final Lane lane, final double fraction)
     {
         // The reason this method does not use exitLane() is that we do not want to set the lane to null in the historical.
-        LanePosition exitLanePosition = getPosition();
+
+        /*
+         * We cannot use the getLane() methods to obtain the exit lane. This is because at the time we enter the next lane (i.e.
+         * now) that method will return the lane that is entered at that time.
+         */
+        Lane exitLane = this.lane.get();
+        Length exitPosition = exitLane == null ? null : getPosition(exitLane);
+
         this.lane.set(lane);
         Try.execute(() -> lane.addGtu(this, fraction), "Entering lane where the GTU is already at.");
 
@@ -333,23 +340,21 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
 
         // First enter, then exit, as e.g. TrafficLightDetector checks whether a collection is empty to trigger an event that
         // the detector is empty. However, the GTU might have entered the next lane where the detector continues.
-        if (exitLanePosition != null)
+        if (exitLane != null)
         {
-            exitLanePosition.lane().removeGtu(this, true, exitLanePosition.position());
+            exitLane.removeGtu(this, true, exitPosition);
             this.pendingLanesToEnter.values().remove(lane);
             this.pendingEnterEvents.remove(lane);
-            fireTimedEvent(LaneBasedGtu.LANE_EXIT_EVENT,
-                    new Object[] {getId(), exitLanePosition.lane().getLink().getId(), exitLanePosition.lane().getId()},
+            fireTimedEvent(LaneBasedGtu.LANE_EXIT_EVENT, new Object[] {getId(), exitLane.getLink().getId(), exitLane.getId()},
                     getSimulator().getSimulatorTime());
-            if (exitLanePosition.lane().getLink().equals(lane.getLink()))
+            if (exitLane.getLink().equals(lane.getLink()))
             {
                 // Same link, so must be a lane change
                 setLaneChangeDirection(LateralDirectionality.NONE);
-                String direction = lane.equals(exitLanePosition.lane().getLeft(getType()).orElse(null))
-                        ? LateralDirectionality.LEFT.name() : LateralDirectionality.RIGHT.name();
+                String direction = lane.equals(exitLane.getLeft(getType()).orElse(null)) ? LateralDirectionality.LEFT.name()
+                        : LateralDirectionality.RIGHT.name();
                 fireTimedEvent(LaneBasedGtu.LANE_CHANGE_EVENT,
-                        new Object[] {getId(), direction, exitLanePosition.lane().getLink().getId(),
-                                exitLanePosition.lane().getId(), exitLanePosition.position()},
+                        new Object[] {getId(), direction, exitLane.getLink().getId(), exitLane.getId(), exitPosition},
                         getSimulator().getSimulatorTime());
             }
         }
@@ -402,20 +407,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      */
     public synchronized Lane getLane(final Duration time)
     {
-        return getLane(time, true);
-    }
-
-    /**
-     * Returns the lane at the given time. This may be in the future during the plan, in which case it is a prospective lane.
-     * @param time simulation time to get the lane for
-     * @param firstEpisode return current lane when time is exactly the start of the second episode
-     * @return lane at given time
-     */
-    private Lane getLane(final Duration time, final boolean firstEpisode)
-    {
-        return this.pendingLanesToEnter.isEmpty() || this.pendingLanesToEnter.firstKey().gt(time)
-                || (firstEpisode && this.pendingLanesToEnter.firstKey().eq(time)) ? this.lane.get(time)
-                        : this.pendingLanesToEnter.floorEntry(time).getValue();
+        return this.pendingLanesToEnter.isEmpty() || this.pendingLanesToEnter.firstKey().gt(time) ? this.lane.get(time)
+                : this.pendingLanesToEnter.floorEntry(time).getValue();
     }
 
     /**
@@ -762,7 +755,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         Length remain = getOperationalPlan().getTotalLength().plus(EVENT_MARGIN);
         Length planStartPositionAtLaneOnPath = getLongitudinalPosition();
         boolean checkLaneChange = getOperationalPlan() instanceof LaneBasedOperationalPlan lbop && lbop.isDeviative()
-                && !this.bookkeeping.equals(LaneBookkeeping.INSTANT);
+                && this.bookkeeping.isEdge() && (!this.bookkeeping.isInformed() || !this.laneChangeDirection.get().isNone());
         while (true)
         {
             Duration enterTime;
@@ -786,22 +779,30 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             {
                 Duration firstTimeOnLane = this.pendingLanesToEnter.isEmpty() ? getSimulator().getSimulatorTime()
                         : this.pendingLanesToEnter.lastKey();
-                Length overshoot = laneLateralOvershoot(lastTimeOnLane);
-                if (overshoot.gt0() && laneLateralOvershoot(firstTimeOnLane).le0())
+                Length startOvershoot = laneLateralOvershoot(firstTimeOnLane);
+                Length endOvershoot = laneLateralOvershoot(lastTimeOnLane);
+                if (startOvershoot.ge0())
+                {
+                    // Already overshot the edge, change lane instantaneously
+                    LateralDirectionality lcDirection =
+                            getDeviation(firstTimeOnLane).ge0() ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
+                    changeLaneInstantaneously(lcDirection);
+                }
+                else if (endOvershoot.gt0() && startOvershoot.le0())
                 {
                     Length deviation = getDeviation(lastTimeOnLane);
                     boolean noAdjacentLane =
                             (deviation.gt0() ? laneOnPath.getLeft(getType()) : laneOnPath.getRight(getType())).isEmpty();
-                    boolean willRoam = noAdjacentLane && overshoot.gt(getWidth().times(0.5));
+                    boolean willRoam = noAdjacentLane && endOvershoot.gt(getWidth().times(0.5));
 
                     Duration lateralCrossingTime = getTimeOfLateralCrossing(firstTimeOnLane, lastTimeOnLane, willRoam);
-                    if (willRoam)
+                    if (lateralCrossingTime != null && willRoam)
                     {
                         this.roamEvent =
                                 getSimulator().scheduleEventAbs(Duration.ofSI(lateralCrossingTime.si), () -> exitLane());
                         return; // no further lanes to check when roaming
                     }
-                    else
+                    else if (lateralCrossingTime != null)
                     {
                         // Regular lane change
                         LateralDirectionality lcDirection = getDeviation(lateralCrossingTime).ge0() ? LateralDirectionality.LEFT
@@ -826,6 +827,11 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                                     getSimulator().scheduleEventAbs(Duration.ofSI(lateralCrossingTime.si), () -> exitLane());
                             return; // no further lanes to check when roaming
                         }
+                    }
+                    else
+                    {
+                        throw new OtsRuntimeException("GTU " + getId() + " expects a lane change from lane " + laneOnPath
+                                + " as the overshoot goes from (-) to (+) in the episode, but no edge crossing was found.");
                     }
                 }
             }
@@ -917,6 +923,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             }
             if (mid == low)
             {
+                if (low < 1 || low > path.size())
+                {
+                    return null;
+                }
                 position0 = Length.max(startPosition, Length.min(Length.ofSI(path.lengthAtIndex(low - 1)), endPosition));
                 Duration time0 = getOperationalPlan().getTimeAtDistance(position0);
                 overshoot0 = laneLateralOvershoot(time0).minus(lateralMargin);
@@ -991,9 +1001,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
              */
             Duration time1 = this.pendingLanesToEnter.higherKey(time0) == null ? getOperationalPlan().getEndTime()
                     : this.pendingLanesToEnter.higherKey(time0);
-            // Cannot invoke getPosition(time1) as it might return a position on the lane of the first episode
-            // false argument: make sure we always get the -next- lane at the given timestamp, so we get clean episodes
-            Lane laneAtTime = getLane(time1, false);
+            Lane laneAtTime = getLane(time1);
             LanePosition position1 = new LanePosition(laneAtTime, getPosition(laneAtTime, getReference(), time1));
             searchedDistanceAtFrom = findDetectorTriggersInEpisode(searchedDistanceAtFrom, position0, position1, schedule);
             time0 = time1;
@@ -1168,26 +1176,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
 
         if (nextPhysical.isEmpty())
         {
-            // ignore gap and just return closest lane on next link for the GTU type
-            if (link instanceof CrossSectionLink cLink)
-            {
-                double minDistance = Double.POSITIVE_INFINITY;
-                Lane closest = null;
-                for (Lane next : cLink.getLanesAndShoulders())
-                {
-                    double distance = Math.hypot(next.getCenterLine().getFirst().x - lane.getCenterLine().getLast().x,
-                            next.getCenterLine().getFirst().y - lane.getCenterLine().getLast().y);
-                    if (distance < minDistance)
-                    {
-                        closest = next;
-                        minDistance = distance;
-                    }
-                }
-                if (closest != null)
-                {
-                    out.add(closest);
-                }
-            }
             return out;
         }
 
@@ -1237,39 +1225,15 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             adjust = 0.0;
         }
 
-        // find intersection
         double cumul = 0.0;
+        double x0 = line.get(0).x;
+        double y0 = line.get(0).y;
+        double x1 = line.get(1).x;
+        double y1 = line.get(1).y;
         for (int i = 0; i < points.size() - 1; i++)
         {
-            Point2d intersect = Point2d.intersectionOfLineSegments(points.get(i), points.get(i + 1), line.get(0), line.get(1));
-
-            /*
-             * SKL 31-07-2023: Using the djunits code rather than the older OTS point and line code, causes an intersection on a
-             * polyline to sometimes not be found, if the path has a point that is essentially on the line to cross. Clearly,
-             * when entering a next lane/link, this is often the case as the GTU path is made from lane center lines that have
-             * the endpoint of the lanes in it.
-             */
-            if (intersect == null)
-            {
-                double projectionFraction = line.projectOrthogonalFractionalExtended(points.get(i));
-                if (0.0 <= projectionFraction && projectionFraction <= 1.0)
-                {
-                    // try
-                    // {
-                    Point2d projection = line.getLocationFraction(projectionFraction);
-                    double distance = projection.distance(points.get(i));
-                    if (distance < 1e-6)
-                    {
-                        intersect = projection;
-                    }
-                    // }
-                    // catch (Exception e)
-                    // {
-                    // Point2d projection = line.getLocationFraction(projectionFraction);
-                    // }
-                }
-            }
-
+            Point2d intersect = Point2d.intersectionOfLines(points.get(i).x, points.get(i).y, points.get(i + 1).x,
+                    points.get(i + 1).y, true, true, x0, y0, x1, y1, false, false);
             if (intersect != null)
             {
                 cumul += points.get(i).distance(intersect);

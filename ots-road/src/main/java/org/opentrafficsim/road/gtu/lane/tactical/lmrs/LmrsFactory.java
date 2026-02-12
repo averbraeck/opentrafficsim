@@ -32,7 +32,6 @@ import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.parameters.ParameterFactoryOneShot;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
@@ -999,7 +998,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         get(this.customAccelerationIncentives, gtuType).forEach((s) -> tacticalPlanner.addAccelerationIncentive(s.get()));
 
         // Add AccelerationLaneChangers if the bookkeeping requires it
-        if (LaneBookkeeping.EDGE.equals(gtu.getBookkeeping()) || LaneBookkeeping.START_AND_EDGE.equals(gtu.getBookkeeping()))
+        if (gtu.getBookkeeping().isEdge())
         {
             tacticalPlanner.addAccelerationIncentive(AccelerationLaneChangers.SINGLETON);
         }

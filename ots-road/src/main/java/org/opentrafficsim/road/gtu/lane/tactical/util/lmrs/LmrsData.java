@@ -3,6 +3,8 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
@@ -47,6 +49,9 @@ public final class LmrsData implements Synchronizable
 
     /** Whether the longitudinal control is human. */
     private boolean humanLongitudinalControl = true;
+
+    /** Turn indicator for lane change. */
+    private TimeStampedObject<TurnIndicatorStatus> laneChangeIndicator;
 
     /**
      * Constructor.
@@ -193,6 +198,25 @@ public final class LmrsData implements Synchronizable
     public void setHumanLongitudinalControl(final boolean humanLongitudinalControl)
     {
         this.humanLongitudinalControl = humanLongitudinalControl;
+    }
+
+    /**
+     * Return initiated lane change.
+     * @return initiated lane change
+     */
+    public TimeStampedObject<TurnIndicatorStatus> getInitiatedLaneChange()
+    {
+        return this.laneChangeIndicator;
+    }
+
+    /**
+     * Set turn indicator for lane change.
+     * @param laneChangeIndicator indicator for lane change
+     */
+    @SuppressWarnings("hiddenfield")
+    public void setInitiatedLaneChange(final TimeStampedObject<TurnIndicatorStatus> laneChangeIndicator)
+    {
+        this.laneChangeIndicator = laneChangeIndicator;
     }
 
     @Override

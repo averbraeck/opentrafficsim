@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
@@ -233,12 +234,36 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         lmrsData.finalizeStep();
-
         SimpleOperationalPlan simplePlan =
                 new SimpleOperationalPlan(a, context.getParameters().getParameter(DT), initiatedOrContinuedLaneChange);
+
+        // set turn indicator
         if (turnIndicatorStatus != null)
         {
             context.addIntent(turnIndicatorStatus, Length.ZERO);
+        }
+        else
+        {
+            // lingering indicator during lane change
+            TimeStampedObject<TurnIndicatorStatus> lingeringLaneChangeIndicator = lmrsData.getInitiatedLaneChange();
+            if (lingeringLaneChangeIndicator != null)
+            {
+                if (lingeringLaneChangeIndicator.timestamp().si > context.getTime().si
+                        - context.getParameters().getParameter(ParameterTypes.LCDUR).si)
+                {
+                    context.addIntent(lingeringLaneChangeIndicator.object(), Length.ZERO);
+                }
+                else
+                {
+                    lmrsData.setInitiatedLaneChange(null);
+                }
+            }
+        }
+        if (simplePlan.isLaneChange())
+        {
+            turnIndicatorStatus =
+                    simplePlan.getLaneChangeDirection().isLeft() ? TurnIndicatorStatus.LEFT : TurnIndicatorStatus.RIGHT;
+            lmrsData.setInitiatedLaneChange(new TimeStampedObject<TurnIndicatorStatus>(turnIndicatorStatus, context.getTime()));
         }
         return simplePlan;
 
@@ -306,15 +331,6 @@ public final class LmrsUtil implements LmrsParameters
     public static Desire getLaneChangeDesire(final TacticalContextEgo context,
             final AbstractIncentivesTacticalPlanner incentives) throws ParameterException, GtuException
     {
-        if (context.getPerception().getGtu().getLaneChangeDirection().isLeft())
-        {
-            return new Desire(1.0, 0.0);
-        }
-        else if (context.getPerception().getGtu().getLaneChangeDirection().isRight())
-        {
-            return new Desire(0.0, 1.0);
-        }
-
         double dSync = context.getParameters().getParameter(DSYNC);
         double dCoop = context.getParameters().getParameter(DCOOP);
 

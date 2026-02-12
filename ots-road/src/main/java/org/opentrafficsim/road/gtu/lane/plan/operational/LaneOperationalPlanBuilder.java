@@ -122,8 +122,7 @@ public final class LaneOperationalPlanBuilder
         if (simplePlan.isLaneChange())
         {
             boolean start = gtu.getBookkeeping().equals(LaneBookkeeping.START)
-                    || (gtu.getBookkeeping().equals(LaneBookkeeping.START_AND_EDGE)
-                            && gtu.getSpeed().lt(LaneBookkeeping.START_THRESHOLD));
+                    || (gtu.getBookkeeping().isStartAndEdge() && gtu.getSpeed().lt(LaneBookkeeping.START_THRESHOLD));
             if (gtu.getBookkeeping().equals(LaneBookkeeping.INSTANT) || start)
             {
                 // changes the bookkeeping only, not the position

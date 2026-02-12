@@ -248,4 +248,10 @@ public class TacticalContextEgo implements TacticalContext
         }
     }
 
+    @Override
+    public String toString()
+    {
+        return "TacticalContextEgo [gtu=" + this.gtu.getId() + "]";
+    }
+
 }
