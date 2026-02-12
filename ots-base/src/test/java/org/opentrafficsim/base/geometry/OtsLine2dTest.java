@@ -53,7 +53,7 @@ public final class OtsLine2dTest
         Point2d[] points = new Point2d[0]; // Empty array
         try
         {
-            runConstructors(points);
+            runConstructors(points, true);
             fail("Should have thrown a NetworkException");
         }
         catch (IllegalArgumentException exception)
@@ -68,7 +68,7 @@ public final class OtsLine2dTest
                 points[0] = new Point2d(x0, y0);
                 try
                 {
-                    runConstructors(points);
+                    runConstructors(points, true);
                     fail("Should have thrown a NetworkException");
                 }
                 catch (IllegalArgumentException exception)
@@ -82,21 +82,9 @@ public final class OtsLine2dTest
                         points = new Point2d[2]; // Straight line; two points
                         points[0] = new Point2d(x0, y0);
                         points[1] = new Point2d(x1, y1);
-                        if (0 == points[0].distance(points[1]))
+                        if (0 != points[0].distance(points[1]))
                         {
-                            try
-                            {
-                                runConstructors(points);
-                                fail("Should have thrown a NetworkException");
-                            }
-                            catch (IllegalArgumentException exception)
-                            {
-                                // Ignore expected exception
-                            }
-                        }
-                        else
-                        {
-                            runConstructors(points);
+                            runConstructors(points, true);
                             for (double x2 : values)
                             {
                                 for (double y2 : values)
@@ -105,22 +93,7 @@ public final class OtsLine2dTest
                                     points[0] = new Point2d(x0, y0);
                                     points[1] = new Point2d(x1, y1);
                                     points[2] = new Point2d(x2, y2);
-                                    if (0 == points[1].distance(points[2]))
-                                    {
-                                        try
-                                        {
-                                            runConstructors(points);
-                                            fail("Should have thrown a NetworkException");
-                                        }
-                                        catch (IllegalArgumentException exception)
-                                        {
-                                            // Ignore expected exception
-                                        }
-                                    }
-                                    else
-                                    {
-                                        runConstructors(points);
-                                    }
+                                    runConstructors(points, 0 != points[1].distance(points[2]));
                                 }
                             }
                         }
@@ -133,9 +106,15 @@ public final class OtsLine2dTest
     /**
      * Test all the constructors of Point2d.
      * @param points array of Point2d to test with
+     * @param equalNumberOfPoints false if we expect filtered points
      */
-    private void runConstructors(final Point2d[] points)
+    private void runConstructors(final Point2d[] points, final boolean equalNumberOfPoints)
     {
+        if (!equalNumberOfPoints)
+        {
+            assertTrue(new OtsLine2d(points).size() < points.length, "Duplicate points should be filtered.");
+            return;
+        }
         verifyPoints(new OtsLine2d(points), points);
         List<Point2d> list = new ArrayList<>();
         for (int i = 0; i < points.length; i++)
