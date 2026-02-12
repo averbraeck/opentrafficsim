@@ -7,7 +7,6 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableSortedSet;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -176,30 +175,26 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
         // check tail
         Length tail = getPerception().getGtu().getRear().dx();
+        Length tailImpossibility = null;
         while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty())
         {
             if (record.getPrev().size() > 1)
             {
-                return tail.minus(record.getStartDistance()); // merge prevents lane change
+                tailImpossibility = tail.minus(record.getStartDistance()); // merge prevents lane change
+                break;
             }
             record = record.getPrev().iterator().next();
             if (!canChange(record, lat, accessLaw))
             {
-                return tail.minus(record.getEndDistance());
+                tailImpossibility = tail.minus(record.getEndDistance());
+                break;
             }
         }
 
         LaneRecord prevRecord = null;
         record = root;
-        Length lookAhead;
-        try
-        {
-            lookAhead = getPerception().getGtu().getParameters().getParameter(LOOKAHEAD);
-        }
-        catch (ParameterException ex)
-        {
-            lookAhead = Length.POSITIVE_INFINITY;
-        }
+        Length lookAhead =
+                getPerception().getGtu().getParameters().getOptionalParameter(LOOKAHEAD).orElse(Length.POSITIVE_INFINITY);
         if (canChange(record, lat, accessLaw))
         {
             while (record != null && canChange(record, lat, accessLaw))
@@ -214,11 +209,11 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
             Length d = prevRecord.getEndDistance().minus(getPerception().getGtu().getFront().dx());
             if (d.gt0())
             {
-                return d;
+                return tailImpossibility == null ? d : tailImpossibility;
             }
             // nose is beyond lane, and next lane does not allow a lane change, we can do a !canChange() search
         }
-        while (record != null && !canChange(record, lat, accessLaw))
+        while (record != null && !canChange(record, lat, accessLaw) && record.getStartDistance().lt(lookAhead))
         {
             prevRecord = record;
             record = record.getNext().isEmpty() ? null : record.getNext().iterator().next();
