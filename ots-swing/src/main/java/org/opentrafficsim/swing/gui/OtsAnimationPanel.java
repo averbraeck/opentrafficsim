@@ -1,9 +1,11 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,12 +19,12 @@ import java.awt.event.WindowListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.Box;
@@ -50,6 +52,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
@@ -78,8 +81,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /** Pattern to split string by upper case, with lower case adjacent, without disregarding the match itself. */
     private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})(?<=\\p{Ll})|(?=\\p{Lu}\\p{Ll})");
 
-    /** The formatter for the world coordinates. */
-    private static final NumberFormat COORD_FORMATTER = NumberFormat.getInstance();
+    /** The format for the world coordinates. */
+    private static final String COORD_FORMAT = "%09.2f";
+
+    /** Pattern to split leading zeros from the rest of a number. */
+    private static final Pattern LEADING_ZEROS = Pattern.compile("^([+-]?)(0*)([1-9]\\d*(?:[\\.,]\\d+)?|0(?:[\\.,]\\d+)?)$");
 
     /** The animation panel on tab position 0. */
     private final AutoAnimationPanel animationPanel;
@@ -140,12 +146,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /** Track auto on the next paintComponent operation; then copy state from autoPanTrack. */
     private boolean autoPanOnNextPaintComponent = false;
 
-    /** Initialize the coordinate formatter. */
-    static
-    {
-        COORD_FORMATTER.setMaximumFractionDigits(3);
-    }
-
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param extent bottom left corner, length and width of the area (world) to animate.
@@ -198,19 +198,23 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         // add info labels next to buttons
         JPanel infoTextPanel = new JPanel();
         buttonPanel.add(infoTextPanel);
-        infoTextPanel.setMinimumSize(new Dimension(250, 20));
-        infoTextPanel.setPreferredSize(new Dimension(250, 20));
+        infoTextPanel.setMinimumSize(new Dimension(250, 30));
+        infoTextPanel.setPreferredSize(new Dimension(250, 30));
+        infoTextPanel.setMaximumSize(new Dimension(250, 30));
         infoTextPanel.setLayout(new BoxLayout(infoTextPanel, BoxLayout.Y_AXIS));
-        this.coordinateField = new JLabel("Mouse: ");
-        this.coordinateField.setMinimumSize(new Dimension(250, 10));
-        this.coordinateField.setPreferredSize(new Dimension(250, 10));
+        this.coordinateField = new JLabel();
+        this.coordinateField.setMinimumSize(new Dimension(150, 15));
+        this.coordinateField.setPreferredSize(new Dimension(150, 15));
+        this.coordinateField.setMaximumSize(new Dimension(150, 15));
+        this.coordinateField.setFont(new Font("Consolas", Font.PLAIN, 12));
         infoTextPanel.add(this.coordinateField);
         // gtu fields
         JPanel gtuPanel = new JPanel();
         gtuPanel.setAlignmentX(0.0f);
         gtuPanel.setLayout(new BoxLayout(gtuPanel, BoxLayout.X_AXIS));
-        gtuPanel.setMinimumSize(new Dimension(250, 10));
-        gtuPanel.setPreferredSize(new Dimension(250, 10));
+        gtuPanel.setMinimumSize(new Dimension(250, 15));
+        gtuPanel.setPreferredSize(new Dimension(250, 15));
+        gtuPanel.setMaximumSize(new Dimension(250, 15));
         infoTextPanel.add(gtuPanel);
         if (null != network)
         {
@@ -219,6 +223,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         }
         // gtu counter
         this.gtuCountField = new JLabel("0 GTU's");
+        this.gtuCountField.setMinimumSize(new Dimension(150, 15));
+        this.gtuCountField.setPreferredSize(new Dimension(150, 15));
+        this.gtuCountField.setMaximumSize(new Dimension(150, 15));
         this.gtuCount = null == network ? 0 : network.getGTUs().size();
         gtuPanel.add(this.gtuCountField);
         setGtuCountText();
@@ -272,7 +279,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             final boolean enabled)
     {
         JButton result = new JButton(IconUtil.of(iconPath).get());
+        result.setMinimumSize(new Dimension(34, 32));
         result.setPreferredSize(new Dimension(34, 32));
+        result.setMaximumSize(new Dimension(34, 32));
         result.setName(name);
         result.setEnabled(enabled);
         result.setActionCommand(actionCommand);
@@ -618,22 +627,48 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      */
     protected final void updateWorldCoordinate()
     {
-        String worldPoint = "(x=" + COORD_FORMATTER.format(this.animationPanel.getWorldCoordinate().getX()) + " ; y="
-                + COORD_FORMATTER.format(this.animationPanel.getWorldCoordinate().getY()) + ")";
-        this.coordinateField.setText("Mouse: " + worldPoint);
-        int requiredWidth = this.coordinateField.getGraphics().getFontMetrics().stringWidth(this.coordinateField.getText());
+        String x = String.format(COORD_FORMAT, this.animationPanel.getWorldCoordinate().getX());
+        String y = String.format(COORD_FORMAT, this.animationPanel.getWorldCoordinate().getY());
+        String worldPoint = "<html>(x=" + fadeLeadingZeros(x) + "; y=" + fadeLeadingZeros(y) + ")</html>";
+        this.coordinateField.setText(worldPoint);
+        String worldPointNoHtml = "(x=" + x + "; y=" + y + ")";
+        int requiredWidth = this.coordinateField.getGraphics().getFontMetrics().stringWidth(worldPointNoHtml);
         if (this.coordinateField.getPreferredSize().width < requiredWidth)
         {
             Dimension requiredSize = new Dimension(requiredWidth, this.coordinateField.getPreferredSize().height);
-            this.coordinateField.setPreferredSize(requiredSize);
             this.coordinateField.setMinimumSize(requiredSize);
+            this.coordinateField.setPreferredSize(requiredSize);
+            this.coordinateField.setMaximumSize(requiredSize);
             Container parent = this.coordinateField.getParent();
-            parent.setPreferredSize(requiredSize);
+            requiredSize = new Dimension(requiredWidth, parent.getPreferredSize().height);
             parent.setMinimumSize(requiredSize);
+            parent.setPreferredSize(requiredSize);
+            parent.setMaximumSize(requiredSize);
             Logger.ots().trace("Increased minimum width to " + requiredSize.width);
             parent.revalidate();
         }
         this.coordinateField.repaint();
+    }
+
+    /**
+     * Gives the leading zeros a faded color using HTML.
+     * @param formatted formatted number
+     * @return formatted number with leading zeros faded
+     */
+    protected String fadeLeadingZeros(final String formatted)
+    {
+        Matcher m = LEADING_ZEROS.matcher(formatted);
+        if (!m.matches())
+        {
+            return formatted;
+        }
+        String sign = m.group(1) == null ? "" : m.group(1);
+        String zeros = m.group(2) == null ? "" : m.group(2);
+        String digits = m.group(3);
+        Color brighter = ColorInterpolator.interpolateColor(this.coordinateField.getBackground(),
+                this.gtuCountField.getForeground(), 0.2);
+        String zerosColor = String.format("#%02x%02x%02x", brighter.getRed(), brighter.getGreen(), brighter.getBlue());
+        return sign + "<span style='color:" + zerosColor + ";'>" + zeros + "</span>" + digits;
     }
 
     /**
@@ -771,7 +806,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      */
     private void setGtuCountText()
     {
-        this.gtuCountField.setText(this.gtuCount + " GTU's");
+        String text = this.gtuCount + " GTU's";
+        this.gtuCountField.setText(text);
     }
 
     /**

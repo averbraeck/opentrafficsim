@@ -177,7 +177,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         SwingTrajectoryPlot plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("Trajectory right lane", updateInterval, scheduler, sampler.getSamplerData(), path), true);
         plot.addColorer(new SynchronizationTrajectoryColorer(syncData), false);
-        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
+        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "trajectories",
                 plot.getContentPane());
     }
 
