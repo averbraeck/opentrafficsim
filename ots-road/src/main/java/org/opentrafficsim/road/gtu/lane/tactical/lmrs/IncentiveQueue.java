@@ -62,8 +62,7 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
         {
             return Desire.ZERO;
         }
-        double aCur = Try.assign(() -> context.getGtu().getCarFollowingAcceleration().si, OperationalPlanException.class,
-                "Could not obtain the car-following acceleration.");
+        double aCur = context.getCarFollowingAcceleration().si;
         if (aCur <= 0.0 && context.getSpeed().eq0())
         {
             return Desire.ZERO;

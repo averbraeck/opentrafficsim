@@ -13,6 +13,7 @@ import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
 import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.draw.colorer.NumberFormatUnit;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.WithDesiredSpeed;
 
 /**
  * Colorer of GTUs by desired speed.
@@ -35,7 +36,9 @@ public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed>
      */
     public DesiredSpeedGtuColorer(final BoundsPaintScale boundsPaintScale)
     {
-        super((gtu) -> gtu instanceof LaneBasedGtu gtuLane ? Optional.of(gtuLane.getDesiredSpeed()) : Optional.empty(),
+        super((gtu) -> gtu instanceof LaneBasedGtu gtuLane
+                && gtuLane.getTacticalPlanner() instanceof WithDesiredSpeed speedPlanner
+                        ? Optional.of(speedPlanner.getDesiredSpeed()) : Optional.empty(),
                 (v) -> v == null ? Color.WHITE : boundsPaintScale.getPaint(v.getInUnit(SpeedUnit.KM_PER_HOUR)),
                 LegendColorer.fromBoundsPaintScale(boundsPaintScale, FORMAT.getDoubleFormat()), boundsPaintScale);
     }

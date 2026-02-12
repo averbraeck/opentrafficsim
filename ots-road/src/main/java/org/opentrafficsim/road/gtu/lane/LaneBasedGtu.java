@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,7 +37,6 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
@@ -50,12 +48,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
@@ -65,8 +57,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -132,18 +122,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
 
     /** Detector events. */
     private Set<SimEventInterface<Duration>> detectorEvents = new LinkedHashSet<>();
-
-    /** Cached desired speed. */
-    private Speed cachedDesiredSpeed;
-
-    /** Time desired speed was cached. */
-    private Duration desiredSpeedTime;
-
-    /** Cached car-following acceleration. */
-    private Acceleration cachedCarFollowingAcceleration;
-
-    /** Time car-following acceleration was cached. */
-    private Duration carFollowingAccelerationTime;
 
     /** Turn indicator status. */
     private final Historical<TurnIndicatorStatus> turnIndicatorStatus;
@@ -290,7 +268,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * {@inheritDoc} The lane the GTU is on will be left.
+     * {@inheritDoc} The lane the GTU is on will be exited.
      */
     @Override
     public synchronized void setParent(final Gtu gtu) throws GtuException
@@ -308,11 +286,11 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         if (exitLanePosition != null)
         {
             exitLanePosition.lane().removeGtu(this, true, exitLanePosition.position());
+            fireTimedEvent(LaneBasedGtu.LANE_EXIT_EVENT,
+                    new Object[] {getId(), exitLanePosition.lane().getLink().getId(), exitLanePosition.lane().getId()},
+                    getSimulator().getSimulatorTime());
         }
         this.lane.set(null);
-        fireTimedEvent(LaneBasedGtu.LANE_EXIT_EVENT,
-                new Object[] {getId(), exitLanePosition.lane().getLink().getId(), exitLanePosition.lane().getId()},
-                getSimulator().getSimulatorTime());
     }
 
     /**
@@ -1301,70 +1279,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     public RoadNetwork getNetwork()
     {
         return (RoadNetwork) super.getPerceivableContext();
-    }
-
-    /**
-     * This method returns the current desired speed of the GTU. This value is required often, so implementations can cache it.
-     * @return current desired speed
-     */
-    public synchronized Speed getDesiredSpeed()
-    {
-        Duration simTime = getSimulator().getSimulatorTime();
-        if (this.desiredSpeedTime == null || this.desiredSpeedTime.si < simTime.si)
-        {
-            Optional<InfrastructurePerception> infra =
-                    getTacticalPlanner().getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class);
-            SpeedLimitInfo speedInfo;
-            if (infra.isEmpty())
-            {
-                speedInfo = new SpeedLimitInfo();
-                speedInfo.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, getMaximumSpeed());
-            }
-            else
-            {
-                // Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
-                speedInfo = infra.get().getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
-            }
-            this.cachedDesiredSpeed =
-                    Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
-                            "Parameter exception while obtaining the desired speed.");
-            this.desiredSpeedTime = simTime;
-        }
-        return this.cachedDesiredSpeed;
-    }
-
-    /**
-     * This method returns the current car-following acceleration of the GTU. This value is required often, so implementations
-     * can cache it.
-     * @return current car-following acceleration
-     */
-    public synchronized Acceleration getCarFollowingAcceleration()
-    {
-        Duration simTime = getSimulator().getSimulatorTime();
-        if (this.carFollowingAccelerationTime == null || this.carFollowingAccelerationTime.si < simTime.si)
-        {
-            LanePerception perception = getTacticalPlanner().getPerception();
-            // speed
-            EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
-                    .orElseThrow(() -> new NoSuchElementException("EgoPerception is required to determine the speed."));
-            Speed speed = ego.getSpeed();
-            // speed limit info
-            InfrastructurePerception infra = perception.getPerceptionCategoryOptional(InfrastructurePerception.class)
-                    .orElseThrow(() -> new NoSuchElementException(
-                            "InfrastructurePerception is required to determine the desired speed."));
-            SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
-            // leaders
-            NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
-                    .orElseThrow(() -> new NoSuchElementException(
-                            "NeighborsPerception is required to determine the car-following acceleration."));
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-            // obtain
-            this.cachedCarFollowingAcceleration =
-                    Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(), speed,
-                            speedInfo, leaders), "Parameter exception while obtaining the desired speed.");
-            this.carFollowingAccelerationTime = simTime;
-        }
-        return this.cachedCarFollowingAcceleration;
     }
 
     /**

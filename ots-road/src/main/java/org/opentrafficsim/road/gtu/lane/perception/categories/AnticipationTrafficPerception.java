@@ -69,7 +69,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     }
 
     @Override
-    public Speed getSpeed(final RelativeLane lane) throws ParameterException
+    public Speed getSpeed(final RelativeLane lane, final Speed desiredSpeed) throws ParameterException
     {
         Duration now = Try.assign(() -> getTimestamp(), "GTU not initialized.");
         if (this.lastSpeedTime == null || this.lastSpeedTime.si < now.si)
@@ -85,7 +85,6 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         if (vAnt == null)
         {
             LaneBasedGtu gtu = getPerception().getGtu();
-            Speed desiredSpeed = gtu.getDesiredSpeed();
             vAnt = anticipationSpeed(lane, gtu.getParameters(),
                     getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category")),

@@ -603,7 +603,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             getGtu().getParameters().setClaimedParameter(LmrsParameters.DRIGHT, desire.right(), this);
 
             // car-following
-            Acceleration a = getGtu().getCarFollowingAcceleration();
+            Acceleration a = context.getCarFollowingAcceleration();
 
             // cooperation
             Acceleration aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.LEFT, desire);

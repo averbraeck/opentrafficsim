@@ -111,7 +111,7 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
                     if (leaders != null && !leaders.isEmpty())
                     {
                         PerceivedGtu leader = leaders.first();
-                        Speed vDes = context.getGtu().getDesiredSpeed();
+                        Speed vDes = context.getDesiredSpeed();
                         Speed vGain = context.getParameters().getParameter(VGAIN);
                         Length x0 = context.getParameters().getParameter(LOOKAHEAD);
                         rho = Tailgating.socialPressure(vDes, leader.getSpeed(), vGain, leader.getDistance(), x0);

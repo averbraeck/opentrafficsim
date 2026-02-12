@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -431,15 +432,19 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
             Throw.whenNull(time, "time");
             // parameters are not historical, they could be, but that's really slow
             Parameters parameters = new ParameterSet(gtu.getParameters());
+            CarFollowingModel carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
             return new Behavior()
             {
                 /** Speed limit info. */
                 private SpeedLimitInfo speedLimitInfo;
 
+                /** Desired speed. */
+                private Speed desiredSpeed;
+
                 @Override
                 public CarFollowingModel getCarFollowingModel()
                 {
-                    return gtuTypeAssumptions == null ? gtu.getTacticalPlanner().getCarFollowingModel()
+                    return gtuTypeAssumptions == null ? carFollowingModel
                             : gtuTypeAssumptions.getCarFollowingModel(gtu.getType());
                 }
 
@@ -468,7 +473,19 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
                 @Override
                 public Speed getDesiredSpeed()
                 {
-                    return gtu.getDesiredSpeed();
+                    if (this.desiredSpeed == null)
+                    {
+                        try
+                        {
+                            this.desiredSpeed = getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimitInfo());
+                        }
+                        catch (ParameterException ex)
+                        {
+                            this.desiredSpeed = Try.assign(() -> gtu.getLane().getSpeedLimit(gtu.getType()),
+                                    "Unable to obtain speed limit for GTU on lane where it is at.");
+                        }
+                    }
+                    return this.desiredSpeed;
                 }
 
                 @Override

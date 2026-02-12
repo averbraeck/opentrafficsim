@@ -77,8 +77,8 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
         if (lane.isCurrent() && context.getPerception().getLaneStructure().exists(RelativeLane.LEFT))
         {
             Speed vCong = context.getParameters().getParameter(VCONG);
-            if (context.getPerception().getPerceptionCategory(TrafficPerception.class)
-                    .getSpeed(RelativeLane.CURRENT).si > vCong.si)
+            if (context.getPerception().getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT,
+                    context.getDesiredSpeed()).si > vCong.si)
             {
                 // TODO depends on left/right traffic
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =

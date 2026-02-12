@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -82,39 +80,28 @@ public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Sta
         double rightDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
 
         // gather some info
-        Speed vCur = traffic.getSpeed(RelativeLane.CURRENT);
+        Speed vCur = traffic.getSpeed(RelativeLane.CURRENT, context.getDesiredSpeed());
         Speed vGain = context.getParameters().getParameter(VGAIN);
 
         // calculate aGain (default 1; lower as acceleration is higher than 0)
-        Dimensionless aGain;
-        /*
-         * Instead of instantaneous car-following acceleration, use current acceleration; only then is the acceleration factor
-         * consistent with possible lane change incentives pertaining to speed (which used to be only vehicles in the original
-         * LMRS, but can be any number of reasons here. E.g. traffic lights, conflicts, etc.)
-         */
-        Acceleration aCur = context.getAcceleration();
-
-        /*
-         * The idea to let aCur simply be the current acceleration is wrong; aCur -should- only describe the car-following
-         * relation, as this describes a sense of sticking to a lane as the leader is getting away.
-         */
-        aCur = context.getGtu().getCarFollowingAcceleration();
+        double aGain;
+        Acceleration aCur = context.getCarFollowingAcceleration();
         if (aCur.si > 0)
         {
             Acceleration a = context.getParameters().getParameter(A);
-            aGain = a.minus(aCur).divide(a);
+            aGain = (a.si - aCur.si) / a.si;
         }
         else
         {
-            aGain = new Dimensionless(1, DimensionlessUnit.SI);
+            aGain = 1.0;
         }
 
         // left desire
         double dLeft;
         if (leftDist > 0.0 && infra.getCrossSection().contains(RelativeLane.LEFT))
         {
-            Speed vLeft = traffic.getSpeed(RelativeLane.LEFT);
-            dLeft = aGain.si * (vLeft.si - vCur.si) / vGain.si;
+            Speed vLeft = traffic.getSpeed(RelativeLane.LEFT, context.getDesiredSpeed());
+            dLeft = aGain * (vLeft.si - vCur.si) / vGain.si;
         }
         else
         {
@@ -125,14 +112,14 @@ public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Sta
         double dRight;
         if (rightDist > 0.0 && infra.getCrossSection().contains(RelativeLane.RIGHT))
         {
-            Speed vRight = traffic.getSpeed(RelativeLane.RIGHT);
+            Speed vRight = traffic.getSpeed(RelativeLane.RIGHT, context.getDesiredSpeed());
             if (vCur.si >= context.getParameters().getParameter(VCONG).si)
             {
-                dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
+                dRight = aGain * Math.min(vRight.si - vCur.si, 0) / vGain.si;
             }
             else
             {
-                dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
+                dRight = aGain * (vRight.si - vCur.si) / vGain.si;
             }
         }
         else

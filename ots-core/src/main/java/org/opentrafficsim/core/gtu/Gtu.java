@@ -319,7 +319,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get front.
      * @return the front position of the GTU, relative to its reference point.
      */
-    public final RelativePosition getFront()
+    public RelativePosition getFront()
     {
         return this.relativePositions.get(RelativePosition.FRONT);
     }
@@ -328,7 +328,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get rear.
      * @return the rear position of the GTU, relative to its reference point.
      */
-    public final RelativePosition getRear()
+    public RelativePosition getRear()
     {
         return this.relativePositions.get(RelativePosition.REAR);
     }
@@ -337,7 +337,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get center.
      * @return the center position of the GTU, relative to its reference point.
      */
-    public final RelativePosition getCenter()
+    public RelativePosition getCenter()
     {
         return this.relativePositions.get(RelativePosition.CENTER);
     }
@@ -346,7 +346,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get relative positions.
      * @return the positions for this GTU, but not the contour points.
      */
-    public final ImmutableMap<Type, RelativePosition> getRelativePositions()
+    public ImmutableMap<Type, RelativePosition> getRelativePositions()
     {
         return new ImmutableLinkedHashMap<>(this.relativePositions, Immutable.WRAP);
     }
@@ -355,7 +355,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get length.
      * @return the maximum length of the GTU (parallel with driving direction).
      */
-    public final Length getLength()
+    public Length getLength()
     {
         return this.length;
     }
@@ -364,7 +364,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get width.
      * @return the maximum width of the GTU (perpendicular to driving direction).
      */
-    public final Length getWidth()
+    public Length getWidth()
     {
         return this.width;
     }
@@ -373,13 +373,13 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get maximum speed.
      * @return the maximum speed of the GTU, in the direction of movement.
      */
-    public final Speed getMaximumSpeed()
+    public Speed getMaximumSpeed()
     {
         return this.maximumSpeed;
     }
 
     @Override
-    public final Bounds2d getRelativeBounds()
+    public Bounds2d getRelativeBounds()
     {
         return this.shape.getRelativeBounds();
     }
@@ -517,7 +517,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     }
 
     @Override
-    public final String getId()
+    public String getId()
     {
         return this.id;
     }
@@ -552,7 +552,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get reference.
      * @return the reference position of the GTU, by definition (0, 0, 0).
      */
-    public final RelativePosition getReference()
+    public RelativePosition getReference()
     {
         return RelativePosition.REFERENCE_POSITION;
     }
@@ -561,7 +561,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get simulator.
      * @return the simulator of the GTU.
      */
-    public final OtsSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -570,7 +570,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get parameters.
      * @return Parameters.
      */
-    public final Parameters getParameters()
+    public Parameters getParameters()
     {
         return this.parameters;
     }
@@ -579,7 +579,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Set parameters. This method clears any existing parameter history and should normally only be invoked for initialization.
      * @param parameters parameters
      */
-    public final void setParameters(final Parameters parameters)
+    public void setParameters(final Parameters parameters)
     {
         this.parameters = parameters;
     }
@@ -628,7 +628,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get operational plan.
      * @return the current operational plan for the GTU
      */
-    public final OperationalPlan getOperationalPlan()
+    public OperationalPlan getOperationalPlan()
     {
         return this.operationalPlan.get();
     }
@@ -638,7 +638,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * @param time simulation time to obtain the operational plan at
      * @return the operational plan for the GTU at the given time.
      */
-    public final OperationalPlan getOperationalPlan(final Duration time)
+    public OperationalPlan getOperationalPlan(final Duration time)
     {
         return this.operationalPlan.get(time);
     }
@@ -656,7 +656,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get odometer.
      * @return the current odometer value.
      */
-    public final Length getOdometer()
+    public Length getOdometer()
     {
         return getOdometer(this.simulator.getSimulatorTime());
     }
@@ -666,7 +666,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * @param time simulation time to obtain the odometer at
      * @return the odometer value at given time.
      */
-    public final Length getOdometer(final Duration time)
+    public Length getOdometer(final Duration time)
     {
         synchronized (this)
         {
@@ -691,7 +691,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get speed.
      * @return the current speed of the GTU, along the direction of movement.
      */
-    public final Speed getSpeed()
+    public Speed getSpeed()
     {
         synchronized (this)
         {
@@ -704,7 +704,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * @param time simulation time at which to obtain the speed
      * @return the current speed of the GTU, along the direction of movement.
      */
-    public final Speed getSpeed(final Duration time)
+    public Speed getSpeed(final Duration time)
     {
         synchronized (this)
         {
@@ -749,7 +749,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get acceleration.
      * @return the current acceleration of the GTU, along the direction of movement.
      */
-    public final Acceleration getAcceleration()
+    public Acceleration getAcceleration()
     {
         synchronized (this)
         {
@@ -762,7 +762,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * @param time simulation time at which to obtain the acceleration
      * @return the current acceleration of the GTU, along the direction of movement.
      */
-    public final Acceleration getAcceleration(final Duration time)
+    public Acceleration getAcceleration(final Duration time)
     {
         synchronized (this)
         {
@@ -808,7 +808,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get maximum acceleration.
      * @return maximumAcceleration
      */
-    public final Acceleration getMaximumAcceleration()
+    public Acceleration getMaximumAcceleration()
     {
         return this.maximumAcceleration;
     }
@@ -817,7 +817,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Set maximum deceleration.
      * @param maximumAcceleration set maximumAcceleration
      */
-    public final void setMaximumAcceleration(final Acceleration maximumAcceleration)
+    public void setMaximumAcceleration(final Acceleration maximumAcceleration)
     {
         if (maximumAcceleration.le(Acceleration.ZERO))
         {
@@ -830,7 +830,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Get maximum deceleration.
      * @return maximumDeceleration
      */
-    public final Acceleration getMaximumDeceleration()
+    public Acceleration getMaximumDeceleration()
     {
         return this.maximumDeceleration;
     }
@@ -839,7 +839,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Set the maximum deceleration.
      * @param maximumDeceleration set maximumDeceleration, must be a negative number
      */
-    public final void setMaximumDeceleration(final Acceleration maximumDeceleration)
+    public void setMaximumDeceleration(final Acceleration maximumDeceleration)
     {
         if (maximumDeceleration.ge(Acceleration.ZERO))
         {
@@ -950,7 +950,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Returns whether the GTU is destroyed.
      * @return whether the GTU is destroyed
      */
-    public final boolean isDestroyed()
+    public boolean isDestroyed()
     {
         return this.destroyed;
     }
@@ -1061,7 +1061,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Note that destroying the next move event of the GTU can be dangerous!
      * @return nextMoveEvent the next move event of the GTU, e.g. to cancel it from outside.
      */
-    public final SimEventInterface<Duration> getNextMoveEvent()
+    public SimEventInterface<Duration> getNextMoveEvent()
     {
         return this.nextMoveEvent;
     }

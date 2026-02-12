@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -18,6 +19,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.TacticalContextEgo;
+import org.opentrafficsim.road.gtu.lane.tactical.WithDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.DeadEnUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
@@ -41,7 +43,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchronizable, Blockable
+public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchronizable, Blockable, WithDesiredSpeed
 {
 
     /** Deviation object in case of no desired deviation. */
@@ -139,6 +141,12 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
             }
         }
         return false;
+    }
+
+    @Override
+    public Speed getDesiredSpeed()
+    {
+        return this.lmrsData.getDesiredSpeed();
     }
 
     @Override

@@ -3,12 +3,14 @@ package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
+import org.opentrafficsim.road.gtu.lane.tactical.WithDesiredSpeed;
 
 /**
  * Keeps data for LMRS for a specific GTU.
@@ -20,7 +22,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class LmrsData implements Synchronizable
+public final class LmrsData implements Synchronizable, WithDesiredSpeed
 {
 
     /** Form of synchronization. */
@@ -43,6 +45,9 @@ public final class LmrsData implements Synchronizable
 
     /** Synchronization state. */
     private Synchronizable.State synchronizationState = Synchronizable.State.NONE;
+
+    /** Desired speed. */
+    private Speed desiredSpeed;
 
     /** Vehicle that is being synchronized to. */
     private String syncVehicle;
@@ -180,6 +185,21 @@ public final class LmrsData implements Synchronizable
     public Synchronizable.State getSynchronizationState()
     {
         return this.synchronizationState;
+    }
+
+    /**
+     * Set desired speed.
+     * @param desiredSpeed desired speed
+     */
+    public void setDesiredSpeed(final Speed desiredSpeed)
+    {
+        this.desiredSpeed = desiredSpeed;
+    }
+
+    @Override
+    public Speed getDesiredSpeed()
+    {
+        return this.desiredSpeed;
     }
 
     /**

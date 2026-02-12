@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeBoolean;
@@ -76,7 +75,7 @@ public interface Tailgating
                 Length x0 = context.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
                 Speed vGain = context.getParameters().getParameter(LmrsParameters.VGAIN);
                 PerceivedGtu leader = leaders.first();
-                Speed desiredSpeed = Try.assign(() -> context.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
+                Speed desiredSpeed = context.getDesiredSpeed();
                 double rho = Tailgating.socialPressure(desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 context.getParameters().setClaimedParameter(RHO, rho, this);
                 Tailgating.deviate(context, rho);
@@ -118,7 +117,7 @@ public interface Tailgating
                 Length x0 = context.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
                 Speed vGain = context.getParameters().getParameter(LmrsParameters.VGAIN);
                 PerceivedGtu leader = leaders.first();
-                Speed desiredSpeed = Try.assign(() -> context.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
+                Speed desiredSpeed = context.getDesiredSpeed();
                 double rho = Tailgating.socialPressure(desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 context.getParameters().setClaimedParameter(RHO, rho, this);
                 double tNew = rho * tMin.si + (1.0 - rho) * tMax.si;

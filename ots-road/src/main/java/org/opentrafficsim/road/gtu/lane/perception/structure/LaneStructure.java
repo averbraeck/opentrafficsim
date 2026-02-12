@@ -459,10 +459,9 @@ public class LaneStructure
     {
         if (gtu.equals(LaneStructure.this.egoGtu))
         {
-            return record.getStartDistance().neg().plus(gtu.getRelativePositions().get(positionType).dx());
+            return Length.ofSI(-record.getStartDistance().si + gtu.getRelativePositions().get(positionType).dx().si);
         }
-        return Try.assign(() -> gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType)),
-                "Unable to obtain position %s of GTU.", positionType);
+        return gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType));
     }
 
     /**

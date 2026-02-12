@@ -123,12 +123,13 @@ public final class LmrsUtil implements LmrsParameters
             {
                 initHeadwayRelaxation(context.getParameters(), leaders.first());
             }
-            a = context.getGtu().getCarFollowingAcceleration();
+            a = context.getCarFollowingAcceleration();
         }
         else
         {
             a = Acceleration.POS_MAXVALUE;
         }
+        lmrsData.setDesiredSpeed(context.getDesiredSpeed());
 
         // determine lane change desire based on incentives
         Desire desire = getLaneChangeDesire(context, incentives);

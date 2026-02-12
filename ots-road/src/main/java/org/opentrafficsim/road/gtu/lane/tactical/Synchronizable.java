@@ -10,6 +10,7 @@ package org.opentrafficsim.road.gtu.lane.tactical;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@FunctionalInterface
 public interface Synchronizable
 {
 

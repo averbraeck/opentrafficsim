@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.network.route.Route;
@@ -21,6 +22,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -46,6 +48,12 @@ public class TacticalContextEgo implements TacticalContext
 
     /** Route. */
     private Optional<Route> route;
+
+    /** Desired speed from car-following model. */
+    private Speed desiredSpeed;
+
+    /** Car-following acceleration. */
+    private Acceleration carFollowingAcceleration;
 
     /** Intents. */
     private Map<Class<?>, NavigableMap<Length, Object>> intents = new LinkedHashMap<>();
@@ -122,6 +130,40 @@ public class TacticalContextEgo implements TacticalContext
     public Duration getTime()
     {
         return getGtu().getSimulator().getSimulatorTime();
+    }
+
+    /**
+     * Returns the desired speed from the car-following model.
+     * @return desired speed from the car-following model
+     * @throws ParameterException if a parameter is not present
+     */
+    public Speed getDesiredSpeed() throws ParameterException
+    {
+        if (this.desiredSpeed == null)
+        {
+            this.desiredSpeed = getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimitInfo());
+        }
+        return this.desiredSpeed;
+    }
+
+    /**
+     * Returns the car-following acceleration from the car-following model and leaders perceived by the neighbor category.
+     * @return car-following acceleration from the car-following model
+     * @throws NoSuchElementException when neighbors perception is not present
+     * @throws ParameterException if a parameter is not present
+     */
+    public Acceleration getCarFollowingAcceleration() throws ParameterException
+    {
+        if (this.carFollowingAcceleration == null)
+        {
+            var leaders = getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                    .orElseThrow(() -> new NoSuchElementException(
+                            "To obtain car-following acceleration a neighbors perception category is required."))
+                    .getLeaders(RelativeLane.CURRENT);
+            this.carFollowingAcceleration =
+                    getCarFollowingModel().followingAcceleration(getParameters(), getSpeed(), getSpeedLimitInfo(), leaders);
+        }
+        return this.carFollowingAcceleration;
     }
 
     /**
