@@ -2,9 +2,14 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.e
 
 import java.util.Iterator;
 
+import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.*;
 import org.opentrafficsim.base.parameters.*;
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -127,23 +132,31 @@ public class GapSearchPattern extends ManeuverPattern {
 
             Acceleration acc = ego.getCurrentCarFollowingAcceleration();
 
+            Speed targetLaneSpeed;
             if (infra.getIfLaneAvailable(this.pattern.targetDirection)) {
-                Speed targetLaneSpeed = ego.getEgoSpeed();
                 if (this.pattern.getTargetDirection().isLeft())
                     targetLaneSpeed = macro.getAverageSpeedLeft();
                 else if (this.pattern.getTargetDirection().isRight())
                     targetLaneSpeed = macro.getAverageSpeedRight();
-
-                Acceleration aToMatch = CarFollowingUtil.approachTargetSpeed(
-                        this.vehicle.getCarFollowingModel(),
-                        params,
-                        ego.getEgoSpeed(),
-                        infra.getCurrentSpeedLimit(),
-                        infra.getDistanceToLaneEnd().times(0.9),
-                        targetLaneSpeed);
-
-                acc = Acceleration.min(acc, aToMatch);
+                else
+                    targetLaneSpeed = ego.getEgoSpeed(); // fallback, should not happen
             }
+            else {
+                targetLaneSpeed = macro.getAverageSpeedCurrent();
+                System.out.println("GTU " + this.vehicle.getGtu().getId() +
+                        " GapSearchPattern - MatchTargetLaneSpeedState - executeControl(): Target lane not available, using current lane speed as fallback: " + targetLaneSpeed);
+            }
+
+            Acceleration aToMatch = CarFollowingUtil.approachTargetSpeed(
+                    this.vehicle.getCarFollowingModel(),
+                    params,
+                    ego.getEgoSpeed(),
+                    infra.getCurrentSpeedLimit(),
+                    //infra.getDistanceToLaneEnd().times(0.9),
+                    Length.instantiateSI(20.0), // We want to match the speed well before the end of the lane to allow for gap search and adjustments
+                    targetLaneSpeed);
+            Acceleration egoDecel = this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
+            acc = Acceleration.min(acc, Acceleration.max(aToMatch, egoDecel));
 
             SimpleOperationalPlan plan = new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
             LateralDirectionality direction = ((GapSearchPattern)this.maneuverPattern).getTargetDirection();
@@ -166,8 +179,21 @@ public class GapSearchPattern extends ManeuverPattern {
             if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection()))
                 return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
 
-            if (mand.magnitude() >= this.vehicle.getParameters().getParameter(DMAND))
+            MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
+            Speed targetLaneSpeed = this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight();
+            Speed vCong = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
+
+            if (mand.magnitude() >= this.vehicle.getParameters().getParameter(DMAND)
+                    & targetLaneSpeed.si > vCong.si
+                    ) {
                 return transitionTo(new SearchForGapState(this.maneuverPattern));
+            }
+            if (mand.magnitude() >= this.vehicle.getParameters().getParameter(DMAND)
+                    & targetLaneSpeed.si <= vCong.si
+                    ) {
+                return transitionTo(new congestedGapSearchState(this.maneuverPattern));
+            }
+
 
             final InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
             final EgoContext ego = this.vehicle.getContext(EgoContext.class);
@@ -179,9 +205,9 @@ public class GapSearchPattern extends ManeuverPattern {
                     infra.getCurrentSpeedLimit(),
                     infra.getDistanceToLaneEnd().minus(this.vehicle.getParameters().getParameter(MirovaParameters.emergencyStoppingDistance)));
 
-            if (stopAccel.si < -6.5) // emergency braking threshold
+            if (stopAccel.si < -5.0) // emergency braking threshold
             {
-                transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
+                return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
             }
 
             return null;
@@ -867,5 +893,142 @@ public class GapSearchPattern extends ManeuverPattern {
         public String toString() {
             return "ExecuteLaneChange[" + this.direction + "]";
         }
-}
+
+    }
+
+    public static class congestedGapSearchState extends ActionState {
+
+        private String targetLeaderId = null;
+        private final GapSearchPattern pattern;
+
+        public congestedGapSearchState(final ManeuverPattern p) {
+            super(p);
+            this.pattern = (GapSearchPattern) p;
+        }
+
+        @Override
+        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
+
+            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            Iterable<HeadwayGtu> leaderIt = neigh.getLeaders(this.pattern.getTargetDirection());
+
+            Acceleration aCf = ego.getCurrentCarFollowingAcceleration();
+
+            if (this.targetLeaderId == null) {
+                // Initial search for a leader to follow
+                Double safetyReductionFactor = this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange)*1.05;
+                Duration tDesired = this.vehicle.getParameters().getParameter(ParameterTypes.T).times(safetyReductionFactor);
+                this.vehicle.getParameters().setParameterResettable(ParameterTypes.T, tDesired);
+                Acceleration egoDecelThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
+                for (HeadwayGtu leader : leaderIt) {
+                    Acceleration aTarget = CarFollowingUtil.followSingleLeader(
+                            this.vehicle.getCarFollowingModel(),
+                            this.vehicle.getParameters(),
+                            ego.getEgoSpeed(),
+                            this.vehicle.getContext(InfrastructureContext.class).getCurrentSpeedLimit(),
+                            leader.getDistance(),
+                            leader.getSpeed());
+                    if (aTarget.si > egoDecelThreshold.si & aTarget.si < aCf.si) {
+                        this.targetLeaderId = leader.getId();
+                        aCf = Acceleration.min(aCf, aTarget);
+                        break;
+                    }
+
+                }
+                this.vehicle.getParameters().resetParameter(ParameterTypes.T);
+            }
+            else {
+                // Follow the previously identified leader
+                for (HeadwayGtu leader : leaderIt) {
+                    if (leader.getId().equals(this.targetLeaderId)) {
+                        Acceleration aTarget;
+                        if (ego.getEgoSpeed().si < 7.0) {
+                            aTarget = CarFollowingUtil.followSingleLeader(
+                                    this.vehicle.getCarFollowingModel(),
+                                    this.vehicle.getParameters(),
+                                    ego.getEgoSpeed(),
+                                    this.vehicle.getContext(InfrastructureContext.class).getCurrentSpeedLimit(),
+                                    leader.getDistance(),
+                                    leader.getSpeed());
+                        }
+                        else {
+                             aTarget = CarFollowingUtil.stop(
+                                     this.vehicle.getCarFollowingModel(),
+                                     this.vehicle.getParameters(),
+                                     ego.getEgoSpeed(),
+                                     this.vehicle.getContext(InfrastructureContext.class).getCurrentSpeedLimit(),
+                                     leader.getDistance().minus(this.vehicle.getParameters().getParameter(ParameterTypes.S0)));
+                        }
+                        aTarget = Acceleration.max(aTarget, this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold));
+                        aCf = Acceleration.min(aCf, aTarget);
+                        break;
+                    }
+                }
+            }
+
+
+            SimpleOperationalPlan plan = new SimpleOperationalPlan(aCf, this.pattern.patternSpecificTimestep);
+            if (this.pattern.getTargetDirection() == LateralDirectionality.LEFT) {
+                plan.setIndicatorIntentLeft();
+            } else if (this.pattern.getTargetDirection() == LateralDirectionality.RIGHT) {
+                plan.setIndicatorIntentRight();
+            }
+            return plan;
+        }
+
+        @Override
+        public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException {
+            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+            Desire mand = this.vehicle.getMandatoryLaneChangeDesire();
+
+            if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection()))
+                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
+
+            final InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+            final EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            final Parameters params = this.vehicle.getParameters();
+            Acceleration stopAccel = CarFollowingUtil.stop(
+                    this.vehicle.getCarFollowingModel(),
+                    params,
+                    ego.getEgoSpeed(),
+                    infra.getCurrentSpeedLimit(),
+                    infra.getDistanceToLaneEnd().minus(this.vehicle.getParameters().getParameter(MirovaParameters.emergencyStoppingDistance)));
+
+            if (stopAccel.si < -5.0) // emergency braking threshold
+            {
+                return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
+            }
+
+
+            return null;
+        }
+
+        @Override
+        public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException, NullPointerException,
+                IllegalArgumentException, GtuException, NetworkException
+        {
+            try
+            {
+                if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)
+                        & this.vehicle.getLaneChangeDesire().isMandatory()
+                        ) {
+                    return null;
+                }
+                else {
+                    return finishManeuver();
+                }
+            }
+            catch (ParameterException | GtuException | NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return "CongestedGapSearchState";
+        }
+    }
 }

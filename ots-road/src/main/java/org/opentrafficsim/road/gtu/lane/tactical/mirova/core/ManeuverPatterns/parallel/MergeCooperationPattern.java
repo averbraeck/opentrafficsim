@@ -52,10 +52,17 @@ public class MergeCooperationPattern extends ManeuverPattern {
 
     private LateralDirectionality directionOfMergeCandidate = null;
 
-    private static final Length DISTANCE_THRESHOLD_MERGE_COOPERATION = Length.instantiateSI(40.0);
+    private static final Length DISTANCE_THRESHOLD_MERGE_COOPERATION = Length.instantiateSI(250.0);
     private static final Duration TIME_THRESHOLD_MERGE_COOPERATION = Duration.instantiateSI(15.0);
 
     private ArrayList<LateralDirectionality> listLanesWithCooperationNeeds = new ArrayList<>();
+
+    public enum RelativeCandidatePosition {
+        AHEAD,
+        BEHIND
+    }
+
+    private RelativeCandidatePosition lastCandidatePosition = null;
 
     public MergeCooperationPattern(final MirovaTacticalPlanner vehicle) {
         super(PatternType.PARALLEL, vehicle);
@@ -86,132 +93,20 @@ public class MergeCooperationPattern extends ManeuverPattern {
                     }
                 }
             }
+            HeadwayGtu alongsideCandidate = neighbors.getFollower(dir);
+            if (alongsideCandidate != null) {
+                boolean indicatesTowardsUs = (dir.isRight() && alongsideCandidate.isLeftTurnIndicatorOn())
+                        || (dir.isLeft() && alongsideCandidate.isRightTurnIndicatorOn());
+                Length rearGap = neighbors.getRearGapDistance(dir);
+                rearGap = rearGap != null ? rearGap : Length.instantiateSI(Double.POSITIVE_INFINITY);
+                if (alongsideCandidate != null && indicatesTowardsUs && neighbors.getRearGapDistance(dir).si < 0.0 ) {
+                      return true;
+                  }
+            }
+
         }
 
         return false;
-//        NeighborsContext neighbors = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class);
-//        EgoContext ego = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
-//        InfrastructureContext infrastructure = this.vehicle.getContextManager().getCategory("Infrastructure", InfrastructureContext.class);
-//
-//        HeadwayGtu egoLeader = neighbors.getCurrentLeader(); // Vehicle directly ahead of us
-//
-//        this.activeMergeCandidateId = null;
-//
-//        // Iterate left and right to find candidates
-//        for (LateralDirectionality dir : this.listLanesWithCooperationNeeds) {
-//            Iterable<HeadwayGtu> adjacentLeaders = neighbors.getLeaders(dir);
-//            if (adjacentLeaders == null) continue;
-//
-//            for (HeadwayGtu candidate : adjacentLeaders) {
-//
-//                // --- CHECK 1: Lane Change Wish (Indicators) ---
-//                boolean indicatesTowardsUs = (dir.isRight() && candidate.isLeftTurnIndicatorOn())
-//                                          || (dir.isLeft() && candidate.isRightTurnIndicatorOn());
-//
-//                // If no indicator, we assume no immediate cooperation need (could be extended by "Lane End" logic)
-//                if (!indicatesTowardsUs) continue;
-//
-//                //System.out.println("GTU " + this.vehicle.getGtu().getId()                        + "MergeCooperationPattern: Candidate found: " + candidate.toString());
-//
-//                // --- CHECK 2: Can Ego-Leader handle it? ---
-//                // If the candidate is far ahead of us, they might merge in front of our leader.
-//                boolean leaderSuitable = false;
-//                if (egoLeader != null) {
-//
-//                    SortedSet<HeadwayGtu> tempSet = new TreeSet<>();
-//                    tempSet.add(candidate);
-//                    PerceptionIterable<HeadwayGtu> iterable = new PerceptionIterableSet<>(tempSet);
-//
-//                    Acceleration potentialLeaderDeceleration = null;
-//                    try
-//                    {
-//                        Duration temporaryHeadway = egoLeader.getParameters().getParameter(ParameterTypes.T)
-//                                .times(this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange));
-//                        egoLeader.getParameters().setParameterResettable(ParameterTypes.T, temporaryHeadway);
-//                        potentialLeaderDeceleration = CarFollowingUtil.followSingleLeader(
-//                                egoLeader.getCarFollowingModel(),
-//                                egoLeader.getParameters(),
-//                                egoLeader.getSpeed(),
-//                                infrastructure.getCurrentSpeedLimit(),
-//                                candidate.getDistance().minus(egoLeader.getDistance()),
-//                                candidate.getSpeed());
-//
-//                        egoLeader.getParameters().resetParameter(ParameterTypes.T);
-//                    }
-//                    catch (ParameterException exception)
-//                    {
-//                        exception.printStackTrace();
-//                    }
-//
-//
-//                    try
-//                    {
-//                        if (potentialLeaderDeceleration.si > this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold).si) {
-//                            leaderSuitable = true;
-////                            System.out.println("GTU " + this.vehicle.getGtu().getId()
-////                                    + " MergeCooperationPattern: Leader " + egoLeader.getId()
-////                                    + " can handle merge from candidate " + candidate.getId()
-////                                    + " with deceleration " + potentialLeaderDeceleration.toString(AccelerationUnit.SI));
-//                        }
-//
-//                    }
-//                    catch (ParameterException exception)
-//                    {
-//                        exception.printStackTrace();
-//                    }
-//                    }
-//
-//
-//                    // If the leader is suitable/better positioned, we do NOT act.
-//                    if (leaderSuitable) {
-//
-//                        continue;
-//                    }
-//
-//                    // --- CHECK 3: Can Ego brake reasonably? ---
-//                    // Kinematic check: Can we open a gap within our cooperative Deceleration Threshold?
-//
-//                    Acceleration requiredDeceleration = null;
-//                    try
-//                    {
-//                        Duration temporaryHeadway = this.vehicle.getParameters().getParameter(ParameterTypes.T)
-//                                .times(this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange));
-//                        this.vehicle.getParameters().setParameterResettable(ParameterTypes.T, temporaryHeadway);
-//                        requiredDeceleration = CarFollowingUtil.followSingleLeader(
-//                                this.vehicle.getCarFollowingModel(),
-//                                this.vehicle.getParameters(),
-//                                ego.getEgoSpeed(),
-//                                infrastructure.getCurrentSpeedLimit(),
-//                                candidate);
-////                        System.out.println("GTU " + this.vehicle.getGtu().getId()
-////                                + " MergeCooperationPattern: Required deceleration to cooperate with candidate "
-////                                + candidate.getId() + " is " + requiredDeceleration.toString(AccelerationUnit.SI)
-////                                + ". Ego speed: " + ego.getEgoSpeed().toString()+ ", Candidate speed: " + candidate.getSpeed().toString() + ", Distance: " + candidate.getDistance());
-//                        this.vehicle.getParameters().resetParameter(ParameterTypes.T);
-//                    }
-//                    catch (ParameterException exception)
-//                    {
-//                        exception.printStackTrace();
-//                    }
-//
-//                    try
-//                    {
-//                        if (requiredDeceleration.si > this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold).si) {
-//                            // All checks passed. We are the chosen one.
-//                            this.activeMergeCandidateId = candidate.getId();
-//                            this.directionOfMergeCandidate = dir;
-//                            //System.out.println("GTU " + this.vehicle.getGtu().getId()                                    + "MergeCooperationPattern: Candidate passed all checks, cooperation initiated: " + candidate.toString());
-//                            return true;
-//                        }
-//                    }
-//                    catch (ParameterException exception)
-//                    {
-//                        exception.printStackTrace();
-//                    }
-//                }
-//            }
-//
-//        return false;
     }
 
     /**
@@ -310,23 +205,108 @@ public class MergeCooperationPattern extends ManeuverPattern {
 
         NeighborsContext neighbors = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class);
 
-        // Scan all relevant lists (Left and Right) to find the ID.
-        // Even if they merged partially, they might appear in one of these lists or as a 'Parallel' leader.
+        // We check both leaders and followers in the relevant lanes, prioritizing the last known position to optimize search.
         for (LateralDirectionality dir : this.listLanesWithCooperationNeeds) {
-            Iterable<HeadwayGtu> leaders = neighbors.getLeaders(dir);
-            if (leaders != null) {
-                for (HeadwayGtu gtu : leaders) {
-                    if (gtu.getId().equals(this.activeMergeCandidateId)) {
-//                        System.out.println("GTU " + this.vehicle.getGtu().getId()
-//                                + "MergeCooperationPattern: Active merge candidate located in leaders: " + gtu.toString());
-                        return gtu;
+            if (this.lastCandidatePosition != null && this.lastCandidatePosition == RelativeCandidatePosition.AHEAD) {
+                Iterable<HeadwayGtu> leaders = neighbors.getLeaders(dir);
+                if (leaders != null) {
+                    for (HeadwayGtu gtu : leaders) {
+                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
+                            this.lastCandidatePosition = RelativeCandidatePosition.AHEAD;
+                            return gtu;
+                        }
                     }
                 }
-//                System.out.println("GTU " + this.vehicle.getGtu().getId()
-//                        + "MergeCooperationPattern: Active merge candidate NOT found in leaders for direction " + dir.toString());
+                Iterable<HeadwayGtu> followers = neighbors.getFollowers(dir);
+                if (followers != null) {
+                    for (HeadwayGtu gtu : followers) {
+                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
+                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
+                            return gtu;
+                        }
+                    }
+                }
+            }
+            else {
+                Iterable<HeadwayGtu> followers = neighbors.getFollowers(dir);
+                if (followers != null) {
+                    for (HeadwayGtu gtu : followers) {
+                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
+                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
+                            return gtu;
+                        }
+                    }
+                }
+                Iterable<HeadwayGtu> leaders = neighbors.getLeaders(dir);
+                if (leaders != null) {
+                    for (HeadwayGtu gtu : leaders) {
+                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
+                            this.lastCandidatePosition = RelativeCandidatePosition.AHEAD;
+                            return gtu;
+                        }
+                    }
+                }
+
             }
         }
         return null; // Lost contact
+    }
+
+    /**
+     * Retrieves the last known relative position (ahead/behind) of the merge candidate.
+     * This can be used to infer whether they merged in front of us or behind us if we lose direct contact.
+     * @return RelativeCandidatePosition of the last known position, or null if unknown.
+     */
+    public RelativeCandidatePosition getLastCandidatePosition() {
+        return this.lastCandidatePosition;
+    }
+
+    /**
+     * Updates the last known relative position of the merge candidate.
+     * This should be called whenever we successfully perceive the candidate to keep track of their position.
+     * @param position The new relative position (ahead/behind) of the candidate.
+     */
+    public void setLastCandidatePosition(final RelativeCandidatePosition position) {
+        this.lastCandidatePosition = position;
+    }
+
+
+    /**
+     * Scans for parallel merge candidates in close proximity (both leader and follower positions) within the relevant lanes.
+     * Used as a fallback when ego speed is very low, to allow opportunistic merges even without clear indicators.
+     * @return A suitable parallel merge candidate, or null if none found.
+     * @throws IllegalArgumentException
+     * @throws NullPointerException
+     * @throws ParameterException
+     */
+    public HeadwayGtu findParallelMergeCandidate() throws ParameterException, NullPointerException, IllegalArgumentException {
+        NeighborsContext neighbors = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class);
+        for (LateralDirectionality dir : this.listLanesWithCooperationNeeds) {
+            if (neighbors.isGtuAlongside(dir)) {
+                HeadwayGtu parallelMergeCandidate = neighbors.getLeader(dir);
+                if (parallelMergeCandidate != null) {
+                    if (neighbors.getFrontGapDistance(dir) != null && neighbors.getFrontGapDistance(dir).si < 0.0) {
+                        this.activeMergeCandidateId = parallelMergeCandidate.getId();
+                        this.directionOfMergeCandidate = dir;
+                        this.lastCandidatePosition = RelativeCandidatePosition.AHEAD;
+                        return parallelMergeCandidate;
+                    }
+                }
+                else {
+                    parallelMergeCandidate = neighbors.getFollower(dir);
+                    if (parallelMergeCandidate != null) {
+                        if (neighbors.getRearGapDistance(dir) != null && neighbors.getRearGapDistance(dir).si < 0.0) {
+                            this.activeMergeCandidateId = parallelMergeCandidate.getId();
+                            this.directionOfMergeCandidate = dir;
+                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
+                            return parallelMergeCandidate;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
 
@@ -339,6 +319,9 @@ public class MergeCooperationPattern extends ManeuverPattern {
         public PreemptiveDecelerationState(final MergeCooperationPattern pattern) {
             super(pattern);
             this.maneuverPattern = pattern;
+            this.maneuverPattern.activeMergeCandidateId = null;
+            this.maneuverPattern.directionOfMergeCandidate = null;
+            this.maneuverPattern.lastCandidatePosition = null;
 
         }
 
@@ -444,6 +427,7 @@ public class MergeCooperationPattern extends ManeuverPattern {
                                 // All checks passed. We are the chosen one.
                                 this.maneuverPattern.activeMergeCandidateId = candidate.getId();
                                 this.maneuverPattern.directionOfMergeCandidate = dir;
+                                this.maneuverPattern.lastCandidatePosition = RelativeCandidatePosition.AHEAD;
                                 return true;
                             }
                         }
@@ -473,6 +457,8 @@ public class MergeCooperationPattern extends ManeuverPattern {
                 // If the target lane is  slower, we might want to decelerate to allow the merge.
                 Acceleration aCoopMax = this.vehicle.getParameters().getParameter(MirovaParameters.preemptiveCooperativeDeceleration);
                 Speed targetSpeed = targetLaneSpeed.gt(vCong) ? targetLaneSpeed : vCong;
+
+                this.vehicle.getParameters().setParameterResettable(ParameterTypes.S0, Length.instantiateSI(10.0));
                 Acceleration aCoop = CarFollowingUtil.approachTargetSpeed(
                         this.vehicle.getCarFollowingModel(),
                         this.vehicle.getParameters(),
@@ -481,6 +467,7 @@ public class MergeCooperationPattern extends ManeuverPattern {
                         Length.instantiateSI(10.0),
                         targetSpeed
                         );
+                this.vehicle.getParameters().resetParameter(ParameterTypes.S0);
                 aCoop = aCoop.gt(aCoopMax) ? aCoop : aCoopMax;
                 SimpleOperationalPlan plan = new SimpleOperationalPlan(aCoop, this.vehicle.getParameters().getParameter(ParameterTypes.DT));
                 return plan;
@@ -496,6 +483,7 @@ public class MergeCooperationPattern extends ManeuverPattern {
                 IllegalArgumentException, GtuException, NetworkException
         {
             EgoContext ego = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
+
             if (this.maneuverPattern.getDirectionOfMergeCandidate() != null) {
                 if (ego.getEgoSpeed().gt(this.vehicle.getParameters().getParameter(ParameterTypes.VCONG)) && this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeLaneChangesEnabled))
                     {
@@ -511,6 +499,17 @@ public class MergeCooperationPattern extends ManeuverPattern {
                     }
                 }
             }
+
+            if (ego.getEgoSpeed().lt(new Speed(50.0, SpeedUnit.KM_PER_HOUR)))
+            {
+                this.maneuverPattern.findParallelMergeCandidate();
+                if (this.maneuverPattern.activeMergeCandidateId != null) {
+
+                    return transitionTo(new OpenGapCongestedState(this.maneuverPattern));
+                }
+            }
+
+
             if (searchCooperationCandidate()) {
                 return transitionTo(new OpenGapState(this.maneuverPattern));
             }
@@ -589,6 +588,14 @@ public class MergeCooperationPattern extends ManeuverPattern {
                     return transitionTo(new PerformLaneChangeState(this.maneuverPattern, oppositeDir));
                 }
             }
+
+            if (ego.getEgoSpeed().lt(new Speed(30.0, SpeedUnit.KM_PER_HOUR)))
+            {
+                if (this.maneuverPattern.findParallelMergeCandidate() != null) {
+                    return transitionTo(new OpenGapCongestedState(this.maneuverPattern));
+                }
+            }
+
             return null;
         }
 
@@ -629,4 +636,120 @@ public class MergeCooperationPattern extends ManeuverPattern {
         }
     }
 
+    public static class OpenGapCongestedState extends ActionState {
+
+        private MergeCooperationPattern maneuverPattern;
+        private HeadwayGtu mergeCandidate = null;
+        private Acceleration aCoop = null;
+
+        public OpenGapCongestedState(final MergeCooperationPattern pattern) {
+            super(pattern);
+            this.maneuverPattern = pattern;
+
+        }
+
+        @Override
+        public SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException, GtuException, NetworkException {
+            this.maneuverPattern.setRunning(true);
+            this.maneuverPattern.setCurrentActionState(this);
+
+            InfrastructureContext infrastructure = this.vehicle.getContextManager().getCategory("Infrastructure", InfrastructureContext.class);
+
+            this.aCoop = CarFollowingUtil.followSingleLeader(
+                    this.vehicle.getCarFollowingModel(),
+                    this.vehicle.getParameters(),
+                    this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed(),
+                    infrastructure.getCurrentSpeedLimit(),
+                    this.mergeCandidate);
+
+            Acceleration decelThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.preemptiveCooperativeDeceleration); // this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold).times(0.5);
+            this.aCoop = this.aCoop.gt(decelThreshold) ? this.aCoop : decelThreshold;
+
+            return new SimpleOperationalPlan(this.aCoop, this.vehicle.getParameters().getParameter(ParameterTypes.DT));
+        }
+
+        @Override
+        public SimpleOperationalPlan next() throws OperationalPlanException, ParameterException, NullPointerException,
+                IllegalArgumentException, GtuException, NetworkException
+        {
+            EgoContext ego = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
+            if (this.maneuverPattern.getDirectionOfMergeCandidate() != null) {
+                if (ego.getEgoSpeed().gt(this.vehicle.getParameters().getParameter(ParameterTypes.VCONG)) && this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeLaneChangesEnabled))
+                    {
+                    NeighborsContext neighbors = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class);
+                    LateralDirectionality dir = this.maneuverPattern.getDirectionOfMergeCandidate();
+                    LateralDirectionality oppositeDir = dir.isLeft() ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
+                    MacroTrafficContext macro = this.vehicle.getContextManager().getCategory("MacroTraffic", MacroTrafficContext.class);
+                    RelativeLane targetLane = dir.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
+                    Speed vTargetLane = macro.getAverageSpeed(targetLane);
+                    if (neighbors.checkIfLaneChangeIsPossible(oppositeDir) && ego.getEgoSpeed().si > (vTargetLane.si - 5.0))
+                    {
+                        return transitionTo(new PerformLaneChangeState(this.maneuverPattern, oppositeDir));
+                    }
+                }
+            }
+
+
+            return null;
+        }
+
+        @Override
+        public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException, NullPointerException,
+                IllegalArgumentException, GtuException, NetworkException
+        {
+            NeighborsContext neighbors = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class);
+            LateralDirectionality dir = this.maneuverPattern.getDirectionOfMergeCandidate();
+
+            this.mergeCandidate = this.maneuverPattern.getActiveMergeCandidate();
+
+            /*
+            if (neighbors.getLeader(dir)!=null && neighbors.getLeader(dir).getId().equals(this.maneuverPattern.activeMergeCandidateId)) {
+                this.mergeCandidate = neighbors.getLeader(dir);
+            }
+            else if (neighbors.getFollower(dir)!=null && neighbors.getFollower(dir).getId().equals(this.maneuverPattern.activeMergeCandidateId)) {
+                this.mergeCandidate = neighbors.getFollower(dir);
+            }
+                */
+            if (this.mergeCandidate == null) {
+                return finishManeuver();
+            }
+
+            InfrastructureContext infrastructure = this.vehicle.getContextManager().getCategory("Infrastructure", InfrastructureContext.class);
+
+            if (this.maneuverPattern.lastCandidatePosition == RelativeCandidatePosition.BEHIND
+                    && (neighbors.getRearGapDistance(dir).si > 0.0
+                            || infrastructure.getDistanceToLaneEnd(dir.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT).si > Length.instantiateSI(300.0).si))
+            {
+                return finishManeuver();
+            }
+
+
+            Length emergencyStopBuffer = this.vehicle.getParameters().getParameter(MirovaParameters.emergencyStoppingDistance);
+            if (this.maneuverPattern.lastCandidatePosition == RelativeCandidatePosition.AHEAD) {
+                Length frontGap = neighbors.getFrontGapDistance(dir);
+                if (frontGap != null && frontGap.si < 0.0) {
+                    Length candidateLength = this.mergeCandidate.getLength();
+                    Length standstillBuffer = this.vehicle.getParameters().getParameter(ParameterTypes.S0);
+                    Length distanceToEnd = infrastructure.getDistanceToLaneEnd(dir.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT);
+                    if (frontGap != null && distanceToEnd.si < candidateLength.si + standstillBuffer.si + emergencyStopBuffer.si + 4.0) {
+                        return finishManeuver();
+                    }
+                }
+            }
+            Length standstillBuffer = this.vehicle.getParameters().getParameter(ParameterTypes.S0);
+
+            if (infrastructure.getDistanceToLaneEnd(dir.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT).si < standstillBuffer.si + emergencyStopBuffer.si + 0.5) {
+                return finishManeuver();
+            }
+
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return "OpenGapCongestedState";
+        }
+
+
+    }
 }

@@ -183,7 +183,7 @@
       <ots:Straight />
       <ots:DefinedLayout>1LaneLocal</ots:DefinedLayout>
     </ots:Link>
-    <ots:Link Id="F2B" NodeEnd="B" NodeStart="F2" OffsetEnd="-3.6m" Type="HIGHWAY">
+    <ots:Link Id="F2B" NodeEnd="B" NodeStart="F2" OffsetEnd="-3.6m" Type="LOCAL">
       <ots:Bezier />
       <ots:DefinedLayout>1LaneHighway</ots:DefinedLayout>
     </ots:Link>

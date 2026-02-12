@@ -263,6 +263,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         // 4️. Apply temporal relaxation (gradual decay of short-term motivation and headway adaptation)
         updateTargetDesiredHeadway();
         updateCurrentRelaxedHeadway();
+        updateDecelerationThresholds();
 
         // 5️. Reset operational plan for this time step
         this.operationalPlan = null;
@@ -799,6 +800,24 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
          // Update GTU parameters for use by the car-following model
          final Parameters params = this.getGtu().getParameters();
          params.setParameterResettable(ParameterTypes.T, this.currentRelaxedHeadway);
+     }
+
+     private void updateDecelerationThresholds() throws ParameterException {
+         final Parameters params = this.getGtu().getParameters();
+         Acceleration maxEgo = params.getParameter(MirovaParameters.maxEgoDecelerationThreshold);
+         Acceleration minEgo = params.getParameter(MirovaParameters.minEgoDecelerationThreshold);
+         Acceleration maxFollower = params.getParameter(MirovaParameters.maxFollowerDecelerationThreshold);
+         Acceleration minFollower = params.getParameter(MirovaParameters.minFollowerDecelerationThreshold);
+
+         Double currentLaneChangeDesire = this.laneChangeDesire.magnitude() > getDFree() ? this.laneChangeDesire.magnitude() : getDFree(); // binary desire for simplicity, can be refined to use actual magnitude
+         Double desireFactor = Math.min(currentLaneChangeDesire - getDFree(), 1.0);
+         // interpolate linear based on desire (between DFREE and 1.0)
+         Acceleration newEgo = Acceleration.instantiateSI(minEgo.si + (maxEgo.si - minEgo.si) * desireFactor);
+         Acceleration newFollower = Acceleration.instantiateSI(minFollower.si + (maxFollower.si - minFollower.si) * desireFactor);
+
+         params.setParameterResettable(MirovaParameters.egoDecelerationThreshold, newEgo);
+         params.setParameterResettable(MirovaParameters.followerDecelerationThreshold, newFollower);
+
      }
 
 

@@ -86,6 +86,8 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     public static final String RIGHT_SIDE_OVERTAKING_AHEAD = "rightSideOvertakingAhead";
     public static final String LANE_CHANGE_POSSIBLE_LEFT = "laneChangePossibleLeft";
     public static final String LANE_CHANGE_POSSIBLE_RIGHT = "laneChangePossibleRight";
+    public static final String GTU_ALONGSIDE_LEFT = "alongside_LEFT";
+    public static final String GTU_ALONGSIDE_RIGHT = "alongside_RIGHT";
 
 
 
@@ -399,6 +401,33 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
             return result;
         } catch (OperationalPlanException e) {
             return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Returns whether there is a GTU alongside in the given direction.
+     * Computes (via Perception) and caches the result if not yet available.
+     *
+     * @param dir Direction to check for alongside GTU
+     * @return true if there is a GTU alongside, false if not or if perception unavailable
+     */
+    public Boolean isGtuAlongside(final LateralDirectionality dir) throws ParameterException, NullPointerException, IllegalArgumentException {
+        String key;
+        if (dir.isLeft()) {
+            key = GTU_ALONGSIDE_LEFT;
+        } else if (dir.isRight()) {
+            key = GTU_ALONGSIDE_RIGHT;
+        } else {
+            return false; // No alongside for current lane
+        }
+        Boolean cached = getCachedValue(key, Boolean.class);
+        if (cached != null) return cached;
+        try {
+            boolean result = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class).isGtuAlongside(dir);
+            cacheValue(key, result, true);
+            return result;
+        } catch (OperationalPlanException e) {
+            return false;
         }
     }
 
