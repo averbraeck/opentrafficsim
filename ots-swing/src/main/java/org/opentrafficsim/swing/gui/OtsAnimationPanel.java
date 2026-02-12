@@ -992,6 +992,22 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         }
 
         @Override
+        public void setBackground(final Color bg)
+        {
+            int threshold = 64;
+            int alternative = 96;
+            if (bg.getRed() <= threshold && bg.getGreen() <= threshold && bg.getBlue() <= threshold)
+            {
+                setGridColor(new Color(alternative, alternative, alternative));
+            }
+            else
+            {
+                setGridColor(Color.BLACK);
+            }
+            super.setBackground(bg);
+        }
+
+        @Override
         public String toString()
         {
             return "AutoAnimationPanel [network=" + this.network + ", lastGtu=" + this.lastGtu + "]";
