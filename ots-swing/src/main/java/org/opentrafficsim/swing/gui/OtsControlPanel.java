@@ -509,15 +509,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         Logger.ots().trace("OtsControlPanel.autoPauseSimulator entered");
         if (getSimulator().isStartingOrRunning())
         {
-            try
-            {
-                Logger.ots().trace("AutoPauseSimulator: stopping simulator");
-                getSimulator().stop();
-            }
-            catch (SimRuntimeException exception1)
-            {
-                exception1.printStackTrace();
-            }
             Duration currentTick = getSimulator().getSimulatorTime();
             Duration nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime();
             Logger.ots().trace("currentTick is {}", currentTick);
@@ -532,7 +523,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 {
                     this.stopAtEvent = scheduleEvent(nextTick, SimEventInterface.MAX_PRIORITY, () -> autoPauseSimulator());
                     Logger.ots().trace("AutoPauseSimulator: starting simulator");
-                    getSimulator().start();
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -542,6 +532,15 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             }
             else
             {
+                try
+                {
+                    Logger.ots().trace("AutoPauseSimulator: stopping simulator");
+                    getSimulator().stop();
+                }
+                catch (SimRuntimeException exception1)
+                {
+                    exception1.printStackTrace();
+                }
                 Logger.ots().trace("Not re-scheduling");
                 if (SwingUtilities.isEventDispatchThread())
                 {
