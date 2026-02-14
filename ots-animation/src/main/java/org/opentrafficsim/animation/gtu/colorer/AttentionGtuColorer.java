@@ -7,7 +7,7 @@ import java.util.List;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
-import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelFuller;
+import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelFuller;
 
 /**
  * Colorer for level of attention.

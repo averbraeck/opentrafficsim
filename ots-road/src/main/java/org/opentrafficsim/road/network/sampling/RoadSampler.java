@@ -24,10 +24,10 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;

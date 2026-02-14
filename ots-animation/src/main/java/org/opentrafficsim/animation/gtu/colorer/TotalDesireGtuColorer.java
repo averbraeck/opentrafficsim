@@ -2,8 +2,8 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.util.Optional;
 
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 
 /**
  * Colorer for total desire.

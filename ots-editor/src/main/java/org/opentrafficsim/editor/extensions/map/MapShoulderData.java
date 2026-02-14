@@ -3,7 +3,7 @@ package org.opentrafficsim.editor.extensions.map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
+import org.opentrafficsim.road.network.CrossSectionGeometry;
 
 /**
  * Shoulder data for in the editor. Implements {@code ShoulderData} additionally to extending {@code EditorCrossSectionData}.

@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 
 /**
  * A factory class is used to generate strategical planners as the strategical planner is state-full.

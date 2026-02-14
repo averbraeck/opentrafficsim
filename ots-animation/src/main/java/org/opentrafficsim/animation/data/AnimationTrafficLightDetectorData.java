@@ -1,7 +1,7 @@
 package org.opentrafficsim.animation.data;
 
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
-import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
+import org.opentrafficsim.road.network.object.detector.TrafficLightDetector;
 
 /**
  * Animation data of a TrafficLightDetector.

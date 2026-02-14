@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.kpi.interfaces.LinkData;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
 
 /**
  * Link representation in road sampler.

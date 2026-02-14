@@ -12,9 +12,9 @@ import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataDuration;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**

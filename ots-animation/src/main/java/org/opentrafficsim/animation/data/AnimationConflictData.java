@@ -3,7 +3,7 @@ package org.opentrafficsim.animation.data;
 import java.awt.Color;
 
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.conflict.Conflict;
 
 /**
  * Animation data of a Conflict.

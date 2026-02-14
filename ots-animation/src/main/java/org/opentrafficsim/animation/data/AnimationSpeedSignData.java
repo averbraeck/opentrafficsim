@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
-import org.opentrafficsim.road.network.lane.object.SpeedSign;
+import org.opentrafficsim.road.network.object.SpeedSign;
 
 /**
  * Animation data of a SpeedSign.

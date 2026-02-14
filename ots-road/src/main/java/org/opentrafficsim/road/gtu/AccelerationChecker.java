@@ -1,0 +1,66 @@
+package org.opentrafficsim.road.gtu;
+
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.core.network.Network;
+
+/**
+ * Checks acceleration bounds.
+ * <p>
+ * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
+public class AccelerationChecker extends AbstractLaneBasedMoveChecker
+{
+
+    /** Minimum allowable acceleration. */
+    private final Acceleration min;
+
+    /** Maximum allowable acceleration. */
+    private final Acceleration max;
+
+    /** Speed above which acceleration should be checked. */
+    private final Speed minSpeed;
+
+    /**
+     * Constructor.
+     * @param network network
+     */
+    public AccelerationChecker(final Network network)
+    {
+        this(network, Acceleration.ofSI(-10.0), Acceleration.ofSI(5), Speed.ofSI(2.5));
+    }
+
+    /**
+     * Constructor.
+     * @param network network
+     * @param min minimum allowable acceleration
+     * @param max maximum allowable acceleration
+     * @param minSpeed speed above which acceleration should be checked
+     */
+    public AccelerationChecker(final Network network, final Acceleration min, final Acceleration max, final Speed minSpeed)
+    {
+        super(network);
+        this.min = min;
+        this.max = max;
+        this.minSpeed = minSpeed;
+    }
+
+    @Override
+    public void checkMove(final LaneBasedGtu gtu) throws Exception
+    {
+        Acceleration a = gtu.getOperationalPlan().getAcceleration(Duration.ZERO);
+        if (gtu.getOperationalPlan().getSpeedFromStart(Duration.ZERO).si > this.minSpeed.si
+                && (a.si < this.min.si || a.si > this.max.si))
+        {
+            Logger.ots().error("GTU: {} acceleration out of bounds ({}, {})", this.min, this.max);
+        }
+    }
+
+}

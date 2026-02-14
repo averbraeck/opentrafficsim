@@ -18,8 +18,8 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulator;
-import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.object.detector.TrafficLightDetector;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
 import org.opentrafficsim.trafficcontrol.ActuatedTrafficController;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 

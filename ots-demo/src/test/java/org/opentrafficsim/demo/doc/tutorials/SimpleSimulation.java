@@ -16,11 +16,11 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.LaneGeometryUtil;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
-import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import picocli.CommandLine.Option;

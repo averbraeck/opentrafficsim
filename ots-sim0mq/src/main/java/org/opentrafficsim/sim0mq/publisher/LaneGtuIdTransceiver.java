@@ -8,10 +8,10 @@ import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.CrossSectionElement;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
 import org.sim0mq.Sim0MQException;
 
 /**

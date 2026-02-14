@@ -6,10 +6,10 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.StripeData;
+import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
 import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization.SynchronizableStripe;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.StripeData;
-import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 
 /**
  * Representation of a stripe that can be synchronized as used within the editor.

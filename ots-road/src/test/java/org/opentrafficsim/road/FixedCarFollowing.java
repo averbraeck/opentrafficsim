@@ -8,10 +8,10 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.FixedCarFollowing.FixedCarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
+import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**

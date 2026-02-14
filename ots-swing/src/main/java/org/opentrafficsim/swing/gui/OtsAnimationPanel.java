@@ -55,7 +55,7 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.Colorer;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;

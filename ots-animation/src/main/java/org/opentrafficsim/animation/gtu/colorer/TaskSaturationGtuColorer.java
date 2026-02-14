@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.LegendColorer;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
+import org.opentrafficsim.road.gtu.perception.mental.Fuller;
 
 /**
  * Displays task saturation.

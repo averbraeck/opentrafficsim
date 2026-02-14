@@ -10,9 +10,9 @@ import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
-import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.StripeData;
-import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
+import org.opentrafficsim.road.network.LaneType;
+import org.opentrafficsim.road.network.StripeData;
+import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
 
 /**
  * Road defaults for locale nl_NL.

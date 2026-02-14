@@ -20,7 +20,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 

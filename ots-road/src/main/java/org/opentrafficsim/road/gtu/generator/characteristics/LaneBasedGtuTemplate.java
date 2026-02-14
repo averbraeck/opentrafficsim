@@ -8,7 +8,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.VehicleModel;
+import org.opentrafficsim.road.gtu.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
 /**

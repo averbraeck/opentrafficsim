@@ -12,8 +12,8 @@ import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
 import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.draw.colorer.NumberFormatUnit;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.WithDesiredSpeed;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.tactical.WithDesiredSpeed;
 
 /**
  * Colorer of GTUs by desired speed.

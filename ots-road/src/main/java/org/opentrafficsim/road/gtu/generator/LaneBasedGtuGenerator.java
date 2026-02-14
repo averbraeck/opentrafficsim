@@ -36,18 +36,18 @@ import org.opentrafficsim.core.gtu.GtuGenerator;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics.Overlap;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 

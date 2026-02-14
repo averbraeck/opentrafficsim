@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
 
 /**
  * Test PerceivedObject.

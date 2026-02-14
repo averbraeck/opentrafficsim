@@ -8,7 +8,7 @@ import java.util.function.Function;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 
 /**
  * Super class with default coloring of left and right desire value.

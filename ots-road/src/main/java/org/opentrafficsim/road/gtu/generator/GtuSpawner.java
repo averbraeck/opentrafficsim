@@ -12,11 +12,11 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
+import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.LanePosition;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;

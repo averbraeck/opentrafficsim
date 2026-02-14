@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.RelativeLane;
 
 /**
  * Test the RelativeLane class.

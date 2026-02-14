@@ -16,11 +16,11 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlanner;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
 
 /**
  * This is the standard strategical route planner with a fixed tactical planner. If no route is supplied, but there is a

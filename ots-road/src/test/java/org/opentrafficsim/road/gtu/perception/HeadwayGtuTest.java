@@ -17,13 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Maneuver;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Signals;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtuSimple;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuSimple;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Maneuver;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Signals;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics.Overlap;
 
 /**
  * Test the HeadwayGtu class and the EnumType in the Headway interface.

@@ -10,7 +10,7 @@ import java.awt.image.ImageObserver;
 import org.djunits.unit.SpeedUnit;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.OtsRenderable;
-import org.opentrafficsim.road.network.lane.object.SpeedSign;
+import org.opentrafficsim.road.network.object.SpeedSign;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be

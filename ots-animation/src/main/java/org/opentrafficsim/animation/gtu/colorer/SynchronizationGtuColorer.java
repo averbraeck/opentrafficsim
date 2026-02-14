@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
-import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
-import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable.State;
+import org.opentrafficsim.road.gtu.tactical.Synchronizable;
+import org.opentrafficsim.road.gtu.tactical.Synchronizable.State;
 
 /**
  * Color based on synchronization state.

@@ -8,9 +8,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.perception.PerceptionCollectable.PerceptionAccumulator;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be

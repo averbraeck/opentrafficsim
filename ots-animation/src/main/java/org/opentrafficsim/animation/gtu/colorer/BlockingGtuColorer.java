@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
-import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
+import org.opentrafficsim.road.gtu.tactical.Blockable;
 
 /**
  * Displays whether a GTU is blocking conflicts.

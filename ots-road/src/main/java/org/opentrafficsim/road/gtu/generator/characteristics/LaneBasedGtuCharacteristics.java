@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.generator.characteristics;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.VehicleModel;
+import org.opentrafficsim.road.gtu.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 
 /**

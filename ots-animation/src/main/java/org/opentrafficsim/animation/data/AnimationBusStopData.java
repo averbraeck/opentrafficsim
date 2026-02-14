@@ -1,7 +1,7 @@
 package org.opentrafficsim.animation.data;
 
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
-import org.opentrafficsim.road.network.lane.object.BusStop;
+import org.opentrafficsim.road.network.object.BusStop;
 
 /**
  * Animation data of a BusStop.

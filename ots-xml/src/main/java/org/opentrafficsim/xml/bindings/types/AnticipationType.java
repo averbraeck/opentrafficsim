@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
+import org.opentrafficsim.road.gtu.perception.categories.neighbors.Anticipation;
 
 /**
  * Expression type with Anticipation value.

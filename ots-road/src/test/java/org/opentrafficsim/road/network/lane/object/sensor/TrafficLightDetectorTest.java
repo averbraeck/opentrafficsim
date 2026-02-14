@@ -34,19 +34,19 @@ import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
+import org.opentrafficsim.road.gtu.tactical.lmrs.Lmrs;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.Setting;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
+import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
-import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
+import org.opentrafficsim.road.network.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.object.detector.TrafficLightDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 

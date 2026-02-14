@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.xml.bindings.types.GapAcceptanceType;
 
 /**

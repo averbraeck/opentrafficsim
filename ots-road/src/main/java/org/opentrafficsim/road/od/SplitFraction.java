@@ -16,7 +16,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.CrossSectionLink;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 

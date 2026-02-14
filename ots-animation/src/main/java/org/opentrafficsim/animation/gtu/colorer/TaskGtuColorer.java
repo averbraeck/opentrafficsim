@@ -8,10 +8,10 @@ import java.util.Optional;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.LegendColorer;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArFuller;
-import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTask;
+import org.opentrafficsim.road.gtu.perception.LanePerception;
+import org.opentrafficsim.road.gtu.perception.mental.Mental;
+import org.opentrafficsim.road.gtu.perception.mental.ar.ArFuller;
+import org.opentrafficsim.road.gtu.perception.mental.ar.ArTask;
 
 /**
  * Colorer for task demand with anticipation reliance indicated by interpolating towards white, for a specific task.

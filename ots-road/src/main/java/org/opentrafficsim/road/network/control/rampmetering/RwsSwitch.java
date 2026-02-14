@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.logger.Logger;
-import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
+import org.opentrafficsim.road.network.object.detector.LoopDetector;
 
 /**
  * Switch implementing the RWS algorithm.

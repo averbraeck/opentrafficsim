@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
 
 /**
  * Expression type with Tailgating value.

@@ -14,9 +14,9 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryDefault;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlannerFactory;
 
 /**
  * Factory for creating {@code LaneBasedStrategicalRoutePlanner} using any {@code LaneBasedTacticalPlannerFactory}.

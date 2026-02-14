@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 
 /**
  * Animation data of a LaneBasedGtu.

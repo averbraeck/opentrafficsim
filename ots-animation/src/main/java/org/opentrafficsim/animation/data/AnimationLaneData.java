@@ -1,7 +1,7 @@
 package org.opentrafficsim.animation.data;
 
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.Lane;
 
 /**
  * Animation data of a Lane.

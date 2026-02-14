@@ -6,7 +6,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
+import org.opentrafficsim.road.network.CrossSectionGeometry;
 
 /**
  * Cross section element data for in the editor.

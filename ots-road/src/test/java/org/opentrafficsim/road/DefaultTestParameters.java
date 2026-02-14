@@ -11,8 +11,8 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.tactical.following.AbstractIdm;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 
 /**
  * Creator of set of parameters with default values.

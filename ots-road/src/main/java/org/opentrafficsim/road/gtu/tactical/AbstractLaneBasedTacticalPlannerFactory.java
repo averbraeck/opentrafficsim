@@ -1,0 +1,149 @@
+package org.opentrafficsim.road.gtu.tactical;
+
+import java.util.Optional;
+
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.perception.PerceptionFactory;
+import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModelFactory;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+
+/**
+ * Abstract tactical planner factory which uses a car-following model factory for supplying peeked desired speed and headway. To
+ * this end the next car-following model is created and used throughout all peek invocations until an implementation of this
+ * class calls {@code nextCarFollowingModel()} to generate a new tactical planner. Implementations should also use
+ * {@code getCarFollowingParameters()} in the {@code getParameters()} method to include the parameters a car-following model
+ * requires.
+ * <p>
+ * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <T> class of the tactical planner generated
+ */
+public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlanner>
+        implements LaneBasedTacticalPlannerFactory<T>
+{
+
+    /** Constructor for the car-following model. */
+    private final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory;
+
+    /** Peeked car following model. */
+    private CarFollowingModel peekedCarFollowingModel = null;
+
+    /** Perception factory. */
+    private final PerceptionFactory perceptionFactory;
+
+    /**
+     * Constructor.
+     * @param carFollowingModelFactory car-following model factory
+     * @param perceptionFactory perception factory
+     */
+    public AbstractLaneBasedTacticalPlannerFactory(
+            final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
+            final PerceptionFactory perceptionFactory)
+    {
+        this.carFollowingModelFactory = carFollowingModelFactory;
+        this.perceptionFactory = perceptionFactory;
+    }
+
+    /**
+     * Returns the next car following model, which will be a fixed peeked instance until {@code nextCarFollowingModel()} is
+     * called.
+     * @return next car following model
+     */
+    private CarFollowingModel peekCarFollowingModel()
+    {
+        if (this.peekedCarFollowingModel != null)
+        {
+            return this.peekedCarFollowingModel;
+        }
+        this.peekedCarFollowingModel = this.carFollowingModelFactory.get();
+        return this.peekedCarFollowingModel;
+    }
+
+    /**
+     * Returns the next car following model.
+     * @param gtu gtu
+     * @return next car following model
+     */
+    protected final CarFollowingModel nextCarFollowingModel(final LaneBasedGtu gtu)
+    {
+        CarFollowingModel model = peekCarFollowingModel();
+        model.init(gtu);
+        this.peekedCarFollowingModel = null; // peek will create a new one
+        return model;
+    }
+
+    /**
+     * Returns the parameters for the car-following model using the factory. This method should be used in the
+     * {@code getParameters()} method of implementing sub-classes.
+     * @param gtuType GTU type
+     * @return parameters for the car-following model using the factory
+     * @throws ParameterException on illegal parameter value
+     */
+    protected final Parameters getCarFollowingParameters(final GtuType gtuType) throws ParameterException
+    {
+        return this.carFollowingModelFactory.getParameters(gtuType);
+    }
+
+    /**
+     * Returns a {@code String} representation of the car-following model factory. This method may be used in the
+     * {@code toString()} method of implementing sub-classes.
+     * @return representation of the car-following model factory
+     */
+    protected final String getCarFollowingModelFactoryString()
+    {
+        return this.carFollowingModelFactory.toString();
+    }
+
+    @Override
+    public final Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
+            final Parameters parameters) throws GtuException
+    {
+        try
+        {
+            SpeedLimitInfo sli = new SpeedLimitInfo();
+            sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, maxGtuSpeed);
+            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, speedLimit);
+            return Optional.of(peekCarFollowingModel().desiredSpeed(parameters, sli));
+        }
+        catch (ParameterException exception)
+        {
+            throw new GtuException(exception);
+        }
+    }
+
+    @Override
+    public final Optional<Length> peekDesiredHeadway(final GtuType gtuType, final Speed speed, final Parameters parameters)
+            throws GtuException
+    {
+        try
+        {
+            return Optional.of(peekCarFollowingModel().desiredHeadway(parameters, speed));
+        }
+        catch (ParameterException exception)
+        {
+            throw new GtuException(exception);
+        }
+    }
+
+    /**
+     * Returns the perception factory.
+     * @return perception factory
+     */
+    public PerceptionFactory getPerceptionFactory()
+    {
+        return this.perceptionFactory;
+    }
+
+}

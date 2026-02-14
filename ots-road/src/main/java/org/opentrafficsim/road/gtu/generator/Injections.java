@@ -42,18 +42,18 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.VehicleModel;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.IdsWithCharacteristics;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
-import org.opentrafficsim.road.gtu.lane.VehicleModel;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 

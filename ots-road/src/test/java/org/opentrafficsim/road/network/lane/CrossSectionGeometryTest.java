@@ -7,6 +7,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.road.network.CrossSectionGeometry;
 
 /**
  * Test CrossSectionGeometry.

@@ -11,14 +11,14 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.road.gtu.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
-import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.Lane;
 
 /**
  * Options for vehicle generation based on an OD matrix.

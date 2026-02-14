@@ -28,11 +28,11 @@ import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
-import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelFuller;
-import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTask;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.perception.mental.Mental;
+import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelFuller;
+import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTask;
+import org.opentrafficsim.road.network.conflict.Conflict;
 
 /**
  * Draws circles around a GTU indicating the level of attention and perception delay.

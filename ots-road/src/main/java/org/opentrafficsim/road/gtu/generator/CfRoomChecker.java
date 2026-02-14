@@ -12,9 +12,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
 
 /**
  * This class places GTU's behind the leader at the desired headway (i.e. CF, car-following) and the speed of the leader, but no

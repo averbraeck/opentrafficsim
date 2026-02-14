@@ -13,13 +13,13 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborTriplet;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
-import org.opentrafficsim.road.gtu.lane.perception.mental.FactorEstimation;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.perception.categories.neighbors.Estimation;
+import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborTriplet;
+import org.opentrafficsim.road.gtu.perception.mental.AdaptationSituationalAwareness;
+import org.opentrafficsim.road.gtu.perception.mental.FactorEstimation;
+import org.opentrafficsim.road.gtu.perception.mental.Fuller;
+import org.opentrafficsim.road.network.conflict.Conflict;
 
 /**
  * EstimationTest.

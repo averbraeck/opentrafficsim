@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.kpi.interfaces.LaneData;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.Lane;
 
 /**
  * Lane representation in road sampler.

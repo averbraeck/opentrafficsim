@@ -34,11 +34,15 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.mock.MockDevsSimulator;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LaneGeometryUtil;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
-import org.opentrafficsim.road.network.lane.conflict.ConflictType;
-import org.opentrafficsim.road.network.lane.conflict.DefaultConflictRule;
+import org.opentrafficsim.road.network.conflict.Conflict;
+import org.opentrafficsim.road.network.conflict.ConflictType;
+import org.opentrafficsim.road.network.conflict.DefaultConflictRule;
 
 /**
  * Test the Conflict class.

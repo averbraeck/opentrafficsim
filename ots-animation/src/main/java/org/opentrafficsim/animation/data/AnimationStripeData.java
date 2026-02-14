@@ -9,7 +9,7 @@ import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
-import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.road.network.Stripe;
 
 /**
  * Animation data of a Stripe.

@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
+import org.opentrafficsim.road.gtu.perception.categories.neighbors.Estimation;
 
 /**
  * Expression type with Estimation value.

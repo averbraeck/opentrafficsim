@@ -8,7 +8,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataSpeed;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**

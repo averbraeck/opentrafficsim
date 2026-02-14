@@ -26,7 +26,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
-import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
 

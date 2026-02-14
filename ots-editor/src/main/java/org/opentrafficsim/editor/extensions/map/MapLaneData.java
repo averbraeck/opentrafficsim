@@ -2,7 +2,7 @@ package org.opentrafficsim.editor.extensions.map;
 
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
+import org.opentrafficsim.road.network.CrossSectionGeometry;
 
 /**
  * Lane data for in the editor.

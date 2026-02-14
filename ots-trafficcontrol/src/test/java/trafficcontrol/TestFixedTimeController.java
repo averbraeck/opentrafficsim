@@ -26,8 +26,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
 import org.opentrafficsim.trafficcontrol.FixedTimeController.SignalGroup;
 

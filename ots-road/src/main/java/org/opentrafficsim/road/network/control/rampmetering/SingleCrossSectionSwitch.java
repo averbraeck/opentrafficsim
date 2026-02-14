@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
+import org.opentrafficsim.road.network.object.detector.LoopDetector;
 
 /**
  * Super class for feed-forward controller. This class contains some helper methods for sub-classes.

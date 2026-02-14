@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.strategical;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlanner;
 
 /**
  * Interface for lane-based strategical planners. It specifies output of certain methods to produce lane-based objects.

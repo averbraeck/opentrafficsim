@@ -20,8 +20,8 @@ import org.opentrafficsim.core.perception.Historical;
 import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.perception.LanePerception;
+import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be

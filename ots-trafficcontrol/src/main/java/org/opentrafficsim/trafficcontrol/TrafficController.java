@@ -6,7 +6,7 @@ import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.object.NonLocatedObject;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLightColor;
 
 /**
  * Interface for traffic light controllers.

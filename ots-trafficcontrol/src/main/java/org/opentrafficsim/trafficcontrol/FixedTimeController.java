@@ -22,8 +22,8 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 

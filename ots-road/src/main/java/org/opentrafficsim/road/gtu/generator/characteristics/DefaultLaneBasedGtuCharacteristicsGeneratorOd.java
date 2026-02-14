@@ -18,13 +18,13 @@ import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.VehicleModel;
-import org.opentrafficsim.road.gtu.lane.VehicleModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory.Setting;
+import org.opentrafficsim.road.gtu.VehicleModel;
+import org.opentrafficsim.road.gtu.VehicleModelFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.tactical.lmrs.Lmrs;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 

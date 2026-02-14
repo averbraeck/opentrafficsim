@@ -10,8 +10,8 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.LanePosition;
 
 /**
  * Colors GTUs by the direction that they will take at the next split.

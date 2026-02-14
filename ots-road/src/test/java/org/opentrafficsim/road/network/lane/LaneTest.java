@@ -42,10 +42,15 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.mock.MockDevsSimulator;
+import org.opentrafficsim.road.network.CrossSectionGeometry;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LaneGeometryUtil;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
-import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
+import org.opentrafficsim.road.network.object.LaneBasedObject;
+import org.opentrafficsim.road.network.object.detector.LaneDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 

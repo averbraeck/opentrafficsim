@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 
 /**
  * GTU representation in road sampler.

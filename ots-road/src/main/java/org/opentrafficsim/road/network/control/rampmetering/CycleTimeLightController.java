@@ -13,10 +13,10 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.DetectorType;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.object.detector.LaneDetector;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLightColor;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;

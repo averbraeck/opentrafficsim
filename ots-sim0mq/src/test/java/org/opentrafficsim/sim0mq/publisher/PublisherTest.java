@@ -28,9 +28,9 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.conflict.ConflictBuilder;
+import org.opentrafficsim.road.network.conflict.LaneCombinationList;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.sim0mq.Sim0MQException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;

@@ -12,8 +12,8 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.network.LanePosition;
 
 /**
  * Room checker based on time-to-collision. The room is considered ok if:

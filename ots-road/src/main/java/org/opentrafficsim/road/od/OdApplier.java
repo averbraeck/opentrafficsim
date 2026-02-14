@@ -44,12 +44,12 @@ import org.opentrafficsim.road.gtu.generator.headway.Arrivals;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.object.detector.LaneDetector;
+import org.opentrafficsim.road.network.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;

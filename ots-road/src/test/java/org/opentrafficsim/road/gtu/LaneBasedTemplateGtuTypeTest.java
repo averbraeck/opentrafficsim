@@ -31,13 +31,13 @@ import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.distributions.DistConstant;

@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Synchronization;
 
 /**
  * Expression type with Synchronization value.

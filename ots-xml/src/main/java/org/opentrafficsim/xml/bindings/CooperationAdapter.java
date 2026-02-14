@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.xml.bindings.types.CooperationType;
 
 /**

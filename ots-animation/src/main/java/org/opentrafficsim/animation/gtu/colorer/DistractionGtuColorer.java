@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
-import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction;
+import org.opentrafficsim.road.gtu.perception.LanePerception;
+import org.opentrafficsim.road.gtu.perception.mental.Fuller;
+import org.opentrafficsim.road.gtu.perception.mental.Mental;
+import org.opentrafficsim.road.gtu.perception.mental.Task;
+import org.opentrafficsim.road.gtu.perception.mental.sdm.DefaultDistraction;
 
 /**
  * Distraction colorer, which shows which distraction is active. This only works on GTUs with the Fuller mental model.

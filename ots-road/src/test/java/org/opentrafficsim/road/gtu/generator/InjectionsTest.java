@@ -48,17 +48,17 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePos
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
+import org.opentrafficsim.road.gtu.tactical.lmrs.Lmrs;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LaneGeometryUtil;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
-import org.opentrafficsim.road.network.lane.LanePosition;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;

@@ -25,9 +25,9 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.BySpeed;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.LanePosition;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 

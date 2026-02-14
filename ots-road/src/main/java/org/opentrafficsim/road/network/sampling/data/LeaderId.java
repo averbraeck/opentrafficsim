@@ -5,9 +5,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**

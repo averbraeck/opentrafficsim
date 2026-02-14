@@ -12,7 +12,7 @@ import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.map.MapLinkData.MiddleOffset;
-import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
+import org.opentrafficsim.road.network.CrossSectionGeometry;
 
 /**
  * Stripe data for in the editor.

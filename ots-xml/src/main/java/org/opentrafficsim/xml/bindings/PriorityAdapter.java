@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
+import org.opentrafficsim.road.network.CrossSectionLink.Priority;
 import org.opentrafficsim.xml.bindings.types.PriorityType;
 
 /**

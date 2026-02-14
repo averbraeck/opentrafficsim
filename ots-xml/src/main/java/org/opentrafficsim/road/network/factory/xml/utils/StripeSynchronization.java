@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
+import org.opentrafficsim.road.network.CrossSectionElement;
+import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.Stripe;
+import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
 
 /**
  * Utility which allows synchronization of stripes.

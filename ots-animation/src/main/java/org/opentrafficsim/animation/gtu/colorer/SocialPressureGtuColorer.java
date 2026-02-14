@@ -8,7 +8,7 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
 import org.opentrafficsim.draw.colorer.NumberFormatUnit;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
 
 /**
  * Colorer for social pressure.

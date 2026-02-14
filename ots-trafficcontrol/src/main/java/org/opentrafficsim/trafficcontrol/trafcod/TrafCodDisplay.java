@@ -20,8 +20,8 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
 import org.opentrafficsim.base.logger.Logger;
-import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
-import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.road.network.object.detector.TrafficLightDetector;
+import org.opentrafficsim.road.network.object.trafficlight.TrafficLightColor;
 
 /**
  * Display the current state of a TrafCOD machine.

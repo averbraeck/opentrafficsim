@@ -7,7 +7,7 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.CrossSectionLink;
 import org.sim0mq.Sim0MQException;
 
 /**

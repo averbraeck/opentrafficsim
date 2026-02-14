@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
-import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.CrossSectionElement;
 
 /**
  * Animation data of a CrossSectionElement.

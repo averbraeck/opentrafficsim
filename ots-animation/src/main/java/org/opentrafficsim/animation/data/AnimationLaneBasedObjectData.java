@@ -5,7 +5,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
-import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.opentrafficsim.road.network.object.LaneBasedObject;
 
 /**
  * Animation data of a LaneBasedObject.
