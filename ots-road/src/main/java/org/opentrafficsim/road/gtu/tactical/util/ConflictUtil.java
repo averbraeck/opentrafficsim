@@ -37,25 +37,26 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.perception.PerceptionCollectable.PerceptionAccumulator;
-import org.opentrafficsim.road.gtu.perception.PerceptionCollectable.PerceptionCollector;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.PerceptionCollectable.PerceptionAccumulator;
+import org.opentrafficsim.road.gtu.perception.PerceptionCollectable.PerceptionCollector;
 import org.opentrafficsim.road.gtu.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Maneuver;
-import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Signals;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuBase;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuSimple;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Maneuver;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Signals;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
 import org.opentrafficsim.road.gtu.tactical.Blockable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.tactical.pt.BusSchedule;
+import org.opentrafficsim.road.gtu.tactical.util.ConflictUtil.ConflictPlans;
 import org.opentrafficsim.road.network.CrossSectionLink;
 import org.opentrafficsim.road.network.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.conflict.ConflictRule;
@@ -268,7 +269,8 @@ public final class ConflictUtil
                  * priority behavior results. This may cause the non-priority direction to never flow.
                  */
                 if (stop && conflict.isMerge() && conflict.getConflictPriority().isPriority() && conflict.getDistance().gt0()
-                        && !conflict.getUpstreamConflictingGtus().isEmpty())
+                        && !conflict.getUpstreamConflictingGtus().isEmpty() && conflict.getUpstreamConflictingGtus().first()
+                                .getDistance().lt(context.getParameters().getParameter(STOP_AREA)))
                 {
                     conflictPlans.setZipGtu(conflict.getUpstreamConflictingGtus().first().getId());
                 }
