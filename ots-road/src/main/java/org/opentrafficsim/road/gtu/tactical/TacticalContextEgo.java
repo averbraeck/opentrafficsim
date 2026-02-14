@@ -12,7 +12,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -41,7 +40,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TacticalContextEgo implements TacticalContext, Identifiable
+public class TacticalContextEgo implements TacticalContext
 {
 
     /** GTU. */
@@ -117,39 +116,12 @@ public class TacticalContextEgo implements TacticalContext, Identifiable
     }
 
     /**
-     * Returns the route.
-     * @return route
-     */
-    public Optional<Route> getRoute()
-    {
-        if (this.route == null)
-        {
-            this.route = getUnsafeGtu().getStrategicalPlanner().getRoute();
-        }
-        return this.route;
-    }
-
-    /**
      * Returns the current time.
      * @return current time
      */
     public Duration getTime()
     {
         return getUnsafeGtu().getSimulator().getSimulatorTime();
-    }
-
-    /**
-     * Returns the desired speed from the car-following model.
-     * @return desired speed from the car-following model
-     * @throws ParameterException if a parameter is not present
-     */
-    public Speed getDesiredSpeed() throws ParameterException
-    {
-        if (this.desiredSpeed == null)
-        {
-            this.desiredSpeed = getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimitInfo());
-        }
-        return this.desiredSpeed;
     }
 
     /**
@@ -170,30 +142,6 @@ public class TacticalContextEgo implements TacticalContext, Identifiable
                     getCarFollowingModel().followingAcceleration(getParameters(), getSpeed(), getSpeedLimitInfo(), leaders);
         }
         return this.carFollowingAcceleration;
-    }
-
-    /**
-     * Returns the current lane change direction.
-     * @return current lane change direction
-     */
-    public LateralDirectionality getLaneChangeDirection()
-    {
-        return getUnsafeGtu().getLaneChangeDirection();
-    }
-
-    /**
-     * Returns the GTU type.
-     * @return GTU type
-     */
-    public GtuType getType()
-    {
-        return getUnsafeGtu().getType();
-    }
-
-    @Override
-    public String getId()
-    {
-        return getUnsafeGtu().getId();
     }
 
     /**
@@ -254,6 +202,18 @@ public class TacticalContextEgo implements TacticalContext, Identifiable
     }
 
     @Override
+    public String getId()
+    {
+        return getUnsafeGtu().getId();
+    }
+
+    @Override
+    public GtuType getGtuType()
+    {
+        return getUnsafeGtu().getType();
+    }
+
+    @Override
     public Parameters getParameters()
     {
         if (this.parameters == null)
@@ -283,6 +243,32 @@ public class TacticalContextEgo implements TacticalContext, Identifiable
                     .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
         }
         return this.speedLimitInfo;
+    }
+
+    @Override
+    public Speed getDesiredSpeed() throws ParameterException
+    {
+        if (this.desiredSpeed == null)
+        {
+            this.desiredSpeed = getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimitInfo());
+        }
+        return this.desiredSpeed;
+    }
+
+    @Override
+    public Optional<Route> getRoute()
+    {
+        if (this.route == null)
+        {
+            this.route = getUnsafeGtu().getStrategicalPlanner().getRoute();
+        }
+        return this.route;
+    }
+
+    @Override
+    public LateralDirectionality getLaneChangeDirection()
+    {
+        return getUnsafeGtu().getLaneChangeDirection();
     }
 
     @Override

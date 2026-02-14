@@ -37,12 +37,6 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
 {
 
     /**
-     * Returns the GTU type.
-     * @return gtuType
-     */
-    GtuType getGtuType();
-
-    /**
      * Returns information on the signals. This includes indicators and braking lights.
      * @return information on the signals
      */
@@ -75,7 +69,7 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
         return getKinematics().getAcceleration();
     }
 
-    // getParameters(), getCarFollowingModel() and getSpeedLimitInfo() implemented as TacticalContext requires it at this level
+    // forwarding methods implemented as TacticalContext requires it at this level
 
     @Override
     default Parameters getParameters()
@@ -93,6 +87,24 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
     default SpeedLimitInfo getSpeedLimitInfo()
     {
         return getBehavior().getSpeedLimitInfo();
+    }
+
+    @Override
+    default Speed getDesiredSpeed()
+    {
+        return getBehavior().getDesiredSpeed();
+    }
+
+    @Override
+    default Optional<Route> getRoute()
+    {
+        return getBehavior().getRoute();
+    }
+
+    @Override
+    default LateralDirectionality getLaneChangeDirection()
+    {
+        return getManeuver().getLaneChangeDirection();
     }
 
     /**
@@ -218,6 +230,16 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
         boolean isChangingRight();
 
         /**
+         * Returns the lane change direction.
+         * @return lane change direction
+         */
+        default LateralDirectionality getLaneChangeDirection()
+        {
+            return isChangingLeft() ? LateralDirectionality.LEFT
+                    : (isChangingRight() ? LateralDirectionality.RIGHT : LateralDirectionality.NONE);
+        }
+
+        /**
          * Returns the lateral deviation from the lane center line. Positive values are left, negative values are right.
          * @return lateral deviation from the lane center line
          */
@@ -255,6 +277,12 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
                 public boolean isChangingRight()
                 {
                     return gtu.getLaneChangeDirection(time).isRight();
+                }
+
+                @Override
+                public LateralDirectionality getLaneChangeDirection()
+                {
+                    return gtu.getLaneChangeDirection(time);
                 }
 
                 @Override

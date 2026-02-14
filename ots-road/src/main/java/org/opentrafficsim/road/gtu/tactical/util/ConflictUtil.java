@@ -211,7 +211,7 @@ public final class ConflictUtil
                 // This also makes a GTU type and -Ego- context unnecessary here
                 Optional<Route> route = context.getRoute();
                 if (route.isPresent() && route.get() instanceof BusSchedule busSchedule
-                        && context.getType().isOfType(DefaultsNl.BUS)
+                        && context.getGtuType().isOfType(DefaultsNl.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     Optional<Duration> actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());

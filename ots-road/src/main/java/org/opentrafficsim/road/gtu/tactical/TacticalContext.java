@@ -1,9 +1,16 @@
 package org.opentrafficsim.road.gtu.tactical;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.base.Identifiable;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -16,8 +23,14 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface TacticalContext
+public interface TacticalContext extends Identifiable
 {
+
+    /**
+     * Returns the GTU type.
+     * @return GTU type
+     */
+    GtuType getGtuType();
 
     /**
      * Returns the parameters.
@@ -36,6 +49,25 @@ public interface TacticalContext
      * @return speed limit info
      */
     SpeedLimitInfo getSpeedLimitInfo();
+
+    /**
+     * Returns the desired speed from the car-following model.
+     * @return desired speed from the car-following model
+     * @throws ParameterException if a parameter is not present
+     */
+    Speed getDesiredSpeed() throws ParameterException;
+
+    /**
+     * Returns the route.
+     * @return route
+     */
+    Optional<Route> getRoute();
+
+    /**
+     * Returns the lane change direction.
+     * @return lane change direction
+     */
+    LateralDirectionality getLaneChangeDirection();
 
     /**
      * Return ego length.
