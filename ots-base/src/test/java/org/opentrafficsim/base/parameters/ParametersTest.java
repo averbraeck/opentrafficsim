@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.data.Column;
 import org.djutils.exceptions.Throw;
 import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
@@ -670,6 +671,19 @@ public final class ParametersTest implements ConstraintInterface
                 "When merging set B with set A, parameter values should be equal.");
         assertFalse(paramsB.contains(ParameterTypes.A),
                 "When merging set B with set A, set B should not contain the parameters of set A.");
+    }
+
+    /**
+     * Tests the correct creation of a column.
+     */
+    @Test
+    public void columnTest()
+    {
+        Column<Acceleration> col = ParameterTypes.A.getColumn("m/s2");
+        assertEquals(col.getId(), ParameterTypes.A.getId());
+        assertEquals(col.getDescription(), ParameterTypes.A.getDescription());
+        assertEquals(col.getValueType(), ParameterTypes.A.getValueClass());
+        assertEquals(col.getUnit(), "m/s2");
     }
 
 }
