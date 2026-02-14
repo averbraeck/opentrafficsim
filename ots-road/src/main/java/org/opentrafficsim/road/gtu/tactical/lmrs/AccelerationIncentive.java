@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.tactical.lmrs;
 
-import java.util.Optional;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
@@ -9,7 +7,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedLaneBasedObject;
@@ -74,24 +71,22 @@ public interface AccelerationIncentive
      * the GTU type.
      * @param <T> type of lane-based object
      * @param iterable iterable
-     * @param gtu gtu
+     * @param route route, may be {@code null}
      * @return iterable with only those lane-based objects that are on the route
      * @throws NullPointerException when any input is {@code null}
      */
-    static <T extends PerceivedLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
+    static <T extends PerceivedLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final Route route)
     {
-        Throw.whenNull(gtu, "gtu");
-        Optional<Route> route = gtu.getStrategicalPlanner().getRoute();
         return new FilteredIterable<>(iterable, (t) ->
         {
-            if (route.isEmpty())
+            if (route == null)
             {
                 return true; // when there is no route, we are always on it...
             }
             Link link = t.getLane().getLink();
-            if (route.get().contains(link.getStartNode()) && route.get().contains(link.getEndNode()))
+            if (route.contains(link.getStartNode()) && route.contains(link.getEndNode()))
             {
-                return route.get().indexOf(link.getEndNode()) - route.get().indexOf(link.getStartNode()) == 1;
+                return route.indexOf(link.getEndNode()) - route.indexOf(link.getStartNode()) == 1;
             }
             return false;
         });

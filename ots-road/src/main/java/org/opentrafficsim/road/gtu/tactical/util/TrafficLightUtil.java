@@ -67,7 +67,7 @@ public final class TrafficLightUtil
         headwayTrafficLights = AccelerationIncentive.onRoad(headwayTrafficLights, lane, mergeDistance);
         if (onRoute)
         {
-            headwayTrafficLights = AccelerationIncentive.onRoute(headwayTrafficLights, context.getGtu());
+            headwayTrafficLights = AccelerationIncentive.onRoute(headwayTrafficLights, context.getRoute().orElse(null));
         }
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         for (PerceivedTrafficLight headwayTrafficLight : headwayTrafficLights)

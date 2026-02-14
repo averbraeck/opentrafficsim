@@ -154,7 +154,7 @@ public final class ConflictUtil
         conflicts = AccelerationIncentive.onRoad(conflicts, lane, mergeDistance);
         if (onRoute)
         {
-            conflicts = AccelerationIncentive.onRoute(conflicts, context.getGtu());
+            conflicts = AccelerationIncentive.onRoute(conflicts, context.getRoute().orElse(null));
         }
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                 context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
