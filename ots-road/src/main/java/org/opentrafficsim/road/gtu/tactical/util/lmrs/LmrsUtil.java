@@ -33,8 +33,8 @@ import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.lmrs.AbstractIncentivesTacticalPlanner;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.tactical.util.ConflictUtil;
-import org.opentrafficsim.road.gtu.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.tactical.util.ConflictUtil.ConflictPlans;
+import org.opentrafficsim.road.gtu.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.network.conflict.Conflict;
 
 /**
@@ -384,12 +384,6 @@ public final class LmrsUtil implements LmrsParameters
     static boolean acceptLaneChange(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
             final GapAcceptance gapAcceptance) throws ParameterException, OperationalPlanException
     {
-        // beyond start distance
-        if (!context.getGtu().laneChangeAllowed())
-        {
-            return false;
-        }
-
         // legal?
         InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         if (infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).si <= 0.0)
@@ -398,7 +392,7 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // safe regarding neighbors?
-        double consideredDesire = context.getGtu().getLaneChangeDirection().equals(lat) ? 1.0 : desire;
+        double consideredDesire = context.getLaneChangeDirection().equals(lat) ? 1.0 : desire;
         if (!gapAcceptance.acceptGap(context, consideredDesire, lat))
         {
             return false;

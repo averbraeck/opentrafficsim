@@ -37,19 +37,19 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable.PerceptionCollector;
+import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
+import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Maneuver;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Signals;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuBase;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuSimple;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
-import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Maneuver;
-import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Signals;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
 import org.opentrafficsim.road.gtu.tactical.Blockable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContext;
@@ -211,7 +211,7 @@ public final class ConflictUtil
                 // This also makes a GTU type and -Ego- context unnecessary here
                 Optional<Route> route = context.getRoute();
                 if (route.isPresent() && route.get() instanceof BusSchedule busSchedule
-                        && context.getGtu().getType().isOfType(DefaultsNl.BUS)
+                        && context.getType().isOfType(DefaultsNl.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     Optional<Duration> actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());

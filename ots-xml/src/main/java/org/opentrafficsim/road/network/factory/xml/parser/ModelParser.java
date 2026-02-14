@@ -73,7 +73,6 @@ import org.opentrafficsim.road.gtu.tactical.following.DesiredHeadwayModel;
 import org.opentrafficsim.road.gtu.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.gtu.tactical.following.Idm;
 import org.opentrafficsim.road.gtu.tactical.following.IdmPlus;
-import org.opentrafficsim.road.gtu.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.tactical.lmrs.AccelerationBusStop;
 import org.opentrafficsim.road.gtu.tactical.lmrs.AccelerationConflicts;
 import org.opentrafficsim.road.gtu.tactical.lmrs.AccelerationNoRightOvertake;
@@ -89,10 +88,11 @@ import org.opentrafficsim.road.gtu.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.tactical.lmrs.IncentiveStayRight;
 import org.opentrafficsim.road.gtu.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactoryOld;
 import org.opentrafficsim.road.gtu.tactical.lmrs.SocioDesiredSpeed;
-import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Cooperation;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
@@ -637,7 +637,8 @@ public class ModelParser
         }
         if (lmrs.getAccelerationIncentives().getNoRightOvertake() != null)
         {
-            factory.addAccelerationIncentive(AccelerationNoRightOvertake.SINGLETON);
+            // no desire is wrong, but this is going to be replaced soon
+            factory.addAccelerationIncentive(() -> new AccelerationNoRightOvertake(() -> new Desire(0.0, 0.0)));
         }
 
         // Lmrs factory

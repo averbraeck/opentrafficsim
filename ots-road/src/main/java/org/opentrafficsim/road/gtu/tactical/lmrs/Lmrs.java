@@ -21,7 +21,8 @@ import org.opentrafficsim.road.gtu.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.WithDesiredSpeed;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.tactical.util.DeadEnUtil;
+import org.opentrafficsim.road.gtu.tactical.util.DeadEndUtil;
+import org.opentrafficsim.road.gtu.tactical.util.LaneChangeNotAllowedUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsData;
@@ -110,8 +111,8 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
             }
         }
 
-        // deal with dead-end situations
-        simplePlan = DeadEnUtil.dealWithDeadEnd(context, simplePlan);
+        // deal with dead-end situations and lane changes that are not allowed
+        simplePlan = LaneChangeNotAllowedUtil.preventLaneChange(context, DeadEndUtil.dealWithDeadEnd(context, simplePlan));
 
         // set turn indicator
         context.getIntent(TurnIndicatorStatus.class).ifPresentOrElse((d) -> getGtu().setTurnIndicatorStatus(d.object()),

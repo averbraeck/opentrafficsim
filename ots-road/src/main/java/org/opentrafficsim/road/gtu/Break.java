@@ -154,7 +154,7 @@ public final class Break
     public static void on(final TacticalContextEgo context, final String id, final double time,
             final boolean additionalCondition)
     {
-        on(context.getGtu(), id, time, additionalCondition);
+        on(context.getUnsafeGtu(), id, time, additionalCondition);
     }
 
     /**

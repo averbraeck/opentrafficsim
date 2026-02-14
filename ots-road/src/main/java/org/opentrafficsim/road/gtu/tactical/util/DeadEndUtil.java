@@ -22,13 +22,13 @@ import org.opentrafficsim.road.network.LaneChangeInfo;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class DeadEnUtil
+public final class DeadEndUtil
 {
 
     /**
      * Constructor.
      */
-    private DeadEnUtil()
+    private DeadEndUtil()
     {
         //
     }
@@ -58,33 +58,33 @@ public final class DeadEnUtil
              */
             if (!simplePlan.isLaneChange())
             {
-                boolean edge = context.getGtu().getBookkeeping().isEdge();
+                boolean edge = context.getUnsafeGtu().getBookkeeping().isEdge();
                 if (edge)
                 {
                     int n = lcInfo.first().numberOfLaneChanges();
-                    remainingDist = remainingDist.minus(context.getGtu().getLength().times(n));
+                    remainingDist = remainingDist.minus(context.getLength().times(n));
                 }
-                if (edge && remainingDist.lt0() && !context.getGtu().getLaneChangeDirection().isNone())
+                if (edge && remainingDist.lt0() && !context.getLaneChangeDirection().isNone())
                 {
-                    Logger.ots().info("Forced continuation of lane change for GTU {}.", context.getGtu().getId());
+                    Logger.ots().info("Forced continuation of lane change for GTU {}.", context.getId());
                     /*
                      * We cannot allow the model to cancel a lane change so close to the dead-end. The model can decide when the
                      * lane change is acceptable to initiate, but once initiated there is no more space to cancel.
                      */
                     simplePlan = new SimpleOperationalPlan(simplePlan.getAcceleration(), simplePlan.getDuration(),
-                            context.getGtu().getLaneChangeDirection());
+                            context.getLaneChangeDirection());
                 }
                 else
                 {
                     Acceleration a = CarFollowingUtil.stop(context, remainingDist);
-                    a = Acceleration.max(a, context.getGtu().getParameters().getParameter(ParameterTypes.BCRIT).neg());
+                    a = Acceleration.max(a, context.getParameters().getParameter(ParameterTypes.BCRIT).neg());
                     simplePlan.minimizeAcceleration(a);
                 }
             }
             else if (remainingDist.lt0())
             {
                 // change lane instantaneously
-                context.getGtu().changeLaneInstantaneously(simplePlan.getLaneChangeDirection());
+                context.getUnsafeGtu().changeLaneInstantaneously(simplePlan.getLaneChangeDirection());
                 simplePlan = new SimpleOperationalPlan(simplePlan.getAcceleration(), simplePlan.getDuration());
             }
         }

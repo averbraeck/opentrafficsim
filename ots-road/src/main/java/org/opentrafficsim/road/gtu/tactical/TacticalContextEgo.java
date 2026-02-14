@@ -12,11 +12,14 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
@@ -24,6 +27,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -37,7 +41,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TacticalContextEgo implements TacticalContext
+public class TacticalContextEgo implements TacticalContext, Identifiable
 {
 
     /** GTU. */
@@ -89,10 +93,12 @@ public class TacticalContextEgo implements TacticalContext
     }
 
     /**
-     * Returns the GTU.
+     * Returns the GTU. This is tagged as unsafe because models should not typically interfere with the simulation structure.
+     * Still, sometimes information or commands are required outside of the tactical context. This should only be done with care
+     * and full understanding of what is being done.
      * @return GTU
      */
-    public LaneBasedGtu getGtu()
+    public LaneBasedGtu getUnsafeGtu()
     {
         return this.gtu;
     }
@@ -118,7 +124,7 @@ public class TacticalContextEgo implements TacticalContext
     {
         if (this.route == null)
         {
-            this.route = getGtu().getStrategicalPlanner().getRoute();
+            this.route = getUnsafeGtu().getStrategicalPlanner().getRoute();
         }
         return this.route;
     }
@@ -129,7 +135,7 @@ public class TacticalContextEgo implements TacticalContext
      */
     public Duration getTime()
     {
-        return getGtu().getSimulator().getSimulatorTime();
+        return getUnsafeGtu().getSimulator().getSimulatorTime();
     }
 
     /**
@@ -164,6 +170,39 @@ public class TacticalContextEgo implements TacticalContext
                     getCarFollowingModel().followingAcceleration(getParameters(), getSpeed(), getSpeedLimitInfo(), leaders);
         }
         return this.carFollowingAcceleration;
+    }
+
+    /**
+     * Returns the current lane change direction.
+     * @return current lane change direction
+     */
+    public LateralDirectionality getLaneChangeDirection()
+    {
+        return getUnsafeGtu().getLaneChangeDirection();
+    }
+
+    /**
+     * Returns the GTU type.
+     * @return GTU type
+     */
+    public GtuType getType()
+    {
+        return getUnsafeGtu().getType();
+    }
+
+    @Override
+    public String getId()
+    {
+        return getUnsafeGtu().getId();
+    }
+
+    /**
+     * Returns the current position.
+     * @return current position
+     */
+    public LanePosition getPosition()
+    {
+        return getUnsafeGtu().getPosition();
     }
 
     /**

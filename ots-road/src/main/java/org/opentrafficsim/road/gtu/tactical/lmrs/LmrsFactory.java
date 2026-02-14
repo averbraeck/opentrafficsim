@@ -993,7 +993,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         }
         if (get(this.accelerationNoRightOvertake, gtuType))
         {
-            tacticalPlanner.addAccelerationIncentive(AccelerationNoRightOvertake.SINGLETON);
+            tacticalPlanner.addAccelerationIncentive(
+                    new AccelerationNoRightOvertake(() -> tacticalPlanner.getLatestMandatoryDesire()));
         }
         get(this.customAccelerationIncentives, gtuType).forEach((s) -> tacticalPlanner.addAccelerationIncentive(s.get()));
 

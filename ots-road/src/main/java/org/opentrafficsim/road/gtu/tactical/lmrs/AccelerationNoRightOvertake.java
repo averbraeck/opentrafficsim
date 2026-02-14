@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.tactical.lmrs;
 
+import java.util.function.Supplier;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -8,7 +10,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.FilteredIterable;
@@ -20,6 +21,7 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerc
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 
 /**
  * Makes a GTU follow leaders in the left lane, with limited deceleration.
@@ -31,7 +33,7 @@ import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class AccelerationNoRightOvertake implements AccelerationIncentive, Stateless<AccelerationNoRightOvertake>
+public final class AccelerationNoRightOvertake implements AccelerationIncentive
 {
 
     /** Speed threshold below which traffic is considered congested. */
@@ -40,21 +42,16 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
     /** Maximum adjustment deceleration, e.g. when speed limit drops. */
     public static final ParameterTypeAcceleration B0 = ParameterTypes.B0;
 
-    /** Singleton instance. */
-    public static final AccelerationNoRightOvertake SINGLETON = new AccelerationNoRightOvertake();
-
-    @Override
-    public AccelerationNoRightOvertake get()
-    {
-        return SINGLETON;
-    }
+    /** Supplier of mandatory desire. */
+    private Supplier<Desire> getMandatoryDesire;
 
     /**
      * Constructor.
+     * @param getMandatoryDesire supplier of mandatory desire from the model
      */
-    private AccelerationNoRightOvertake()
+    public AccelerationNoRightOvertake(final Supplier<Desire> getMandatoryDesire)
     {
-        //
+        this.getMandatoryDesire = getMandatoryDesire;
     }
 
     @Override
@@ -64,8 +61,7 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
         // Ignore incentive if we need to change lane for the route
         // TODO: depends on left/right traffic
         if (!lane.isCurrent() || !context.getPerception().getLaneStructure().exists(lane.getLeft())
-                || (context.getGtu().getTacticalPlanner() instanceof AbstractIncentivesTacticalPlanner planner
-                        && planner.getLatestMandatoryDesire().right() > 0.0))
+                || this.getMandatoryDesire.get().right() > 0.0)
         {
             return NO_REASON;
         }
