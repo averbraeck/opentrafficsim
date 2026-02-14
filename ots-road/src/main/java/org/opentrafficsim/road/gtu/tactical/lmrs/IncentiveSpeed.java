@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.tactical.lmrs;
 
-import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -43,7 +43,7 @@ public final class IncentiveSpeed implements VoluntaryIncentive, Stateless<Incen
 
     @Override
     public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
-            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
+            final ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
         // TODO: SpeedWithCourtesy now uses TrafficPerception, which embeds the courtesy part. How to do this?

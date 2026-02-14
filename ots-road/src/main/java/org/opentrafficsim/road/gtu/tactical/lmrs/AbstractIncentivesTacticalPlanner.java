@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
-import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -73,11 +72,11 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
     private Map<Class<? extends AccelerationIncentive>, Acceleration> acceleration = new LinkedHashMap<>();
 
     /** Immutable map of mandatory desire. */
-    private ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesireImmutable =
+    private ImmutableLinkedHashMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesireImmutable =
             new ImmutableLinkedHashMap<>(this.mandatoryDesire, Immutable.WRAP);
 
     /** Immutable map of voluntary desire. */
-    private ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesireImmutable =
+    private ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesireImmutable =
             new ImmutableLinkedHashMap<>(this.voluntaryDesire, Immutable.WRAP);
 
     /** Latest total mandatory desire. */

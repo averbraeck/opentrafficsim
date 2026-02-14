@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -46,7 +46,7 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
 
     @Override
     public Desire determineDesire(final TacticalContextEgo context,
-            final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
+            final ImmutableLinkedHashMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         PerceivedBusStop firstStop = null;

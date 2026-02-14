@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -73,7 +73,7 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
 
     @Override
     public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
-            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
+            final ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
         double dLeft = 0;

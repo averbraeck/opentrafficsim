@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.tactical.lmrs;
 
-import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -38,7 +38,7 @@ public final class IncentiveDummy implements MandatoryIncentive, Stateless<Incen
 
     @Override
     public Desire determineDesire(final TacticalContextEgo context,
-            final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
+            final ImmutableLinkedHashMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         return new Desire(0, 0);

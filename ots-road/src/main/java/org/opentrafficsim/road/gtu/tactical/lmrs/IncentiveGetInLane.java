@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.tactical.lmrs;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
@@ -59,7 +59,7 @@ public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<I
 
     @Override
     public Desire determineDesire(final TacticalContextEgo context,
-            final ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
+            final ImmutableLinkedHashMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
         Speed vCong = context.getParameters().getParameter(VCONG);

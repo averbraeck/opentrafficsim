@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.tactical.lmrs;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
@@ -49,7 +49,7 @@ public final class IncentiveStayRight implements VoluntaryIncentive, Stateless<I
 
     @Override
     public Desire determineDesire(final TacticalContextEgo context, final Desire mandatoryDesire,
-            final ImmutableMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
+            final ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
         InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);

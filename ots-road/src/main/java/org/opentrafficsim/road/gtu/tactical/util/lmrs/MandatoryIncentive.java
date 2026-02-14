@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.tactical.util.lmrs;
 
-import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
@@ -27,7 +27,7 @@ public interface MandatoryIncentive extends Incentive
      * @throws OperationalPlanException in case of a perception exception
      */
     Desire determineDesire(TacticalContextEgo context,
-            ImmutableMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
+            ImmutableLinkedHashMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException;
 
 }
