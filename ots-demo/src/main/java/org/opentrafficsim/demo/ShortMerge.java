@@ -150,7 +150,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     @Override
     protected void setAnimationToggles()
     {
-        AnimationToggles.setTextAnimationTogglesStandard(getAnimationPanel());
+        AnimationToggles.setIconAnimationTogglesStandard(getAnimationPanel());
         getAnimationPanel().getAnimationPanel().toggleClass(Link.class);
         getAnimationPanel().getAnimationPanel().toggleClass(Node.class);
         getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);

@@ -70,7 +70,7 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
      */
     protected void setAnimationToggles()
     {
-        AnimationToggles.setTextAnimationTogglesStandard(getAnimationPanel());
+        AnimationToggles.setIconAnimationTogglesStandard(getAnimationPanel());
     }
 
     /**
