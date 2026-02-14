@@ -654,8 +654,10 @@ public class OtsLine2d extends PolyLine2d implements Locatable
 
     /**
      * This method is used, rather than {@code Point2d.intersectionOfLines()} because this method will return {@code null} if
-     * the determinant &lt; 0.0000001, rather than determinant &eq; 0.0. The benefit of this is that intersections are not so
-     * far away, that any calculations with them cause underflow or overflow issues.
+     * the determinant &lt; 0.0000001, rather than determinant = 0.0. Near-parallel lines will thus be seen as parallel below
+     * this threshold. The benefit of this is that fractional helper points will not be so far away from the line, that any
+     * calculations with them cause underflow or overflow issues. They would be further away for smaller (but above 0)
+     * determinant values.
      * @param line1P1 point 1 of line 1.
      * @param line1P2 point 2 of line 1.
      * @param line2P1 point 1 of line 2.
