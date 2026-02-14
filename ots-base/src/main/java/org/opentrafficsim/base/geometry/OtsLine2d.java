@@ -664,6 +664,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      * @param line2P2 point 2 of line 2.
      * @return intersection of lines, or {@code null} for (nearly) parallel lines.
      */
+    // TODO: can be replaced with djutils version with eps once it is published in djutils
     private Point2d intersectionOfLines(final Point2d line1P1, final Point2d line1P2, final Point2d line2P1,
             final Point2d line2P2)
     {
