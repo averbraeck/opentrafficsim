@@ -1,6 +1,7 @@
 package org.opentrafficsim.base.parameters;
 
 import org.djutils.base.Identifiable;
+import org.djutils.data.Column;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.Type;
@@ -218,6 +219,16 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
     public String printValue(final Parameters parameters) throws ParameterException
     {
         return parameters.getParameter(this).toString();
+    }
+
+    /**
+     * Returns a data column that can hold values of this parameter type.
+     * @param unit unit, which may also be {@code null} or "-"
+     * @return column that can hold values of this parameter type
+     */
+    public Column<T> getColumn(final String unit)
+    {
+        return new Column<T>(this.id, this.description, this.valueClass, unit);
     }
 
     @Override
