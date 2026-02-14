@@ -40,6 +40,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.draw.network.LinkAnimation;
@@ -67,7 +68,6 @@ import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
-import org.opentrafficsim.swing.gui.IconUtil;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
@@ -164,7 +164,26 @@ public final class EditorMap extends JPanel implements EventListener
         super(new BorderLayout());
         this.contextualized = contextualized;
         this.editor = editor;
-        this.visualizationPanel = new VisualizationPanel(new Bounds2d(500, 500), this.updater, contextualized.getContext());
+        this.visualizationPanel = new VisualizationPanel(new Bounds2d(500, 500), this.updater, contextualized.getContext())
+        {
+            private static final long serialVersionUID = 20260212L;
+
+            @Override
+            public void setBackground(final Color bg)
+            {
+                int threshold = 64;
+                int alternative = 96;
+                if (bg.getRed() <= threshold && bg.getGreen() <= threshold && bg.getBlue() <= threshold)
+                {
+                    setGridColor(new Color(alternative, alternative, alternative));
+                }
+                else
+                {
+                    setGridColor(Color.BLACK);
+                }
+                super.setBackground(bg);
+            }
+        };
         this.updater.addListener(this.visualizationPanel, AnimatorInterface.UPDATE_ANIMATION_EVENT);
 
         /*-

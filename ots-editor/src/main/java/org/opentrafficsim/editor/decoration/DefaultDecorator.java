@@ -7,6 +7,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
@@ -29,7 +30,6 @@ import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
 import org.opentrafficsim.editor.extensions.TrafCodEditor;
 import org.opentrafficsim.editor.extensions.map.EditorMap;
-import org.opentrafficsim.swing.gui.IconUtil;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
@@ -120,6 +120,10 @@ public final class DefaultDecorator
         editor.setCustomIcon(XsdPaths.DEFAULT_INPUT_PARAMETERS, parameterIcon);
         editor.setCustomIcon(XsdPaths.INPUT_PARAMETERS, parameterIcon);
         editor.setCustomIcon(".Control", IconUtil.of("TrafficLight24.png").imageSize(s, s).get());
+        editor.setCustomIcon("Ots.Models.Model.TacticalPlanner.Lmrs.CarFollowingModel",
+                IconUtil.of("Queue24.png").imageSize(s, s).get());
+        editor.setCustomIcon("Ots.Models.Model.TacticalPlanner.Lmrs.Perception",
+                IconUtil.of("Eye24.png").imageSize(s, s).get());
         editor.setCustomIcon("Ots.Run", IconUtil.of("Run24.png").imageSize(s, s).get());
         editor.setCustomIcon("Ots.Animation", IconUtil.of("Play24.png").imageSize(s, s).get());
         editor.setCustomIcon("Ots.Animation.Connector", IconUtil.of("Connector24.png").imageSize(s, s).get());

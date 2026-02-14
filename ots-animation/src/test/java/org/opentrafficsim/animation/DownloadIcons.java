@@ -1,4 +1,4 @@
-package org.opentrafficsim.swing.gui;
+package org.opentrafficsim.animation;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -46,9 +46,16 @@ public final class DownloadIcons
      */
     public static void main(final String[] args) throws IOException
     {
+        // downloadIcon("mdi", "car-clock", "TravelTime");
+        // downloadIcon("mdi", "car-connected", "Cacc");
+        // downloadIcon("mdi", "car-cruise-control", "Acc");
+        // downloadIcon("mdi", "car-speed-limiter", "Isa");
+
         downloadIcon("ic", "baseline-edit-road", "RoadLayout");
         downloadIcon("ix", "road-filled", "Lane");
         downloadIcon("ix", "road", "Stripe");
+        downloadIcon("mdi", "account-view-outline", "Social");
+        downloadIcon("mdi", "arrow-decision", "Route");
         downloadIcon("mdi", "arrow-expand-all", "ZoomAll");
         downloadIcon("mdi", "arrow-right-bold-circle-outline", "Step");
         downloadIcon("mdi", "arrow-up-down", "UpDown");
@@ -64,6 +71,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "chevron-triple-right", "Generator");
         downloadIcon("mdi", "cog", "Application");
         downloadIcon("mdi", "database-outline", "Database");
+        downloadIcon("mdi", "eye-outline", "Eye");
         downloadIcon("mdi", "file-outline", "File");
         downloadIcon("mdi", "file-import-outline", "Import");
         downloadIcon("mdi", "file-report-outline", "Output");
@@ -86,7 +94,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "question-mark-circle-outline", "Question");
         downloadIcon("mdi", "ray-start-arrow", "Connector");
         downloadIcon("mdi", "ray-start-end", "Link");
-        downloadIcon("mdi", "ray-start-vertex-end", "Route");
+        downloadIcon("mdi", "ray-start-vertex-end", "Path");
         downloadIcon("mdi", "ray-start", "Centroid");
         downloadIcon("mdi", "ray-vertex", "Node");
         downloadIcon("mdi", "routes", "Directions");
@@ -99,22 +107,25 @@ public final class DownloadIcons
         downloadIcon("mdi", "text-long", "Text");
         downloadIcon("mdi", "texture-box", "Conflict");
         downloadIcon("mdi", "traffic-cone", "Roadworks");
-        downloadIcon("mdi", "transit-connection-horizontal", "Path");
+        downloadIcon("mdi", "transit-connection-horizontal", "Centroid");
         downloadIcon("mdi", "variable", "Parameter");
         downloadIcon("mdi", "vector-bezier", "Bezier");
         downloadIcon("mdi", "vector-line", "Straight");
+        downloadIcon("mdi", "vector-point", "Point");
         downloadIcon("mdi", "vector-polyline", "PolyLine");
         downloadIcon("mdi", "vector-radius", "Arc");
         downloadIcon("mdi", "warning-outline", "Warning");
+        downloadIcon("ph", "flow-arrow-fill", "Connector");
         downloadIcon("tabler", "drone", "Perception");
         downloadIcon("tabler", "traffic-lights", "TrafficLight");
 
         // Flip Id24.png
-        BufferedImage idIn = ImageIO.read(ResourceResolver.resolve("Id24.png").openStream());
+        BufferedImage idIn = ImageIO.read(ResourceResolver.resolve("ots-icons/Id24.png").openStream());
         BufferedImage idOut = new BufferedImage(24, 24, idIn.getType());
         Graphics2D g = (Graphics2D) idOut.getGraphics();
         g.drawImage(idIn, 0, 0, 23, 23, 23, 0, 0, 23, null);
-        ImageIO.write(idOut, "png", new FileOutputStream(Path.of("src", "main", "resources", "Id24.png").toFile()));
+        ImageIO.write(idOut, "png",
+                new FileOutputStream(Path.of("src", "main", "resources", "ots-icons", "Id24.png").toFile()));
     }
 
     /**
@@ -133,7 +144,8 @@ public final class DownloadIcons
         // Download to resources
         try (InputStream in = new URL(url).openStream())
         {
-            Files.copy(in, Path.of("src", "main", "resources", file + "24.png"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(in, Path.of("src", "main", "resources", "ots-icons", file + "24.png"),
+                    StandardCopyOption.REPLACE_EXISTING);
         }
         catch (MalformedURLException exception)
         {

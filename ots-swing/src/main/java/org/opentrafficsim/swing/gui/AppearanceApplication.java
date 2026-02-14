@@ -114,7 +114,7 @@ public class AppearanceApplication extends JFrame
         }
         try
         {
-            setIconImage(ImageIO.read(ResourceResolver.resolve("Ots32.png").openStream()));
+            setIconImage(ImageIO.read(ResourceResolver.resolve("ots-icons/Ots32.png").openStream()));
         }
         catch (IOException io)
         {

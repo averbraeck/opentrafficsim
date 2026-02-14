@@ -45,6 +45,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.animation.data.AnimationGtuData;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -269,16 +270,16 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /**
      * Create a button.
      * @param name name of the button
-     * @param iconPath path to the resource
+     * @param iconFile name of the icon file
      * @param actionCommand the action command
      * @param toolTipText the hint to show when the mouse hovers over the button
      * @param enabled true if the new button must initially be enable; false if it must initially be disabled
      * @return JButton
      */
-    private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
+    private JButton makeButton(final String name, final String iconFile, final String actionCommand, final String toolTipText,
             final boolean enabled)
     {
-        JButton result = new JButton(IconUtil.of(iconPath).get());
+        JButton result = new JButton(IconUtil.of(iconFile).get());
         result.setMinimumSize(new Dimension(34, 32));
         result.setPreferredSize(new Dimension(34, 32));
         result.setMaximumSize(new Dimension(34, 32));

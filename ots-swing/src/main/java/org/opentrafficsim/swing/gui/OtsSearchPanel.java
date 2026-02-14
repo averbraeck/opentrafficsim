@@ -19,6 +19,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.djutils.base.Identifiable;
+import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;

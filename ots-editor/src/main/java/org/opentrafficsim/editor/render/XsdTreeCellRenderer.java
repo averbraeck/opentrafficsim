@@ -17,9 +17,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.djutils.io.ResourceResolver;
+import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.swing.gui.IconUtil;
 
 /**
  * Renderer for the nodes in the tree.
@@ -58,12 +58,9 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
     public XsdTreeCellRenderer(final OtsEditor editor) throws IOException
     {
         this.editor = editor;
-        this.consumer = ImageIO.read(ResourceResolver.resolve("Application24.png").openStream()).getScaledInstance(12, 12,
-                Image.SCALE_SMOOTH);
-        this.description = ImageIO.read(ResourceResolver.resolve("Information24.png").openStream()).getScaledInstance(12, 12,
-                Image.SCALE_SMOOTH);
-        this.dropdown = ImageIO.read(ResourceResolver.resolve("Dropdown24.png").openStream()).getScaledInstance(16, 16,
-                Image.SCALE_SMOOTH);
+        this.consumer = IconUtil.asImage("Application24.png").getScaledInstance(12, 12, Image.SCALE_SMOOTH);
+        this.description = IconUtil.asImage("Information24.png").getScaledInstance(12, 12, Image.SCALE_SMOOTH);
+        this.dropdown = IconUtil.asImage("Dropdown24.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH);
 
         this.leafIcon = IconUtil.of("File24.png").imageSize(16, 16).get();
         this.openIcon = IconUtil.of("FolderOpen24.png").imageSize(16, 16).get();

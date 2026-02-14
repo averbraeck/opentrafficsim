@@ -9,10 +9,10 @@ import javax.swing.JLabel;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
-import org.opentrafficsim.swing.gui.IconUtil;
 
 /**
  * Editor for route.

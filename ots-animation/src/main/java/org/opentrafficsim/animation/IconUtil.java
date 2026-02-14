@@ -1,4 +1,4 @@
-package org.opentrafficsim.swing.gui;
+package org.opentrafficsim.animation;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -29,8 +29,8 @@ import org.djutils.io.ResourceResolver;
 public final class IconUtil
 {
 
-    /** Path to image. */
-    private final String imagePath;
+    /** Image file name. */
+    private final String fileName;
 
     /** Image width. */
     private int imageWidth = -1;
@@ -49,21 +49,21 @@ public final class IconUtil
 
     /**
      * Constructor.
-     * @param imagePath path to image
+     * @param fileName image file name
      */
-    private IconUtil(final String imagePath)
+    private IconUtil(final String fileName)
     {
-        this.imagePath = imagePath;
+        this.fileName = fileName;
     }
 
     /**
-     * Initiate util with path to image.
-     * @param imagePath path to image
+     * Initiate util with image file name.
+     * @param fileName image file name
      * @return this util for method changing
      */
-    public static IconUtil of(final String imagePath)
+    public static IconUtil of(final String fileName)
     {
-        return new IconUtil(imagePath);
+        return new IconUtil(fileName);
     }
 
     /**
@@ -111,7 +111,7 @@ public final class IconUtil
         Image im;
         try
         {
-            im = ImageIO.read(ResourceResolver.resolve(this.imagePath).openStream());
+            im = ImageIO.read(ResourceResolver.resolveAsResource("ots-icons/" + this.fileName).openStream());
             if (this.gray)
             {
                 im = GrayFilter.createDisabledImage(im);
@@ -150,6 +150,17 @@ public final class IconUtil
             im = bg;
         }
         return new InterpolatedImageIcon(im);
+    }
+
+    /**
+     * Returns icon as image.
+     * @param fileName image file name
+     * @return icon as image
+     * @throws IOException if file could not be read
+     */
+    public static BufferedImage asImage(final String fileName) throws IOException
+    {
+        return ImageIO.read(ResourceResolver.resolve("ots-icons/" + fileName).openStream());
     }
 
     /**
