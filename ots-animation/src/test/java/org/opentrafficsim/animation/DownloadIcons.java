@@ -52,6 +52,7 @@ public final class DownloadIcons
         // downloadIcon("mdi", "car-speed-limiter", "Isa");
 
         downloadIcon("ic", "baseline-edit-road", "RoadLayout");
+        downloadIcon("iconoir", "dot-arrow-right", "Connector");
         downloadIcon("ix", "road-filled", "Lane");
         downloadIcon("ix", "road", "Stripe");
         downloadIcon("mdi", "account-view-outline", "Social");
@@ -115,7 +116,6 @@ public final class DownloadIcons
         downloadIcon("mdi", "vector-polyline", "PolyLine");
         downloadIcon("mdi", "vector-radius", "Arc");
         downloadIcon("mdi", "warning-outline", "Warning");
-        downloadIcon("ph", "flow-arrow-fill", "Connector");
         downloadIcon("tabler", "drone", "Perception");
         downloadIcon("tabler", "traffic-lights", "TrafficLight");
 
