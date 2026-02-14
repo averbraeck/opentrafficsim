@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
@@ -96,7 +96,8 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
         EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
                 .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Duration headway = leader.distance().divide(ego.getSpeed());
-        Duration h = Try.assign(() -> perception.getGtu().getParameters().getParameter(HEXP), "Parameter h_exp not present.");
+        Duration h = perception.getGtu().getParameters().getOptionalParameter(HEXP)
+                .orElseThrow(() -> new OtsRuntimeException("Parameter h_exp not present."));
         return headway.si <= 0.0 ? 0.999 : Math.exp(-headway.si / h.si);
     }
 

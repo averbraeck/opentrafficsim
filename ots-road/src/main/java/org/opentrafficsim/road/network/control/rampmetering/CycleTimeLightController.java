@@ -71,7 +71,7 @@ public class CycleTimeLightController implements RampMeteringLightController
         this.trafficLights = trafficLights;
         for (TrafficLight trafficLight : trafficLights)
         {
-            Try.execute(() -> new RampMeteringDetector(trafficLight, detectorType),
+            Try.execute(() -> new RampMeteringDetector(trafficLight, detectorType), OtsRuntimeException.class,
                     "Unexpected exception while creating a detector with a ramp metering traffic light.");
             this.greenStarts.put(trafficLight, Duration.NEGATIVE_INFINITY);
         }

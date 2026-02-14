@@ -7,8 +7,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
@@ -106,10 +106,10 @@ public class ChannelTaskSignal extends AbstractTask implements ChannelTask
             DistancedObject<LaneBasedGtu> leader = leaders.next();
             if (this.predicate.test(leader.object()))
             {
-                Length x0 =
-                        Try.assign(() -> perception.getGtu().getParameters().getParameter(X0_D), "Parameter x0_d not present.");
-                double tdSignal = Try.assign(() -> perception.getGtu().getParameters().getParameter(TDSIGNAL),
-                        "Parameter td_signal not available.");
+                Length x0 = perception.getGtu().getParameters().getOptionalParameter(X0_D)
+                        .orElseThrow(() -> new OtsRuntimeException("Parameter x0_d not present."));
+                double tdSignal = perception.getGtu().getParameters().getOptionalParameter(TDSIGNAL)
+                        .orElseThrow(() -> new OtsRuntimeException("Parameter td_signal not available."));
                 return tdSignal * (1.0 - leader.distance().si / x0.si);
             }
         }

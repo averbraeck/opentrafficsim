@@ -18,12 +18,10 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -34,8 +32,8 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.PerceivedGtuT
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.perception.structure.LaneRecordInterface;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable;
-import org.opentrafficsim.road.gtu.perception.structure.SimpleLaneRecord;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
+import org.opentrafficsim.road.gtu.perception.structure.SimpleLaneRecord;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
@@ -157,8 +155,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         {
             /*
              * This is skipped in the current implementation because LaneStructure.getDownstreamObjects() accounts for the
-             * object length. That does not work across lane boundaries, but that does not work for Conflicts anyway. No code
-             * in OTS actually searches for ConflictEnd objects. (skl - 2026.02.10)
+             * object length. That does not work across lane boundaries, but that does not work for Conflicts anyway. No code in
+             * OTS actually searches for ConflictEnd objects. (skl - 2026.02.10)
              */
             // Length position = conflictType.equals(ConflictType.SPLIT) ? length : lane.getLength();
             this.end = null; // new ConflictEnd(this, lane, position);
@@ -372,8 +370,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private Length position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
             final RelativePosition.Type positionType)
     {
-        return Try.assign(() -> gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType)),
-                "Unable to obtain position %s of GTU.", positionType);
+        return gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType));
     }
 
     @Override
@@ -722,8 +719,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         }
 
         @Override
-        protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
-                throws GtuException, ParameterException
+        protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance) throws ParameterException
         {
             return this.perceptionGtuType.createPerceivedGtu(getObject(), Conflict.this, object,
                     this.downstream ? distance.minus(getLength()) : distance, this.downstream);

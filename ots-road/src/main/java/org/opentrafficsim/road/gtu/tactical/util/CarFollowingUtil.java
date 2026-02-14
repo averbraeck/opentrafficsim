@@ -8,16 +8,15 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterableSet;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
-import org.opentrafficsim.road.gtu.perception.object.PerceivedObjectBase;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
-import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.ObjectType;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics.Overlap;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.ObjectType;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedObjectBase;
 import org.opentrafficsim.road.gtu.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -305,10 +304,9 @@ public final class CarFollowingUtil
      */
     private static PerceptionIterable<PerceivedObject> createLeader(final Length headway, final Speed speed)
     {
-        PerceptionIterable<PerceivedObject> leaders = Try.assign(
-                () -> new PerceptionIterableSet<>(new PerceivedObjectBase(UUID.randomUUID().toString(), ObjectType.GTU,
-                        Length.ONE, new Kinematics.Record(headway, speed, Acceleration.ZERO, true, Overlap.AHEAD))),
-                "Exception during headway creation.");
+        PerceptionIterable<PerceivedObject> leaders =
+                new PerceptionIterableSet<>(new PerceivedObjectBase(UUID.randomUUID().toString(), ObjectType.GTU, Length.ONE,
+                        new Kinematics.Record(headway, speed, Acceleration.ZERO, true, Overlap.AHEAD)));
         return leaders;
     }
 

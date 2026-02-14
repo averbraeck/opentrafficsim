@@ -10,7 +10,6 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
 
 /**
  * Implements {@code PerceptionCategory} and allows sub-classes to easily implement lazy evaluation through the
@@ -70,14 +69,9 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
     /**
      * Returns the current time.
      * @return current time
-     * @throws GtuException if the GTU has not been initialized
      */
-    public final Duration getTimestamp() throws GtuException
+    public final Duration getTimestamp()
     {
-        if (getGtu() == null)
-        {
-            throw new GtuException("gtu value has not been initialized for LanePerception when perceiving.");
-        }
         return getGtu().getSimulator().getSimulatorTime();
     }
 

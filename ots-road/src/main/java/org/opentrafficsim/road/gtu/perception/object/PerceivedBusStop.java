@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.object.BusStop;
@@ -38,10 +37,9 @@ public class PerceivedBusStop extends PerceivedLaneBasedObjectBase
      * @param relativeLane relative lane
      * @param conflictIds conflicts downstream of the bus stop
      * @param lane lane
-     * @throws GtuException when id is null, or parameters are inconsistent
      */
     public PerceivedBusStop(final BusStop busStop, final Length distance, final RelativeLane relativeLane,
-            final Set<String> conflictIds, final Lane lane) throws GtuException
+            final Set<String> conflictIds, final Lane lane)
     {
         super(busStop.getId(), ObjectType.BUSSTOP, Length.ZERO, Kinematics.staticAhead(distance), lane);
         this.relativeLane = relativeLane;

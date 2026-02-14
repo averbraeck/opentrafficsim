@@ -8,6 +8,7 @@ import java.util.Map;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Connector;
@@ -144,12 +145,16 @@ public interface RouteGenerator
                 return Try.assign(
                         () -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes,
                                 this.linkWeight),
-                        "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes);
+                        OtsRuntimeException.class, "Could not determine the shortest route from %s to %s via %s.", origin,
+                        destination, viaNodes);
             }
-            return this.shortestRouteCache.get(() -> Try.assign(
-                    () -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes, this.linkWeight),
-                    "Could not determine the shortest route from %s to %s via %s.", origin, destination, viaNodes), gtuType,
-                    origin, destination, viaNodes);
+            return this.shortestRouteCache.get(
+                    () -> Try.assign(
+                            () -> origin.getNetwork().getShortestRouteBetween(gtuType, origin, destination, viaNodes,
+                                    this.linkWeight),
+                            OtsRuntimeException.class, "Could not determine the shortest route from %s to %s via %s.", origin,
+                            destination, viaNodes),
+                    gtuType, origin, destination, viaNodes);
         }
 
         @Override

@@ -9,7 +9,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
 
@@ -87,10 +86,9 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
      * @param object underlying object
      * @param distance distance to the object
      * @return perceived version of the underlying object
-     * @throws GtuException on exception
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    protected abstract P perceive(U object, Length distance) throws GtuException, ParameterException;
+    protected abstract P perceive(U object, Length distance) throws ParameterException;
 
     @Override
     public final synchronized P first()
@@ -362,7 +360,7 @@ public abstract class AbstractPerceptionReiterable<O extends LaneBasedObject, P 
             if (this.value == null)
             {
                 this.value = Try.assign(() -> perceive(this.underlyingDistance.object(), this.underlyingDistance.distance()),
-                        "Exception during perception of object.");
+                        "Parameter exception during perception of object.");
             }
             return this.value;
         }

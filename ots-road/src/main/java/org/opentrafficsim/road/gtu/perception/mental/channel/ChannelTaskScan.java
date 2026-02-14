@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.perception.mental.channel;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
@@ -59,7 +59,8 @@ public class ChannelTaskScan extends AbstractTask implements ChannelTask
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        return Try.assign(() -> perception.getGtu().getParameters().getParameter(TDSCAN), "Parameter td_scan not available.");
+        return perception.getGtu().getParameters().getOptionalParameter(TDSCAN)
+                .orElseThrow(() -> new OtsRuntimeException("Parameter td_scan not available."));
     }
 
 }

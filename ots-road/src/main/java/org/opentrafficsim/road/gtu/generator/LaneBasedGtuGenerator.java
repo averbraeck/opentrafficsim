@@ -146,15 +146,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @param roomChecker the way that this generator checks that there is sufficient room to place a new GTU
      * @param idGenerator id generator
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
-     * @throws ParameterException if drawing from the interarrival generator fails
      * @throws NetworkException if the object could not be added to the network
      */
     @SuppressWarnings("parameternumber")
     public LaneBasedGtuGenerator(final String id, final Supplier<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final RoadNetwork network, final OtsSimulatorInterface simulator,
-            final RoomChecker roomChecker, final Supplier<String> idGenerator)
-            throws SimRuntimeException, ParameterException, NetworkException
+            final RoomChecker roomChecker, final Supplier<String> idGenerator) throws SimRuntimeException, NetworkException
     {
         this.id = id;
         this.uniqueId = UUID.randomUUID().toString() + "_" + id;
@@ -168,9 +166,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         Duration headway = this.interarrivelTimeGenerator.get();
         if (headway != null) // otherwise no demand at all
         {
-
-            simulator.scheduleEventRel(headway,
-                    () -> Try.execute(() -> generateCharacteristics(), "Exception generating characteristics."));
+            simulator.scheduleEventRel(headway, () -> Try.execute(() -> generateCharacteristics(), OtsRuntimeException.class,
+                    "Exception generating characteristics."));
         }
         this.network.addNonLocatedObject(this);
         if (this.idGenerator instanceof IdsWithCharacteristics ids && ids.hasIds())
@@ -265,8 +262,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         Duration headway = this.interarrivelTimeGenerator.get();
         if (headway != null)
         {
-            this.simulator.scheduleEventRel(headway,
-                    () -> Try.execute(() -> generateCharacteristics(), "Exception generating characteristics."));
+            this.simulator.scheduleEventRel(headway, () -> Try.execute(() -> generateCharacteristics(),
+                    OtsRuntimeException.class, "Exception generating characteristics."));
         }
         // @end
     }
@@ -313,15 +310,15 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             placeGtu(characteristics, placement.getPosition(), placement.getSpeed());
             if (queue.size() > 0)
             {
-                this.simulator.scheduleEventNow(
-                        () -> Try.execute(() -> tryToPlaceGTU(position), "Exception during attempt to place GTU."));
+                this.simulator.scheduleEventNow(() -> Try.execute(() -> tryToPlaceGTU(position), OtsRuntimeException.class,
+                        "Exception during attempt to place GTU."));
             }
         }
         // @docs/02-model-structure/dsol.md#event-based-simulation (without the 'else')
         else if (queue.size() > 0)
         {
-            this.simulator.scheduleEventRel(this.reTryInterval,
-                    () -> Try.execute(() -> tryToPlaceGTU(position), "Exception during attempt to place GTU."));
+            this.simulator.scheduleEventRel(this.reTryInterval, () -> Try.execute(() -> tryToPlaceGTU(position),
+                    OtsRuntimeException.class, "Exception during attempt to place GTU."));
         }
         // @end
     }
@@ -380,8 +377,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         // @docs/02-model-structure/dsol.md#event-based-simulation
         if (queue.size() == 1)
         {
-            this.simulator.scheduleEventNow(
-                    () -> Try.execute(() -> tryToPlaceGTU(lanePosition), "Exception during attempt to place GTU."));
+            this.simulator.scheduleEventNow(() -> Try.execute(() -> tryToPlaceGTU(lanePosition), OtsRuntimeException.class,
+                    "Exception during attempt to place GTU."));
         }
         // @end
     }

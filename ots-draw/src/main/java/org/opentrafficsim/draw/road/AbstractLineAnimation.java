@@ -3,9 +3,6 @@ package org.opentrafficsim.draw.road;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
@@ -39,11 +36,8 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
      * @param source source
      * @param contextualized context provider
      * @param width line width
-     * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException in case of remote registration failure of the animation
      */
     public AbstractLineAnimation(final T source, final Contextualized contextualized, final Length width)
-            throws NamingException, RemoteException
     {
         super(source, contextualized);
         double halfLength = .5 * source.getLine().getLength();

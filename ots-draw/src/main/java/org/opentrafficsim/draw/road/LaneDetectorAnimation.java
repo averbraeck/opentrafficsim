@@ -83,11 +83,9 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends Rendera
      * @param contextualized context provider.
      * @param color the display color of the detector.
      * @param textSupplier text supplier.
-     * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException in case of remote registration failure of the animation
      */
     public LaneDetectorAnimation(final L laneDetector, final Contextualized contextualized, final Color color,
-            final Function<LaneDetectorAnimation<L, T>, T> textSupplier) throws NamingException, RemoteException
+            final Function<LaneDetectorAnimation<L, T>, T> textSupplier)
     {
         super(laneDetector, contextualized, new Length(0.5, LengthUnit.SI));
         this.color = color;
@@ -241,11 +239,8 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends Rendera
              * @param sink loop detector data.
              * @param dy vertical spacing.
              * @param contextualized context provider.
-             * @throws NamingException when animation context cannot be created or retrieved
-             * @throws RemoteException when remote context cannot be found
              */
             public SinkText(final SinkData sink, final float dy, final Contextualized contextualized)
-                    throws RemoteException, NamingException
             {
                 super(sink, sink::getId, 0.0f, dy, TextAlignment.CENTER, Color.BLACK, contextualized,
                         RenderableTextSource.RENDERWHEN10);

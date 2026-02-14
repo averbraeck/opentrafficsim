@@ -23,7 +23,6 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SynchronizationGtuColorer;
@@ -37,7 +36,6 @@ import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Link;
@@ -240,17 +238,23 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         public void constructModel() throws SimRuntimeException
         {
             super.constructModel();
-            Try.execute(() -> addGenerator(), OtsRuntimeException.class, "Unable to add generator to network.");
+            try
+            {
+                addGenerator();
+            }
+            catch (ParameterException | NetworkException | SimRuntimeException exception)
+            {
+                throw new OtsRuntimeException("Unable to create generator.");
+            }
         }
 
         /**
          * Create generators.
          * @throws ParameterException on parameter exception
-         * @throws GtuException on GTU exception
          * @throws NetworkException if not does not exist
          * @throws SimRuntimeException in case of sim run time exception
          */
-        private void addGenerator() throws ParameterException, GtuException, NetworkException, SimRuntimeException
+        private void addGenerator() throws ParameterException, NetworkException, SimRuntimeException
         {
 
             Random seedGenerator = new Random(1L);
@@ -389,15 +393,13 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          * @param simulationTime simulation time
          * @param stream random numbers stream
          * @throws SimRuntimeException in case of scheduling problems
-         * @throws GtuException in case the GTU is inconsistent
-         * @throws ParameterException in case a parameter for the perception is missing
          * @throws NetworkException if the object could not be added to the network
          */
         private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id, final IdSupplier idSupplier,
                 final ObjectDistribution<LaneBasedGtuTemplate> distribution, final Supplier<Duration> headwaySupplier,
                 final RoomChecker roomChecker, final ParameterFactory bcFactory,
                 final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime,
-                final StreamInterface stream) throws SimRuntimeException, GtuException, ParameterException, NetworkException
+                final StreamInterface stream) throws SimRuntimeException, NetworkException
         {
 
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();

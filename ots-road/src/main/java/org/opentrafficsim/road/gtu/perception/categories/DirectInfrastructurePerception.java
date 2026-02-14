@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableSortedSet;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -127,8 +128,8 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         }
         else
         {
-            Length range = Try.assign(() -> getGtu().getParameters().getParameter(LANE_STRUCTURE),
-                    "Parameter PERCEPTION not available.");
+            Length range = getGtu().getParameters().getOptionalParameter(LANE_STRUCTURE)
+                    .orElseThrow(() -> new OtsRuntimeException("Parameter PERCEPTION not available."));
             Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
             ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route.get(), getGtu().getType(),
                     range.minus(record.getStartDistance()).plus(front), laneLaw);
@@ -156,7 +157,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         Lane l = getLaneStructure().getRootRecord(lane).getLane();
         GtuType gtuType = getGtu().getType();
         slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, Try.assign(() -> l.getSpeedLimit(getGtu().getType()),
-                "No speed limit for GTU type %s on lane %s.", gtuType, l.getFullId()), l);
+                OtsRuntimeException.class, "No speed limit for GTU type %s on lane %s.", gtuType, l.getFullId()), l);
         return slp;
     }
 

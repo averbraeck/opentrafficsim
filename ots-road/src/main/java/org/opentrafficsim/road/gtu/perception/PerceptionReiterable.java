@@ -7,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.perception.structure.LaneStructure;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
@@ -72,7 +71,7 @@ public class PerceptionReiterable<O extends LaneBasedObject, P extends Perceived
     }
 
     @Override
-    protected P perceive(final U object, final Length distance) throws GtuException, ParameterException
+    protected P perceive(final U object, final Length distance) throws ParameterException
     {
         return this.perception.apply(object, distance);
     }

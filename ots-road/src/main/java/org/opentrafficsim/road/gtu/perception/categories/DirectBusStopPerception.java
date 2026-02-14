@@ -4,7 +4,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -82,8 +81,7 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
                             {
                                 conflictIds.add(conflict.getId());
                             }
-                            return Try.assign(() -> new PerceivedBusStop(object, distance, lane, conflictIds, object.getLane()),
-                                    "Exception while creating bus stop headway.");
+                            return new PerceivedBusStop(object, distance, lane, conflictIds, object.getLane());
                         });
 
                 stops.addIterable(lane, it);

@@ -14,8 +14,8 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.djutils.math.means.ArithmeticMean;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -274,8 +274,18 @@ public abstract class Platoons<T>
     {
         if (!this.queue.isEmpty())
         {
-            this.simulator.scheduleEventAbs(this.queue.peek().time(),
-                    () -> Try.execute(() -> placeGtu(this.queue.poll()), "Exception while placing platoon GTU."));
+            this.simulator.scheduleEventAbs(this.queue.peek().time(), () ->
+            {
+                try
+                {
+                    placeGtu(this.queue.poll());
+                }
+                catch (OtsGeometryException | SimRuntimeException | GtuException | NetworkException | ParameterException
+                        | NamingException exception)
+                {
+                    throw new OtsRuntimeException("Exception while placing platoon GTU.");
+                }
+            });
         }
     }
 

@@ -36,13 +36,13 @@ When a `LaneBasedGtuGenerator` is created, it registers an event in the simulato
 
 Time of the event will be an inter-arrival time of GTUs, relative to ‘now’. The target is the generator itself, and the method that should be invoked is `generateCharacteristics()`. As this method has no input, an empty object array is given with the event as input. To make sure more than one GTU is created, the `generateCharacteristics()` method also schedules itself repeatedly. This initialization and repeated scheduling ensures that characteristics for a GTU are generated whenever a new GTU arrives in the simulation. If no headway is returned (`null`), demand is over and the repeated scheduling stops.
 
-The generator has a separate chain of events to actually place the GTUs on the network. It is started inside `queueGtu` invoked by `generateCharacteristics()` whenever it results in exactly one GTU in the queue. This holds for the first GTU, but also for any GTU that is created after the queue was depleted as all GTUs could be placed on the network. This event chain invokes the method `tryToPlaceGtu(…)`, which has a `GeneratorLanePosition` as input such that it is known where the GTU should be placed on the network. The position is added to the event in the input array. 
+The generator has a separate chain of events to actually place the GTUs on the network. It is started inside `queueGtu` invoked by `generateCharacteristics()` whenever it results in exactly one GTU in the queue. This holds for the first GTU, but also for any GTU that is created after the queue was depleted as all GTUs could be placed on the network. This event chain invokes the method `tryToPlaceGtu(…)`, which has a `GeneratorLanePosition` as input such that it is known where the GTU should be placed on the network. The position is added to the event by calling the method. 
 
 ```java
     if (queue.size() == 1)
     {
-        this.simulator.scheduleEventNow(
-                    () -> Try.execute(() -> tryToPlaceGTU(lanePosition), "Exception during attempt to place GTU."));
+        this.simulator.scheduleEventNow(() -> Try.execute(() -> tryToPlaceGTU(lanePosition),
+                OtsRuntimeException.class, "Exception during attempt to place GTU."));
     }
 ```
 
@@ -51,8 +51,8 @@ The method `tryToPlaceGtu(…)` attempts to place the GTU on the network. If suc
 ```java
     if (queue.size() > 0)
     {
-        this.simulator.scheduleEventRel(this.reTryInterval,
-                    () -> Try.execute(() -> tryToPlaceGTU(position), "Exception during attempt to place GTU."));
+        this.simulator.scheduleEventRel(this.reTryInterval, () -> Try.execute(() -> tryToPlaceGTU(position),
+                OtsRuntimeException.class, "Exception during attempt to place GTU."));
     }
 ```
 

@@ -7,7 +7,6 @@ import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -77,7 +76,7 @@ public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneB
 
             @Override
             protected PerceivedLocalDistraction perceive(final LocalDistraction object, final Length distance)
-                    throws GtuException, ParameterException
+                    throws ParameterException
             {
                 return new PerceivedLocalDistraction(distance, object);
             }

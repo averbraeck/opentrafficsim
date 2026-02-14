@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -73,7 +73,8 @@ public final class ChannelTaskCooperation extends AbstractTask implements Channe
         Iterator<DistancedObject<LaneBasedGtu>> leaders =
                 neighbors.getLeaders(this.left ? RelativeLane.LEFT : RelativeLane.RIGHT).underlyingWithDistance();
         ParameterTypeDouble param = this.left ? LmrsParameters.DRIGHT : LmrsParameters.DLEFT;
-        Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(X0_D), "Parameter x0_d not present.");
+        Length x0 = perception.getGtu().getParameters().getOptionalParameter(X0_D)
+                .orElseThrow(() -> new OtsRuntimeException("Parameter x0_d not present."));
         double dMax = 0.0;
         while (leaders.hasNext())
         {

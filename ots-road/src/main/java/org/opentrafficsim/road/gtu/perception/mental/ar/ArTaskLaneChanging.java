@@ -3,10 +3,8 @@ package org.opentrafficsim.road.gtu.perception.mental.ar;
 import java.util.NoSuchElementException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
@@ -44,7 +42,7 @@ public final class ArTaskLaneChanging extends ArTaskHeadwayBased implements Stat
     {
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not available."));
-        double lat = Try.assign(() -> getConsideration(perception, gtu, parameters), "Exception during lateral consideration.");
+        double lat = getConsideration(perception, gtu, parameters);
         RelativeLane lane;
         if (Math.abs(lat) < 1e-9)
         {
@@ -91,10 +89,9 @@ public final class ArTaskLaneChanging extends ArTaskHeadwayBased implements Stat
      * @param parameters parameters
      * @return demand of this task
      * @throws ParameterException if a parameter is missing or out of bounds
-     * @throws GtuException exceptions pertaining to the GTU
      */
     private double getConsideration(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
-            throws ParameterException, GtuException
+            throws ParameterException
     {
         double dLeft = gtu.getParameters().getParameter(LmrsParameters.DLEFT);
         double dRight = gtu.getParameters().getParameter(LmrsParameters.DRIGHT);

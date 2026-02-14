@@ -311,7 +311,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         Length exitPosition = exitLane == null ? null : getPosition(exitLane);
 
         this.lane.set(lane);
-        Try.execute(() -> lane.addGtu(this, fraction), "Entering lane where the GTU is already at.");
+        Try.execute(() -> lane.addGtu(this, fraction), OtsRuntimeException.class, "Entering lane where the GTU is already at.");
 
         fireTimedEvent(LaneBasedGtu.LANE_ENTER_EVENT, new Object[] {getId(), lane.getLink().getId(), lane.getId()},
                 getSimulator().getSimulatorTime());
@@ -506,6 +506,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Returns the nearest lane position on the route / network. It is not strictly guaranteed that the position is closest, as
      * this method will only search on links where either of the nodes is the closest node.
      * @return nearest lane position on the route / network
+     * @throws IllegalStateException if the GTU is on a lane
      */
     public synchronized LanePosition getRoamingPosition()
     {

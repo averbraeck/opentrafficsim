@@ -10,7 +10,6 @@ import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -102,9 +101,7 @@ public final class LaneGeometryUtil
             final LaneType laneType, final Map<GtuType, Speed> speedLimits)
     {
         OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
-        return Try.assign(
-                () -> new Lane(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType, speedLimits),
-                "Network exception.");
+        return new Lane(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType, speedLimits);
     }
 
     /**
@@ -122,8 +119,7 @@ public final class LaneGeometryUtil
         OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
         ContinuousPiecewiseLinearFunction offsetFunc = ContinuousPiecewiseLinearFunction.of(0.0, offset.si, 1.0, offset.si);
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
-        return Try.assign(() -> new Stripe(id, type, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
-                "Network exception.");
+        return new Stripe(id, type, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc));
     }
 
     /**
@@ -143,7 +139,6 @@ public final class LaneGeometryUtil
         OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
         ContinuousPiecewiseLinearFunction offset = ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
         ContinuousPiecewiseLinearFunction width = ContinuousPiecewiseLinearFunction.of(0.0, startWidth.si, 1.0, endWidth.si);
-        return Try.assign(() -> new Shoulder(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType),
-                "Network exception.");
+        return new Shoulder(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType);
     }
 }

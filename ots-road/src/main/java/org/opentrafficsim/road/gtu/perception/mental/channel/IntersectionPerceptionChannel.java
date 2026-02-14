@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -110,8 +111,8 @@ public class IntersectionPerceptionChannel extends AbstractPerceptionCategory<La
             return getPerception().getLaneStructure().getDownstreamObjects(lane, TrafficLight.class, RelativePosition.FRONT,
                     true);
         }, "Unable to get downstream traffic lights from LaneStructure");
-        Route route =
-                Try.assign(() -> getPerception().getGtu().getStrategicalPlanner().getRoute().get(), "Unable to obtain route");
+        Route route = getPerception().getGtu().getStrategicalPlanner().getRoute()
+                .orElseThrow(() -> new OtsRuntimeException("Unable to obtain route"));
         return new PerceptionReiterable<>(getGtu(), iterable, (trafficLight, distance) ->
         {
             return new PerceivedTrafficLightChannel(trafficLight, distance,
@@ -131,8 +132,8 @@ public class IntersectionPerceptionChannel extends AbstractPerceptionCategory<La
                 Conflict.class, RelativePosition.FRONT, true), "Unable to get downstream conflicts from LaneStructure");
         return new PerceptionReiterable<>(getGtu(), iterable, (conflict, distance) ->
         {
-            Length lookAhead =
-                    Try.assign(() -> getGtu().getParameters().getParameter(LOOKAHEAD), "Parameter LOOKAHEAD not present.");
+            Length lookAhead = getGtu().getParameters().getOptionalParameter(LOOKAHEAD)
+                    .orElseThrow(() -> new OtsRuntimeException("Parameter LOOKAHEAD not present."));
             // TODO visibility
             Length conflictingVisibility = lookAhead;
             PerceivedConflict perceivedConflict;

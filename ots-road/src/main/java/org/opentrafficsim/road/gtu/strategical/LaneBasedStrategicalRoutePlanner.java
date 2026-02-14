@@ -260,7 +260,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
         if (this.route == null && this.destination != null && !this.routeGenerator.equals(RouteGenerator.NULL)
                 && !getGtu().isRoaming())
         {
-            LanePosition ref = Try.assign(() -> getGtu().getPosition(), "Could not retrieve GTU reference position.");
+            LanePosition ref = getGtu().getPosition();
             List<Node> nodes = new ArrayList<>();
             if (this.origin != null)
             {
@@ -273,9 +273,10 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
             }
             Route newRoute = this.routeGenerator.getRoute(ref.lane().getLink().getEndNode(), this.destination, gtuType);
             nodes.addAll(newRoute.getNodes());
-            this.route = Try.assign(() -> new Route(
-                    "Route for " + gtuType + " from " + this.origin + "to " + this.destination + " via " + ref.lane().getLink(),
-                    gtuType, nodes), "No route possible over nodes %s", nodes);
+            this.route = Try.assign(
+                    () -> new Route("Route for " + gtuType + " from " + this.origin + "to " + this.destination + " via "
+                            + ref.lane().getLink(), gtuType, nodes),
+                    OtsRuntimeException.class, "No route possible over nodes %s", nodes);
         }
     }
 

@@ -33,13 +33,14 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.DesiredHeadwayGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -234,6 +235,9 @@ public class StrategiesDemo extends AbstractSimulationScript
         egoSlider.setToolTipText("<html>Ego-speed sensitivity as 1/<i>v<sub>gain</sub></i></html>");
         egoSlider.addChangeListener(new ChangeListener()
         {
+            /** Whether exception was logged. */
+            private boolean loggedException = false;
+
             @Override
             public void stateChanged(final ChangeEvent e)
             {
@@ -243,8 +247,18 @@ public class StrategiesDemo extends AbstractSimulationScript
                 {
                     if (gtu.getType().isOfType(DefaultsNl.CAR))
                     {
-                        Try.execute(() -> gtu.getParameters().setClaimedParameter(LmrsParameters.VGAIN, vGain, egoSlider),
-                                "Exception while setting vGain");
+                        try
+                        {
+                            gtu.getParameters().setClaimedParameter(LmrsParameters.VGAIN, vGain, egoSlider);
+                        }
+                        catch (ParameterException exception)
+                        {
+                            if (!this.loggedException)
+                            {
+                                Logger.ots().error("Unable to set VGAIN on GTU.");
+                                this.loggedException = true;
+                            }
+                        }
                     }
                 }
             }
@@ -274,6 +288,9 @@ public class StrategiesDemo extends AbstractSimulationScript
         socioSlider.setToolTipText("Socio-speed sensitivity between 0 and 1");
         socioSlider.addChangeListener(new ChangeListener()
         {
+            /** Whether exception was logged. */
+            private boolean loggedException = false;
+
             @Override
             public void stateChanged(final ChangeEvent e)
             {
@@ -283,8 +300,15 @@ public class StrategiesDemo extends AbstractSimulationScript
                 {
                     if (gtu.getType().isOfType(DefaultsNl.CAR))
                     {
-                        Try.execute(() -> gtu.getParameters().setClaimedParameter(LmrsParameters.SOCIO, sigma, socioSlider),
-                                "Exception while setting vGain");
+                        try
+                        {
+                            gtu.getParameters().setClaimedParameter(LmrsParameters.SOCIO, sigma, socioSlider);
+                        }
+                        catch (ParameterException exception)
+                        {
+                            Logger.ots().error("Unable to set SOCIO on GTU.");
+                            this.loggedException = true;
+                        }
                     }
                 }
             }
@@ -299,8 +323,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         this.kmplcListener = new KmplcListener(kmplcLabel, network);
         for (Gtu gtu : network.getGTUs())
         {
-            Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT),
-                    "Exception while adding lane change listener");
+            gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT);
         }
         kmplcLabel.setHorizontalAlignment(SwingConstants.LEFT);
         kmplcLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -347,13 +370,13 @@ public class StrategiesDemo extends AbstractSimulationScript
                     for (int i = 0; i < l.numberOfGtus(); i++)
                     {
                         LaneBasedGtu gtu1 = l.getGtu(i);
-                        Length up = Try.assign(() -> gtu1.getPosition(l, gtu1.getFront()), "");
+                        Length up = gtu1.getPosition(l, gtu1.getFront());
                         LaneBasedGtu gtu2;
                         Length down;
                         if (i < l.numberOfGtus() - 1)
                         {
                             gtu2 = l.getGtu(i + 1);
-                            down = Try.assign(() -> gtu2.getPosition(l, gtu2.getRear()), "");
+                            down = gtu2.getPosition(l, gtu2.getRear());
                         }
                         else
                         {
@@ -363,7 +386,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                                 continue;
                             }
                             gtu2 = nextLane.getGtu(0);
-                            down = l.getLength().plus(Try.assign(() -> gtu2.getPosition(nextLane, gtu2.getRear()), ""));
+                            down = l.getLength().plus(gtu2.getPosition(nextLane, gtu2.getRear()));
                         }
                         Length tentativeGap = down.minus(up)
                                 .minus(this.nextGtuType.isOfType(DefaultsNl.TRUCK) ? this.truckLength : this.carLength);
@@ -570,8 +593,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         if (this.kmplcListener != null)
         {
-            Try.execute(() -> gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT),
-                    "Exception while adding lane change listener");
+            gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT);
         }
     }
 

@@ -3,7 +3,6 @@ package org.opentrafficsim.core.perception;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
@@ -42,8 +41,8 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         this.simulator = simulator;
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
-        Try.execute(() -> this.simulator.addListener(this, Replication.START_REPLICATION_EVENT), "Unable to add listener.");
-        Try.execute(() -> this.simulator.addListener(this, Replication.END_REPLICATION_EVENT), "Unable to add listener.");
+        this.simulator.addListener(this, Replication.START_REPLICATION_EVENT);
+        this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
     }
 
     /**

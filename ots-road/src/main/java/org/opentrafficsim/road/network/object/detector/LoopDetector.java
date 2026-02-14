@@ -250,18 +250,21 @@ public class LoopDetector extends LaneDetector
      * @param measurements measurements to obtain
      * @param detectorType detector type.
      * @throws NetworkException on network exception
+     * @throws IllegalArgumentException when aggregation times are negative
      */
     public LoopDetector(final String id, final LanePosition position, final Length length, final DetectorType detectorType,
             final Duration firstAggregation, final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements)
             throws NetworkException
     {
         super(id, position.lane(), position.position(), RelativePosition.FRONT, detectorType);
-        Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
+        Throw.when(firstAggregation.si < 0.0, IllegalArgumentException.class, "firstAggregation time should be positive.");
+        Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "aggregation time should be positive and non-0.");
         this.length = length;
         this.currentAggregation = Duration.ofSI(firstAggregation.si);
         this.aggregation = aggregation;
         this.firstAggregation = firstAggregation;
-        Try.execute(() -> getSimulator().scheduleEventAbs(this.currentAggregation, () -> aggregate()), "");
+        Try.execute(() -> getSimulator().scheduleEventAbs(this.currentAggregation, () -> aggregate()),
+                "Unable to schedule aggregation.");
         this.measurements = measurements;
         this.periodicMeasurements = Arrays.stream(measurements).filter((m) -> m.isPeriodic()).collect(Collectors.toSet());
         this.data.put(null, new GtuTypeData());
@@ -404,7 +407,7 @@ public class LoopDetector extends LaneDetector
         }
         this.currentAggregation = this.aggregation; // after first possibly irregular period, all periods regular
         Duration time = this.firstAggregation.plus(this.aggregation.times(this.period++));
-        Try.execute(() -> getSimulator().scheduleEventAbs(time, () -> aggregate()), "");
+        Try.execute(() -> getSimulator().scheduleEventAbs(time, () -> aggregate()), "Unable to schedule aggregation.");
     }
 
     /**

@@ -636,7 +636,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         {
             firstLanes.add(lane);
         }
-        GraphPath<LaneDataRoad> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
+        GraphPath<LaneDataRoad> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "Missing speed limit");
         this.trajectoryPlot =
                 new TrajectoryPlot("Trajectories", Duration.ofSI(5.0), this.scheduler, this.sampler.getSamplerData(), path);
         this.trajectoryPlot.updateFixedDomainRange(true);

@@ -8,7 +8,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
-import org.djutils.exceptions.Try;
 import org.djutils.math.AngleUtil;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -93,7 +92,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
      */
     public CollisionDetector logCollisions()
     {
-        Try.execute(() -> addListener((e) ->
+        addListener((e) ->
         {
             Object[] payload = (Object[]) e.getContent();
             LaneBasedGtu gtu = (LaneBasedGtu) payload[0];
@@ -104,7 +103,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
             Angle angle = Angle.ofSI(AngleUtil.normalizeAroundZero(object.getDirZ() - gtu.getDirZ()));
             Logger.ots().info("GTU " + gtu.getId() + " collided with " + object.getId() + " at a point distance of " + distance
                     + " with a speed difference of " + dv + " and and angle of " + angle + ".");
-        }, COLLISION), "Unable to listen to collisions.");
+        }, COLLISION);
         return this;
     }
 
@@ -114,7 +113,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
      */
     public CollisionDetector stopCollided()
     {
-        Try.execute(() -> addListener((e) ->
+        addListener((e) ->
         {
             Object[] payload = (Object[]) e.getContent();
             LaneBasedGtu gtu = (LaneBasedGtu) payload[0];
@@ -124,7 +123,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
             {
                 otherGtu.stop();
             }
-        }, COLLISION), "Unable to listen to collisions.");
+        }, COLLISION);
         return this;
     }
 
@@ -134,13 +133,13 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
      */
     public CollisionDetector throwException()
     {
-        Try.execute(() -> addListener((e) ->
+        addListener((e) ->
         {
             Object[] payload = (Object[]) e.getContent();
             LaneBasedGtu gtu = (LaneBasedGtu) payload[0];
             LaneBasedObject object = (LaneBasedObject) payload[1];
             throw new CollisionException("GTU " + gtu.getId() + " collided with " + object.getId());
-        }, COLLISION), "Unable to listen to collisions.");
+        }, COLLISION);
         return this;
     }
 
@@ -150,8 +149,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
      */
     public CollisionDetector destroyGtu()
     {
-        Try.execute(() -> addListener((e) -> ((LaneBasedGtu) ((Object[]) e.getContent())[0]).destroy(), COLLISION),
-                "Unable to listen to collisions.");
+        addListener((e) -> ((LaneBasedGtu) ((Object[]) e.getContent())[0]).destroy(), COLLISION);
         return this;
     }
 

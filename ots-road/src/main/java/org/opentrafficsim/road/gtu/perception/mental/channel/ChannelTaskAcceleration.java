@@ -7,8 +7,8 @@ import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -78,10 +78,11 @@ public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask
         EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
                 .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Speed v = ego.getSpeed();
-        Speed vCong = Try.assign(() -> perception.getGtu().getParameters().getParameter(VCONG), "Parameter VCONG not present");
-        Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(X0), "Parameter LOOKAHEAD not present.");
-        Iterator<DistancedObject<LaneBasedGtu>> leaders =
-                neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
+        Speed vCong = perception.getGtu().getParameters().getOptionalParameter(VCONG)
+                .orElseThrow(() -> new OtsRuntimeException("Parameter VCONG not present"));
+        Length x0 = perception.getGtu().getParameters().getOptionalParameter(X0)
+                .orElseThrow(() -> new OtsRuntimeException("Parameter LOOKAHEAD not present."));
+        Iterator<DistancedObject<LaneBasedGtu>> leaders = neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
         /*
          * We limit this search by a first conflict. Traffic from other directions on the intersection should not let the
          * required level of attention for free acceleration flicker for each passing vehicle.

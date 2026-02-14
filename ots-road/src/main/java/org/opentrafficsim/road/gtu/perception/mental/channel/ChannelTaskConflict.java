@@ -14,9 +14,9 @@ import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -117,8 +117,9 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
 
         // Get minimum headway of first vehicle on each conflict in the group
         Duration conflictHeadway = Duration.POSITIVE_INFINITY;
-        LaneBasedGtu gtu = Try.assign(() -> perception.getGtu(), "Gtu not initialized.");
-        Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(LOOKAHEAD), "No x0 parameter.");
+        LaneBasedGtu gtu = perception.getGtu();
+        Length x0 = perception.getGtu().getParameters().getOptionalParameter(LOOKAHEAD)
+                .orElseThrow(() -> new OtsRuntimeException("No x0 parameter."));
         for (DistancedObject<Conflict> conflict : this.conflicts)
         {
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> conflictingGtus =
@@ -137,10 +138,10 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
         Duration egoHeadway = this.conflicts.first().distance().divide(ego.getSpeed());
 
         // Find least critical
-        Duration hEgo =
-                Try.assign(() -> perception.getGtu().getParameters().getParameter(HEGO), "Parameter h_ego not present.");
-        Duration hConf =
-                Try.assign(() -> perception.getGtu().getParameters().getParameter(HCONF), "Parameter h_conf not present.");
+        Duration hEgo = perception.getGtu().getParameters().getOptionalParameter(HEGO)
+                .orElseThrow(() -> new OtsRuntimeException("Parameter h_ego not present."));
+        Duration hConf = perception.getGtu().getParameters().getOptionalParameter(HCONF)
+                .orElseThrow(() -> new OtsRuntimeException("Parameter h_conf not present."));
         return Math.min(0.999, Math.exp(-Math.min(egoHeadway.si / hEgo.si, conflictHeadway.si / hConf.si)));
     }
 
@@ -158,7 +159,8 @@ public final class ChannelTaskConflict extends AbstractTask implements ChannelTa
 
         // Find groups of conflicts when their upstream nodes are intersecting sets
         Map<SortedSet<DistancedObject<Conflict>>, Set<Node>> groups = new LinkedHashMap<>();
-        Length x0 = Try.assign(() -> perception.getGtu().getParameters().getParameter(LOOKAHEAD), "No x0 parameter.");
+        Length x0 = perception.getGtu().getParameters().getOptionalParameter(LOOKAHEAD)
+                .orElseThrow(() -> new OtsRuntimeException("No x0 parameter."));
         while (conflicts.hasNext())
         {
             DistancedObject<Conflict> conflict = conflicts.next();

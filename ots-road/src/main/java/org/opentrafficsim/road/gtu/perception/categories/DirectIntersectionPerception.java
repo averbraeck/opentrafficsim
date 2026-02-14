@@ -95,12 +95,10 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                     true);
         }, "Unable to get downstream traffic lights from LaneStructure");
         LaneBasedGtu gtu = getPerception().getGtu();
-        Route route = Try.assign(() -> gtu.getStrategicalPlanner().getRoute(), "Unable to obtain route.").orElse(null);
+        Route route = gtu.getStrategicalPlanner().getRoute().orElse(null);
         return new PerceptionReiterable<>(gtu, iterable, (trafficLight, distance) ->
         {
-            return Try.assign(
-                    () -> new PerceivedTrafficLight(trafficLight, distance, trafficLight.canTurnOnRed(route, gtu.getType())),
-                    "Unable to create PerceivedTrafficLight");
+            return new PerceivedTrafficLight(trafficLight, distance, trafficLight.canTurnOnRed(route, gtu.getType()));
         });
     }
 
@@ -116,8 +114,8 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
         return new PerceptionReiterable<LaneBasedObject, PerceivedConflict, Conflict>(getGtu(), iterable,
                 (conflict, distance) ->
                 {
-                    Length lookAhead = Try.assign(() -> getGtu().getParameters().getParameter(LOOKAHEAD),
-                            "Parameter Look-ahead not present.");
+                    Length lookAhead = getGtu().getParameters().getOptionalParameter(LOOKAHEAD)
+                            .orElseThrow(() -> new OtsRuntimeException("Parameter Look-ahead not present."));
                     return PerceivedConflict.of(getGtu(), conflict, DirectIntersectionPerception.this.perceptionGtuType,
                             distance, lookAhead);
                 });

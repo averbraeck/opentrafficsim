@@ -39,7 +39,6 @@ import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.reference.ReferenceType;
-import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.OtsRuntimeException;
@@ -60,9 +59,9 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
-import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
 import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
+import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
@@ -738,7 +737,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             }
         }
         StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
-        Try.execute(() -> this.fireEvent(LAYOUT_REBUILT, this), "Unable to fire LAYOUT event.");
+        fireEvent(LAYOUT_REBUILT, this);
     }
 
     /**

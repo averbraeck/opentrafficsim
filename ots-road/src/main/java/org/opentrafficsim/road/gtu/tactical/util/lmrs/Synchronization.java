@@ -6,7 +6,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -384,7 +383,7 @@ public interface Synchronization extends LmrsParameters
             throws OperationalPlanException
     {
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        Length dx = Try.assign(() -> perception.getGtu().getFront().dx(), "Could not obtain GTU.");
+        Length dx = perception.getGtu().getFront().dx();
         Length xMergeRef = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat);
         if (xMergeRef.gt0() && xMergeRef.lt(dx))
         {

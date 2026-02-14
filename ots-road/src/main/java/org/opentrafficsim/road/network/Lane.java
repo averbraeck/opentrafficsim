@@ -765,7 +765,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final Optional<LaneBasedGtu> getGtuAhead(final Length position, final RelativePosition.Type relativePosition,
-            final Duration when) throws GtuException
+            final Duration when)
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
         if (list.isEmpty())
@@ -791,10 +791,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param relativePosition RelativePosition.TYPE; the relative position of the GTU we are looking for.
      * @param when the time for which to evaluate the positions.
      * @return the first GTU after a position on this lane in the given direction, empty if no GTU could be found.
-     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final Optional<LaneBasedGtu> getGtuBehind(final Length position, final RelativePosition.Type relativePosition,
-            final Duration when) throws GtuException
+            final Duration when)
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
         if (list.isEmpty())
@@ -821,9 +820,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return int[2]; Where int[0] is the index of the object with lower position, and int[1] with higher. In case an object is
      *         exactly at the position int[1] - int[0] = 2. If all objects have a higher position int[0] = -1, if all objects
      *         have a lower position int[1] = listSize.
-     * @throws GtuException ...
      */
-    private int[] lineSearch(final Positions positions, final int listSize, final double position) throws GtuException
+    private int[] lineSearch(final Positions positions, final int listSize, final double position)
     {
         int[] out = new int[2];
         // line search only works if the position is within the original domain, first catch 4 outside situations
@@ -1412,9 +1410,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
          * Returns the position of the index'th element.
          * @param index index
          * @return position of the index'th element
-         * @throws GtuException on exception
          */
-        double get(int index) throws GtuException;
+        double get(int index);
     }
 
 }

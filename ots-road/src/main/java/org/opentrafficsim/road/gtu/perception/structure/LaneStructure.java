@@ -17,7 +17,6 @@ import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -318,18 +317,15 @@ public class LaneStructure
                 start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
                 {
                     // this navigator only returns records when there are no GTUs on the lane
-                    return Try
-                            .assign(() -> record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
-                                    record.getLane().getNetwork().getSimulator().getSimulatorTime()), "Problem with GTU")
+                    return record.getLane()
+                            .getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
+                                    record.getLane().getNetwork().getSimulator().getSimulatorTime())
                             .isEmpty() ? record.getNext() : new LinkedHashSet<>();
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
-                    Optional<LaneBasedGtu> down =
-                            Try.assign(
-                                    () -> record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
-                                            record.getLane().getNetwork().getSimulator().getSimulatorTime()),
-                                    "Problem with GTU");
+                    Optional<LaneBasedGtu> down = record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx),
+                            otherPosition, record.getLane().getNetwork().getSimulator().getSimulatorTime());
                     return down.isEmpty() ? Collections.emptyList() : List.of(down.get());
                 }, (t, r) -> r.getStartDistance().plus(position(t, r, otherDistancePosition)).minus(dxDistance));
     }
@@ -358,11 +354,8 @@ public class LaneStructure
                 {
                     // this navigator only returns records when there are no GTUs on the lane (it may thus ignore a GTU on a
                     // lateral lane that is closer) and combines the upstream and lateral records
-                    Optional<LaneBasedGtu> gtu =
-                            Try.assign(
-                                    () -> record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx), otherPosition,
-                                            record.getLane().getNetwork().getSimulator().getSimulatorTime()),
-                                    "Problem with GTU");
+                    Optional<LaneBasedGtu> gtu = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx),
+                            otherPosition, record.getLane().getNetwork().getSimulator().getSimulatorTime());
                     Set<LaneRecord> set = new LinkedHashSet<>();
                     if (gtu.isEmpty())
                     {
@@ -373,11 +366,8 @@ public class LaneStructure
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
-                    Optional<LaneBasedGtu> up =
-                            Try.assign(
-                                    () -> record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx), otherPosition,
-                                            record.getLane().getNetwork().getSimulator().getSimulatorTime()),
-                                    "Problem with GTU");
+                    Optional<LaneBasedGtu> up = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx),
+                            otherPosition, record.getLane().getNetwork().getSimulator().getSimulatorTime());
                     return up.isEmpty() ? Collections.emptyList() : List.of(up.get());
                 }, (t, r) -> dxDistance.minus(r.getStartDistance().plus(position(t, r, otherDistancePosition))));
     }
@@ -481,7 +471,7 @@ public class LaneStructure
         Deque<LaneRecord> upQueue = new LinkedList<>();
         Deque<LaneRecord> latDownQueue = new LinkedList<>();
         Deque<LaneRecord> latUpQueue = new LinkedList<>();
-        LanePosition position = Try.assign(() -> this.egoGtu.getPosition(), "GTU does not have a reference position.");
+        LanePosition position = this.egoGtu.getPosition();
         LaneRecord root = new LaneRecord(position.lane(), RelativeLane.CURRENT, position.position().neg(), Length.ZERO);
         visited.add(position.lane());
         addToCrossSection(root);

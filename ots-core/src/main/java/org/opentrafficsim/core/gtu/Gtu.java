@@ -467,15 +467,33 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
                 double tNext = Math.floor(now.si / this.alignStep + 1.0) * this.alignStep;
                 DirectedPoint2d p = (tNext - now.si < this.alignStep) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocationFromStart(new Duration(tNext - now.si, DurationUnit.SI));
-                this.nextMoveEvent = this.simulator.scheduleEventRel(Duration.ofSI(tNext),
-                        () -> Try.execute(() -> move(p), "ParameterException in move"));
+                this.nextMoveEvent = this.simulator.scheduleEventRel(Duration.ofSI(tNext), () ->
+                {
+                    try
+                    {
+                        move(p);
+                    }
+                    catch (SimRuntimeException | GtuException | NetworkException | ParameterException exception)
+                    {
+                        throw new OtsRuntimeException("Exception during move.", exception);
+                    }
+                });
             }
             else
             {
                 // schedule the next move at the end of the current operational plan
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-                this.nextMoveEvent = this.simulator.scheduleEventRel(newOperationalPlan.getTotalDuration(),
-                        () -> Try.execute(() -> move(newOperationalPlan.getEndLocation()), "ParameterException in move"));
+                this.nextMoveEvent = this.simulator.scheduleEventRel(newOperationalPlan.getTotalDuration(), () ->
+                {
+                    try
+                    {
+                        move(newOperationalPlan.getEndLocation());
+                    }
+                    catch (SimRuntimeException | GtuException | NetworkException | ParameterException exception)
+                    {
+                        throw new OtsRuntimeException("Exception during move.", exception);
+                    }
+                });
             }
 
             fireTimedEvent(Gtu.MOVE_EVENT,

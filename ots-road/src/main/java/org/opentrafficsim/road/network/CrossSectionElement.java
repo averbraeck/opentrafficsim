@@ -8,7 +8,6 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -188,7 +187,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     public double getZ()
     {
         // default implementation returns 0.0 in case of a null location or a 2D location
-        return Try.assign(() -> OtsShape.super.getZ(), "Remote exception on calling getZ()");
+        return OtsShape.super.getZ();
     }
 
     /**

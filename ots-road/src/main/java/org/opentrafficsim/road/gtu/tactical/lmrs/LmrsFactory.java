@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -1162,8 +1163,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         {
             PerceivedGtuType headwayGtuType = new AnticipationPerceivedGtuType(estimation, anticipation, () ->
             {
-                return Try.assign(() -> gtu.getParameters().getParameter(ParameterTypes.TR),
-                        "Unable to obtain reaction time parameter");
+                return gtu.getParameters().getOptionalParameter(ParameterTypes.TR)
+                        .orElseThrow(() -> new OtsRuntimeException("Unable to obtain reaction time parameter"));
             });
             perception.addPerceptionCategory(new DirectNeighborsPerception(perception, headwayGtuType));
             perception.addPerceptionCategory(new DirectIntersectionPerception(perception, headwayGtuType));

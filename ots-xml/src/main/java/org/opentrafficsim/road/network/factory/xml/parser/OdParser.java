@@ -34,9 +34,9 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.DetectorType;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
@@ -158,8 +158,7 @@ public final class OdParser
                     timeList.add(time.getValue().get(eval));
                 }
                 Collections.sort(timeList);
-                globalTimeVector = Try.assign(() -> new DurationVector(timeList, DurationUnit.SECOND), XmlParserException.class,
-                        "Global time has no values.");
+                globalTimeVector = new DurationVector(timeList, DurationUnit.SECOND);
             }
 
             Interpolation globalInterpolation = od.getGlobalInterpolation().get(eval);
@@ -188,7 +187,7 @@ public final class OdParser
             DetectorType detectorType = definitions.getOrThrow(DetectorType.class, od.getSinkType().get(eval));
             Map<String, GeneratorObjects> output =
                     Try.assign(() -> OdApplier.applyOd(otsNetwork, odMatrix, odOptions, detectorType), XmlParserException.class,
-                            "Simulator time should be zero when parsing an OD.");
+                            "Simulator time should be zero when parsing an OD or missing parameter.");
 
             // Collect generators in output
             for (GeneratorObjects generatorObject : output.values())

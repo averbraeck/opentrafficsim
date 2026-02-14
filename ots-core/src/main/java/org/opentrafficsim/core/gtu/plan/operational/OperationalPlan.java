@@ -140,7 +140,7 @@ public class OperationalPlan
         {
             this.totalDuration = segmentsDuration;
             this.totalLength = segmentsLength;
-            this.path = Try.assign(() -> path.extract(0.0, this.totalLength.si), "Unexpected path truncation exception.");
+            this.path = path.extract(0.0, this.totalLength.si);
         }
         else if (segmentsLength.gt(pathLength))
         {
@@ -159,8 +159,7 @@ public class OperationalPlan
         {
             this.totalDuration = segmentsDuration;
             this.totalLength = Length.ZERO;
-            this.path =
-                    Try.assign(() -> path.extract(0.0, Math.min(pathLength.si, 1.0)), "Unexpected path truncation exception.");
+            this.path = path.extract(0.0, Math.min(pathLength.si, 1.0));
         }
     }
 

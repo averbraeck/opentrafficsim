@@ -104,7 +104,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
         else if (this.gtuTypeGenerator != null)
         {
-            gtuType = Try.assign(() -> this.gtuTypeGenerator.get(), GtuException.class, "Parameter while drawing GTU type.");
+            gtuType = this.gtuTypeGenerator.get();
         }
         else
         {
@@ -113,8 +113,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         GtuCharacteristics gtuCharacteristics;
         if (this.templates.containsKey(gtuType))
         {
-            gtuCharacteristics =
-                    Try.assign(() -> this.templates.get(gtuType).get(), "Exception while drawing GTU characteristics.");
+            gtuCharacteristics = this.templates.get(gtuType).get();
         }
         else
         {

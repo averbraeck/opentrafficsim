@@ -6,7 +6,6 @@ import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.PO
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -63,7 +62,7 @@ public abstract class Fuller implements Mental
     @Override
     public void apply(final LanePerception perception) throws ParameterException
     {
-        LaneBasedGtu gtu = Try.assign(() -> perception.getGtu(), "Could not obtain GTU.");
+        LaneBasedGtu gtu = perception.getGtu();
         Parameters parameters = gtu.getParameters();
         // a) the fundamental diagrams of task workload are defined in the tasks
         // b) sum task demand (possibly with anticipation reliance in sub-class)

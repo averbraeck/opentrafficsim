@@ -27,10 +27,8 @@ public class Shoulder extends Lane
      * @param id the id of this lane within the link; should be unique within the link
      * @param geometry geometry
      * @param laneType lane type
-     * @throws NetworkException when no cross-section slice is defined
      */
     public Shoulder(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry, final LaneType laneType)
-            throws NetworkException
     {
         super(link, id, geometry, laneType, new LinkedHashMap<>());
     }

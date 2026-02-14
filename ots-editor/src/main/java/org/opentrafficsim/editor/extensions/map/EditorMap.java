@@ -39,9 +39,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.animation.IconUtil;
-import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
@@ -814,19 +812,18 @@ public final class EditorMap extends JPanel implements EventListener
         }
         else if (node.getPathString().equals(XsdPaths.LINK) || node.getPathString().equals(XsdPaths.CONNECTOR))
         {
-            animation = Try.assign(() -> new LinkAnimation((MapLinkData) data, this.contextualized, 0.5f).setDynamic(true), "");
+            animation = new LinkAnimation((MapLinkData) data, this.contextualized, 0.5f).setDynamic(true);
         }
         else if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
         {
-            animation = Try.assign(() -> new TrafficLightAnimation((MapTrafficLightData) data, this.contextualized), "");
+            animation = new TrafficLightAnimation((MapTrafficLightData) data, this.contextualized);
         }
         else if (node.getPathString().equals(XsdPaths.SINK))
         {
-            Function<LaneDetectorAnimation<SinkData, SinkText>, SinkText> textSupplier =
-                    (s) -> Try.assign(() -> new SinkText(s.getSource(),
-                            (float) (s.getSource().getLine().getLength() / 2.0 + 0.2), this.contextualized), "");
-            animation = Try.assign(() -> new LaneDetectorAnimation<SinkData, SinkText>((SinkData) data, this.contextualized,
-                    Color.ORANGE, textSupplier), "");
+            Function<LaneDetectorAnimation<SinkData, SinkText>, SinkText> textSupplier = (s) -> new SinkText(s.getSource(),
+                    (float) (s.getSource().getLine().getLength() / 2.0 + 0.2), this.contextualized);
+            animation = new LaneDetectorAnimation<SinkData, SinkText>((SinkData) data, this.contextualized, Color.ORANGE,
+                    textSupplier);
         }
         else if (node.getPathString().equals(XsdPaths.GENERATOR) || node.getPathString().equals(XsdPaths.LIST_GENERATOR))
         {
@@ -946,7 +943,7 @@ public final class EditorMap extends JPanel implements EventListener
     public void reinitialize(final XsdTreeNode node)
     {
         remove(node);
-        Try.execute(() -> add(node), OtsRuntimeException.class, "Unable to bind to context.");
+        add(node);
     }
 
     /**
@@ -1010,8 +1007,7 @@ public final class EditorMap extends JPanel implements EventListener
         this.networkFlattenerListener.destroy();
         for (MapLinkData linkData : this.links.keySet())
         {
-            Try.execute(() -> linkData.notify(new Event(ChangeListener.CHANGE_EVENT, this.networkFlattenerListener.getNode())),
-                    "Remove event exception.");
+            linkData.notify(new Event(ChangeListener.CHANGE_EVENT, this.networkFlattenerListener.getNode()));
         }
         this.networkFlattenerListener = null;
     }

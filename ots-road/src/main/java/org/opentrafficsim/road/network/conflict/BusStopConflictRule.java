@@ -4,14 +4,12 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
-import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.CrossSectionLink.Priority;
+import org.opentrafficsim.road.network.Lane;
 
 /**
  * Conflict rule for conflicts where busses enter the lane after a stop.
@@ -69,37 +67,30 @@ public class BusStopConflictRule implements ConflictRule
         Lane lane = busConflict.getLane();
         Length pos = busConflict.getLongitudinalPosition();
         LaneBasedGtu gtu = null;
-        try
+        while (gtu == null && lane != null)
         {
-            while (gtu == null && lane != null)
+            gtu = lane.getGtuBehind(pos, RelativePosition.FRONT, this.simulator.getSimulatorTime()).orElse(null);
+            if (gtu == null)
             {
-                gtu = lane.getGtuBehind(pos, RelativePosition.FRONT, this.simulator.getSimulatorTime()).orElse(null);
-                if (gtu == null)
+                Set<Lane> set = lane.prevLanes(this.busType);
+                if (set.size() == 1)
                 {
-                    Set<Lane> set = lane.prevLanes(this.busType);
-                    if (set.size() == 1)
+                    lane = set.iterator().next();
+                    // only on bus stop
+                    if (lane.getLink().getPriority().isBusStop())
                     {
-                        lane = set.iterator().next();
-                        // only on bus stop
-                        if (lane.getLink().getPriority().isBusStop())
-                        {
-                            pos = lane.getLength();
-                        }
-                        else
-                        {
-                            lane = null;
-                        }
+                        pos = lane.getLength();
                     }
                     else
                     {
                         lane = null;
                     }
                 }
+                else
+                {
+                    lane = null;
+                }
             }
-        }
-        catch (GtuException exception)
-        {
-            throw new OtsRuntimeException("Error while looking for GTU upstream of merge at bus stop.", exception);
         }
         boolean busHasPriority = gtu != null && gtu.getType().isOfType(this.busType) && gtu.getTurnIndicatorStatus().isLeft();
 

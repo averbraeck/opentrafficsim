@@ -7,7 +7,6 @@ import java.util.NoSuchElementException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -71,7 +70,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     @Override
     public Speed getSpeed(final RelativeLane lane, final Speed desiredSpeed) throws ParameterException
     {
-        Duration now = Try.assign(() -> getTimestamp(), "GTU not initialized.");
+        Duration now = getTimestamp();
         if (this.lastSpeedTime == null || this.lastSpeedTime.si < now.si)
         {
             // due to lane interdependency, we clear all
@@ -157,7 +156,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     @Override
     public LinearDensity getDensity(final RelativeLane lane)
     {
-        Duration now = Try.assign(() -> getTimestamp(), "");
+        Duration now = getTimestamp();
         TimeStampedObject<LinearDensity> tK = this.density.get(lane);
         if (tK == null || tK.timestamp().si < now.si)
         {

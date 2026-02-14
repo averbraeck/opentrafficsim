@@ -3,10 +3,7 @@ package org.opentrafficsim.draw.road;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.function.Supplier;
-
-import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
@@ -36,11 +33,8 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
      * @param trafficLight the traffic light
      * @param contextualized context provider
-     * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException on communication failure
      */
     public TrafficLightAnimation(final TrafficLightData trafficLight, final Contextualized contextualized)
-            throws NamingException, RemoteException
     {
         super(trafficLight, contextualized, new Length(0.5, LengthUnit.SI));
 
@@ -103,12 +97,9 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
          * @param textPlacement where to place the text
          * @param color the color of the text
          * @param contextualized context provider
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
          */
         public Text(final TrafficLightData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
-                throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
         }

@@ -20,7 +20,6 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -185,10 +184,8 @@ public final class LaneFactory
         ContinuousPiecewiseLinearFunction offsetFunc =
                 ContinuousPiecewiseLinearFunction.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
-        this.firstStripe = Try.assign(
-                () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
-                        CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
-                "Unexpected exception while building link.");
+        this.firstStripe = new Stripe("1", DefaultsRoadNl.SOLID, this.link,
+                CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc));
         return this;
     }
 
@@ -213,10 +210,8 @@ public final class LaneFactory
         ContinuousPiecewiseLinearFunction offsetFunc =
                 ContinuousPiecewiseLinearFunction.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
-        this.firstStripe = Try.assign(
-                () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
-                        CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
-                "Unexpected exception while building link.");
+        this.firstStripe = new Stripe("1", DefaultsRoadNl.SOLID, this.link,
+                CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc));
         return this;
     }
 
@@ -281,9 +276,9 @@ public final class LaneFactory
             ContinuousPiecewiseLinearFunction widthFunc =
                     ContinuousPiecewiseLinearFunction.of(0.0, this.laneWidth0.abs().si, 1.0, this.laneWidth0.abs().si);
 
-            this.lanes.add(Try.assign(() -> new Lane(this.link, "Lane " + (this.lanes.size() + 1),
+            this.lanes.add(new Lane(this.link, "Lane " + (this.lanes.size() + 1),
                     CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc), this.laneType0,
-                    Map.of(this.gtuType, this.speedLimit0)), "Unexpected exception while building link."));
+                    Map.of(this.gtuType, this.speedLimit0)));
             this.offset = this.offset.plus(this.laneWidth0);
 
             Length width = type.getWidth();
@@ -292,10 +287,8 @@ public final class LaneFactory
             ContinuousPiecewiseLinearFunction offsetFunc2 =
                     ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
             ContinuousPiecewiseLinearFunction widthFunc2 = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
-            stripeList.add(Try.assign(
-                    () -> new Stripe("" + idStream.nextInt(), type, this.link,
-                            CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc2, widthFunc2)),
-                    "Unexpected exception while building link."));
+            stripeList.add(new Stripe("" + idStream.nextInt(), type, this.link,
+                    CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc2, widthFunc2)));
         }
         return this;
     }
@@ -328,8 +321,7 @@ public final class LaneFactory
             }
             Length start = startOffset.plus(width.times(0.5));
             Length end = endOffset.plus(width.times(0.5));
-            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Left shoulder", start, end, width, width,
-                    laneType), "Unexpected exception while building link.");
+            LaneGeometryUtil.createStraightShoulder(this.link, "Left shoulder", start, end, width, width, laneType);
         }
         if (lat == null || lat.isNone() || lat.isRight())
         {
@@ -348,8 +340,7 @@ public final class LaneFactory
             }
             Length start = startOffset.minus(width.times(0.5));
             Length end = endOffset.minus(width.times(0.5));
-            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Right shoulder", start, end, width, width,
-                    laneType), "Unexpected exception while building link.");
+            LaneGeometryUtil.createStraightShoulder(this.link, "Right shoulder", start, end, width, width, laneType);
         }
         return this;
     }

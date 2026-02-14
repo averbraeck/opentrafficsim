@@ -30,7 +30,6 @@ import org.djutils.data.serialization.TextSerializationException;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
@@ -706,7 +705,7 @@ public final class DemandParser
                 generators.add(generator);
             }
         }
-        catch (TextSerializationException | IOException | SimRuntimeException | ParameterException | NetworkException ex)
+        catch (TextSerializationException | IOException | SimRuntimeException | NetworkException ex)
         {
             throw new XmlParserException(ex);
         }
