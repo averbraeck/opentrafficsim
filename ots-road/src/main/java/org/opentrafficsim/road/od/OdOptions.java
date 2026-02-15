@@ -49,7 +49,7 @@ public class OdOptions
     public static final Option<MarkovCorrelation<GtuType, Frequency>> MARKOV = new Option<>("markov", null);
 
     /** Initial distance over which lane changes shouldn't be performed option. */
-    public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
+    public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", Length.ofSI(50.0));
 
     /** Lane bookkeeping. */
     public static final Option<LaneBookkeeping> BOOKKEEPING = new Option<>("bookkeeping", LaneBookkeeping.START);

@@ -11,9 +11,11 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.opentrafficsim.xml.bindings.FrequencyAdapter;
 import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
+import org.opentrafficsim.xml.bindings.PositiveLengthAdapter;
 import org.opentrafficsim.xml.bindings.StringAdapter;
 import org.opentrafficsim.xml.bindings.types.FrequencyType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType;
+import org.opentrafficsim.xml.bindings.types.LengthType;
 import org.opentrafficsim.xml.bindings.types.StringType;
 
 
@@ -44,6 +46,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
  *       <attribute name="Link" use="required" type="{http://www.opentrafficsim.org/ots}string" />
  *       <attribute name="Lane" use="required" type="{http://www.opentrafficsim.org/ots}string" />
  *       <attribute name="Position" use="required" type="{http://www.opentrafficsim.org/ots}LengthBeginEndType" />
+ *       <attribute name="NoLaneChangeDistance" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -103,6 +106,15 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlAttribute(name = "Position", required = true)
     @XmlJavaTypeAdapter(LengthBeginEndAdapter.class)
     protected LengthBeginEndType position;
+    /**
+     * Length over which GTUs are not allowed to change lane after being
+     *             generated, to avoid interference with generation on adjacent lanes. If no value is specified and there are adjacent
+     *             lanes, 50m will be used.
+     * 
+     */
+    @XmlAttribute(name = "NoLaneChangeDistance")
+    @XmlJavaTypeAdapter(PositiveLengthAdapter.class)
+    protected LengthType noLaneChangeDistance;
 
     /**
      * Gets the value of the gtuTemplate property.
@@ -390,6 +402,33 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      */
     public void setPosition(LengthBeginEndType value) {
         this.position = value;
+    }
+
+    /**
+     * Length over which GTUs are not allowed to change lane after being
+     *             generated, to avoid interference with generation on adjacent lanes. If no value is specified and there are adjacent
+     *             lanes, 50m will be used.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public LengthType getNoLaneChangeDistance() {
+        return noLaneChangeDistance;
+    }
+
+    /**
+     * Sets the value of the noLaneChangeDistance property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     * @see #getNoLaneChangeDistance()
+     */
+    public void setNoLaneChangeDistance(LengthType value) {
+        this.noLaneChangeDistance = value;
     }
 
 }

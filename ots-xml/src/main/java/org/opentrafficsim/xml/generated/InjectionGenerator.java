@@ -107,6 +107,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
  *           </complexType>
  *         </element>
  *       </sequence>
+ *       <attribute name="NoLaneChangeDistance" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -164,6 +165,14 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      */
     @XmlElement(name = "Arrivals", required = true)
     protected InjectionGenerator.Arrivals arrivals;
+    /**
+     * Length over which GTUs are not allowed to change lane after being
+     *             generated, to avoid interference with generation on adjacent lanes. If no value is specified, 50m will be used.
+     * 
+     */
+    @XmlAttribute(name = "NoLaneChangeDistance")
+    @XmlJavaTypeAdapter(PositiveLengthAdapter.class)
+    protected LengthType noLaneChangeDistance;
 
     /**
      * Provide a Position if there is no Link, Lane or Position (on lane)
@@ -314,6 +323,32 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      */
     public void setArrivals(InjectionGenerator.Arrivals value) {
         this.arrivals = value;
+    }
+
+    /**
+     * Length over which GTUs are not allowed to change lane after being
+     *             generated, to avoid interference with generation on adjacent lanes. If no value is specified, 50m will be used.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public LengthType getNoLaneChangeDistance() {
+        return noLaneChangeDistance;
+    }
+
+    /**
+     * Sets the value of the noLaneChangeDistance property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     * @see #getNoLaneChangeDistance()
+     */
+    public void setNoLaneChangeDistance(LengthType value) {
+        this.noLaneChangeDistance = value;
     }
 
 

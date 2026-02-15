@@ -65,6 +65,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
+import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.ConstantDistType;
@@ -93,6 +94,10 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public final class DemandParser
 {
+
+    /** Default no lane-change distance if value is not specified and its injections or there are adjacent lanes. */
+    private static final Length DEFAULT_NO_LC_DISTANCE = OdOptions.NO_LC_DIST.getDefaultValue();
+
     /** */
     private DemandParser()
     {
@@ -413,7 +418,12 @@ public final class DemandParser
                 LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(lane.getFullId(), headwayGenerator,
                         characteristicsGenerator, GeneratorPositions.create(initialLongitudinalPositions, stream), otsNetwork,
                         simulator, roomChecker, idGenerator);
-                generator.setNoLaneChangeDistance(Length.ofSI(50.0));
+
+                Length noLcDistance =
+                        generatorTag.getNoLaneChangeDistance() != null ? generatorTag.getNoLaneChangeDistance().get(eval)
+                                : (link.getLanes().size() > 1 ? DEFAULT_NO_LC_DISTANCE : Length.ZERO);
+
+                generator.setNoLaneChangeDistance(noLcDistance);
                 generators.add(generator);
             }
         }
@@ -701,7 +711,9 @@ public final class DemandParser
                 LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("Injections " + generatorNumber++,
                         injections.asArrivalsSupplier(), characteristicsGenerator, generatorPosition, otsNetwork, simulator,
                         roomChecker, idGeneratorInjections);
-                generator.setNoLaneChangeDistance(Length.ofSI(50.0));
+                Length noLcDistance = generatorTag.getNoLaneChangeDistance() == null ? DEFAULT_NO_LC_DISTANCE
+                        : generatorTag.getNoLaneChangeDistance().get(eval);
+                generator.setNoLaneChangeDistance(noLcDistance);
                 generators.add(generator);
             }
         }

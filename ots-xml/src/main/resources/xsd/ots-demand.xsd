@@ -197,7 +197,8 @@
         <xsd:choice minOccurs="0">
           <xsd:annotation>
             <xsd:documentation source="description">
-              Shortest route in terms of distance (default), free flow time, or a weighted mixture of both.
+              Shortest route in terms of distance (default), free flow time, or a
+              weighted mixture of both.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:element name="Distance" type="ots:EmptyType" />
@@ -271,6 +272,14 @@
       <xsd:attribute name="Link" type="ots:string" use="required" />
       <xsd:attribute name="Lane" type="ots:string" use="required" />
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
+      <xsd:attribute name="NoLaneChangeDistance" type="ots:PositiveLengthType" use="optional">
+        <xsd:annotation>
+          <xsd:documentation source="description">Length over which GTUs are not allowed to change lane after being
+            generated, to avoid interference with generation on adjacent lanes. If no value is specified and there are adjacent
+            lanes, 50m will be used.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
@@ -373,6 +382,13 @@
         </xsd:element>
 
       </xsd:sequence>
+      <xsd:attribute name="NoLaneChangeDistance" type="ots:PositiveLengthType" use="optional">
+        <xsd:annotation>
+          <xsd:documentation source="description">Length over which GTUs are not allowed to change lane after being
+            generated, to avoid interference with generation on adjacent lanes. If no value is specified, 50m will be used.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
@@ -424,10 +440,8 @@
 
   <xsd:complexType name="RoomCheckerType">
     <xsd:annotation>
-      <xsd:documentation source="description">
-        Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following to
-        increase flow based on
-        bounded-acceleration, Ttc uses time-to-collision.
+      <xsd:documentation source="description">Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following to
+        increase flow during spillback based on bounded-acceleration, Ttc uses time-to-collision.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice>
