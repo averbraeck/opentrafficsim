@@ -20,6 +20,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.math.AngleUtil;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -513,10 +514,7 @@ public final class LaneOperationalPlanBuilder
                 return targetPoint;
             }
             // translate laterally by deviation
-            double angle = targetPoint.dirZ + Math.PI / 4.0;
-            double dx = deviation.si * Math.cos(angle);
-            double dy = deviation.si * Math.sin(angle);
-            return targetPoint.translate(dx, dy);
+            return OtsGeometryUtil.offsetPoint(targetPoint, deviation.si);
         }
 
         // Make turn

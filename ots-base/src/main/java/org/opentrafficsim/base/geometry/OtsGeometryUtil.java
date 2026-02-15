@@ -162,4 +162,69 @@ public final class OtsGeometryUtil
         return new PolyLine2d(0.0, out.toArray(new Point2d[out.size()]));
     }
 
+    /**
+     * Compute the 2D intersection of two lines. Both lines are defined by two points (that should be distinct).
+     * @param line1P1X x-coordinate of start point of line 1
+     * @param line1P1Y y-coordinate of start point of line 1
+     * @param line1P2X x-coordinate of end point of line 1
+     * @param line1P2Y y-coordinate of end point of line 1
+     * @param lowLimitLine1 if {@code true}; the intersection may not lie before the start point of line 1
+     * @param highLimitLine1 if {@code true}; the intersection may not lie beyond the end point of line 1
+     * @param line2P1X x-coordinate of start point of line 2
+     * @param line2P1Y y-coordinate of start point of line 2
+     * @param line2P2X x-coordinate of end point of line 2
+     * @param line2P2Y y-coordinate of end point of line 2
+     * @param lowLimitLine2 if {@code true}; the intersection may not lie before the start point of line 2
+     * @param highLimitLine2 if {@code true}; the intersection may not lie beyond the end point of line 2
+     * @param eps tolerance (conservative to find intersections)
+     * @return the intersection of the two lines, or {@code null} if the lines are (almost) parallel, or the intersection point
+     *         lies outside the permitted range
+     * @throws ArithmeticException when any of the parameters is {@code NaN}
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public static Point2d intersectionOfLinesEps(final double line1P1X, final double line1P1Y, final double line1P2X,
+            final double line1P2Y, final boolean lowLimitLine1, final boolean highLimitLine1, final double line2P1X,
+            final double line2P1Y, final double line2P2X, final double line2P2Y, final boolean lowLimitLine2,
+            final boolean highLimitLine2, final double eps)
+    {
+        Throw.when(eps < 0.0, IllegalArgumentException.class, "eps may not be negative");
+        double line1DX = line1P2X - line1P1X;
+        double line1DY = line1P2Y - line1P1Y;
+        double l2p1x = line2P1X - line1P1X;
+        double l2p1y = line2P1Y - line1P1Y;
+        double l2p2x = line2P2X - line1P1X;
+        double l2p2y = line2P2Y - line1P1Y;
+        double denominator = (l2p2y - l2p1y) * line1DX - (l2p2x - l2p1x) * line1DY;
+        Throw.whenNaN(denominator, "none of the parameters may be NaN");
+        if (Math.abs(denominator) < eps)
+        {
+            return null; // lines are parallel (they might even be on top of each other, but we don't check that)
+        }
+        double uA = ((l2p2x - l2p1x) * (-l2p1y) - (l2p2y - l2p1y) * (-l2p1x)) / denominator;
+        // System.out.println("uA is " + uA);
+        if (uA < -eps && lowLimitLine1 || uA > 1.0 + eps && highLimitLine1)
+        {
+            return null; // intersection outside line 1
+        }
+        double uB = (line1DY * l2p1x - line1DX * l2p1y) / denominator;
+        // System.out.println("uB is " + uB);
+        if (uB < -eps && lowLimitLine2 || uB > 1.0 + eps && highLimitLine2)
+        {
+            return null; // intersection outside line 2
+        }
+        if (Math.abs(uA - 1.0) < eps) // maximize precision
+        {
+            return new Point2d(line1P2X, line1P2Y);
+        }
+        if (Math.abs(uB) < eps)
+        {
+            return new Point2d(line2P1X, line2P1Y);
+        }
+        if (Math.abs(uB - 1.0) < eps)
+        {
+            return new Point2d(line2P2X, line2P2Y);
+        }
+        return new Point2d(line1P1X + uA * line1DX, line1P1Y + uA * line1DY);
+    }
+
 }
