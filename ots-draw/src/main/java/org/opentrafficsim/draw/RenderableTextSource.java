@@ -267,12 +267,14 @@ public abstract class RenderableTextSource<L extends OtsShape, T extends Rendera
                 scaledFontRectangle = fm.getStringBounds(str, graphics);
             }
             Color useColor = this.color;
+            Color bgColor = new Color(255, 255, 255, 48);
             if (null != this.background && isSimilar(useColor, this.background.getBackgroundColor()))
             {
                 // Construct an alternative color
                 if (Color.BLACK.equals(useColor))
                 {
                     useColor = Color.WHITE;
+                    bgColor = new Color(0, 0, 0, 48);
                 }
                 else
                 {
@@ -296,9 +298,17 @@ public abstract class RenderableTextSource<L extends OtsShape, T extends Rendera
                         this.dy + dh - scaledFontRectangle.getHeight(), scaledFontRectangle.getWidth(),
                         scaledFontRectangle.getHeight(), r, r);
                 Color bg = this.background.getBackgroundColor();
-                graphics.setColor(new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), 92));
+                graphics.setColor(new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), 96));
                 graphics.fill(s);
             }
+            // slight outline
+            graphics.setColor(bgColor);
+            float delta = (float) (1.0 / Math.sqrt(graphics.getTransform().getDeterminant()));
+            graphics.drawString(str, dxText + this.dx - delta, -this.dy);
+            graphics.drawString(str, dxText + this.dx + delta, -this.dy);
+            graphics.drawString(str, dxText + this.dx, -this.dy - delta);
+            graphics.drawString(str, dxText + this.dx, -this.dy + delta);
+            // text itself
             graphics.setColor(useColor);
             graphics.drawString(str, dxText + this.dx, -this.dy);
 
