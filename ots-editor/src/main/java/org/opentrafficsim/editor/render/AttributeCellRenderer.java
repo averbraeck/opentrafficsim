@@ -155,7 +155,6 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
 
         }
         setFont(table.getFont());
-        table.setGridColor(table.getBackground());
         setIcon(null);
         setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : this.tableForgroundColor);
         if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)

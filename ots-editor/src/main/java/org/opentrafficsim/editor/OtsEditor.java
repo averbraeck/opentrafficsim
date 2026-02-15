@@ -396,7 +396,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             column.setHeaderValue(tableModel.getColumnName(i));
             columns.addColumn(column);
         }
-        this.attributesTable = new JTable(tableModel, columns);
+        this.attributesTable = new JTable(tableModel, columns)
+        {
+            /** */
+            private static final long serialVersionUID = 20260215L;
+
+            @Override
+            public void setBackground(final Color bg)
+            {
+                super.setBackground(bg);
+                setGridColor(bg);
+            }
+        };
         this.attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
         this.attributesTable.setDefaultRenderer(String.class,
