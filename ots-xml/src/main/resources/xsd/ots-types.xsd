@@ -10,7 +10,9 @@
 
   <xsd:simpleType name="AbsoluteTemperatureUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AbsoluteTemperatureUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AbsoluteTemperatureUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -20,7 +22,9 @@
 
   <xsd:simpleType name="AbsorbedDoseUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AbsorbedDoseUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AbsorbedDoseUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -30,7 +34,9 @@
 
   <xsd:simpleType name="AccelerationUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AccelerationUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AccelerationUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -40,7 +46,9 @@
 
   <xsd:simpleType name="AmountOfSubstanceUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AmountOfSubstanceUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AmountOfSubstanceUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -50,7 +58,9 @@
 
   <xsd:simpleType name="AngleUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AngleUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AngleUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%)"></xsd:pattern>
@@ -59,7 +69,9 @@
 
   <xsd:simpleType name="AngularAccelerationUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AngularAccelerationUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AngularAccelerationUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -69,7 +81,9 @@
 
   <xsd:simpleType name="AngularVelocityUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AngularVelocityUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AngularVelocityUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -79,7 +93,9 @@
 
   <xsd:simpleType name="AreaUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid AreaUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid AreaUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -89,7 +105,9 @@
 
   <xsd:simpleType name="CatalyticActivityUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid CatalyticActivityUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid CatalyticActivityUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -99,7 +117,9 @@
 
   <xsd:simpleType name="DensityUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid DensityUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid DensityUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kg/m\^3|g/cm\^3)"></xsd:pattern>
@@ -108,7 +128,9 @@
 
   <xsd:simpleType name="DirectionUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid DirectionUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid DirectionUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\))"></xsd:pattern>
@@ -117,7 +139,9 @@
 
   <xsd:simpleType name="DurationUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid DurationUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid DurationUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -127,7 +151,9 @@
 
   <xsd:simpleType name="ElectricalCapacitanceUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ElectricalCapacitanceUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ElectricalCapacitanceUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF)"></xsd:pattern>
@@ -136,7 +162,9 @@
 
   <xsd:simpleType name="ElectricalChargeUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ElectricalChargeUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ElectricalChargeUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -146,7 +174,9 @@
 
   <xsd:simpleType name="ElectricalConductanceUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ElectricalConductanceUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ElectricalConductanceUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS)"></xsd:pattern>
@@ -155,7 +185,9 @@
 
   <xsd:simpleType name="ElectricalCurrentUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ElectricalCurrentUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ElectricalCurrentUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA)"></xsd:pattern>
@@ -164,7 +196,9 @@
 
   <xsd:simpleType name="ElectricalInductanceUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ElectricalInductanceUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ElectricalInductanceUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH)"></xsd:pattern>
@@ -173,7 +207,9 @@
 
   <xsd:simpleType name="ElectricalPotentialUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ElectricalPotentialUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ElectricalPotentialUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV)"></xsd:pattern>
@@ -182,7 +218,9 @@
 
   <xsd:simpleType name="ElectricalResistanceUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ElectricalResistanceUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ElectricalResistanceUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -192,7 +230,9 @@
 
   <xsd:simpleType name="EnergyUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid EnergyUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid EnergyUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -202,7 +242,9 @@
 
   <xsd:simpleType name="EquivalentDoseUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid EquivalentDoseUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid EquivalentDoseUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -212,7 +254,9 @@
 
   <xsd:simpleType name="FlowMassUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid FlowMassUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid FlowMassUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kg/s|kg/sec|lb/s|lb/sec)"></xsd:pattern>
@@ -221,7 +265,9 @@
 
   <xsd:simpleType name="FlowVolumeUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid FlowVolumeUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid FlowVolumeUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -231,7 +277,9 @@
 
   <xsd:simpleType name="ForceUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid ForceUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid ForceUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(N|sn|dyn|kgf|ozf|lbf|tnf)"></xsd:pattern>
@@ -240,7 +288,9 @@
 
   <xsd:simpleType name="FrequencyUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid FrequencyUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid FrequencyUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -250,7 +300,9 @@
 
   <xsd:simpleType name="IlluminanceUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid IlluminanceUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid IlluminanceUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -260,7 +312,9 @@
 
   <xsd:simpleType name="LengthUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid LengthUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid LengthUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -270,7 +324,9 @@
 
   <xsd:simpleType name="LinearDensityUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid LinearDensityUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid LinearDensityUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -280,7 +336,9 @@
 
   <xsd:simpleType name="LuminousFluxUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid LuminousFluxUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid LuminousFluxUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -290,7 +348,9 @@
 
   <xsd:simpleType name="LuminousIntensityUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid LuminousIntensityUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid LuminousIntensityUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -300,7 +360,9 @@
 
   <xsd:simpleType name="MagneticFluxDensityUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid MagneticFluxDensityUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid MagneticFluxDensityUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G)"></xsd:pattern>
@@ -309,7 +371,9 @@
 
   <xsd:simpleType name="MagneticFluxUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid MagneticFluxUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid MagneticFluxUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -319,7 +383,9 @@
 
   <xsd:simpleType name="MassUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid MassUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid MassUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -329,7 +395,9 @@
 
   <xsd:simpleType name="MomentumUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid MomentumUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid MomentumUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(kgm/s|kgm/sec)"></xsd:pattern>
@@ -338,7 +406,9 @@
 
   <xsd:simpleType name="PositionUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid PositionUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid PositionUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -348,7 +418,9 @@
 
   <xsd:simpleType name="PowerUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid PowerUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid PowerUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -358,7 +430,9 @@
 
   <xsd:simpleType name="PressureUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid PressureUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid PressureUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -368,7 +442,9 @@
 
   <xsd:simpleType name="RadioactivityUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid RadioactivityUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid RadioactivityUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi)"></xsd:pattern>
@@ -377,7 +453,9 @@
 
   <xsd:simpleType name="SolidAngleUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid SolidAngleUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid SolidAngleUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(sr|sq\.deg)"></xsd:pattern>
@@ -386,7 +464,9 @@
 
   <xsd:simpleType name="SpeedUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid SpeedUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid SpeedUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -396,7 +476,9 @@
 
   <xsd:simpleType name="TemperatureUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid TemperatureUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid TemperatureUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -406,7 +488,9 @@
 
   <xsd:simpleType name="TimeUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid TimeUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid TimeUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -416,7 +500,9 @@
 
   <xsd:simpleType name="TorqueUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid TorqueUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid TorqueUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="(N\.m|m\.kgf|lbf\.ft|lbf\.in)"></xsd:pattern>
@@ -425,7 +511,9 @@
 
   <xsd:simpleType name="VolumeUnitType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a valid VolumeUnit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a valid VolumeUnit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -439,7 +527,9 @@
 
   <xsd:simpleType name="AbsoluteTemperatureType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid AbsoluteTemperature with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid AbsoluteTemperature with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -449,7 +539,9 @@
 
   <xsd:simpleType name="AbsorbedDoseType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid AbsorbedDose with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid AbsorbedDose with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -459,7 +551,9 @@
 
   <xsd:simpleType name="AccelerationType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Acceleration with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Acceleration with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -469,7 +563,9 @@
 
   <xsd:simpleType name="AmountOfSubstanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid AmountOfSubstance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid AmountOfSubstance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -479,7 +575,9 @@
 
   <xsd:simpleType name="AngleType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Angle with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Angle with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -489,7 +587,9 @@
 
   <xsd:simpleType name="AngularAccelerationType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid AngularAcceleration with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid AngularAcceleration with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -499,7 +599,9 @@
 
   <xsd:simpleType name="AngularVelocityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid AngularVelocity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid AngularVelocity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -509,7 +611,9 @@
 
   <xsd:simpleType name="AreaType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Area with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Area with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -519,7 +623,9 @@
 
   <xsd:simpleType name="CatalyticActivityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid CatalyticActivity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid CatalyticActivity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -529,7 +635,9 @@
 
   <xsd:simpleType name="DensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Density with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Density with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/m\^3|g/cm\^3))"></xsd:pattern>
@@ -538,7 +646,9 @@
 
   <xsd:simpleType name="DirectionType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Direction with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Direction with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -548,7 +658,9 @@
 
   <xsd:simpleType name="DurationType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Duration with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Duration with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -558,7 +670,9 @@
 
   <xsd:simpleType name="ElectricalCapacitanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalCapacitance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid ElectricalCapacitance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -568,7 +682,9 @@
 
   <xsd:simpleType name="ElectricalChargeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalCharge with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid ElectricalCharge with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -578,7 +694,9 @@
 
   <xsd:simpleType name="ElectricalConductanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalConductance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid ElectricalConductance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -588,7 +706,9 @@
 
   <xsd:simpleType name="ElectricalCurrentType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalCurrent with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid ElectricalCurrent with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -598,7 +718,9 @@
 
   <xsd:simpleType name="ElectricalInductanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalInductance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid ElectricalInductance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -608,7 +730,9 @@
 
   <xsd:simpleType name="ElectricalPotentialType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalPotential with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid ElectricalPotential with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -618,7 +742,9 @@
 
   <xsd:simpleType name="ElectricalResistanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalResistance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid ElectricalResistance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -628,7 +754,9 @@
 
   <xsd:simpleType name="EnergyType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Energy with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Energy with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -638,7 +766,9 @@
 
   <xsd:simpleType name="EquivalentDoseType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid EquivalentDose with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid EquivalentDose with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -648,7 +778,9 @@
 
   <xsd:simpleType name="FlowMassType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid FlowMass with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid FlowMass with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/s|kg/sec|lb/s|lb/sec))"></xsd:pattern>
@@ -657,7 +789,9 @@
 
   <xsd:simpleType name="FlowVolumeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid FlowVolume with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid FlowVolume with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -667,7 +801,9 @@
 
   <xsd:simpleType name="ForceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Force with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Force with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N|sn|dyn|kgf|ozf|lbf|tnf))"></xsd:pattern>
@@ -676,7 +812,9 @@
 
   <xsd:simpleType name="FrequencyType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Frequency with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Frequency with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -686,7 +824,9 @@
 
   <xsd:simpleType name="IlluminanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Illuminance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Illuminance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -696,7 +836,9 @@
 
   <xsd:simpleType name="LengthType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Length with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Length with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -706,7 +848,9 @@
 
   <xsd:simpleType name="LinearDensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid LinearDensity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid LinearDensity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -716,7 +860,9 @@
 
   <xsd:simpleType name="LuminousFluxType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid LuminousFlux with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid LuminousFlux with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -726,7 +872,9 @@
 
   <xsd:simpleType name="LuminousIntensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid LuminousIntensity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid LuminousIntensity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -736,7 +884,9 @@
 
   <xsd:simpleType name="MagneticFluxDensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid MagneticFluxDensity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid MagneticFluxDensity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -746,7 +896,9 @@
 
   <xsd:simpleType name="MagneticFluxType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid MagneticFlux with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid MagneticFlux with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -756,7 +908,9 @@
 
   <xsd:simpleType name="MassType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Mass with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Mass with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -766,7 +920,9 @@
 
   <xsd:simpleType name="MomentumType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Momentum with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Momentum with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kgm/s|kgm/sec))"></xsd:pattern>
@@ -775,7 +931,9 @@
 
   <xsd:simpleType name="PositionType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Position with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Position with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -785,7 +943,9 @@
 
   <xsd:simpleType name="PowerType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Power with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Power with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -795,7 +955,9 @@
 
   <xsd:simpleType name="PressureType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Pressure with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Pressure with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -805,7 +967,9 @@
 
   <xsd:simpleType name="RadioactivityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Radioactivity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Radioactivity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -815,7 +979,9 @@
 
   <xsd:simpleType name="SolidAngleType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid SolidAngle with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid SolidAngle with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(sr|sq\.deg))"></xsd:pattern>
@@ -824,7 +990,9 @@
 
   <xsd:simpleType name="SpeedType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Speed with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Speed with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -834,7 +1002,9 @@
 
   <xsd:simpleType name="TemperatureType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Temperature with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Temperature with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -844,7 +1014,9 @@
 
   <xsd:simpleType name="TimeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Time with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Time with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -854,7 +1026,9 @@
 
   <xsd:simpleType name="TorqueType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Torque with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Torque with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N\.m|m\.kgf|lbf\.ft|lbf\.in))"></xsd:pattern>
@@ -863,7 +1037,9 @@
 
   <xsd:simpleType name="VolumeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid Volume with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid Volume with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -877,7 +1053,9 @@
 
   <xsd:simpleType name="PositiveAbsoluteTemperatureType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAbsoluteTemperature with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveAbsoluteTemperature with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -887,7 +1065,9 @@
 
   <xsd:simpleType name="PositiveAbsorbedDoseType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAbsorbedDose with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveAbsorbedDose with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -897,7 +1077,9 @@
 
   <xsd:simpleType name="PositiveAccelerationType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAcceleration with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveAcceleration with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -907,7 +1089,9 @@
 
   <xsd:simpleType name="PositiveAmountOfSubstanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAmountOfSubstance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveAmountOfSubstance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -917,7 +1101,9 @@
 
   <xsd:simpleType name="PositiveAngleType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAngle with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveAngle with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -927,7 +1113,9 @@
 
   <xsd:simpleType name="PositiveAngularAccelerationType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAngularAcceleration with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveAngularAcceleration with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -937,7 +1125,9 @@
 
   <xsd:simpleType name="PositiveAngularVelocityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAngularVelocity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveAngularVelocity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -947,7 +1137,9 @@
 
   <xsd:simpleType name="PositiveAreaType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveArea with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveArea with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -957,7 +1149,9 @@
 
   <xsd:simpleType name="PositiveCatalyticActivityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveCatalyticActivity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveCatalyticActivity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -967,7 +1161,9 @@
 
   <xsd:simpleType name="PositiveDensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveDensity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveDensity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/m\^3|g/cm\^3))"></xsd:pattern>
@@ -976,7 +1172,9 @@
 
   <xsd:simpleType name="PositiveDirectionType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveDirection with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveDirection with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -986,7 +1184,9 @@
 
   <xsd:simpleType name="PositiveDurationType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveDuration with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveDuration with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -996,7 +1196,9 @@
 
   <xsd:simpleType name="PositiveElectricalCapacitanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalCapacitance with unit.
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveElectricalCapacitance with unit.
+        </ots:pattern>
       </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
@@ -1007,7 +1209,9 @@
 
   <xsd:simpleType name="PositiveElectricalChargeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalCharge with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveElectricalCharge with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1017,7 +1221,9 @@
 
   <xsd:simpleType name="PositiveElectricalConductanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalConductance with unit.
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveElectricalConductance with unit.
+        </ots:pattern>
       </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
@@ -1028,7 +1234,9 @@
 
   <xsd:simpleType name="PositiveElectricalCurrentType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalCurrent with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveElectricalCurrent with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1038,7 +1246,9 @@
 
   <xsd:simpleType name="PositiveElectricalInductanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalInductance with unit.
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveElectricalInductance with unit.
+        </ots:pattern>
       </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
@@ -1049,7 +1259,9 @@
 
   <xsd:simpleType name="PositiveElectricalPotentialType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalPotential with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveElectricalPotential with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1059,7 +1271,9 @@
 
   <xsd:simpleType name="PositiveElectricalResistanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalResistance with unit.
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveElectricalResistance with unit.
+        </ots:pattern>
       </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
@@ -1070,7 +1284,9 @@
 
   <xsd:simpleType name="PositiveEnergyType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveEnergy with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveEnergy with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1080,7 +1296,9 @@
 
   <xsd:simpleType name="PositiveEquivalentDoseType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveEquivalentDose with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveEquivalentDose with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1090,7 +1308,9 @@
 
   <xsd:simpleType name="PositiveFlowMassType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveFlowMass with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveFlowMass with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg/s|kg/sec|lb/s|lb/sec))"></xsd:pattern>
@@ -1099,7 +1319,9 @@
 
   <xsd:simpleType name="PositiveFlowVolumeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveFlowVolume with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveFlowVolume with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1109,7 +1331,9 @@
 
   <xsd:simpleType name="PositiveForceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveForce with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveForce with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N|sn|dyn|kgf|ozf|lbf|tnf))"></xsd:pattern>
@@ -1118,7 +1342,9 @@
 
   <xsd:simpleType name="PositiveFrequencyType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveFrequency with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveFrequency with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1128,7 +1354,9 @@
 
   <xsd:simpleType name="PositiveIlluminanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveIlluminance with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveIlluminance with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1138,7 +1366,9 @@
 
   <xsd:simpleType name="PositiveLengthType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLength with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveLength with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1148,7 +1378,9 @@
 
   <xsd:simpleType name="PositiveLinearDensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLinearDensity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveLinearDensity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1158,7 +1390,9 @@
 
   <xsd:simpleType name="PositiveLuminousFluxType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLuminousFlux with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveLuminousFlux with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1168,7 +1402,9 @@
 
   <xsd:simpleType name="PositiveLuminousIntensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLuminousIntensity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveLuminousIntensity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1178,7 +1414,9 @@
 
   <xsd:simpleType name="PositiveMagneticFluxDensityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveMagneticFluxDensity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveMagneticFluxDensity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1188,7 +1426,9 @@
 
   <xsd:simpleType name="PositiveMagneticFluxType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveMagneticFlux with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveMagneticFlux with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1198,7 +1438,9 @@
 
   <xsd:simpleType name="PositiveMassType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveMass with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveMass with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1208,7 +1450,9 @@
 
   <xsd:simpleType name="PositiveMomentumType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveMomentum with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveMomentum with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kgm/s|kgm/sec))"></xsd:pattern>
@@ -1217,7 +1461,9 @@
 
   <xsd:simpleType name="PositivePositionType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositivePosition with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositivePosition with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1227,7 +1473,9 @@
 
   <xsd:simpleType name="PositivePowerType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositivePower with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositivePower with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1237,7 +1485,9 @@
 
   <xsd:simpleType name="PositivePressureType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositivePressure with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositivePressure with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1247,7 +1497,9 @@
 
   <xsd:simpleType name="PositiveRadioactivityType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveRadioactivity with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveRadioactivity with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1257,7 +1509,9 @@
 
   <xsd:simpleType name="PositiveSolidAngleType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveSolidAngle with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveSolidAngle with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(sr|sq\.deg))"></xsd:pattern>
@@ -1266,7 +1520,9 @@
 
   <xsd:simpleType name="PositiveSpeedType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveSpeed with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveSpeed with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1276,7 +1532,9 @@
 
   <xsd:simpleType name="PositiveTemperatureType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveTemperature with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveTemperature with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1286,7 +1544,9 @@
 
   <xsd:simpleType name="PositiveTimeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveTime with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveTime with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1296,7 +1556,9 @@
 
   <xsd:simpleType name="PositiveTorqueType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveTorque with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveTorque with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(N\.m|m\.kgf|lbf\.ft|lbf\.in))"></xsd:pattern>
@@ -1305,7 +1567,9 @@
 
   <xsd:simpleType name="PositiveVolumeType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveVolume with unit.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a valid PositiveVolume with unit.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1320,7 +1584,9 @@
 
   <xsd:simpleType name="Expression">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}" />
@@ -1329,7 +1595,9 @@
 
   <xsd:simpleType name="IdType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a value without { }.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a value without { }.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="[^{}]+" />
@@ -1430,7 +1698,9 @@
 
   <xsd:simpleType name="ClassNameType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a full class name with dot-notation.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a full class name with dot-notation.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|(([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+)"></xsd:pattern>
@@ -1440,7 +1710,9 @@
   <!-- Same as ClassNameType, just a different binding. -->
   <xsd:simpleType name="StaticFieldNameType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a full field name with dot-notation.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a full field name with dot-notation.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|(([A-Za-z_0-9$]+\.)*[A-Za-z_0-9$]+)"></xsd:pattern>
@@ -1450,7 +1722,9 @@
   <!-- Allows patterns like BEGIN | END | END-10m | 25m | 50% -->
   <xsd:simpleType name="LengthBeginEndType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as BEGIN, END, END-10m, 25m, or 50%.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a value as BEGIN, END, END-10m, 25m, or 50%.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern
@@ -1462,8 +1736,10 @@
 
   <xsd:simpleType name="FractionType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as decimal number [0 .. 1] or percentage [0% ..
-        100%].</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a value as decimal number [0 .. 1] or percentage [0% ..
+          100%].</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|((0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.0*)?))\s*\%)"></xsd:pattern>
@@ -1472,7 +1748,9 @@
 
   <xsd:simpleType name="VehicleFrequencyType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as X.Xveh/{time unit}.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a value as X.Xveh/{time unit}.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|(\d+\.?\d*\s*veh\s*\/\s*(ms|s|min|h|day|wk))"></xsd:pattern>
@@ -1481,7 +1759,9 @@
 
   <xsd:simpleType name="CoordinateType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as (X.X, X.X).</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide an expression { }, or a value as (X.X, X.X).</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|(\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*\s*\))">
@@ -1562,7 +1842,9 @@
 
   <xsd:simpleType name="ColorType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Expression { } or e.g. RED, #FF80AA, or RGB(255,0,80).</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Expression { } or e.g. RED, #FF80AA, or RGB(255,0,80).</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern

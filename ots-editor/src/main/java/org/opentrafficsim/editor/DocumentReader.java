@@ -127,53 +127,61 @@ public final class DocumentReader
     }
 
     /**
-     * Types of annotation elements the {@code DocumentReader} can read. This is a combination of the element name (e.g.
-     * {@code xsd:appinfo}) and the source {@code name}.
+     * Types of annotation elements the {@code DocumentReader} can read. These are defined as below.
      *
      * <pre>
-     * &lt;xsd:sequence&gt;
-     *   &lt;xsd:annotation&gt;
-     *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
-     *   &lt;/xsd:annotation&gt;
-     * &lt;/xsd:sequence&gt;
-     * </pre>
+         * &lt;xsd:sequence&gt;
+         *   &lt;xsd:annotation&gt;
+         *     &lt;xsd:description&gt;describes the sequence&lt;/xsd:description&gt;
+         *     &lt;xsd:appinfo&gt;
+         *       &lt;ots:name&gt;annotates the sequence&lt;/ots:name&gt;
+         *     &lt;/xsd:appinfo&gt;
+         *   &lt;/xsd:annotation&gt;
+         * &lt;/xsd:sequence&gt;
+         * </pre>
      */
     public enum NodeAnnotation
     {
         /** Element xsd:documentation. */
-        DESCRIPTION("xsd:documentation", "description"),
+        DESCRIPTION("xsd:documentation", null),
 
-        /** Element xsd:appinfo. */
-        APPINFO_NAME("xsd:appinfo", "name"),
+        /** Element xsd:appinfo/ots:name. */
+        APPINFO_NAME("xsd:appinfo", "ots:name"),
 
-        /** Element xsd:appinfo. */
-        APPINFO_PATTERN("xsd:appinfo", "pattern");
+        /** Element xsd:appinfo/ots:pattern. */
+        APPINFO_PATTERN("xsd:appinfo", "ots:pattern"),
+
+        /** Element xsd:appinfo/ots:defaultValue. */
+        APPINFO_DEFAULT_VALUE("xsd:appinfo", "ots:defaultValue");
 
         /** Element name. */
-        private final String elementName;
+        private final String annotationName;
 
-        /** Source. */
-        private final String source;
+        /** Tag. */
+        private final String tag;
 
         /**
          * Constructor.
-         * @param elementName element name
-         * @param source source name
+         * @param annotationName annotation name
+         * @param tag tag name
          */
-        NodeAnnotation(final String elementName, final String source)
+        NodeAnnotation(final String annotationName, final String tag)
         {
-            this.elementName = elementName;
-            this.source = source;
+            this.annotationName = annotationName;
+            this.tag = tag;
         }
 
         /**
-         * Returns an annotation value. These are defined as below, for either xsd:appinfo or xsd:documentation. All space-like
-         * characters are replaced by blanks, and consecutive blanks are removed.
+         * Returns an annotation value. These are defined as below. All space-like characters are replaced by blanks, and
+         * consecutive blanks are removed.
          *
          * <pre>
          * &lt;xsd:sequence&gt;
          *   &lt;xsd:annotation&gt;
-         *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
+         *     &lt;xsd:description&gt;describes the sequence&lt;/xsd:description&gt;
+         *     &lt;xsd:appinfo&gt;
+         *       &lt;ots:name&gt;annotates the sequence&lt;/ots:name&gt;
+         *     &lt;/xsd:appinfo&gt;
          *   &lt;/xsd:annotation&gt;
          * &lt;/xsd:sequence&gt;
          * </pre>
@@ -185,26 +193,43 @@ public final class DocumentReader
         {
             for (Node child : DocumentReader.getChildren(node, "xsd:annotation"))
             {
-                for (Node annotation : DocumentReader.getChildren(child, this.elementName))
+                for (Node annotation : DocumentReader.getChildren(child, this.annotationName))
                 {
-                    Optional<String> appInfoSource = DocumentReader.getAttribute(annotation, "source");
-                    if (appInfoSource.isPresent() && appInfoSource.get().equals(this.source))
+                    if (this.annotationName.equals(annotation.getNodeName()))
                     {
-                        StringBuilder str = new StringBuilder();
-                        for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
+                        if (this.tag == null)
                         {
-                            Node appInfo = annotation.getChildNodes().item(appIndex);
-                            if (appInfo.getNodeName().equals("#text") || appInfo.getNodeName().equals("#cdata-section"))
-                            {
-                                str.append(appInfo.getNodeValue());
-                            }
+                            return getNodeValue(annotation);
                         }
-                        // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
-                        return Optional.of(str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim());
+                        for (Node tagChild : DocumentReader.getChildren(annotation, this.tag))
+                        {
+                            // As in Highlander, there can be only one.
+                            return getNodeValue(tagChild);
+                        }
                     }
                 }
             }
             return Optional.empty();
+        }
+
+        /**
+         * Returns the combined textual content of the node.
+         * @param annotation node
+         * @return combined textual content
+         */
+        private Optional<String> getNodeValue(final Node annotation)
+        {
+            StringBuilder str = new StringBuilder();
+            for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
+            {
+                Node appInfo = annotation.getChildNodes().item(appIndex);
+                if (appInfo.getNodeName().equals("#text") || appInfo.getNodeName().equals("#cdata-section"))
+                {
+                    str.append(appInfo.getNodeValue());
+                }
+            }
+            // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
+            return Optional.of(str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim());
         }
     }
 

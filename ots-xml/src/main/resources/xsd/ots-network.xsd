@@ -40,8 +40,7 @@
       <xsd:attribute name="Node" type="ots:string" use="required" />
       <xsd:attribute name="Outbound" type="ots:boolean" use="required">
         <xsd:annotation>
-          <xsd:documentation source="description">
-            Outbound Connectors go from Centroid to Node. Inbound from Node to
+          <xsd:documentation xml:lang="en"> Outbound Connectors go from Centroid to Node. Inbound from Node to
             Centroid.
           </xsd:documentation>
         </xsd:annotation>
@@ -117,7 +116,9 @@
           </xsd:element>
           <xsd:sequence>
             <xsd:annotation>
-              <xsd:appinfo source="name">Defined</xsd:appinfo>
+              <xsd:appinfo>
+                <ots:name>Defined</ots:name>
+              </xsd:appinfo>
             </xsd:annotation>
             <xsd:element name="DefinedLayout" type="ots:string" />
             <xsd:element name="LaneOverride" minOccurs="0" maxOccurs="unbounded">
@@ -133,7 +134,8 @@
                 <xsd:sequence>
                   <xsd:element name="Elements" type="ots:StripeElements" minOccurs="0" />
                   <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
-                  <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0" maxOccurs="unbounded" />
+                  <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0"
+                    maxOccurs="unbounded" />
                 </xsd:sequence>
                 <xsd:attribute name="LeftChangeLane" type="ots:boolean" />
                 <xsd:attribute name="RightChangeLane" type="ots:boolean" />
@@ -143,7 +145,7 @@
             </xsd:element>
           </xsd:sequence>
         </xsd:choice>
-        
+
         <xsd:element name="TrafficLight" type="ots:TrafficLightType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="TrafficLightSensor" type="ots:TrafficLightDetectorType" minOccurs="0"
           maxOccurs="unbounded" />
@@ -159,7 +161,7 @@
       <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" default="KEEPRIGHT" />
       <xsd:attribute name="Priority" type="ots:PriorityType" use="optional" />
       <xsd:attribute name="ConflictId" type="ots:string" use="optional" />
-      
+
     </xsd:complexType>
 
     <!-- Link.TrafficLight.{Id|Lane} key -->
@@ -168,10 +170,10 @@
       <xsd:field xpath="@Id" />
       <xsd:field xpath="@Lane" />
     </xsd:key>
-    
+
     <!-- Link.StripeOverride.Stripe key -->
     <xsd:key name="linkStripeOverrideKey">
-    <xsd:selector xpath="ots:StripeOverride" />
+      <xsd:selector xpath="ots:StripeOverride" />
       <xsd:field xpath="@Stripe" />
     </xsd:key>
 
@@ -182,7 +184,7 @@
       <xsd:sequence>
         <xsd:element name="Conflicts" minOccurs="0" maxOccurs="1">
           <xsd:annotation>
-            <xsd:documentation source="description">Default width is 2m. None creates no conflicts. Relative width is
+            <xsd:documentation xml:lang="en">Default width is 2m. None creates no conflicts. Relative width is
               relative to lane width. Otherwise specify width.
             </xsd:documentation>
           </xsd:annotation>
@@ -230,7 +232,7 @@
     <!-- TODO allow for detectors that span multiple lanes (longitudinally); thus multiple links -->
     <xsd:attribute name="Class" type="ots:ClassNameType" use="required">
       <xsd:annotation>
-        <xsd:documentation source="description">Fully specified classname including the package.
+        <xsd:documentation xml:lang="en">Fully specified classname including the package.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>

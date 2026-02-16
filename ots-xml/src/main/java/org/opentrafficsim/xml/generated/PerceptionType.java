@@ -158,10 +158,10 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
     private static final long serialVersionUID = 10102L;
     /**
-     * Class: category by class name, should have LanePerception as constructor
-     *             parameter, and optionally a second HeadwayGtuType parameter. Ego: perception of own vehicle. BusStop: perceive bus
-     *             stops for scheduled busses. Infrastructure: infrastructure. Intersection: conflicts and traffic lights. Neighbors:
-     *             surrounding GTUs. Traffic: speed and density on lanes.
+     * Class: category by class name, should have LanePerception as
+     *             constructor parameter, and optionally a second HeadwayGtuType parameter. Ego: perception of own vehicle. BusStop:
+     *             perceive bus stops for scheduled busses. Infrastructure: infrastructure. Intersection: conflicts and traffic lights.
+     *             Neighbors: surrounding GTUs. Traffic: speed and density on lanes.
      * 
      */
     @XmlElement(name = "Categories")
@@ -177,10 +177,10 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected PerceptionType.Mental mental;
 
     /**
-     * Class: category by class name, should have LanePerception as constructor
-     *             parameter, and optionally a second HeadwayGtuType parameter. Ego: perception of own vehicle. BusStop: perceive bus
-     *             stops for scheduled busses. Infrastructure: infrastructure. Intersection: conflicts and traffic lights. Neighbors:
-     *             surrounding GTUs. Traffic: speed and density on lanes.
+     * Class: category by class name, should have LanePerception as
+     *             constructor parameter, and optionally a second HeadwayGtuType parameter. Ego: perception of own vehicle. BusStop:
+     *             perceive bus stops for scheduled busses. Infrastructure: infrastructure. Intersection: conflicts and traffic lights.
+     *             Neighbors: surrounding GTUs. Traffic: speed and density on lanes.
      * 
      * @return
      *     possible object is
@@ -622,7 +622,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
             private static final long serialVersionUID = 10102L;
             /**
-             * Estimation entails perfect (NONE) or under- or overestimation
+             * Estimation entails perfect (NONE) or under- or
+             *                         overestimation
              *                         (UNDERESTIMATION, OVERESTIMATION) of the delayed speed and headway.
              * 
              */
@@ -639,7 +640,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
             protected AnticipationType anticipation;
 
             /**
-             * Estimation entails perfect (NONE) or under- or overestimation
+             * Estimation entails perfect (NONE) or under- or
+             *                         overestimation
              *                         (UNDERESTIMATION, OVERESTIMATION) of the delayed speed and headway.
              * 
              * @return

@@ -75,9 +75,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlJavaTypeAdapter(StringAdapter.class)
     protected StringType gtuType;
     /**
-     * Bias strength value. For a lane that is <i>d</i> lanes away from the 
-     *             desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a 
-     *             GTU will be generated there.
+     * Bias strength value. For a lane that is <i>d</i> lanes away from the desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a GTU will be generated there.
      * 
      */
     @XmlAttribute(name = "Bias", required = true)
@@ -213,9 +211,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Bias strength value. For a lane that is <i>d</i> lanes away from the 
-     *             desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a 
-     *             GTU will be generated there.
+     * Bias strength value. For a lane that is <i>d</i> lanes away from the desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a GTU will be generated there.
      * 
      * @return
      *     possible object is

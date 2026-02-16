@@ -937,6 +937,12 @@ public class XsdTreeNode extends LocalEventProducer
     {
         assureAttributesAndDescription();
         Objects.checkIndex(index, attributeCount());
+        Optional<String> appInfoDefault =
+                DocumentReader.NodeAnnotation.APPINFO_DEFAULT_VALUE.get(this.attributeNodes.get(index));
+        if (appInfoDefault.isPresent())
+        {
+            return appInfoDefault;
+        }
         return DocumentReader.getAttribute(this.attributeNodes.get(index), "default");
     }
 

@@ -34,7 +34,12 @@
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="SinkType" type="ots:string" use="required" />
-      <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR" />
+      <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR">
+      <xsd:annotation>
+        <xsd:appinfo>
+                        <ots:defaultValue>PASSIVIMO</ots:defaultValue>
+                      </xsd:appinfo></xsd:annotation>
+      </xsd:attribute>
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
       <xsd:attribute name="Options" type="ots:string" use="optional" />
     </xsd:complexType>
@@ -54,8 +59,8 @@
       <xsd:sequence>
         <xsd:element name="OdOptionsItem" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:documentation source="description">Defines options on a Global, LinkType, Origin (node) or Lane level. The
-              most specific level is always applicable for a vehicle generator.
+            <xsd:documentation xml:lang="en">Defines options on a Global, LinkType, Origin (node) or Lane level.
+              The most specific level is always applicable for a vehicle generator.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:complexType>
@@ -85,7 +90,7 @@
               </xsd:element>
               <xsd:element name="NoLaneChange" type="ots:PositiveLengthType" minOccurs="0">
                 <xsd:annotation>
-                  <xsd:documentation source="description">Initial distance over which GTUs are not allowed to change lane,
+                  <xsd:documentation xml:lang="en">Initial distance over which GTUs are not allowed to change lane,
                     to prevent interacting with generation on adjacent lanes.
                   </xsd:documentation>
                 </xsd:annotation>
@@ -109,14 +114,14 @@
               </xsd:element>
               <xsd:element name="Markov" minOccurs="0">
                 <xsd:annotation>
-                  <xsd:documentation source="description">Markov chaining based on auto-correlation of GTU types.
+                  <xsd:documentation xml:lang="en">Markov chaining based on auto-correlation of GTU types.
                   </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                   <xsd:sequence>
                     <xsd:element name="State" maxOccurs="unbounded">
                       <xsd:annotation>
-                        <xsd:documentation source="description">Defines auto-correlation of a GTU type. The parent type
+                        <xsd:documentation xml:lang="en">Defines auto-correlation of a GTU type. The parent type
                           creates a group of correlated GTU types under a single parent.
                         </xsd:documentation>
                       </xsd:annotation>
@@ -131,7 +136,7 @@
               </xsd:element>
               <xsd:element name="LaneBiases" minOccurs="0">
                 <xsd:annotation>
-                  <xsd:documentation source="description">Influences the preferred lateral position of generated GTU's.
+                  <xsd:documentation xml:lang="en">Influences the preferred lateral position of generated GTU's.
                   </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -196,8 +201,7 @@
       <xsd:sequence>
         <xsd:choice minOccurs="0">
           <xsd:annotation>
-            <xsd:documentation source="description">
-              Shortest route in terms of distance (default), free flow time, or a
+            <xsd:documentation xml:lang="en">Shortest route in terms of distance (default), free flow time, or a
               weighted mixture of both.
             </xsd:documentation>
           </xsd:annotation>
@@ -274,7 +278,7 @@
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
       <xsd:attribute name="NoLaneChangeDistance" type="ots:PositiveLengthType" use="optional">
         <xsd:annotation>
-          <xsd:documentation source="description">Length over which GTUs are not allowed to change lane after being
+          <xsd:documentation xml:lang="en">Length over which GTUs are not allowed to change lane after being
             generated, to avoid interference with generation on adjacent lanes. If no value is specified and there are adjacent
             lanes, 50m will be used.
           </xsd:documentation>
@@ -289,7 +293,7 @@
 
         <xsd:element name="Position" minOccurs="0">
           <xsd:annotation>
-            <xsd:documentation source="description">Provide a Position if there is no Link, Lane or Position (on lane)
+            <xsd:documentation xml:lang="en">Provide a Position if there is no Link, Lane or Position (on lane)
               data.
             </xsd:documentation>
           </xsd:annotation>
@@ -302,7 +306,7 @@
 
         <xsd:element name="GtuCharacteristics" minOccurs="0">
           <xsd:annotation>
-            <xsd:documentation source="description">Provide Gtu Characteristics if there is no data on GTU size, speed,
+            <xsd:documentation xml:lang="en">Provide Gtu Characteristics if there is no data on GTU size, speed,
               acceleration and route.
             </xsd:documentation>
           </xsd:annotation>
@@ -324,18 +328,18 @@
 
         <xsd:choice>
           <xsd:annotation>
-            <xsd:documentation source="description">Test.
+            <xsd:documentation xml:lang="en">Test.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:element name="RoomChecker" type="ots:RoomCheckerType">
             <xsd:annotation>
-              <xsd:documentation source="description">Provide a Room Checker if there is no speed in the data.
+              <xsd:documentation xml:lang="en">Provide a Room Checker if there is no speed in the data.
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
           <xsd:element name="TimeToCollision" type="ots:PositiveDurationType">
             <xsd:annotation>
-              <xsd:documentation source="description">Provide a Time To Collision if there is speed in the data.
+              <xsd:documentation xml:lang="en">Provide a Time To Collision if there is speed in the data.
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
@@ -345,7 +349,8 @@
 
         <xsd:element name="Arrivals">
           <xsd:annotation>
-            <xsd:documentation source="description">Provide link to arrivals file (csv with csv.header) or specify Arrivals.
+            <xsd:documentation xml:lang="en">Provide link to arrivals file (csv with csv.header) or specify
+              Arrivals.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:complexType>
@@ -353,7 +358,7 @@
               <xsd:element name="Arrival" minOccurs="0" maxOccurs="unbounded">
                 <xsd:complexType>
                   <xsd:annotation>
-                    <xsd:documentation source="description">The value column is the arrival time.</xsd:documentation>
+                    <xsd:documentation xml:lang="en">The value column is the arrival time.</xsd:documentation>
                   </xsd:annotation>
                   <xsd:simpleContent>
                     <xsd:extension base="ots:PositiveDurationType"> <!-- this is the arrival time -->
@@ -384,7 +389,7 @@
       </xsd:sequence>
       <xsd:attribute name="NoLaneChangeDistance" type="ots:PositiveLengthType" use="optional">
         <xsd:annotation>
-          <xsd:documentation source="description">Length over which GTUs are not allowed to change lane after being
+          <xsd:documentation xml:lang="en">Length over which GTUs are not allowed to change lane after being
             generated, to avoid interference with generation on adjacent lanes. If no value is specified, 50m will be used.
           </xsd:documentation>
         </xsd:annotation>
@@ -400,7 +405,7 @@
       <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
       <xsd:attribute name="Destination" type="ots:boolean" use="optional" default="true">
         <xsd:annotation>
-          <xsd:documentation source="description">When true, only GTUs with a route towards the link end node will be
+          <xsd:documentation xml:lang="en">When true, only GTUs with a route towards the link end node will be
             deleted, or possibly towards the end node of a next connector.
           </xsd:documentation>
         </xsd:annotation>
@@ -440,8 +445,8 @@
 
   <xsd:complexType name="RoomCheckerType">
     <xsd:annotation>
-      <xsd:documentation source="description">Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following to
-        increase flow during spillback based on bounded-acceleration, Ttc uses time-to-collision.
+      <xsd:documentation xml:lang="en">Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following
+        to increase flow during spillback based on bounded-acceleration, Ttc uses time-to-collision.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice>
@@ -482,7 +487,9 @@
 
   <xsd:simpleType name="LevelType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a positive value or percentage, or X.Xveh/{time unit}.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a positive value or percentage, or X.Xveh/{time unit}.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|((\d*(\.\d\d*)?\%?)|\d+\.?\d*\s*veh(\s*\/\s*(ms|s|m|min|h|hr|d|day|wk|week))?)" />
@@ -491,7 +498,9 @@
 
   <xsd:simpleType name="PositiveFactor">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide a positive value or percentage.</xsd:appinfo>
+      <xsd:appinfo>
+        <ots:pattern>Provide a positive value or percentage.</ots:pattern>
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|(\d*(\.\d\d*)?\%?)" />

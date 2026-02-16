@@ -1239,9 +1239,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             @XmlElement(name = "Then", required = true)
             protected CorrelationParameterType then;
             /**
-             * Expression with a local context. Use 'first' and 'then' to refer
-             *                       to the two base parameter values. The expression result will become the value for 'then'. Argument 'first'
-             *                       may be empty. For example "then + 0.2*first" increases the 'then' value by 20% of 'first'.
+             * Expression with a local context. Use 'first' and 'then' to
+             *                       refer to the two base parameter values. The expression result will become the value for 'then'. Argument
+             *                       'first' may be empty. For example "then + 0.2*first" increases the 'then' value by 20% of 'first'.
              * 
              */
             @XmlAttribute(name = "Expression")
@@ -1296,9 +1296,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Expression with a local context. Use 'first' and 'then' to refer
-             *                       to the two base parameter values. The expression result will become the value for 'then'. Argument 'first'
-             *                       may be empty. For example "then + 0.2*first" increases the 'then' value by 20% of 'first'.
+             * Expression with a local context. Use 'first' and 'then' to
+             *                       refer to the two base parameter values. The expression result will become the value for 'then'. Argument
+             *                       'first' may be empty. For example "then + 0.2*first" increases the 'then' value by 20% of 'first'.
              * 
              * @return
              *     possible object is
@@ -2920,18 +2920,18 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             @XmlElement(name = "CarFollowingModel")
             protected CarFollowingModelType carFollowingModel;
             /**
-             * DEADEND: stop for dead-end during synchronization. PASSIVE
-             *                         (default): follow first leader in target lane. ALIGNGAP: align to middle of adjacent gap. ACTIVE:
-             *                         actively consider whether gaps can be reached in time (not advised).
+             * DEADEND: stop for dead-end during synchronization. PASSIVE:
+             *                         follow first leader in target lane. ALIGNGAP: align to middle of adjacent gap. ACTIVE: actively consider
+             *                         whether gaps can be reached in time (not advised).
              * 
              */
             @XmlElement(name = "Synchronization", type = java.lang.String.class, defaultValue = "PASSIVE")
             @XmlJavaTypeAdapter(SynchronizationAdapter.class)
             protected SynchronizationType synchronization;
             /**
-             * PASSIVE (default): follow potential lane changer.
-             *                         PASSIVEMOVING: follow potential lane changer except at very low ego-speed. ACTIVE: actively consider
-             *                         whether the potential lane changer can make the gap.
+             * PASSIVE: follow potential lane changer. PASSIVEMOVING:
+             *                         follow potential lane changer except at very low ego-speed. ACTIVE: actively consider whether the
+             *                         potential lane changer can make the gap.
              * 
              */
             @XmlElement(name = "Cooperation", type = java.lang.String.class, defaultValue = "PASSIVE")
@@ -2939,15 +2939,15 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected CooperationType cooperation;
             /**
              * INFORMED: aware of desired headway of potential follower.
-             *                         EGOHEADWAY (default): potential follower evaluated with own desired headway.
+             *                         EGO_HEADWAY: potential follower evaluated with own desired headway.
              * 
              */
             @XmlElement(name = "GapAcceptance", type = java.lang.String.class)
             @XmlJavaTypeAdapter(GapAcceptanceAdapter.class)
             protected GapAcceptanceType gapAcceptance;
             /**
-             * NONE (default): no tailgating. RHOONLY: pressure parameter
-             *                         affects other traffic, ego headway not affected. PRESSURE: ego headway and surrounding traffic affected.
+             * NONE: no tailgating. RHOONLY: pressure parameter affects
+             *                         other traffic, ego headway not affected. PRESSURE: ego headway and surrounding traffic affected.
              * 
              */
             @XmlElement(name = "Tailgating", type = java.lang.String.class)
@@ -2987,9 +2987,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * DEADEND: stop for dead-end during synchronization. PASSIVE
-             *                         (default): follow first leader in target lane. ALIGNGAP: align to middle of adjacent gap. ACTIVE:
-             *                         actively consider whether gaps can be reached in time (not advised).
+             * DEADEND: stop for dead-end during synchronization. PASSIVE:
+             *                         follow first leader in target lane. ALIGNGAP: align to middle of adjacent gap. ACTIVE: actively consider
+             *                         whether gaps can be reached in time (not advised).
              * 
              * @return
              *     possible object is
@@ -3014,9 +3014,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * PASSIVE (default): follow potential lane changer.
-             *                         PASSIVEMOVING: follow potential lane changer except at very low ego-speed. ACTIVE: actively consider
-             *                         whether the potential lane changer can make the gap.
+             * PASSIVE: follow potential lane changer. PASSIVEMOVING:
+             *                         follow potential lane changer except at very low ego-speed. ACTIVE: actively consider whether the
+             *                         potential lane changer can make the gap.
              * 
              * @return
              *     possible object is
@@ -3042,7 +3042,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
             /**
              * INFORMED: aware of desired headway of potential follower.
-             *                         EGOHEADWAY (default): potential follower evaluated with own desired headway.
+             *                         EGO_HEADWAY: potential follower evaluated with own desired headway.
              * 
              * @return
              *     possible object is
@@ -3067,8 +3067,8 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * NONE (default): no tailgating. RHOONLY: pressure parameter
-             *                         affects other traffic, ego headway not affected. PRESSURE: ego headway and surrounding traffic affected.
+             * NONE: no tailgating. RHOONLY: pressure parameter affects
+             *                         other traffic, ego headway not affected. PRESSURE: ego headway and surrounding traffic affected.
              * 
              * @return
              *     possible object is
@@ -3190,7 +3190,8 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
             /**
-             * TrafficLights: consider traffic lights. Conflicts: consider
+             * TrafficLights: consider traffic lights. Conflicts:
+             *                           consider
              *                           intersection conflicts. SpeedLimitTransitions: decelerate for lower speed limit ahead.
              *                           NoRightOvertake: follow left leader, in some circumstances. BusStop: for scheduled busses to stop.
              *                           Class: from a class with empty constructor.

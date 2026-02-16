@@ -160,7 +160,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlElement(name = "RandomStream")
     protected RandomStreamSource randomStream;
     /**
-     * Provide link to arrivals file (csv with csv.header) or specify Arrivals.
+     * Provide link to arrivals file (csv with csv.header) or specify
+     *               Arrivals.
      * 
      */
     @XmlElement(name = "Arrivals", required = true)
@@ -301,7 +302,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Provide link to arrivals file (csv with csv.header) or specify Arrivals.
+     * Provide link to arrivals file (csv with csv.header) or specify
+     *               Arrivals.
      * 
      * @return
      *     possible object is

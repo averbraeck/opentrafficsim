@@ -12,8 +12,8 @@ import org.opentrafficsim.xml.bindings.types.DurationType;
 
 
 /**
- * Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following to
- *         increase flow during spillback based on bounded-acceleration, Ttc uses time-to-collision.
+ * Cf uses equilibrium car-following, CfBa uses non-equilibrium car-following
+ *         to increase flow during spillback based on bounded-acceleration, Ttc uses time-to-collision.
  * 
  * <p>Java class for RoomCheckerType complex type</p>.
  * 

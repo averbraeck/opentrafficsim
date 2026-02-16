@@ -151,8 +151,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
     private static final long serialVersionUID = 10102L;
     /**
-     * Defines options on a Global, LinkType, Origin (node) or Lane level. The
-     *               most specific level is always applicable for a vehicle generator.
+     * Defines options on a Global, LinkType, Origin (node) or Lane level.
+     *               The most specific level is always applicable for a vehicle generator.
      * 
      */
     @XmlElement(name = "OdOptionsItem", required = true)
@@ -161,8 +161,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected String id;
 
     /**
-     * Defines options on a Global, LinkType, Origin (node) or Lane level. The
-     *               most specific level is always applicable for a vehicle generator.
+     * Defines options on a Global, LinkType, Origin (node) or Lane level.
+     *               The most specific level is always applicable for a vehicle generator.
      * 
      * Gets the value of the odOptionsItem property.
      * 

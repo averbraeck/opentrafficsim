@@ -80,7 +80,7 @@
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="Compatible" type="ots:boolean" use="optional" default="true">
         <xsd:annotation>
-          <xsd:documentation source="description">When false, the GTU type is explicitly subtracted from the allowed GTU
+          <xsd:documentation xml:lang="en">When false, the GTU type is explicitly subtracted from the allowed GTU
             types.
           </xsd:documentation>
         </xsd:annotation>
@@ -106,7 +106,7 @@
 
   <xsd:element name="LaneBias">
     <xsd:annotation>
-      <xsd:documentation source="description">Sets the preferred lateral position for vehicle generation for the given GTU
+      <xsd:documentation xml:lang="en">Sets the preferred lateral position for vehicle generation for the given GTU
         type either based on speed, or a fixed lateral position (between 0 and 1 covering the width of the road, in terms of
         lanes).
       </xsd:documentation>
@@ -123,14 +123,12 @@
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="Bias" type="ots:float" use="required">
         <xsd:annotation>
-          <xsd:documentation source="description"><![CDATA[Bias strength value. For a lane that is <i>d</i> lanes away from the 
-            desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a 
-            GTU will be generated there.]]></xsd:documentation>
+          <xsd:documentation xml:lang="en"><![CDATA[Bias strength value. For a lane that is <i>d</i> lanes away from the desired lateral lane position on the road, a relative probability of 1/(<i>d</i> + 1)<sup>bias</sup> follows that a GTU will be generated there.]]></xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>
       <xsd:attribute name="StickyLanes" type="ots:positiveInteger" use="optional">
         <xsd:annotation>
-          <xsd:documentation source="description">Limits GTUs to be generated on lanes at most this number of lanes away
+          <xsd:documentation xml:lang="en">Limits GTUs to be generated on lanes at most this number of lanes away
             from the desired lateral lane position on the road.
           </xsd:documentation>
         </xsd:annotation>
@@ -247,7 +245,7 @@
               <xsd:element name="Continuous" type="ots:EmptyType" />
               <xsd:element name="Dashed">
                 <xsd:annotation>
-                  <xsd:documentation source="description">Dashes per line. If the pattern involves multiple dash and gap
+                  <xsd:documentation xml:lang="en">Dashes per line. If the pattern involves multiple dash and gap
                     lengths, include additional gap/dash pairs.
                   </xsd:documentation>
                 </xsd:annotation>
@@ -293,7 +291,7 @@
 
   <xsd:simpleType name="LateralSync">
     <xsd:annotation>
-      <xsd:documentation source="description">NONE: no synchronization, dash pattern applied to stripe line. LINK: dash
+      <xsd:documentation xml:lang="en">NONE: no synchronization, dash pattern applied to stripe line. LINK: dash
         pattern applied to link line. SNAP: a number of gap/dash pairs inserted or removed to stay close to original length
         while adhering to link phase at end-points.
       </xsd:documentation>
@@ -399,7 +397,7 @@
 
   <xsd:element name="RoadLayout">
     <xsd:annotation>
-      <xsd:documentation source="description"> Road layout. Lanes to the right of the design line have negative offset.
+      <xsd:documentation xml:lang="en"> Road layout. Lanes to the right of the design line have negative offset.
         Those to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to
         left (most positive).
       </xsd:documentation>
