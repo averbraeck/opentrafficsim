@@ -54,10 +54,12 @@ public interface Synchronization extends LmrsParameters
             {
                 if (desire >= dCoop && !set.isEmpty())
                 {
+                    // for dCoop <d take first leader
                     leader = set.first();
                 }
                 else
                 {
+                    // for dSync < d < dCoop take first leader with non-zero speed
                     for (PerceivedGtu gtu : set)
                     {
                         if (gtu.getSpeed().gt0())
@@ -75,17 +77,8 @@ public interface Synchronization extends LmrsParameters
                 a = Acceleration.min(a, aSingle);
                 a = Synchronization.gentleUrgency(a, desire, context.getParameters());
             }
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                    context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
-            if (!leaders.isEmpty() && leaders.first().getSpeed().lt(context.getParameters().getParameter(ParameterTypes.VCONG)))
-            {
-                Length headway = leaders.first().getDistance();
-                Acceleration aSingle = LmrsUtil.singleAcceleration(context, headway, leaders.first().getSpeed(), desire);
-                aSingle = Synchronization.gentleUrgency(aSingle, desire, context.getParameters());
-                a = Acceleration.min(a, aSingle);
-            }
 
-            // check merge distance
+            // never stop before we can actually merge
             Length xMerge = Synchronization.getMergeDistance(context.getPerception(), lat).minus(context.getLength());
             if (xMerge.gt0())
             {
@@ -123,6 +116,7 @@ public interface Synchronization extends LmrsParameters
             {
                 PerceivedGtu leader = leaders.first();
                 Length gap = leader.getDistance();
+                // cannot use LmrsUtil.singleAcceleration() as we use getCarFollowingModel().desiredHeadway() below
                 LmrsUtil.setDesiredHeadway(context.getParameters(), desire, true);
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers =
                         context.getPerception().getPerceptionCategory(NeighborsPerception.class).getFollowers(relativeLane);
@@ -138,7 +132,7 @@ public interface Synchronization extends LmrsParameters
                 // limit deceleration based on desire
                 a = Synchronization.gentleUrgency(a, desire, context.getParameters());
             }
-            // a = Acceleration.min(a, DEADEND.synchronize(context, desire, lat, lmrsData, initiatedLaneChange));
+
             // never stop before we can actually merge
             Length xMerge = Synchronization.getMergeDistance(context.getPerception(), lat);
             if (xMerge.gt0())
@@ -188,6 +182,8 @@ public interface Synchronization extends LmrsParameters
                 final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
                 throws ParameterException, OperationalPlanException
         {
+            // TODO: remove infrastructure constraints (that is up to DeadEndUtil)
+            // TODO: select first leader towards which the acceleration is > -b0 (rather than b)
 
             Acceleration b = context.getParameters().getParameter(ParameterTypes.B);
             Duration tMin = context.getParameters().getParameter(ParameterTypes.TMIN);
