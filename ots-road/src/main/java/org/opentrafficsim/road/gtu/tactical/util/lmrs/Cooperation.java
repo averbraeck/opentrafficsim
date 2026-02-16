@@ -64,7 +64,7 @@ public interface Cooperation extends LmrsParameters
         }
     };
 
-    /** Same as passive cooperation, except that cooperation is fully ignored if the potential lane changer brakes heavily. */
+    /** Same as passive cooperation, except that cooperation is sometimes ignored at low speed of other vehicles. */
     Cooperation PASSIVE_MOVING = new Cooperation()
     {
         @Override
@@ -107,7 +107,7 @@ public interface Cooperation extends LmrsParameters
         }
     };
 
-    /** Cooperation similar to the default, with nuanced differences of when to ignore. */
+    /** Cooperation similar to the default, except at large adjacent leader deceleration. */
     Cooperation ACTIVE = new Cooperation()
     {
         @Override
@@ -124,9 +124,8 @@ public interface Cooperation extends LmrsParameters
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
                     .getLeaders(relativeLane))
             {
-                double desire = leader.getManeuver().isChangingLane(lat.flip()) ? 1.0
-                        : (lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
-                                : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0);
+                double desire = lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
+                        : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
                 if (desire >= dCoop && leader.getDistance().gt0()
                         && leader.getAcceleration().gt(context.getParameters().getParameter(ParameterTypes.BCRIT).neg()))
                 {
