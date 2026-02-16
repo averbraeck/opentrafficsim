@@ -129,7 +129,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         else
         {
             Length range = getGtu().getParameters().getOptionalParameter(LANE_STRUCTURE)
-                    .orElseThrow(() -> new OtsRuntimeException("Parameter PERCEPTION not available."));
+                    .orElseThrow(() -> new OtsRuntimeException("Parameter LANE_STRUCTURE not available."));
             Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
             ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route.get(), getGtu().getType(),
                     range.minus(record.getStartDistance()).plus(front), laneLaw);
