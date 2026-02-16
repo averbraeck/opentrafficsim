@@ -1291,8 +1291,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      * @param allOptions list of all options, will be filtered when typing.
      * @param table table, will be either the tree table or the attributes table.
      * @param action action to perform based on the option in the popup that was selected.
+     * @param includeRemove whether to include a remove options
      */
-    public void valueOptionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action)
+    public void valueOptionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action,
+            final boolean includeRemove)
     {
         // initially no filtering on current value; this allows a quick reset to possible values
         List<String> options = filterOptions(allOptions, "");
@@ -1301,15 +1303,28 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         {
             return;
         }
+        for (int i = 0; i < 20; i++)
+        {
+            OtsEditor.this.dropdownOptions.add("Item " + i);
+        }
+        OtsEditor.this.dropdownOptions.add("Item that is redculously long and probably missplet.");
+        if (includeRemove)
+        {
+            OtsEditor.this.dropdownOptions.add(PopupValueSelectedListener.REMOVE_OPTION);
+        }
         JPopupMenu popup = new JPopupMenu();
         int index = 0;
         int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items");
-        for (String option : options)
+        for (String option : OtsEditor.this.dropdownOptions)
         {
             JMenuItem item = new JMenuItem(option);
             item.setVisible(index++ < maxDropdown);
             item.addActionListener(new PopupValueSelectedListener(option, table, action, this.treeTable));
             item.setFont(table.getFont());
+            if (includeRemove && PopupValueSelectedListener.REMOVE_OPTION.equals(option))
+            {
+                popup.add(new JPopupMenu.Separator());
+            }
             popup.add(item);
         }
         this.dropdownIndent = 0;
@@ -1335,6 +1350,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         {
             JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
             table.setComponentPopupMenu(popup);
+            popup.setMinimumSize(popup.getSize());
             popup.pack();
             popup.setInvoker(table);
             popup.setVisible(true);
@@ -1363,6 +1379,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                             item.setFont(table.getFont());
                             popup.add(item);
                         }
+                        popup.setMinimumSize(popup.getSize());
                         popup.pack();
                         placePopup(popup, rectangle, table);
                     });
@@ -1399,14 +1416,26 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items");
         for (Component component : popup.getComponents())
         {
-            JMenuItem item = (JMenuItem) component;
-            boolean visible = optionIndex < maxDropdown && this.dropdownOptions.indexOf(item.getText()) >= this.dropdownIndent;
-            item.setVisible(visible);
-            if (visible)
+            if (component instanceof JMenuItem item)
             {
-                optionIndex++;
+                boolean visible =
+                        optionIndex < maxDropdown && this.dropdownOptions.indexOf(item.getText()) >= this.dropdownIndent;
+                item.setVisible(visible);
+                if (visible)
+                {
+                    optionIndex++;
+                }
+            }
+            else
+            {
+                // JPopupMenu.Separator above remove option
+                boolean visible = optionIndex < maxDropdown
+                        && this.dropdownOptions.indexOf(PopupValueSelectedListener.REMOVE_OPTION) >= this.dropdownIndent;
+                component.setVisible(visible);
             }
         }
+        // only increase with packing
+        popup.setMinimumSize(popup.getSize());
         popup.pack();
         return optionIndex > 0;
     }

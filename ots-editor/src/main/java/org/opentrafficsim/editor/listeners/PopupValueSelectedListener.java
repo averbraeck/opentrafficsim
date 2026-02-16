@@ -23,6 +23,9 @@ import de.javagl.treetable.JTreeTable;
 public class PopupValueSelectedListener implements ActionListener
 {
 
+    /** Menu item string for removal of value. */
+    public static final String REMOVE_OPTION = "<html> <span style='color:red'>&#x2717;</span> <i>remove</i></html>"; // "&#128465;"
+
     /** Option value. */
     private final String option;
 
@@ -54,7 +57,14 @@ public class PopupValueSelectedListener implements ActionListener
     @Override
     public void actionPerformed(final ActionEvent e)
     {
-        this.action.accept(this.option);
+        if (REMOVE_OPTION.equals(this.option))
+        {
+            this.action.accept(null);
+        }
+        else
+        {
+            this.action.accept(this.option);
+        }
         CellEditor cellEditor = this.table.getCellEditor();
         if (cellEditor != null)
         {

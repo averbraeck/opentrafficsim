@@ -90,7 +90,8 @@ public class AttributesMouseListener extends MouseAdapter
             if (!node.isIncluded())
             {
                 List<String> allOptions = node.getAttributeRestrictions(row);
-                this.editor.valueOptionsPopup(allOptions, this.attributesTable, (t) -> node.setAttributeValue(row, t));
+                this.editor.valueOptionsPopup(allOptions, this.attributesTable, (t) -> node.setAttributeValue(row, t),
+                        node.getAttributeValue(row) != null && !node.getAttributeValue(row).isEmpty());
             }
         }
     }
