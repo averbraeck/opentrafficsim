@@ -1,8 +1,5 @@
 package org.opentrafficsim.animation;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -12,10 +9,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import javax.imageio.ImageIO;
-
-import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.logger.Logger;
 
 /**
@@ -31,6 +27,9 @@ import org.opentrafficsim.base.logger.Logger;
 public final class DownloadIcons
 {
 
+    /** Set of files saved to check there are no duplicates in script. */
+    private static Set<String> fileNames;
+
     /**
      * Constructor.
      */
@@ -42,10 +41,12 @@ public final class DownloadIcons
     /**
      * Main method.
      * @param args ignored
-     * @throws IOException cannot flip Id24.png
      */
-    public static void main(final String[] args) throws IOException
+    public static void main(final String[] args)
     {
+
+        fileNames = new LinkedHashSet<>();
+
         // downloadIcon("mdi", "car-clock", "TravelTime");
         // downloadIcon("mdi", "car-connected", "Cacc");
         // downloadIcon("mdi", "car-cruise-control", "Acc");
@@ -56,7 +57,7 @@ public final class DownloadIcons
         downloadIcon("ix", "road-filled", "Lane");
         downloadIcon("ix", "road", "Stripe");
         downloadIcon("mdi", "account-view-outline", "Social");
-        downloadIcon("mdi", "arrow-decision", "Route");
+        downloadIcon("mdi", "arrow-decision", "Route", "rotate=90deg"); // rotate right
         downloadIcon("mdi", "arrow-expand-all", "ZoomAll");
         downloadIcon("mdi", "arrow-right-bold-circle-outline", "Step");
         downloadIcon("mdi", "arrow-up-down", "UpDown");
@@ -83,22 +84,20 @@ public final class DownloadIcons
         downloadIcon("mdi", "folder-outline", "Folder");
         downloadIcon("mdi", "global-search", "Find");
         downloadIcon("mdi", "google-nearby", "Priority");
-        downloadIcon("mdi", "graph", "Network");
+        downloadIcon("mdi", "graph", "Network", "rotate=270deg"); // rotate left
         downloadIcon("mdi", "grid", "Grid");
         downloadIcon("mdi", "home", "Home");
         downloadIcon("mdi", "horizontal-line", "CenterLine");
         downloadIcon("mdi", "information-outline", "Information");
-        downloadIcon("mdi", "label-outline", "Id");
+        downloadIcon("mdi", "label-outline", "Id", "flip=horizontal"); // flip
         downloadIcon("mdi", "map-marker-check-outline", "Sink");
         downloadIcon("mdi", "menu-close", "Dropdown");
         downloadIcon("mdi", "pause-circle-outline", "Pause");
         downloadIcon("mdi", "play-circle-outline", "Play");
         downloadIcon("mdi", "puzzle-outline", "Component");
         downloadIcon("mdi", "question-mark-circle-outline", "Question");
-        downloadIcon("mdi", "ray-start-arrow", "Connector");
         downloadIcon("mdi", "ray-start-end", "Link");
         downloadIcon("mdi", "ray-start-vertex-end", "Path");
-        downloadIcon("mdi", "ray-start", "Centroid");
         downloadIcon("mdi", "ray-vertex", "Node");
         downloadIcon("mdi", "routes", "Directions");
         downloadIcon("mdi", "sign-caution", "Blockage");
@@ -121,13 +120,6 @@ public final class DownloadIcons
         downloadIcon("tabler", "drone", "Perception");
         downloadIcon("tabler", "traffic-lights", "TrafficLight");
 
-        // Flip Id24.png
-        BufferedImage idIn = ImageIO.read(ResourceResolver.resolve("ots-icons/Id24.png").openStream());
-        BufferedImage idOut = new BufferedImage(24, 24, idIn.getType());
-        Graphics2D g = (Graphics2D) idOut.getGraphics();
-        g.drawImage(idIn, 0, 0, 23, 23, 23, 0, 0, 23, null);
-        ImageIO.write(idOut, "png",
-                new FileOutputStream(Path.of("src", "main", "resources", "ots-icons", "Id24.png").toFile()));
     }
 
     /**
@@ -135,16 +127,27 @@ public final class DownloadIcons
      * @param iconSet icon set on Iconify
      * @param icon icon name on Iconify
      * @param file file name for in resources (minus "24.png")
+     * @param transformations e.g. {@code flip=horizontal} or {@code rotate=45}
      */
-    private static void downloadIcon(final String iconSet, final String icon, final String file)
+    private static void downloadIcon(final String iconSet, final String icon, final String file,
+            final String... transformations)
     {
+        // Check no duplicates
+        if (!fileNames.add(file))
+        {
+            Logger.ots().warn("File {} is specified at least twice.", file);
+        }
         // Api at api.iconify.design setting color #0066c4
-        String encoded = URLEncoder.encode(
-                String.format("https://api.iconify.design/%s/%s.svg?color=%%230066c4", iconSet, icon), StandardCharsets.UTF_8);
+        String iconifyUrl = "https://api.iconify.design/%s/%s.svg?color=%%230066c4";
+        for (String transformation : transformations)
+        {
+            iconifyUrl += ("&" + transformation);
+        }
+        String encoded = URLEncoder.encode(String.format(iconifyUrl, iconSet, icon), StandardCharsets.UTF_8);
         // Service to save .svg as .png
-        String url = "https://wsrv.nl/?url=" + encoded + "&w=24&h=24&output=png";
+        String wsrvUrl = "https://wsrv.nl/?url=" + encoded + "&w=24&h=24&output=png";
         // Download to resources
-        try (InputStream in = new URL(url).openStream())
+        try (InputStream in = new URL(wsrvUrl).openStream())
         {
             Files.copy(in, Path.of("src", "main", "resources", "ots-icons", file + "24.png"),
                     StandardCopyOption.REPLACE_EXISTING);

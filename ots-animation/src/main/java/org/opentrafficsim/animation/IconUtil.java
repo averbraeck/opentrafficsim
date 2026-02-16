@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import javax.imageio.ImageIO;
 import javax.swing.GrayFilter;
@@ -17,6 +18,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.djutils.io.ResourceResolver;
+import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.draw.Colors;
 
 /**
  * Utility to obtain icon with image.
@@ -122,8 +125,9 @@ public final class IconUtil
                         this.imageHeight > 0 ? this.imageHeight : im.getHeight(null), Image.SCALE_SMOOTH);
             }
         }
-        catch (IOException ex)
+        catch (IOException | NoSuchElementException ex)
         {
+            Logger.ots().warn("Unable to load icon {}", this.fileName);
             // Return some image, we do not want the program to crash on an icon not being available
             int w = this.imageWidth > 0 ? this.imageWidth : 24;
             int h = this.imageHeight > 0 ? this.imageHeight : 24;
@@ -132,13 +136,13 @@ public final class IconUtil
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, w, h);
-            g.setColor(Color.BLACK);
-            int s = Math.min(w, h);
+            g.setColor(Colors.OTS_BLUE);
+            g.drawRect(0, 0, w - 1, h - 1);
+            int s = (int) (Math.min(w, h) * 0.9);
             g.setFont(new Font("TimesRoman", Font.PLAIN, s));
             FontMetrics metrics = g.getFontMetrics();
             float ws = metrics.stringWidth("?");
             float hs = metrics.getHeight();
-            System.out.println("hs: " + hs);
             g.drawString("?", (((float) w) - ws) / 2.0f, ((float) h - hs) / 2.0f + metrics.getAscent());
         }
         if (this.iconWidth > 0 && this.iconHeight > 0)
