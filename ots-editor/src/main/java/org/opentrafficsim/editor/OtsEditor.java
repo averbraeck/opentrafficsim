@@ -37,6 +37,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.Box;
@@ -1061,9 +1063,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Adds a listener to a popup to remove the popop from the component when the popup becomes invisible. This makes sure that
-     * a right-click on another location that should show a different popup, is not overruled by the popup of a previous click.
-     * @param popup popup menu.
+     * Adds a listener to a pop-up to remove the pop-up from the component when the pop-up becomes invisible. This makes sure
+     * that a right-click on another location that should show a different pop-up, is not overruled by the pop-up of a previous
+     * click.
+     * @param popup pop-up menu.
      * @param component component from which the menu will be removed.
      */
     public void preparePopupRemoval(final JPopupMenu popup, final JComponent component)
@@ -1286,165 +1289,234 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Places a popup with value options under the cell that is being clicked in a table (tree or attributes). The popup will
-     * show items relevant to what is being typed in the cell. The maximum number of items shown is limited to
-     * {@code MAX_DROPDOWN_ITEMS}.
+     * show items relevant to what is being typed in the cell. The maximum number of items shown is limited to the
+     * {@code max_dropdown_items} app property.
      * @param allOptions list of all options, will be filtered when typing.
      * @param table table, will be either the tree table or the attributes table.
      * @param action action to perform based on the option in the popup that was selected.
-     * @param includeRemove whether to include a remove options
+     * @param includeRemove whether to include a remove option
      */
     public void valueOptionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action,
             final boolean includeRemove)
     {
         // initially no filtering on current value; this allows a quick reset to possible values
-        List<String> options = filterOptions(allOptions, "");
-        OtsEditor.this.dropdownOptions = options;
+        List<String> options = filterOptions(allOptions, null);
         if (options.isEmpty())
         {
             return;
         }
-        for (int i = 0; i < 20; i++)
-        {
-            OtsEditor.this.dropdownOptions.add("Item " + i);
-        }
-        OtsEditor.this.dropdownOptions.add("Item that is redculously long and probably missplet.");
-        if (includeRemove)
-        {
-            OtsEditor.this.dropdownOptions.add(PopupValueSelectedListener.REMOVE_OPTION);
-        }
+        this.dropdownIndent = 0;
+        this.dropdownOptions = options;
+
+        // create pop-up
         JPopupMenu popup = new JPopupMenu();
         int index = 0;
-        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items");
-        for (String option : OtsEditor.this.dropdownOptions)
+        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items") - (includeRemove ? 1 : 0);
+        for (String option : this.dropdownOptions)
         {
             JMenuItem item = new JMenuItem(option);
+            item.setName(option);
             item.setVisible(index++ < maxDropdown);
             item.addActionListener(new PopupValueSelectedListener(option, table, action, this.treeTable));
             item.setFont(table.getFont());
-            if (includeRemove && PopupValueSelectedListener.REMOVE_OPTION.equals(option))
-            {
-                popup.add(new JPopupMenu.Separator());
-            }
             popup.add(item);
         }
-        this.dropdownIndent = 0;
+        if (includeRemove)
+        {
+            JMenuItem item = new JMenuItem(PopupValueSelectedListener.REMOVE_OPTION);
+            item.setName(PopupValueSelectedListener.REMOVE_OPTION);
+            item.setVisible(true);
+            item.addActionListener(
+                    new PopupValueSelectedListener(PopupValueSelectedListener.REMOVE_OPTION, table, action, this.treeTable));
+            item.setFont(table.getFont());
+            popup.add(new JPopupMenu.Separator());
+            item.setIcon(PopupValueSelectedListener.REMOVE_ICON);
+            popup.add(item);
+        }
+        JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
+        showOptionsInScope(popup, includeRemove, getPattern(field));
+        preparePopupRemoval(popup, table);
+
+        // place the pop-up
+        table.setComponentPopupMenu(popup);
+        popup.setMinimumSize(popup.getSize());
+        popup.pack();
+        popup.setInvoker(table);
+        popup.setVisible(true);
+        field.requestFocus();
+        Rectangle rectangle = field.getBounds();
+        placePopup(popup, rectangle, table);
+
+        // scrolling
         popup.addMouseWheelListener(new MouseWheelListener()
         {
             @Override
             public void mouseWheelMoved(final MouseWheelEvent e)
             {
-                OtsEditor.this.dropdownIndent += (e.getWheelRotation() * e.getScrollAmount());
+                OtsEditor.this.dropdownIndent += e.getUnitsToScroll();
                 OtsEditor.this.dropdownIndent = OtsEditor.this.dropdownIndent < 0 ? 0 : OtsEditor.this.dropdownIndent;
-                int maxIndent = OtsEditor.this.dropdownOptions.size() - maxDropdown;
+                int maxIndent = OtsEditor.this.dropdownOptions.size() - maxDropdown - 1;
                 if (maxIndent > 0)
                 {
                     OtsEditor.this.dropdownIndent =
                             OtsEditor.this.dropdownIndent > maxIndent ? maxIndent : OtsEditor.this.dropdownIndent;
-                    showOptionsInScope(popup);
+                    showOptionsInScope(popup, includeRemove, getPattern(field));
+                    popup.pack();
+                    popup.setVisible(true);
+                    field.requestFocus();
                 }
             }
         });
-        preparePopupRemoval(popup, table);
-        // invoke later because JTreeTable removes the popup with editable cells and it may take previous editable field
-        SwingUtilities.invokeLater(() ->
+
+        // typing
+        field.addKeyListener(new KeyAdapter()
         {
-            JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
-            table.setComponentPopupMenu(popup);
-            popup.setMinimumSize(popup.getSize());
-            popup.pack();
-            popup.setInvoker(table);
-            popup.setVisible(true);
-            field.requestFocus();
-            Rectangle rectangle = field.getBounds();
-            placePopup(popup, rectangle, table);
-            field.addKeyListener(new KeyAdapter()
+            @Override
+            public void keyTyped(final KeyEvent e)
             {
-                @Override
-                public void keyTyped(final KeyEvent e)
+                // invoke later to include this current typed key in the result
+                SwingUtilities.invokeLater(() ->
                 {
-                    // invoke later to include this current typed key in the result
-                    SwingUtilities.invokeLater(() ->
+                    OtsEditor.this.dropdownIndent = 0;
+                    Pattern pattern = getPattern(field);
+                    OtsEditor.this.dropdownOptions = filterOptions(allOptions, pattern);
+                    boolean anyVisible = showOptionsInScope(popup, includeRemove, pattern);
+                    if (!anyVisible)
                     {
-                        OtsEditor.this.dropdownIndent = 0;
-                        String currentValue = field.getText();
-                        OtsEditor.this.dropdownOptions = filterOptions(allOptions, currentValue);
-                        boolean anyVisible = showOptionsInScope(popup);
-                        // if no items left, show what was typed as a single item
-                        // it will be hidden later if we are in the scope of the options, or another current value
-                        if (!anyVisible)
-                        {
-                            JMenuItem item = new JMenuItem(currentValue);
-                            item.addActionListener(
-                                    new PopupValueSelectedListener(currentValue, table, action, OtsEditor.this.treeTable));
-                            item.setFont(table.getFont());
-                            popup.add(item);
-                        }
-                        popup.setMinimumSize(popup.getSize());
-                        popup.pack();
-                        placePopup(popup, rectangle, table);
-                    });
-                }
-            });
-            field.addActionListener((e) ->
-            {
-                popup.setVisible(false);
-                table.setComponentPopupMenu(null);
-            });
+                        popup.setVisible(false);
+                        field.requestFocus();
+                        return;
+                    }
+                    popup.pack();
+                    popup.setVisible(true);
+                    placePopup(popup, rectangle, table);
+                    field.requestFocus();
+                });
+            }
+        });
+
+        // remove pop-up when finalizing editing (hitting enter)
+        field.addActionListener((e) ->
+        {
+            popup.setVisible(false);
+            table.setComponentPopupMenu(null);
         });
     }
 
     /**
-     * Filter options for popup, leaving only those that start with the current value.
-     * @param options options to filter.
-     * @param currentValue current value.
-     * @return filtered options.
+     * Returns a matching pattern based on the current value of the field.
+     * @param field field component
+     * @return matching pattern based on the current value of the field
      */
-    private static List<String> filterOptions(final List<String> options, final String currentValue)
+    private Pattern getPattern(final JTextField field)
     {
-        return options.stream().filter((val) -> currentValue == null || currentValue.isEmpty() || val.startsWith(currentValue))
-                .distinct().sorted().collect(Collectors.toList());
+        String currentValue = field.getText();
+        return currentValue == null || currentValue.isBlank() ? null
+                : Pattern.compile(Pattern.quote(currentValue), Pattern.CASE_INSENSITIVE);
     }
 
     /**
-     * Updates the options that are shown within a popup menu based on an indent from scrolling.
-     * @param popup popup menu.
-     * @return whether at least one item is visible.
+     * Filter options for pop-up, leaving only those that match the pattern.
+     * @param options options to filter
+     * @param pattern pattern to find
+     * @return filtered options.
      */
-    private boolean showOptionsInScope(final JPopupMenu popup)
+    private static List<String> filterOptions(final List<String> options, final Pattern pattern)
+    {
+        return options.stream().filter((val) -> pattern == null || pattern.matcher(val).find()).distinct().sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Updates the options that are shown within a pop-up menu based on an indent from scrolling, highlight anything that
+     * matches the pattern, and set scroll icon when appropriate.
+     * @param popup pop-up menu
+     * @param includeRemove whether to include a remove option
+     * @param pattern pattern to highlight
+     * @return whether at least one item is visible
+     */
+    private boolean showOptionsInScope(final JPopupMenu popup, final boolean includeRemove, final Pattern pattern)
     {
         int optionIndex = 0;
-        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items");
+        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items") - (includeRemove ? 1 : 0);
+        JMenuItem first = null;
+        JMenuItem last = null;
+        boolean anyAbove = false;
+        boolean anyBelow = false;
+
+        // set components visible depending on their index in the full list and the current indent
         for (Component component : popup.getComponents())
         {
             if (component instanceof JMenuItem item)
             {
-                boolean visible =
-                        optionIndex < maxDropdown && this.dropdownOptions.indexOf(item.getText()) >= this.dropdownIndent;
+                if (includeRemove && PopupValueSelectedListener.REMOVE_OPTION.equals(item.getName()))
+                {
+                    // ignore the remove item
+                    continue;
+                }
+                if (pattern != null)
+                {
+                    // match pattern, make it HTML safe, and but it between bold tags
+                    Matcher matcher = pattern.matcher(item.getName());
+                    StringBuffer stringBuffer = new StringBuffer();
+                    while (matcher.find())
+                    {
+                        matcher.appendReplacement(stringBuffer, "<b>" + matcher.group().replace("&", "&amp;")
+                                .replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;") + "</b>");
+                    }
+                    matcher.appendTail(stringBuffer);
+                    if (stringBuffer.length() > 0)
+                    {
+                        item.setText("<html>" + stringBuffer.toString() + "</html>");
+                    }
+                    else
+                    {
+                        item.setText(item.getName());
+                    }
+                }
+                int index = this.dropdownOptions.indexOf(item.getName());
+                boolean isAbove = index < this.dropdownIndent;
+                boolean isBelow = optionIndex > maxDropdown;
+                boolean visible = (!isAbove && !isBelow);
+                anyAbove |= (isAbove && index >= 0);
+                anyBelow |= (isBelow && index >= 0);
                 item.setVisible(visible);
                 if (visible)
                 {
+                    if (first == null)
+                    {
+                        first = item;
+                    }
+                    // last before possible remove option
+                    item.setIcon(null);
+                    last = item;
                     optionIndex++;
                 }
             }
             else
             {
                 // JPopupMenu.Separator above remove option
-                boolean visible = optionIndex < maxDropdown
-                        && this.dropdownOptions.indexOf(PopupValueSelectedListener.REMOVE_OPTION) >= this.dropdownIndent;
-                component.setVisible(visible);
+                component.setVisible(includeRemove);
             }
         }
-        // only increase with packing
-        popup.setMinimumSize(popup.getSize());
-        popup.pack();
+
+        // set icons on first and last item that we added, if there are items above or below
+        if (anyAbove)
+        {
+            first.setIcon(PopupValueSelectedListener.UP_ICON);
+        }
+        if (anyBelow)
+        {
+            last.setIcon(PopupValueSelectedListener.DOWN_ICON);
+        }
         return optionIndex > 0;
     }
 
     /**
-     * Places a popup either below or above a given rectangle, based on surrounding space in the window.
-     * @param popup popup.
-     * @param rectangle rectangle of cell being edited, relative to the parent component.
-     * @param parent component containing the cell.
+     * Places a pop-up either below or above a given rectangle, based on surrounding space in the window.
+     * @param popup pop-up
+     * @param rectangle rectangle of cell being edited, relative to the parent component
+     * @param parent component containing the cell
      */
     private void placePopup(final JPopupMenu popup, final Rectangle rectangle, final JComponent parent)
     {

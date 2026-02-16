@@ -69,8 +69,10 @@ public final class DownloadIcons
         downloadIcon("mdi", "chart-ppf", "Clothoid");
         downloadIcon("mdi", "chevron-down", "Expanded");
         downloadIcon("mdi", "chevron-right", "Collapsed");
+        downloadIcon("mdi", "chevron-up", "Up");
         downloadIcon("mdi", "chevron-triple-right", "Generator");
         downloadIcon("mdi", "cog", "Application");
+        downloadIcon("mdi", "cross-circle-outline", "Delete");
         downloadIcon("mdi", "database-outline", "Database");
         downloadIcon("mdi", "eye-outline", "Eye");
         downloadIcon("mdi", "file-outline", "File");

@@ -5,7 +5,10 @@ import java.awt.event.ActionListener;
 import java.util.function.Consumer;
 
 import javax.swing.CellEditor;
+import javax.swing.Icon;
 import javax.swing.JTable;
+
+import org.opentrafficsim.animation.IconUtil;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -23,8 +26,17 @@ import de.javagl.treetable.JTreeTable;
 public class PopupValueSelectedListener implements ActionListener
 {
 
+    /** Icon for remove option. */
+    public static final Icon REMOVE_ICON = IconUtil.of("Delete24.png").imageSize(14, 14).get();
+
+    /** Icon for up scrolling. */
+    public static final Icon UP_ICON = IconUtil.of("Up24.png").imageSize(14, 14).get();
+
+    /** Icon for down scrolling. */
+    public static final Icon DOWN_ICON = IconUtil.of("Expanded24.png").imageSize(14, 14).get();
+
     /** Menu item string for removal of value. */
-    public static final String REMOVE_OPTION = "<html> <span style='color:red'>&#x2717;</span> <i>remove</i></html>"; // "&#128465;"
+    public static final String REMOVE_OPTION = "<html><i>remove</i></html>";
 
     /** Option value. */
     private final String option;
