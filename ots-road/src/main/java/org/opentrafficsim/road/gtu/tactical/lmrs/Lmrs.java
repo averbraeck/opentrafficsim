@@ -75,13 +75,13 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
     public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
     {
-        // Create tactical context
+        // create tactical context
         TacticalContextEgo context = new TacticalContextEgo(getGtu());
 
         // LMRS
         SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(context, this.lmrsData, this);
 
-        // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
+        // lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
         RelativeLane[] lanes;
         double dLeft = context.getParameters().getParameter(LmrsParameters.DLEFT);
         double dRight = context.getParameters().getParameter(LmrsParameters.DRIGHT);

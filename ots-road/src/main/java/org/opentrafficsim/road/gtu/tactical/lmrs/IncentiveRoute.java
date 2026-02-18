@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.tactical.lmrs;
 
 import java.util.SortedSet;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
@@ -9,9 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
@@ -64,55 +63,59 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
             final ImmutableLinkedHashMap<Class<? extends MandatoryIncentive>, Desire> mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
-        Speed speed = context.getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
-
         // desire to leave current lane
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         SortedSet<LaneChangeInfo> currentInfo = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         Length currentFirst = currentInfo.isEmpty() || currentInfo.first().numberOfLaneChanges() == 0 ? Length.POSITIVE_INFINITY
                 : currentInfo.first().remainingDistance();
-        double dCurr = getDesireToLeave(context.getParameters(), infra, RelativeLane.CURRENT, speed);
-        double dLeft = 0;
+        double dCurr = getDesireToLeave(context, RelativeLane.CURRENT);
+
+        // left
+        double dLeft = 0.0;
         if (context.getPerception().getLaneStructure().exists(RelativeLane.LEFT)
                 && infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).neg().lt(currentFirst))
         {
             // desire to leave left lane
-            dLeft = getDesireToLeave(context.getParameters(), infra, RelativeLane.LEFT, speed);
+            dLeft = getDesireToLeave(context, RelativeLane.LEFT);
             // desire to leave from current to left lane
-            dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0;
+            dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0.0;
         }
-        double dRigh = 0;
+
+        // right
+        double dRigh = 0.0;
         if (context.getPerception().getLaneStructure().exists(RelativeLane.RIGHT) && infra
                 .getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).neg().lt(currentFirst))
         {
             // desire to leave right lane
-            dRigh = getDesireToLeave(context.getParameters(), infra, RelativeLane.RIGHT, speed);
+            dRigh = getDesireToLeave(context, RelativeLane.RIGHT);
             // desire to leave from current to right lane
-            dRigh = dRigh < dCurr ? dCurr : dRigh > dCurr ? -dRigh : 0;
+            dRigh = dRigh < dCurr ? dCurr : dRigh > dCurr ? -dRigh : 0.0;
         }
+
         return new Desire(dLeft, dRigh);
     }
 
     /**
      * Calculates desire to leave a lane.
-     * @param params parameters
-     * @param infra infrastructure perception
+     * @param context tactical information such as parameters and car-following model
      * @param lane relative lane to evaluate
-     * @param speed speed
      * @return desire to leave a lane
      * @throws ParameterException in case of a parameter exception
      * @throws OperationalPlanException in case of perception exceptions
      */
-    private static double getDesireToLeave(final Parameters params, final InfrastructurePerception infra,
-            final RelativeLane lane, final Speed speed) throws ParameterException, OperationalPlanException
+    public static double getDesireToLeave(final TacticalContextEgo context, final RelativeLane lane)
+            throws ParameterException, OperationalPlanException
     {
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        Length x0 = context.getParameters().getParameter(LOOKAHEAD);
+        Duration t0 = context.getParameters().getParameter(T0);
         double dOut = 0.0;
         if (infra.getCrossSection().contains(lane))
         {
             for (LaneChangeInfo info : infra.getLegalLaneChangeInfo(lane))
             {
                 double d = info.remainingDistance().lt0() ? info.numberOfLaneChanges()
-                        : getDesireToLeave(params, info.remainingDistance(), info.numberOfLaneChanges(), speed);
+                        : getDesireToLeave(x0, t0, info.remainingDistance(), info.numberOfLaneChanges(), context.getSpeed());
                 dOut = d > dOut ? d : dOut;
             }
         }
@@ -121,18 +124,19 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
 
     /**
      * Calculates desire to leave a lane for a single infrastructure info.
-     * @param params parameters
+     * @param x0 relevant distance per lane change
+     * @param t0 relevant time per lane change
      * @param x remaining distance for lane changes
      * @param n number of required lane changes
      * @param v current speed
      * @return desire to leave a lane for a single infrastructure info
      * @throws ParameterException in case of a parameter exception
      */
-    public static double getDesireToLeave(final Parameters params, final Length x, final int n, final Speed v)
+    public static double getDesireToLeave(final Length x0, final Duration t0, final Length x, final int n, final Speed v)
             throws ParameterException
     {
-        double d1 = 1 - x.si / (n * params.getParameter(LOOKAHEAD).si);
-        double d2 = 1 - (x.si / v.si) / (n * params.getParameter(T0).si);
+        double d1 = 1 - x.si / (n * x0.si);
+        double d2 = 1 - (x.si / v.si) / (n * t0.si);
         d1 = d2 > d1 ? d2 : d1;
         return d1 < 0 ? 0 : d1;
     }

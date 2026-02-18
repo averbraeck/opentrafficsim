@@ -967,7 +967,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         }
         if (get(this.incentiveStayRight, gtuType))
         {
-            tacticalPlanner.addVoluntaryIncentive(IncentiveStayRight.SINGLETON);
+            tacticalPlanner.addVoluntaryIncentive(IncentiveStayOnSlowLanes.SINGLETON);
         }
         if (get(this.incentiveKeep, gtuType))
         {

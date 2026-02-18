@@ -75,7 +75,18 @@ public final class LmrsData implements Synchronizable, WithDesiredSpeed
     }
 
     /**
-     * Checks if the given leader is a new leader.
+     * Remembers the leaders of the current time step (those forwarded to isNewLeader()) for the next time step.
+     */
+    void initStep()
+    {
+        this.leaders.clear();
+        this.leaders.addAll(this.tempLeaders);
+        this.tempLeaders.clear();
+        this.synchronizationState = Synchronizable.State.NONE;
+    }
+
+    /**
+     * Checks if the given leader is a new leader. It should be a current leader.
      * @param gtu gtu to check
      * @return whether the gtu is a new leader
      */
@@ -83,16 +94,6 @@ public final class LmrsData implements Synchronizable, WithDesiredSpeed
     {
         this.tempLeaders.add(gtu.getId());
         return !this.leaders.contains(gtu.getId());
-    }
-
-    /**
-     * Remembers the leaders of the current time step (those forwarded to isNewLeader()) for the next time step.
-     */
-    void finalizeStep()
-    {
-        this.leaders.clear();
-        this.leaders.addAll(this.tempLeaders);
-        this.tempLeaders.clear();
     }
 
     /**
@@ -173,12 +174,16 @@ public final class LmrsData implements Synchronizable, WithDesiredSpeed
     }
 
     /**
-     * Sets the synchronization state.
+     * Sets the synchronization state, but only if the given value is more critical than any previous. The order is NONE,
+     * COOPERATING, SYNCHRONIZING, INDICATING.
      * @param synchronizationState Synchronizable.State; synchronization step
      */
     void setSynchronizationState(final Synchronizable.State synchronizationState)
     {
-        this.synchronizationState = synchronizationState;
+        if (synchronizationState.compareTo(this.synchronizationState) > 0)
+        {
+            this.synchronizationState = synchronizationState;
+        }
     }
 
     @Override

@@ -110,6 +110,8 @@ public final class LmrsUtil implements LmrsParameters
     public static SimpleOperationalPlan determinePlan(final TacticalContextEgo context, final LmrsData lmrsData,
             final AbstractIncentivesTacticalPlanner incentives) throws GtuException, NetworkException, ParameterException
     {
+        lmrsData.initStep();
+
         // obtain objects to get info
         NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
@@ -191,50 +193,47 @@ public final class LmrsUtil implements LmrsParameters
             lmrsData.setSynchronizationState(Synchronizable.State.NONE);
             if (desire.leftIsLargerOrEqual() && desire.left() >= dSync)
             {
-                Synchronizable.State state;
                 if (desire.left() >= context.getParameters().getParameter(DCOOP))
                 {
                     // switch on left indicator
                     turnIndicatorStatus = TurnIndicatorStatus.LEFT;
-                    state = Synchronizable.State.INDICATING;
+                    lmrsData.setSynchronizationState(Synchronizable.State.INDICATING);
                 }
                 else
                 {
-                    state = Synchronizable.State.SYNCHRONIZING;
+                    lmrsData.setSynchronizationState(Synchronizable.State.SYNCHRONIZING);
                 }
                 aSync = lmrsData.getSynchronization().synchronize(context, desire.left(), LateralDirectionality.LEFT, lmrsData,
                         initiatedOrContinuedLaneChange);
-                a = applyAcceleration(a, aSync, lmrsData, state);
+                a = applyAcceleration(a, aSync);
             }
             else if (!desire.leftIsLargerOrEqual() && desire.right() >= dSync)
             {
-                Synchronizable.State state;
                 if (desire.right() >= context.getParameters().getParameter(DCOOP))
                 {
                     // switch on right indicator
                     turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
-                    state = Synchronizable.State.INDICATING;
+                    lmrsData.setSynchronizationState(Synchronizable.State.INDICATING);
                 }
                 else
                 {
-                    state = Synchronizable.State.SYNCHRONIZING;
+                    lmrsData.setSynchronizationState(Synchronizable.State.SYNCHRONIZING);
                 }
                 aSync = lmrsData.getSynchronization().synchronize(context, desire.right(), LateralDirectionality.RIGHT,
                         lmrsData, initiatedOrContinuedLaneChange);
-                a = applyAcceleration(a, aSync, lmrsData, state);
+                a = applyAcceleration(a, aSync);
             }
 
             // cooperate
-            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.LEFT, desire);
-            a = applyAcceleration(a, aSync, lmrsData, Synchronizable.State.COOPERATING);
-            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.RIGHT, desire);
-            a = applyAcceleration(a, aSync, lmrsData, Synchronizable.State.COOPERATING);
+            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.LEFT, lmrsData, desire);
+            a = applyAcceleration(a, aSync);
+            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.RIGHT, lmrsData, desire);
+            a = applyAcceleration(a, aSync);
 
             // relaxation
             exponentialHeadwayRelaxation(context.getParameters());
         }
 
-        lmrsData.finalizeStep();
         SimpleOperationalPlan simplePlan =
                 new SimpleOperationalPlan(a, context.getParameters().getParameter(DT), initiatedOrContinuedLaneChange);
 
@@ -274,18 +273,14 @@ public final class LmrsUtil implements LmrsParameters
      * Minimizes the acceleration and sets the synchronization state if applicable.
      * @param a previous acceleration
      * @param aNew new acceleration
-     * @param lmrsData lmrs data
-     * @param state Synchronizable.State; synchronization state
      * @return minimized acceleration
      */
-    private static Acceleration applyAcceleration(final Acceleration a, final Acceleration aNew, final LmrsData lmrsData,
-            final Synchronizable.State state)
+    private static Acceleration applyAcceleration(final Acceleration a, final Acceleration aNew)
     {
         if (a.si < aNew.si)
         {
             return a;
         }
-        lmrsData.setSynchronizationState(state);
         return aNew;
     }
 

@@ -1,8 +1,10 @@
 package org.opentrafficsim.road.gtu.tactical.lmrs;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
@@ -53,11 +55,11 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
                 context.getPerception().getPerceptionCategory(BusStopPerception.class).getBusStops();
         Duration now = context.getPerception().getGtu().getSimulator().getSimulatorTime();
+        BusSchedule busSchedule = (BusSchedule) context.getPerception().getGtu().getStrategicalPlanner().getRoute()
+                .orElseThrow(() -> new OperationalPlanException(
+                        "Unable to determine lane change desire for bus stops for bus without bus schedule."));
         for (PerceivedBusStop stop : stops)
         {
-            BusSchedule busSchedule = (BusSchedule) context.getPerception().getGtu().getStrategicalPlanner().getRoute()
-                    .orElseThrow(() -> new OperationalPlanException(
-                            "Unable to determine lane change desire for bus stops for bus without bus schedule."));
             if (busSchedule.isLineStop(stop.getId(), now))
             {
                 firstStop = stop;
@@ -69,21 +71,20 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
         {
             return new Desire(0, 0);
         }
+
+        Length x0 = context.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
+        Duration t0 = context.getParameters().getParameter(ParameterTypes.T0);
         if (firstStop.getRelativeLane().isCurrent())
         {
-            double d =
-                    -IncentiveRoute.getDesireToLeave(context.getParameters(), firstStop.getDistance(), 1, context.getSpeed());
+            double d = -IncentiveRoute.getDesireToLeave(x0, t0, firstStop.getDistance(), 1, context.getSpeed());
             return new Desire(d, d);
         }
-
         int n = firstStop.getRelativeLane().getNumLanes();
 
-        double dNotGood =
-                -IncentiveRoute.getDesireToLeave(context.getParameters(), firstStop.getDistance(), n + 1, context.getSpeed());
-        double dGood = IncentiveRoute.getDesireToLeave(context.getParameters(), firstStop.getDistance(), n, context.getSpeed());
+        double dNotGood = -IncentiveRoute.getDesireToLeave(x0, t0, firstStop.getDistance(), n + 1, context.getSpeed());
+        double dGood = IncentiveRoute.getDesireToLeave(x0, t0, firstStop.getDistance(), n, context.getSpeed());
         return firstStop.getRelativeLane().getLateralDirectionality().isRight() ? new Desire(dNotGood, dGood)
                 : new Desire(dGood, dNotGood);
-
     }
 
     @Override

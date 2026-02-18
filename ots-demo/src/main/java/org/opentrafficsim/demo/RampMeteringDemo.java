@@ -606,9 +606,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
             Acceleration a = context.getCarFollowingAcceleration();
 
             // cooperation
-            Acceleration aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.LEFT, desire);
+            Acceleration aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.LEFT, null, desire);
             a = Acceleration.min(a, aCoop);
-            aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.RIGHT, desire);
+            aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.RIGHT, null, desire);
             a = Acceleration.min(a, aCoop);
 
             // compose human plan

@@ -12,6 +12,7 @@ import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 
 /**
@@ -31,8 +32,8 @@ public interface Cooperation extends LmrsParameters
     Cooperation PASSIVE = new Cooperation()
     {
         @Override
-        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat, final Desire ownDesire)
-                throws ParameterException, OperationalPlanException
+        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
+                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
         {
             if (!context.getPerception().getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
@@ -49,6 +50,10 @@ public interface Cooperation extends LmrsParameters
                         : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
+                    if (lmrsData != null)
+                    {
+                        lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
+                    }
                     Acceleration aSingle =
                             LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                     a = Acceleration.min(a, aSingle);
@@ -68,8 +73,8 @@ public interface Cooperation extends LmrsParameters
     Cooperation PASSIVE_MOVING = new Cooperation()
     {
         @Override
-        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat, final Desire ownDesire)
-                throws ParameterException, OperationalPlanException
+        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
+                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
         {
             if (!context.getPerception().getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
@@ -92,6 +97,10 @@ public interface Cooperation extends LmrsParameters
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
                         && (leader.getSpeed().ge(thresholdSpeed) || leaderInCongestion))
                 {
+                    if (lmrsData != null)
+                    {
+                        lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
+                    }
                     Acceleration aSingle =
                             LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                     a = Acceleration.min(a, aSingle);
@@ -111,8 +120,8 @@ public interface Cooperation extends LmrsParameters
     Cooperation ACTIVE = new Cooperation()
     {
         @Override
-        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat, final Desire ownDesire)
-                throws ParameterException, OperationalPlanException
+        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
+                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
         {
             if (!context.getPerception().getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
@@ -129,6 +138,10 @@ public interface Cooperation extends LmrsParameters
                 if (desire >= dCoop && leader.getDistance().gt0()
                         && leader.getAcceleration().gt(context.getParameters().getParameter(ParameterTypes.BCRIT).neg()))
                 {
+                    if (lmrsData != null)
+                    {
+                        lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
+                    }
                     Acceleration aSingle =
                             LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                     a = Acceleration.min(a, Synchronization.gentleUrgency(aSingle, desire, context.getParameters()));
@@ -148,11 +161,12 @@ public interface Cooperation extends LmrsParameters
      * Determine acceleration for cooperation.
      * @param context tactical information such as parameters and car-following model
      * @param lat lateral direction for cooperation
+     * @param lmrsData lmrs data to store COOPERATION synchronization state in, may be {@code null}
      * @param ownDesire own lane change desire
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    Acceleration cooperate(TacticalContextEgo context, LateralDirectionality lat, Desire ownDesire)
+    Acceleration cooperate(TacticalContextEgo context, LateralDirectionality lat, LmrsData lmrsData, Desire ownDesire)
             throws ParameterException, OperationalPlanException;
 }
