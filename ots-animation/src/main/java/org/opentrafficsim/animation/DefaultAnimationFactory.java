@@ -316,7 +316,7 @@ public class DefaultAnimationFactory implements EventListener
     protected void animateGTU(final LaneBasedGtu gtu)
     {
         GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, gtu,
-                this.gtuMarkers.getOrDefault(gtu.getType(), GtuMarker.CIRCLE));
+                this.gtuMarkers.getOrDefault(gtu.getType(), gtu.getLength().si >= 10.0 ? GtuMarker.SQUARE : GtuMarker.CIRCLE));
         Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
         this.animatedGTUs.put(gtu, gtuAnimation);
 
