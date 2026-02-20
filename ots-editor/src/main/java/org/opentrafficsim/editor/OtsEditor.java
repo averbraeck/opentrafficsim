@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -161,6 +162,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /** All items eligible to be shown in a dropdown, i.e. they match the currently typed value. */
     private List<String> dropdownOptions = new ArrayList<>();
+
+    /** Listener on text field editor that can remove itself. */
+    private FieldListener fieldListener;
 
     /** Map of listeners for {@code EventProducer}. */
     private final EventListenerMap listenerMap = new EventListenerMap();
@@ -1063,36 +1067,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Adds a listener to a pop-up to remove the pop-up from the component when the pop-up becomes invisible. This makes sure
-     * that a right-click on another location that should show a different pop-up, is not overruled by the pop-up of a previous
-     * click.
-     * @param popup pop-up menu.
-     * @param component component from which the menu will be removed.
-     */
-    public void preparePopupRemoval(final JPopupMenu popup, final JComponent component)
-    {
-        popup.addPopupMenuListener(new PopupMenuListener()
-        {
-            @Override
-            public void popupMenuWillBecomeVisible(final PopupMenuEvent e)
-            {
-            }
-
-            @Override
-            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e)
-            {
-                component.setComponentPopupMenu(null);
-                OtsEditor.this.choiceNode = null;
-            }
-
-            @Override
-            public void popupMenuCanceled(final PopupMenuEvent e)
-            {
-            }
-        });
-    }
-
-    /**
      * Sets a custom icon for nodes that comply to the path. The path may be an absolute path (e.g. "Ots.Network.Connector") or
      * a relative path (e.g. ".Node").
      * @param path path.
@@ -1299,6 +1273,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public void valueOptionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action,
             final boolean includeRemove)
     {
+        // remove any previous listening
+        if (this.fieldListener != null)
+        {
+            this.fieldListener.remove();
+        }
+
         // initially no filtering on current value; this allows a quick reset to possible values
         List<String> options = filterOptions(allOptions, null);
         if (options.isEmpty())
@@ -1334,18 +1314,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             popup.add(item);
         }
         JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
-        showOptionsInScope(popup, includeRemove, getPattern(field));
-        preparePopupRemoval(popup, table);
-
-        // place the pop-up
-        table.setComponentPopupMenu(popup);
-        popup.setMinimumSize(popup.getSize());
-        popup.pack();
-        popup.setInvoker(table);
-        popup.setVisible(true);
-        field.requestFocus();
-        Rectangle rectangle = field.getBounds();
-        placePopup(popup, rectangle, table);
+        if (field.getText() != null && !field.getText().isEmpty())
+        {
+            showOptionsInScope(popup, includeRemove, getPattern(field));
+        }
 
         // scrolling
         popup.addMouseWheelListener(new MouseWheelListener()
@@ -1369,7 +1341,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         });
 
         // typing
-        field.addKeyListener(new KeyAdapter()
+        KeyListener fieldKeyListener = new KeyAdapter()
         {
             @Override
             public void keyTyped(final KeyEvent e)
@@ -1389,17 +1361,58 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                     }
                     popup.pack();
                     popup.setVisible(true);
+                    Rectangle rectangle = field.getBounds();
                     placePopup(popup, rectangle, table);
                     field.requestFocus();
                 });
             }
+        };
+        this.fieldListener = new FieldListener(fieldKeyListener, popup, field);
+
+        // place the pop-up
+        SwingUtilities.invokeLater(() ->
+        {
+            table.setComponentPopupMenu(popup);
+            popup.setMinimumSize(popup.getSize());
+            popup.pack();
+            popup.setInvoker(table);
+            popup.setVisible(true);
+            field.requestFocus();
+            Rectangle rectangle = field.getBounds();
+            placePopup(popup, rectangle, table);
         });
 
-        // remove pop-up when finalizing editing (hitting enter)
-        field.addActionListener((e) ->
+        // prepare removal
+        preparePopupRemoval(popup, table);
+    }
+
+    /**
+     * Adds a listener to a pop-up to remove the pop-up from the component when the pop-up becomes invisible. This makes sure
+     * that a right-click on another location that should show a different pop-up, is not overruled by the pop-up of a previous
+     * click.
+     * @param popup pop-up menu
+     * @param table component from which the menu will be removed
+     */
+    public void preparePopupRemoval(final JPopupMenu popup, final JTable table)
+    {
+        popup.addPopupMenuListener(new PopupMenuListener()
         {
-            popup.setVisible(false);
-            table.setComponentPopupMenu(null);
+            @Override
+            public void popupMenuWillBecomeVisible(final PopupMenuEvent e)
+            {
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e)
+            {
+                OtsEditor.this.choiceNode = null;
+                table.setComponentPopupMenu(null);
+            }
+
+            @Override
+            public void popupMenuCanceled(final PopupMenuEvent e)
+            {
+            }
         });
     }
 
@@ -1473,6 +1486,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                     {
                         item.setText(item.getName());
                     }
+                }
+                else
+                {
+                    item.setText(item.getName());
                 }
                 int index = this.dropdownOptions.indexOf(item.getName());
                 boolean isAbove = index < this.dropdownIndent;
