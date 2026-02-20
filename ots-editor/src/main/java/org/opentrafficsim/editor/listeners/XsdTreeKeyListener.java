@@ -55,6 +55,11 @@ public class XsdTreeKeyListener extends KeyAdapter
             // prevents row i being removed, being replaced by i+1, and editing then setting the value of i+1 now at i
             return;
         }
+        else if (e.getKeyCode() == KeyEvent.VK_F1)
+        {
+            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+            node.getDescription().ifPresent((d) -> this.editor.showDescription(d, node.getNodeName()));
+        }
         else if (e.getKeyCode() == KeyEvent.VK_W && e.isControlDown())
         {
             XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();

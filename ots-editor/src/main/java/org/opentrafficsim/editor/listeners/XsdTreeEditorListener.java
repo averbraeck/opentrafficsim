@@ -71,6 +71,12 @@ public class XsdTreeEditorListener extends KeyAdapter implements FocusListener, 
     @Override
     public void keyReleased(final KeyEvent e)
     {
+        if (e.getKeyCode() == KeyEvent.VK_F1)
+        {
+            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
+            node.getDescription().ifPresent((d) -> this.editor.showDescription(d, node.getNodeName()));
+            return;
+        }
         setValue((JTextField) e.getComponent());
     }
 

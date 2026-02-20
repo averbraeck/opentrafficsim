@@ -352,12 +352,13 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         {
             String description = treeNode.getDescription().get();
             JMenuItem item = new JMenuItem("Description...");
+            item.setAccelerator(KeyStroke.getKeyStroke("F1"));
             item.addActionListener(new ActionListener()
             {
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    XsdTreeListener.this.editor.showDescription(description);
+                    XsdTreeListener.this.editor.showDescription(description, treeNode.getNodeName());
                 }
             });
             item.setFont(this.treeTable.getFont());

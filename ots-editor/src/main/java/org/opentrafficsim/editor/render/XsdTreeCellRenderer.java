@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.UIManager;
@@ -16,7 +15,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;

@@ -59,7 +59,7 @@ public class AttributesMouseListener extends MouseAdapter
                 && this.attributesTable.convertColumnIndexToModel(col) == AttributesTableModel.DESCRIPTION_COLUMN
                 && this.attributesTable.getModel().getValueAt(row, col) != null)
         {
-            this.editor.showDescription(description.orElse(null));
+            this.editor.showDescription(description.orElse(null), node.getAttributeNameByIndex(row));
         }
         // set status label to invalid message or description
         this.editor.removeStatusLabel();

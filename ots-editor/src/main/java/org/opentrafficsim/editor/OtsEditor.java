@@ -97,10 +97,13 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.Undo.ActionType;
+import org.opentrafficsim.editor.listeners.AttributesKeyListener;
 import org.opentrafficsim.editor.listeners.AttributesListSelectionListener;
 import org.opentrafficsim.editor.listeners.AttributesMouseListener;
 import org.opentrafficsim.editor.listeners.ChangesListener;
+import org.opentrafficsim.editor.listeners.FieldListener;
 import org.opentrafficsim.editor.listeners.PopupValueSelectedListener;
+import org.opentrafficsim.editor.listeners.ScenarioActionListener;
 import org.opentrafficsim.editor.listeners.XsdTreeEditorListener;
 import org.opentrafficsim.editor.listeners.XsdTreeKeyListener;
 import org.opentrafficsim.editor.listeners.XsdTreeListener;
@@ -182,7 +185,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private final JComboBox<ScenarioWrapper> scenario;
 
     /** Eval wrapper, which maintains input parameters and notifies all dependent objects on changes. */
-    private EvalWrapper evalWrapper = new EvalWrapper(this);
+    private final EvalWrapper evalWrapper = new EvalWrapper(this);
 
     /** Tree table at the top in the right-hand side. */
     private JTreeTable treeTable;
@@ -328,24 +331,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.scenario.setMinimumSize(new Dimension(50, 22));
         this.scenario.setMaximumSize(new Dimension(250, 22));
         this.scenario.setPreferredSize(new Dimension(200, 22));
-        this.scenario.addActionListener((a) ->
-        {
-            try
-            {
-                OtsEditor.this.evalWrapper.setDirty();
-                OtsEditor.this.evalWrapper
-                        .getEval(OtsEditor.this.scenario.getItemAt(OtsEditor.this.scenario.getSelectedIndex()));
-                OtsEditor.this.visualizationPane.repaint();
-            }
-            catch (CircularDependencyException ex)
-            {
-                showCircularInputParameters(ex.getMessage());
-            }
-            catch (RuntimeException ex)
-            {
-                showInvalidExpression(ex.getMessage());
-            }
-        });
+        this.scenario
+                .addActionListener(new ScenarioActionListener(this, this.visualizationPane, this.scenario, this.evalWrapper));
+
         controlsContainer.add(this.scenario);
         controlsContainer.add(Box.createHorizontalStrut(2));
         JButton playRun = new AppearanceControlButton(IconUtil.of("Play24.png").imageSize(18, 18).get());
@@ -426,6 +414,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 .addListSelectionListener(new AttributesListSelectionListener(this, this.attributesTable));
         AttributesTableModel.applyColumnWidth(this.attributesTable);
         this.rightSplitPane.setBottomComponent(new JScrollPane(this.attributesTable));
+        new AttributesKeyListener(this, this.attributesTable);
 
         addMenuBar();
 
@@ -1216,12 +1205,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Shows a description in a modal pane.
      * @param description description.
+     * @param title title of the window, may be {@code null} but typically is the name of the node or attribute
      */
-    public void showDescription(final String description)
+    public void showDescription(final String description, final String title)
     {
         JOptionPane.showMessageDialog(OtsEditor.this,
-                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>", "Description",
-                JOptionPane.INFORMATION_MESSAGE, this.descriptionIcon);
+                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>",
+                title == null ? "Description" : title, JOptionPane.INFORMATION_MESSAGE, this.descriptionIcon);
     }
 
     /**

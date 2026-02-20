@@ -1,4 +1,4 @@
-package org.opentrafficsim.editor;
+package org.opentrafficsim.editor.listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +15,7 @@ import javax.swing.JTextField;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-class FieldListener implements ActionListener
+public class FieldListener implements ActionListener
 {
 
     /** Key listener. */
@@ -33,7 +33,7 @@ class FieldListener implements ActionListener
      * @param popup pop-up
      * @param field text editor field
      */
-    FieldListener(final KeyListener fieldKeyListener, final JPopupMenu popup, final JTextField field)
+    public FieldListener(final KeyListener fieldKeyListener, final JPopupMenu popup, final JTextField field)
     {
         this.fieldKeyListener = fieldKeyListener;
         this.popup = popup;
@@ -52,7 +52,7 @@ class FieldListener implements ActionListener
     /**
      * Removes this listener and the contained KeyListener from the field.
      */
-    void remove()
+    public void remove()
     {
         // remove listeners on editing field, otherwise popup appears on different cell when typing there
         this.popup.setVisible(false);
