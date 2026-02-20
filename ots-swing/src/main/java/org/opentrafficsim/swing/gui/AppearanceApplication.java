@@ -158,7 +158,15 @@ public class AppearanceApplication extends JFrame
         {
             // ok, use defaults
         }
-        this.appearance = Appearance.valueOf(this.frameProperties.getProperty("Appearance").toUpperCase());
+        try
+        {
+            this.appearance = Appearance.valueOf(this.frameProperties.getProperty("Appearance").toUpperCase());
+        }
+        catch (IllegalArgumentException ex)
+        {
+            Logger.ots().trace("Unable to load saved appearance. Using GRAY instead.");
+            this.appearance = Appearance.GRAY;
+        }
         this.fontScaleName = this.frameProperties.getProperty("FontScale");
 
         /** Menu class to only accept the font of an Appearance */
