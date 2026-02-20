@@ -365,15 +365,14 @@ public final class XmlParser
         }
 
         // models and parameters
-        // TODO: we now only take the first model, need to make models per GTU type, and with parents
         List<ModelType> models = ots.getModels() == null ? new ArrayList<>() : ots.getModels().getModel();
 
         Map<String, ParameterType<?>> parameterTypes = new LinkedHashMap<>();
         DefinitionsParser.parseParameterTypes(ots.getDefinitions(), parameterTypes, eval);
         ParameterFactory parameterFactory =
                 ModelParser.parseParameters(definitions, models, eval, parameterTypes, streamInformation);
-        Map<String, LaneBasedStrategicalPlannerFactory<?>> factories =
-                ModelParser.parseModel(otsNetwork, models, eval, parameterTypes, streamInformation, parameterFactory);
+        Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, definitions, models,
+                eval, parameterTypes, streamInformation, parameterFactory);
         List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
         if (demand != null)
         {

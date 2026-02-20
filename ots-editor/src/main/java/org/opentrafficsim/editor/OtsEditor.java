@@ -308,6 +308,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
         rightContainer.setBorder(new LineBorder(null, -1));
 
+        // visualization pane
+        UIManager.getInsets("TabbedPane.contentBorderInsets").set(-1, -1, 1, -1);
+        this.visualizationPane = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
+        this.visualizationPane.setPreferredSize(new Dimension(900, 900));
+        this.visualizationPane.setBorder(new LineBorder(Color.BLACK, 0));
+        this.leftRightSplitPane.setLeftComponent(this.visualizationPane);
+
         // scenario and controls
         JPanel controlsContainer = new JPanel();
         controlsContainer.add(Box.createHorizontalGlue()); // right-aligns everything
@@ -328,6 +335,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 OtsEditor.this.evalWrapper.setDirty();
                 OtsEditor.this.evalWrapper
                         .getEval(OtsEditor.this.scenario.getItemAt(OtsEditor.this.scenario.getSelectedIndex()));
+                OtsEditor.this.visualizationPane.repaint();
             }
             catch (CircularDependencyException ex)
             {
@@ -371,13 +379,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.questionIcon = IconUtil.of("Question24.png").get();
         this.descriptionIcon = IconUtil.of("Information24.png").get();
         this.warningIcon = IconUtil.of("Warning24.png").get();
-
-        // visualization pane
-        UIManager.getInsets("TabbedPane.contentBorderInsets").set(-1, -1, 1, -1);
-        this.visualizationPane = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
-        this.visualizationPane.setPreferredSize(new Dimension(900, 900));
-        this.visualizationPane.setBorder(new LineBorder(Color.BLACK, 0));
-        this.leftRightSplitPane.setLeftComponent(this.visualizationPane);
 
         // There is likely a better way to do this, but setting the icons specific on the tree is impossible for collapsed and
         // expanded. Also in that case after removal of a node, the tree appearance gets reset and java default icons appear.
@@ -513,12 +514,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
         if (index == 0)
         {
-            OtsRunner.runSingle(file, null);
+            OtsRunner.runSingle(file, null, this);
         }
         else
         {
             String selectedScenario = this.scenario.getItemAt(index).scenarioNode().getId();
-            OtsRunner.runSingle(file, selectedScenario);
+            OtsRunner.runSingle(file, selectedScenario, this);
         }
         file.delete();
     }

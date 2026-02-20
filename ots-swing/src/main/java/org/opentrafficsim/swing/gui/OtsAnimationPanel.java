@@ -634,6 +634,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         String worldPoint = "<html>(x=" + fadeLeadingZeros(x) + "; y=" + fadeLeadingZeros(y) + ")</html>";
         this.coordinateField.setText(worldPoint);
         String worldPointNoHtml = "(x=" + x + "; y=" + y + ")";
+        if (this.coordinateField.getGraphics() == null)
+        {
+            // window is in a deleted state, but the mouse listener is still causing this event
+            return;
+        }
         int requiredWidth = this.coordinateField.getGraphics().getFontMetrics().stringWidth(worldPointNoHtml);
         if (this.coordinateField.getPreferredSize().width < requiredWidth)
         {

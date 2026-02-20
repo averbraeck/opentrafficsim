@@ -46,7 +46,20 @@ public abstract class OtsXmlModel extends AbstractOtsModel
     {
         super(simulator);
         Throw.whenNull(resource, "resource");
-        initialize(resource);
+        initialize(resource, null);
+    }
+
+    /**
+     * Instantiate an abstract OtsModel. The name and description will be set as the class name. Streams will be default.
+     * @param simulator the simulator to use
+     * @param resource resource
+     * @param scenario scenario
+     */
+    public OtsXmlModel(final OtsSimulatorInterface simulator, final String resource, final String scenario)
+    {
+        super(simulator);
+        Throw.whenNull(resource, "resource");
+        initialize(resource, scenario);
     }
 
     /**
@@ -56,25 +69,27 @@ public abstract class OtsXmlModel extends AbstractOtsModel
      * @param description a description of the simulation (HTML formatted)
      * @param streamInformation the initial set of streams (e.g., with seed management)
      * @param resource resource
+     * @param scenario scenario
      */
     public OtsXmlModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
-            final StreamInformation streamInformation, final String resource)
+            final StreamInformation streamInformation, final String resource, final String scenario)
     {
         super(simulator, shortName, description, streamInformation);
-        initialize(resource);
+        initialize(resource, scenario);
     }
 
     /**
      * Initializes the simulator based on run information in the XML.
      * @param resource resource
+     * @param scenario scenario, may be {@code null}
      */
-    private void initialize(final String resource)
+    private void initialize(final String resource, final String scenario)
     {
         Throw.whenNull(resource, "resource");
         this.network = new RoadNetwork(getShortName(), getSimulator());
         try
         {
-            this.xmlParser = new XmlParser(this.network).setResource(resource);
+            this.xmlParser = new XmlParser(this.network).setResource(resource).setScenario(scenario);
             getSimulator().initialize(Time.ZERO, this.xmlParser.getWarmupPeriod(), this.xmlParser.getRunLength(), this,
                     new HistoryManagerDevs(getSimulator(), this.xmlParser.getHistory(), Duration.ofSI(10.0)));
         }

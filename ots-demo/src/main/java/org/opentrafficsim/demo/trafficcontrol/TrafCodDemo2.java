@@ -157,7 +157,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
         {
             super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams(),
-                    "/resources/TrafCODDemo2/TrafCODDemo2.xml");
+                    "/resources/TrafCODDemo2/TrafCODDemo2.xml", null);
         }
 
         @Override
