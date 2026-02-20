@@ -22,7 +22,7 @@ public enum Appearance
     FOSIM("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Dialog"),
 
     /** Dark. */
-    DARK("Dark", new Color(96, 96, 96), Color.WHITE, Color.DARK_GRAY, "Dialog"),
+    DARK("Dark", new Color(112, 112, 112), new Color(160, 160, 160), Color.DARK_GRAY, "Dialog"),
 
     /** Gray. */
     GRAY("Gray", Color.LIGHT_GRAY, Color.BLACK, new Color(96, 96, 96), "Dialog"),
