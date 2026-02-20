@@ -32,7 +32,7 @@ import org.opentrafficsim.xml.bindings.types.AccelerationUnitType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AccelerationDistType")
 @XmlSeeAlso({
-    org.opentrafficsim.xml.generated.ModelType.ModelParameters.AccelerationDist.class
+    org.opentrafficsim.xml.generated.ModelParameters.AccelerationDist.class
 })
 @SuppressWarnings("all") public class AccelerationDistType
     extends ConstantDistType

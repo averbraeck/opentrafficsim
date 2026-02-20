@@ -1,39 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd">
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd">
   <ots:Definitions>
     <ots:GtuTypes>
-      <ots:GtuType Id="CAR" />
+      <ots:GtuType Id="CAR"/>
+      <ots:GtuType Id="TRUCK"/>
     </ots:GtuTypes>
     <ots:GtuTemplates>
       <ots:GtuTemplate GtuType="CAR" Id="CAR">
         <ots:LengthDist LengthUnit="m">
-          <ots:Uniform Max="6" Min="3.5" />
+          <ots:Uniform Max="6" Min="3.5"/>
         </ots:LengthDist>
         <ots:WidthDist LengthUnit="m">
-          <ots:Constant C="2" />
+          <ots:Constant C="2"/>
         </ots:WidthDist>
         <ots:MaxSpeedDist SpeedUnit="km/h">
-          <ots:Constant C="160" />
+          <ots:Constant C="160"/>
+        </ots:MaxSpeedDist>
+      </ots:GtuTemplate>
+      <ots:GtuTemplate GtuType="TRUCK" Id="TRUCK">
+        <ots:LengthDist LengthUnit="m">
+          <ots:Uniform Max="18" Min="10"/>
+        </ots:LengthDist>
+        <ots:WidthDist LengthUnit="m">
+          <ots:Uniform Max="2.5" Min="2"/>
+        </ots:WidthDist>
+        <ots:MaxSpeedDist SpeedUnit="km/h">
+          <ots:Normal Mu="85" Sigma="2.5"/>
         </ots:MaxSpeedDist>
       </ots:GtuTemplate>
     </ots:GtuTemplates>
     <ots:LinkTypes>
       <ots:LinkType Id="FREEWAY">
-        <ots:Compatibility GtuType="CAR" />
-        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="100km/h" />
+        <ots:Compatibility GtuType="CAR"/>
+        <ots:Compatibility GtuType="TRUCK"/>
+        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="100km/h"/>
+        <ots:SpeedLimit GtuType="TRUCK" LegalSpeedLimit="90km/h"/>
       </ots:LinkType>
     </ots:LinkTypes>
     <ots:StripeTypes>
-      <ots:StripeType Id="SOLID" RightChangeLane="false" LeftChangeLane="false">
+      <ots:StripeType Id="SOLID" LeftChangeLane="false" RightChangeLane="false">
         <ots:Elements>
           <ots:Line Width="20cm">
-            <ots:Continuous />
+            <ots:Continuous/>
           </ots:Line>
         </ots:Elements>
       </ots:StripeType>
-      <ots:StripeType Id="DASHED" RightChangeLane="true" LeftChangeLane="true">
+      <ots:StripeType Id="DASHED" LeftChangeLane="true" RightChangeLane="true">
         <ots:Elements>
           <ots:Line Width="20cm">
             <ots:Dashed>
@@ -45,17 +57,30 @@
           </ots:Line>
         </ots:Elements>
         <ots:DashOffset>
-          <ots:SyncUpstream />
+          <ots:SyncUpstream/>
         </ots:DashOffset>
       </ots:StripeType>
     </ots:StripeTypes>
     <ots:LaneTypes>
       <ots:LaneType Id="FREEWAY">
-        <ots:Compatibility GtuType="CAR" />
+        <ots:Compatibility GtuType="CAR"/>
+        <ots:Compatibility GtuType="TRUCK"/>
       </ots:LaneType>
     </ots:LaneTypes>
+    <ots:LaneBiases>
+      <ots:LaneBias Bias="2" GtuType="CAR">
+        <ots:LeftSpeed>130km/h</ots:LeftSpeed>
+        <ots:RightSpeed>80km/h</ots:RightSpeed>
+      </ots:LaneBias>
+      <ots:LaneBias Bias="5" GtuType="TRUCK">
+        <ots:FromRight>0.0</ots:FromRight>
+      </ots:LaneBias>
+    </ots:LaneBiases>
     <ots:RoadLayouts>
       <ots:RoadLayout Id="2" LinkType="FREEWAY">
+        <ots:Shoulder>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Shoulder>
         <ots:Stripe Id="1">
           <ots:DefinedStripe>SOLID</ots:DefinedStripe>
         </ots:Stripe>
@@ -72,8 +97,14 @@
         <ots:Stripe Id="3">
           <ots:DefinedStripe>SOLID</ots:DefinedStripe>
         </ots:Stripe>
+        <ots:Shoulder>
+          <ots:Width>0.6m</ots:Width>
+        </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="Taper" LinkType="FREEWAY">
+        <ots:Shoulder>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Shoulder>
         <ots:Stripe Id="1">
           <ots:DefinedStripe>SOLID</ots:DefinedStripe>
         </ots:Stripe>
@@ -81,7 +112,7 @@
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Stripe Id="2">
-          <ots:Custom RightChangeLane="true" LeftChangeLane="false">
+          <ots:Custom LeftChangeLane="false" RightChangeLane="true">
             <ots:Elements>
               <ots:Line Width="40cm">
                 <ots:Dashed>
@@ -99,7 +130,7 @@
           <ots:WidthEnd>0.01m</ots:WidthEnd>
         </ots:Lane>
         <ots:Stripe Id="3">
-          <ots:Custom RightChangeLane="false" LeftChangeLane="true">
+          <ots:Custom LeftChangeLane="true" RightChangeLane="false">
             <ots:Elements>
               <ots:Line Width="40cm">
                 <ots:Dashed>
@@ -125,8 +156,14 @@
         <ots:Stripe Id="5">
           <ots:DefinedStripe>SOLID</ots:DefinedStripe>
         </ots:Stripe>
+        <ots:Shoulder>
+          <ots:Width>0.6m</ots:Width>
+        </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="3" LinkType="FREEWAY">
+        <ots:Shoulder>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Shoulder>
         <ots:Stripe Id="1">
           <ots:DefinedStripe>SOLID</ots:DefinedStripe>
         </ots:Stripe>
@@ -149,54 +186,116 @@
         <ots:Stripe Id="4">
           <ots:DefinedStripe>SOLID</ots:DefinedStripe>
         </ots:Stripe>
+        <ots:Shoulder>
+          <ots:Width>0.6m</ots:Width>
+        </ots:Shoulder>
       </ots:RoadLayout>
     </ots:RoadLayouts>
     <ots:DetectorTypes>
       <ots:DetectorType Id="SINK">
-        <ots:Compatibility GtuType="CAR" />
+        <ots:Compatibility GtuType="CAR"/>
+        <ots:Compatibility GtuType="TRUCK"/>
       </ots:DetectorType>
     </ots:DetectorTypes>
+    <ots:ParameterTypes>
+      <ots:Acceleration Default="1.25m/s2" Field="org.opentrafficsim.base.parameters.ParameterTypes.A" Id="a"/>
+      <ots:Speed Field="org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters.VGAIN" Id="vGain"/>
+    </ots:ParameterTypes>
   </ots:Definitions>
   <ots:Network>
-    <ots:Node Coordinate="(0,0)" Direction="0deg" Id="A" />
-    <ots:Node Coordinate="(500,0)" Direction="0deg" Id="B" />
-    <ots:Node Coordinate="(750,0)" Direction="0deg" Id="C" />
-    <ots:Node Coordinate="(1250,0)" Direction="0deg" Id="D" />
-    <ots:Node Coordinate="(0,-20)" Direction="0deg" Id="E" />
+    <ots:Node Coordinate="(0,0)" Direction="0deg" Id="A"/>
+    <ots:Node Coordinate="(500,0)" Direction="0deg" Id="B"/>
+    <ots:Node Coordinate="(750,0)" Direction="0deg" Id="C"/>
+    <ots:Node Coordinate="{eLoc}" Direction="0deg" Id="D"/>
+    <ots:Node Coordinate="(0,-20)" Direction="0deg" Id="E"/>
     <ots:Link Id="AB" NodeEnd="B" NodeStart="A" Type="FREEWAY">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>2</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="EB" NodeEnd="B" NodeStart="E" OffsetEnd="-7m" Type="FREEWAY">
-      <ots:Bezier />
+      <ots:Bezier/>
       <ots:DefinedLayout>2</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="BC" NodeEnd="C" NodeStart="B" Type="FREEWAY">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>Taper</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="CD" NodeEnd="D" NodeStart="C" Type="FREEWAY">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>3</ots:DefinedLayout>
     </ots:Link>
   </ots:Network>
   <ots:Demand>
-    <ots:Od GlobalInterpolation="STEPWISE" Id="OD" SinkType="SINK">
+    <ots:Od GlobalInterpolation="STEPWISE" Id="OD" Options="Options" SinkType="SINK">
       <ots:GlobalTime>
-        <ots:Time Value="0s" />
-        <ots:Time Value="3600s" />
+        <ots:Time Value="0s"/>
+        <ots:Time Value="3600s"/>
       </ots:GlobalTime>
-      <ots:Category GtuType="CAR" Id="CAR" />
+      <ots:Category GtuType="CAR" Id="CAR"/>
+      <ots:Category GtuType="TRUCK" Id="TRUCK"/>
       <ots:Cell Category="CAR" Destination="D" Origin="A">
         <ots:Level>2000veh/h</ots:Level>
+        <ots:Level>0veh/h</ots:Level>
+      </ots:Cell>
+      <ots:Cell Category="TRUCK" Destination="D" Origin="A">
+        <ots:Level>1000veh/h</ots:Level>
         <ots:Level>0veh/h</ots:Level>
       </ots:Cell>
       <ots:Cell Category="CAR" Destination="D" Origin="E">
         <ots:Level>2000veh/h</ots:Level>
         <ots:Level>0veh/h</ots:Level>
       </ots:Cell>
+      <ots:Cell Category="TRUCK" Destination="D" Origin="E">
+        <ots:Level>1000veh/h</ots:Level>
+        <ots:Level>0veh/h</ots:Level>
+      </ots:Cell>
     </ots:Od>
+    <ots:OdOptions Id="Options">
+      <ots:OdOptionsItem>
+        <ots:Global/>
+      </ots:OdOptionsItem>
+    </ots:OdOptions>
   </ots:Demand>
+  <ots:Models>
+    <ots:Model Id="Model">
+      <ots:GtuTypeParameters GtuType="TRUCK">
+        <ots:Acceleration Id="a">0.8m/s2</ots:Acceleration>
+        <ots:Speed Id="vGain">50km/h</ots:Speed>
+      </ots:GtuTypeParameters>
+      <ots:TacticalPlanner>
+        <ots:Lmrs>
+          <ots:DefaultModel Cooperation="PASSIVE_MOVING">
+            <ots:MandatoryIncentives/>
+            <ots:VoluntaryIncentives Courtesy="on"/>
+            <ots:AccelerationIncentives NoSlowLaneOvertake="on"/>
+            <ots:SocialInteractions LaneChanges="on" SocialPressure="on" Speed="on" Tailgating="on"/>
+            <ots:Perception>
+              <ots:None/>
+            </ots:Perception>
+          </ots:DefaultModel>
+          <ots:GtuTypeModel GtuType="TRUCK">
+            <ots:MandatoryIncentives/>
+            <ots:VoluntaryIncentives StayOnSlowLanes="on"/>
+            <ots:AccelerationIncentives/>
+            <ots:SocialInteractions/>
+            <ots:Perception>
+              <ots:None/>
+            </ots:Perception>
+          </ots:GtuTypeModel>
+        </ots:Lmrs>
+      </ots:TacticalPlanner>
+    </ots:Model>
+  </ots:Models>
+  <ots:Scenarios>
+    <ots:DefaultInputParameters>
+      <ots:String Id="{eLoc}">(3250,0)</ots:String>
+    </ots:DefaultInputParameters>
+    <ots:Scenario Id="Scenario1">
+      <ots:InputParameters>
+        <ots:String Id="{eLoc}">(1250,0)</ots:String>
+      </ots:InputParameters>
+    </ots:Scenario>
+  </ots:Scenarios>
   <ots:Run>
     <ots:RunLength>1h</ots:RunLength>
   </ots:Run>

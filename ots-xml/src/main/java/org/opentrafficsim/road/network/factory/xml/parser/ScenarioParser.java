@@ -17,9 +17,7 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
-import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.InputParameters;
-import org.opentrafficsim.xml.generated.ModelIdReferralType;
 import org.opentrafficsim.xml.generated.ScenarioType;
 import org.opentrafficsim.xml.generated.Scenarios;
 
@@ -225,33 +223,6 @@ public final class ScenarioParser
             String id = parameter.getId();
             map.put(id.substring(1, id.length() - 1), () -> parameter.get().get(eval));
         }
-    }
-
-    /**
-     * Parse model ID referrals.
-     * @param scenario scenario
-     * @param demand demand
-     * @param eval expression evaluator.
-     * @return map from ID to ID
-     */
-    public static Map<String, String> parseModelIdReferral(final List<ScenarioType> scenario, final Demand demand,
-            final Eval eval)
-    {
-        // TODO: use run to select scenario (probably outside this class, and accept a single Scenario
-        Map<String, String> map = new LinkedHashMap<>();
-        for (ModelIdReferralType modelIdReferral : demand.getModelIdReferral())
-        {
-            map.put(modelIdReferral.getId(), modelIdReferral.getModelId().get(eval));
-        }
-        // overwrite with scenario level ID referrals
-        if (!scenario.isEmpty())
-        {
-            for (ModelIdReferralType modelIdReferral : scenario.get(0).getModelIdReferral())
-            {
-                map.put(modelIdReferral.getId(), modelIdReferral.getModelId().get(eval));
-            }
-        }
-        return map;
     }
 
     /**

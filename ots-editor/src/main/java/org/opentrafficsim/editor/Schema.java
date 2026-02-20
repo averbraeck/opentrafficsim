@@ -241,7 +241,7 @@ public class Schema
                 {
                     this.root = node;
                 }
-                nextPath = extendPath ? (nextPath.isEmpty() ? name.get() : nextPath + "." + name) : nextPath;
+                nextPath = extendPath ? (nextPath.isEmpty() ? name.get() : nextPath + "." + name.get()) : nextPath;
                 this.elements.put(nextPath, node);
             }
             String ref = DocumentReader.getAttribute(node, "ref").orElse(null);

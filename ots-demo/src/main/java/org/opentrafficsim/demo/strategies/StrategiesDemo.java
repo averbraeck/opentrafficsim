@@ -509,7 +509,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         LmrsFactory<Lmrs> lmrsFactory = new LmrsFactory<>(Lmrs::new).set(Setting.SOCIO_TAILGATING, true)
                 .set(Setting.SOCIO_LANE_CHANGE, true).set(Setting.SOCIO_SPEED, true)
-                .set(Setting.INCENTIVE_STAY_RIGHT, true, DefaultsNl.TRUCK).setStream(this.stream);
+                .set(Setting.INCENTIVE_STAY_ON_SLOW_LANES, true, DefaultsNl.TRUCK).setStream(this.stream);
         lmrsFactory.addParameter(DefaultsNl.CAR, LmrsParameters.SOCIO, 0.5);
         lmrsFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.SOCIO, 1.0);
         lmrsFactory.addParameter(DefaultsNl.CAR, LmrsParameters.VGAIN, new Speed(35.0, SpeedUnit.KM_PER_HOUR));

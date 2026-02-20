@@ -116,7 +116,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     "randomStream"
 })
 @XmlSeeAlso({
-    org.opentrafficsim.xml.generated.ModelType.ModelParameters.IntegerDist.class
+    org.opentrafficsim.xml.generated.ModelParameters.IntegerDist.class
 })
 @SuppressWarnings("all") public class DiscreteDistType implements Serializable
 {

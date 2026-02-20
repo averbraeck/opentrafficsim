@@ -384,6 +384,18 @@
       <ots:Cycle Green="27s" Offset="90s" SignalGroupId="D" Yellow="3s" />
     </ots:FixedTime>
   </ots:Control>
+  <ots:Scenarios>
+    <ots:DefaultInputParameters>
+      <ots:Duration Id="{a}">3s</ots:Duration>
+      <ots:Duration Id="{b}">3s</ots:Duration>
+    </ots:DefaultInputParameters>
+    <ots:Scenario Id="scenario">
+      <ots:InputParameters>
+        <ots:Duration Id="{a}">5s</ots:Duration>
+        <ots:Duration Id="{b}">5s</ots:Duration>
+      </ots:InputParameters>
+    </ots:Scenario>
+  </ots:Scenarios>
   <ots:Run>
     <ots:RunLength>1h</ots:RunLength>
   </ots:Run>

@@ -40,11 +40,13 @@ import org.opentrafficsim.xml.generated.Control;
 import org.opentrafficsim.xml.generated.Control.FixedTime;
 import org.opentrafficsim.xml.generated.Control.FixedTime.Cycle;
 import org.opentrafficsim.xml.generated.Control.TrafCod.Console;
+import org.opentrafficsim.xml.generated.ControlType;
 import org.opentrafficsim.xml.generated.ControlType.SignalGroup.TrafficLight;
 import org.opentrafficsim.xml.generated.LaneLinkType;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.MultipleLane;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.SingleLane;
+import org.opentrafficsim.xml.generated.ScenarioType;
 
 import jakarta.xml.bind.DatatypeConverter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -72,6 +74,7 @@ public final class ControlParser
      * @param simulator simulator
      * @param control control objects
      * @param definitions type definitions.
+     * @param scenario scenario
      * @param eval expression evaluator.
      * @throws NetworkException when sensors could not be added to the network
      * @throws IOException when a TrafCOD engine cannot be loaded
@@ -80,13 +83,17 @@ public final class ControlParser
      * @throws SimRuntimeException when a TrafCOD engine fails to initialize
      */
     public static void parseControl(final RoadNetwork otsNetwork, final OtsSimulatorInterface simulator, final Control control,
-            final Definitions definitions, final Eval eval)
+            final Definitions definitions, final ScenarioType scenario, final Eval eval)
             throws NetworkException, MalformedURLException, IOException, SimRuntimeException, TrafficControlException
     {
 
         // Fixed time controllers
         for (FixedTime fixedTime : control.getFixedTime())
         {
+            if (!isScenarioControl(fixedTime, scenario, eval))
+            {
+                continue;
+            }
             String id = fixedTime.getId();
             Duration cycleTime = fixedTime.getCycleTime().get(eval);
             Duration offset = fixedTime.getOffset().get(eval);
@@ -128,6 +135,10 @@ public final class ControlParser
 
         for (org.opentrafficsim.xml.generated.Control.TrafCod trafCod : control.getTrafCod())
         {
+            if (!isScenarioControl(trafCod, scenario, eval))
+            {
+                continue;
+            }
             String controllerName = trafCod.getId();
             String programString = trafCod.getProgram().getValue().get(eval);
             // TODO: use space
@@ -236,6 +247,29 @@ public final class ControlParser
             }
             // TODO get the TrafCOD program, etc.
         }
+    }
+
+    /**
+     * Returns whether the given control is part of the scenario.
+     * @param control control
+     * @param scenario scenario tag, may be {@code null}
+     * @param eval expression evaluator
+     * @return whether the given control is part of the scenario
+     */
+    private static boolean isScenarioControl(final ControlType control, final ScenarioType scenario, final Eval eval)
+    {
+        if (scenario == null)
+        {
+            return true;
+        }
+        for (org.opentrafficsim.xml.generated.ScenarioType.Control scenarioControl : scenario.getControl())
+        {
+            if (scenarioControl.getId().get(eval).equals(control.getId()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

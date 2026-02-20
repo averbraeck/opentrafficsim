@@ -32,7 +32,7 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityUnitType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinearDensityDistType")
 @XmlSeeAlso({
-    org.opentrafficsim.xml.generated.ModelType.ModelParameters.LinearDensityDist.class
+    org.opentrafficsim.xml.generated.ModelParameters.LinearDensityDist.class
 })
 @SuppressWarnings("all") public class LinearDensityDistType
     extends ConstantDistType

@@ -32,7 +32,7 @@ import org.opentrafficsim.xml.bindings.types.DurationUnitType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DurationDistType")
 @XmlSeeAlso({
-    org.opentrafficsim.xml.generated.ModelType.ModelParameters.DurationDist.class
+    org.opentrafficsim.xml.generated.ModelParameters.DurationDist.class
 })
 @SuppressWarnings("all") public class DurationDistType
     extends ConstantDistType

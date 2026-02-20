@@ -205,12 +205,6 @@
       <xsd:field xpath="@Id" />
     </xsd:key>
 
-    <!-- Demand.Category.Id key -->
-    <xsd:key name="categoryKey">
-      <xsd:selector xpath="ots:Demand/ots:Od/ots:Category|.//ots:DefaultInputParameters/ots:String" />
-      <xsd:field xpath="@Id" />
-    </xsd:key>
-
     <!-- Demand.Route.Id key -->
     <xsd:key name="routeKey">
       <xsd:selector xpath="ots:Demand/ots:Route|.//ots:DefaultInputParameters/ots:String" />
@@ -257,8 +251,16 @@
     <!-- ========================================== CONTROL KEYS ========================================== -->
 
     <!-- Control.FixedTime.Id key -->
-    <xsd:key name="controlFixedTimeKey">
-      <xsd:selector xpath="ots:Control/ots:FixedTime|.//ots:DefaultInputParameters/ots:String" />
+    <xsd:key name="controlKey">
+      <xsd:selector xpath="ots:Control/ots:FixedTime|ots:Control/ots:TrafCod|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- =========================================== MODEL KEYS =========================================== -->
+
+    <!-- Models.Model.Id key -->
+    <xsd:key name="modelKey">
+      <xsd:selector xpath="ots:Models/ots:Model|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
 
@@ -606,12 +608,6 @@
       <xsd:field xpath="@Destination" />
     </xsd:keyref>
 
-    <!-- Demand.Od.Cell.Category = Cagtegory.Id -->
-    <xsd:keyref name="cellCategoryIdRef" refer="ots:categoryKey">
-      <xsd:selector xpath="ots:Demand/ots:Od/ots:Cell" />
-      <xsd:field xpath="@Category" />
-    </xsd:keyref>
-
     <!-- Demand.Od.Category.GtuType = GtuType.Od -->
     <xsd:keyref name="categoryGtuTypeIdRef" refer="ots:gtuTypeKey">
       <xsd:selector xpath="ots:Demand/ots:Od/ots:Category" />
@@ -706,12 +702,12 @@
 
     <!-- ========================================== MODEL KEYREFS ========================================= -->
 
-    <!-- Models.Model.GtuType = GtuType.Id -->
-    <xsd:keyref name="modelGtuTypeRef" refer="ots:gtuTypeKey">
-      <xsd:selector xpath="ots:Models/ots:Model" />
+    <!-- GtuTypeModelParameters.GtuType = GtuType.Id -->
+    <xsd:keyref name="gtuTypeModelParametersGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath=".//ots:GtuTypeParameters" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
-
+    
     <!-- ModelParameters.Duration.Id = ParameterTypes.Duration.Id -->
     <xsd:keyref name="modelParametersDurationRef" refer="ots:parameterTypesDurationKey">
       <xsd:selector xpath=".//ots:ModelParameters/ots:Duration" />
@@ -885,12 +881,30 @@
       <xsd:selector xpath=".//ots:CorrelationParameterType/ots:Integer" />
       <xsd:field xpath="." />
     </xsd:keyref>
+    
+    <!-- Models.Model.TacticalPlanner.Lmrs.GtuTypeModel.GtuType = GtuType.Id -->
+    <xsd:keyref name="modelGtuTypeRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath="ots:Models/ots:Model/ots:TacticalPlanner/ots:Lmrs/ots:GtuTypeModel" />
+      <xsd:field xpath="@GtuType" />
+    </xsd:keyref>
 
     <!-- ======================================== SCENARIOS KEYREFS ======================================= -->
 
     <!-- Scenario.Od.Id = Od.Id -->
     <xsd:keyref name="scenarioOdRef" refer="ots:odKey">
       <xsd:selector xpath=".//ots:Scenario/ots:Od" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- Scenario.Control.Id = Control.Id -->
+    <xsd:keyref name="scenarioControlRef" refer="ots:controlKey">
+      <xsd:selector xpath=".//ots:Scenario/ots:Control" />
+      <xsd:field xpath="@Id" />
+    </xsd:keyref>
+    
+    <!-- Scenario.Model.Id = Model.Id -->
+    <xsd:keyref name="scenarioModelRef" refer="ots:modelKey">
+      <xsd:selector xpath=".//ots:Scenario/ots:Model" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
 

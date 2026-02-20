@@ -550,20 +550,25 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
     // Social interactions
 
-    /** Enables tailgating. Without tailgating, any social interaction still results in social pressure. */
-    @Option(names = {"--tailgating"},
-            description = "Enables tailgating. Without tailgating, any social interaction still results in social pressure.",
+    /** Enables social pressure exerted to the (potential) leader. */
+    @Option(names = {"--tailgating"}, description = "Enables social pressure exerted to the (potential) leader.",
+            defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
+    private List<Boolean> socialPressure = listOf(false);
+
+    /** Enables tailgating due to social pressure towards the leader. */
+    @Option(names = {"--tailgating"}, description = "Enables tailgating due to social pressure towards the leader.",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> tailgating = listOf(false);
 
-    /** Enables lane changes due to social pressure. */
-    @Option(names = {"--socioLaneChange"}, description = "Enables lane changes due to social pressure.", defaultValue = "false",
+    /** Enables lane changes due to social pressure from the (potential) follower. */
+    @Option(names = {"--socioLaneChange"},
+            description = "Enables lane changes due to social pressure from the (potential) follower.", defaultValue = "false",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> socioLaneChange = listOf(false);
 
-    /** Enables speed increase due to social pressure. */
-    @Option(names = {"--socioSpeed"}, description = "Enables speed increase due to social pressure.", defaultValue = "false",
-            split = "\\|", splitSynopsisLabel = "|", negatable = true)
+    /** Enables speed increase due to social pressure from the follower. */
+    @Option(names = {"--socioSpeed"}, description = "Enables speed increase due to social pressure from the follower.",
+            defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> socioSpeed = listOf(false);
 
     /**
@@ -937,8 +942,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         Synchronization sync = get(this.synchronization, gtuType);
         Cooperation coop = get(this.cooperation, gtuType);
         GapAcceptance gapAccept = get(this.gapAcceptance, gtuType);
-        Tailgating tail = get(this.tailgating, gtuType) ? Tailgating.PRESSURE
-                : (anySocialInteractions() ? Tailgating.RHO_ONLY : Tailgating.NONE);
+        Tailgating tail = get(this.socialPressure, gtuType) && get(this.tailgating, gtuType) ? Tailgating.PRESSURE
+                : (get(this.socialPressure, gtuType) ? Tailgating.RHO_ONLY : Tailgating.NONE);
         T tacticalPlanner = get(this.lmrsProvider, gtuType).from(cfModel, gtu, perception, sync, coop, gapAccept, tail);
 
         // Mandatory incentives
@@ -1016,7 +1021,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      */
     private boolean anySocialInteractions()
     {
-        return this.tailgating.contains(true) || this.socioLaneChange.contains(true) || this.socioSpeed.contains(true);
+        return this.socialPressure.contains(true) || this.tailgating.contains(true) || this.socioLaneChange.contains(true)
+                || this.socioSpeed.contains(true);
     }
 
     /**
@@ -1258,7 +1264,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public static final Setting<Boolean> INCENTIVE_QUEUE = new Setting<>((factory) -> factory.incentiveQueue);
 
         /** Voluntary lane change incentive for trucks to stay in slowest rightmost two lanes (default: false). */
-        public static final Setting<Boolean> INCENTIVE_STAY_RIGHT = new Setting<>((factory) -> factory.incentiveStayRight);
+        public static final Setting<Boolean> INCENTIVE_STAY_ON_SLOW_LANES =
+                new Setting<>((factory) -> factory.incentiveStayRight);
 
         /** Voluntary lane change incentive to keep to the slow lane (default: true). */
         public static final Setting<Boolean> INCENTIVE_KEEP = new Setting<>((factory) -> factory.incentiveKeep);
@@ -1281,7 +1288,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public static final Setting<Boolean> ACCELERATION_CONFLICTS = new Setting<>((factory) -> factory.accelerationConflicts);
 
         /** Acceleration incentive to not overtake traffic in the left lane (default: false). */
-        public static final Setting<Boolean> ACCELERATION_NO_RIGHT_OVERTAKE =
+        public static final Setting<Boolean> ACCELERATION_NO_SLOW_LANE_OVERTAKE =
                 new Setting<>((factory) -> factory.accelerationNoRightOvertake);
 
         /** Custom acceleration incentives. */
@@ -1358,13 +1365,16 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
         // Social interactions
 
-        /** Enables tailgating. Without tailgating, any social interaction still results in social pressure (default: false). */
+        /** Enables social pressure exerted to the (potential) leader (default: false). */
+        public static final Setting<Boolean> SOCIO_PRESSURE = new Setting<>((factory) -> factory.socialPressure);
+
+        /** Enables tailgating due to social pressure towards the leader (default: false). */
         public static final Setting<Boolean> SOCIO_TAILGATING = new Setting<>((factory) -> factory.tailgating);
 
-        /** Enables lane changes due to social pressure (default: false). */
+        /** Enables lane changes due to social pressure from the (potential) follower (default: false). */
         public static final Setting<Boolean> SOCIO_LANE_CHANGE = new Setting<>((factory) -> factory.socioLaneChange);
 
-        /** Enables speed increase due to social pressure (default: false). */
+        /** Enables speed increase due to social pressure from the follower (default: false). */
         public static final Setting<Boolean> SOCIO_SPEED = new Setting<>((factory) -> factory.socioSpeed);
 
         /** Function to return the right list. */

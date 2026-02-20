@@ -9,14 +9,8 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opentrafficsim.xml.bindings.AnticipationAdapter;
 import org.opentrafficsim.xml.bindings.ClassAdapter;
-import org.opentrafficsim.xml.bindings.EstimationAdapter;
-import org.opentrafficsim.xml.bindings.StringAdapter;
-import org.opentrafficsim.xml.bindings.types.AnticipationType;
 import org.opentrafficsim.xml.bindings.types.ClassType;
-import org.opentrafficsim.xml.bindings.types.EstimationType;
-import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
@@ -627,17 +621,15 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *                         (UNDERESTIMATION, OVERESTIMATION) of the delayed speed and headway.
              * 
              */
-            @XmlElement(name = "Estimation", required = true, type = String.class)
-            @XmlJavaTypeAdapter(EstimationAdapter.class)
-            protected EstimationType estimation;
+            @XmlElement(name = "Estimation", required = true)
+            protected String estimation;
             /**
              * Anticipation entails NONE, CONSTANTSPEED or
              *                         CONSTANT_ACCELERATION, where the latter two anticipate to compensate the delay.
              * 
              */
-            @XmlElement(name = "Anticipation", required = true, type = String.class)
-            @XmlJavaTypeAdapter(AnticipationAdapter.class)
-            protected AnticipationType anticipation;
+            @XmlElement(name = "Anticipation", required = true)
+            protected String anticipation;
 
             /**
              * Estimation entails perfect (NONE) or under- or
@@ -649,7 +641,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *     {@link String }
              *     
              */
-            public EstimationType getEstimation() {
+            public String getEstimation() {
                 return estimation;
             }
 
@@ -662,7 +654,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *     
              * @see #getEstimation()
              */
-            public void setEstimation(EstimationType value) {
+            public void setEstimation(String value) {
                 this.estimation = value;
             }
 
@@ -675,7 +667,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *     {@link String }
              *     
              */
-            public AnticipationType getAnticipation() {
+            public String getAnticipation() {
                 return anticipation;
             }
 
@@ -688,7 +680,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *     
              * @see #getAnticipation()
              */
-            public void setAnticipation(AnticipationType value) {
+            public void setAnticipation(String value) {
                 this.anticipation = value;
             }
 
@@ -864,9 +856,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *                         rely on anticipation to reduce task demand of secondary task(s).
              * 
              */
-            @XmlElement(name = "TaskManager", type = String.class)
-            @XmlJavaTypeAdapter(StringAdapter.class)
-            protected StringType taskManager;
+            @XmlElement(name = "TaskManager")
+            protected String taskManager;
 
             /**
              * Implementations of Task with constructor without input.
@@ -939,7 +930,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *     {@link String }
              *     
              */
-            public StringType getTaskManager() {
+            public String getTaskManager() {
                 return taskManager;
             }
 
@@ -952,7 +943,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
              *     
              * @see #getTaskManager()
              */
-            public void setTaskManager(StringType value) {
+            public void setTaskManager(String value) {
                 this.taskManager = value;
             }
 

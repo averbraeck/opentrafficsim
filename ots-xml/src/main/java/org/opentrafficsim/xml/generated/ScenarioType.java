@@ -43,7 +43,15 @@ import org.opentrafficsim.xml.bindings.types.StringType;
  *             </complexContent>
  *           </complexType>
  *         </element>
- *         <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}ModelIdReferralType" maxOccurs="unbounded" minOccurs="0"/>
+ *         <element name="Model" minOccurs="0">
+ *           <complexType>
+ *             <complexContent>
+ *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}string" />
+ *               </restriction>
+ *             </complexContent>
+ *           </complexType>
+ *         </element>
  *       </sequence>
  *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
  *     </restriction>
@@ -58,7 +66,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     "inputParameters",
     "od",
     "control",
-    "modelIdReferral"
+    "model"
 })
 @SuppressWarnings("all") public class ScenarioType
     implements Serializable
@@ -71,8 +79,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected List<ScenarioType.Od> od;
     @XmlElement(name = "Control")
     protected List<ScenarioType.Control> control;
-    @XmlElement(name = "ModelIdReferral")
-    protected List<ModelIdReferralType> modelIdReferral;
+    @XmlElement(name = "Model")
+    protected ScenarioType.Model model;
     @XmlAttribute(name = "Id", required = true)
     protected String id;
 
@@ -165,35 +173,27 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the modelIdReferral property.
-     * 
-     * <p>This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the modelIdReferral property.</p>
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * </p>
-     * <pre>
-     * getModelIdReferral().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ModelIdReferralType }
-     * </p>
-     * 
+     * Gets the value of the model property.
      * 
      * @return
-     *     The value of the modelIdReferral property.
+     *     possible object is
+     *     {@link ScenarioType.Model }
+     *     
      */
-    public List<ModelIdReferralType> getModelIdReferral() {
-        if (modelIdReferral == null) {
-            modelIdReferral = new ArrayList<>();
-        }
-        return this.modelIdReferral;
+    public ScenarioType.Model getModel() {
+        return model;
+    }
+
+    /**
+     * Sets the value of the model property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ScenarioType.Model }
+     *     
+     */
+    public void setModel(ScenarioType.Model value) {
+        this.model = value;
     }
 
     /**
@@ -241,6 +241,61 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
     public static class Control
+        implements Serializable
+    {
+
+        private static final long serialVersionUID = 10102L;
+        @XmlAttribute(name = "Id", required = true)
+        @XmlJavaTypeAdapter(StringAdapter.class)
+        protected StringType id;
+
+        /**
+         * Gets the value of the id property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public StringType getId() {
+            return id;
+        }
+
+        /**
+         * Sets the value of the id property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setId(StringType value) {
+            this.id = value;
+        }
+
+    }
+
+
+    /**
+     * <p>Java class for anonymous complex type</p>.
+     * 
+     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * 
+     * <pre>{@code
+     * <complexType>
+     *   <complexContent>
+     *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}string" />
+     *     </restriction>
+     *   </complexContent>
+     * </complexType>
+     * }</pre>
+     * 
+     * 
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
+    public static class Model
         implements Serializable
     {
 

@@ -51,6 +51,18 @@
       <xsd:field xpath="@Destination" />
       <xsd:field xpath="@Category" /> <!-- optional field, so this can't be an xsd:key -->
     </xsd:unique>
+    
+    <!-- Demand.Category.Id key -->
+    <xsd:key name="categoryKey">
+      <xsd:selector xpath="ots:Category|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
+    <!-- Demand.Od.Cell.Category = Category.Id -->
+    <xsd:keyref name="cellCategoryIdRef" refer="ots:categoryKey">
+      <xsd:selector xpath="ots:Cell" />
+      <xsd:field xpath="@Category" />
+    </xsd:keyref>
 
   </xsd:element>
 
@@ -71,23 +83,6 @@
                 <xsd:element name="Origin" type="ots:string" />
                 <xsd:element name="Lane" type="ots:LaneLinkType" />
               </xsd:choice>
-              <xsd:element name="DefaultModel" minOccurs="0" maxOccurs="1">
-                <xsd:complexType>
-                  <xsd:choice>
-                    <xsd:element name="Id" type="ots:string" />
-                    <xsd:element name="ModelIdReferral" type="ots:string" />
-                  </xsd:choice>
-                </xsd:complexType>
-              </xsd:element>
-              <xsd:element name="Model" minOccurs="0" maxOccurs="unbounded">
-                <xsd:complexType>
-                  <xsd:choice>
-                    <xsd:element name="Id" type="ots:string" />
-                    <xsd:element name="ModelIdReferral" type="ots:string" />
-                  </xsd:choice>
-                  <xsd:attribute name="GtuType" type="ots:string" use="required" />
-                </xsd:complexType>
-              </xsd:element>
               <xsd:element name="NoLaneChange" type="ots:PositiveLengthType" minOccurs="0">
                 <xsd:annotation>
                   <xsd:documentation xml:lang="en">Initial distance over which GTUs are not allowed to change lane,
@@ -423,7 +418,6 @@
         <xsd:element ref="ots:ShortestRoute" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ShortestRouteMix" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:GtuTemplateMix" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="ModelIdReferral" type="ots:ModelIdReferralType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:Generator" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:InjectionGenerator" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:Sink" minOccurs="0" maxOccurs="unbounded" />

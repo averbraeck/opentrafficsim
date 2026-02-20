@@ -13,6 +13,10 @@
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.BooleanType" xmlType="ots:boolean"
       adapter="org.opentrafficsim.xml.bindings.BooleanAdapter" />
 
+    <!-- OnOff -->
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.BooleanType" xmlType="ots:OnOff"
+      adapter="org.opentrafficsim.xml.bindings.OnOffAdapter" />
+
     <!-- Integer -->
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.IntegerType" xmlType="ots:int"
       adapter="org.opentrafficsim.xml.bindings.IntegerAdapter" />
@@ -135,8 +139,7 @@
       node="//xsd:element[@name='Clothoid']/xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='Interpolated']">
       <simplify:as-element-property />
     </jaxb:bindings>
-    <jaxb:bindings
-      node="//xsd:element[@name='StripeOverride']/xsd:complexType/xsd:attribute[@name='LateralSync']">
+    <jaxb:bindings node="//xsd:element[@name='StripeOverride']/xsd:complexType/xsd:attribute[@name='LateralSync']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"
@@ -147,8 +150,7 @@
   </jaxb:bindings>
 
   <jaxb:bindings schemaLocation="ots-definitions.xsd">
-    <jaxb:bindings
-      node="//xsd:element[@name='StripeType']/xsd:complexType/xsd:attribute[@name='LateralSync']">
+    <jaxb:bindings node="//xsd:element[@name='StripeType']/xsd:complexType/xsd:attribute[@name='LateralSync']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"
@@ -156,8 +158,7 @@
         </jaxb:baseType>
       </jaxb:property>
     </jaxb:bindings>
-    <jaxb:bindings
-      node="//xsd:element[@name='Custom']/xsd:complexType/xsd:attribute[@name='LateralSync']">
+    <jaxb:bindings node="//xsd:element[@name='Custom']/xsd:complexType/xsd:attribute[@name='LateralSync']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"
@@ -175,7 +176,15 @@
   </jaxb:bindings>
 
   <jaxb:bindings schemaLocation="ots-model.xsd">
-    <jaxb:bindings node="//xsd:element[@name='Synchronization']">
+    <jaxb:bindings node="//xsd:complexType[@name='LmrsModel']/xsd:attribute[@name='CarFollowingModel']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.CarFollowingModelType"
+            adapter="org.opentrafficsim.xml.bindings.CarFollowingModelAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='LmrsModel']/xsd:attribute[@name='Synchronization']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.SynchronizationType"
@@ -183,7 +192,7 @@
         </jaxb:baseType>
       </jaxb:property>
     </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='Cooperation']">
+    <jaxb:bindings node="//xsd:complexType[@name='LmrsModel']/xsd:attribute[@name='Cooperation']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.CooperationType"
@@ -191,43 +200,11 @@
         </jaxb:baseType>
       </jaxb:property>
     </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='GapAcceptance']">
+    <jaxb:bindings node="//xsd:complexType[@name='LmrsModel']/xsd:attribute[@name='GapAcceptance']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.GapAcceptanceType"
             adapter="org.opentrafficsim.xml.bindings.GapAcceptanceAdapter" />
-        </jaxb:baseType>
-      </jaxb:property>
-    </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='Tailgating']">
-      <jaxb:property>
-        <jaxb:baseType>
-          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.TailgatingType"
-            adapter="org.opentrafficsim.xml.bindings.TailgatingAdapter" />
-        </jaxb:baseType>
-      </jaxb:property>
-    </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='Estimation']">
-      <jaxb:property>
-        <jaxb:baseType>
-          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.EstimationType"
-            adapter="org.opentrafficsim.xml.bindings.EstimationAdapter" />
-        </jaxb:baseType>
-      </jaxb:property>
-    </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='Anticipation']">
-      <jaxb:property>
-        <jaxb:baseType>
-          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AnticipationType"
-            adapter="org.opentrafficsim.xml.bindings.AnticipationAdapter" />
-        </jaxb:baseType>
-      </jaxb:property>
-    </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='TaskManager']">
-      <jaxb:property>
-        <jaxb:baseType>
-          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StringType"
-            adapter="org.opentrafficsim.xml.bindings.StringAdapter" />
         </jaxb:baseType>
       </jaxb:property>
     </jaxb:bindings>

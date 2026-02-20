@@ -45,7 +45,7 @@ public final class RunEditor
     public static void main(final String[] args) throws IOException, SAXException, ParserConfigurationException,
             InterruptedException, URISyntaxException, NamingException
     {
-        Logger.setLogLevel(Level.TRACE);
+        Logger.setLogLevel(Level.INFO);
         OtsEditor editor = new OtsEditor();
         DefaultDecorator.decorate(editor);
         editor.setSchema(DocumentReader.open(ResourceResolver.resolve("/xsd/ots.xsd").asUri()));

@@ -149,6 +149,8 @@ public final class DefaultDecorator
                 "Yellow");
         new AttributesStringFunction(editor, ".LaneBias", "GtuType");
         new AttributesStringFunction(editor, ".Compatibility", "GtuType", "Compatible");
+        new AttributesStringFunction(editor, "Ots.Models.Model.GtuTypeParameters", "GtuType");
+        new AttributesStringFunction(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.GtuTypeModel", "GtuType");
         new OdOptionsItemStringFunction(editor);
         new ClassNameTypeStringFunction(editor);
         new XiIncludeStringFunction(editor);

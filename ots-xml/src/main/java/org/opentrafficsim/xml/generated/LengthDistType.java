@@ -32,7 +32,7 @@ import org.opentrafficsim.xml.bindings.types.LengthUnitType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LengthDistType")
 @XmlSeeAlso({
-    org.opentrafficsim.xml.generated.ModelType.ModelParameters.LengthDist.class
+    org.opentrafficsim.xml.generated.ModelParameters.LengthDist.class
 })
 @SuppressWarnings("all") public class LengthDistType
     extends ConstantDistType

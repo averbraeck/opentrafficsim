@@ -32,7 +32,7 @@ import org.opentrafficsim.xml.bindings.types.FrequencyUnitType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FrequencyDistType")
 @XmlSeeAlso({
-    org.opentrafficsim.xml.generated.ModelType.ModelParameters.FrequencyDist.class
+    org.opentrafficsim.xml.generated.ModelParameters.FrequencyDist.class
 })
 @SuppressWarnings("all") public class FrequencyDistType
     extends ConstantDistType

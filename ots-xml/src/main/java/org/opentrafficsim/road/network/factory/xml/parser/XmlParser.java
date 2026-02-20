@@ -37,6 +37,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
+import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
@@ -374,20 +375,52 @@ public final class XmlParser
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories = ModelParser.parseModel(otsNetwork, definitions, models,
                 eval, parameterTypes, streamInformation, parameterFactory);
         List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
+        ScenarioType selectedScenario = null;
+        for (ScenarioType scenarioItem : scenarios)
+        {
+            if (scenarioItem.getId().equals(scenario))
+            {
+                selectedScenario = scenarioItem;
+                break;
+            }
+        }
+
         if (demand != null)
         {
-            Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, demand, eval);
-
             // OD generators
-            List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
-                    laneBiases, factories, modelIdReferrals, streamInformation, eval);
+            LaneBasedStrategicalPlannerFactory<?> factory;
+            if (selectedScenario != null && selectedScenario.getModel() != null)
+            {
+                String modelId = selectedScenario.getModel().getId().get(eval);
+                Throw.when(!factories.containsKey(modelId), XmlParserException.class,
+                        "Scenario refers to model {} but this is not defined.", modelId);
+                factory = factories.get(modelId);
+            }
+            else if (factories.size() == 1)
+            {
+                // default model as defined by XML
+                factory = factories.values().iterator().next();
+            }
+            else if (factories.size() == 0)
+            {
+                // default model
+                factory = DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(streamInformation.getStream("default"));
+            }
+            else
+            {
+                throw new XmlParserException(
+                        "Mutliple models defined, but no scenario, or no model within scenario, specifies which to use.");
+            }
+            List<LaneBasedGtuGenerator> generators = OdParser.parseOd(otsNetwork, definitions, demand, gtuTemplates,
+                    laneBiases, factory, streamInformation, selectedScenario, eval);
             Logger.ots().trace("Created {} generators based on origin destination matrices", generators.size());
         }
 
         // control
         if (ots.getControl() != null)
         {
-            ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), ots.getControl(), definitions, eval);
+            ControlParser.parseControl(otsNetwork, otsNetwork.getSimulator(), ots.getControl(), definitions, selectedScenario,
+                    eval);
         }
 
         return runControl;

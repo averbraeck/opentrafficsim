@@ -1256,13 +1256,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      * Places a popup with value options under the cell that is being clicked in a table (tree or attributes). The popup will
      * show items relevant to what is being typed in the cell. The maximum number of items shown is limited to the
      * {@code max_dropdown_items} app property.
-     * @param allOptions list of all options, will be filtered when typing.
-     * @param table table, will be either the tree table or the attributes table.
-     * @param action action to perform based on the option in the popup that was selected.
-     * @param includeRemove whether to include a remove option
+     * @param allOptions list of all options, will be filtered when typing
+     * @param table table, will be either the tree table or the attributes table
+     * @param action action to perform based on the option in the popup that was selected
+     * @param currentValue current value
      */
     public void valueOptionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action,
-            final boolean includeRemove)
+            final String currentValue)
     {
         // remove any previous listening
         if (this.fieldListener != null)
@@ -1282,6 +1282,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // create pop-up
         JPopupMenu popup = new JPopupMenu();
         int index = 0;
+        boolean includeRemove = currentValue != null && !currentValue.isEmpty();
         int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items") - (includeRemove ? 1 : 0);
         for (String option : this.dropdownOptions)
         {
@@ -1307,7 +1308,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
         if (field.getText() != null && !field.getText().isEmpty())
         {
-            showOptionsInScope(popup, includeRemove, getPattern(field));
+            showOptionsInScope(popup, includeRemove, getPattern(currentValue));
         }
 
         // scrolling
@@ -1323,7 +1324,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 {
                     OtsEditor.this.dropdownIndent =
                             OtsEditor.this.dropdownIndent > maxIndent ? maxIndent : OtsEditor.this.dropdownIndent;
-                    showOptionsInScope(popup, includeRemove, getPattern(field));
+                    showOptionsInScope(popup, includeRemove, getPattern(field.getText()));
                     popup.pack();
                     popup.setVisible(true);
                     field.requestFocus();
@@ -1341,7 +1342,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 SwingUtilities.invokeLater(() ->
                 {
                     OtsEditor.this.dropdownIndent = 0;
-                    Pattern pattern = getPattern(field);
+                    Pattern pattern = getPattern(field.getText());
                     OtsEditor.this.dropdownOptions = filterOptions(allOptions, pattern);
                     boolean anyVisible = showOptionsInScope(popup, includeRemove, pattern);
                     if (!anyVisible)
@@ -1409,12 +1410,11 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Returns a matching pattern based on the current value of the field.
-     * @param field field component
+     * @param currentValue current value
      * @return matching pattern based on the current value of the field
      */
-    private Pattern getPattern(final JTextField field)
+    private Pattern getPattern(final String currentValue)
     {
-        String currentValue = field.getText();
         return currentValue == null || currentValue.isBlank() ? null
                 : Pattern.compile(Pattern.quote(currentValue), Pattern.CASE_INSENSITIVE);
     }

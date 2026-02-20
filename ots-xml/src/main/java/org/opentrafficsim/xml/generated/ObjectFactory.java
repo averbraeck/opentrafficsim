@@ -201,6 +201,66 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link FullerAttentionMatrix }
+     * 
+     * @return
+     *     the new instance of {@link FullerAttentionMatrix }
+     */
+    public FullerAttentionMatrix createFullerAttentionMatrix() {
+        return new FullerAttentionMatrix();
+    }
+
+    /**
+     * Create an instance of {@link FullerAnticipationReliance }
+     * 
+     * @return
+     *     the new instance of {@link FullerAnticipationReliance }
+     */
+    public FullerAnticipationReliance createFullerAnticipationReliance() {
+        return new FullerAnticipationReliance();
+    }
+
+    /**
+     * Create an instance of {@link LmrsModel }
+     * 
+     * @return
+     *     the new instance of {@link LmrsModel }
+     */
+    public LmrsModel createLmrsModel() {
+        return new LmrsModel();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters }
+     */
+    public ModelParameters createModelParameters() {
+        return new ModelParameters();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType }
+     */
+    public DiscreteDistType createDiscreteDistType() {
+        return new DiscreteDistType();
+    }
+
+    /**
+     * Create an instance of {@link ConstantDistType }
+     * 
+     * @return
+     *     the new instance of {@link ConstantDistType }
+     */
+    public ConstantDistType createConstantDistType() {
+        return new ConstantDistType();
+    }
+
+    /**
      * Create an instance of {@link ControlType }
      * 
      * @return
@@ -238,26 +298,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public ControlType.SignalGroup createControlTypeSignalGroup() {
         return new ControlType.SignalGroup();
-    }
-
-    /**
-     * Create an instance of {@link ConstantDistType }
-     * 
-     * @return
-     *     the new instance of {@link ConstantDistType }
-     */
-    public ConstantDistType createConstantDistType() {
-        return new ConstantDistType();
-    }
-
-    /**
-     * Create an instance of {@link DiscreteDistType }
-     * 
-     * @return
-     *     the new instance of {@link DiscreteDistType }
-     */
-    public DiscreteDistType createDiscreteDistType() {
-        return new DiscreteDistType();
     }
 
     /**
@@ -311,16 +351,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link ModelType.TacticalPlanner.Lmrs }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.TacticalPlanner.Lmrs }
-     */
-    public ModelType.TacticalPlanner.Lmrs createModelTypeTacticalPlannerLmrs() {
-        return new ModelType.TacticalPlanner.Lmrs();
-    }
-
-    /**
      * Create an instance of {@link ModelType.StrategicalPlanner }
      * 
      * @return
@@ -328,16 +358,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public ModelType.StrategicalPlanner createModelTypeStrategicalPlanner() {
         return new ModelType.StrategicalPlanner();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters }
-     */
-    public ModelType.ModelParameters createModelTypeModelParameters() {
-        return new ModelType.ModelParameters();
     }
 
     /**
@@ -1131,16 +1151,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link ModelIdReferralType }
-     * 
-     * @return
-     *     the new instance of {@link ModelIdReferralType }
-     */
-    public ModelIdReferralType createModelIdReferralType() {
-        return new ModelIdReferralType();
-    }
-
-    /**
      * Create an instance of {@link Models }
      * 
      * @return
@@ -1471,43 +1481,63 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link CarFollowingModelType }
+     * Create an instance of {@link GtuTypeLmrsModel }
      * 
      * @return
-     *     the new instance of {@link CarFollowingModelType }
+     *     the new instance of {@link GtuTypeLmrsModel }
      */
-    public CarFollowingModelType createCarFollowingModelType() {
-        return new CarFollowingModelType();
+    public GtuTypeLmrsModel createGtuTypeLmrsModel() {
+        return new GtuTypeLmrsModel();
     }
 
     /**
-     * Create an instance of {@link CarFollowingModelHeadwaySpeedType }
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Fuller }
      * 
      * @return
-     *     the new instance of {@link CarFollowingModelHeadwaySpeedType }
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Fuller }
      */
-    public CarFollowingModelHeadwaySpeedType createCarFollowingModelHeadwaySpeedType() {
-        return new CarFollowingModelHeadwaySpeedType();
+    public org.opentrafficsim.xml.generated.Fuller createFuller() {
+        return new org.opentrafficsim.xml.generated.Fuller();
     }
 
     /**
-     * Create an instance of {@link DesiredHeadwayModelType }
+     * Create an instance of {@link FullerTasks }
      * 
      * @return
-     *     the new instance of {@link DesiredHeadwayModelType }
+     *     the new instance of {@link FullerTasks }
      */
-    public DesiredHeadwayModelType createDesiredHeadwayModelType() {
-        return new DesiredHeadwayModelType();
+    public FullerTasks createFullerTasks() {
+        return new FullerTasks();
     }
 
     /**
-     * Create an instance of {@link DesiredSpeedModelType }
+     * Create an instance of {@link FullerTasksSummativeAndAr }
      * 
      * @return
-     *     the new instance of {@link DesiredSpeedModelType }
+     *     the new instance of {@link FullerTasksSummativeAndAr }
      */
-    public DesiredSpeedModelType createDesiredSpeedModelType() {
-        return new DesiredSpeedModelType();
+    public FullerTasksSummativeAndAr createFullerTasksSummativeAndAr() {
+        return new FullerTasksSummativeAndAr();
+    }
+
+    /**
+     * Create an instance of {@link FullerBehavioralAdaptations }
+     * 
+     * @return
+     *     the new instance of {@link FullerBehavioralAdaptations }
+     */
+    public FullerBehavioralAdaptations createFullerBehavioralAdaptations() {
+        return new FullerBehavioralAdaptations();
+    }
+
+    /**
+     * Create an instance of {@link FullerSummative }
+     * 
+     * @return
+     *     the new instance of {@link FullerSummative }
+     */
+    public FullerSummative createFullerSummative() {
+        return new FullerSummative();
     }
 
     /**
@@ -1551,33 +1581,363 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link ResponsiveControlType.Detector.MultipleLane }
+     * Create an instance of {@link FullerAttentionMatrix.Tasks }
      * 
      * @return
-     *     the new instance of {@link ResponsiveControlType.Detector.MultipleLane }
+     *     the new instance of {@link FullerAttentionMatrix.Tasks }
      */
-    public ResponsiveControlType.Detector.MultipleLane createResponsiveControlTypeDetectorMultipleLane() {
-        return new ResponsiveControlType.Detector.MultipleLane();
+    public FullerAttentionMatrix.Tasks createFullerAttentionMatrixTasks() {
+        return new FullerAttentionMatrix.Tasks();
     }
 
     /**
-     * Create an instance of {@link ResponsiveControlType.Detector.SingleLane }
+     * Create an instance of {@link FullerAttentionMatrix.BehavioralAdaptations }
      * 
      * @return
-     *     the new instance of {@link ResponsiveControlType.Detector.SingleLane }
+     *     the new instance of {@link FullerAttentionMatrix.BehavioralAdaptations }
      */
-    public ResponsiveControlType.Detector.SingleLane createResponsiveControlTypeDetectorSingleLane() {
-        return new ResponsiveControlType.Detector.SingleLane();
+    public FullerAttentionMatrix.BehavioralAdaptations createFullerAttentionMatrixBehavioralAdaptations() {
+        return new FullerAttentionMatrix.BehavioralAdaptations();
     }
 
     /**
-     * Create an instance of {@link ControlType.SignalGroup.TrafficLight }
+     * Create an instance of {@link FullerAnticipationReliance.Tasks }
      * 
      * @return
-     *     the new instance of {@link ControlType.SignalGroup.TrafficLight }
+     *     the new instance of {@link FullerAnticipationReliance.Tasks }
      */
-    public ControlType.SignalGroup.TrafficLight createControlTypeSignalGroupTrafficLight() {
-        return new ControlType.SignalGroup.TrafficLight();
+    public FullerAnticipationReliance.Tasks createFullerAnticipationRelianceTasks() {
+        return new FullerAnticipationReliance.Tasks();
+    }
+
+    /**
+     * Create an instance of {@link LmrsModel.MandatoryIncentives }
+     * 
+     * @return
+     *     the new instance of {@link LmrsModel.MandatoryIncentives }
+     */
+    public LmrsModel.MandatoryIncentives createLmrsModelMandatoryIncentives() {
+        return new LmrsModel.MandatoryIncentives();
+    }
+
+    /**
+     * Create an instance of {@link LmrsModel.VoluntaryIncentives }
+     * 
+     * @return
+     *     the new instance of {@link LmrsModel.VoluntaryIncentives }
+     */
+    public LmrsModel.VoluntaryIncentives createLmrsModelVoluntaryIncentives() {
+        return new LmrsModel.VoluntaryIncentives();
+    }
+
+    /**
+     * Create an instance of {@link LmrsModel.AccelerationIncentives }
+     * 
+     * @return
+     *     the new instance of {@link LmrsModel.AccelerationIncentives }
+     */
+    public LmrsModel.AccelerationIncentives createLmrsModelAccelerationIncentives() {
+        return new LmrsModel.AccelerationIncentives();
+    }
+
+    /**
+     * Create an instance of {@link LmrsModel.SocialInteractions }
+     * 
+     * @return
+     *     the new instance of {@link LmrsModel.SocialInteractions }
+     */
+    public LmrsModel.SocialInteractions createLmrsModelSocialInteractions() {
+        return new LmrsModel.SocialInteractions();
+    }
+
+    /**
+     * Create an instance of {@link LmrsModel.Perception }
+     * 
+     * @return
+     *     the new instance of {@link LmrsModel.Perception }
+     */
+    public LmrsModel.Perception createLmrsModelPerception() {
+        return new LmrsModel.Perception();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Duration }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Duration }
+     */
+    public ModelParameters.Duration createModelParametersDuration() {
+        return new ModelParameters.Duration();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.DurationDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.DurationDist }
+     */
+    public ModelParameters.DurationDist createModelParametersDurationDist() {
+        return new ModelParameters.DurationDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Length }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Length }
+     */
+    public ModelParameters.Length createModelParametersLength() {
+        return new ModelParameters.Length();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.LengthDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.LengthDist }
+     */
+    public ModelParameters.LengthDist createModelParametersLengthDist() {
+        return new ModelParameters.LengthDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Speed }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Speed }
+     */
+    public ModelParameters.Speed createModelParametersSpeed() {
+        return new ModelParameters.Speed();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.SpeedDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.SpeedDist }
+     */
+    public ModelParameters.SpeedDist createModelParametersSpeedDist() {
+        return new ModelParameters.SpeedDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Acceleration }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Acceleration }
+     */
+    public ModelParameters.Acceleration createModelParametersAcceleration() {
+        return new ModelParameters.Acceleration();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.AccelerationDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.AccelerationDist }
+     */
+    public ModelParameters.AccelerationDist createModelParametersAccelerationDist() {
+        return new ModelParameters.AccelerationDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.LinearDensity }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.LinearDensity }
+     */
+    public ModelParameters.LinearDensity createModelParametersLinearDensity() {
+        return new ModelParameters.LinearDensity();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.LinearDensityDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.LinearDensityDist }
+     */
+    public ModelParameters.LinearDensityDist createModelParametersLinearDensityDist() {
+        return new ModelParameters.LinearDensityDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Frequency }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Frequency }
+     */
+    public ModelParameters.Frequency createModelParametersFrequency() {
+        return new ModelParameters.Frequency();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.FrequencyDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.FrequencyDist }
+     */
+    public ModelParameters.FrequencyDist createModelParametersFrequencyDist() {
+        return new ModelParameters.FrequencyDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Double }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Double }
+     */
+    public ModelParameters.Double createModelParametersDouble() {
+        return new ModelParameters.Double();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.DoubleDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.DoubleDist }
+     */
+    public ModelParameters.DoubleDist createModelParametersDoubleDist() {
+        return new ModelParameters.DoubleDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Fraction }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Fraction }
+     */
+    public ModelParameters.Fraction createModelParametersFraction() {
+        return new ModelParameters.Fraction();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Integer }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Integer }
+     */
+    public ModelParameters.Integer createModelParametersInteger() {
+        return new ModelParameters.Integer();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.IntegerDist }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.IntegerDist }
+     */
+    public ModelParameters.IntegerDist createModelParametersIntegerDist() {
+        return new ModelParameters.IntegerDist();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Boolean }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Boolean }
+     */
+    public ModelParameters.Boolean createModelParametersBoolean() {
+        return new ModelParameters.Boolean();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.String }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.String }
+     */
+    public ModelParameters.String createModelParametersString() {
+        return new ModelParameters.String();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Class }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Class }
+     */
+    public ModelParameters.Class createModelParametersClass() {
+        return new ModelParameters.Class();
+    }
+
+    /**
+     * Create an instance of {@link ModelParameters.Correlation }
+     * 
+     * @return
+     *     the new instance of {@link ModelParameters.Correlation }
+     */
+    public ModelParameters.Correlation createModelParametersCorrelation() {
+        return new ModelParameters.Correlation();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType.Constant }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType.Constant }
+     */
+    public DiscreteDistType.Constant createDiscreteDistTypeConstant() {
+        return new DiscreteDistType.Constant();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType.BernoulliI }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType.BernoulliI }
+     */
+    public DiscreteDistType.BernoulliI createDiscreteDistTypeBernoulliI() {
+        return new DiscreteDistType.BernoulliI();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType.Binomial }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType.Binomial }
+     */
+    public DiscreteDistType.Binomial createDiscreteDistTypeBinomial() {
+        return new DiscreteDistType.Binomial();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType.Uniform }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType.Uniform }
+     */
+    public DiscreteDistType.Uniform createDiscreteDistTypeUniform() {
+        return new DiscreteDistType.Uniform();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType.Geometric }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType.Geometric }
+     */
+    public DiscreteDistType.Geometric createDiscreteDistTypeGeometric() {
+        return new DiscreteDistType.Geometric();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType.NegBinomial }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType.NegBinomial }
+     */
+    public DiscreteDistType.NegBinomial createDiscreteDistTypeNegBinomial() {
+        return new DiscreteDistType.NegBinomial();
+    }
+
+    /**
+     * Create an instance of {@link DiscreteDistType.Poisson }
+     * 
+     * @return
+     *     the new instance of {@link DiscreteDistType.Poisson }
+     */
+    public DiscreteDistType.Poisson createDiscreteDistTypePoisson() {
+        return new DiscreteDistType.Poisson();
     }
 
     /**
@@ -1721,73 +2081,33 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link DiscreteDistType.Constant }
+     * Create an instance of {@link ResponsiveControlType.Detector.MultipleLane }
      * 
      * @return
-     *     the new instance of {@link DiscreteDistType.Constant }
+     *     the new instance of {@link ResponsiveControlType.Detector.MultipleLane }
      */
-    public DiscreteDistType.Constant createDiscreteDistTypeConstant() {
-        return new DiscreteDistType.Constant();
+    public ResponsiveControlType.Detector.MultipleLane createResponsiveControlTypeDetectorMultipleLane() {
+        return new ResponsiveControlType.Detector.MultipleLane();
     }
 
     /**
-     * Create an instance of {@link DiscreteDistType.BernoulliI }
+     * Create an instance of {@link ResponsiveControlType.Detector.SingleLane }
      * 
      * @return
-     *     the new instance of {@link DiscreteDistType.BernoulliI }
+     *     the new instance of {@link ResponsiveControlType.Detector.SingleLane }
      */
-    public DiscreteDistType.BernoulliI createDiscreteDistTypeBernoulliI() {
-        return new DiscreteDistType.BernoulliI();
+    public ResponsiveControlType.Detector.SingleLane createResponsiveControlTypeDetectorSingleLane() {
+        return new ResponsiveControlType.Detector.SingleLane();
     }
 
     /**
-     * Create an instance of {@link DiscreteDistType.Binomial }
+     * Create an instance of {@link ControlType.SignalGroup.TrafficLight }
      * 
      * @return
-     *     the new instance of {@link DiscreteDistType.Binomial }
+     *     the new instance of {@link ControlType.SignalGroup.TrafficLight }
      */
-    public DiscreteDistType.Binomial createDiscreteDistTypeBinomial() {
-        return new DiscreteDistType.Binomial();
-    }
-
-    /**
-     * Create an instance of {@link DiscreteDistType.Uniform }
-     * 
-     * @return
-     *     the new instance of {@link DiscreteDistType.Uniform }
-     */
-    public DiscreteDistType.Uniform createDiscreteDistTypeUniform() {
-        return new DiscreteDistType.Uniform();
-    }
-
-    /**
-     * Create an instance of {@link DiscreteDistType.Geometric }
-     * 
-     * @return
-     *     the new instance of {@link DiscreteDistType.Geometric }
-     */
-    public DiscreteDistType.Geometric createDiscreteDistTypeGeometric() {
-        return new DiscreteDistType.Geometric();
-    }
-
-    /**
-     * Create an instance of {@link DiscreteDistType.NegBinomial }
-     * 
-     * @return
-     *     the new instance of {@link DiscreteDistType.NegBinomial }
-     */
-    public DiscreteDistType.NegBinomial createDiscreteDistTypeNegBinomial() {
-        return new DiscreteDistType.NegBinomial();
-    }
-
-    /**
-     * Create an instance of {@link DiscreteDistType.Poisson }
-     * 
-     * @return
-     *     the new instance of {@link DiscreteDistType.Poisson }
-     */
-    public DiscreteDistType.Poisson createDiscreteDistTypePoisson() {
-        return new DiscreteDistType.Poisson();
+    public ControlType.SignalGroup.TrafficLight createControlTypeSignalGroupTrafficLight() {
+        return new ControlType.SignalGroup.TrafficLight();
     }
 
     /**
@@ -1808,6 +2128,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public ScenarioType.Control createScenarioTypeControl() {
         return new ScenarioType.Control();
+    }
+
+    /**
+     * Create an instance of {@link ScenarioType.Model }
+     * 
+     * @return
+     *     the new instance of {@link ScenarioType.Model }
+     */
+    public ScenarioType.Model createScenarioTypeModel() {
+        return new ScenarioType.Model();
     }
 
     /**
@@ -1941,33 +2271,23 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link ModelType.TacticalPlanner.Lmrs.MandatoryIncentives }
+     * Create an instance of {@link ModelType.GtuTypeParameters }
      * 
      * @return
-     *     the new instance of {@link ModelType.TacticalPlanner.Lmrs.MandatoryIncentives }
+     *     the new instance of {@link ModelType.GtuTypeParameters }
      */
-    public ModelType.TacticalPlanner.Lmrs.MandatoryIncentives createModelTypeTacticalPlannerLmrsMandatoryIncentives() {
-        return new ModelType.TacticalPlanner.Lmrs.MandatoryIncentives();
+    public ModelType.GtuTypeParameters createModelTypeGtuTypeParameters() {
+        return new ModelType.GtuTypeParameters();
     }
 
     /**
-     * Create an instance of {@link ModelType.TacticalPlanner.Lmrs.VoluntaryIncentives }
+     * Create an instance of {@link ModelType.TacticalPlanner.Lmrs }
      * 
      * @return
-     *     the new instance of {@link ModelType.TacticalPlanner.Lmrs.VoluntaryIncentives }
+     *     the new instance of {@link ModelType.TacticalPlanner.Lmrs }
      */
-    public ModelType.TacticalPlanner.Lmrs.VoluntaryIncentives createModelTypeTacticalPlannerLmrsVoluntaryIncentives() {
-        return new ModelType.TacticalPlanner.Lmrs.VoluntaryIncentives();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.TacticalPlanner.Lmrs.AccelerationIncentives }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.TacticalPlanner.Lmrs.AccelerationIncentives }
-     */
-    public ModelType.TacticalPlanner.Lmrs.AccelerationIncentives createModelTypeTacticalPlannerLmrsAccelerationIncentives() {
-        return new ModelType.TacticalPlanner.Lmrs.AccelerationIncentives();
+    public ModelType.TacticalPlanner.Lmrs createModelTypeTacticalPlannerLmrs() {
+        return new ModelType.TacticalPlanner.Lmrs();
     }
 
     /**
@@ -1981,216 +2301,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link ModelType.ModelParameters.Duration }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Duration }
-     */
-    public ModelType.ModelParameters.Duration createModelTypeModelParametersDuration() {
-        return new ModelType.ModelParameters.Duration();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.DurationDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.DurationDist }
-     */
-    public ModelType.ModelParameters.DurationDist createModelTypeModelParametersDurationDist() {
-        return new ModelType.ModelParameters.DurationDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Length }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Length }
-     */
-    public ModelType.ModelParameters.Length createModelTypeModelParametersLength() {
-        return new ModelType.ModelParameters.Length();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.LengthDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.LengthDist }
-     */
-    public ModelType.ModelParameters.LengthDist createModelTypeModelParametersLengthDist() {
-        return new ModelType.ModelParameters.LengthDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Speed }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Speed }
-     */
-    public ModelType.ModelParameters.Speed createModelTypeModelParametersSpeed() {
-        return new ModelType.ModelParameters.Speed();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.SpeedDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.SpeedDist }
-     */
-    public ModelType.ModelParameters.SpeedDist createModelTypeModelParametersSpeedDist() {
-        return new ModelType.ModelParameters.SpeedDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Acceleration }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Acceleration }
-     */
-    public ModelType.ModelParameters.Acceleration createModelTypeModelParametersAcceleration() {
-        return new ModelType.ModelParameters.Acceleration();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.AccelerationDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.AccelerationDist }
-     */
-    public ModelType.ModelParameters.AccelerationDist createModelTypeModelParametersAccelerationDist() {
-        return new ModelType.ModelParameters.AccelerationDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.LinearDensity }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.LinearDensity }
-     */
-    public ModelType.ModelParameters.LinearDensity createModelTypeModelParametersLinearDensity() {
-        return new ModelType.ModelParameters.LinearDensity();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.LinearDensityDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.LinearDensityDist }
-     */
-    public ModelType.ModelParameters.LinearDensityDist createModelTypeModelParametersLinearDensityDist() {
-        return new ModelType.ModelParameters.LinearDensityDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Frequency }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Frequency }
-     */
-    public ModelType.ModelParameters.Frequency createModelTypeModelParametersFrequency() {
-        return new ModelType.ModelParameters.Frequency();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.FrequencyDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.FrequencyDist }
-     */
-    public ModelType.ModelParameters.FrequencyDist createModelTypeModelParametersFrequencyDist() {
-        return new ModelType.ModelParameters.FrequencyDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Double }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Double }
-     */
-    public ModelType.ModelParameters.Double createModelTypeModelParametersDouble() {
-        return new ModelType.ModelParameters.Double();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.DoubleDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.DoubleDist }
-     */
-    public ModelType.ModelParameters.DoubleDist createModelTypeModelParametersDoubleDist() {
-        return new ModelType.ModelParameters.DoubleDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Fraction }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Fraction }
-     */
-    public ModelType.ModelParameters.Fraction createModelTypeModelParametersFraction() {
-        return new ModelType.ModelParameters.Fraction();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Integer }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Integer }
-     */
-    public ModelType.ModelParameters.Integer createModelTypeModelParametersInteger() {
-        return new ModelType.ModelParameters.Integer();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.IntegerDist }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.IntegerDist }
-     */
-    public ModelType.ModelParameters.IntegerDist createModelTypeModelParametersIntegerDist() {
-        return new ModelType.ModelParameters.IntegerDist();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Boolean }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Boolean }
-     */
-    public ModelType.ModelParameters.Boolean createModelTypeModelParametersBoolean() {
-        return new ModelType.ModelParameters.Boolean();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.String }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.String }
-     */
-    public ModelType.ModelParameters.String createModelTypeModelParametersString() {
-        return new ModelType.ModelParameters.String();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Class }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Class }
-     */
-    public ModelType.ModelParameters.Class createModelTypeModelParametersClass() {
-        return new ModelType.ModelParameters.Class();
-    }
-
-    /**
-     * Create an instance of {@link ModelType.ModelParameters.Correlation }
-     * 
-     * @return
-     *     the new instance of {@link ModelType.ModelParameters.Correlation }
-     */
-    public ModelType.ModelParameters.Correlation createModelTypeModelParametersCorrelation() {
-        return new ModelType.ModelParameters.Correlation();
-    }
-
-    /**
      * Create an instance of {@link InjectionGenerator.Arrivals.Arrival }
      * 
      * @return
@@ -2198,26 +2308,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public InjectionGenerator.Arrivals.Arrival createInjectionGeneratorArrivalsArrival() {
         return new InjectionGenerator.Arrivals.Arrival();
-    }
-
-    /**
-     * Create an instance of {@link OdOptions.OdOptionsItem.DefaultModel }
-     * 
-     * @return
-     *     the new instance of {@link OdOptions.OdOptionsItem.DefaultModel }
-     */
-    public OdOptions.OdOptionsItem.DefaultModel createOdOptionsOdOptionsItemDefaultModel() {
-        return new OdOptions.OdOptionsItem.DefaultModel();
-    }
-
-    /**
-     * Create an instance of {@link OdOptions.OdOptionsItem.Model }
-     * 
-     * @return
-     *     the new instance of {@link OdOptions.OdOptionsItem.Model }
-     */
-    public OdOptions.OdOptionsItem.Model createOdOptionsOdOptionsItemModel() {
-        return new OdOptions.OdOptionsItem.Model();
     }
 
     /**

@@ -247,7 +247,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                     this.editor.valueOptionsPopup(allOptions, this.treeTable, (t) ->
                     {
                         treeNode.setId(t);
-                    }, treeNode.getId() != null && !treeNode.getId().isEmpty());
+                    }, treeNode.getId());
                 }
                 else if (colNumber == XsdTreeTableModel.VALUE_COLUMN)
                 {
@@ -255,7 +255,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                     this.editor.valueOptionsPopup(allOptions, this.treeTable, (t) ->
                     {
                         treeNode.setValue(t);
-                    }, treeNode.getValue() != null && !treeNode.getValue().isEmpty());
+                    }, treeNode.getValue());
                 }
             }
         }

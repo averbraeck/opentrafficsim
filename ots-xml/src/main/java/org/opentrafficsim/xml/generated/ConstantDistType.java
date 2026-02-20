@@ -200,15 +200,15 @@ import org.opentrafficsim.xml.bindings.types.IntegerType;
     "randomStream"
 })
 @XmlSeeAlso({
-    LengthDistType.class,
-    SpeedDistType.class,
-    AccelerationDistType.class,
-    org.opentrafficsim.xml.generated.ModelType.ModelParameters.DoubleDist.class,
     PositionDistType.class,
     TimeDistType.class,
     DurationDistType.class,
+    LengthDistType.class,
+    SpeedDistType.class,
+    AccelerationDistType.class,
     LinearDensityDistType.class,
-    FrequencyDistType.class
+    FrequencyDistType.class,
+    org.opentrafficsim.xml.generated.ModelParameters.DoubleDist.class
 })
 @SuppressWarnings("all") public class ConstantDistType implements Serializable
 {

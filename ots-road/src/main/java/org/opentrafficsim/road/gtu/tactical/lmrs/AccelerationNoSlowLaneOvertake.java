@@ -33,7 +33,7 @@ import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class AccelerationNoRightOvertake implements AccelerationIncentive
+public final class AccelerationNoSlowLaneOvertake implements AccelerationIncentive
 {
 
     /** Speed threshold below which traffic is considered congested. */
@@ -49,7 +49,7 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive
      * Constructor.
      * @param getMandatoryDesire supplier of mandatory desire from the model
      */
-    public AccelerationNoRightOvertake(final Supplier<Desire> getMandatoryDesire)
+    public AccelerationNoSlowLaneOvertake(final Supplier<Desire> getMandatoryDesire)
     {
         this.getMandatoryDesire = getMandatoryDesire;
     }
@@ -61,7 +61,7 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive
         // Ignore incentive if we need to change lane for the route
         // TODO: depends on left/right traffic
         if (!lane.isCurrent() || !context.getPerception().getLaneStructure().exists(lane.getLeft())
-                || this.getMandatoryDesire.get().right() > 0.0)
+                || this.getMandatoryDesire.get().right() > 0.0 || this.getMandatoryDesire.get().left() < 0.0)
         {
             return NO_REASON;
         }

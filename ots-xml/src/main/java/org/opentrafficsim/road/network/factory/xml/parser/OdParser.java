@@ -25,7 +25,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.definitions.Definitions;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
@@ -34,14 +33,12 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.DetectorType;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory;
-import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.CrossSectionLink;
@@ -65,10 +62,9 @@ import org.opentrafficsim.xml.generated.LevelTimeType;
 import org.opentrafficsim.xml.generated.Od;
 import org.opentrafficsim.xml.generated.Od.Cell;
 import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem;
-import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.DefaultModel;
 import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.LaneBiases.DefinedLaneBias;
 import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.Markov.State;
-import org.opentrafficsim.xml.generated.OdOptions.OdOptionsItem.Model;
+import org.opentrafficsim.xml.generated.ScenarioType;
 
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -98,18 +94,18 @@ public final class OdParser
      * @param demand demand
      * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU templates
      * @param definedLaneBiases defined lane biases
-     * @param factories factories from model parser
-     * @param modelIdReferrals model id referrals
+     * @param factory factory from model parser
      * @param streamMap stream map
+     * @param scenario scenario
      * @param eval expression evaluator.
      * @return generators
      * @throws XmlParserException if the OD contains an inconsistency or error
      * @throws NetworkException if a node cannot be found
      */
-    public static List<LaneBasedGtuGenerator> parseDemand(final RoadNetwork otsNetwork, final Definitions definitions,
+    public static List<LaneBasedGtuGenerator> parseOd(final RoadNetwork otsNetwork, final Definitions definitions,
             final Demand demand, final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates,
-            final Map<String, LaneBias> definedLaneBiases, final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories,
-            final Map<String, String> modelIdReferrals, final StreamInformation streamMap, final Eval eval)
+            final Map<String, LaneBias> definedLaneBiases, final LaneBasedStrategicalPlannerFactory<?> factory,
+            final StreamInformation streamMap, final ScenarioType scenario, final Eval eval)
             throws XmlParserException, NetworkException
     {
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
@@ -123,6 +119,10 @@ public final class OdParser
 
         for (Od od : demand.getOd())
         {
+            if (demand.getOd().size() > 1 && !isScenarioOd(od, scenario, eval))
+            {
+                continue;
+            }
             // Origins and destinations, retrieve them from demand items
             List<Node> origins = new ArrayList<>();
             List<Node> destinations = new ArrayList<>();
@@ -180,8 +180,8 @@ public final class OdParser
 
             // OD options
             Set<GtuTemplate> templates = parseGtuTemplates(definitions, gtuTemplates, streamMap, eval);
-            OdOptions odOptions = parseOdOptions(otsNetwork, definitions, templates, definedLaneBiases, factories,
-                    modelIdReferrals, streamMap, odOptionsMap, od, categorization, eval);
+            OdOptions odOptions = parseOdOptions(otsNetwork, definitions, templates, definedLaneBiases, factory, streamMap,
+                    odOptionsMap, od, categorization, eval);
 
             // Invoke OdApplier
             DetectorType detectorType = definitions.getOrThrow(DetectorType.class, od.getSinkType().get(eval));
@@ -197,6 +197,29 @@ public final class OdParser
         }
 
         return generators;
+    }
+
+    /**
+     * Returns whether the given OD is part of the scenario.
+     * @param od od
+     * @param scenario scenario tag, may be {@code null}
+     * @param eval expression evaluator
+     * @return whether the given OD is part of the scenario
+     */
+    private static boolean isScenarioOd(final Od od, final ScenarioType scenario, final Eval eval)
+    {
+        if (scenario == null)
+        {
+            return true;
+        }
+        for (org.opentrafficsim.xml.generated.ScenarioType.Od scenarioOd : scenario.getOd())
+        {
+            if (scenarioOd.getId().get(eval).equals(od.getId()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -410,8 +433,7 @@ public final class OdParser
      * @param definitions definitions to get GTU types in categories.
      * @param templates parsed GTU templates.
      * @param definedLaneBiases parsed lane biases.
-     * @param factories parsed model factories.
-     * @param modelIdReferrals model id referrals.
+     * @param factory parsed model factory.
      * @param streamMap parsed random streams.
      * @param odOptionsMap Map&lt;String, org.opentrafficsim.xml.generated.OdOptions&gt;; gathered OdOptions tags.
      * @param od OD tag.
@@ -423,9 +445,9 @@ public final class OdParser
      */
     private static OdOptions parseOdOptions(final RoadNetwork otsNetwork, final Definitions definitions,
             final Set<GtuTemplate> templates, final Map<String, LaneBias> definedLaneBiases,
-            final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
-            final StreamInformation streamMap, final Map<String, org.opentrafficsim.xml.generated.OdOptions> odOptionsMap,
-            final Od od, final Categorization categorization, final Eval eval) throws XmlParserException, NetworkException
+            final LaneBasedStrategicalPlannerFactory<?> factory, final StreamInformation streamMap,
+            final Map<String, org.opentrafficsim.xml.generated.OdOptions> odOptionsMap, final Od od,
+            final Categorization categorization, final Eval eval) throws XmlParserException, NetworkException
     {
         OdOptions odOptions =
                 new OdOptions().set(OdOptions.GTU_ID, new IdSupplier("")).set(OdOptions.NO_LC_DIST, Length.ofSI(50.0));
@@ -454,8 +476,8 @@ public final class OdParser
                  */
 
                 // GTU type (model)
-                parseModelOption(otsNetwork, definitions, factories, modelIdReferrals, odOptions, templates, defaultLmrsFactory,
-                        option, eval);
+                odOptions.set(OdOptions.GTU_TYPE,
+                        new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(factory).setTemplates(templates).create());
 
                 // no lc
                 if (option.getNoLaneChange() != null)
@@ -524,83 +546,6 @@ public final class OdParser
             }
         }
         return odOptions;
-    }
-
-    /**
-     * Parse OD model option.
-     * @param otsNetwork network to obtain routes and lanes in categories.
-     * @param definitions definitions to get GTU types in categories.
-     * @param factories parsed model factories.
-     * @param modelIdReferrals model id referrals.
-     * @param odOptions OD options.
-     * @param templates parsed GTU templates.
-     * @param defaultLmrsFactory default LMRS factory.
-     * @param option OD option item tag.
-     * @param eval expression evaluator.
-     * @throws XmlParserException when a non-existent model is referred.
-     * @throws NetworkException if a node or link cannot be found
-     */
-    private static void parseModelOption(final RoadNetwork otsNetwork, final Definitions definitions,
-            final Map<String, LaneBasedStrategicalPlannerFactory<?>> factories, final Map<String, String> modelIdReferrals,
-            final OdOptions odOptions, final Set<GtuTemplate> templates,
-            final LaneBasedStrategicalRoutePlannerFactory defaultLmrsFactory, final OdOptionsItem option, final Eval eval)
-            throws XmlParserException, NetworkException
-    {
-        Factory characteristicsGeneratorFactory;
-        if (option.getDefaultModel() != null || (option.getModel() != null && !option.getModel().isEmpty()))
-        {
-            LaneBasedStrategicalPlannerFactory<?> defaultFactory;
-            if (option.getDefaultModel() != null)
-            {
-                // TODO: model id referral
-                String modelId = OdParser.getModelId(option.getDefaultModel(), modelIdReferrals, eval);
-                Throw.when(!factories.containsKey(modelId), XmlParserException.class,
-                        "OD option DefaultModel refers to a non-existent model with ID %s.", modelId);
-                defaultFactory = factories.get(modelId);
-            }
-            else
-            {
-                defaultFactory = null;
-            }
-            // compose map that couples GTU types to factories through Model ID's
-            final Map<GtuType, LaneBasedStrategicalPlannerFactory<?>> gtuTypeFactoryMap = new LinkedHashMap<>();
-            if (option.getModel() != null)
-            {
-                for (Model model : option.getModel())
-                {
-                    GtuType gtuType = definitions.getOrThrow(GtuType.class, model.getGtuType().get(eval));
-                    Throw.when(!factories.containsKey(model.getId().get(eval)), XmlParserException.class,
-                            "OD option Model refers to a non existent-model with ID %s.", model.getId());
-                    gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals, eval)));
-                }
-            }
-
-            LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> factoryByGtuType =
-                    new LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>()
-                    {
-                        @Override
-                        public LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route, final Node origin,
-                                final Node destination) throws GtuException
-                        {
-                            LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory =
-                                    gtuTypeFactoryMap.get(gtu.getType());
-                            if (strategicalPlannerFactory != null)
-                            {
-                                // a model factory for this GTU type is specified
-                                return strategicalPlannerFactory.create(gtu, route, origin, destination);
-                            }
-                            if (defaultFactory != null)
-                            {
-                                // a default model factory is specified
-                                return defaultFactory.create(gtu, route, origin, destination);
-                            }
-                            return defaultLmrsFactory.create(gtu, route, origin, destination);
-                        }
-                    };
-            characteristicsGeneratorFactory = new Factory(factoryByGtuType).setTemplates(templates);
-            setOption(odOptions, OdOptions.GTU_TYPE, characteristicsGeneratorFactory.create(), option, otsNetwork, definitions,
-                    eval);
-        }
     }
 
     /**
@@ -739,38 +684,6 @@ public final class OdParser
                 odOptions.set(option, value);
             }
         }
-    }
-
-    /**
-     * Returns the ID of a default model, referred if there is a referral specified.
-     * @param model model
-     * @param modelIdReferrals model ID
-     * @param eval expression evaluator.
-     * @return ID of a model, referred if there is a referral specified
-     */
-    private static String getModelId(final DefaultModel model, final Map<String, String> modelIdReferrals, final Eval eval)
-    {
-        if (model.getModelIdReferral() != null)
-        {
-            return modelIdReferrals.get(model.getModelIdReferral().get(eval));
-        }
-        return model.getId().get(eval);
-    }
-
-    /**
-     * Returns the ID of a model, referred if there is a referral specified.
-     * @param model model
-     * @param modelIdReferrals model ID
-     * @param eval expression evaluator.
-     * @return ID of a model, referred if there is a referral specified
-     */
-    private static String getModelId(final Model model, final Map<String, String> modelIdReferrals, final Eval eval)
-    {
-        if (model.getModelIdReferral() != null)
-        {
-            return modelIdReferrals.get(model.getModelIdReferral().get(eval));
-        }
-        return model.getId().get(eval);
     }
 
 }

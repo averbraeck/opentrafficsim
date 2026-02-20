@@ -1631,6 +1631,17 @@
   <xsd:simpleType name="boolean">
     <xsd:union memberTypes="ots:Expression xsd:boolean" />
   </xsd:simpleType>
+  
+  <xsd:simpleType name="OnOff">
+    <xsd:union memberTypes="ots:Expression">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="on" />
+          <xsd:enumeration value="off" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:union>
+  </xsd:simpleType>
 
   <xsd:simpleType name="int">
     <xsd:union memberTypes="ots:Expression xsd:int" />
@@ -1690,11 +1701,6 @@
       </xsd:simpleType>
     </xsd:union>
   </xsd:simpleType>
-
-  <xsd:complexType name="ModelIdReferralType">
-    <xsd:attribute name="Id" type="ots:IdType" />
-    <xsd:attribute name="ModelId" type="ots:string" />
-  </xsd:complexType>
 
   <xsd:simpleType name="ClassNameType">
     <xsd:annotation>

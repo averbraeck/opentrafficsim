@@ -28,7 +28,6 @@ import jakarta.xml.bind.annotation.XmlType;
  *         <element ref="{http://www.opentrafficsim.org/ots}ShortestRoute" maxOccurs="unbounded" minOccurs="0"/>
  *         <element ref="{http://www.opentrafficsim.org/ots}ShortestRouteMix" maxOccurs="unbounded" minOccurs="0"/>
  *         <element ref="{http://www.opentrafficsim.org/ots}GtuTemplateMix" maxOccurs="unbounded" minOccurs="0"/>
- *         <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}ModelIdReferralType" maxOccurs="unbounded" minOccurs="0"/>
  *         <element ref="{http://www.opentrafficsim.org/ots}Generator" maxOccurs="unbounded" minOccurs="0"/>
  *         <element ref="{http://www.opentrafficsim.org/ots}InjectionGenerator" maxOccurs="unbounded" minOccurs="0"/>
  *         <element ref="{http://www.opentrafficsim.org/ots}Sink" maxOccurs="unbounded" minOccurs="0"/>
@@ -49,7 +48,6 @@ import jakarta.xml.bind.annotation.XmlType;
     "shortestRoute",
     "shortestRouteMix",
     "gtuTemplateMix",
-    "modelIdReferral",
     "generator",
     "injectionGenerator",
     "sink"
@@ -74,8 +72,6 @@ import jakarta.xml.bind.annotation.XmlType;
     protected List<ShortestRouteMix> shortestRouteMix;
     @XmlElement(name = "GtuTemplateMix")
     protected List<GtuTemplateMix> gtuTemplateMix;
-    @XmlElement(name = "ModelIdReferral")
-    protected List<ModelIdReferralType> modelIdReferral;
     @XmlElement(name = "Generator")
     protected List<Generator> generator;
     @XmlElement(name = "InjectionGenerator")
@@ -305,38 +301,6 @@ import jakarta.xml.bind.annotation.XmlType;
             gtuTemplateMix = new ArrayList<>();
         }
         return this.gtuTemplateMix;
-    }
-
-    /**
-     * Gets the value of the modelIdReferral property.
-     * 
-     * <p>This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the modelIdReferral property.</p>
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * </p>
-     * <pre>
-     * getModelIdReferral().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ModelIdReferralType }
-     * </p>
-     * 
-     * 
-     * @return
-     *     The value of the modelIdReferral property.
-     */
-    public List<ModelIdReferralType> getModelIdReferral() {
-        if (modelIdReferral == null) {
-            modelIdReferral = new ArrayList<>();
-        }
-        return this.modelIdReferral;
     }
 
     /**

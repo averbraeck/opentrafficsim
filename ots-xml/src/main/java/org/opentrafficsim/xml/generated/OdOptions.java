@@ -42,31 +42,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
  *                     <element name="Origin" type="{http://www.opentrafficsim.org/ots}string"/>
  *                     <element name="Lane" type="{http://www.opentrafficsim.org/ots}LaneLinkType"/>
  *                   </choice>
- *                   <element name="DefaultModel" minOccurs="0">
- *                     <complexType>
- *                       <complexContent>
- *                         <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           <choice>
- *                             <element name="Id" type="{http://www.opentrafficsim.org/ots}string"/>
- *                             <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}string"/>
- *                           </choice>
- *                         </restriction>
- *                       </complexContent>
- *                     </complexType>
- *                   </element>
- *                   <element name="Model" maxOccurs="unbounded" minOccurs="0">
- *                     <complexType>
- *                       <complexContent>
- *                         <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           <choice>
- *                             <element name="Id" type="{http://www.opentrafficsim.org/ots}string"/>
- *                             <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}string"/>
- *                           </choice>
- *                           <attribute name="GtuType" use="required" type="{http://www.opentrafficsim.org/ots}string" />
- *                         </restriction>
- *                       </complexContent>
- *                     </complexType>
- *                   </element>
  *                   <element name="NoLaneChange" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" minOccurs="0"/>
  *                   <element name="RoomChecker" type="{http://www.opentrafficsim.org/ots}RoomCheckerType" minOccurs="0"/>
  *                   <element name="HeadwayDist" minOccurs="0">
@@ -236,31 +211,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      *           <element name="Origin" type="{http://www.opentrafficsim.org/ots}string"/>
      *           <element name="Lane" type="{http://www.opentrafficsim.org/ots}LaneLinkType"/>
      *         </choice>
-     *         <element name="DefaultModel" minOccurs="0">
-     *           <complexType>
-     *             <complexContent>
-     *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 <choice>
-     *                   <element name="Id" type="{http://www.opentrafficsim.org/ots}string"/>
-     *                   <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}string"/>
-     *                 </choice>
-     *               </restriction>
-     *             </complexContent>
-     *           </complexType>
-     *         </element>
-     *         <element name="Model" maxOccurs="unbounded" minOccurs="0">
-     *           <complexType>
-     *             <complexContent>
-     *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 <choice>
-     *                   <element name="Id" type="{http://www.opentrafficsim.org/ots}string"/>
-     *                   <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}string"/>
-     *                 </choice>
-     *                 <attribute name="GtuType" use="required" type="{http://www.opentrafficsim.org/ots}string" />
-     *               </restriction>
-     *             </complexContent>
-     *           </complexType>
-     *         </element>
      *         <element name="NoLaneChange" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" minOccurs="0"/>
      *         <element name="RoomChecker" type="{http://www.opentrafficsim.org/ots}RoomCheckerType" minOccurs="0"/>
      *         <element name="HeadwayDist" minOccurs="0">
@@ -334,8 +284,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         "linkType",
         "origin",
         "lane",
-        "defaultModel",
-        "model",
         "noLaneChange",
         "roomChecker",
         "headwayDist",
@@ -357,10 +305,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         protected StringType origin;
         @XmlElement(name = "Lane")
         protected LaneLinkType lane;
-        @XmlElement(name = "DefaultModel")
-        protected OdOptions.OdOptionsItem.DefaultModel defaultModel;
-        @XmlElement(name = "Model")
-        protected List<OdOptions.OdOptionsItem.Model> model;
         /**
          * Initial distance over which GTUs are not allowed to change lane,
          *                     to prevent interacting with generation on adjacent lanes.
@@ -481,62 +425,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
          */
         public void setLane(LaneLinkType value) {
             this.lane = value;
-        }
-
-        /**
-         * Gets the value of the defaultModel property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link OdOptions.OdOptionsItem.DefaultModel }
-         *     
-         */
-        public OdOptions.OdOptionsItem.DefaultModel getDefaultModel() {
-            return defaultModel;
-        }
-
-        /**
-         * Sets the value of the defaultModel property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link OdOptions.OdOptionsItem.DefaultModel }
-         *     
-         */
-        public void setDefaultModel(OdOptions.OdOptionsItem.DefaultModel value) {
-            this.defaultModel = value;
-        }
-
-        /**
-         * Gets the value of the model property.
-         * 
-         * <p>This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the model property.</p>
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * </p>
-         * <pre>
-         * getModel().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link OdOptions.OdOptionsItem.Model }
-         * </p>
-         * 
-         * 
-         * @return
-         *     The value of the model property.
-         */
-        public List<OdOptions.OdOptionsItem.Model> getModel() {
-            if (model == null) {
-                model = new ArrayList<>();
-            }
-            return this.model;
         }
 
         /**
@@ -661,94 +549,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
          */
         public void setLaneBiases(OdOptions.OdOptionsItem.LaneBiases value) {
             this.laneBiases = value;
-        }
-
-
-        /**
-         * <p>Java class for anonymous complex type</p>.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
-         * 
-         * <pre>{@code
-         * <complexType>
-         *   <complexContent>
-         *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       <choice>
-         *         <element name="Id" type="{http://www.opentrafficsim.org/ots}string"/>
-         *         <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}string"/>
-         *       </choice>
-         *     </restriction>
-         *   </complexContent>
-         * </complexType>
-         * }</pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "id",
-            "modelIdReferral"
-        })
-        public static class DefaultModel
-            implements Serializable
-        {
-
-            private static final long serialVersionUID = 10102L;
-            @XmlElement(name = "Id", type = String.class)
-            @XmlJavaTypeAdapter(StringAdapter.class)
-            protected StringType id;
-            @XmlElement(name = "ModelIdReferral", type = String.class)
-            @XmlJavaTypeAdapter(StringAdapter.class)
-            protected StringType modelIdReferral;
-
-            /**
-             * Gets the value of the id property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public StringType getId() {
-                return id;
-            }
-
-            /**
-             * Sets the value of the id property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setId(StringType value) {
-                this.id = value;
-            }
-
-            /**
-             * Gets the value of the modelIdReferral property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public StringType getModelIdReferral() {
-                return modelIdReferral;
-            }
-
-            /**
-             * Sets the value of the modelIdReferral property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setModelIdReferral(StringType value) {
-                this.modelIdReferral = value;
-            }
-
         }
 
 
@@ -1107,122 +907,6 @@ import org.opentrafficsim.xml.bindings.types.StringType;
                     this.correlation = value;
                 }
 
-            }
-
-        }
-
-
-        /**
-         * <p>Java class for anonymous complex type</p>.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
-         * 
-         * <pre>{@code
-         * <complexType>
-         *   <complexContent>
-         *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       <choice>
-         *         <element name="Id" type="{http://www.opentrafficsim.org/ots}string"/>
-         *         <element name="ModelIdReferral" type="{http://www.opentrafficsim.org/ots}string"/>
-         *       </choice>
-         *       <attribute name="GtuType" use="required" type="{http://www.opentrafficsim.org/ots}string" />
-         *     </restriction>
-         *   </complexContent>
-         * </complexType>
-         * }</pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "id",
-            "modelIdReferral"
-        })
-        public static class Model
-            implements Serializable
-        {
-
-            private static final long serialVersionUID = 10102L;
-            @XmlElement(name = "Id", type = String.class)
-            @XmlJavaTypeAdapter(StringAdapter.class)
-            protected StringType id;
-            @XmlElement(name = "ModelIdReferral", type = String.class)
-            @XmlJavaTypeAdapter(StringAdapter.class)
-            protected StringType modelIdReferral;
-            @XmlAttribute(name = "GtuType", required = true)
-            @XmlJavaTypeAdapter(StringAdapter.class)
-            protected StringType gtuType;
-
-            /**
-             * Gets the value of the id property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public StringType getId() {
-                return id;
-            }
-
-            /**
-             * Sets the value of the id property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setId(StringType value) {
-                this.id = value;
-            }
-
-            /**
-             * Gets the value of the modelIdReferral property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public StringType getModelIdReferral() {
-                return modelIdReferral;
-            }
-
-            /**
-             * Sets the value of the modelIdReferral property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setModelIdReferral(StringType value) {
-                this.modelIdReferral = value;
-            }
-
-            /**
-             * Gets the value of the gtuType property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public StringType getGtuType() {
-                return gtuType;
-            }
-
-            /**
-             * Sets the value of the gtuType property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setGtuType(StringType value) {
-                this.gtuType = value;
             }
 
         }
