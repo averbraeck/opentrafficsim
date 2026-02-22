@@ -293,7 +293,7 @@ public final class ScenarioParser
         private final Set<String> lookingUp = new LinkedHashSet<>();
 
         /** More scenario input parameters. */
-        private ParameterMap scenario;
+        private ParameterMap scenarioMap;
 
         /**
          * Constructor.
@@ -306,11 +306,11 @@ public final class ScenarioParser
 
         /**
          * Set scenario input parameters.
-         * @param scenario parameter map of the scenario.
+         * @param scenarioMap parameter map of the scenario.
          */
-        public void setScenarioMap(final ParameterMap scenario)
+        public void setScenarioMap(final ParameterMap scenarioMap)
         {
-            this.scenario = scenario;
+            this.scenarioMap = scenarioMap;
         }
 
         @Override
@@ -321,9 +321,9 @@ public final class ScenarioParser
                 throw new CircularDependencyException("Parameter " + name + " is part of a circular dependency.");
             }
             Object value;
-            if (this.scenario != null && this.scenario.map.containsKey(name))
+            if (this.scenarioMap != null && this.scenarioMap.map.containsKey(name))
             {
-                value = this.scenario.map.get(name).get();
+                value = this.scenarioMap.map.get(name).get();
             }
             else if (this.map.containsKey(name))
             {
