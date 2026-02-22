@@ -1,19 +1,16 @@
 package org.opentrafficsim.editor.listeners;
 
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.CellEditor;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.KeyStroke;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -42,15 +39,16 @@ import de.javagl.treetable.JTreeTable;
  * <li>Sets editor status based on invalid message or description of selected node in tree table.</li>
  * <li>Updates attributes table based on selected cell, after possibly ending editing in the attribute table.</li>
  * <li>Fires SELECTION_CHANGED events when selection is changed in the tree table.</li>
- * <li>Prevents choice popup for quick double click expanding/collapsing a node with choice.</li>
+ * <li>Prevents choice pop-up for quick double click expanding/collapsing a node with choice.</li>
  * <li>Sets tooltip in tree table when hovering invalid node Id or value field.</li>
- * <li>Shows popup for possible values for value restricted Id's or values.</li>
+ * <li>Shows pop-up for possible values for value restricted Id's or values.</li>
  * <li>Activates double clicked inactive nodes.</li>
- * <li>Shows choice popup when clicking choice node.</li>
- * <li>Shows actions popup when richt-clicking a node.</li>
+ * <li>Shows choice pop-up when clicking choice node.</li>
+ * <li>Shows actions pop-up when richt-clicking a node.</li>
+ * <li>Changes the label of the expand/collapse action between collapsed (Expand) or expanded (Collapse) nodes.</li>
  * </ul>
- * The actions popup has key accelerators that are only active with the popup menu shown. These accelerators are also defined in
- * {@code XsdTreeKeyListener} such that key combinations perform these actions without the popup menu.
+ * The actions pop-up has key accelerators that are only active with the pop-up menu shown. These accelerators are also defined
+ * in {@code XsdTreeKeyListener} such that key combinations perform these actions without the pop-up menu.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -96,9 +94,13 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     {
         if (e.getPaths().length > 0)
         {
+            // update label of expand/collapse action
+            TreePath path = (e.getPaths().length == 1 ? e.getPaths()[0] : e.getNewLeadSelectionPath());
+            boolean expanded = this.treeTable.getTree().isExpanded(path);
+            this.editor.actions().expandOrCollapseNode().putValue(Action.NAME, expanded ? "Collapse" : "Expand");
+
             // listen to attribute change, and set potential coupled node for navigation
-            XsdTreeNode node = (XsdTreeNode) (e.getPaths().length == 1 ? e.getPaths()[0] : e.getNewLeadSelectionPath())
-                    .getLastPathComponent();
+            XsdTreeNode node = (XsdTreeNode) path.getLastPathComponent();
             if (this.listening != null)
             {
                 this.listening.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -234,7 +236,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 cellEditor.stopCellEditing();
             }
 
-            // show value options popup
+            // show value options pop-up
             int row = this.treeTable.rowAtPoint(e.getPoint());
             int col = this.treeTable.columnAtPoint(e.getPoint());
             if (this.treeTable.isCellEditable(row, col))
@@ -306,7 +308,8 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                     JMenuItem button = new JMenuItem(option.optionNode().getShortString());
                     if (!option.selected())
                     {
-                        button.addActionListener((event) -> this.editor.getNodeActions().setOption(option.optionNode()));
+                        button.addActionListener(
+                                (event) -> this.editor.actions().getNodeActions().setOption(option.optionNode()));
                     }
                     button.setFont(this.treeTable.getFont());
                     popup.add(button);
@@ -350,20 +353,22 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         }
         if (treeNode.getDescription().isPresent()) // description is the only thing we show with the node disabled
         {
-            String description = treeNode.getDescription().get();
-            JMenuItem item = new JMenuItem("Description...");
-            item.setAccelerator(KeyStroke.getKeyStroke("F1"));
-            item.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.showDescription(description, treeNode.getNodeName());
-                }
-            });
+            JMenuItem item = new JMenuItem(this.editor.actions().showTreeNodeDescription());
             item.setFont(this.treeTable.getFont());
             popup.add(item);
             anyAdded = true;
+        }
+        if (treeNode.isActive())
+        {
+            String status = treeNode.isSelfValid() ? null : treeNode.reportInvalidNode()
+                    .orElseGet(() -> treeNode.reportInvalidValue().orElseGet(() -> treeNode.reportInvalidId().orElse(null)));
+            if (status != null)
+            {
+                JMenuItem item = new JMenuItem(this.editor.actions().showTreeNodeInvalid());
+                item.setFont(this.treeTable.getFont());
+                popup.add(item);
+                anyAdded = true;
+            }
         }
 
         if (!treeNode.isIncluded())
@@ -406,28 +411,10 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode.isActive() && treeNode.isAddable())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem add = new JMenuItem("Add");
-            add.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().add(treeNode);
-                }
-            });
-            add.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem add = new JMenuItem(this.editor.actions().addNode());
             add.setFont(this.treeTable.getFont());
             popup.add(add);
-            JMenuItem duplicate = new JMenuItem("Duplicate");
-            duplicate.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().duplicate(treeNode);
-                }
-            });
-            duplicate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem duplicate = new JMenuItem(this.editor.actions().duplicateNode());
             duplicate.setFont(this.treeTable.getFont());
             popup.add(duplicate);
             groupAdded = true;
@@ -435,19 +422,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode.isActive() && treeNode.isRemovable())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem remove = new JMenuItem("Remove");
-            remove.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    if (XsdTreeListener.this.editor.confirmNodeRemoval(treeNode))
-                    {
-                        XsdTreeListener.this.editor.getNodeActions().remove(treeNode);
-                    }
-                }
-            });
-            remove.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+            JMenuItem remove = new JMenuItem(this.editor.actions().deleteNode());
             remove.setFont(this.treeTable.getFont());
             popup.add(remove);
             groupAdded = true;
@@ -455,16 +430,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode.isActive() && (treeNode.isRemovable() || treeNode.isAddable()))
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem copy = new JMenuItem("Copy");
-            copy.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().copy(treeNode);
-                }
-            });
-            copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem copy = new JMenuItem(this.editor.actions().copyNode());
             copy.setFont(this.treeTable.getFont());
             popup.add(copy);
             groupAdded = true;
@@ -472,16 +438,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode.isActive() && treeNode.isRemovable())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem cut = new JMenuItem("Cut");
-            cut.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().cut(treeNode);
-                }
-            });
-            cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem cut = new JMenuItem(this.editor.actions().cutNode());
             cut.setFont(this.treeTable.getFont());
             popup.add(cut);
             groupAdded = true;
@@ -491,35 +448,17 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             if (treeNode.isActive() && treeNode.isAddable())
             {
                 sepNeeded = addSeparator(popup, sepNeeded);
-                JMenuItem cut = new JMenuItem("Insert");
-                cut.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(final ActionEvent e)
-                    {
-                        XsdTreeListener.this.editor.getNodeActions().insert(treeNode);
-                    }
-                });
-                cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
-                cut.setFont(this.treeTable.getFont());
-                popup.add(cut);
+                JMenuItem insert = new JMenuItem(this.editor.actions().insertNode());
+                insert.setFont(this.treeTable.getFont());
+                popup.add(insert);
                 groupAdded = true;
             }
             if (!treeNode.isActive() || treeNode.isAddable())
             {
                 sepNeeded = addSeparator(popup, sepNeeded);
-                JMenuItem cut = new JMenuItem("Paste");
-                cut.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(final ActionEvent e)
-                    {
-                        XsdTreeListener.this.editor.getNodeActions().paste(treeNode);
-                    }
-                });
-                cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
-                cut.setFont(this.treeTable.getFont());
-                popup.add(cut);
+                JMenuItem paste = new JMenuItem(this.editor.actions().pasteNode());
+                paste.setFont(this.treeTable.getFont());
+                popup.add(paste);
                 groupAdded = true;
             }
         }
@@ -541,16 +480,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode.isActive() && treeNode.isChoice() && options.size() > 1)
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem revolve = new JMenuItem("Revolve option");
-            revolve.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().revolveOption(treeNode, options);
-                }
-            });
-            revolve.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem revolve = new JMenuItem(this.editor.actions().revolveNode());
             revolve.setFont(this.treeTable.getFont());
             popup.add(revolve);
             groupAdded = true;
@@ -558,18 +488,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode instanceof XsdTreeNodeRoot)
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem expand = new JMenuItem("Collapse all");
-            expand.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    for (int i = XsdTreeListener.this.treeTable.getTree().getRowCount() - 1; i > 0; i--)
-                    {
-                        XsdTreeListener.this.treeTable.getTree().collapseRow(i);
-                    }
-                }
-            });
+            JMenuItem expand = new JMenuItem(this.editor.actions().collapseAll());
             expand.setFont(this.treeTable.getFont());
             popup.add(expand);
             groupAdded = true;
@@ -577,18 +496,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         else if (!treeNode.isActive() || treeNode.getChildCount() > 0)
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            TreePath path = this.treeTable.getTree().getSelectionPath();
-            boolean expanded = this.treeTable.getTree().isExpanded(path);
-            JMenuItem expand = new JMenuItem(expanded ? "Collapse" : "Expand");
-            expand.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().expand(treeNode, path, expanded);
-                }
-            });
-            expand.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem expand = new JMenuItem(this.editor.actions().expandOrCollapseNode());
             expand.setFont(this.treeTable.getFont());
             popup.add(expand);
             groupAdded = true;
@@ -610,16 +518,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode.isActive() && treeNode.canMoveUp())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem moveUp = new JMenuItem("Move up");
-            moveUp.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().move(treeNode, -1);
-                }
-            });
-            moveUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem moveUp = new JMenuItem(this.editor.actions().moveNodeUp());
             moveUp.setFont(this.treeTable.getFont());
             popup.add(moveUp);
             groupAdded = true;
@@ -627,16 +526,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (treeNode.isActive() && treeNode.canMoveDown())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem moveDown = new JMenuItem("Move down");
-            moveDown.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    XsdTreeListener.this.editor.getNodeActions().move(treeNode, 1);
-                }
-            });
-            moveDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem moveDown = new JMenuItem(this.editor.actions().moveNodeDown());
             moveDown.setFont(this.treeTable.getFont());
             popup.add(moveDown);
             groupAdded = true;
@@ -646,7 +536,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
 
     /**
      * Add separator if required.
-     * @param popup the popup to add a separator to
+     * @param popup the pop-up to add a separator to
      * @param separatorNeeded whether a separator is needed
      * @return {@code false} always for usage in {@code separatorNeeded = addSeparator(popup, separatorNeeded)}
      */

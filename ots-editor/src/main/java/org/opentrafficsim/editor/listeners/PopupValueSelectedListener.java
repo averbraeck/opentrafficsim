@@ -13,8 +13,8 @@ import org.opentrafficsim.animation.IconUtil;
 import de.javagl.treetable.JTreeTable;
 
 /**
- * Listener to when a value is selected in a popup showing a list of values. This is either in the tree table or the attributes
- * tables. The resulting action depends on the creator of the listener, e.g. setting an Id.
+ * Listener to when a value is selected in a pop-up showing a list of values. This is either in the tree table or the attributes
+ * table. The resulting action depends on the creator of this listener, e.g. setting an Id.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -34,6 +34,9 @@ public class PopupValueSelectedListener implements ActionListener
 
     /** Icon for down scrolling. */
     public static final Icon DOWN_ICON = IconUtil.of("Expanded24.png").imageSize(14, 14).get();
+
+    /** Icon for edge where further scrolling is not possible. */
+    public static final Icon EDGE_ICON = IconUtil.of("Point24.png").imageSize(14, 14).get();
 
     /** Menu item string for removal of value. */
     public static final String REMOVE_OPTION = "<html><i>remove</i></html>";

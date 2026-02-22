@@ -2,10 +2,10 @@ package org.opentrafficsim.editor.listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
 
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentListener;
 
 /**
  * Listener to any event on a table editor field that can remove itself.
@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 public class FieldListener implements ActionListener
 {
 
-    /** Key listener. */
-    private final KeyListener fieldKeyListener;
+    /** Document listener. */
+    private final DocumentListener documentListener;
 
     /** Pop-up menu. */
     private final JPopupMenu popup;
@@ -28,17 +28,17 @@ public class FieldListener implements ActionListener
     private final JTextField field;
 
     /**
-     *
-     * @param fieldKeyListener key listener
+     * Constructor.
+     * @param documentListener document listener
      * @param popup pop-up
      * @param field text editor field
      */
-    public FieldListener(final KeyListener fieldKeyListener, final JPopupMenu popup, final JTextField field)
+    public FieldListener(final DocumentListener documentListener, final JPopupMenu popup, final JTextField field)
     {
-        this.fieldKeyListener = fieldKeyListener;
+        this.documentListener = documentListener;
         this.popup = popup;
         this.field = field;
-        this.field.addKeyListener(this.fieldKeyListener);
+        this.field.getDocument().addDocumentListener(documentListener);
         this.field.addActionListener(this);
     }
 
@@ -54,9 +54,9 @@ public class FieldListener implements ActionListener
      */
     public void remove()
     {
-        // remove listeners on editing field, otherwise popup appears on different cell when typing there
+        // remove listeners on editing field, otherwise pop-up appears on different cell when typing there
         this.popup.setVisible(false);
-        this.field.removeKeyListener(this.fieldKeyListener);
+        this.field.getDocument().removeDocumentListener(this.documentListener);
         this.field.removeActionListener(this);
     }
 

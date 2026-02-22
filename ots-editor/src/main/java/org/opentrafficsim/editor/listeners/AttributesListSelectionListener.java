@@ -51,6 +51,10 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
     @Override
     public void valueChanged(final ListSelectionEvent e)
     {
+        if (!e.getValueIsAdjusting())
+        {
+            return;
+        }
         int index = this.attributesTable.getSelectedRow();
         XsdTreeNode node = ((AttributesTableModel) this.attributesTable.getModel()).getNode();
         if (index >= 0)

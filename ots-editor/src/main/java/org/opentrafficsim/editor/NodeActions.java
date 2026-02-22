@@ -11,7 +11,7 @@ import de.javagl.treetable.JTreeTable;
 
 /**
  * This class houses actions that can be performed on tree nodes. The actions will always be executed. Any check on whether the
- * state of a node is appropriate for an action, is up to the caller. Callers are typically mouse event or key listeners on the
+ * state of a node is appropriate for an action, is up to the caller. Callers are typically mouse event or listeners on the
  * tree.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

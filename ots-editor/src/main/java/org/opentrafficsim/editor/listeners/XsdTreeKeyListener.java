@@ -2,13 +2,11 @@ package org.opentrafficsim.editor.listeners;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
-import javax.swing.tree.TreePath;
+import javax.swing.JComponent;
 
+import org.opentrafficsim.editor.Actions;
 import org.opentrafficsim.editor.OtsEditor;
-import org.opentrafficsim.editor.XsdOption;
-import org.opentrafficsim.editor.XsdTreeNode;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -45,126 +43,26 @@ public class XsdTreeKeyListener extends KeyAdapter
         this.editor = editor;
         this.treeTable = treeTable;
         this.treeTable.addKeyListener(this);
+
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().showTreeNodeDescription());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().showTreeNodeInvalid());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().addNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().duplicateNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().deleteNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().copyNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().cutNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().insertNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().pasteNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().revolveNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().expandOrCollapseNode());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().moveNodeUp());
+        Actions.bind(treeTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, this.editor.actions().moveNodeDown());
     }
 
     @Override
     public void keyPressed(final KeyEvent e)
     {
-        if (this.treeTable.isEditing())
-        {
-            // prevents row i being removed, being replaced by i+1, and editing then setting the value of i+1 now at i
-            return;
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_F1)
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            node.getDescription().ifPresent((d) -> this.editor.showDescription(d, node.getNodeName()));
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_W && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (node.isAddable())
-            {
-                this.editor.getNodeActions().add(node);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_D && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (node.isAddable())
-            {
-                this.editor.getNodeActions().duplicate(node);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_DELETE)
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (node.isRemovable())
-            {
-                if (this.editor.confirmNodeRemoval(node))
-                {
-                    this.editor.getNodeActions().remove(node);
-                }
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_C && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (node.isActive() && (node.isRemovable() || node.isAddable()))
-            {
-                this.editor.getNodeActions().copy(node);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_X && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (node.isActive() && node.isRemovable())
-            {
-                this.editor.getNodeActions().cut(node);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_INSERT)
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (this.editor.getClipboard() != null && node.canContain(this.editor.getClipboard()) && node.isActive()
-                    && node.isAddable())
-            {
-                this.editor.getNodeActions().insert(node);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_V && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (this.editor.getClipboard() != null && node.canContain(this.editor.getClipboard())
-                    && (!node.isActive() || node.isAddable()))
-            {
-                this.editor.getNodeActions().paste(node);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_R && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            List<XsdOption> options = node.getOptions();
-            if (node.isChoice() && options.size() > 1)
-            {
-                this.editor.getNodeActions().revolveOption(node, options);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_E && e.isControlDown())
-        {
-            TreePath path = this.treeTable.getTree().getSelectionPath();
-            XsdTreeNode node = (XsdTreeNode) path.getLastPathComponent();
-            boolean expanded = this.treeTable.getTree().isExpanded(path);
-            this.editor.getNodeActions().expand(node, path, expanded);
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_UP && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (node.canMoveUp())
-            {
-                this.editor.getNodeActions().move(node, -1);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_DOWN && e.isControlDown())
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            if (node.canMoveDown())
-            {
-                this.editor.getNodeActions().move(node, 1);
-            }
-            e.consume();
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT
+        if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT
                 || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_ENTER
                 || e.getKeyCode() == KeyEvent.VK_TAB)
         {

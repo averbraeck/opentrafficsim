@@ -61,11 +61,11 @@ public class ScenarioActionListener implements ActionListener
         }
         catch (CircularDependencyException ex)
         {
-            this.editor.showCircularInputParameters(ex.getMessage());
+            this.editor.dialogs().showCircularInputParameters(ex.getMessage());
         }
         catch (RuntimeException ex)
         {
-            this.editor.showInvalidExpression(ex.getMessage());
+            this.editor.dialogs().showInvalidExpression(ex.getMessage());
         }
     }
 

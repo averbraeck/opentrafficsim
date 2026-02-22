@@ -73,7 +73,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Returns expression evaluator.
-     * @param scenario selected scenario (of type as listed in dropdown menu).
+     * @param scenario selected scenario (of type as listed in drop-down menu).
      * @return expression evaluator.
      */
     public Eval getEval(final ScenarioWrapper scenario)
@@ -105,7 +105,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             }
             catch (RuntimeException ex)
             {
-                this.editor.showInvalidExpression(ex.getMessage());
+                this.editor.dialogs().showInvalidExpression(ex.getMessage());
                 return null;
             }
             this.dirty = false;

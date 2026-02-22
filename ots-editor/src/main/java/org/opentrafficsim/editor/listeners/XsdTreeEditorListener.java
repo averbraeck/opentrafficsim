@@ -2,14 +2,14 @@ package org.opentrafficsim.editor.listeners;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 
+import org.opentrafficsim.editor.Actions;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeTableModel;
@@ -29,7 +29,7 @@ import de.javagl.treetable.JTreeTable;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class XsdTreeEditorListener extends KeyAdapter implements FocusListener, CellEditorListener
+public class XsdTreeEditorListener implements FocusListener, CellEditorListener
 {
 
     /** Editor. */
@@ -38,46 +38,37 @@ public class XsdTreeEditorListener extends KeyAdapter implements FocusListener, 
     /** Tree table. */
     private final JTreeTable treeTable;
 
+    /** Attributes table. */
+    private final JTable attributesTable;
+
     /**
      * Constructor.
      * @param editor editor
      * @param treeTable tree table
+     * @param attributesTable attributes table
      */
-    public XsdTreeEditorListener(final OtsEditor editor, final JTreeTable treeTable)
+    public XsdTreeEditorListener(final OtsEditor editor, final JTreeTable treeTable, final JTable attributesTable)
     {
         this.editor = editor;
         this.treeTable = treeTable;
+        this.attributesTable = attributesTable;
         DefaultCellEditor cellEditor = (DefaultCellEditor) this.treeTable.getDefaultEditor(String.class);
-        cellEditor.getComponent().addKeyListener(this);
         cellEditor.getComponent().addFocusListener(this);
         cellEditor.addCellEditorListener(this);
 
-        // tree table key listener (when editing is initiated by typing with an editable cell selected)
-        this.treeTable.addKeyListener(new KeyAdapter()
+        JTextField field = ((JTextField) cellEditor.getComponent());
+        field.getDocument().addDocumentListener(Actions.documentListener(() ->
         {
-            @Override
-            public void keyReleased(final KeyEvent e)
+            /*
+             * This check before setting the value is quite important to prevent loss of typed data. As the JTextField is
+             * re-used when editing another cell, the JTreeTable sets its value to null in the transition. This null value
+             * should not be set on either the previous or next edited node.
+             */
+            if (XsdTreeEditorListener.this.treeTable.isEditing())
             {
-                if (XsdTreeEditorListener.this.treeTable.isEditing())
-                {
-                    setValue((JTextField) XsdTreeEditorListener.this.treeTable.getEditorComponent());
-                }
+                setValue(field);
             }
-        });
-    }
-
-    // editor text field key listener (when editing is initiated by double clicking a cell)
-
-    @Override
-    public void keyReleased(final KeyEvent e)
-    {
-        if (e.getKeyCode() == KeyEvent.VK_F1)
-        {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getSelectionPath().getLastPathComponent();
-            node.getDescription().ifPresent((d) -> this.editor.showDescription(d, node.getNodeName()));
-            return;
-        }
-        setValue((JTextField) e.getComponent());
+        }));
     }
 
     /**
@@ -95,6 +86,7 @@ public class XsdTreeEditorListener extends KeyAdapter implements FocusListener, 
             if (editorCol == XsdTreeTableModel.ID_COLUMN)
             {
                 treeNode.setId(textField.getText());
+                this.attributesTable.updateUI();
             }
             else if (editorCol == XsdTreeTableModel.VALUE_COLUMN)
             {

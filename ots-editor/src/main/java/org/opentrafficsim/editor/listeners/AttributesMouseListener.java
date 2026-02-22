@@ -18,8 +18,8 @@ import org.opentrafficsim.editor.XsdTreeNode;
  * <ul>
  * <li>Creates a dialog showing an attribute description when the "i" icon is clicked.</li>
  * <li>Sets the editor status label as either the invalidation message of an attribute, or the attribute description.</li>
- * <li>Creates a popup when an attribute is selected that has restriction by having an xsd:keyref or being an
- * xsd:enumaration.</li>
+ * <li>Creates a pop-up when an attribute is selected that has restriction by having an xsd:keyref or being an
+ * xsd:enumeration.</li>
  * </ul>
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -59,7 +59,7 @@ public class AttributesMouseListener extends MouseAdapter
                 && this.attributesTable.convertColumnIndexToModel(col) == AttributesTableModel.DESCRIPTION_COLUMN
                 && this.attributesTable.getModel().getValueAt(row, col) != null)
         {
-            this.editor.showDescription(description.orElse(null), node.getAttributeNameByIndex(row));
+            this.editor.dialogs().showDescription(description.orElse(null), node.getAttributeNameByIndex(row));
         }
         // set status label to invalid message or description
         this.editor.removeStatusLabel();

@@ -8,9 +8,7 @@ import java.awt.FileDialog;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -25,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -54,7 +51,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -71,6 +67,7 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.CellEditorListener;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -206,13 +203,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private Map<String, Icon> customIcons = new LinkedHashMap<>();
 
     /** Icon for in question dialog. */
-    private final Icon questionIcon;
+    private final Icon questionIcon = IconUtil.of("Question24.png").get();
 
-    /** Icon for in description dialog. */
-    private final Icon descriptionIcon;
-
-    /** Icon for in warning dialog. */
-    private final Icon warningIcon;
+    /** Dialogs. */
+    private final Dialogs dialogs = new Dialogs(this);
 
     /** Root node of the XSD file. */
     private Document xsdDocument;
@@ -263,8 +257,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /** Whether the node in the clipboard was cut. */
     private boolean cut;
 
-    /** Node actions. */
-    private NodeActions nodeActions;
+    /** Actions that can be performed on the editor. */
+    private Actions actions;
 
     /** Application store for preferences and recent files. */
     private static final ApplicationStore APPLICATION_STORE = new ApplicationStore("OTS", "editor");
@@ -364,10 +358,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         rightContainer.add(this.rightSplitPane);
         this.leftRightSplitPane.setRightComponent(rightContainer);
 
-        this.questionIcon = IconUtil.of("Question24.png").get();
-        this.descriptionIcon = IconUtil.of("Information24.png").get();
-        this.warningIcon = IconUtil.of("Warning24.png").get();
-
         // There is likely a better way to do this, but setting the icons specific on the tree is impossible for collapsed and
         // expanded. Also in that case after removal of a node, the tree appearance gets reset and java default icons appear.
         // This happens to the leaf/open/closed icons that can be set on the tree. This needs to be done before the JTreeTable
@@ -414,6 +404,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 .addListSelectionListener(new AttributesListSelectionListener(this, this.attributesTable));
         AttributesTableModel.applyColumnWidth(this.attributesTable);
         this.rightSplitPane.setBottomComponent(new JScrollPane(this.attributesTable));
+        this.actions = new Actions(this, this.attributesTable);
+        this.actions.setTreeTable(this.treeTable);
         new AttributesKeyListener(this, this.attributesTable);
 
         addMenuBar();
@@ -427,7 +419,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Makes the divider clickable cause the panel to exchange screen size the other way around.
-     * @param pane splitpane to make click-flippable.
+     * @param pane split pane to make click-flippable.
      */
     private void makeClickFlippable(final JSplitPane pane)
     {
@@ -471,7 +463,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
         if (!root.isValid())
         {
-            showInvalidToRunMessage();
+            dialogs().showInvalidToRunMessage();
             return;
         }
         autosave(root);
@@ -486,7 +478,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         catch (CircularDependencyException ex)
         {
-            showCircularInputParameters(ex.getMessage());
+            dialogs().showCircularInputParameters(ex.getMessage());
             return;
         }
         File file;
@@ -496,7 +488,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         catch (IOException exception)
         {
-            showUnableToRunFromTempFile();
+            dialogs().showUnableToRunFromTempFile();
             return;
         }
         save(file, root, false);
@@ -522,7 +514,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
         if (!root.isValid())
         {
-            showInvalidToRunMessage();
+            dialogs().showInvalidToRunMessage();
             return;
         }
         autosave(root);
@@ -563,7 +555,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         TreePath path = this.treeTable.getTree().getSelectionPath();
         if (this.treeTable.getTree().isExpanded(path))
         {
-            getNodeActions().expand(node, path, true);
+            actions().getNodeActions().expand(node, path, true);
         }
     }
 
@@ -745,18 +737,14 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 JMenuItem item = new JMenuItem(file);
                 item.addActionListener((i) ->
                 {
-                    if (confirmDiscardChanges())
+                    if (!this.unsavedChanges || dialogs().confirmDiscardChanges())
                     {
                         File f = new File(file);
                         this.lastDirectory = f.getParent() + File.separator;
                         this.lastFile = f.getName();
                         if (!loadFile(f, "File loaded", true))
                         {
-                            boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
-                                    "File could not be loaded. Do you want to remove it from recent files?",
-                                    "Remove from recent files?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                    this.questionIcon) == JOptionPane.OK_OPTION;
-                            if (remove)
+                            if (dialogs().confirmRemoveRecentFile())
                             {
                                 APPLICATION_STORE.removeRecentFile("recent_files", file);
                                 updateRecentFileMenu();
@@ -772,10 +760,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         item.setEnabled(!files.isEmpty());
         item.addActionListener((i) ->
         {
-            boolean clear = JOptionPane.showConfirmDialog(OtsEditor.this, "Are you sure you want to clear the recent files?",
-                    "Clear recent files?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    this.questionIcon) == JOptionPane.OK_OPTION;
-            if (clear)
+            if (dialogs().confirmClearRecentFiles())
             {
                 APPLICATION_STORE.clearProperty("recent_files");
                 updateRecentFileMenu();
@@ -872,30 +857,23 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         if (it.hasNext())
         {
             File file = it.next().toFile();
-            int userInput = JOptionPane.showConfirmDialog(this,
-                    "Autosave file " + file.getName() + " (" + new Date(file.lastModified())
-                            + ") detected. Do you want to load this file? ('No' removes the file)",
-                    "Autosave file detected", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    this.questionIcon);
-            if (userInput == JOptionPane.OK_OPTION)
+            Optional<Boolean> userInput = dialogs().confirmLoadAutosaveFile(file);
+            if (userInput.isPresent() && userInput.get())
             {
                 boolean loaded = loadFile(file, "Autosave file loaded", false);
                 if (!loaded)
                 {
-                    boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
-                            "Autosave file could not be loaded. Do you want ro remove it?", "Remove autosave?",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                            this.questionIcon) == JOptionPane.YES_OPTION;
-                    if (remove)
+                    if (dialogs().confirmRemoveAutosaveFile())
                     {
                         file.delete();
                     }
+                    return;
                 }
                 setUnsavedChanges(true);
                 this.treeTable.updateUI();
                 file.delete();
             }
-            else if (userInput == JOptionPane.NO_OPTION)
+            else if (userInput.isPresent() && !userInput.get())
             {
                 file.delete();
             }
@@ -907,7 +885,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     private void newFile()
     {
-        if (confirmDiscardChanges())
+        if (!this.unsavedChanges || dialogs().confirmDiscardChanges())
         {
             try
             {
@@ -918,8 +896,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             }
             catch (IOException exception)
             {
-                JOptionPane.showMessageDialog(this, "Unable to reload schema.", "Unable to reload schema.",
-                        JOptionPane.WARNING_MESSAGE);
+                dialogs().notification("Unable to reload schema.");
             }
         }
     }
@@ -938,7 +915,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
         this.treeTable = new AppearanceControlTreeTable(treeModel);
         this.treeTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.nodeActions = new NodeActions(this, this.treeTable);
+        this.actions = new Actions(this, this.attributesTable);
+        this.actions.setTreeTable(this.treeTable);
         this.treeTable.putClientProperty("terminateEditOnFocusLost", true);
         treeModel.setTreeTable(this.treeTable);
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
@@ -950,7 +928,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // this listener changes Id or node Value for each key being pressed
         // this listener starts a new undo event when the editor gets focus on the JTreeTable
         // this listener may cause new undo actions when cells are navigated using the keyboard
-        new XsdTreeEditorListener(this, this.treeTable);
+        new XsdTreeEditorListener(this, this.treeTable, this.attributesTable);
 
         // throws selection events and updates the attributes table
         // this listener will make sure no choice popup is presented by a left-click on expand/collapse, even for a choice node
@@ -1176,80 +1154,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Requests the user to confirm the deletion of a node. The default button is "Ok". The window popping up is considered
-     * sufficient warning, and in this way a speedy succession of "del" and "enter" may delete a consecutive range of nodes to
-     * be deleted.
-     * @param node node.
-     * @return {@code true} if the user confirms node removal.
+     * Return utility for dialogs.
+     * @return utility for dialogs
      */
-    public boolean confirmNodeRemoval(final XsdTreeNode node)
+    public Dialogs dialogs()
     {
-        return JOptionPane.showConfirmDialog(this, "Remove `" + node + "`?", "Remove?", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, this.questionIcon) == JOptionPane.OK_OPTION;
-    }
-
-    /**
-     * Shows a dialog in a modal pane to confirm discarding unsaved changes.
-     * @return whether unsaved changes can be discarded.
-     */
-    private boolean confirmDiscardChanges()
-    {
-        if (!this.unsavedChanges)
-        {
-            return true;
-        }
-        return JOptionPane.showConfirmDialog(this, "Discard unsaved changes?", "Discard unsaved changes?",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, this.questionIcon) == JOptionPane.OK_OPTION;
-    }
-
-    /**
-     * Shows a description in a modal pane.
-     * @param description description.
-     * @param title title of the window, may be {@code null} but typically is the name of the node or attribute
-     */
-    public void showDescription(final String description, final String title)
-    {
-        JOptionPane.showMessageDialog(OtsEditor.this,
-                "<html><body><p style='width: 400px;'>" + description + "</p></body></html>",
-                title == null ? "Description" : title, JOptionPane.INFORMATION_MESSAGE, this.descriptionIcon);
-    }
-
-    /**
-     * Show tree invalid.
-     */
-    public void showInvalidToRunMessage()
-    {
-        JOptionPane.showMessageDialog(OtsEditor.this, "The setup is not valid. Make sure no red nodes remain.",
-                "Setup is not valid", JOptionPane.INFORMATION_MESSAGE, this.descriptionIcon);
-    }
-
-    /**
-     * Show input parameters have a circular dependency.
-     * @param message exception message
-     */
-    public void showCircularInputParameters(final String message)
-    {
-        JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency: " + message,
-                "Circular input parameter", JOptionPane.INFORMATION_MESSAGE, this.warningIcon);
-    }
-
-    /**
-     * Show message about invalid expression.
-     * @param message exception message
-     */
-    public void showInvalidExpression(final String message)
-    {
-        JOptionPane.showMessageDialog(OtsEditor.this, "An expression is not valid: " + message, "Expression not valid",
-                JOptionPane.INFORMATION_MESSAGE, this.warningIcon);
-    }
-
-    /**
-     * Show unable to run.
-     */
-    public void showUnableToRunFromTempFile()
-    {
-        JOptionPane.showMessageDialog(OtsEditor.this, "Unable to run, temporary file could not be saved.", "Unable to run",
-                JOptionPane.INFORMATION_MESSAGE, this.warningIcon);
+        return this.dialogs;
     }
 
     /**
@@ -1306,10 +1216,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             popup.add(item);
         }
         JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
-        if (field.getText() != null && !field.getText().isEmpty())
-        {
-            showOptionsInScope(popup, includeRemove, getPattern(currentValue));
-        }
+        showOptionsInScope(popup, includeRemove, getPattern(currentValue));
 
         // scrolling
         popup.addMouseWheelListener(new MouseWheelListener()
@@ -1333,33 +1240,30 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         });
 
         // typing
-        KeyListener fieldKeyListener = new KeyAdapter()
+        DocumentListener documentListener = Actions.documentListener(() ->
         {
-            @Override
-            public void keyTyped(final KeyEvent e)
+            if (!OtsEditor.this.treeTable.isEditing())
             {
-                // invoke later to include this current typed key in the result
-                SwingUtilities.invokeLater(() ->
-                {
-                    OtsEditor.this.dropdownIndent = 0;
-                    Pattern pattern = getPattern(field.getText());
-                    OtsEditor.this.dropdownOptions = filterOptions(allOptions, pattern);
-                    boolean anyVisible = showOptionsInScope(popup, includeRemove, pattern);
-                    if (!anyVisible)
-                    {
-                        popup.setVisible(false);
-                        field.requestFocus();
-                        return;
-                    }
-                    popup.pack();
-                    popup.setVisible(true);
-                    Rectangle rectangle = field.getBounds();
-                    placePopup(popup, rectangle, table);
-                    field.requestFocus();
-                });
+                // the pop-up should not be made visible if the editor is in a non-editing transient mode
+                return;
             }
-        };
-        this.fieldListener = new FieldListener(fieldKeyListener, popup, field);
+            OtsEditor.this.dropdownIndent = 0;
+            Pattern pattern = getPattern(field.getText());
+            OtsEditor.this.dropdownOptions = filterOptions(allOptions, pattern);
+            boolean anyVisible = showOptionsInScope(popup, includeRemove, pattern);
+            if (!anyVisible)
+            {
+                popup.setVisible(false);
+                field.requestFocus();
+                return;
+            }
+            popup.pack();
+            popup.setVisible(true);
+            Rectangle rectangle = field.getBounds();
+            placePopup(popup, rectangle, table);
+            field.requestFocus();
+        });
+        this.fieldListener = new FieldListener(documentListener, popup, field);
 
         // place the pop-up
         SwingUtilities.invokeLater(() ->
@@ -1512,10 +1416,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         if (anyAbove)
         {
             first.setIcon(PopupValueSelectedListener.UP_ICON);
+            if (!anyBelow)
+            {
+                last.setIcon(PopupValueSelectedListener.EDGE_ICON);
+            }
         }
         if (anyBelow)
         {
             last.setIcon(PopupValueSelectedListener.DOWN_ICON);
+            if (!anyAbove)
+            {
+                first.setIcon(PopupValueSelectedListener.EDGE_ICON);
+            }
         }
         return optionIndex > 0;
     }
@@ -1550,7 +1462,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     void openFile()
     {
-        if (!confirmDiscardChanges())
+        if (this.unsavedChanges && !dialogs().confirmDiscardChanges())
         {
             return;
         }
@@ -1572,7 +1484,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         boolean loaded = loadFile(file, "File loaded", true);
         if (!loaded)
         {
-            JOptionPane.showMessageDialog(this, "Unable to read file.", "Unable to read file.", JOptionPane.WARNING_MESSAGE);
+            dialogs().notification("Unable to read file.");
         }
     }
 
@@ -1722,9 +1634,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 String nameSpace = semi < 0 ? null : prop.substring(0, semi);
                 if (!nameSpaces.contains(nameSpace) && value != null && !value.isBlank())
                 {
-                    JOptionPane.showMessageDialog(this,
+                    dialogs().notification(
                             "Unable to save property " + prop + " as its namespace xmlns:" + nameSpace + " is not provided.",
-                            "Unable to save property.", JOptionPane.WARNING_MESSAGE);
+                            "Unable to save property.");
                 }
                 else if (value != null && !value.isBlank())
                 {
@@ -1753,7 +1665,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {
-            JOptionPane.showMessageDialog(this, "Unable to save file.", "Unable to save file.", JOptionPane.WARNING_MESSAGE);
+            dialogs().notification("Unable to save file.");
         }
     }
 
@@ -1762,7 +1674,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     private void exit()
     {
-        if (confirmDiscardChanges())
+        if (!this.unsavedChanges || dialogs().confirmDiscardChanges())
         {
             System.exit(0);
         }
@@ -1830,12 +1742,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Returns the node actions.
+     * Returns the actions that can be performed on the editor.
      * @return node actions.
      */
-    public NodeActions getNodeActions()
+    public Actions actions()
     {
-        return this.nodeActions;
+        return this.actions;
     }
 
     @Override
@@ -1858,7 +1770,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         catch (CircularDependencyException ex)
         {
-            showCircularInputParameters(ex.getMessage());
+            dialogs().showCircularInputParameters(ex.getMessage());
             return this.evalWrapper.getLastValidEval();
         }
         catch (RuntimeException ex)
