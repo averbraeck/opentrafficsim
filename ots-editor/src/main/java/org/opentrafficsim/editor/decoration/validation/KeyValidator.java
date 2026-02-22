@@ -237,8 +237,9 @@ public class KeyValidator extends XPathValidator implements EventListener
         {
             if (set.contains(node))
             {
-                invalidateAllDependent();
                 set.remove(node);
+                invalidateAllDependent();
+                set.forEach((n) -> n.invalidate());
             }
         }
         if (!this.listeningKeyrefValidators.isEmpty())
