@@ -156,7 +156,7 @@
 
           <!-- LaneBiases.LaneBias.GtuType key -->
           <xsd:key name="odOptionsItemLaneBiasGtuTypeKey">
-            <xsd:selector xpath="ots:LaneBiases/ots:LaneBias" />
+            <xsd:selector xpath="ots:LaneBiases/ots:LaneBias|ots:LaneBiases/ots:DefinedLaneBias" />
             <xsd:field xpath="@GtuType" />
           </xsd:key>
 

@@ -644,12 +644,18 @@
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
-    <!-- DefinedLaneBias.GtuType is Definitions.LaneBiases.LaneBias.GtuType -->
-    <xsd:keyref name="definedLaneBiasGtuTypeRef" refer="ots:definitionsLaneBiasGtuTypeKey">
+    <!-- LaneBias.GtuType is Definitions.LaneBiases.LaneBias.GtuType -->
+    <xsd:keyref name="laneBiasesLaneBiasGtuTypeRef" refer="ots:definitionsLaneBiasGtuTypeKey">
       <xsd:selector xpath="ots:LaneBiases/ots:LaneBias" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
-
+    
+    <!-- DefinedLaneBias.GtuType is Definitions.LaneBiases.DefinedLaneBias.GtuType -->
+    <xsd:keyref name="laneBiasesDefinedLaneBiasGtuTypeRef" refer="ots:definitionsLaneBiasGtuTypeKey">
+      <xsd:selector xpath="ots:DefinedLaneBiases/ots:LaneBias" />
+      <xsd:field xpath="@GtuType" />
+    </xsd:keyref>
+    
     <!-- Demand.OdOptions.OdOptionsItem.Markov.State.GtuType = GtuType.Id -->
     <xsd:keyref name="markovStateGtuTypeRef" refer="ots:gtuTypeKey">
       <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Markov/ots:State" />

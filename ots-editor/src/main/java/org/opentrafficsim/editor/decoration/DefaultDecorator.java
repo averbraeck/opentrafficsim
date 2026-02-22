@@ -142,6 +142,7 @@ public final class DefaultDecorator
         new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination", "Category");
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
+        new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.LaneBiases.DefinedLaneBias", "GtuType");
         new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
         new AttributesStringFunction(editor, "Ots.Control.FixedTime.SignalGroup.TrafficLight", "Link", "Lane",
                 "TrafficLightId");
