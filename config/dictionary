@@ -43,11 +43,13 @@ inflection
 ingest
 ingested
 ingests
+int
 interarrival
 iterable
 jagged
 joda
 kelvin
+keyref
 knoop
 knoppers
 kurtosis
@@ -99,6 +101,7 @@ tamminga
 terse
 theta
 tokenized
+tooltip
 tort
 tram
 traversability
