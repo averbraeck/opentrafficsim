@@ -57,6 +57,7 @@ import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -96,8 +97,9 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel.DemoPanelPosition;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel.DemoPanelPosition;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -151,7 +153,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     private String absoluteCrossSection3 = "None";
 
     /** Fd line in graphs based on settings. */
-    @SuppressWarnings("synthetic-access")
     private DynamicFdLine fdLine = new DynamicFdLine();
 
     /** Trajectory plot. */
@@ -228,7 +229,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             @Override
             public Duration get()
             {
-                @SuppressWarnings("synthetic-access")
                 double mean = 1.0 / FundamentalDiagramDemo.this.demand.si;
                 return Duration.ofSI(-mean * Math.log(stream.nextDouble()));
             }
@@ -238,7 +238,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         DistNormal fSpeed = new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0);
         ParameterFactory parametersFactory = new ParameterFactory()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
             {
@@ -262,7 +261,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             @Override
             public LaneBasedGtuCharacteristics draw() throws ParameterException, GtuException
             {
-                @SuppressWarnings("synthetic-access")
                 GtuType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
 
                 return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, stream)
@@ -302,7 +300,24 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     }
 
     @Override
-    protected void setupDemo(final OtsAnimationPanel animationPanel, final RoadNetwork net)
+    protected OtsSimulationPanelDecorator getDecorator()
+    {
+        return new OtsSimulationPanelDecorator()
+        {
+            @Override
+            public void setupDemo(final OtsSimulationPanel simulationPanel, final Network network)
+            {
+                FundamentalDiagramDemo.this.setupDemo(simulationPanel, network);
+            }
+        };
+    }
+
+    /**
+     * Setup a demo panel within the animation panel. The default implementation does nothing.
+     * @param animationPanel animation panel
+     * @param network network
+     */
+    private void setupDemo(final OtsSimulationPanel animationPanel, final Network network)
     {
         this.fdLine.update();
 
@@ -321,6 +336,41 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         controlPanel.setPreferredSize(new Dimension(250, 500));
         Dimension controlSize = new Dimension(250, 0);
         int strutSize = 20;
+        setupDetectorSelectors(controlPanel, controlSize);
+        // spacer
+        controlPanel.add(Box.createVerticalStrut(strutSize));
+        // reset button
+        JButton reset = new JButton("Clear data & graphs");
+        reset.setAlignmentX(Component.CENTER_ALIGNMENT);
+        reset.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                clearDataAndGraphs();
+            }
+        });
+        controlPanel.add(reset);
+        // spacer
+        controlPanel.add(Box.createVerticalStrut(strutSize));
+        // demand
+        setupDemandSliders(controlPanel, controlSize, strutSize);
+        // spacer
+        controlPanel.add(Box.createVerticalStrut(strutSize));
+        setupParameterSliders(controlPanel, controlSize, strutSize);
+
+        // Initiate graphs
+        this.scheduler = new OtsPlotScheduler(getSimulator());
+        clearDataAndGraphs();
+    }
+
+    /**
+     * Sets up the detector selection drop-down menus.
+     * @param controlPanel control panel
+     * @param controlSize control size
+     */
+    private void setupDetectorSelectors(final JPanel controlPanel, final Dimension controlSize)
+    {
         // cross section dropdown
         JLabel crossSectionLabel = new JLabel("<html>Cross-section location [km]</html>");
         crossSectionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -338,7 +388,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         crossSectionMenu.setSelectedIndex(5);
         crossSectionMenu.addActionListener(new ActionListener()
         {
-            @SuppressWarnings({"synthetic-access", "unchecked"})
+            @SuppressWarnings({"unchecked"})
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -361,7 +411,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         crossSectionMenu.setSelectedIndex(0);
         crossSectionMenu.addActionListener(new ActionListener()
         {
-            @SuppressWarnings({"synthetic-access", "unchecked"})
+            @SuppressWarnings({"unchecked"})
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -378,7 +428,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         crossSectionMenu.setSelectedIndex(0);
         crossSectionMenu.addActionListener(new ActionListener()
         {
-            @SuppressWarnings({"synthetic-access", "unchecked"})
+            @SuppressWarnings({"unchecked"})
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -388,24 +438,16 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
         });
         controlPanel.add(crossSectionMenu);
-        // spacer
-        controlPanel.add(Box.createVerticalStrut(strutSize));
-        // reset button
-        JButton reset = new JButton("Clear data & graphs");
-        reset.setAlignmentX(Component.CENTER_ALIGNMENT);
-        reset.addActionListener(new ActionListener()
-        {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                clearDataAndGraphs();
-            }
-        });
-        controlPanel.add(reset);
-        // spacer
-        controlPanel.add(Box.createVerticalStrut(strutSize));
-        // demand
+    }
+
+    /**
+     * Sets up the parameter value sliders.
+     * @param controlPanel control panel
+     * @param controlSize control size
+     * @param strutSize space between parameters
+     */
+    private void setupDemandSliders(final JPanel controlPanel, final Dimension controlSize, final int strutSize)
+    {
         JLabel demandLabel = new JLabel("<html>Demand [veh/h]</html>");
         demandLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         demandLabel.setPreferredSize(controlSize);
@@ -420,7 +462,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         demandSlider.setToolTipText("<html>Demand [veh/h]</html>");
         demandSlider.addChangeListener(new ChangeListener()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void stateChanged(final ChangeEvent e)
             {
@@ -446,7 +487,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         truckSlider.setToolTipText("<html>Truck percentage [%]</html>");
         truckSlider.addChangeListener(new ChangeListener()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void stateChanged(final ChangeEvent e)
             {
@@ -457,8 +497,16 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
         });
         controlPanel.add(truckSlider);
-        // spacer
-        controlPanel.add(Box.createVerticalStrut(strutSize));
+    }
+
+    /**
+     * Sets up the parameter value sliders.
+     * @param controlPanel control panel
+     * @param controlSize control size
+     * @param strutSize space between parameters
+     */
+    private void setupParameterSliders(final JPanel controlPanel, final Dimension controlSize, final int strutSize)
+    {
         // Tmax
         JLabel tLabel = new JLabel("<html>Max. headway [s]</html>");
         tLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -480,7 +528,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         tSlider.setToolTipText("<html>Max. headway [s]</html>");
         tSlider.addChangeListener(new ChangeListener()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void stateChanged(final ChangeEvent e)
             {
@@ -532,7 +579,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         vSlider.setToolTipText("<html>Speed limit [km/h]</html>");
         vSlider.addChangeListener(new ChangeListener()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void stateChanged(final ChangeEvent e)
             {
@@ -549,10 +595,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
         });
         controlPanel.add(vSlider);
-
-        // Initiate graphs
-        this.scheduler = new OtsPlotScheduler(getSimulator());
-        clearDataAndGraphs();
     }
 
     /**
@@ -823,7 +865,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         /**
          * Recalculates the FD based on input parameters.
          */
-        @SuppressWarnings("synthetic-access")
         public void update()
         {
             // harmonic mean of desired speed of cars and trucks

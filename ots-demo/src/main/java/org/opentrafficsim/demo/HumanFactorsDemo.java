@@ -66,8 +66,9 @@ import org.opentrafficsim.road.od.Interpolation;
 import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdOptions;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DsolException;
@@ -100,9 +101,9 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
      * @param model model
      * @param panel panel
      */
-    private HumanFactorsDemo(final HumanFactorsModel model, final OtsAnimationPanel panel)
+    private HumanFactorsDemo(final HumanFactorsModel model, final OtsSimulationPanel panel)
     {
-        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel);
     }
 
     /**
@@ -118,14 +119,20 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
                     new HistoryManagerDevs(simulator, Duration.ofSI(3.0), Duration.ofSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
-            List<Colorer<? super Gtu>> colorers =
-                    List.of(new FixedColorer<>(Colors.OTS_BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
-                            new SocialPressureGtuColorer(), new IncentiveGtuColorer(IncentiveSocioSpeed.class),
-                            new AttentionGtuColorer(), new TaskSaturationGtuColorer());
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
-                    junctionModel, colorers, junctionModel.getNetwork());
-            new HumanFactorsDemo(junctionModel, animationPanel);
-            animationPanel.enableSimulationControlButtons();
+            OtsSimulationPanel simulationPanel =
+                    new OtsSimulationPanel(junctionModel.getNetwork(), new OtsSimulationPanelDecorator()
+                    {
+                        @Override
+                        public List<Colorer<? super Gtu>> getGtuColorers()
+                        {
+                            return List.of(new FixedColorer<>(Colors.OTS_BLUE, "Blue"), new SpeedGtuColorer(),
+                                    new AccelerationGtuColorer(), new SocialPressureGtuColorer(),
+                                    new IncentiveGtuColorer(IncentiveSocioSpeed.class), new AttentionGtuColorer(),
+                                    new TaskSaturationGtuColorer());
+                        }
+                    });
+            new HumanFactorsDemo(junctionModel, simulationPanel);
+            simulationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
         {

@@ -31,6 +31,8 @@ import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 public abstract class OtsXmlModel extends AbstractOtsModel
 {
 
+    // TODO: need to expose the Animation contents via XmlParser such that OtsSimulationPanel can be setup
+
     /** The network. */
     private RoadNetwork network;
 

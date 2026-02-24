@@ -184,8 +184,7 @@ public class DefaultAnimationFactory implements EventListener
 
         for (Gtu gtu : network.getGTUs())
         {
-            GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, (LaneBasedGtu) gtu,
-                    this.gtuMarkers.getOrDefault(gtu.getType(), GtuMarker.CIRCLE));
+            GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, (LaneBasedGtu) gtu, getGtuMarker(gtu.getType()));
             Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
             this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
 
@@ -203,6 +202,25 @@ public class DefaultAnimationFactory implements EventListener
             animateNonLocatedObject(object);
         }
 
+    }
+
+    /**
+     * Obtains the marker for the GTU type, possibly recursively over the parents. If no marker is set for any GTU type through
+     * the recursion, {@link GtuMarker}{@code .CIRCLE} is returned.
+     * @param gtuType GTU type
+     * @return marker for the GTU type
+     */
+    private GtuMarker getGtuMarker(final GtuType gtuType)
+    {
+        if (this.gtuMarkers.containsKey(gtuType))
+        {
+            return this.gtuMarkers.get(gtuType);
+        }
+        if (gtuType.getParent().isEmpty())
+        {
+            return GtuMarker.CIRCLE;
+        }
+        return getGtuMarker(gtuType.getParent().get());
     }
 
     /**
@@ -315,8 +333,7 @@ public class DefaultAnimationFactory implements EventListener
      */
     protected void animateGTU(final LaneBasedGtu gtu)
     {
-        GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, gtu,
-                this.gtuMarkers.getOrDefault(gtu.getType(), gtu.getLength().si >= 10.0 ? GtuMarker.SQUARE : GtuMarker.CIRCLE));
+        GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, gtu, getGtuMarker(gtu.getType()));
         Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
         this.animatedGTUs.put(gtu, gtuAnimation);
 

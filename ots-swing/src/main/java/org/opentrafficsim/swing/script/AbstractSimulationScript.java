@@ -1,10 +1,8 @@
 package org.opentrafficsim.swing.script;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -17,27 +15,21 @@ import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.animation.DefaultAnimationFactory;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
-import org.opentrafficsim.draw.colorer.Colorer;
-import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.swing.gui.AnimationToggles;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
-import org.opentrafficsim.swing.gui.OtsSwingApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.simulators.ReplicationState;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Command;
@@ -56,7 +48,7 @@ import picocli.CommandLine.Option;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@Command(description = "Test program for CLI", name = "Program", mixinStandardHelpOptions = true, showDefaultValues = true)
+@Command(description = "Simulation script", name = "Program", mixinStandardHelpOptions = true, showDefaultValues = true)
 public abstract class AbstractSimulationScript implements EventListener, Checkable
 {
     /** Name. */
@@ -65,14 +57,11 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     /** Description. */
     private final String description;
 
-    /** The simulator. */
+    /** Simulator. */
     private OtsSimulatorInterface simulator;
 
-    /** The network. */
+    /** Network. */
     private RoadNetwork network;
-
-    /** GTU colorers. */
-    private List<Colorer<? super Gtu>> gtuColorers = OtsSwingApplication.DEFAULT_GTU_COLORERS;
 
     /** Seed. */
     @Option(names = "--seed", description = "Seed", defaultValue = "1")
@@ -95,7 +84,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     @Option(names = {"-h", "--history"}, description = "Guaranteed history time", defaultValue = "0s")
     private Duration historyTime;
 
-    /** Autorun. */
+    /** Auto-run. */
     @Option(names = {"-a", "--autorun"}, description = "Autorun", negatable = true, defaultValue = "false")
     private boolean autorun;
 
@@ -159,39 +148,12 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     }
 
     /**
-     * Returns whether to autorun.
-     * @return whether to autorun
+     * Returns whether to auto-run.
+     * @return whether to auto-run
      */
     public boolean isAutorun()
     {
         return this.autorun;
-    }
-
-    /**
-     * Set GTU colorers.
-     * @param colorers GTU colorers
-     */
-    public final void setGtuColorers(final List<Colorer<? super Gtu>> colorers)
-    {
-        this.gtuColorers = colorers;
-    }
-
-    /**
-     * Returns the GTU colorers.
-     * @return returns the GTU colorers
-     */
-    public final List<Colorer<? super Gtu>> getGtuColorers()
-    {
-        return this.gtuColorers;
-    }
-
-    /**
-     * Returns map of (non-default) GTU type markers. The default implementation of this method returns an empty map.
-     * @return map of GTU type markers
-     */
-    public Map<GtuType, GtuMarker> getGtuMarkers()
-    {
-        return Collections.emptyMap();
     }
 
     @Override
@@ -212,7 +174,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     {
         if (isAutorun())
         {
-            // TODO: wait until simulation control buttons are enabled (indicating that the tabs have been added)
             this.simulator = new OtsSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel,
@@ -230,8 +191,10 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                     tReport += 60.0;
                 }
             }
-            // sim.stop(); // end of simulation event
-            onSimulationEnd(); // TODO this is temporary for as long as stop() gives an exception
+            if (!this.simulator.getReplicationState().equals(ReplicationState.ENDED))
+            {
+                onSimulationEnd();
+            }
             System.exit(0);
         }
         else
@@ -240,23 +203,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel,
                     new HistoryManagerDevs(this.simulator, this.historyTime, Duration.ofSI(10.0)));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(scriptModel.getNetwork().getExtent(),
-                    (OtsAnimator) this.simulator, scriptModel, getGtuColorers(), scriptModel.getNetwork());
-            setAnimationToggles(animationPanel);
-            setupDemo(animationPanel, scriptModel.getNetwork());
-            OtsSimulationApplication<ScriptModel> app =
-                    new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel, getGtuMarkers())
-                    {
-                        /** */
-                        private static final long serialVersionUID = 20190130L;
-
-                        @Override
-                        protected void setAnimationToggles()
-                        {
-                            // override with nothing to prevent double toggles
-                        }
-                    };
-            addTabs(this.simulator, app);
+            OtsSimulationPanel animationPanel = new OtsSimulationPanel(scriptModel.getNetwork(), getDecorator());
+            OtsSimulationApplication<ScriptModel> app = new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel);
             app.setExitOnClose(true);
             animationPanel.enableSimulationControlButtons();
         }
@@ -267,18 +215,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     {
         if (event.getType().equals(Replication.END_REPLICATION_EVENT))
         {
-            // try
-            // {
-            // getSimulator().scheduleEventNow(this, this, "onSimulationEnd", null);
-            // }
-            // catch (SimRuntimeException exception)
-            // {
-            // throw new OtsRuntimeException(exception);
-            // }
             onSimulationEnd();
-            // solve bug that event is fired twice
-            AbstractSimulationScript.this.simulator.removeListener(AbstractSimulationScript.this,
-                    Replication.END_REPLICATION_EVENT);
         }
     }
 
@@ -303,27 +240,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     // Overridable methods
 
     /**
-     * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
-     * @param net network
-     * @param animationPanel animation panel
-     */
-    protected void animateNetwork(final Network net, final OtsAnimationPanel animationPanel)
-    {
-        DefaultAnimationFactory.animateNetwork(net, net.getSimulator(),
-                animationPanel.getColorControlPanel().getGtuColorerManager(), getGtuMarkers());
-    }
-
-    /**
-     * Adds tabs to the animation. May be overridden.
-     * @param sim simulator
-     * @param animation animation to add tabs to
-     */
-    protected void addTabs(final OtsSimulatorInterface sim, final OtsSimulationApplication<?> animation)
-    {
-        //
-    }
-
-    /**
      * Method that is called when the simulation has ended. This can be used to store data.
      */
     protected void onSimulationEnd()
@@ -332,22 +248,14 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     }
 
     /**
-     * Method that is called when the animation has been created, to add components for a demo.
-     * @param animationPanel animation panel
-     * @param net network
+     * Returns a decorator. The default implementation returns all default implementations of the decorator methods.
+     * @return decorator
      */
-    protected void setupDemo(final OtsAnimationPanel animationPanel, final RoadNetwork net)
+    protected OtsSimulationPanelDecorator getDecorator()
     {
-        //
-    }
-
-    /**
-     * Sets the animation toggles. May be overridden.
-     * @param animation animation to set the toggle on
-     */
-    protected void setAnimationToggles(final OtsAnimationPanel animation)
-    {
-        AnimationToggles.setIconAnimationTogglesStandard(animation);
+        return new OtsSimulationPanelDecorator()
+        {
+        };
     }
 
     // Abstract methods
@@ -365,28 +273,20 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /**
      * Model.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ScriptModel extends AbstractOtsModel
     {
+
         /**
-         * @param simulator the simulator
+         * Constructor.
+         * @param simulator simulator
          */
-        @SuppressWarnings("synthetic-access")
         ScriptModel(final OtsSimulatorInterface simulator)
         {
             super(simulator);
             AbstractSimulationScript.this.simulator = simulator;
         }
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -403,7 +303,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                     Replication.END_REPLICATION_EVENT);
         }
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public RoadNetwork getNetwork()
         {

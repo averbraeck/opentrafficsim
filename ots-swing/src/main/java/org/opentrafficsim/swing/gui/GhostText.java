@@ -11,7 +11,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 /**
- * Code taken from stack overflow.
+ * Code taken from stack overflow. This class shows light gray text within a {@link JTextComponent} when it is empty, as a hint
+ * as to what a user might type.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,6 +23,7 @@ import javax.swing.text.JTextComponent;
  */
 public class GhostText implements FocusListener, DocumentListener, PropertyChangeListener
 {
+
     /** Text component. */
     private final JTextComponent textComp;
 
@@ -39,8 +41,8 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
 
     /**
      * Constructor.
-     * @param textComp text component to receive ghost text.
-     * @param ghostText ghost text.
+     * @param textComp text component to receive ghost text
+     * @param ghostText ghost text
      */
     public GhostText(final JTextComponent textComp, final String ghostText)
     {
@@ -85,7 +87,7 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
 
     /**
      * Get ghost color.
-     * @return ghost color.
+     * @return ghost color
      */
     public Color getGhostColor()
     {
@@ -94,7 +96,7 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
 
     /**
      * Set ghost color.
-     * @param ghostColor ghost color.
+     * @param ghostColor ghost color
      */
     public void setGhostColor(final Color ghostColor)
     {
@@ -126,7 +128,6 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
                 registerListeners();
             }
         }
-
     }
 
     @Override

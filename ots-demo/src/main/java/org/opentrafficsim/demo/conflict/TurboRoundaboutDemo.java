@@ -4,11 +4,10 @@ import java.rmi.RemoteException;
 
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
 import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DsolException;
@@ -33,9 +32,9 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
      * @param panel the tabbed panel to display
      * @param model the model
      */
-    public TurboRoundaboutDemo(final String title, final OtsAnimationPanel panel, final TurboRoundaboutModel model)
+    public TurboRoundaboutDemo(final String title, final OtsSimulationPanel panel, final TurboRoundaboutModel model)
     {
-        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel);
     }
 
     /**
@@ -57,11 +56,10 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
         {
             OtsAnimator simulator = new OtsAnimator("TurboRoundaboutDemo");
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
-                    junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
-            TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", animationPanel, junctionModel);
+            OtsSimulationPanel simulationPanel = new OtsSimulationPanel(junctionModel.getNetwork());
+            TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", simulationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
-            animationPanel.enableSimulationControlButtons();
+            simulationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | RemoteException | DsolException exception)
         {

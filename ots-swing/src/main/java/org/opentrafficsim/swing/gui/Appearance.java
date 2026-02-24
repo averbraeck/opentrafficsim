@@ -15,7 +15,7 @@ import java.awt.Color;
 public enum Appearance
 {
 
-    /** MOTUS mimic. Grid and nodes not visible. */
+    /** MOTUS mimic. Nodes not visible. */
     MOTUS("Motus", new Color(236, 233, 216), Color.BLACK, Color.BLACK, "Verdana"),
 
     /** Green. */
@@ -51,10 +51,10 @@ public enum Appearance
     /** Foreground color. */
     private final Color foreground;
 
-    /** Backdrop color. (network panel) */
+    /** Backdrop color (animation panel). */
     private final Color backdrop;
 
-    /** font name. */
+    /** Font name. */
     private final String font;
 
     /**

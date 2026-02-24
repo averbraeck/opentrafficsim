@@ -150,6 +150,15 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     }
 
     /**
+     * Returns the paths.
+     * @return paths
+     */
+    public List<List<Lane>> getPaths()
+    {
+        return this.paths;
+    }
+
+    /**
      * Sample the state of the simulation.
      * @param tv sampler or verifier of the state
      */

@@ -26,12 +26,11 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
-import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.xml.sax.SAXException;
 
@@ -62,10 +61,10 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
      * @param model the model
      * @param animationPanel the animation panel
      */
-    public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel)
+    public LoadXml(final OtsModelInterface model, final OtsSimulationPanel animationPanel)
     {
         // TODO: colorer and markers based on XML
-        super(model, animationPanel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, animationPanel);
     }
 
     /**
@@ -135,10 +134,9 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             xmlModel.getStreams().putAll(map);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), xmlModel,
                     new HistoryManagerDevs(simulator, Duration.ofSI(5.0), Duration.ofSI(10.0)));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), simulator, xmlModel,
-                    DEFAULT_GTU_COLORERS, xmlModel.getNetwork());
-            animationPanel.enableSimulationControlButtons();
-            LoadXml loadXml = new LoadXml(xmlModel, animationPanel);
+            OtsSimulationPanel simulationPanel = new OtsSimulationPanel(xmlModel.getNetwork());
+            simulationPanel.enableSimulationControlButtons();
+            LoadXml loadXml = new LoadXml(xmlModel, simulationPanel);
             // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later
             // (now StripeAnimation.TYPE is figured out from permebability)
         }

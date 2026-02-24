@@ -130,7 +130,6 @@ public class ProbabilityDistributionEditor<T> extends LinearMultiSlider<Double>
         this.categoryFontSize = categoryFontSize;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void paint(final Graphics g)
     {

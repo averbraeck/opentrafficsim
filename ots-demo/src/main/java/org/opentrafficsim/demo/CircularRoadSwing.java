@@ -12,8 +12,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.LinkPosition;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
@@ -37,8 +37,9 @@ import org.opentrafficsim.swing.graphs.SwingContourPlot;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
@@ -64,19 +65,9 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
      * @param panel the tabbed panel to display
      * @param model the model
      */
-    public CircularRoadSwing(final String title, final OtsAnimationPanel panel, final CircularRoadModel model)
+    public CircularRoadSwing(final String title, final OtsSimulationPanel panel, final CircularRoadModel model)
     {
-        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
-
-        // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
-        // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));
-        RoadNetwork network = model.getNetwork();
-    }
-
-    @Override
-    protected void addTabs()
-    {
-        addStatisticsTabs(getModel().getSimulator());
+        super(model, panel);
     }
 
     /**
@@ -103,11 +94,18 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
-                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
-                        DEFAULT_GTU_COLORERS, otsModel.getNetwork());
-                CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
+                OtsSimulationPanel simulationPanel =
+                        new OtsSimulationPanel(otsModel.getNetwork(), new OtsSimulationPanelDecorator()
+                        {
+                            @Override
+                            public void addTabs(final OtsSimulationPanel simulationPanel, final Network network)
+                            {
+                                addStatisticsTabs(simulationPanel, network, otsModel.getPaths());
+                            }
+                        });
+                CircularRoadSwing app = new CircularRoadSwing("Circular Road", simulationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
-                animationPanel.enableSimulationControlButtons();
+                simulationPanel.enableSimulationControlButtons();
             }
             else
             {
@@ -125,9 +123,12 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
     /**
      * Add the statistics tabs.
-     * @param simulator the simulator on which sampling can be scheduled
+     * @param simulationPanel simulation panel
+     * @param network network
+     * @param paths lane paths
      */
-    protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
+    private static void addStatisticsTabs(final OtsSimulationPanel simulationPanel, final Network network,
+            final List<List<Lane>> paths)
     {
         GraphPath<LaneDataRoad> path01;
         GraphPath<LaneDataRoad> path0;
@@ -138,8 +139,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             names.add("Left lane");
             names.add("Right lane");
             List<Lane> start = new ArrayList<>();
-            start.add(getModel().getPath(0).get(0));
-            start.add(getModel().getPath(1).get(0));
+            start.add(paths.get(0).get(0));
+            start.add(paths.get(1).get(0));
             path01 = GraphLaneUtil.createPath(names, start).setCircular(true);
             path0 = GraphLaneUtil.createPath(names.get(0), start.get(0)).setCircular(true);
             path1 = GraphLaneUtil.createPath(names.get(1), start.get(1)).setCircular(true);
@@ -148,7 +149,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         {
             throw new OtsRuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
-        RoadSampler sampler = new RoadSampler(getModel().getNetwork());
+        RoadSampler sampler = new RoadSampler((RoadNetwork) network);
         GraphPath.initRecording(sampler, path01);
         GraphPath.initRecording(sampler, path0);
         GraphPath.initRecording(sampler, path1);
@@ -161,12 +162,12 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         ContourDataSource dataPool = null;
 
         TablePanel trajectoryChart = new TablePanel(2, 2);
-        PlotScheduler scheduler = new OtsPlotScheduler(simulator);
+        PlotScheduler scheduler = new OtsPlotScheduler(network.getSimulator());
         plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("Trajectory all lanes", updateInterval, scheduler, sampler.getSamplerData(), path01));
         trajectoryChart.setCell(plot.getContentPane(), 0, 0);
 
-        List<LaneData> lanes = new ArrayList<>();
+        List<LaneData<?>> lanes = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
         lanes.add(path01.get(0).getSource(0));
         lanes.add(path1.get(0).getSource(0));
@@ -175,7 +176,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         List<String> names = new ArrayList<>();
         names.add("Left lane");
         names.add("Right lane");
-        LinkPosition linkPosition = new LinkPosition(getModel().getPath(0).get(0).getLink(), 0.0);
+        LinkPosition linkPosition = new LinkPosition(paths.get(0).get(0).getLink(), 0.0);
         GraphCrossSection<LaneDataRoad> crossSection;
         try
         {
@@ -196,8 +197,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
                         FundamentalDiagram.sourceFromSampler(sampler, crossSection, false, Duration.ofSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
-        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
-                trajectoryChart);
+        simulationPanel.getTabbedPane().addTab(simulationPanel.getTabbedPane().getTabCount(), "Trajectories", trajectoryChart);
 
         for (int lane : new int[] {0, 1})
         {
@@ -221,8 +221,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             plot = new SwingContourPlot(new ContourPlotAcceleration("Accceleration lane " + lane, scheduler, dataPool));
             charts.setCell(plot.getContentPane(), 2, 1);
 
-            getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "stats lane " + lane,
-                    charts);
+            simulationPanel.getTabbedPane().addTab(simulationPanel.getTabbedPane().getTabCount(), "stats lane " + lane, charts);
         }
     }
 

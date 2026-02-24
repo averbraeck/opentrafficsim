@@ -6,7 +6,9 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -183,7 +185,7 @@ public final class InputParameterHelper implements ParameterFactory
     public static Parameters getParametersCar(final InputParameterMap rootMap)
             throws ParameterException, InputParameterException
     {
-        Parameters parametersCar = DefaultsFactory.getDefaultParameters();
+        Parameters parametersCar = getDefaultParameters();
         Acceleration aCar = (Acceleration) rootMap.get("car.a").getCalculatedValue();
         Acceleration bCar = (Acceleration) rootMap.get("car.b").getCalculatedValue();
         Length s0Car = (Length) rootMap.get("car.s0").getCalculatedValue();
@@ -205,7 +207,7 @@ public final class InputParameterHelper implements ParameterFactory
     public static Parameters getParametersTruck(final InputParameterMap rootMap)
             throws ParameterException, InputParameterException
     {
-        Parameters parametersTruck = DefaultsFactory.getDefaultParameters();
+        Parameters parametersTruck = getDefaultParameters();
         Acceleration aTruck = (Acceleration) rootMap.get("truck.a").getCalculatedValue();
         Acceleration bTruck = (Acceleration) rootMap.get("truck.b").getCalculatedValue();
         Length s0Truck = (Length) rootMap.get("truck.s0").getCalculatedValue();
@@ -215,6 +217,24 @@ public final class InputParameterHelper implements ParameterFactory
         parametersTruck.setParameter(ParameterTypes.S0, s0Truck);
         parametersTruck.setParameter(ParameterTypes.T, tSafeTruck);
         return parametersTruck;
+    }
+
+    /**
+     * Returns a default set of parameters.
+     * @return Default set of parameters.
+     */
+    private static Parameters getDefaultParameters()
+    {
+        Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
+        try
+        {
+            params.setParameter(ParameterTypes.LOOKAHEAD, new Length(250, LengthUnit.SI));
+        }
+        catch (ParameterException pe)
+        {
+            throw new OtsRuntimeException("Parameter type 'LOOKAHEAD' could not be set.", pe);
+        }
+        return params;
     }
 
 }

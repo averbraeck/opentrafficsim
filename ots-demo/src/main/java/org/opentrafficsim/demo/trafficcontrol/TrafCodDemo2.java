@@ -20,11 +20,12 @@ import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.object.NonLocatedObject;
-import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
 import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
@@ -53,9 +54,9 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
      * @param panel the tabbed panel to display
      * @param model the model
      */
-    public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCodModel model)
+    public TrafCodDemo2(final String title, final OtsSimulationPanel panel, final TrafCodModel model)
     {
-        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel);
     }
 
     /**
@@ -95,11 +96,18 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         {
             OtsAnimator simulator = new OtsAnimator("TrafCODDemo2");
             final TrafCodModel trafcodModel = new TrafCodModel(simulator, "TrafCODModel", "TrafCOD demonstration Model");
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(), simulator,
-                    trafcodModel, DEFAULT_GTU_COLORERS, trafcodModel.getNetwork());
-            TrafCodDemo2 app = new TrafCodDemo2("TrafCOD demo complex crossing", animationPanel, trafcodModel);
+            OtsSimulationPanel simulationPanel =
+                    new OtsSimulationPanel(trafcodModel.getNetwork(), new OtsSimulationPanelDecorator()
+                    {
+                        @Override
+                        public void addTabs(final OtsSimulationPanel simulationPanel, final Network network)
+                        {
+                            TrafCodDemo2.addTabs(simulationPanel, network);
+                        }
+                    });
+            TrafCodDemo2 app = new TrafCodDemo2("TrafCOD demo complex crossing", simulationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
-            animationPanel.enableSimulationControlButtons();
+            simulationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | RemoteException | DsolException exception)
         {
@@ -109,16 +117,16 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
 
     /**
      * Add tabs with trafCOD status display.
+     * @param animationPanel animation panel
+     * @param network network
      */
-    @Override
-    protected final void addTabs()
+    private static void addTabs(final OtsSimulationPanel animationPanel, final Network network)
     {
-        OtsAnimationPanel animationPanel = getAnimationPanel();
         if (null == animationPanel)
         {
             return;
         }
-        ImmutableMap<String, NonLocatedObject> nonLocatedObjectMap = getModel().getNetwork().getNonLocatedObjectMap();
+        ImmutableMap<String, NonLocatedObject> nonLocatedObjectMap = network.getNonLocatedObjectMap();
         for (NonLocatedObject ioi : nonLocatedObjectMap.values())
         {
             if (ioi instanceof TrafCod)
@@ -132,32 +140,33 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
                     TabbedContentPane tabbedPane = animationPanel.getTabbedPane();
                     tabbedPane.addTab(tabbedPane.getTabCount() - 1, trafCOD.getId(), wrapper);
                 }
+                TrafCodListener listener = new TrafCodListener(network.getSimulator());
                 // trafCOD.addListener(this, TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING);
-                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
-                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
-                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_STATE_CHANGED);
-                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
-                trafCOD.addListener(getModel(), TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
-
+                trafCOD.addListener(listener, TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING);
+                trafCOD.addListener(listener, TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED);
+                trafCOD.addListener(listener, TrafficController.TRAFFICCONTROL_STATE_CHANGED);
+                trafCOD.addListener(listener, TrafficController.TRAFFICCONTROL_VARIABLE_CREATED);
+                trafCOD.addListener(listener, TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED);
             }
         }
     }
 
     /**
-     * The simulation model.
+     * Logs TrafCod events.
      */
-    public static class TrafCodModel extends OtsXmlModel implements EventListener
+    private static class TrafCodListener implements EventListener
     {
+
+        /** Simulator. */
+        private final OtsSimulatorInterface simulator;
+
         /**
          * Constructor.
-         * @param simulator the simulator
-         * @param shortName name of the model
-         * @param description description of the model
+         * @param simulator simulator
          */
-        public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
+        TrafCodListener(final OtsSimulatorInterface simulator)
         {
-            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams(),
-                    "/resources/TrafCODDemo2/TrafCODDemo2.xml", null);
+            this.simulator = simulator;
         }
 
         @Override
@@ -167,7 +176,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {
-                Logger.ots().info("Evaluation starts at " + getSimulator().getSimulatorTime());
+                Logger.ots().info("Evaluation starts at " + this.simulator.getSimulatorTime());
                 return;
             }
             else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))
@@ -195,6 +204,26 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
                 stringBuilder.append("]");
                 Logger.ots().info(stringBuilder.toString());
             }
+        }
+
+    }
+
+    /**
+     * The simulation model.
+     */
+    public static class TrafCodModel extends OtsXmlModel
+    {
+
+        /**
+         * Constructor.
+         * @param simulator the simulator
+         * @param shortName name of the model
+         * @param description description of the model
+         */
+        public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
+        {
+            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams(),
+                    "/resources/TrafCODDemo2/TrafCODDemo2.xml", null);
         }
 
         @Override

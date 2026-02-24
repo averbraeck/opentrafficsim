@@ -28,7 +28,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.demo.conflict.TJunctionDemo;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2;
-import org.opentrafficsim.swing.gui.OtsSwingApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
 /**
  * SuperDemo.java.
@@ -155,7 +155,7 @@ public class SuperDemo extends JFrame
 
         /** the demo class. */
         @SuppressWarnings("checkstyle:visibilitymodifier")
-        protected final Class<? extends OtsSwingApplication<? extends OtsModelInterface>> clazz;
+        protected final Class<? extends OtsSimulationApplication<? extends OtsModelInterface>> clazz;
 
         /** the demo description. */
         private final String description;
@@ -165,7 +165,7 @@ public class SuperDemo extends JFrame
          * @param clazz the demo class
          * @param description the demo description
          */
-        Demo(final String name, final Class<? extends OtsSwingApplication<? extends OtsModelInterface>> clazz,
+        Demo(final String name, final Class<? extends OtsSimulationApplication<? extends OtsModelInterface>> clazz,
                 final String description)
         {
             this.name = name;

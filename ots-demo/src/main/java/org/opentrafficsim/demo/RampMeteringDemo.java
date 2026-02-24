@@ -3,6 +3,7 @@ package org.opentrafficsim.demo;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +121,7 @@ import org.opentrafficsim.road.od.Interpolation;
 import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdOptions;
-import org.opentrafficsim.swing.gui.OtsSwingApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -182,6 +183,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
     @Option(names = "--scenario", description = "Scenario name.", defaultValue = "test")
     private String scenario;
 
+    /** Car GTU type. */
+    private GtuType car;
+
+    /** Controlled car GTU type. */
+    private GtuType controlledCar;
+
     /** GTUs in simulation. */
     private Map<String, Double> gtusInSimulation = new LinkedHashMap<>();
 
@@ -199,7 +206,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
      */
     protected RampMeteringDemo()
     {
-        super("Ramp metering 1", "Ramp metering 2");
+        super("Ramp metering", "Ramp metering");
     }
 
     /**
@@ -225,19 +232,22 @@ public class RampMeteringDemo extends AbstractSimulationScript
      */
     private static double[] arrayFromString(final String str)
     {
-        int n = 0;
-        for (String part : str.split(","))
+        return Arrays.stream(str.split(",")).mapToDouble(Double::parseDouble).toArray();
+    }
+
+    @Override
+    protected OtsSimulationPanelDecorator getDecorator()
+    {
+        return new OtsSimulationPanelDecorator()
         {
-            n++;
-        }
-        double[] out = new double[n];
-        int i = 0;
-        for (String part : str.split(","))
-        {
-            out[i] = Double.valueOf(part);
-            i++;
-        }
-        return out;
+            @Override
+            public List<Colorer<? super Gtu>> getGtuColorers()
+            {
+                List<Colorer<? super Gtu>> colorers = new ArrayList<>(DEFAULT_GTU_COLORERS);
+                colorers.add(new GtuTypeGtuColorer(RampMeteringDemo.this.car, RampMeteringDemo.this.controlledCar));
+                return colorers;
+            }
+        };
     }
 
     @Override
@@ -249,14 +259,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
             network.addListener(this, Network.GTU_ADD_EVENT);
             network.addListener(this, Network.GTU_REMOVE_EVENT);
         }
-        GtuType car = DefaultsNl.CAR;
-        GtuType controlledCar = new GtuType(CONTROLLED_CAR_ID, car);
-        this.definitions.add(GtuType.class, car);
-        this.definitions.add(GtuType.class, controlledCar);
-
-        List<Colorer<? super Gtu>> colorers = new ArrayList<>(OtsSwingApplication.DEFAULT_GTU_COLORERS);
-        colorers.add(new GtuTypeGtuColorer(car, controlledCar));
-        setGtuColorers(colorers);
+        this.car = DefaultsNl.CAR;
+        this.controlledCar = new GtuType(CONTROLLED_CAR_ID, this.car);
+        this.definitions.add(GtuType.class, this.car);
+        this.definitions.add(GtuType.class, this.controlledCar);
 
         // parameters
         StreamInterface stream = sim.getModel().getStream("generation");
@@ -281,7 +287,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit)
                 .addLanes(stripes, DefaultsRoadNl.DASHED, DefaultsRoadNl.BLOCK).getLanes();
-        stripes.get(2).addPermeability(car, LateralDirectionality.LEFT); // prevent right lane changes over block stripe
+        stripes.get(2).addPermeability(this.car, LateralDirectionality.LEFT); // prevent right lane changes over block stripe
         List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED)
                 .addShoulder(laneWidth, LateralDirectionality.RIGHT, new LaneType("SHOULDER")).getLanes();
@@ -334,8 +340,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         OdMatrix od = new OdMatrix("rampMetering", origins, destinations, categorization, this.demandTime, globalInterpolation);
         // Category carCatMainLeft = new Category(categorization, car, lanesAB.get(0));
         // Category carCatMainRight = new Category(categorization, car, lanesAB.get(1));
-        Category carCatRamp = new Category(categorization, car);// , lanesEB.get(0));
-        Category controlledCarCat = new Category(categorization, controlledCar);
+        Category carCatRamp = new Category(categorization, this.car);// , lanesEB.get(0));
+        Category controlledCarCat = new Category(categorization, this.controlledCar);
         // double fLeft = 0.6;
         od.putDemandVector(nodeA, nodeD, carCatRamp, this.mainDemand, 0.6);
         od.putDemandVector(nodeA, nodeD, controlledCarCat, this.mainDemand, 0.4);
@@ -350,7 +356,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                                 .set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true, DefaultsNl.CAR)));
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
         odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.INSTANT);
-        odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
+        odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(this.car, LaneBias.WEAK_LEFT));
         odOptions.set(OdOptions.NO_LC_DIST, Length.ofSI(300));
         OdApplier.applyOd(network, od, odOptions, DefaultsNl.ROAD_USERS);
 
@@ -401,6 +407,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     @Override
     protected void onSimulationEnd()
     {
+        System.out.println("onSimulationEnd()");
         if (this.output)
         {
             // detector data

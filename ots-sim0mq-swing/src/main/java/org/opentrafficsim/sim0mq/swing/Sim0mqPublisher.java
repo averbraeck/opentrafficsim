@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -50,9 +49,8 @@ import org.opentrafficsim.sim0mq.publisher.Publisher;
 import org.opentrafficsim.sim0mq.publisher.ReturnWrapper;
 import org.opentrafficsim.sim0mq.publisher.ReturnWrapperImpl;
 import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
-import org.opentrafficsim.swing.gui.OtsSwingApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.trafcod.TrafCod;
@@ -94,7 +92,7 @@ public final class Sim0mqPublisher
     private RoadNetwork network = null;
 
     /** The OTS animation panel. */
-    private OtsAnimationPanel animationPanel = null;
+    private OtsSimulationPanel animationPanel = null;
 
     /**
      * Create a new Sim0MQPublisher that is operated through //inproc sockets.
@@ -243,9 +241,8 @@ public final class Sim0mqPublisher
             this.model.getStreams().putAll(map);
             animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, HistoryManagerDevs.noHistory(animator));
             this.publisher = new Publisher(this.network);
-            this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), animator, this.model,
-                    OtsSwingApplication.DEFAULT_GTU_COLORERS, this.model.getNetwork());
-            new OtsSimulationApplication<Sim0mqOtsModel>(this.model, this.animationPanel, Collections.emptyMap());
+            this.animationPanel = new OtsSimulationPanel(this.model.getNetwork());
+            new OtsSimulationApplication<Sim0mqOtsModel>(this.model, this.animationPanel);
             JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);
             frame.setSize(new Dimension(1100, 1000));

@@ -39,6 +39,7 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
@@ -52,7 +53,6 @@ import org.opentrafficsim.draw.colorer.trajectory.SynchronizationTrajectoryColor
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.PlotScheduler;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
-import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
@@ -75,6 +75,7 @@ import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.network.CrossSectionLink;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LanePosition;
+import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.road.network.object.SpeedSign;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
@@ -83,8 +84,9 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
 import org.opentrafficsim.swing.gui.AnimationToggles;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -140,27 +142,34 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
      * @param panel the tabbed panel to display
      * @param model the model
      */
-    public ShortMerge(final String title, final OtsAnimationPanel panel, final ShortMergeModel model)
+    public ShortMerge(final String title, final OtsSimulationPanel panel, final ShortMergeModel model)
     {
-        super(model, panel, Map.of(DefaultsNl.TRUCK, GtuMarker.SQUARE));
+        super(model, panel);
     }
 
-    @Override
-    protected void setAnimationToggles()
+    /**
+     * Set animation toggles. The default sets standard icon toggles.
+     * @param animationPanel animation panel
+     */
+    private static void setAnimationToggles(final OtsSimulationPanel animationPanel)
     {
-        AnimationToggles.setIconAnimationTogglesStandard(getAnimationPanel());
-        getAnimationPanel().getAnimationPanel().toggleClass(Link.class);
-        getAnimationPanel().getAnimationPanel().toggleClass(Node.class);
-        getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);
+        AnimationToggles.setIconAnimationTogglesStandard(animationPanel);
+        animationPanel.getAnimationPanel().toggleClass(Link.class);
+        animationPanel.getAnimationPanel().toggleClass(Node.class);
+        animationPanel.getAnimationPanel().showClass(SpeedSign.class);
     }
 
-    @Override
-    protected void addTabs()
+    /**
+     * Adds tabs. The default does nothing.
+     * @param animationPanel animation panel
+     * @param network network
+     */
+    private static void addTabs(final OtsSimulationPanel animationPanel, final Network network)
     {
         GraphPath<LaneDataRoad> path;
         try
         {
-            Lane start = ((CrossSectionLink) getModel().getNetwork().getLink("AB").get()).getLanes().get(1);
+            Lane start = ((CrossSectionLink) network.getLink("AB").get()).getLanes().get(1);
             path = GraphLaneUtil.createPath("Right lane", start);
         }
         catch (NetworkException exception)
@@ -168,14 +177,14 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             throw new OtsRuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
         ExtendedDataSync<GtuDataRoad> syncData = new ExtendedDataSync<GtuDataRoad>();
-        RoadSampler sampler = new RoadSampler(Set.of(syncData), Collections.emptySet(), getModel().getNetwork());
+        RoadSampler sampler = new RoadSampler(Set.of(syncData), Collections.emptySet(), (RoadNetwork) network);
         GraphPath.initRecording(sampler, path);
-        PlotScheduler scheduler = new OtsPlotScheduler(getModel().getSimulator());
+        PlotScheduler scheduler = new OtsPlotScheduler(network.getSimulator());
         Duration updateInterval = Duration.ofSI(10.0);
         SwingTrajectoryPlot plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("Trajectory right lane", updateInterval, scheduler, sampler.getSamplerData(), path), true);
         plot.addColorer(new SynchronizationTrajectoryColorer(syncData), false);
-        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "trajectories",
+        animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "trajectories",
                 plot.getContentPane());
     }
 
@@ -198,14 +207,32 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             OtsAnimator simulator = new OtsAnimator("ShortMerge");
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
-            List<Colorer<? super Gtu>> colorers = new ArrayList<>(DEFAULT_GTU_COLORERS);
-            colorers.add(new SynchronizationGtuColorer());
-            colorers.add(new IncentiveGtuColorer(IncentiveCourtesy.class, "Courtesy incentive"));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
-                    colorers, otsModel.getNetwork());
-            ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
+            OtsSimulationPanel simulationPanel = new OtsSimulationPanel(otsModel.getNetwork(), new OtsSimulationPanelDecorator()
+            {
+                @Override
+                public void setAnimationToggles(final OtsSimulationPanel simulationPanel)
+                {
+                    ShortMerge.setAnimationToggles(simulationPanel);
+                }
+
+                @Override
+                public void addTabs(final OtsSimulationPanel simulationPanel, final Network network)
+                {
+                    ShortMerge.addTabs(simulationPanel, network);
+                }
+
+                @Override
+                public List<Colorer<? super Gtu>> getGtuColorers()
+                {
+                    List<Colorer<? super Gtu>> colorers = new ArrayList<>(DEFAULT_GTU_COLORERS);
+                    colorers.add(new SynchronizationGtuColorer());
+                    colorers.add(new IncentiveGtuColorer(IncentiveCourtesy.class, "Courtesy incentive"));
+                    return colorers;
+                }
+            });
+            ShortMerge app = new ShortMerge("ShortMerge", simulationPanel, otsModel);
             app.setExitOnClose(exitOnClose);
-            animationPanel.enableSimulationControlButtons();
+            simulationPanel.enableSimulationControlButtons();
         }
         catch (SimRuntimeException | RemoteException | IndexOutOfBoundsException | DsolException exception)
         {
@@ -214,14 +241,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     }
 
     /**
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Short merge model.
      */
     public static class ShortMergeModel extends OtsXmlModel
     {

@@ -1,10 +1,7 @@
 package org.opentrafficsim.swing.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,8 +11,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
@@ -32,6 +29,7 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -42,7 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
@@ -56,7 +53,6 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.animation.IconUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
-import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -67,91 +63,90 @@ import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 
 /**
- * Peter's improved simulation control panel.
+ * Peter's and Wouter's improved simulation control panel.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OtsControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener, EventListener
+public class OtsSimulationControlPanel extends JPanel implements ActionListener, PropertyChangeListener, EventListener
 {
+
     /** */
     private static final long serialVersionUID = 20150617L;
 
-    /** The simulator. */
-    private OtsSimulatorInterface simulator;
+    /** Pause icon. */
+    private static final Icon PAUSE_ICON = IconUtil.of("Pause24.png").get();
 
-    /** The model, needed for its properties. */
-    private final OtsModelInterface model;
+    /** Play icon. */
+    private static final Icon PLAY_ICON = IconUtil.of("Play24.png").get();
 
-    /** The clock. */
-    private final ClockLabel clockLabel;
+    /** Simulator. */
+    private final OtsSimulatorInterface simulator;
 
-    /** The time warp control. */
-    private final TimeWarpPanel timeWarpPanel;
-
-    /** The control buttons. */
+    /** Control buttons. */
     private final ArrayList<JButton> buttons = new ArrayList<>();
+
+    /** Decimal separator. */
+    private final String decimalSeparator;
+
+    /** Slider for simulation speed. */
+    private final JSlider speedSlider;
+
+    /** Ratios used in each decade of the speed slider. */
+    private final int[] simulationSpeedRatios;
+
+    /** Tick values of the speed slider. */
+    private final Map<Integer, Double> tickValues = new LinkedHashMap<>();
 
     /** Font used to display the clock and the stop time. */
     private final Font timeFont = new Font("SansSerif", Font.BOLD, 18);
 
-    /** The TimeEdit that lets the user set a time when the simulation will be stopped. */
+    /** Clock label. */
+    private final ClockLabel clockLabel;
+
+    /** Simulate until edit field. */
     private final TimeEdit timeEdit;
 
-    /** The OTS search panel. */
-    private final OtsSearchPanel otsSearchPanel;
-
-    /** The currently registered stop at event. */
+    /** Current stop event to simulate until. */
     private SimEventInterface<Duration> stopAtEvent = null;
 
-    /** The current enabled state of the buttons. */
+    /** Overruled buttons enabled state (for when simulation is controlled otherwise). */
     private boolean buttonsEnabled = false;
-
-    /** Has the window close handler been registered? */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected boolean closeHandlerRegistered = false;
-
-    /** Decimal separator. */
-    private String decimalSeparator;
 
     /** Has cleanup taken place? */
     private boolean isCleanUp = false;
 
-    /** Pause icon. */
-    private final Icon pause = IconUtil.of("Pause24.png").get();
-
-    /** Play icon. */
-    private final Icon play = IconUtil.of("Play24.png").get();
-
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
      * @param simulator the simulator
-     * @param model if non-null, the restart button should work
      * @param otsAnimationPanel the OTS animation panel
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
-    public OtsControlPanel(final OtsSimulatorInterface simulator, final OtsModelInterface model,
-            final OtsAnimationPanel otsAnimationPanel) throws RemoteException
+    public OtsSimulationControlPanel(final OtsSimulatorInterface simulator, final OtsSimulationPanel otsAnimationPanel)
+            throws RemoteException
     {
         this.simulator = simulator;
-        this.model = model;
         this.decimalSeparator =
                 "" + ((DecimalFormat) NumberFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
 
-        this.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.add(makeButton("stepButton", "Next24.png", "Step", "Execute one event", true));
-        buttonPanel.add(makeButton("nextTimeButton", "Step24.png", "NextTime",
-                "Execute all events scheduled for the current time", true));
-        buttonPanel.add(makeButton("runPauseButton", "Play24.png", "RunPause", "XXX", true));
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-        this.timeWarpPanel = new TimeWarpPanel(0.1, 1000, 1, 3, simulator);
-        buttonPanel.add(this.timeWarpPanel);
-        // buttonPanel.add(makeButton("resetButton", "/Undo.png", "Reset", "Reset the simulation", false));
+        // buttons
+        add(makeButton("stepButton", "Next24.png", "Step", "Execute one event", true));
+        add(makeButton("nextTimeButton", "Step24.png", "NextTime", "Execute all events scheduled for the current time", true));
+        add(makeButton("runPauseButton", "Play24.png", "RunPause", "XXX", true));
+        add(Box.createHorizontalStrut(5));
+
+        // simulation speed slider
+        this.simulationSpeedRatios = new int[] {1, 2, 5};
+        this.speedSlider = setupSlider(0.1, 1000, 1, simulator);
+        add(this.speedSlider);
+        add(Box.createHorizontalStrut(5));
+
         /** Label with appearance control. */
         class AppearanceControlLabel extends JLabel implements AppearanceControl
         {
@@ -182,48 +177,31 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 return "AppearanceControlLabel []";
             }
         }
+
+        // clock/timeEdit (exchanged) and speed label
         JLabel speedLabel = new AppearanceControlLabel();
-        this.clockLabel = new ClockLabel(speedLabel);
-        this.clockLabel.setPreferredSize(new Dimension(130, 25));
-        this.clockLabel.setMaximumSize(new Dimension(130, 25));
-        buttonPanel.add(this.clockLabel);
-        this.timeEdit = new TimeEdit(new Time(0, TimeUnit.DEFAULT));
-        this.timeEdit.setPreferredSize(new Dimension(130, 25));
-        this.timeEdit.setMaximumSize(new Dimension(130, 25));
-        this.timeEdit.addPropertyChangeListener("value", this);
-        buttonPanel.add(this.timeEdit);
+        speedLabel.setMinimumSize(new Dimension(85, 25));
         speedLabel.setPreferredSize(new Dimension(85, 25));
         speedLabel.setMaximumSize(new Dimension(85, 25));
-        buttonPanel.add(speedLabel);
+        this.clockLabel = new ClockLabel(speedLabel);
+        this.clockLabel.setMinimumSize(new Dimension(130, 25));
+        this.clockLabel.setPreferredSize(new Dimension(130, 25));
+        this.clockLabel.setMaximumSize(new Dimension(130, 25));
+        this.timeEdit = new TimeEdit(new Time(0, TimeUnit.DEFAULT));
+        this.timeEdit.setMinimumSize(new Dimension(130, 25));
+        this.timeEdit.setPreferredSize(new Dimension(130, 25));
+        this.timeEdit.setMaximumSize(new Dimension(130, 25));
+        this.timeEdit.addPropertyChangeListener("value", this); // adds event at 'simulate until' time
+        add(this.clockLabel);
+        add(this.timeEdit);
+        add(speedLabel);
 
-        this.add(buttonPanel);
-        this.otsSearchPanel = new OtsSearchPanel(otsAnimationPanel);
-        this.add(this.otsSearchPanel, BorderLayout.SOUTH);
-        fixButtons();
-        installWindowCloseHandler();
+        setButtonsEnabledState();
+        prepareCleanup();
         this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
         this.simulator.addListener(this, SimulatorInterface.START_EVENT);
         this.simulator.addListener(this, SimulatorInterface.STOP_EVENT);
         this.simulator.addListener(this, DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT);
-    }
-
-    /**
-     * Change the enabled/disabled state of the various simulation control buttons.
-     * @param newState true if the buttons should become enabled; false if the buttons should become disabled
-     */
-    public void setSimulationControlButtons(final boolean newState)
-    {
-        this.buttonsEnabled = newState;
-        fixButtons();
-    }
-
-    /**
-     * Provide access to the search panel.
-     * @return the OTS search panel
-     */
-    public OtsSearchPanel getOtsSearchPanel()
-    {
-        return this.otsSearchPanel;
     }
 
     /**
@@ -233,7 +211,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
      * @param actionCommand the action command
      * @param toolTipText the hint to show when the mouse hovers over the button
      * @param enabled true if the new button must initially be enable; false if it must initially be disabled
-     * @return JButton
+     * @return created button
      */
     private JButton makeButton(final String name, final String iconFile, final String actionCommand, final String toolTipText,
             final boolean enabled)
@@ -244,88 +222,222 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         result.setActionCommand(actionCommand);
         result.setToolTipText(toolTipText);
         result.addActionListener(this);
+        Dimension dimension = new Dimension(50, 30);
+        result.setMinimumSize(dimension);
+        result.setPreferredSize(dimension);
+        result.setMaximumSize(dimension);
         this.buttons.add(result);
         return result;
     }
 
     /**
+     * Setup the slider.
+     * @param minimum the minimum value on the scale (the displayed scale may extend a little further than this value)
+     * @param maximum the maximum value on the scale (the displayed scale may extend a little further than this value)
+     * @param initialValue the initially selected value on the scale
+     * @param sim the simulator to change the speed of
+     * @return slider
+     */
+    private JSlider setupSlider(final double minimum, final double maximum, final double initialValue,
+            final OtsSimulatorInterface sim)
+    {
+        Throw.when(minimum <= 0 || minimum > initialValue || initialValue > maximum || maximum > 9999,
+                OtsRuntimeException.class, "Bad (combination of) minimum, maximum and initialValue; "
+                        + "(restrictions: 0 < minimum <= initialValue <= maximum <= 9999)");
+
+        Hashtable<Integer, JLabel> labels = new Hashtable<>();
+        int maximumTick = -1;
+        int minimumTick = 0;
+        int ratioIndex = 0;
+        int scale = 0;
+        while (this.simulationSpeedRatios[ratioIndex] * Math.pow(10, scale) <= maximum)
+        {
+            maximumTick++;
+            this.tickValues.put(maximumTick, this.simulationSpeedRatios[ratioIndex] * Math.pow(10, scale));
+            StringBuilder text = new StringBuilder();
+            text.append(this.simulationSpeedRatios[ratioIndex]);
+            for (int i = 0; i < scale; i++)
+            {
+                text.append("0");
+            }
+            labels.put(maximumTick, new JLabel(text.toString().replace("000", "K")));
+            ratioIndex++;
+            if (ratioIndex == this.simulationSpeedRatios.length)
+            {
+                ratioIndex = 0;
+                scale += 1;
+            }
+        }
+        ratioIndex = this.simulationSpeedRatios.length - 1;
+        scale = 1;
+        while (this.simulationSpeedRatios[ratioIndex] * Math.pow(0.1, scale) >= minimum)
+        {
+            minimumTick--;
+            this.tickValues.put(minimumTick, this.simulationSpeedRatios[ratioIndex] * Math.pow(0.1, scale));
+            StringBuilder text = new StringBuilder("0").append(OtsSimulationControlPanel.this.decimalSeparator);
+            for (int i = 1; i < scale; i++)
+            {
+                text.append("0");
+            }
+            text.append(this.simulationSpeedRatios[ratioIndex]);
+            labels.put(minimumTick, new JLabel(text.toString()));
+            ratioIndex--;
+            if (ratioIndex < 0)
+            {
+                ratioIndex = this.simulationSpeedRatios.length - 1;
+                scale += 1;
+            }
+        }
+        JSlider slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick + 1, 0);
+        slider.setMinimumSize(new Dimension(350, 45));
+        slider.setPreferredSize(new Dimension(350, 45));
+        slider.setMaximumSize(new Dimension(350, 45));
+        labels.put(maximumTick + 1, new JLabel("\u221E"));
+        this.tickValues.put(maximumTick + 1, 1E9);
+        slider.setLabelTable(labels);
+        slider.setPaintLabels(true);
+        slider.setPaintTicks(true);
+        slider.setMajorTickSpacing(1);
+        /*- Uncomment to verify the stepToFactor method.
+        for (int i = slider.getMinimum(); i <= slider.getMaximum(); i++)
+        {
+            System.out.println("pos=" + i + " value is " + stepToFactor(i));
+        }
+         */
+
+        // initial value of simulation speed
+        if (sim instanceof DevsRealTimeAnimator)
+        {
+            @SuppressWarnings("unchecked")
+            DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) sim;
+            clock.setSpeedFactor(this.tickValues.get(slider.getValue()));
+        }
+
+        // adjust the simulation speed
+        slider.addChangeListener(new ChangeListener()
+        {
+            @Override
+            public void stateChanged(final ChangeEvent ce)
+            {
+                JSlider source = (JSlider) ce.getSource();
+                if (!source.getValueIsAdjusting() && sim instanceof DevsRealTimeAnimator)
+                {
+                    @SuppressWarnings("unchecked")
+                    DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) sim;
+                    clock.setSpeedFactor(OtsSimulationControlPanel.this.tickValues.get(source.getValue()));
+                }
+            }
+        });
+
+        return slider;
+    }
+
+    /**
+     * Prepare the clean-up; stopping the simulator when going to close, and calling {@link #cleanup} when closed.
+     */
+    private void prepareCleanup()
+    {
+        // The JFrame is not yet created, as panels are prepared as an argument to it, so run a Thread until we find it
+        new Thread("OtsSimulationControlPanel cleanup preparation")
+        {
+            @Override
+            public void run()
+            {
+                JFrame root = null;
+                int n = 0;
+                while (root == null && n++ < 500) // should wait for about 5s max
+                {
+                    try
+                    {
+                        Thread.sleep(10);
+                    }
+                    catch (InterruptedException exception)
+                    {
+                        // nothing to do
+                    }
+                    root = (JFrame) SwingUtilities.getRoot(OtsSimulationControlPanel.this);
+                }
+                root.addWindowListener(new WindowAdapter()
+                {
+                    @Override
+                    public void windowClosing(final WindowEvent e)
+                    {
+                        if (OtsSimulationControlPanel.this.simulator != null)
+                        {
+                            try
+                            {
+                                if (OtsSimulationControlPanel.this.simulator.isStartingOrRunning())
+                                {
+                                    OtsSimulationControlPanel.this.simulator.stop();
+                                }
+                            }
+                            catch (SimRuntimeException exception)
+                            {
+                                exception.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void windowClosed(final WindowEvent e)
+                    {
+                        cleanup();
+                    }
+                });
+            }
+        }.start();
+    }
+
+    /**
+     * Set the time warp factor to the best possible approximation of a given value.
+     * @param factor the requested speed factor
+     */
+    public void setSpeedFactor(final double factor)
+    {
+        int bestStep = -1;
+        double bestError = Double.MAX_VALUE;
+        double logOfFactor = Math.log(factor);
+        for (int step = this.speedSlider.getMinimum(); step <= this.speedSlider.getMaximum(); step++)
+        {
+            double ratio = this.tickValues.get(step); // stepToFactor(step);
+            double logError = Math.abs(logOfFactor - Math.log(ratio));
+            if (logError < bestError)
+            {
+                bestStep = step;
+                bestError = logError;
+            }
+        }
+        Logger.ots().trace("setSpeedfactor: factor is {}, best slider value is {} current value is {}", factor, bestStep,
+                this.speedSlider.getValue());
+        if (this.speedSlider.getValue() != bestStep)
+        {
+            this.speedSlider.setValue(bestStep);
+        }
+    }
+
+    /**
+     * Change the enabled/disabled state of the various simulation control buttons.
+     * @param newState true if the buttons should become enabled; false if the buttons should become disabled
+     */
+    public void setSimulationControlButtons(final boolean newState)
+    {
+        this.buttonsEnabled = newState;
+        setButtonsEnabledState();
+    }
+
+    /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.
      * @param executionTime the time at which the event must happen
-     * @param priority should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
-     *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
-     *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
+     * @param priority should be between {@code SimEventInterface.MAX_PRIORITY} and {@code SimEventInterface.MIN_PRIORITY}; most
+     *            normal events should use {@code SimEventInterface.NORMAL_PRIORITY}
      * @param executable executable
      * @return the event that was scheduled (the caller should save this if a need to cancel the event may arise later)
-     * @throws SimRuntimeException when the <code>executionTime</code> is in the past
+     * @throws SimRuntimeException when the {@code executionTime} is in the past
      */
     private SimEventInterface<Duration> scheduleEvent(final Duration executionTime, final short priority,
             final Executable executable) throws SimRuntimeException
     {
         return this.simulator.scheduleEventAbs(executionTime, priority, executable);
-    }
-
-    /**
-     * Install a handler for the window closed event that stops the simulator (if it is running).
-     */
-    public final void installWindowCloseHandler()
-    {
-        if (this.closeHandlerRegistered)
-        {
-            return;
-        }
-
-        // make sure the root frame gets disposed of when the closing X icon is pressed.
-        new DisposeOnCloseThread(this).start();
-    }
-
-    /** Install the dispose on close when the OtsControlPanel is registered as part of a frame. */
-    protected class DisposeOnCloseThread extends Thread
-    {
-        /** The current container. */
-        private OtsControlPanel panel;
-
-        /**
-         * Constructor.
-         * @param panel the OTSControlpanel container.
-         */
-        public DisposeOnCloseThread(final OtsControlPanel panel)
-        {
-            this.panel = panel;
-        }
-
-        @Override
-        public final void run()
-        {
-            Container root = this.panel;
-            while (!(root instanceof JFrame))
-            {
-                try
-                {
-                    Thread.sleep(10);
-                }
-                catch (InterruptedException exception)
-                {
-                    // nothing to do
-                }
-
-                // Search towards the root of the Swing components until we find a JFrame
-                root = this.panel;
-                while (null != root.getParent() && !(root instanceof JFrame))
-                {
-                    root = root.getParent();
-                }
-            }
-            JFrame frame = (JFrame) root;
-            frame.addWindowListener(this.panel);
-            this.panel.closeHandlerRegistered = true;
-            // frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        }
-
-        @Override
-        public final String toString()
-        {
-            return "DisposeOnCloseThread [panel=" + this.panel + "]";
-        }
     }
 
     @Override
@@ -376,31 +488,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 Logger.ots().trace("NextTime: Starting simulator");
                 this.simulator.start();
             }
-            if (actionCommand.equals("Reset"))
-            {
-                if (getSimulator().isStartingOrRunning())
-                {
-                    getSimulator().stop();
-                }
-
-                if (null == OtsControlPanel.this.model)
-                {
-                    throw new OtsRuntimeException("Do not know how to restart this simulation");
-                }
-
-                // find the JFrame position and dimensions
-                Container root = OtsControlPanel.this;
-                while (!(root instanceof JFrame))
-                {
-                    root = root.getParent();
-                }
-                JFrame frame = (JFrame) root;
-                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                frame.dispose();
-                OtsControlPanel.this.cleanup();
-                // TODO: maybe rebuild model...
-            }
-            fixButtons();
+            setButtonsEnabledState();
         }
         catch (Exception exception)
         {
@@ -409,7 +497,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     }
 
     /**
-     * clean up timers, contexts, threads, etc. that could prevent garbage collection.
+     * Clean up timers, contexts, threads, etc. that could prevent garbage collection.
      */
     private void cleanup()
     {
@@ -422,33 +510,17 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 {
                     if (this.simulator.isStartingOrRunning())
                     {
+                        System.out.println("Clean-up: stopping simulator.");
                         this.simulator.stop();
                     }
-
-                    // unbind the old animation and statistics
-                    // TODO: change getExperiment().removeFromContext() so it works properly...
-                    // Now: ConcurrentModificationException...
-                    if (getSimulator().getReplication().getContext().hasKey("animation"))
-                    {
-                        getSimulator().getReplication().getContext().destroySubcontext("animation");
-                    }
-                    if (getSimulator().getReplication().getContext().hasKey("statistics"))
-                    {
-                        getSimulator().getReplication().getContext().destroySubcontext("statistics");
-                    }
-                    if (getSimulator().getReplication().getContext().hasKey("statistics"))
-                    {
-                        getSimulator().getReplication().getContext().destroySubcontext("statistics");
-                    }
-                    // TODO: this is implemented completely different in latest DSOL versions
                     getSimulator().cleanUp();
                 }
 
+                System.out.println("Clock timer cancelled.");
                 if (this.clockLabel != null)
                 {
                     this.clockLabel.cancelTimer(); // cancel the timer on the clock panel.
                 }
-                // TODO: are there timers or threads we need to stop?
             }
             catch (Throwable exception)
             {
@@ -460,7 +532,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     /**
      * Update the enabled state of all the buttons.
      */
-    protected final void fixButtons()
+    private void setButtonsEnabledState()
     {
         Logger.ots().trace("FixButtons entered");
         final boolean moreWorkToDo = getSimulator().getEventList().size() > 0;
@@ -477,12 +549,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 if (this.simulator.isStartingOrRunning())
                 {
                     button.setToolTipText("Pause the simulation");
-                    button.setIcon(this.pause);
+                    button.setIcon(PAUSE_ICON);
                 }
                 else
                 {
                     button.setToolTipText("Run the simulation at the indicated speed");
-                    button.setIcon(this.play);
+                    button.setIcon(PLAY_ICON);
                 }
                 button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }
@@ -490,15 +562,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 button.setEnabled(moreWorkToDo && this.buttonsEnabled);
             }
-            // else if (actionCommand.equals("Reset"))
-            // {
-            // button.setEnabled(true); // FIXME: should be disabled when the simulator was just reset or initialized
-            // }
             else
             {
                 Logger.ots().error(new Exception("Unknown button?"));
             }
         }
+        this.speedSlider.setEnabled(this.buttonsEnabled);
         Logger.ots().trace("FixButtons finishing");
     }
 
@@ -546,7 +615,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 if (SwingUtilities.isEventDispatchThread())
                 {
                     Logger.ots().trace("Already on EventDispatchThread");
-                    fixButtons();
+                    setButtonsEnabledState();
                 }
                 else
                 {
@@ -559,7 +628,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                             public void run()
                             {
                                 Logger.ots().trace("Runnable started");
-                                fixButtons();
+                                setButtonsEnabledState();
                                 Logger.ots().trace("Runnable finishing");
                             }
                         });
@@ -585,6 +654,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     @Override
     public final void propertyChange(final PropertyChangeEvent evt)
     {
+        // timeEdit value changed, schedule stop event (and cancel possible previous event)
         Logger.ots().trace("PropertyChanged: " + evt);
         if (null != this.stopAtEvent)
         {
@@ -618,287 +688,55 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Return simulator.
-     * @return simulator.
+     * @return simulator
      */
     public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
-    @Override
-    public void windowOpened(final WindowEvent e)
-    {
-        // No action
-    }
-
-    @Override
-    public final void windowClosing(final WindowEvent e)
-    {
-        if (this.simulator != null)
-        {
-            try
-            {
-                if (this.simulator.isStartingOrRunning())
-                {
-                    this.simulator.stop();
-                }
-            }
-            catch (SimRuntimeException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public final void windowClosed(final WindowEvent e)
-    {
-        cleanup();
-    }
-
-    @Override
-    public final void windowIconified(final WindowEvent e)
-    {
-        // No action
-    }
-
-    @Override
-    public final void windowDeiconified(final WindowEvent e)
-    {
-        // No action
-    }
-
-    @Override
-    public final void windowActivated(final WindowEvent e)
-    {
-        // No action
-    }
-
-    @Override
-    public final void windowDeactivated(final WindowEvent e)
-    {
-        // No action
-    }
-
     /**
      * Return time font.
-     * @return timeFont.
+     * @return font for the time display
      */
     public final Font getTimeFont()
     {
         return this.timeFont;
     }
 
-    /** JPanel that contains a JSider that uses a logarithmic scale. */
-    class TimeWarpPanel extends JPanel
+    @Override
+    public final void notify(final Event event)
     {
-        /** */
-        private static final long serialVersionUID = 20150408L;
-
-        /** The JSlider that the user sees. */
-        private final JSlider slider;
-
-        /** The ratios used in each decade. */
-        private final int[] ratios;
-
-        /** The values at each tick. */
-        private Map<Integer, Double> tickValues = new LinkedHashMap<>();
-
-        /**
-         * Construct a new TimeWarpPanel.
-         * @param minimum the minimum value on the scale (the displayed scale may extend a little further than this value)
-         * @param maximum the maximum value on the scale (the displayed scale may extend a little further than this value)
-         * @param initialValue the initially selected value on the scale
-         * @param ticksPerDecade the number of steps per decade
-         * @param simulator the simulator to change the speed of
-         */
-        TimeWarpPanel(final double minimum, final double maximum, final double initialValue, final int ticksPerDecade,
-                final OtsSimulatorInterface simulator)
+        if (event.getType().equals(Replication.END_REPLICATION_EVENT) || event.getType().equals(SimulatorInterface.START_EVENT)
+                || event.getType().equals(SimulatorInterface.STOP_EVENT)
+                || event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
         {
-            Throw.when(minimum <= 0 || minimum > initialValue || initialValue > maximum || maximum > 9999,
-                    OtsRuntimeException.class, "Bad (combination of) minimum, maximum and initialValue; "
-                            + "(restrictions: 0 < minimum <= initialValue <= maximum <= 9999)");
-            switch (ticksPerDecade)
+            Logger.ots().trace("OtsControlPanel receive event " + event);
+            if (event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
             {
-                case 1:
-                    this.ratios = new int[] {1};
-                    break;
-                case 2:
-                    this.ratios = new int[] {1, 3};
-                    break;
-                case 3:
-                    this.ratios = new int[] {1, 2, 5};
-                    break;
-                default:
-                    throw new OtsRuntimeException("Bad ticksPerDecade value (must be 1, 2 or 3)");
+                setSpeedFactor((Double) event.getContent());
+                return;
             }
-            Hashtable<Integer, JLabel> labels = new Hashtable<>();
-            int maximumTick = -1;
-            int minimumTick = 0;
-            int ratioIndex = 0;
-            int scale = 0;
-            while (this.ratios[ratioIndex] * Math.pow(10, scale) <= maximum)
+            else if (event.getType().equals(Replication.END_REPLICATION_EVENT))
             {
-                maximumTick++;
-                this.tickValues.put(maximumTick, this.ratios[ratioIndex] * Math.pow(10, scale));
-                StringBuilder text = new StringBuilder();
-                text.append(this.ratios[ratioIndex]);
-                for (int i = 0; i < scale; i++)
-                {
-                    text.append("0");
-                }
-                labels.put(maximumTick, new JLabel(text.toString().replace("000", "K")));
-                ratioIndex++;
-                if (ratioIndex == this.ratios.length)
-                {
-                    ratioIndex = 0;
-                    scale += 1;
-                }
+                this.buttonsEnabled = false;
             }
-            ratioIndex = this.ratios.length - 1;
-            scale = 1;
-            while (this.ratios[ratioIndex] * Math.pow(0.1, scale) >= minimum)
-            {
-                minimumTick--;
-                this.tickValues.put(minimumTick, this.ratios[ratioIndex] * Math.pow(0.1, scale));
-                StringBuilder text = new StringBuilder("0").append(OtsControlPanel.this.decimalSeparator);
-                for (int i = 1; i < scale; i++)
-                {
-                    text.append("0");
-                }
-                text.append(this.ratios[ratioIndex]);
-                labels.put(minimumTick, new JLabel(text.toString()));
-                ratioIndex--;
-                if (ratioIndex < 0)
-                {
-                    ratioIndex = this.ratios.length - 1;
-                    scale += 1;
-                }
-            }
-            this.slider = new JSlider(SwingConstants.HORIZONTAL, minimumTick, maximumTick + 1, 0);
-            this.slider.setPreferredSize(new Dimension(350, 45));
-            labels.put(maximumTick + 1, new JLabel("\u221E"));
-            this.tickValues.put(maximumTick + 1, 1E9);
-            this.slider.setLabelTable(labels);
-            this.slider.setPaintLabels(true);
-            this.slider.setPaintTicks(true);
-            this.slider.setMajorTickSpacing(1);
-            this.add(this.slider);
-            /*- Uncomment to verify the stepToFactor method.
-            for (int i = this.slider.getMinimum(); i <= this.slider.getMaximum(); i++)
-            {
-                System.out.println("pos=" + i + " value is " + stepToFactor(i));
-            }
-             */
-
-            // initial value of simulation speed
-            if (simulator instanceof DevsRealTimeAnimator)
-            {
-                @SuppressWarnings("unchecked")
-                DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
-                clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
-            }
-
-            // adjust the simulation speed
-            this.slider.addChangeListener(new ChangeListener()
-            {
-                @Override
-                public void stateChanged(final ChangeEvent ce)
-                {
-                    JSlider source = (JSlider) ce.getSource();
-                    if (!source.getValueIsAdjusting() && simulator instanceof DevsRealTimeAnimator)
-                    {
-                        @SuppressWarnings("unchecked")
-                        DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
-                        clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
-                    }
-                }
-            });
-        }
-
-        /**
-         * Access to tickValues map from within the event handler.
-         * @return Map&lt;Integer, Double&gt; the tickValues map of this TimeWarpPanel
-         */
-        protected Map<Integer, Double> getTickValues()
-        {
-            return this.tickValues;
-        }
-
-        /**
-         * Convert a position on the slider to a factor.
-         * @param step the position on the slider
-         * @return the factor that corresponds to step
-         */
-        private double stepToFactor(final int step)
-        {
-            int index = step % this.ratios.length;
-            if (index < 0)
-            {
-                index += this.ratios.length;
-            }
-            double result = this.ratios[index];
-            // Make positive to avoid trouble with negative values that round towards 0 on division
-            int power = (step + 1000 * this.ratios.length) / this.ratios.length - 1000; // This is ugly
-            while (power > 0)
-            {
-                result *= 10;
-                power--;
-            }
-            while (power < 0)
-            {
-                result /= 10;
-                power++;
-            }
-            return result;
-        }
-
-        /**
-         * Retrieve the current TimeWarp factor.
-         * @return the current TimeWarp factor
-         */
-        public final double getFactor()
-        {
-            return stepToFactor(this.slider.getValue());
-        }
-
-        @Override
-        public final String toString()
-        {
-            return "TimeWarpPanel [timeWarp=" + this.getFactor() + "]";
-        }
-
-        /**
-         * Set the time warp factor to the best possible approximation of a given value.
-         * @param factor the requested speed factor
-         */
-        public void setSpeedFactor(final double factor)
-        {
-            int bestStep = -1;
-            double bestError = Double.MAX_VALUE;
-            double logOfFactor = Math.log(factor);
-            for (int step = this.slider.getMinimum(); step <= this.slider.getMaximum(); step++)
-            {
-                double ratio = getTickValues().get(step); // stepToFactor(step);
-                double logError = Math.abs(logOfFactor - Math.log(ratio));
-                if (logError < bestError)
-                {
-                    bestStep = step;
-                    bestError = logError;
-                }
-            }
-            Logger.ots().trace("setSpeedfactor: factor is {}, best slider value is {} current value is {}", factor, bestStep,
-                    this.slider.getValue());
-            if (this.slider.getValue() != bestStep)
-            {
-                this.slider.setValue(bestStep);
-            }
+            setButtonsEnabledState();
         }
     }
 
-    /** JLabel that displays the simulation time. */
+    @Override
+    public final String toString()
+    {
+        return "OtsControlPanel [simulatorTime=" + this.simulator.getSimulatorTime() + "]";
+    }
+
+    /**
+     * {@link JLabel} that displays the simulation time.
+     */
     public class ClockLabel extends JLabel implements AppearanceControl
     {
+
         /** */
         private static final long serialVersionUID = 20141211L;
 
@@ -920,7 +758,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
          */
         ClockLabel(final JLabel speedLabel)
         {
-            super("00:00:00" + OtsControlPanel.this.decimalSeparator + "000");
+            super("00:00:00" + OtsSimulationControlPanel.this.decimalSeparator + "000");
             this.speedLabel = speedLabel;
             speedLabel.setFont(getTimeFont());
             setFont(getTimeFont());
@@ -933,9 +771,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 @Override
                 public void mouseClicked(final MouseEvent e)
                 {
+                    if (!OtsSimulationControlPanel.this.buttonsEnabled)
+                    {
+                        return;
+                    }
                     setVisible(false);
-                    OtsControlPanel.this.timeEdit.setVisible(true);
-                    OtsControlPanel.this.timeEdit.requestFocus();
+                    OtsSimulationControlPanel.this.timeEdit.setVisible(true);
+                    OtsSimulationControlPanel.this.timeEdit.requestFocus();
                     getParent().invalidate();
                 }
             });
@@ -957,7 +799,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         private class TimeUpdateTask extends TimerTask
         {
             /**
-             * Create a TimeUpdateTask.
+             * Constructor.
              */
             TimeUpdateTask()
             {
@@ -994,7 +836,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Return speed label.
-         * @return speedLabel.
+         * @return speed label
          */
         protected JLabel getSpeedLabel()
         {
@@ -1047,9 +889,10 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     }
 
-    /** Entry field for time. */
-    public class TimeEdit extends JFormattedTextField implements AppearanceControl
+    /** Entry field for simulate until time. */
+    private final class TimeEdit extends JFormattedTextField implements AppearanceControl
     {
+
         /** */
         private static final long serialVersionUID = 20141212L;
 
@@ -1060,9 +903,10 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
          * Construct a new TimeEdit.
          * @param initialValue the initial value for the TimeEdit
          */
-        TimeEdit(final Time initialValue)
+        private TimeEdit(final Time initialValue)
         {
-            super(new RegexFormatter("\\d{2,}:[0-5]\\d:[0-5]\\d\\" + OtsControlPanel.this.decimalSeparator + "\\d\\d\\d"));
+            super(new RegexFormatter(
+                    "\\d{2,}:[0-5]\\d:[0-5]\\d\\" + OtsSimulationControlPanel.this.decimalSeparator + "\\d\\d\\d"));
             addKeyListener(new KeyAdapter()
             {
                 @Override
@@ -1095,25 +939,25 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 @Override
                 public void focusLost(final FocusEvent e)
                 {
-                    OtsControlPanel.this.clockLabel.setVisible(true);
+                    OtsSimulationControlPanel.this.clockLabel.setVisible(true);
                     setVisible(false);
                     getParent().invalidate();
                 }
             });
-            OtsControlPanel.this.addMouseListener(new MouseAdapter()
+            OtsSimulationControlPanel.this.addMouseListener(new MouseAdapter()
             {
                 @Override
                 public void mouseClicked(final MouseEvent e)
                 {
-                    if (OtsControlPanel.this.timeEdit.hasFocus())
+                    if (OtsSimulationControlPanel.this.timeEdit.hasFocus())
                     {
                         // removes focus from time edit when the user clicks anywhere on the control panel
                         TimeEdit.this.setFocusable(false);
                         TimeEdit.this.setFocusable(true);
                     }
-                    // this listener prevents events from reaching the main panel with popup menu, make it appear from here
+                    // this listener prevents events from reaching the main panel with pop-up menu, make it appear from here
                     JPanel mainPanel = (JPanel) ((AppearanceApplication) SwingUtilities
-                            .getAncestorOfClass(AppearanceApplication.class, OtsControlPanel.this)).getContentPane();
+                            .getAncestorOfClass(AppearanceApplication.class, OtsSimulationControlPanel.this)).getContentPane();
                     if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1
                             && mainPanel.getComponentPopupMenu() != null)
                     {
@@ -1152,20 +996,22 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
 
         @Override
-        public final String toString()
+        public String toString()
         {
             return "TimeEdit [time=" + getText() + "]";
         }
+
     }
 
     /**
-     * Extension of a DefaultFormatter that uses a regular expression. <br>
+     * Extension of a {@link DefaultFormatter} that uses a regular expression. For use in the simulate until time edit. <br>
      * Derived from <a href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      */
-    static class RegexFormatter extends DefaultFormatter
+    private static final class RegexFormatter extends DefaultFormatter
     {
+
         /** */
         private static final long serialVersionUID = 20141212L;
 
@@ -1176,7 +1022,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
          * Create a new RegexFormatter.
          * @param pattern regular expression pattern that defines what this RexexFormatter will accept
          */
-        RegexFormatter(final String pattern)
+        private RegexFormatter(final String pattern)
         {
             this.pattern = Pattern.compile(pattern);
         }
@@ -1195,33 +1041,11 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
 
         @Override
-        public final String toString()
+        public String toString()
         {
             return "RegexFormatter [pattern=" + this.pattern + "]";
         }
-    }
 
-    @Override
-    public final void notify(final Event event)
-    {
-        if (event.getType().equals(Replication.END_REPLICATION_EVENT) || event.getType().equals(SimulatorInterface.START_EVENT)
-                || event.getType().equals(SimulatorInterface.STOP_EVENT)
-                || event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
-        {
-            Logger.ots().trace("OtsControlPanel receive event " + event);
-            if (event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
-            {
-                this.timeWarpPanel.setSpeedFactor((Double) event.getContent());
-            }
-            fixButtons();
-        }
-    }
-
-    @Override
-    public final String toString()
-    {
-        return "OtsControlPanel [simulatorTime=" + this.simulator.getSimulatorTime() + ", timeWarp="
-                + this.timeWarpPanel.getFactor() + ", stopAtEvent=" + this.stopAtEvent + "]";
     }
 
 }

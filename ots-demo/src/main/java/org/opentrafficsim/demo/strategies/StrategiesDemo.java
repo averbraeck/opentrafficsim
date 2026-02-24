@@ -50,8 +50,10 @@ import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.draw.colorer.FixedColorer;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
@@ -71,8 +73,9 @@ import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel.DemoPanelPosition;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel.DemoPanelPosition;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -133,9 +136,6 @@ public class StrategiesDemo extends AbstractSimulationScript
     protected StrategiesDemo()
     {
         super("Strategies demo", "Demo of driving strategies in LMRS.");
-        setGtuColorers(List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
-                new SocialPressureGtuColorer(), new DesiredHeadwayGtuColorer(Duration.ofSI(0.5), Duration.ofSI(1.6)),
-                new IncentiveGtuColorer(IncentiveSocioSpeed.class)));
         try
         {
             CliUtil.changeOptionDefault(this, "simulationTime", "3600000s");
@@ -144,6 +144,27 @@ public class StrategiesDemo extends AbstractSimulationScript
         {
             throw new OtsRuntimeException(exception);
         }
+    }
+
+    @Override
+    protected OtsSimulationPanelDecorator getDecorator()
+    {
+        return new OtsSimulationPanelDecorator()
+        {
+            @Override
+            public void setupDemo(final OtsSimulationPanel simulationPanel, final Network network)
+            {
+                StrategiesDemo.this.setupDemo(simulationPanel, network);
+            }
+
+            @Override
+            public List<Colorer<? super Gtu>> getGtuColorers()
+            {
+                return List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
+                        new SocialPressureGtuColorer(), new DesiredHeadwayGtuColorer(Duration.ofSI(0.5), Duration.ofSI(1.6)),
+                        new IncentiveGtuColorer(IncentiveSocioSpeed.class));
+            }
+        };
     }
 
     /**
@@ -164,31 +185,35 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
     }
 
-    @Override
-    protected void setupDemo(final OtsAnimationPanel animation, final RoadNetwork network)
+    /**
+     * Setup a demo panel within the simulation panel. The default implementation does nothing.
+     * @param simulationPanel simulation panel
+     * @param network network
+     */
+    private void setupDemo(final OtsSimulationPanel simulationPanel, final Network network)
     {
         // demo panel
-        animation.createDemoPanel(DemoPanelPosition.RIGHT);
-        animation.getDemoPanel().setBorder(new EmptyBorder(10, 10, 10, 10));
-        animation.getDemoPanel().setLayout(new BoxLayout(animation.getDemoPanel(), BoxLayout.Y_AXIS));
-        animation.getDemoPanel().setPreferredSize(new Dimension(300, 300));
+        simulationPanel.createDemoPanel(DemoPanelPosition.RIGHT);
+        simulationPanel.getDemoPanel().setBorder(new EmptyBorder(10, 10, 10, 10));
+        simulationPanel.getDemoPanel().setLayout(new BoxLayout(simulationPanel.getDemoPanel(), BoxLayout.Y_AXIS));
+        simulationPanel.getDemoPanel().setPreferredSize(new Dimension(300, 300));
 
         // text
         JLabel textLabel = new JLabel("<html><p align=\"justify\">"
                 + "Adjust the sliders below to change the ego-speed sensitivity and socio-speed sensitivity of the drivers, "
                 + "and observe how traffic is affected." + "</html>"); // Detailed instructions are in the attached read-me.
         textLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        animation.getDemoPanel().add(textLabel);
+        simulationPanel.getDemoPanel().add(textLabel);
 
         // spacer
-        animation.getDemoPanel().add(Box.createVerticalStrut(20));
+        simulationPanel.getDemoPanel().add(Box.createVerticalStrut(20));
 
         // number of vehicles
         JLabel gtuLabel = new JLabel("<html>Number of vehicles</html>");
         gtuLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gtuLabel.setPreferredSize(new Dimension(200, 0));
         gtuLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        animation.getDemoPanel().add(gtuLabel);
+        simulationPanel.getDemoPanel().add(gtuLabel);
         JSlider gtuSlider = new JSlider(0, 120, this.gtuNum);
         gtuSlider.setMinorTickSpacing(10);
         gtuSlider.setMajorTickSpacing(30);
@@ -205,21 +230,21 @@ public class StrategiesDemo extends AbstractSimulationScript
                 if (!StrategiesDemo.this.getSimulator().isStartingOrRunning())
                 {
                     // StrategiesDemo.this.checkVehicleNumber();
-                    animation.getDemoPanel().getParent().repaint();
+                    simulationPanel.getDemoPanel().getParent().repaint();
                 }
             }
         });
-        animation.getDemoPanel().add(gtuSlider);
+        simulationPanel.getDemoPanel().add(gtuSlider);
 
         // spacer
-        animation.getDemoPanel().add(Box.createVerticalStrut(20));
+        simulationPanel.getDemoPanel().add(Box.createVerticalStrut(20));
 
         // ego
         JLabel egoLabel = new JLabel("<html>Ego-speed sensitivity<sup>-1</sup> [km/h]</html>");
         egoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         egoLabel.setPreferredSize(new Dimension(200, 0));
         egoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        animation.getDemoPanel().add(egoLabel);
+        simulationPanel.getDemoPanel().add(egoLabel);
         int egoSteps = 70;
         JSlider egoSlider = new JSlider(0, egoSteps, egoSteps / 2);
         egoSlider.setMinorTickSpacing(2);
@@ -263,15 +288,15 @@ public class StrategiesDemo extends AbstractSimulationScript
                 }
             }
         });
-        animation.getDemoPanel().add(egoSlider);
+        simulationPanel.getDemoPanel().add(egoSlider);
 
         // spacer
-        animation.getDemoPanel().add(Box.createVerticalStrut(20));
+        simulationPanel.getDemoPanel().add(Box.createVerticalStrut(20));
 
         // socio
         JLabel socioLabel = new JLabel("Socio-speed sensitivity [-]");
         socioLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        animation.getDemoPanel().add(socioLabel);
+        simulationPanel.getDemoPanel().add(socioLabel);
         int socioSteps = 20;
         JSlider socioSlider = new JSlider(0, socioSteps, socioSteps / 2);
         socioSlider.setMinorTickSpacing(1);
@@ -306,28 +331,31 @@ public class StrategiesDemo extends AbstractSimulationScript
                         }
                         catch (ParameterException exception)
                         {
-                            Logger.ots().error("Unable to set SOCIO on GTU.");
+                            if (!this.loggedException)
+                            {
+                                Logger.ots().error("Unable to set SOCIO on GTU.");
+                            }
                             this.loggedException = true;
                         }
                     }
                 }
             }
         });
-        animation.getDemoPanel().add(socioSlider);
+        simulationPanel.getDemoPanel().add(socioSlider);
 
         // spacer
-        animation.getDemoPanel().add(Box.createVerticalStrut(20));
+        simulationPanel.getDemoPanel().add(Box.createVerticalStrut(20));
 
         // km/lc
         JLabel kmplcLabel = new JLabel("Km between lane changes (last 0): -");
-        this.kmplcListener = new KmplcListener(kmplcLabel, network);
+        this.kmplcListener = new KmplcListener(kmplcLabel, (RoadNetwork) network);
         for (Gtu gtu : network.getGTUs())
         {
             gtu.addListener(this.kmplcListener, LaneBasedGtu.LANE_CHANGE_EVENT);
         }
         kmplcLabel.setHorizontalAlignment(SwingConstants.LEFT);
         kmplcLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        animation.getDemoPanel().add(kmplcLabel);
+        simulationPanel.getDemoPanel().add(kmplcLabel);
     }
 
     /**

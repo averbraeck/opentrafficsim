@@ -25,7 +25,7 @@ import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
- * Set the default animation toggles for the animation panel.
+ * Set the default animation toggles for the simulation panel.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -47,9 +47,9 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param panel the WrappableAnimation.
+     * @param panel simulation panel
      */
-    public static void setTextAnimationTogglesFull(final OtsAnimationPanel panel)
+    public static void setTextAnimationTogglesFull(final OtsSimulationPanel panel)
     {
         panel.addToggleAnimationButtonText("Node", NodeData.class, "Show/hide nodes", true);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node ids", false);
@@ -79,9 +79,9 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel the WrappableAnimation.
+     * @param panel the simulation panel
      */
-    public static void setTextAnimationTogglesStandard(final OtsAnimationPanel panel)
+    public static void setTextAnimationTogglesStandard(final OtsSimulationPanel panel)
     {
         panel.addToggleAnimationButtonText("Node", NodeData.class, "Show/hide nodes", false);
         panel.addToggleAnimationButtonText("NodeId", NodeAnimation.Text.class, "Show/hide node ids", false);
@@ -111,9 +111,9 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param panel the WrappableAnimation.
+     * @param panel the simulation panel
      */
-    public static void setIconAnimationTogglesFull(final OtsAnimationPanel panel)
+    public static void setIconAnimationTogglesFull(final OtsSimulationPanel panel)
     {
         panel.addToggleAnimationButtonIcon("Node", NodeData.class, "Node24.png", "Show/hide nodes", true, false);
         panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "Id24.png", "Show/hide node ids", false,
@@ -158,9 +158,9 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel the WrappableAnimation.
+     * @param panel the simulation panel
      */
-    public static void setIconAnimationTogglesStandard(final OtsAnimationPanel panel)
+    public static void setIconAnimationTogglesStandard(final OtsSimulationPanel panel)
     {
         panel.addToggleAnimationButtonIcon("Node", NodeData.class, "Node24.png", "Show/hide nodes", false, false);
         panel.addToggleAnimationButtonIcon("NodeId", NodeAnimation.Text.class, "Id24.png", "Show/hide node ids", false,
@@ -205,10 +205,10 @@ public final class AnimationToggles
 
     /**
      * Set a class to be shown in the animation to true.
-     * @param panel the OtsAnimationPanel where the animation of a class has to be switched off
-     * @param locatableClass the class for which the animation has to be shown.
+     * @param panel the simulation panel
+     * @param locatableClass the class for which the animation has to be shown
      */
-    public static void showAnimationClass(final OtsAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public static void showAnimationClass(final OtsSimulationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.getAnimationPanel().showClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);
@@ -216,10 +216,10 @@ public final class AnimationToggles
 
     /**
      * Set a class to be shown in the animation to false.
-     * @param panel the OtsAnimationPanel where the animation of a class has to be switched off
-     * @param locatableClass the class for which the animation has to be shown.
+     * @param panel the simulation panel
+     * @param locatableClass the class for which the animation has to be hidden
      */
-    public static void hideAnimationClass(final OtsAnimationPanel panel, final Class<? extends Locatable> locatableClass)
+    public static void hideAnimationClass(final OtsSimulationPanel panel, final Class<? extends Locatable> locatableClass)
     {
         panel.getAnimationPanel().hideClass(locatableClass);
         panel.updateAnimationClassCheckBox(locatableClass);
@@ -227,9 +227,9 @@ public final class AnimationToggles
 
     /**
      * Set all animation on, and create the toggles on the left hand side.
-     * @param panel the WrappableAnimation.
+     * @param panel the simulation panel
      */
-    public static void showAnimationFull(final OtsAnimationPanel panel)
+    public static void showAnimationFull(final OtsSimulationPanel panel)
     {
         showAnimationClass(panel, NodeData.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
@@ -243,6 +243,7 @@ public final class AnimationToggles
         showAnimationClass(panel, ShoulderData.class);
         showAnimationClass(panel, GtuData.class);
         hideAnimationClass(panel, DefaultCarAnimation.Text.class);
+        hideAnimationClass(panel, PerceptionAnimation.ChannelAttention.class);
         showAnimationClass(panel, DetectorData.class);
         hideAnimationClass(panel, DetectorData.Text.class);
         showAnimationClass(panel, TrafficLightData.class);
@@ -256,9 +257,9 @@ public final class AnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel the WrappableAnimation.
+     * @param panel the simulation panel
      */
-    public static void showAnimationStandard(final OtsAnimationPanel panel)
+    public static void showAnimationStandard(final OtsSimulationPanel panel)
     {
         hideAnimationClass(panel, NodeData.class);
         hideAnimationClass(panel, NodeAnimation.Text.class);
@@ -272,6 +273,7 @@ public final class AnimationToggles
         showAnimationClass(panel, ShoulderData.class);
         showAnimationClass(panel, GtuData.class);
         hideAnimationClass(panel, DefaultCarAnimation.Text.class);
+        hideAnimationClass(panel, PerceptionAnimation.ChannelAttention.class);
         hideAnimationClass(panel, DetectorData.class);
         hideAnimationClass(panel, DetectorData.Text.class);
         showAnimationClass(panel, TrafficLightData.class);

@@ -19,7 +19,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.draw.graphs.GraphPath;
@@ -31,8 +31,9 @@ import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
-import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
@@ -63,16 +64,9 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
      * @param panel the tabbed panel to display
      * @param model the model
      */
-    public NetworksSwing(final String title, final OtsAnimationPanel panel, final NetworksModel model)
+    public NetworksSwing(final String title, final OtsSimulationPanel panel, final NetworksModel model)
     {
-        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
-        RoadNetwork network = model.getNetwork();
-    }
-
-    @Override
-    protected void addTabs()
-    {
-        addStatisticsTabs(getModel().getSimulator());
+        super(model, panel);
     }
 
     /**
@@ -98,11 +92,18 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
-                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
-                        DEFAULT_GTU_COLORERS, otsModel.getNetwork());
-                NetworksSwing app = new NetworksSwing("Networks", animationPanel, otsModel);
+                OtsSimulationPanel simulationPanel =
+                        new OtsSimulationPanel(otsModel.getNetwork(), new OtsSimulationPanelDecorator()
+                        {
+                            @Override
+                            public void addTabs(final OtsSimulationPanel simulationPanel, final Network network)
+                            {
+                                addStatisticsTabs(simulationPanel, network, otsModel.getPaths());
+                            }
+                        });
+                NetworksSwing app = new NetworksSwing("Networks", simulationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
-                animationPanel.enableSimulationControlButtons();
+                simulationPanel.enableSimulationControlButtons();
             }
             else
             {
@@ -120,20 +121,23 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
     /**
      * Add the statistics tabs.
-     * @param simulator the simulator on which sampling can be scheduled
+     * @param simulationPanel simulation panel
+     * @param network network
+     * @param paths lane paths
      */
-    protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
+    private static void addStatisticsTabs(final OtsSimulationPanel simulationPanel, final Network network,
+            final List<List<Lane>> paths)
     {
-        int graphCount = getModel().pathCount();
+        int graphCount = paths.size();
         int columns = 1;
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
-        RoadSampler sampler = new RoadSampler(getModel().getNetwork());
+        RoadSampler sampler = new RoadSampler((RoadNetwork) network);
         Duration updateInterval = Duration.ofSI(10.0);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             List<Lane> start = new ArrayList<>();
-            start.add(getModel().getPath(graphIndex).get(0));
+            start.add(paths.get(graphIndex).get(0));
             GraphPath<LaneDataRoad> path;
             try
             {
@@ -145,11 +149,11 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             }
             GraphPath.initRecording(sampler, path);
             SwingPlot plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1),
-                    updateInterval, new OtsPlotScheduler(simulator), sampler.getSamplerData(), path));
+                    updateInterval, new OtsPlotScheduler(network.getSimulator()), sampler.getSamplerData(), path));
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
 
-        getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "statistics ", charts);
+        simulationPanel.getTabbedPane().addTab(simulationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
     }
 
     /** A parameter dialog with a radio button for the network choice tab. */

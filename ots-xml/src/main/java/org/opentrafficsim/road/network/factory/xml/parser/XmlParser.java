@@ -73,6 +73,9 @@ import nl.tudelft.simulation.dsol.experiment.StreamSeedInformation;
  */
 public final class XmlParser
 {
+
+    // TODO: need to expose the Animation contents such that OtsSimulationPanel can be setup
+
     /** Road network. */
     private final RoadNetwork network;
 
@@ -109,7 +112,7 @@ public final class XmlParser
      */
     public XmlParser setResource(final String resource) throws IOException
     {
-        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setFile() or setStream().");
+        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setResource() or setStream().");
         this.stream = ResourceResolver.resolve(resource).openStream();
         return this;
     }
@@ -123,7 +126,7 @@ public final class XmlParser
     @SuppressWarnings("hiddenfield")
     public XmlParser setStream(final InputStream stream)
     {
-        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setFile() or setStream().");
+        Throw.when(this.stream != null, IllegalStateException.class, "Invoke only one of setResource() or setStream().");
         this.stream = stream;
         return this;
     }
@@ -173,7 +176,8 @@ public final class XmlParser
             throws SimRuntimeException, MalformedURLException, JAXBException, URISyntaxException, NetworkException,
             XmlParserException, SAXException, ParserConfigurationException, GtuException, IOException, TrafficControlException
     {
-        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        Throw.when(this.stream == null, IllegalStateException.class,
+                "Invoke one of setResource() or setStream() before parsing.");
         return build(getOts(), this.network, this.scenario, this.parseConflicts);
     }
 
@@ -219,7 +223,8 @@ public final class XmlParser
      */
     public Duration getWarmupPeriod() throws JAXBException, SAXException, ParserConfigurationException
     {
-        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        Throw.when(this.stream == null, IllegalStateException.class,
+                "Invoke one of setResource() or setStream() before parsing.");
         return getOts().getRun().getWarmupPeriod() == null ? Duration.ZERO : getOts().getRun().getWarmupPeriod().get(getEval());
     }
 
@@ -233,7 +238,8 @@ public final class XmlParser
      */
     public Duration getRunLength() throws JAXBException, SAXException, ParserConfigurationException
     {
-        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        Throw.when(this.stream == null, IllegalStateException.class,
+                "Invoke one of setResource() or setStream() before parsing.");
         return getOts().getRun().getRunLength().get(getEval());
     }
 
@@ -247,7 +253,8 @@ public final class XmlParser
      */
     public Duration getHistory() throws JAXBException, SAXException, ParserConfigurationException
     {
-        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        Throw.when(this.stream == null, IllegalStateException.class,
+                "Invoke one of setResource() or setStream() before parsing.");
         return getOts().getRun().getHistory() == null ? Duration.ZERO : getOts().getRun().getHistory().get(getEval());
     }
 
@@ -261,7 +268,8 @@ public final class XmlParser
      */
     public List<String> getScenarios() throws JAXBException, SAXException, ParserConfigurationException
     {
-        Throw.when(this.stream == null, IllegalStateException.class, "Invoke one of setFile() or setStream() before parsing.");
+        Throw.when(this.stream == null, IllegalStateException.class,
+                "Invoke one of setResource() or setStream() before parsing.");
         return getOts().getScenarios().getScenario().stream().map((s) -> s.getId()).collect(Collectors.toList());
     }
 
@@ -411,8 +419,8 @@ public final class XmlParser
                 throw new XmlParserException(
                         "Mutliple models defined, but no scenario, or no model within scenario, specifies which to use.");
             }
-            List<LaneBasedGtuGenerator> generators = OdParser.parseOd(otsNetwork, definitions, demand, gtuTemplates,
-                    laneBiases, factory, streamInformation, selectedScenario, eval);
+            List<LaneBasedGtuGenerator> generators = OdParser.parseOd(otsNetwork, definitions, demand, gtuTemplates, laneBiases,
+                    factory, streamInformation, selectedScenario, eval);
             Logger.ots().trace("Created {} generators based on origin destination matrices", generators.size());
         }
 

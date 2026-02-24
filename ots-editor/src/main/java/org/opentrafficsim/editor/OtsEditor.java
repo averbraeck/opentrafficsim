@@ -279,7 +279,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public OtsEditor() throws IOException
     {
         super();
-        setSize(1280, 720);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // only exit after possible confirmation in case of unsaved changes
         addWindowListener(new WindowAdapter()
         {
@@ -415,6 +414,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.statusLabel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         add(this.statusLabel, BorderLayout.SOUTH);
         removeStatusLabel();
+
+        pack();
     }
 
     /**

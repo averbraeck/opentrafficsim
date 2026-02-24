@@ -187,6 +187,7 @@ public final class EditorMap extends JPanel implements EventListener
             }
 
             // Overridden because there are rounding and vertical mod errors in the super implementation.
+            // See https://github.com/averbraeck/dsol/issues/116.
             @Override
             protected synchronized void drawGrid(final Graphics g)
             {

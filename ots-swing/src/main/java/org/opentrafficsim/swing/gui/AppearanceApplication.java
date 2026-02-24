@@ -1,6 +1,7 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -41,9 +42,9 @@ import org.opentrafficsim.base.logger.Logger;
 import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 
 /**
- * Application with global appearance control. Subclasses should call {@code AppearanceApplication.setDefaultFont();} before any
+ * Application with global appearance control. Subclasses should call {@link #setDefaultFont} before any
  * GUI elements are created (unless this is the first GUI element). Subclasses should call
- * {@code setAppearance(getAppearance());} once all elements have been added to the GUI.
+ * {@link #setAppearance}{@code (}{@link #getAppearance}{@code )} once all elements have been added to the GUI.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -71,9 +72,9 @@ public class AppearanceApplication extends JFrame
     }
 
     /** Properties for the frame appearance (not simulation related). */
-    protected Properties frameProperties;
+    private Properties frameProperties;
 
-    /** Popup menu with options. */
+    /** Pop-up menu with options. */
     private final JPopupMenu popMenu;
 
     /** Group of appearance items. */
@@ -98,7 +99,7 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Constructor that sets the content pane.
-     * @param panel content pane.
+     * @param panel content pane
      */
     public AppearanceApplication(final JPanel panel)
     {
@@ -126,7 +127,6 @@ public class AppearanceApplication extends JFrame
         String propertiesFile = System.getProperty("user.home") + sep + "OTS" + sep + "properties.ini";
         addWindowListener(new WindowAdapter()
         {
-            /** {@inheritDoce} */
             @Override
             public void windowClosing(final WindowEvent windowEvent)
             {
@@ -169,7 +169,7 @@ public class AppearanceApplication extends JFrame
         }
         this.fontScaleName = this.frameProperties.getProperty("FontScale");
 
-        /** Menu class to only accept the font of an Appearance */
+        /** Menu class to only accept the font of an Appearance. */
         class AppearanceControlMenu extends JMenu implements AppearanceControl
         {
             /** */
@@ -208,12 +208,12 @@ public class AppearanceApplication extends JFrame
         JMenu scale = new AppearanceControlMenu("Font size");
         scale.addMouseListener(new SubMenuShower(scale));
         this.scaleGroup = new ButtonGroup();
-        for (String fontScaleName : FONT_SCALES.keySet())
+        for (String fontScale : FONT_SCALES.keySet())
         {
-            this.scaleGroup.add(addFontsize(scale, fontScaleName));
+            this.scaleGroup.add(addFontsize(scale, fontScale));
         }
 
-        /** PopupMenu class to only accept the font of an Appearance */
+        /** PopupMenu class to only accept the font of an Appearance. */
         class AppearanceControlPopupMenu extends JPopupMenu implements AppearanceControl
         {
             /** */
@@ -232,20 +232,23 @@ public class AppearanceApplication extends JFrame
             }
         }
 
-        // Popup menu to change appearance
+        // Pop-up menu to change appearance
         this.popMenu = new AppearanceControlPopupMenu();
         this.popMenu.add(app);
         this.popMenu.add(scale);
         ((JPanel) getContentPane()).setComponentPopupMenu(this.popMenu);
+
+        // Default preferred size
+        setPreferredSize(new Dimension(1280, 720));
     }
 
     /**
      * Set font scale.
-     * @param fontScaleName font scale name.
+     * @param fontScaleKey font scale name
      */
-    public void setFontScale(final String fontScaleName)
+    public void setFontScale(final String fontScaleKey)
     {
-        this.fontScaleName = fontScaleName;
+        this.fontScaleName = fontScaleKey;
         setAppearance(getAppearance());
     }
 
@@ -348,7 +351,7 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Changes the font size of the component.
-     * @param c component.
+     * @param c component
      */
     protected void changeFontSize(final Component c)
     {
@@ -406,18 +409,18 @@ public class AppearanceApplication extends JFrame
     /**
      * Adds an appearance to the menu.
      * @param group menu to add item to
-     * @param fontScaleName font scale name
+     * @param fontScale font scale name
      * @return menu item
      */
-    private JMenuItem addFontsize(final JMenu group, final String fontScaleName)
+    private JMenuItem addFontsize(final JMenu group, final String fontScale)
     {
-        JCheckBoxMenuItem check = new StayOpenCheckBoxMenuItem(fontScaleName, this.fontScaleName.equals(fontScaleName));
+        JCheckBoxMenuItem check = new StayOpenCheckBoxMenuItem(fontScale, this.fontScaleName.equals(fontScale));
         check.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(final MouseEvent e)
             {
-                setFontScale(fontScaleName);
+                setFontScale(fontScale);
             }
         });
         return group.add(check);
@@ -443,19 +446,11 @@ public class AppearanceApplication extends JFrame
     }
 
     /**
-     * Mouse listener which shows the submenu when the mouse enters the button.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Mouse listener which shows the sub-menu when the mouse enters the button.
      */
     private class SubMenuShower extends MouseAdapter
     {
-        /** The menu. */
+        /** Menu. */
         private JMenu menu;
 
         /**
@@ -482,15 +477,7 @@ public class AppearanceApplication extends JFrame
     }
 
     /**
-     * Check box item that keeps the popup menu visible after clicking, so the user can click and try some options.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Check box item that keeps the pop-up menu visible after clicking, so the user can click and try some options.
      */
     private static class StayOpenCheckBoxMenuItem extends JCheckBoxMenuItem implements AppearanceControl
     {
@@ -498,7 +485,7 @@ public class AppearanceApplication extends JFrame
         private static final long serialVersionUID = 20180206L;
 
         /** Stored selection path. */
-        private static MenuElement[] PATH;
+        private static MenuElement[] path;
         {
             getModel().addChangeListener(new ChangeListener()
             {
@@ -519,7 +506,7 @@ public class AppearanceApplication extends JFrame
          */
         public static void setPath(final MenuElement[] path)
         {
-            StayOpenCheckBoxMenuItem.PATH = path;
+            StayOpenCheckBoxMenuItem.path = path;
         }
 
         /**
@@ -536,14 +523,14 @@ public class AppearanceApplication extends JFrame
         public void doClick(final int pressTime)
         {
             super.doClick(pressTime);
-            for (MenuElement element : PATH)
+            for (MenuElement element : path)
             {
                 if (element instanceof JComponent)
                 {
                     ((JComponent) element).setVisible(true);
                 }
             }
-            JMenu menu = (JMenu) PATH[PATH.length - 3];
+            JMenu menu = (JMenu) path[path.length - 3];
             MenuSelectionManager.defaultManager()
                     .setSelectedPath(new MenuElement[] {(MenuElement) menu.getParent(), menu, menu.getPopupMenu()});
         }

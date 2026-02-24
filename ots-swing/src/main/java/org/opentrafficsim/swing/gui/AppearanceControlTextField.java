@@ -3,7 +3,7 @@ package org.opentrafficsim.swing.gui;
 import javax.swing.JTextField;
 
 /**
- * Text field that ignore appearance on foreground and background.
+ * Text field that ignores appearance on foreground and background.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -14,6 +14,7 @@ import javax.swing.JTextField;
  */
 public class AppearanceControlTextField extends JTextField implements AppearanceControl
 {
+
     /** */
     private static final long serialVersionUID = 20240227L;
 
@@ -42,4 +43,5 @@ public class AppearanceControlTextField extends JTextField implements Appearance
     {
         return "AppearanceControlTextField []";
     }
+
 }

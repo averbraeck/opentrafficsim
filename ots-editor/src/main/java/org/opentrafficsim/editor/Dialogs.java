@@ -8,6 +8,7 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 
 /**
  * Object that is part of {@link OtsEditor} and may be used to show dialogs.
@@ -72,7 +73,8 @@ public class Dialogs
     public void showDescription(final String description, final String title)
     {
         JOptionPane.showMessageDialog(this.editor, "<html><body><p style='width: 400px;'>" + description + "</p></body></html>",
-                title == null ? "Description" : title, JOptionPane.INFORMATION_MESSAGE, DESCRIPTION_ICON);
+                title == null ? "Description" : OtsSimulationPanel.separatedName(title), JOptionPane.INFORMATION_MESSAGE,
+                DESCRIPTION_ICON);
     }
 
     /**
@@ -82,8 +84,9 @@ public class Dialogs
      */
     public void showInvalidMessage(final String invalidMessage, final String title)
     {
-        JOptionPane.showMessageDialog(this.editor, invalidMessage, title == null ? "Invalid" : title,
-                JOptionPane.INFORMATION_MESSAGE, DESCRIPTION_ICON);
+        JOptionPane.showMessageDialog(this.editor, invalidMessage,
+                title == null ? "Invalid" : OtsSimulationPanel.separatedName(title), JOptionPane.INFORMATION_MESSAGE,
+                DESCRIPTION_ICON);
     }
 
     /**
@@ -188,7 +191,8 @@ public class Dialogs
      */
     public void notification(final String notification, final String title)
     {
-        JOptionPane.showMessageDialog(this.editor, notification, title, JOptionPane.WARNING_MESSAGE, DESCRIPTION_ICON);
+        JOptionPane.showMessageDialog(this.editor, notification, OtsSimulationPanel.separatedName(title),
+                JOptionPane.WARNING_MESSAGE, DESCRIPTION_ICON);
     }
 
 }

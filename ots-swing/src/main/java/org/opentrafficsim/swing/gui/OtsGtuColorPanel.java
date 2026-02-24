@@ -29,35 +29,35 @@ import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
 
 /**
- * Let the user select what the colors in the animation mean.
+ * Let the user select what the GTU color in the animation means.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ColorControlPanel extends JPanel implements ActionListener, AppearanceControl
+public class OtsGtuColorPanel extends JPanel implements ActionListener, AppearanceControl
 {
     /** */
     private static final long serialVersionUID = 20150527L;
 
-    /** The combo box that sets the coloring for the GTUs. */
+    /** Combo box that sets the coloring for the GTUs. */
     private final JComboBox<PredicatedColorer> comboBoxGTUColor = new AppearanceControlComboBox<>();
 
-    /** The panel that holds the legend for the currently selected GtuColorer. */
+    /** Panel that holds the legend for the currently selected GTU colorer. */
     private final JPanel legendPanel;
 
     /** GTU colorer manager. */
     private final GtuColorerManager gtuColorerManager = new GtuColorerManager(Color.WHITE);
 
-    /** The GtuColorer that is currently active. */
+    /** GTU colorer that is currently active. */
     private Colorer<? super Gtu> gtuColorer;
 
     /**
-     * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added with
-     * the <code>addItem</code> method.
+     * Constructor.
      */
-    public ColorControlPanel()
+    public OtsGtuColorPanel()
     {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.legendPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
@@ -67,16 +67,16 @@ public class ColorControlPanel extends JPanel implements ActionListener, Appeara
     }
 
     /**
-     * Add one item to this ColorControlPanel.
-     * @param colorer the GtuColorer that will be added
+     * Add GTU colorer.
+     * @param colorer the GTU colorer to add
      */
-    public final void addItem(final Colorer<? super Gtu> colorer)
+    public void addGtuColorer(final Colorer<? super Gtu> colorer)
     {
         if (this.gtuColorer == null)
         {
             this.gtuColorer = colorer;
         }
-        Predicate<Gtu> predicate = (gtu) -> colorer.equals(ColorControlPanel.this.gtuColorer);
+        Predicate<Gtu> predicate = (gtu) -> colorer.equals(OtsGtuColorPanel.this.gtuColorer);
         this.comboBoxGTUColor.addItem(new PredicatedColorer(predicate, colorer));
         this.gtuColorerManager.add(predicate, colorer);
         rebuildLegend();
@@ -139,17 +139,13 @@ public class ColorControlPanel extends JPanel implements ActionListener, Appeara
             for (LegendEntry legendEntry : legendColorer.getLegend())
             {
                 JPanel panel = new JPanel(new BorderLayout());
-                /**
-                 * ColorBox for AppearanceControl.
-                 */
+                /** ColorBox for AppearanceControl. */
                 class ColorBox extends JLabel implements AppearanceControl
                 {
                     /** */
                     private static final long serialVersionUID = 20180206L;
 
-                    /**
-                     * Constructor.
-                     */
+                    /** Constructor. */
                     ColorBox()
                     {
                         super("     ");
@@ -160,7 +156,6 @@ public class ColorControlPanel extends JPanel implements ActionListener, Appeara
                     {
                         return "ColorBox []";
                     }
-
                 }
                 ColorBox colorBox = new ColorBox();
                 colorBox.setOpaque(true); // By default, the label is transparent
@@ -186,21 +181,18 @@ public class ColorControlPanel extends JPanel implements ActionListener, Appeara
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBackground()
     {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isForeground()
     {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setForeground(final Color fg)
     {
@@ -215,7 +207,7 @@ public class ColorControlPanel extends JPanel implements ActionListener, Appeara
     @Override
     public final String toString()
     {
-        return "ColorControlPanel [gtuColorer=" + this.gtuColorer + "]";
+        return "OtsGtucolorPanel [gtuColorer=" + this.gtuColorer + "]";
     }
 
 }

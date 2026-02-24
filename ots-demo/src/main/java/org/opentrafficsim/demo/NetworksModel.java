@@ -529,6 +529,15 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
+     * Returns the paths.
+     * @return paths
+     */
+    public List<List<Lane>> getPaths()
+    {
+        return this.paths;
+    }
+
+    /**
      * Returns minimum distance.
      * @return minimumDistance
      */

@@ -35,14 +35,16 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class OtsSearchPanel extends JPanel implements ActionListener, FocusListener, DocumentListener
 {
+
     /** ... */
     private static final long serialVersionUID = 20200127L;
 
     /** The animation panel. */
-    private final OtsAnimationPanel otsAnimationPanel;
+    private final OtsSimulationPanel otsAnimationPanel;
 
     /** The type-of-object-to-search-for selector. */
     private final JComboBox<ObjectKind<?>> typeToSearch;
@@ -57,7 +59,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
      * Construct a new OtsSearchPanel.
      * @param otsAnimationPanel the animation panel
      */
-    public OtsSearchPanel(final OtsAnimationPanel otsAnimationPanel)
+    public OtsSearchPanel(final OtsSimulationPanel otsAnimationPanel)
     {
         this.otsAnimationPanel = otsAnimationPanel;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -87,11 +89,13 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         }};
         this.typeToSearch = new JComboBox<ObjectKind<?>>(objectKinds);
         this.typeToSearch.setPreferredSize(new Dimension(55, 25));
+        this.typeToSearch.setMaximumSize(new Dimension(100, 25));
         this.add(this.typeToSearch);
 
-        /** Text field with appearance control. */
         this.idTextField = new AppearanceControlTextField();
+        this.idTextField.setMinimumSize(new Dimension(100, 25));
         this.idTextField.setPreferredSize(new Dimension(100, 25));
+        this.idTextField.setMaximumSize(new Dimension(100, 25));
         this.add(this.idTextField);
         this.trackObject = new JCheckBox("Track");
         this.add(this.trackObject);
@@ -164,7 +168,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     }
 
     /**
-     * Entries in the typeToSearch JComboBox of the OTS search panel.
+     * Entries in the typeToSearch {@link JComboBox} of the OTS search panel.
      * @param <T> Type of object identified by key
      */
     abstract static class ObjectKind<T extends Locatable & Identifiable>
@@ -173,8 +177,8 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         private final String key;
 
         /**
-         * Construct a new ObjectKind (entry in the combo box).
-         * @param key the key of the new ObjectKind
+         * Constructor.
+         * @param key key as shown to the user
          */
         ObjectKind(final String key)
         {
@@ -194,7 +198,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
          * Lookup an object of type T in an OTS network.
          * @param network the OTS network
          * @param id id of the object to return
-         * @return the object in the network of the correct type and matching id, empty if no matching object was found.
+         * @return the object in the network of the correct type and matching id, empty if no matching object was found
          */
         abstract Optional<T> searchNetwork(Network network, String id);
 
