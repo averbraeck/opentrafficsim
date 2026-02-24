@@ -4,6 +4,7 @@ import java.util.SortedSet;
 
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -49,6 +50,10 @@ public final class IncentiveStayOnSlowLanes implements VoluntaryIncentive, State
             final ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
+        if (context.getSpeed().lt(context.getParameters().getParameter(ParameterTypes.VCONG)))
+        {
+            return new Desire(0.0, 0.0);
+        }
         InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         // start at fastest lane
         SortedSet<RelativeLane> rootCrossSection = context.getPerception().getLaneStructure().getRootCrossSection();
