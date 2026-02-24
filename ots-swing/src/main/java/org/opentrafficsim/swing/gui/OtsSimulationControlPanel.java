@@ -441,7 +441,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     }
 
     @Override
-    public final void actionPerformed(final ActionEvent actionEvent)
+    public void actionPerformed(final ActionEvent actionEvent)
     {
         String actionCommand = actionEvent.getActionCommand();
         Logger.ots().trace("actionCommand: " + actionCommand);
@@ -574,7 +574,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     /**
      * Pause the simulator.
      */
-    public final void autoPauseSimulator()
+    public void autoPauseSimulator()
     {
         Logger.ots().trace("OtsControlPanel.autoPauseSimulator entered");
         if (getSimulator().isStartingOrRunning())
@@ -652,7 +652,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     }
 
     @Override
-    public final void propertyChange(final PropertyChangeEvent evt)
+    public void propertyChange(final PropertyChangeEvent evt)
     {
         // timeEdit value changed, schedule stop event (and cancel possible previous event)
         Logger.ots().trace("PropertyChanged: " + evt);
@@ -690,7 +690,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
      * Return simulator.
      * @return simulator
      */
-    public final OtsSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -699,13 +699,13 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
      * Return time font.
      * @return font for the time display
      */
-    public final Font getTimeFont()
+    public Font getTimeFont()
     {
         return this.timeFont;
     }
 
     @Override
-    public final void notify(final Event event)
+    public void notify(final Event event)
     {
         if (event.getType().equals(Replication.END_REPLICATION_EVENT) || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
@@ -726,7 +726,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "OtsControlPanel [simulatorTime=" + this.simulator.getSimulatorTime() + "]";
     }
@@ -734,7 +734,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     /**
      * {@link JLabel} that displays the simulation time.
      */
-    public class ClockLabel extends JLabel implements AppearanceControl
+    private final class ClockLabel extends JLabel implements AppearanceControl
     {
 
         /** */
@@ -756,7 +756,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
          * Construct a clock panel.
          * @param speedLabel speed label
          */
-        ClockLabel(final JLabel speedLabel)
+        private ClockLabel(final JLabel speedLabel)
         {
             super("00:00:00" + OtsSimulationControlPanel.this.decimalSeparator + "000");
             this.speedLabel = speedLabel;
@@ -838,7 +838,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
          * Return speed label.
          * @return speed label
          */
-        protected JLabel getSpeedLabel()
+        private JLabel getSpeedLabel()
         {
             return this.speedLabel;
         }
@@ -848,7 +848,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
          * @param t simulation time
          * @return simulation speed
          */
-        protected double getSpeed(final double t)
+        private double getSpeed(final double t)
         {
             double speed = (t - this.prevSimTime) / (0.001 * UPDATEINTERVAL);
             this.prevSimTime = t;
@@ -882,7 +882,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
         }
 
         @Override
-        public final String toString()
+        public String toString()
         {
             return "ClockPanel";
         }

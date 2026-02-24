@@ -245,7 +245,7 @@ public class SwingPlot extends JFrame
      * Manually set status label from sub class. Will be overwritten by a moving mouse pointer over the axes.
      * @param label label to set
      */
-    protected final void setStatusLabel(final String label)
+    protected void setStatusLabel(final String label)
     {
         if (this.statusLabel != null)
         {

@@ -342,7 +342,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     /**
      * Adds the console tab.
      */
-    public final void addConsoleTab()
+    public void addConsoleTab()
     {
         ConsoleOutput console = new ConsoleOutput();
         console.setBorder(null);
@@ -353,7 +353,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Return tabbed pane.
      * @return tabbed pane
      */
-    public final TabbedContentPane getTabbedPane()
+    public TabbedContentPane getTabbedPane()
     {
         return this.tabbedPane;
     }
@@ -362,7 +362,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Return simulator.
      * @return simulator
      */
-    public final OtsSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
@@ -442,7 +442,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * @param initiallyVisible whether the class is initially shown or not
      * @param nextToPrevious button that needs to be placed next to the previous button
      */
-    public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
+    public void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
             final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean nextToPrevious)
     {
         JToggleButton button;
@@ -493,7 +493,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * @param toolTipText the tool tip text to show when hovering over the button
      * @param initiallyVisible whether the class is initially shown or not
      */
-    public final void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
+    public void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
             final String toolTipText, final boolean initiallyVisible)
     {
         JToggleButton button;
@@ -525,7 +525,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Add a text to explain animation classes.
      * @param text the text to show
      */
-    public final void addToggleText(final String text)
+    public void addToggleText(final String text)
     {
         JPanel textBox = new JPanel();
         textBox.setLayout(new BoxLayout(textBox, BoxLayout.X_AXIS));
@@ -540,7 +540,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * @param gisMap the GIS map for which the toggles have to be added
      * @param toolTipText the tool tip text to show when hovering over the button
      */
-    public final void addAllToggleGISButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
+    public void addAllToggleGISButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
     {
         addToggleText(" ");
         addToggleText(header);
@@ -557,7 +557,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * @param gisMap the map
      * @param toolTipText the tool tip text
      */
-    public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
+    public void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
             final String toolTipText)
     {
         JToggleButton button;
@@ -583,7 +583,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Set a GIS layer to be shown in the animation to true.
      * @param layerName the name of the GIS-layer that has to be shown
      */
-    public final void showGISLayer(final String layerName)
+    public void showGISLayer(final String layerName)
     {
         GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
@@ -598,7 +598,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Set a GIS layer to be hidden in the animation to true.
      * @param layerName the name of the GIS-layer that has to be hidden
      */
-    public final void hideGISLayer(final String layerName)
+    public void hideGISLayer(final String layerName)
     {
         GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
@@ -613,7 +613,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Toggle a GIS layer to be displayed in the animation to its reverse value.
      * @param layerName the name of the GIS-layer that has to be turned off or vice versa
      */
-    public final void toggleGISLayer(final String layerName)
+    public void toggleGISLayer(final String layerName)
     {
         GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
@@ -633,7 +633,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     }
 
     @Override
-    public final void actionPerformed(final ActionEvent actionEvent)
+    public void actionPerformed(final ActionEvent actionEvent)
     {
         String actionCommand = actionEvent.getActionCommand();
         Logger.ots().trace("Action command is " + actionCommand);
@@ -681,7 +681,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Easy access to the AnimationPanel.
      * @return animation panel
      */
-    public final AnimationPanel getAnimationPanel()
+    public AnimationPanel getAnimationPanel()
     {
         return this.otsAnimationPanel;
     }
@@ -726,7 +726,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Update the check-mark related to a programmatically changed animation state.
      * @param locatableClass class to show the check-mark for
      */
-    public final void updateAnimationClassCheckBox(final Class<? extends Locatable> locatableClass)
+    public void updateAnimationClassCheckBox(final Class<? extends Locatable> locatableClass)
     {
         JToggleButton button = this.toggleButtons.get(locatableClass);
         if (button == null)
@@ -739,7 +739,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     /**
      * Display the latest world coordinate based on the mouse position on the screen.
      */
-    protected final void updateWorldCoordinate()
+    private void updateWorldCoordinate()
     {
         String x = String.format(COORD_FORMAT, this.otsAnimationPanel.getWorldCoordinate().getX());
         String y = String.format(COORD_FORMAT, this.otsAnimationPanel.getWorldCoordinate().getY());
@@ -776,7 +776,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * @param formatted formatted number
      * @return formatted number with leading zeros faded
      */
-    protected String fadeLeadingZeros(final String formatted)
+    private String fadeLeadingZeros(final String formatted)
     {
         Matcher m = LEADING_ZEROS.matcher(formatted);
         if (!m.matches())
@@ -796,7 +796,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * GTU colorer manager from the GTU color panel.
      * @return GTU colorer manager from the GTU color panel
      */
-    public final GtuColorerManager getGtuColorerManager()
+    public GtuColorerManager getGtuColorerManager()
     {
         return this.gtuColorPanel.getGtuColorerManager();
     }

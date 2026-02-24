@@ -138,31 +138,31 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     }
 
     @Override
-    public final void focusGained(final FocusEvent e)
+    public void focusGained(final FocusEvent e)
     {
         actionPerformed(null);
     }
 
     @Override
-    public final void focusLost(final FocusEvent e)
+    public void focusLost(final FocusEvent e)
     {
         // Do nothing
     }
 
     @Override
-    public final void insertUpdate(final DocumentEvent e)
+    public void insertUpdate(final DocumentEvent e)
     {
         actionPerformed(null);
     }
 
     @Override
-    public final void removeUpdate(final DocumentEvent e)
+    public void removeUpdate(final DocumentEvent e)
     {
         actionPerformed(null);
     }
 
     @Override
-    public final void changedUpdate(final DocumentEvent e)
+    public void changedUpdate(final DocumentEvent e)
     {
         actionPerformed(null);
     }

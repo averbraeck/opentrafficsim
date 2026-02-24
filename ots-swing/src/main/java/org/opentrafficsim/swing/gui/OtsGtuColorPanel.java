@@ -92,7 +92,7 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
     }
 
     @Override
-    public final void actionPerformed(final ActionEvent e)
+    public void actionPerformed(final ActionEvent e)
     {
         PredicatedColorer newColorerWrapper = (PredicatedColorer) this.comboBoxGTUColor.getSelectedItem();
         if (null != newColorerWrapper)
@@ -205,7 +205,7 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "OtsGtucolorPanel [gtuColorer=" + this.gtuColorer + "]";
     }

@@ -170,7 +170,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * Starts the simulation.
      * @throws Exception on any exception
      */
-    public final void start() throws Exception
+    public void start() throws Exception
     {
         if (isAutorun())
         {
@@ -223,7 +223,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * Returns the simulator.
      * @return simulator
      */
-    public final OtsSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return AbstractSimulationScript.this.simulator;
     }
@@ -232,7 +232,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * Returns the network.
      * @return network
      */
-    public final RoadNetwork getNetwork()
+    public RoadNetwork getNetwork()
     {
         return AbstractSimulationScript.this.network;
     }
