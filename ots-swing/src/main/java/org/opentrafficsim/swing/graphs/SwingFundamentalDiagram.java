@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.opentrafficsim.swing.graphs;
 
 import java.awt.BasicStroke;
@@ -13,6 +10,7 @@ import java.util.Optional;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
@@ -31,7 +29,7 @@ import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.GraphUtil;
 
 /**
- * Embed a FundamentalDiagram in a Swing JPanel.
+ * Embed a {@link FundamentalDiagram} in a swing {@link JPanel}.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -61,7 +59,6 @@ public class SwingFundamentalDiagram extends SwingPlot
                 : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
         return Optional.of(new ChartMouseListener()
         {
-            @SuppressWarnings("unchecked")
             @Override
             public void chartMouseClicked(final ChartMouseEvent event)
             {
@@ -111,7 +108,6 @@ public class SwingFundamentalDiagram extends SwingPlot
                 }
             }
 
-            @SuppressWarnings("unchecked")
             @Override
             public void chartMouseMoved(final ChartMouseEvent event)
             {
