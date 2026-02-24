@@ -38,10 +38,8 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -148,15 +146,13 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     }
 
     /**
-     * Set animation toggles. The default sets standard icon toggles.
-     * @param animationPanel animation panel
+     * Set simulation toggles. The default sets standard icon toggles.
+     * @param simulationPanel simulation panel
      */
-    private static void setAnimationToggles(final OtsSimulationPanel animationPanel)
+    private static void setAnimationToggles(final OtsSimulationPanel simulationPanel)
     {
-        AnimationToggles.setIconAnimationTogglesStandard(animationPanel);
-        animationPanel.getAnimationPanel().toggleClass(Link.class);
-        animationPanel.getAnimationPanel().toggleClass(Node.class);
-        animationPanel.getAnimationPanel().showClass(SpeedSign.class);
+        AnimationToggles.setIconAnimationTogglesStandard(simulationPanel);
+        AnimationToggles.showAnimationClass(simulationPanel, SpeedSign.class);
     }
 
     /**
