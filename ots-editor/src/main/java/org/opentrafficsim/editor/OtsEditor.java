@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -193,10 +192,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /** Status label. */
     private final JLabel statusLabel;
 
-    /** Prevents a popup when an expand node is being clicked. */
+    /** Prevents a pop-up when an expand node is being clicked. */
     private boolean mayPresentChoice = true;
 
-    /** Node for which currently a choice popup is being shown, {@code null} if there is none. */
+    /** Node for which currently a choice pop-up is being shown, {@code null} if there is none. */
     private XsdTreeNode choiceNode;
 
     /** Map of custom icons, to be loaded as the icon for a node is being composed based in its properties. */
@@ -226,28 +225,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /** Auto save task. */
     private TimerTask autosave;
 
-    // navigate
-
-    /** Menu item for jumping back from coupled node. */
-    private JMenuItem backItem;
-
-    /** Candidate keyref node that was coupled from to a key node, may be {@code null}. */
-    private XsdTreeNode candidateBackNode;
-
-    /** Keyref node that was coupled from to a key node, may be {@code null}. */
-    private final LinkedList<XsdTreeNode> backNode = new LinkedList<>();
-
-    /** Candidate attribute of back node referring to coupled node, may be {@code null}. */
-    private String candidateBackAttribute;
-
-    /** Attribute of back node referring to coupled node, may be {@code null}. */
-    private final LinkedList<String> backAttribute = new LinkedList<>();
-
-    /** Menu item for jumping to coupled node. */
-    private JMenuItem coupledItem;
-
-    /** Key node that is coupled to from a keyref node, may be {@code null}. */
-    private XsdTreeNode coupledNode;
+    /** Navigation (F3/F4). */
+    private final Navigation navigation = new Navigation(this, APPLICATION_STORE.getInt("max_navigate"));
 
     // copy/paste
 
@@ -419,7 +398,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Makes the divider clickable cause the panel to exchange screen size the other way around.
+     * Makes the divider clickable causing the panel to exchange screen size the other way around.
      * @param pane split pane to make click-flippable.
      */
     private void makeClickFlippable(final JSplitPane pane)
@@ -576,7 +555,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             CellEditor editor = this.treeTable.getCellEditor();
             if (editor != null)
             {
-                editor.cancelCellEditing();
+                editor.stopCellEditing();
             }
         }
         if (this.attributesTable.isEditing())
@@ -584,7 +563,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             CellEditor editor = this.attributesTable.getCellEditor();
             if (editor != null)
             {
-                editor.cancelCellEditing();
+                editor.stopCellEditing();
             }
         }
         List<XsdTreeNode> nodePath = node.getPath();
@@ -682,46 +661,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
         JMenu navigateMenu = new JMenu("Navigate");
         menuBar.add(navigateMenu);
-        this.backItem = new JMenuItem("Go back");
-        this.backItem.setEnabled(false);
-        this.backItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
-        navigateMenu.add(this.backItem);
-        this.backItem.addActionListener((a) ->
-        {
-            show(this.backNode.pollLast(), this.backAttribute.pollLast());
-            if (this.backNode.isEmpty())
-            {
-                this.backItem.setText("Go back");
-                this.backItem.setEnabled(false);
-            }
-            else
-            {
-                XsdTreeNode back = this.backNode.peekLast();
-                this.backItem.setText("Go back to " + back.getNodeName() + (back.isIdentifiable() ? " " + back.getId() : ""));
-                this.backItem.setEnabled(true);
-            }
-        });
-        this.coupledItem = new JMenuItem("Go to coupled item");
-        this.coupledItem.setEnabled(false);
-        this.coupledItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0));
-        navigateMenu.add(this.coupledItem);
-        this.coupledItem.addActionListener((a) ->
-        {
-            if (this.coupledNode != null)
-            {
-                this.backNode.add(this.candidateBackNode);
-                this.backAttribute.add(this.candidateBackAttribute);
-                while (this.backNode.size() > APPLICATION_STORE.getInt("max_navigate"))
-                {
-                    this.backNode.remove();
-                    this.backAttribute.remove();
-                }
-                XsdTreeNode back = OtsEditor.this.backNode.peekLast();
-                this.backItem.setText("Go back to " + back.getNodeName() + (back.isIdentifiable() ? " " + back.getId() : ""));
-                this.backItem.setEnabled(this.backNode.peekLast() != null);
-                show(OtsEditor.this.coupledNode, null);
-            }
-        });
+        navigateMenu.add(new JMenuItem(this.navigation.getGoBackAction()));
+        navigateMenu.add(new JMenuItem(this.navigation.getGotoCoupledNodeAction()));
     }
 
     /**
@@ -779,20 +720,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public void setCoupledNode(final XsdTreeNode toNode, final XsdTreeNode fromNode, final String fromAttribute)
     {
-        if (toNode == null)
-        {
-            this.coupledItem.setEnabled(false);
-            this.coupledItem.setText("Go to coupled item");
-        }
-        else
-        {
-            this.coupledItem.setEnabled(true);
-            this.coupledItem.setText("Go to " + (fromAttribute != null ? fromNode.getAttributeValue(fromAttribute)
-                    : (fromNode.isIdentifiable() ? fromNode.getId() : fromNode.getValue())));
-        }
-        this.coupledNode = toNode;
-        this.candidateBackNode = fromNode;
-        this.candidateBackAttribute = fromAttribute;
+        this.navigation.setCoupledNode(toNode, fromNode, fromAttribute);
     }
 
     /**
@@ -1526,9 +1454,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             setUnsavedChanges(false);
             setStatusLabel(postLoadStatus);
             this.undo.updateButtons();
-            this.backItem.setEnabled(false);
-            this.coupledItem.setEnabled(false);
-            this.coupledItem.setText("Go to coupled item");
+            this.navigation.clear();
             this.treeTable.updateUI(); // knowing/changing the directory may change validation status through imports
             if (updateRecentFiles)
             {
