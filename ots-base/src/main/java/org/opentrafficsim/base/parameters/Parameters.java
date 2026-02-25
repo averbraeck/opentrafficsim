@@ -27,7 +27,8 @@ public interface Parameters
 
     /**
      * Set parameter value of given parameter type. This method claims setting the value by the key. No other key may be used to
-     * set the parameter.
+     * set the parameter. Different locations of a single logical unit may set the same parameter (with claim) if they share a
+     * common key to do so.
      * @param parameterType the parameter type
      * @param value new value for the parameter of type {@code parameterType}
      * @param key key object for unique right to set the parameter value
