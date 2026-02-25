@@ -28,6 +28,7 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
+import org.djutils.math.AngleUtil;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -48,6 +49,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.network.CrossSectionElement;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
 import org.opentrafficsim.road.network.CrossSectionLink;
+import org.opentrafficsim.road.network.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.LaneType;
@@ -55,7 +57,6 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.Shoulder;
 import org.opentrafficsim.road.network.Stripe;
 import org.opentrafficsim.road.network.StripeData;
-import org.opentrafficsim.road.network.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
 import org.opentrafficsim.road.network.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.conflict.ConflictBuilder.FixedWidthGenerator;
@@ -176,6 +177,7 @@ public final class NetworkParser
             if (!nodeDirections.containsKey(xmlNode.getId()))
             {
                 Logger.ots().warn("Warning: Node {} does not have a (calculated) direction", xmlNode.getId());
+                nodeDirections.put(xmlNode.getId(), Direction.ZERO);
             }
         }
 
@@ -268,7 +270,9 @@ public final class NetworkParser
                 {
                     endHeading -= 2.0 * Math.PI;
                 }
-                designLine = new Arc2d(start, radius, left, Math.abs(endHeading) - startHeading);
+
+                designLine = new Arc2d(start, radius, left,
+                        AngleUtil.normalizeAroundPi(left ? endHeading - startHeading : startHeading - endHeading));
             }
             else if (xmlLink.getBezier() != null)
             {

@@ -39,6 +39,7 @@ import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.reference.ReferenceType;
+import org.djutils.math.AngleUtil;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.OtsRuntimeException;
@@ -1303,7 +1304,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          */
         private void setAttribute(final String attribute)
         {
-            if (this.shapeNode.reportInvalidAttributeValue(this.shapeNode.getAttributeIndexByName(attribute)).isEmpty())
+            if (!this.shapeNode.reportInvalidAttributeValue(this.shapeNode.getAttributeIndexByName(attribute)).isEmpty())
             {
                 // invalid value, do nothing
                 return;
@@ -1410,7 +1411,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         endHeading -= 2.0 * Math.PI;
                     }
-                    Angle angle = Angle.ofSI(left ? endHeading - from.dirZ : from.dirZ - endHeading);
+                    Angle angle =
+                            Angle.ofSI(AngleUtil.normalizeAroundPi(left ? endHeading - from.dirZ : from.dirZ - endHeading));
                     return new Arc2d(from, this.radius.si, left, angle.si);
                 default:
                     throw new OtsRuntimeException(
