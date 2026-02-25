@@ -16,7 +16,8 @@ public enum Appearance
 {
 
     /** MOTUS mimic. Nodes not visible. */
-    MOTUS("Motus", new Color(236, 233, 216), Color.BLACK, Color.BLACK, "Verdana"),
+    // Original MOTUS font was Verdana, but this does not support thin space.
+    MOTUS("Motus", new Color(236, 233, 216), Color.BLACK, Color.BLACK, "Tahoma"),
 
     /** Green. */
     FOSIM("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Dialog"),
