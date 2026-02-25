@@ -10,7 +10,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
@@ -124,6 +123,8 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
         private Boolean startCondition = true;
 
+        private boolean slowLaneChange = false;
+
 
         // ----------------------------------------------------------------------
         // Construction
@@ -132,11 +133,26 @@ public class SimpleLaneChangePattern extends ManeuverPattern
         /** ActionStatePerformLaneChange constructor.
          * @param pattern
          * @param direction
+         * @throws ParameterException
          */
         public PerformLaneChangeState(final ManeuverPattern p) {
             super(p);
             this.direction = this.vehicle.getLaneChangeDesire().dominantDirection();
             this.originLane = this.vehicle.getGtu().getLane();
+
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            if (ego.getEgoSpeed().si < 7.0) {
+                this.slowLaneChange = true;
+                // Reduce the lane change duration to 1.5s for more efficient merging in congested conditions.
+                try
+                {
+                    this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR, this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
+                }
+                catch (ParameterException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
         }
 
         /** ActionStatePerformLaneChange constructor.
@@ -147,6 +163,20 @@ public class SimpleLaneChangePattern extends ManeuverPattern
             super(p);
             this.direction = direction;
             this.originLane = this.vehicle.getGtu().getLane();
+
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            if (ego.getEgoSpeed().si < 7.0) {
+                this.slowLaneChange = true;
+                // Reduce the lane change duration to 1.5s for more efficient merging in congested conditions.
+                try
+                {
+                    this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR, this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
+                }
+                catch (ParameterException exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
         }
 
         // ----------------------------------------------------------------------
@@ -206,7 +236,7 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
             if (!this.vehicle.getLaneChange().isChangingLane()) {
                 Speed resultingSpeed = egoSpeed.plus(minAcc.times(this.maneuverPattern.getPatternSpecificTimestep()));
-                this.startCondition = (resultingSpeed.gt(Speed.instantiateSI(5.0)) || neighborsCtx.checkIfLaneChangeIsPossible(this.direction));
+                this.startCondition = (resultingSpeed.gt(Speed.instantiateSI(5.0)) || neighborsCtx.getIfLaneChangePossible(this.direction));
             }
 
             if (!this.startCondition) {
@@ -247,6 +277,9 @@ public class SimpleLaneChangePattern extends ManeuverPattern
                     && !this.originLane.equals(this.vehicle.getGtu().getLane());
 
             if (finished) {
+                if (this.slowLaneChange) {
+                    this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                }
                 return finishManeuver();
             }
             return null;
@@ -255,19 +288,17 @@ public class SimpleLaneChangePattern extends ManeuverPattern
         /**
          * Checks whether the lane-change should be aborted (safety or desire violation).
          * @return
+         * @throws NetworkException
+         * @throws GtuException
          */
         @Override
-        public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException {
+        public SimpleOperationalPlan abort() throws ParameterException, GtuException, NetworkException {
 
             if (!this.startCondition) {
-                try
-                {
-                    return finishManeuver();
+                if (this.slowLaneChange) {
+                    this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
                 }
-                catch (ParameterException | GtuException | NetworkException exception)
-                {
-                    exception.printStackTrace();
-                }
+                return finishManeuver();
             }
             return null;
         }

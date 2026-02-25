@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -224,14 +225,20 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
             HeadwayGtu follower = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class).getFollower(dir);
             if (follower == null)
             {
-                Speed followerSpeed = getEgoSpeed();
+                desiredRearHeadway = Length.NEGATIVE_INFINITY; // No follower, so no rear headway constraint
             }
             else
             {
                 Speed followerSpeed = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class).getFollower(dir).getSpeed();
+                if (followerSpeed.lt(new Speed(15.0, SpeedUnit.KM_PER_HOUR)))
+                {
+                    desiredRearHeadway = Length.instantiateSI(1.5); // If follower is very slow, assume it can be very close without safety issues
+                }
+                else
+                {
+                    desiredRearHeadway =  followerSpeed.times(this.vehicle.getCurrentRelaxedHeadway()).plus(this.vehicle.getParameters().getParameter(ParameterTypes.S0));
+                }
             }
-
-            desiredRearHeadway =  getEgoSpeed().times(this.vehicle.getCurrentRelaxedHeadway()).plus(this.vehicle.getParameters().getParameter(ParameterTypes.S0));
         }
         catch (ParameterException exception)
         {

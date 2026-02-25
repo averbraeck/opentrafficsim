@@ -22,6 +22,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.Mer
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.SocialInteractionsChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive.GapSearchPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive.SimpleLaneChangePattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel.AnticipatingUpstreamMergingSpeedPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel.MergeCooperationPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel.PreventUndercuttingPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
@@ -129,6 +130,7 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
 
         planner.addParallelManeuverPattern(new MergeCooperationPattern(planner));
         planner.addParallelManeuverPattern(new PreventUndercuttingPattern(planner));
+        planner.addParallelManeuverPattern(new AnticipatingUpstreamMergingSpeedPattern(planner));
     }
 
 

@@ -143,8 +143,6 @@ public class GapSearchPattern extends ManeuverPattern {
             }
             else {
                 targetLaneSpeed = macro.getAverageSpeedCurrent();
-                System.out.println("GTU " + this.vehicle.getGtu().getId() +
-                        " GapSearchPattern - MatchTargetLaneSpeedState - executeControl(): Target lane not available, using current lane speed as fallback: " + targetLaneSpeed);
             }
 
             Acceleration aToMatch = CarFollowingUtil.approachTargetSpeed(
@@ -155,7 +153,7 @@ public class GapSearchPattern extends ManeuverPattern {
                     //infra.getDistanceToLaneEnd().times(0.9),
                     Length.instantiateSI(20.0), // We want to match the speed well before the end of the lane to allow for gap search and adjustments
                     targetLaneSpeed);
-            Acceleration egoDecel = this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
+            Acceleration egoDecel = ego.getEgoDecelerationThreshold(this.pattern.targetDirection);
             acc = Acceleration.min(acc, Acceleration.max(aToMatch, egoDecel));
 
             SimpleOperationalPlan plan = new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
@@ -306,12 +304,12 @@ public class GapSearchPattern extends ManeuverPattern {
 
                 // Determine distance available to adjust speed
                 // We aim to have the speed matched when we reach the buffer area
-                Length distToMerge = infra.getDistanceToLaneEnd().minus(GapSearchPattern.RAMP_END_BUFFER);
+                //Length distToMerge = infra.getDistanceToLaneEnd().minus(GapSearchPattern.RAMP_END_BUFFER);
 
                 // Sanity check: if we are already inside the buffer, use a tiny distance to force immediate adaptation
-                if (distToMerge.si < 1.0) {
-                    distToMerge = Length.instantiateSI(1.0);
-                }
+                //if (distToMerge.si < 1.0) {
+                //    distToMerge = Length.instantiateSI(1.0);
+                //}
 
                 // Calculate kinematic acceleration required to reach vTarget over distToMerge
                 Acceleration aMatch = CarFollowingUtil.approachTargetSpeed(
@@ -319,7 +317,7 @@ public class GapSearchPattern extends ManeuverPattern {
                         params,
                         ego.getEgoSpeed(),
                         infra.getCurrentSpeedLimit(),
-                        distToMerge,
+                        Length.instantiateSI(20.0), // We want to match the speed well before the end of the lane to allow for gap search and adjustments
                         vTarget
                 );
 
@@ -349,10 +347,21 @@ public class GapSearchPattern extends ManeuverPattern {
         public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException {
             final NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
 
-            // A. Check for immediate opportunities (e.g., adjacent lane is empty or cooperative neighbor)
+         // A. Check for immediate opportunities (e.g., adjacent lane is empty or cooperative neighbor)
             if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection())) {
                 return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
             }
+
+            final InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+            final EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
+            RelativeLane targetLane = this.pattern.getTargetDirection().isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
+            Speed vCong = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
+
+            if (macro.getAverageSpeed(targetLane).si <= vCong.si || infra.getDistanceToLaneEnd().si <= 150.0) {
+                return transitionTo(new congestedGapSearchState(this.maneuverPattern));
+            }
+
 
             // B. Active Search: Look for a specific gap using the Berghaus & Oeser logic
             //    This now correctly handles upstream vs. downstream search based on relative speed.
@@ -363,9 +372,6 @@ public class GapSearchPattern extends ManeuverPattern {
                 return transitionTo(new AccelerateToTargetGapState(this.maneuverPattern));
             }
 
-            // C. Emergency Check: Are we running out of road?
-            final InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-            final EgoContext ego = this.vehicle.getContext(EgoContext.class);
 
             // Calculate braking requirement for the buffer point
             Acceleration requiredStopAccel = CarFollowingUtil.stop(
@@ -755,6 +761,8 @@ public class GapSearchPattern extends ManeuverPattern {
 
         private GapSearchPattern pattern;
 
+        private boolean slowLaneChange = false;
+
 
         // ----------------------------------------------------------------------
         // Construction
@@ -763,13 +771,22 @@ public class GapSearchPattern extends ManeuverPattern {
         /** ActionStatePerformLaneChange constructor.
          * @param pattern
          * @param direction
+         * @throws ParameterException
          */
-        public ExecuteLaneChangeState(final ManeuverPattern p, final LateralDirectionality direction) {
+        public ExecuteLaneChangeState(final ManeuverPattern p, final LateralDirectionality direction) throws ParameterException {
             super(p);
             this.direction = direction;
             this.pattern = (GapSearchPattern) p;
 
             this.originLane = this.vehicle.getGtu().getLane();
+
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            if (ego.getEgoSpeed().si < 7.0) {
+                this.slowLaneChange = true;
+                // Reduce the lane change duration to 1.5s for more efficient merging in congested conditions.
+                this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR, this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
+            }
+
         }
 
         // ----------------------------------------------------------------------
@@ -794,7 +811,6 @@ public class GapSearchPattern extends ManeuverPattern {
 
             Speed egoSpeed = egoCtx.getEgoSpeed();
             Parameters params = this.vehicle.getGtu().getParameters();
-
             this.vehicle.setTargetDesiredHeadway(this.vehicle.getParameters().getParameter(ParameterTypes.T)
                     .times(this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange)));
 
@@ -850,6 +866,10 @@ public class GapSearchPattern extends ManeuverPattern {
                     && !this.originLane.equals(this.vehicle.getGtu().getLane());
 
             if (finished) {
+                if (this.slowLaneChange) {
+                    // Reset lane change duration to default after completion
+                    this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                }
                 return finishManeuver();
             }
             return null;
@@ -878,6 +898,10 @@ public class GapSearchPattern extends ManeuverPattern {
                     return null;
                 }
                 else {
+                    if (this.slowLaneChange) {
+                        // Reset lane change duration to default if aborting
+                        this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                    }
                     return finishManeuver();
                 }
             }
@@ -914,20 +938,23 @@ public class GapSearchPattern extends ManeuverPattern {
             Iterable<HeadwayGtu> leaderIt = neigh.getLeaders(this.pattern.getTargetDirection());
 
             Acceleration aCf = ego.getCurrentCarFollowingAcceleration();
-
+            Length distanceToLeader;
             if (this.targetLeaderId == null) {
                 // Initial search for a leader to follow
                 Double safetyReductionFactor = this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange)*1.05;
                 Duration tDesired = this.vehicle.getParameters().getParameter(ParameterTypes.T).times(safetyReductionFactor);
-                this.vehicle.getParameters().setParameterResettable(ParameterTypes.T, tDesired);
-                Acceleration egoDecelThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
+                this.vehicle.setTargetDesiredHeadway(tDesired);
+                //this.vehicle.getParameters().setParameterResettable(ParameterTypes.T, tDesired);
+                Acceleration egoDecelThreshold = ego.getEgoDecelerationThreshold(this.pattern.getTargetDirection());
                 for (HeadwayGtu leader : leaderIt) {
+                    // If the leader is at standstill, we will target a position parallel to already be in reach of the gap
+                    distanceToLeader = leader.getSpeed().si > 3.0 ? leader.getDistance() : leader.getDistance().minus(this.vehicle.getGtu().getLength());
                     Acceleration aTarget = CarFollowingUtil.followSingleLeader(
                             this.vehicle.getCarFollowingModel(),
                             this.vehicle.getParameters(),
                             ego.getEgoSpeed(),
                             this.vehicle.getContext(InfrastructureContext.class).getCurrentSpeedLimit(),
-                            leader.getDistance(),
+                            distanceToLeader,
                             leader.getSpeed());
                     if (aTarget.si > egoDecelThreshold.si & aTarget.si < aCf.si) {
                         this.targetLeaderId = leader.getId();
@@ -936,7 +963,7 @@ public class GapSearchPattern extends ManeuverPattern {
                     }
 
                 }
-                this.vehicle.getParameters().resetParameter(ParameterTypes.T);
+                //this.vehicle.getParameters().resetParameter(ParameterTypes.T);
             }
             else {
                 // Follow the previously identified leader
@@ -949,7 +976,7 @@ public class GapSearchPattern extends ManeuverPattern {
                                     this.vehicle.getParameters(),
                                     ego.getEgoSpeed(),
                                     this.vehicle.getContext(InfrastructureContext.class).getCurrentSpeedLimit(),
-                                    leader.getDistance(),
+                                    leader.getDistance().minus(this.vehicle.getGtu().getLength()),
                                     leader.getSpeed());
                         }
                         else {
@@ -958,9 +985,9 @@ public class GapSearchPattern extends ManeuverPattern {
                                      this.vehicle.getParameters(),
                                      ego.getEgoSpeed(),
                                      this.vehicle.getContext(InfrastructureContext.class).getCurrentSpeedLimit(),
-                                     leader.getDistance().minus(this.vehicle.getParameters().getParameter(ParameterTypes.S0)));
+                                     leader.getDistance().minus(this.vehicle.getGtu().getLength())); // .minus(this.vehicle.getParameters().getParameter(ParameterTypes.S0)));
                         }
-                        aTarget = Acceleration.max(aTarget, this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold));
+                        aTarget = Acceleration.max(aTarget, ego.getEgoDecelerationThreshold(this.pattern.getTargetDirection()));
                         aCf = Acceleration.min(aCf, aTarget);
                         break;
                     }
@@ -988,6 +1015,16 @@ public class GapSearchPattern extends ManeuverPattern {
             final InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
             final EgoContext ego = this.vehicle.getContext(EgoContext.class);
             final Parameters params = this.vehicle.getParameters();
+            HeadwayGtu leader = neigh.getLeader(this.pattern.getTargetDirection());
+
+            // if we are near to standstill and the leader is accelerating, we might be in a situation where we are waiting for the gap
+            // to open up while the leader starts moving. In this case, we should not switch to emergency braking yet, as the gap might become available soon.
+            if (ego.getEgoSpeed().si < 2.0 && leader.getAcceleration().si > 0.5) {
+                //System.out.println("GTU " + this.vehicle.getGtu().getId() + " is in congested gap search state, waiting for leader to start moving. Leader Acceleration: " + leader.getAcceleration());
+                return transitionTo(new executeZipperMergingState(this.maneuverPattern));
+            }
+
+
             Acceleration stopAccel = CarFollowingUtil.stop(
                     this.vehicle.getCarFollowingModel(),
                     params,
@@ -1030,5 +1067,94 @@ public class GapSearchPattern extends ManeuverPattern {
         public String toString() {
             return "CongestedGapSearchState";
         }
+    }
+
+
+    /** In this state we are targetting the gap behind the potential leader, which is parallel to us.
+     * Pattern ends, if conditions for execution of the lane change are met, otherwise we continue to target the gap until
+     * we are close enough to the ramp end, at which point we switch to emergency braking if the gap is still not available.
+     * This state is specifically designed to handle the case where the target lane is congested, and we need to follow a leader
+     * in that lane while waiting for the gap to open up. It ensures that we maintain a safe following distance while still
+     * being ready to merge as soon as possible.
+     * GapSearchPattern.java.
+     * <p>
+     * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     */
+    public static class executeZipperMergingState extends ActionState {
+
+        private final GapSearchPattern pattern;
+
+        public executeZipperMergingState(final ManeuverPattern p) {
+            super(p);
+            this.pattern = (GapSearchPattern) p;
+        }
+
+         @Override
+         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
+            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+
+            HeadwayGtu leader = neigh.getLeader(this.pattern.getTargetDirection());
+
+
+            Acceleration aTarget = CarFollowingUtil.followSingleLeader(
+                    this.vehicle.getCarFollowingModel(),
+                    this.vehicle.getParameters(),
+                    ego.getEgoSpeed(),
+                    infra.getCurrentSpeedLimit(),
+                    leader.getDistance(),
+                    leader.getSpeed());
+
+            // we don't want to decelerate in this state, only follow the leader at a safe distance while waiting for the gap to open up
+            // abort() will handle the transition to emergency braking if we get too close to the ramp end without the gap opening up,
+            // so we can safely ignore the stop acceleration constraint here
+            aTarget = Acceleration.max(aTarget, Acceleration.min(Acceleration.instantiateSI(0.5), leader.getAcceleration())); // Don't decelerate in zipper merging state
+
+            aTarget = Acceleration.min(aTarget, ego.getCurrentCarFollowingAcceleration());
+
+            //System.out.println("GTU " + this.vehicle.getGtu().getId() + " is in zipper merging state, following leader in target lane. Leader ID: " + leader.getId() + " Leader Speed: " + leader.getSpeed() + " Acceleration: " + aTarget);
+
+            SimpleOperationalPlan plan = new SimpleOperationalPlan(aTarget, this.pattern.patternSpecificTimestep);
+            return plan;
+         }
+
+         @Override
+         public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException {
+             NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+
+             if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection()))
+                 return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
+
+             return null;
+         }
+
+         @Override
+         public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException, NullPointerException,
+                 IllegalArgumentException, GtuException, NetworkException
+         {
+             try
+             {
+                 if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND)
+                         & this.vehicle.getLaneChangeDesire().isMandatory()
+                         ) {
+                     return null;
+                 }
+                 else {
+                     return finishManeuver();
+                 }
+             }
+             catch (ParameterException | GtuException | NetworkException exception)
+             {
+                 exception.printStackTrace();
+             }
+             return null;
+         }
+
     }
 }

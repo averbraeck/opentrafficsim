@@ -346,21 +346,21 @@ public class ScenarioOutputConfiguration {
         }
 
 
-        try
-        {
-            LoopDetector detector = this.detectors.get(0);
-
-            CompressedFileWriter zippedWriter = new CompressedFileWriter(new File(this.outputDirectory,
-                    "detector.zip").getAbsolutePath());
-            Table detectorData = detector.asTablePeriodicData(getRoadNetwork());
-            CsvData.writeZippedData(zippedWriter, "detector_data.csv", "detector_data.csvm", detectorData);
-            System.out.println("[OUTPUT]   -> wrote detector data: " + detector.getId() + "_data.csv");
-        }
-        catch (IOException | TextSerializationException | IndexOutOfBoundsException exception)
-        {
-            System.err.println("[ERROR] Failed to write loop detector output: " + exception.getMessage());
-            exception.printStackTrace();
-        }
+//        try
+//        {
+//            LoopDetector detector = this.detectors.get(0);
+//
+//            CompressedFileWriter zippedWriter = new CompressedFileWriter(new File(this.outputDirectory,
+//                    "detector.zip").getAbsolutePath());
+//            Table detectorData = detector.asTablePeriodicData(getRoadNetwork());
+//            CsvData.writeZippedData(zippedWriter, "detector_data.csv", "detector_data.csvm", detectorData);
+//            System.out.println("[OUTPUT]   -> wrote detector data: " + detector.getId() + "_data.csv");
+//        }
+//        catch (IOException | TextSerializationException | IndexOutOfBoundsException exception)
+//        {
+//            System.err.println("[ERROR] Failed to write loop detector output: " + exception.getMessage());
+//            exception.printStackTrace();
+//        }
 
 
         // ---------------------------------------------------------

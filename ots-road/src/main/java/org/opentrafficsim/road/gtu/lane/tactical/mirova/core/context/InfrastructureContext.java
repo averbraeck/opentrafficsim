@@ -6,11 +6,13 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.LaneChangeInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -52,6 +54,8 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
     private static final String LEFT_LANE_AVAILABLE = "leftLaneAvailable";
     /** Cache key for right lane availability. */
     private static final String RIGHT_LANE_AVAILABLE = "rightLaneAvailable";
+    /** Cache key for distance to next legal lane change opportunity with extended look-ahead. */
+    private static final String DIST_TO_NEXT_LANE_CHANGE_OPPORTUNITY = "distanceToNextLaneChangeOpportunity";
 
     /** Distance threshold [m] below which a lane-end is considered critical. */
     private static final double LANE_END_THRESHOLD = 200.0;
@@ -208,6 +212,36 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         return available;
     }
 
+    /**
+     * Returns the distance to the next legal lane change opportunity in the current lane.
+     * <p>
+     * This method uses an extended look-ahead distance defined in {@link MirovaParameters}
+     * to ensure that lane change information is retrieved for a sufficiently long horizon.
+     * The original look-ahead value is restored after retrieval.
+     * </p>
+     *
+     * @return distance to next legal lane change opportunity [m], or {@link Length#POSITIVE_INFINITY} if none found
+     */
+    public Length getDistanceToLaneChangeExtendedLookahead()
+    {
+        Length cached = getCachedValue(DIST_TO_NEXT_LANE_CHANGE_OPPORTUNITY, Length.class);
+        if (cached != null)
+        {
+            return cached;
+        }
+        Length distance = null;
+        try
+        {
+            distance = distanceToLaneChangeExtendedLookahead();
+        }
+        catch (Exception e)
+        {
+            distance = Length.POSITIVE_INFINITY;
+        }
+        cacheValue(DIST_TO_NEXT_LANE_CHANGE_OPPORTUNITY, distance, true);
+        return distance;
+    }
+
     // ----------------------------------------------------------------------
     // Safe computation wrappers
     // ----------------------------------------------------------------------
@@ -331,6 +365,32 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         return infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, laneChangeDirection).si > 0.0;
     }
 
+    /**
+     * Computes the distance to the next legal lane change opportunity in the current lane.
+     * <p>
+     * This method temporarily overrides the look-ahead parameter to the extended value
+     * defined in {@link MirovaParameters} to ensure that lane change information is retrieved
+     * for a sufficiently long horizon. The original look-ahead value is restored after retrieval.
+     * </p>
+     *
+     * @return distance to next legal lane change opportunity [m], or {@link Length#POSITIVE_INFINITY} if none found
+     * @throws OperationalPlanException if perception fails
+     * @throws ParameterException if parameter access fails
+     */
+    private Length distanceToLaneChangeExtendedLookahead() throws OperationalPlanException, ParameterException
+    {
+        InfrastructurePerception infra = this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        Length extendedLookaheadDistance = this.vehicle.getParameters().getParameter(MirovaParameters.extendedLookAheadDistance);
+        this.vehicle.getParameters().setParameterResettable(ParameterTypes.LOOKAHEAD, extendedLookaheadDistance);
+        SortedSet<LaneChangeInfo> laneInfo = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
+        this.vehicle.getParameters().resetParameter(ParameterTypes.LOOKAHEAD);
+        if (laneInfo != null && !laneInfo.isEmpty())
+        {
+            LaneChangeInfo first = laneInfo.first();
+            return first.remainingDistance();
+        }
+        return Length.POSITIVE_INFINITY;
+    }
 
     /**
      * Updates the cache validity for this context category.

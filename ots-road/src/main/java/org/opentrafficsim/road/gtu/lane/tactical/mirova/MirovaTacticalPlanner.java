@@ -13,6 +13,7 @@ import org.opentrafficsim.core.gtu.perception.*;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.*;
 import org.opentrafficsim.road.gtu.lane.perception.*;
@@ -35,7 +36,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.network.*;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.speed.*;
+
 
 import java.util.*;
 
@@ -263,7 +266,8 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         // 4️. Apply temporal relaxation (gradual decay of short-term motivation and headway adaptation)
         updateTargetDesiredHeadway();
         updateCurrentRelaxedHeadway();
-        updateDecelerationThresholds();
+        // update of decel thresholds is carried out on demand in egoCtx
+        //updateDecelerationThresholds();
 
         // 5️. Reset operational plan for this time step
         this.operationalPlan = null;
@@ -275,6 +279,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
             this.operationalPlan = this.currentActionState.update();
         }
         else {
+
             // 6.2 check if situation requires new exclusive maneuver
             ManeuverPattern selectedPattern = null;
             selectedPattern = selectPatternByType(getExclusiveManeuverPatterns());
@@ -312,6 +317,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
                         }
                     }
                 }
+
 
                 // If no parallel pattern produced a plan, fall back to car-following
                 EgoContext egoContext = getContextManager().getCategory("Ego", EgoContext.class);
@@ -465,18 +471,53 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         {
             getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.NONE);
             }
+        /*
+        Lane currentLane = getGtu().getLane();
+        Link currentLink = currentLane.getLink();
+
+        if (currentLink.getId().equals("AB") && currentLane.getId().equals("FORWARD3"))
+        {
+            InfrastructurePerception infra = getPerception().getPerceptionCategory(InfrastructurePerception.class);
+            Set<Lane> lanes = getGtu().getNextLanesForRoute(currentLane);
+            Lane nextLane = getGtu().getNextLaneForRoute(currentLane);
+            Length distToLane =  currentLane.getLength().times(1 - currentLane.fraction(getGtu().getLongitudinalPosition()));
+            Length extendedLookahead = getParameters().getParameter(MirovaParameters.extendedLookAheadDistance);
+            if (distToLane.si < extendedLookahead.si)
+            {
+                while (distToLane.si < extendedLookahead.si) {
+                    nextLane = getGtu().getNextLaneForRoute(nextLane);
+                    if (nextLane == null) {
+                        break;
+                    }
+                    if (!nextLane.accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT, getGtu().getType()).isEmpty()) {
+                        Lane laneAfterNext = getGtu().getNextLaneForRoute(nextLane);
+                        System.out.println("GTU: " + getGtu().getId() + ": Right lane available after next lane: " + nextLane.toString());
+                        if (nextLane.getLink().getLanes().size() > laneAfterNext.getLink().getLanes().size()) {
+                            System.out.println("GTU: " + getGtu().getId() + ": Right lane available after next lane: " + laneAfterNext.toString());
+                            break; // No further right lane available, stop looking ahead
+                        }
+                    }
+                    distToLane = distToLane.plus(nextLane.getLength());
+                }
+                System.out.println("GTU: " + getGtu().getId() + ": Next lanes for route: " + lanes.toString()
+                        + " | Next lane for route: " + nextLane.toString()
+                        + " | Distance to lane end: " + distToLane.toDisplayString());
+            }
+        }
+        */
+
 
 
         Acceleration planAcc = this.operationalPlan.getAcceleration();
 
-            if (planAcc.si < -8.0  || planAcc.eq(Acceleration.NEGATIVE_INFINITY)
-                    || planAcc.le(Acceleration.NEG_MAXVALUE))
-            {
-                System.out.printf("GTU: %s @simsec: %s -> Plan acceleration: %s, ActionState: %s%n",
-                        getGtu().getId(),
-                        getGtu().getSimulator().getSimulatorTime().toDisplayString(),
-                        planAcc.toDisplayString(), (this.currentActionState != null) ? this.currentActionState.toString() : "none");
-            }
+        if (planAcc.si < -8.0  || planAcc.eq(Acceleration.NEGATIVE_INFINITY)
+                || planAcc.le(Acceleration.NEG_MAXVALUE))
+        {
+            System.out.printf("GTU: %s @simsec: %s -> Plan acceleration: %s, ActionState: %s%n",
+                    getGtu().getId(),
+                    getGtu().getSimulator().getSimulatorTime().toDisplayString(),
+                    planAcc.toDisplayString(), (this.currentActionState != null) ? this.currentActionState.toString() : "none");
+        }
         return this.operationalPlan;
     }
 
@@ -747,11 +788,12 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
      /**
       * Sets a new target desired headway if it is smaller than the current target.
       * @param newTargetDesiredHeadway the new target desired headway
+     * @throws ParameterException
       */
-     public void setTargetDesiredHeadway(final Duration newTargetDesiredHeadway) {
+     public void setTargetDesiredHeadway(final Duration newTargetDesiredHeadway) throws ParameterException {
          if (newTargetDesiredHeadway.le(this.targetDesiredHeadway)) {
              this.targetDesiredHeadway = newTargetDesiredHeadway;
-             startHeadwayRelaxation(newTargetDesiredHeadway);
+             updateCurrentRelaxedHeadway();
          }
      }
 

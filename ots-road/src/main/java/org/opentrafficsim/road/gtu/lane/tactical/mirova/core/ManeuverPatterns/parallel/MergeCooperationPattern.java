@@ -93,16 +93,16 @@ public class MergeCooperationPattern extends ManeuverPattern {
                     }
                 }
             }
-            HeadwayGtu alongsideCandidate = neighbors.getFollower(dir);
-            if (alongsideCandidate != null) {
-                boolean indicatesTowardsUs = (dir.isRight() && alongsideCandidate.isLeftTurnIndicatorOn())
-                        || (dir.isLeft() && alongsideCandidate.isRightTurnIndicatorOn());
-                Length rearGap = neighbors.getRearGapDistance(dir);
-                rearGap = rearGap != null ? rearGap : Length.instantiateSI(Double.POSITIVE_INFINITY);
-                if (alongsideCandidate != null && indicatesTowardsUs && neighbors.getRearGapDistance(dir).si < 0.0 ) {
-                      return true;
-                  }
-            }
+//            HeadwayGtu alongsideCandidate = neighbors.getFollower(dir);
+//            if (alongsideCandidate != null) {
+//                boolean indicatesTowardsUs = (dir.isRight() && alongsideCandidate.isLeftTurnIndicatorOn())
+//                        || (dir.isLeft() && alongsideCandidate.isRightTurnIndicatorOn());
+//                Length rearGap = neighbors.getRearGapDistance(dir);
+//                rearGap = rearGap != null ? rearGap : Length.instantiateSI(Double.POSITIVE_INFINITY);
+//                if (alongsideCandidate != null && indicatesTowardsUs && neighbors.getRearGapDistance(dir).si < 0.0 ) {
+//                      return true;
+//                  }
+//            }
 
         }
 
@@ -217,36 +217,36 @@ public class MergeCooperationPattern extends ManeuverPattern {
                         }
                     }
                 }
-                Iterable<HeadwayGtu> followers = neighbors.getFollowers(dir);
-                if (followers != null) {
-                    for (HeadwayGtu gtu : followers) {
-                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
-                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
-                            return gtu;
-                        }
-                    }
-                }
-            }
-            else {
-                Iterable<HeadwayGtu> followers = neighbors.getFollowers(dir);
-                if (followers != null) {
-                    for (HeadwayGtu gtu : followers) {
-                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
-                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
-                            return gtu;
-                        }
-                    }
-                }
-                Iterable<HeadwayGtu> leaders = neighbors.getLeaders(dir);
-                if (leaders != null) {
-                    for (HeadwayGtu gtu : leaders) {
-                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
-                            this.lastCandidatePosition = RelativeCandidatePosition.AHEAD;
-                            return gtu;
-                        }
-                    }
-                }
-
+//                Iterable<HeadwayGtu> followers = neighbors.getFollowers(dir);
+//                if (followers != null) {
+//                    for (HeadwayGtu gtu : followers) {
+//                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
+//                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
+//                            return gtu;
+//                        }
+//                    }
+//                }
+//            }
+//            else {
+//                Iterable<HeadwayGtu> followers = neighbors.getFollowers(dir);
+//                if (followers != null) {
+//                    for (HeadwayGtu gtu : followers) {
+//                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
+//                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
+//                            return gtu;
+//                        }
+//                    }
+//                }
+//                Iterable<HeadwayGtu> leaders = neighbors.getLeaders(dir);
+//                if (leaders != null) {
+//                    for (HeadwayGtu gtu : leaders) {
+//                        if (gtu.getId().equals(this.activeMergeCandidateId)) {
+//                            this.lastCandidatePosition = RelativeCandidatePosition.AHEAD;
+//                            return gtu;
+//                        }
+//                    }
+//                }
+//
             }
         }
         return null; // Lost contact
@@ -292,17 +292,17 @@ public class MergeCooperationPattern extends ManeuverPattern {
                         return parallelMergeCandidate;
                     }
                 }
-                else {
-                    parallelMergeCandidate = neighbors.getFollower(dir);
-                    if (parallelMergeCandidate != null) {
-                        if (neighbors.getRearGapDistance(dir) != null && neighbors.getRearGapDistance(dir).si < 0.0) {
-                            this.activeMergeCandidateId = parallelMergeCandidate.getId();
-                            this.directionOfMergeCandidate = dir;
-                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
-                            return parallelMergeCandidate;
-                        }
-                    }
-                }
+//                else {
+//                    parallelMergeCandidate = neighbors.getFollower(dir);
+//                    if (parallelMergeCandidate != null) {
+//                        if (neighbors.getRearGapDistance(dir) != null && neighbors.getRearGapDistance(dir).si < 0.0) {
+//                            this.activeMergeCandidateId = parallelMergeCandidate.getId();
+//                            this.directionOfMergeCandidate = dir;
+//                            this.lastCandidatePosition = RelativeCandidatePosition.BEHIND;
+//                            return parallelMergeCandidate;
+//                        }
+//                    }
+//                }
             }
         }
 
@@ -458,7 +458,7 @@ public class MergeCooperationPattern extends ManeuverPattern {
                 Acceleration aCoopMax = this.vehicle.getParameters().getParameter(MirovaParameters.preemptiveCooperativeDeceleration);
                 Speed targetSpeed = targetLaneSpeed.gt(vCong) ? targetLaneSpeed : vCong;
 
-                this.vehicle.getParameters().setParameterResettable(ParameterTypes.S0, Length.instantiateSI(10.0));
+                //this.vehicle.getParameters().setParameterResettable(ParameterTypes.S0, Length.instantiateSI(10.0));
                 Acceleration aCoop = CarFollowingUtil.approachTargetSpeed(
                         this.vehicle.getCarFollowingModel(),
                         this.vehicle.getParameters(),
@@ -467,7 +467,7 @@ public class MergeCooperationPattern extends ManeuverPattern {
                         Length.instantiateSI(10.0),
                         targetSpeed
                         );
-                this.vehicle.getParameters().resetParameter(ParameterTypes.S0);
+                //this.vehicle.getParameters().resetParameter(ParameterTypes.S0);
                 aCoop = aCoop.gt(aCoopMax) ? aCoop : aCoopMax;
                 SimpleOperationalPlan plan = new SimpleOperationalPlan(aCoop, this.vehicle.getParameters().getParameter(ParameterTypes.DT));
                 return plan;
@@ -654,14 +654,21 @@ public class MergeCooperationPattern extends ManeuverPattern {
             this.maneuverPattern.setCurrentActionState(this);
 
             InfrastructureContext infrastructure = this.vehicle.getContextManager().getCategory("Infrastructure", InfrastructureContext.class);
-
+            NeighborsContext neighbors = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class);
+            if (this.mergeCandidate.equals(neighbors.getLeader(LateralDirectionality.NONE))) { // (this.mergeCandidate.isAhead() && neighbors.getFrontGapDistance(this.maneuverPattern.getDirectionOfMergeCandidate()).si > 0.0) {
+                Duration laneChangeDesiredHeadDuration = this.vehicle.getParameters().getParameter(ParameterTypes.T).times(this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange));
+                this.vehicle.setTargetDesiredHeadway(laneChangeDesiredHeadDuration);
+                this.vehicle.getParameters().setParameterResettable(ParameterTypes.S0, Length.instantiateSI(0.5));
+                }
             this.aCoop = CarFollowingUtil.followSingleLeader(
                     this.vehicle.getCarFollowingModel(),
                     this.vehicle.getParameters(),
                     this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed(),
                     infrastructure.getCurrentSpeedLimit(),
                     this.mergeCandidate);
-
+            if (this.mergeCandidate.equals(neighbors.getLeader(LateralDirectionality.NONE))) {
+                this.vehicle.getParameters().resetParameter(ParameterTypes.S0);
+                }
             Acceleration decelThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.preemptiveCooperativeDeceleration); // this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold).times(0.5);
             this.aCoop = this.aCoop.gt(decelThreshold) ? this.aCoop : decelThreshold;
 

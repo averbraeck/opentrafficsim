@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -620,6 +621,13 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         }
     }
 
+    /**
+     * Computes the speed difference between the ego vehicle and the leader in the specified direction.
+     * A positive value indicates that the ego is faster than the leader, while a negative value indicates it is slower.
+     *
+     * @param dir the lateral direction to check (LEFT, RIGHT, or NONE for current lane)
+     * @return the speed difference (ego speed minus leader speed) or null if computation fails
+     */
     private Speed computeFrontGapDeltaSpeed(final LateralDirectionality dir) {
         try {
             if (dir.isLeft()) {
@@ -627,21 +635,21 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
                 if (leftLeader != null) {
                     return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(leftLeader.getSpeed());
                 } else {
-                    return Speed.ZERO;
+                    return Speed.NEGATIVE_INFINITY;
                 }
             } else if (dir.isRight()) {
                 HeadwayGtu rightLeader = getRightLeader();
                 if (rightLeader != null) {
                     return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(rightLeader.getSpeed());
                 } else {
-                    return Speed.ZERO;
+                    return Speed.NEGATIVE_INFINITY;
                 }
             } else {
                 HeadwayGtu leaderHeadway = getCurrentLeader();
                 if (leaderHeadway != null) {
                     return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(leaderHeadway.getSpeed());
                 } else {
-                    return Speed.ZERO;
+                    return Speed.NEGATIVE_INFINITY;
                 }
             }
         } catch (Exception e) {
@@ -863,9 +871,15 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
      */
     public Boolean checkIfLaneChangeIsPossible(final LateralDirectionality laneChangeDirection) throws ParameterException, GtuException, NetworkException {
 
-        EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
         InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
         Boolean laneChangeLegal = infraCtx.getIfLaneAvailable(laneChangeDirection);
+        if (getFollower(laneChangeDirection) == null && getLeader(laneChangeDirection) == null && laneChangeLegal) {
+            // if there is no follower, we can be a bit more lenient on the gaps and decelerations, so we consider lane change possible
+            return true;
+        }
+
+        EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
+
 
         Acceleration followerDecelThreshold = egoCtx.getFollowerDecelerationThreshold(laneChangeDirection);
         Acceleration egoDecelThreshold = egoCtx.getEgoDecelerationThreshold(laneChangeDirection);
@@ -876,7 +890,10 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
         Length vehicleLength = this.vehicle.getGtu().getLength();
 
+        //Speed followerSpeed = egoCtx.getEgoSpeed().minus(getRearGapDeltaSpeed(laneChangeDirection));
+
         Length desiredRearHeadway = egoCtx.getDesiredRearHeadway(laneChangeDirection).times(reductionFactor);
+
         //Length.max(egoCtx.getDesiredRearHeadway(laneChangeDirection).times(reductionFactor), vehicleLength);
         Length rearHeadway = getRearGapDistance(laneChangeDirection);
 
@@ -888,7 +905,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
                 && followerDecel.gt(followerDecelThreshold)
                 && rearHeadway.gt(desiredRearHeadway)
                 && frontHeadway.gt(desiredFrontHeadway);
-
+        /*
         if (laneChangePossible) {
             // laneChange is possible based on current gaps and decelerations,
             // but we also want to check if the follower would still have a safe gap
@@ -917,11 +934,15 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
                     }
                 }
             }
+
             return laneChangePossible && rearHeadway.gt(desiredRearHeadway);
         }
         else {
+
             return laneChangePossible;
         }
+            */
+        return laneChangePossible;
 
     }
 

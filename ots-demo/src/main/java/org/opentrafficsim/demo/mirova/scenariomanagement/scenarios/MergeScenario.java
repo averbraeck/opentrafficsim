@@ -104,6 +104,9 @@ import org.opentrafficsim.road.od.OdApplier;
 import org.opentrafficsim.road.od.OdMatrix;
 import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
@@ -123,8 +126,8 @@ public class MergeScenario extends ScenarioGenerator
     @Override
     public void buildNetwork(final OtsSimulatorInterface sim) throws Exception
     {
-        URL xmlURL = URLResource.getResource("/resources/lmrs/shortMerge.xml");
-        this.network = new RoadNetwork("ShortMerge", sim);
+        URL xmlURL = URLResource.getResource("/resources/mirova/MergeBodegraven.xml");
+        this.network = new RoadNetwork("MergeBodegraven", sim);
         new XmlParser(this.network).setUrl(xmlURL).build();
 
         CrossSectionLink linkAB = (CrossSectionLink)this.network.getLink("A", "B");
@@ -184,8 +187,9 @@ public class MergeScenario extends ScenarioGenerator
     public void buildGtuTemplates(final OtsSimulatorInterface sim) throws Exception
     {
         LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = buildStrategicalPlannerFactoryCar();
+        //LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = buildLmrsStrategicalPlannerFactoryCar();
         LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryTrucks = buildStrategicalPlannerFactoryTruck();
-
+        //LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryTrucks = buildLmrsStrategicalPlannerFactoryTruck();
         FrequencyAndObject<Route> routeAE = new FrequencyAndObject<Route>(
                 1.0 - this.defaultParameters.getMergeShare(),
                 this.routes.get("A-E"));
@@ -244,10 +248,10 @@ public class MergeScenario extends ScenarioGenerator
             public Parameters getParameters() throws ParameterException {
                 Parameters parameters = getDefaultParameters();
 
-                parameters.setParameter(ParameterTypes.TMAX, new Duration(1.0, DurationUnit.SI));
+                parameters.setParameter(ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
                 parameters.setParameter(ParameterTypes.TMIN, new Duration(0.5, DurationUnit.SI));
                 parameters.setParameter(MirovaParameters.socioSpeedSensitivity, 0.75);
-                DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 50, 90);
+                DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 20, 50);
                 parameters.setParameter(MirovaParameters.vGain, new Speed(vGain.draw(), SpeedUnit.KM_PER_HOUR));
                 return parameters;
             }
@@ -255,6 +259,21 @@ public class MergeScenario extends ScenarioGenerator
 
         LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
                 mirovaTacticalPlannerFactoryCars);
+
+        return strategicalPlannerFactoryCars;
+    }
+
+    public LaneBasedStrategicalPlannerFactory<?> buildLmrsStrategicalPlannerFactoryCar() throws ParameterException
+    {
+        LmrsFactory lmrsTacticalPlannerFactoryCars = new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory());
+
+        lmrsTacticalPlannerFactoryCars.getParameters().setParameter(ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
+        lmrsTacticalPlannerFactoryCars.getParameters().setParameter(ParameterTypes.TMIN, new Duration(0.5, DurationUnit.SI));
+        //DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 20, 50);
+        //lmrsTacticalPlannerFactoryCars.getParameters().setParameter(LmrsParameters.VGAIN, new Speed(30, SpeedUnit.KM_PER_HOUR));
+
+        LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
+                lmrsTacticalPlannerFactoryCars);
 
         return strategicalPlannerFactoryCars;
     }
@@ -278,8 +297,8 @@ public class MergeScenario extends ScenarioGenerator
             @Override
             public Parameters getParameters() throws ParameterException {
                 Parameters parameters = getDefaultParameters();
-                parameters.setParameter(ParameterTypes.TMAX, new Duration(1.6, DurationUnit.SI));
-                parameters.setParameter(ParameterTypes.TMIN, new Duration(1.2, DurationUnit.SI));
+                parameters.setParameter(ParameterTypes.TMAX, new Duration(1.0, DurationUnit.SI));
+                parameters.setParameter(ParameterTypes.TMIN, new Duration(0.9, DurationUnit.SI));
                 DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 90, 110);
                 parameters.setParameter(MirovaParameters.vGain, new Speed(vGain.draw(), SpeedUnit.KM_PER_HOUR)); // higher vGain for trucks to reduce discretionary lane changes
                 parameters.setParameter(MirovaParameters.socioSpeedSensitivity, 0.75); // more conservative lane changes for trucks
@@ -290,6 +309,22 @@ public class MergeScenario extends ScenarioGenerator
 
         LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                 mirovaTacticalPlannerFactoryTrucks);
+
+        return strategicalPlannerFactoryTrucks;
+    }
+
+
+    public LaneBasedStrategicalPlannerFactory<?> buildLmrsStrategicalPlannerFactoryTruck() throws ParameterException
+    {
+        LmrsFactory lmrsTacticalPlannerFactoryTrucks = new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory());
+
+        lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(ParameterTypes.TMAX, new Duration(1.0, DurationUnit.SI));
+        lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(ParameterTypes.TMIN, new Duration(0.9, DurationUnit.SI));
+        //DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 90, 110);
+        //lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(LmrsParameters.VGAIN, new Speed(30, SpeedUnit.KM_PER_HOUR)); // higher vGain for trucks to reduce discretionary lane changes
+
+        LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+                lmrsTacticalPlannerFactoryTrucks);
 
         return strategicalPlannerFactoryTrucks;
     }
@@ -350,9 +385,9 @@ public class MergeScenario extends ScenarioGenerator
      * @throws Exception
      */
     public void createVehiclesFromODMatrix(final ScenarioParameters params, final OtsSimulatorInterface sim) throws Exception {
-        double intervalVolume = 3500.0; // vehicles per hour
-        double endVolume = params.getDemand(); // vehicles per hour
-        double volumeStep = 250.0; // vehicles per hour
+        double intervalVolume = 5000.0; // vehicles per hour
+        double endVolume = 6500.0; // params.getDemand(); // vehicles per hour
+        double volumeStep = 100.0; // vehicles per hour
         double steps = Math.ceil((endVolume - intervalVolume) / volumeStep) + 1;
         double relativeTimeStep = 1.0 / steps;
         int i = 0;
@@ -363,7 +398,7 @@ public class MergeScenario extends ScenarioGenerator
         double[] truckDemandOnRamp = new double[(int)steps];
 
         for (i = 0; i < steps; i++) {
-            time[i] = relativeTimeStep * i * 4.0; // 4 hours total simulation time
+            time[i] = relativeTimeStep * i * 2.0; // 4 hours total simulation time
             carDemandMain[i]   = intervalVolume * (1.0 - params.getTruckShare()) * (1.0 - this.defaultParameters.getMergeShare());
             truckDemandMain[i] = intervalVolume *   params.getTruckShare()  * (1.0 - this.defaultParameters.getMergeShare());
             carDemandOnRamp[i]   = intervalVolume * (1.0 - params.getTruckShare()) * this.defaultParameters.getMergeShare();
@@ -465,9 +500,9 @@ public class MergeScenario extends ScenarioGenerator
     @Override
     public void setDefaultParameters() {
         this.defaultParameters.setDemand(4500.0); // vehicles per hour
-        this.defaultParameters.setTruckShare(0.05); // 5% trucks
+        this.defaultParameters.setTruckShare(0.1); // 5% trucks
         this.defaultParameters.setSeed(42L); // random see
-        this.defaultParameters.setMergeShare(0.15); // 15% of overall demand merges from on-ramp
+        this.defaultParameters.setMergeShare(0.2); // 20% of overall demand merges from on-ramp
     }
 
     public GeneratorPositions.LaneBiases getLaneBiases() {
@@ -506,9 +541,9 @@ public class MergeScenario extends ScenarioGenerator
                 .registerExtendedDataType(new ExtendedDataFollowerDecelLeft())
                 .registerExtendedDataType(new ExtendedDataEgoDecelRight())
                 .registerExtendedDataType(new ExtendedDataEgoDecelLeft())
-                .registerExtendedDataType(new ExtendedDataCurrentCFAcceleration())
+                //.registerExtendedDataType(new ExtendedDataCurrentCFAcceleration())
                 .registerExtendedDataType(new ExtendedDataCurrentDesiredSpeed())
-                .registerExtendedDataType(new ExtendedDataSocioSpeedPressure())
+                //.registerExtendedDataType(new ExtendedDataSocioSpeedPressure())
                 .create();
 
         ImmutableMap<String, Link> linkMap = this.network.getLinkMap();
@@ -543,11 +578,16 @@ public class MergeScenario extends ScenarioGenerator
         }
 
         // activates sampling on all lanes for the entire simulation duration
-//        for (Lane lane : this.listAllLanes) {
-//            GraphPath<LaneDataRoad> path = GraphLaneUtil.createPath("path", lane);
-//            sampler.scheduleStartRecording(Time.instantiateSI(0), path.get(0).getSource(0));
-//
-//        }
+        for (Lane lane : this.listAllLanes) {
+            if (lane.getLink().getId().equals("BC"))
+             {
+                GraphPath<LaneDataRoad> path = GraphLaneUtil.createPath("path", lane);
+                sampler.scheduleStartRecording(Time.instantiateSI(0), path.get(0).getSource(0));
+                System.out.println("Scheduled sampler for lane " + lane.getId());
+             }
+
+
+        }
 
         this.listRoadSamplers.add(sampler);
 
