@@ -17,7 +17,7 @@
     </xi:include>
     <xi:include href="../xsd/defaults/default_stripetypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml" />
+        <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml" />
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_lanetypes.xml">
@@ -219,49 +219,31 @@
     <ots:ShortestRoute Id="EW" GtuType="NL.CAR">
       <ots:From>TRE</ots:From>
       <ots:To>TRW</ots:To>
-      <ots:Cost>
-        <ots:Distance />
-      </ots:Cost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="WE" GtuType="NL.CAR">
       <ots:From>BLW</ots:From>
       <ots:To>BLE</ots:To>
-      <ots:Cost>
-        <ots:Distance />
-      </ots:Cost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="WS" GtuType="NL.CAR">
       <ots:From>BLW</ots:From>
       <ots:To>BLS</ots:To>
-      <ots:Cost>
-        <ots:Distance />
-      </ots:Cost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="SW" GtuType="NL.CAR">
       <ots:From>TRS</ots:From>
       <ots:To>TRW</ots:To>
-      <ots:Cost>
-        <ots:Distance />
-      </ots:Cost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="ES" GtuType="NL.CAR">
       <ots:From>TRE</ots:From>
       <ots:To>BLS</ots:To>
-      <ots:Cost>
-        <ots:Distance />
-      </ots:Cost>
     </ots:ShortestRoute>
 
     <ots:ShortestRoute Id="SE" GtuType="NL.CAR">
       <ots:From>TRS</ots:From>
       <ots:To>BLE</ots:To>
-      <ots:Cost>
-        <ots:Distance />
-      </ots:Cost>
     </ots:ShortestRoute>
 
     <ots:ShortestRouteMix Id="E" GtuType="NL.CAR">
