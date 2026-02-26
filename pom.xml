@@ -120,11 +120,11 @@
     </dependency>
     
     <dependency>
-	  <groupId>org.djutils</groupId>
-	  <artifactId>djutils-test</artifactId>
-	  <version>${djutils.version}</version>
-	  <scope>test</scope>
-	</dependency>
+  	  <groupId>org.djutils</groupId>
+  	  <artifactId>djutils-test</artifactId>
+  	  <version>${djutils.version}</version>
+  	  <scope>test</scope>
+  	</dependency>
 
   </dependencies>
 
