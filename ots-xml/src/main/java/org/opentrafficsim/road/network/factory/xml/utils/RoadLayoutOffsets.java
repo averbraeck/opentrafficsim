@@ -41,6 +41,11 @@ public final class RoadLayoutOffsets
     public static void calculateOffsets(final Iterator<OffsetElement> elements, final List<CseData> cseDataList,
             final Map<Object, Integer> cseObjectMap)
     {
+        if (!elements.hasNext())
+        {
+            // no cross-section elements
+            return;
+        }
         int nr = 0;
         Length totalWidthStart = Length.ZERO;
         Length totalWidthEnd = Length.ZERO;
@@ -136,11 +141,11 @@ public final class RoadLayoutOffsets
     /**
      * Calculate the offsets for the RoadLayout. Note that offsets can be different for begin and end, and that they can be
      * specified from the right, left or center of the lane/stripe. The overall Link can have an additional start offset and end
-     * offset that has to be added to the already calculated offsets.
+     * offset that has to be added to the already calculated offsets
      * @param roadLayoutTag the tag for the road layout containing all lanes and stripes
      * @param cseDataList the list of offsets and widths for each tag, in order of definition in the RoadLayout tag
      * @param cseTagMap the map of the tags to the index in the list, to be able to find them quickly
-     * @param eval expression evaluator.
+     * @param eval expression evaluator
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static void calculateOffsets(final BasicRoadLayout roadLayoutTag, final List<CseData> cseDataList,
@@ -251,33 +256,19 @@ public final class RoadLayoutOffsets
 
     /**
      * A logical wrapper class that can provide width and center offset information. This is a static version of CseData.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param widthStart start width.
-     * @param widthEnd end width.
-     * @param centerOffsetStart start offset.
-     * @param centerOffsetEnd end offset.
-     * @param object underlying object providing width and offset.
+     * @param widthStart start width
+     * @param widthEnd end width
+     * @param centerOffsetStart start offset
+     * @param centerOffsetEnd end offset
+     * @param object underlying object providing width and offset
      */
-    public static record OffsetElement(Length widthStart, Length widthEnd, Length centerOffsetStart, Length centerOffsetEnd,
+    public record OffsetElement(Length widthStart, Length widthEnd, Length centerOffsetStart, Length centerOffsetEnd,
             Object object)
     {
     }
 
     /**
      * This class stores offset and width information in generic form applicable to all cross-section elements.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class CseData
     {
@@ -299,7 +290,7 @@ public final class RoadLayoutOffsets
 
         /**
          * Constructor.
-         * @param offsetElement offset element.
+         * @param offsetElement offset element
          */
         public CseData(final OffsetElement offsetElement)
         {
