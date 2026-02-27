@@ -36,8 +36,11 @@ public abstract class OtsRenderable<L extends OtsShape> extends Renderable2d<L>
     /** Stored hints to reset. */
     private Object[] oldRenderingHints = new Object[RENDERING_KEYS.length];
 
+    /** Whether the object is dynamic. */
+    private boolean isDynamic;
+
     /**
-     * Constructs a new Renderable2d.
+     * Constructor.
      * @param source the source
      * @param contextProvider the object that can provide the context to store the animation objects
      */
@@ -48,9 +51,29 @@ public abstract class OtsRenderable<L extends OtsShape> extends Renderable2d<L>
     }
 
     /**
-     * Set standard rendering hints for this renderable to paint. The graphics should be reset using {@code resetRendering()}
+     * Sets the dynamic state.
+     * @param dynamic dynamic state
+     * @return this renderable for method changing
+     */
+    public OtsRenderable<L> setDynamic(final boolean dynamic)
+    {
+        this.isDynamic = dynamic;
+        return this;
+    }
+
+    /**
+     * Returns whether the renderable is dynamic.
+     * @return whether the renderable is dynamic
+     */
+    public boolean isDynamic()
+    {
+        return this.isDynamic;
+    }
+
+    /**
+     * Set standard rendering hints for this renderable to paint. The graphics should be reset using {@link #resetRendering}
      * after painting.
-     * @param graphics graphics.
+     * @param graphics graphics
      */
     protected void setRendering(final Graphics2D graphics)
     {
@@ -62,8 +85,8 @@ public abstract class OtsRenderable<L extends OtsShape> extends Renderable2d<L>
     }
 
     /**
-     * Resets rendering hints that this renderable changed through {@code setRendering()}.
-     * @param graphics graphics.
+     * Resets rendering hints that this renderable changed through {@link #setRendering}.
+     * @param graphics graphics
      */
     protected void resetRendering(final Graphics2D graphics)
     {

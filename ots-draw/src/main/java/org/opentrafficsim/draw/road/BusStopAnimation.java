@@ -15,11 +15,12 @@ import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
+import org.opentrafficsim.draw.road.BusStopAnimation.Text;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
- * Draw BusStopData.
+ * Draw bus stop.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
@@ -29,13 +30,11 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
+public class BusStopAnimation extends AbstractLineAnimation<BusStopData, Text>
 {
-    /** the Text object to destroy when the animation is destroyed. */
-    private final Text text;
 
     /**
-     * Construct a DetectorAnimation.
+     * Constructor.
      * @param laneDetector the lane detector to draw
      * @param contextualized context provider
      * @throws NamingException in case of registration failure of the animation
@@ -45,53 +44,34 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
             throws NamingException, RemoteException
     {
         super(laneDetector, contextualized, new Length(0.5, LengthUnit.SI));
-        float halfLength = (float) (laneDetector.getLine().getLength() / 2.0);
-        this.text = new Text(laneDetector, laneDetector::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK,
-                contextualized);
-    }
-
-    /**
-     * Returns text object.
-     * @return text.
-     */
-    public final Text getText()
-    {
-        return this.text;
     }
 
     @Override
-    public final void paint(final Graphics2D graphics, final ImageObserver observer)
+    protected Text createText(final BusStopData source, final Contextualized contextualized, final String prefix)
+    {
+        float halfLength = (float) (source.getLine().getLength() / 2.0);
+        return new Text(source, source::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
+    }
+
+    @Override
+    public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.WHITE);
         super.paint(graphics, observer);
     }
 
     @Override
-    public void destroy(final Contextualized contextProvider)
+    public String toString()
     {
-        super.destroy(contextProvider);
-        this.text.destroy(contextProvider);
-    }
-
-    @Override
-    public final String toString()
-    {
-        return "DetectorAnimation [getSource()=" + this.getSource() + "]";
+        return "BusStopAnimation [source=" + this.getSource() + "]";
     }
 
     /**
-     * Text animation for the Detector. Separate class to be able to turn it on and off...
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Text animation for the bus stop.
      */
     public static class Text extends RenderableTextSource<BusStopData, Text>
     {
+
         /**
          * Constructor.
          * @param source the object for which the text is displayed
@@ -101,31 +81,23 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
          * @param textPlacement where to place the text
          * @param color the color of the text
          * @param contextualized context provider
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
          */
         public Text(final BusStopData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
-                throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override
-        public final String toString()
+        public String toString()
         {
             return "Text []";
         }
+
     }
 
     /**
-     * BusStopData provides the information required to draw a bus stop.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Provides the information required to draw a bus stop.
      */
     public interface BusStopData extends LaneBasedObjectData, LineLocatable
     {

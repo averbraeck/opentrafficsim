@@ -9,7 +9,8 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.LineLocatable;
-import org.opentrafficsim.draw.OtsRenderable;
+import org.opentrafficsim.draw.OtsRenderableLabeled;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -23,23 +24,37 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <T> the LaneBasedObject class of the source that indicates the location of the Renderable on the screen
+ * @param <L> source type
+ * @param <T> text renderable type
  */
-public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> extends OtsRenderable<T>
+public abstract class AbstractLineAnimation<L extends LaneBasedObjectData, T extends RenderableTextSource<L, T>>
+        extends OtsRenderableLabeled<L, T>
 {
 
     /** Rectangle to color. */
     private final Rectangle2D rectangle;
 
     /**
-     * Construct the line animation.
+     * Construct the line animation. This constructor uses an empty prefix for the label.
      * @param source source
      * @param contextualized context provider
      * @param width line width
      */
-    public AbstractLineAnimation(final T source, final Contextualized contextualized, final Length width)
+    public AbstractLineAnimation(final L source, final Contextualized contextualized, final Length width)
     {
-        super(source, contextualized);
+        this(source, contextualized, width, "");
+    }
+
+    /**
+     * Construct the line animation.
+     * @param source source
+     * @param contextualized context provider
+     * @param width line width
+     * @param prefix label prefix
+     */
+    public AbstractLineAnimation(final L source, final Contextualized contextualized, final Length width, final String prefix)
+    {
+        super(source, contextualized, prefix);
         double halfLength = .5 * source.getLine().getLength();
         this.rectangle = new Rectangle2D.Double(-.5 * width.si, -halfLength, width.si, 2 * halfLength);
     }
@@ -54,16 +69,11 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
     }
 
     /**
-     * LaneBasedObjectData provides the information required to draw a lane based object.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Object data to draw a lane based object.
      */
     public interface LaneBasedObjectData extends LineLocatable, Identifiable
     {
+
         /**
          * Returns the width of the lane.
          * @return width of the lane.
@@ -78,6 +88,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
         {
             return DrawLevel.OBJECT.getZ();
         }
+
     }
 
 }

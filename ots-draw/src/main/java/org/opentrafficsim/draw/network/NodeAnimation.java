@@ -14,15 +14,16 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
-import org.opentrafficsim.draw.OtsRenderable;
+import org.opentrafficsim.draw.OtsRenderableLabeled;
 import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
+import org.opentrafficsim.draw.network.NodeAnimation.Text;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
- * Draws NodeData.
+ * Draws node data.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -30,25 +31,27 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class NodeAnimation extends OtsRenderable<NodeData>
+public class NodeAnimation extends OtsRenderableLabeled<NodeData, Text>
 {
-    /** the Text object to destroy when the animation is destroyed. */
-    private Text text;
 
     /**
      * Constructor.
-     * @param node node data.
+     * @param node node data
      * @param contextualized context provider
      */
     public NodeAnimation(final NodeData node, final Contextualized contextualized)
     {
         super(node, contextualized);
-        this.text = new Text(node, node::getId, 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
-                RenderableTextSource.RENDERWHEN10);
         setScaleY(false);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    protected Text createText(final NodeData source, final Contextualized contextualized, final String prefix)
+    {
+        return new Text(source, source::getId, 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
+                RenderableTextSource.RENDERWHEN10);
+    }
+
     @Override
     public boolean isScaleY()
     {
@@ -81,28 +84,13 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     }
 
     @Override
-    public void destroy(final Contextualized contextProvider)
-    {
-        super.destroy(contextProvider);
-        this.text.destroy(contextProvider);
-    }
-
-    @Override
     public final String toString()
     {
         return "NodeAnimation [node=" + super.getSource() + "]";
     }
 
     /**
-     * Text animation for the Node. Separate class to be able to turn it on and off...
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Text animation for the Node.
      */
     public static class Text extends RenderableTextSource<NodeData, Text>
     {
@@ -136,12 +124,6 @@ public class NodeAnimation extends OtsRenderable<NodeData>
 
     /**
      * NodeData provides the information required to draw a node.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface NodeData extends OtsShape, Identifiable
     {

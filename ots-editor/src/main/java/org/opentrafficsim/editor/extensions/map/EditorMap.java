@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.function.Function;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
@@ -60,7 +59,6 @@ import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LoopDetectorData;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.SinkData;
-import org.opentrafficsim.draw.road.LaneDetectorAnimation.SinkData.SinkText;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
@@ -157,9 +155,9 @@ public final class EditorMap extends JPanel implements EventListener
     /**
      * Constructor.
      * @param contextualized context provider.
-     * @param editor editor.
-     * @throws RemoteException context binding problem.
-     * @throws NamingException context binding problem.
+     * @param editor editor
+     * @throws RemoteException context binding problem
+     * @throws NamingException context binding problem
      */
     private EditorMap(final Contextualized contextualized, final OtsEditor editor) throws RemoteException, NamingException
     {
@@ -672,10 +670,10 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Builds a map panel with an animator and context.
-     * @param editor editor.
-     * @return map.
-     * @throws RemoteException context binding problem.
-     * @throws NamingException context binding problem.
+     * @param editor editor
+     * @return map
+     * @throws RemoteException context binding problem
+     * @throws NamingException context binding problem
      */
     public static EditorMap build(final OtsEditor editor) throws RemoteException, NamingException
     {
@@ -887,8 +885,8 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns whether the node is any of the visualized types.
-     * @param node node.
-     * @return whether the node is any of the visualized types.
+     * @param node node
+     * @return whether the node is any of the visualized types
      */
     private boolean isType(final XsdTreeNode node)
     {
@@ -904,7 +902,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Set the data as being valid to draw.
-     * @param data data that is valid to draw.
+     * @param data data that is valid to draw
      */
     public void setValid(final MapData data)
     {
@@ -916,7 +914,7 @@ public final class EditorMap extends JPanel implements EventListener
         Renderable2d<?> animation;
         if (node.getPathString().equals(XsdPaths.NODE) || node.getPathString().equals(XsdPaths.CENTROID))
         {
-            animation = new NodeAnimation((MapNodeData) data, this.contextualized);
+            animation = new NodeAnimation((MapNodeData) data, this.contextualized).setDynamic(true);
         }
         else if (node.getPathString().equals(XsdPaths.LINK) || node.getPathString().equals(XsdPaths.CONNECTOR))
         {
@@ -924,14 +922,11 @@ public final class EditorMap extends JPanel implements EventListener
         }
         else if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
         {
-            animation = new TrafficLightAnimation((MapTrafficLightData) data, this.contextualized);
+            animation = new TrafficLightAnimation((MapTrafficLightData) data, this.contextualized).setDynamic(true);
         }
         else if (node.getPathString().equals(XsdPaths.SINK))
         {
-            Function<LaneDetectorAnimation<SinkData, SinkText>, SinkText> textSupplier = (s) -> new SinkText(s.getSource(),
-                    (float) (s.getSource().getLine().getLength() / 2.0 + 0.2), this.contextualized);
-            animation = new LaneDetectorAnimation<SinkData, SinkText>((SinkData) data, this.contextualized, Color.ORANGE,
-                    textSupplier);
+            animation = new LaneDetectorAnimation<SinkData>((SinkData) data, this.contextualized, Color.ORANGE, "Sink");
         }
         else if (node.getPathString().equals(XsdPaths.GENERATOR) || node.getPathString().equals(XsdPaths.LIST_GENERATOR))
         {
@@ -946,7 +941,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Set the data as being invalid to draw.
-     * @param data data that is invalid to draw.
+     * @param data data that is invalid to draw
      */
     // TODO: for some reason, this does not work... because data remains in JVM?
     public void setInvalid(final MapData data)
@@ -957,7 +952,7 @@ public final class EditorMap extends JPanel implements EventListener
     /**
      * Adds a data representation of the node. This will not yet be drawn until the data object itself tells the map it is valid
      * to be drawn.
-     * @param node node of element to draw.
+     * @param node node of element to draw
      */
     private void add(final XsdTreeNode node)
     {
@@ -1005,7 +1000,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Remove the drawing data of pertaining to the node.
-     * @param node node.
+     * @param node node
      */
     private void remove(final XsdTreeNode node)
     {
@@ -1046,7 +1041,7 @@ public final class EditorMap extends JPanel implements EventListener
      * Reinitialize animation on object who's animator stores static information that depends on something that was changed.
      * This will create a new animation object. Only data objects that know their animations have static data, should call this.
      * And only when information changed on which the static data depends.
-     * @param node node.
+     * @param node node
      */
     public void reinitialize(final XsdTreeNode node)
     {
@@ -1056,8 +1051,8 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the map data of the given XSD node.
-     * @param node node.
-     * @return map data of the given XSD node, empty if no such data.
+     * @param node node
+     * @return map data of the given XSD node, empty if no such data
      */
     public Optional<MapData> getData(final XsdTreeNode node)
     {
@@ -1066,7 +1061,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Add defined road layout.
-     * @param node node of the defined road layout.
+     * @param node node of the defined road layout
      */
     private void addRoadLayout(final XsdTreeNode node)
     {
@@ -1080,7 +1075,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Remove defined road layout.
-     * @param node node of the defined road layout.
+     * @param node node of the defined road layout
      */
     private void removeRoadLayout(final XsdTreeNode node)
     {
@@ -1090,7 +1085,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Sets the network level flattener.
-     * @param node node of network flattener.
+     * @param node node of network flattener
      */
     private void setNetworkFlattener(final XsdTreeNode node)
     {
@@ -1122,8 +1117,8 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the road layout listener from which a {@code MapLinkData} can obtain offsets.
-     * @param node node of a defined layout.
-     * @return listener, can be used to obtain offsets.
+     * @param node node of a defined layout
+     * @return listener, can be used to obtain offsets
      */
     RoadLayoutListener getRoadLayoutListener(final XsdTreeNode node)
     {
@@ -1132,7 +1127,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Remove animation.
-     * @param animation animation to remove.
+     * @param animation animation to remove
      */
     void removeAnimation(final Renderable2d<?> animation)
     {
@@ -1145,7 +1140,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the context.
-     * @return context.
+     * @return context
      */
     Contextualized getContextualized()
     {
@@ -1154,7 +1149,7 @@ public final class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the network level flattener, or a 64 segment flattener of none specified.
-     * @return flattener.
+     * @return flattener
      */
     public CurveFlattener getNetworkFlattener()
     {

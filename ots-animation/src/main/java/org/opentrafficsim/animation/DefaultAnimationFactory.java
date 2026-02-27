@@ -83,7 +83,7 @@ import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
- * DefaultAnimationFactory.
+ * Factory for default animation objects.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -93,19 +93,20 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class DefaultAnimationFactory implements EventListener
 {
-    /** The network. */
+
+    /** Network. */
     private final Network network;
 
-    /** The simulator. */
+    /** Simulator. */
     private final OtsSimulatorInterface simulator;
 
     /** GTU colorer. */
     private final GtuColorerManager gtuColorerManager;
 
-    /** Rendered gtus. */
+    /** Rendered GTUs. */
     private Map<LaneBasedGtu, Renderable2d<GtuData>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    /** Rendered gtus. */
+    /** Rendered GTUs. */
     private Map<LaneBasedGtu, Renderable2d<ChannelAttention>> animatedAttention =
             Collections.synchronizedMap(new LinkedHashMap<>());
 
@@ -121,7 +122,7 @@ public class DefaultAnimationFactory implements EventListener
 
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
-     * adding and removing of GTUs and Objects is animated correctly.
+     * adding and removing of GTUs and objects is animated correctly.
      * @param network the network
      * @param gtuColorerManager GTU colorer manager
      * @param animateNetwork whether to animate the current network objects
@@ -304,9 +305,11 @@ public class DefaultAnimationFactory implements EventListener
             else if (event.getType().equals(Network.OBJECT_REMOVE_EVENT))
             {
                 LocatedObject object = this.network.getObjectMap().get((String) event.getContent());
-                // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
-                // XXX: this is now a memory leak; we don't expect static animation objects to be removed during the run
-                this.animatedLocatedObjects.remove(object);
+                Renderable2d<?> renderable = this.animatedLocatedObjects.remove(object);
+                if (renderable != null)
+                {
+                    renderable.destroy(this.simulator);
+                }
             }
             else if (event.getType().equals(Network.NONLOCATED_OBJECT_ADD_EVENT))
             {
@@ -316,9 +319,11 @@ public class DefaultAnimationFactory implements EventListener
             else if (event.getType().equals(Network.NONLOCATED_OBJECT_REMOVE_EVENT))
             {
                 NonLocatedObject object = this.network.getNonLocatedObjectMap().get((String) event.getContent());
-                // TODO: this.animatedObjects.get(object).destroy(object.getSimulator());
-                // XXX: this is now a memory leak; we don't expect static animation objects to be removed during the run
-                this.animatedNonLocatedObjects.remove(object);
+                Renderable2d<?> renderable = this.animatedNonLocatedObjects.remove(object);
+                if (renderable != null)
+                {
+                    renderable.destroy(this.simulator);
+                }
             }
         }
         catch (SimRuntimeException exception)
@@ -352,9 +357,8 @@ public class DefaultAnimationFactory implements EventListener
             if (object instanceof SinkDetector)
             {
                 SinkDetector detector = (SinkDetector) object;
-                // Renderable2d<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
-                Renderable2d<LaneDetectorData> objectAnimation = LaneDetectorAnimation
-                        .ofGenericType(new AnimationLaneDetectorData(detector), this.simulator, Color.ORANGE);
+                Renderable2d<LaneDetectorData> objectAnimation =
+                        new LaneDetectorAnimation<>(new AnimationLaneDetectorData(detector), this.simulator, Color.ORANGE);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof TrafficLightDetector)
@@ -372,8 +376,9 @@ public class DefaultAnimationFactory implements EventListener
             else if (object instanceof LaneDetector)
             {
                 LaneDetector detector = (LaneDetector) object;
-                Renderable2d<LaneDetectorData> objectAnimation = LaneDetectorAnimation
-                        .ofGenericType(new AnimationLaneDetectorData(detector), this.simulator, Color.BLACK);
+                Renderable2d<LaneDetectorData> objectAnimation =
+                        new LaneDetectorAnimation<LaneDetectorAnimation.LaneDetectorData>(
+                                new AnimationLaneDetectorData(detector), this.simulator, Color.BLACK);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof Conflict)
@@ -413,7 +418,7 @@ public class DefaultAnimationFactory implements EventListener
 
     /**
      * Draw non-located objects.
-     * @param object the object to draw.
+     * @param object the object to draw
      */
     protected void animateNonLocatedObject(final NonLocatedObject object)
     {

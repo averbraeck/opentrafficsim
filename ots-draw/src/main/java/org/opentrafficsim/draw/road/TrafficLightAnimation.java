@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
+import org.opentrafficsim.draw.road.TrafficLightAnimation.Text;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -24,10 +25,8 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightData>
+public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightData, Text>
 {
-    /** the Text object to destroy when the animation is destroyed. */
-    private final Text text;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
@@ -37,36 +36,20 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
     public TrafficLightAnimation(final TrafficLightData trafficLight, final Contextualized contextualized)
     {
         super(trafficLight, contextualized, new Length(0.5, LengthUnit.SI));
-
-        float halfLength = (float) (trafficLight.getLine().getLength() / 2.0);
-        this.text = new Text(trafficLight, trafficLight::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK,
-                contextualized);
     }
 
-    /**
-     * Return text object.
-     * @return text.
-     */
-    public final Text getText()
+    @Override
+    protected Text createText(final TrafficLightData source, final Contextualized contextualized, final String prefix)
     {
-        return this.text;
+        float halfLength = (float) (source.getLine().getLength() / 2.0);
+        return new Text(source, source::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(getSource().getColor());
         super.paint(graphics, observer);
-    }
-
-    @Override
-    public void destroy(final Contextualized contextProvider)
-    {
-        super.destroy(contextProvider);
-        this.text.destroy(contextProvider);
     }
 
     @Override
@@ -76,15 +59,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
     }
 
     /**
-     * Text animation for the TrafficLight. Separate class to be able to turn it on and off...
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Text animation for the TrafficLight.
      */
     public static class Text extends RenderableTextSource<TrafficLightData, Text>
     {
@@ -113,18 +88,12 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
 
     /**
      * TrafficLightData provides the information required to draw a traffic light.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface TrafficLightData extends LaneBasedObjectData
     {
         /**
          * Returns the traffic light color.
-         * @return traffic light color.
+         * @return traffic light color
          */
         Color getColor();
     }

@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.draw.OtsRenderableLabeled.NoText;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
@@ -29,7 +30,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
+public class ConflictAnimation extends AbstractLineAnimation<ConflictData, NoText<ConflictData>>
 {
 
     /** Drawable paths. */
@@ -49,6 +50,13 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
         // geometry of area (not the line) is absolute; pre-transform geometry to fit rotation of source
         this.paths = this.getSource().getAbsoluteContour() == null ? null
                 : PaintPolygons.getPaths(getSource().getLocation(), getSource().getAbsoluteContour().getPointList());
+    }
+
+    @Override
+    protected NoText<ConflictData> createText(final ConflictData source, final Contextualized contextualized,
+            final String prefix)
+    {
+        return null; // no label for conflicts
     }
 
     @Override
@@ -86,37 +94,33 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
     @Override
     public final String toString()
     {
-        return "ConflictAnimation [getSource()=" + getSource() + "]";
+        return "ConflictAnimation [source=" + getSource() + "]";
     }
 
     /**
-     * ConflictData provides the information required to draw a conflict.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Provides the information required to draw a conflict.
      */
     public interface ConflictData extends LaneBasedObjectData
     {
+
         /**
          * Returns the conflict color.
-         * @return conflict color.
+         * @return conflict color
          */
         Color getColor();
 
         /**
          * Whether the conflict is a crossing.
-         * @return whether the conflict is a crossing.
+         * @return whether the conflict is a crossing
          */
         boolean isCrossing();
 
         /**
          * Whether the conflict is a permitted conflict.
-         * @return whether the conflict is a permitted conflict.
+         * @return whether the conflict is a permitted conflict
          */
         boolean isPermitted();
+
     }
 
 }
