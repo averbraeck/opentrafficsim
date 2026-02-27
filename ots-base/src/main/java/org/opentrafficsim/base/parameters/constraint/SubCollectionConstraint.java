@@ -1,7 +1,6 @@
 package org.opentrafficsim.base.parameters.constraint;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 
 import org.djutils.exceptions.Throw;
 
@@ -43,23 +42,6 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
     public String failMessage()
     {
         return "Value of parameter '%s' contains value(s) not in the collection of acceptable values.";
-    }
-
-    /**
-     * Creates a new instance with given collection.
-     * @param objs acceptable objects
-     * @param <T> type
-     * @return new instance with given collection
-     */
-    @SafeVarargs
-    public static <T> SubCollectionConstraint<T> newInstance(final T... objs)
-    {
-        Collection<T> collection = new LinkedHashSet<>();
-        for (T t : objs)
-        {
-            collection.add(t);
-        }
-        return new SubCollectionConstraint<>(collection);
     }
 
     @Override

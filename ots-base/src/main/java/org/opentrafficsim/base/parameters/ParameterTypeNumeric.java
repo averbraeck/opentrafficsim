@@ -67,16 +67,4 @@ public abstract class ParameterTypeNumeric<T extends Number> extends ParameterTy
         super(id, description, valueClass, defaultValue, constraint);
     }
 
-    @Override
-    public String printValue(final Parameters parameters) throws ParameterException
-    {
-        return parameters.getParameter(this).toString();
-    }
-
-    @Override
-    public String toString()
-    {
-        return "ParameterTypeNumeric [id=" + getId() + ", description=" + getDescription() + "]";
-    }
-
 }

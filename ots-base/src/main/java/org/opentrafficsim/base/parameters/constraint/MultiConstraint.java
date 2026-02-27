@@ -1,7 +1,6 @@
 package org.opentrafficsim.base.parameters.constraint;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Constraint containing multiple constraints.
@@ -18,7 +17,7 @@ public class MultiConstraint<T> implements Constraint<T>
 {
 
     /** Set of constraints. */
-    private final Set<Constraint<? super T>> constraints;
+    private final Collection<Constraint<? super T>> constraints;
 
     /** Message of the latest failed constrained. */
     private String failedConstraintMessage = null;
@@ -27,27 +26,10 @@ public class MultiConstraint<T> implements Constraint<T>
     private final String stringRepresentation;
 
     /**
-     * Creates a {@code MultiConstraint} from given constraints.
-     * @param constraints constraints
-     * @param <T> value type
-     * @return {@code MultiConstraint}
-     */
-    @SafeVarargs
-    public static final <T> MultiConstraint<T> create(final Constraint<? super T>... constraints)
-    {
-        Set<Constraint<? super T>> set = new LinkedHashSet<>();
-        for (Constraint<? super T> constraint : constraints)
-        {
-            set.add(constraint);
-        }
-        return new MultiConstraint<>(set);
-    }
-
-    /**
      * Constructor.
      * @param constraints constraints
      */
-    public MultiConstraint(final Set<Constraint<? super T>> constraints)
+    public MultiConstraint(final Collection<Constraint<? super T>> constraints)
     {
         this.constraints = constraints;
         this.stringRepresentation = String.format("MultiConstraint [contains %d constraints]", this.constraints.size());

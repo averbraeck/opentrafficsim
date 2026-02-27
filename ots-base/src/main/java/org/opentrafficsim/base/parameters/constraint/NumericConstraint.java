@@ -1,10 +1,5 @@
 package org.opentrafficsim.base.parameters.constraint;
 
-import java.util.IllegalFormatException;
-
-import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.OtsRuntimeException;
-
 /**
  * List of default constraint for ParameterTypes.
  * <p>
@@ -83,24 +78,10 @@ public enum NumericConstraint implements Constraint<Number>
 
     /**
      * Constructor with message for value failure, pointing to a parameter using '%s'.
-     * @param failMessage Message for value failure, pointing to a parameter using '%s'.
+     * @param failMessage Message for value failure, pointing to a parameter using '%s'
      */
-    // @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
     NumericConstraint(final String failMessage)
     {
-        Throw.whenNull(failMessage, "Default parameter constraint '%s' has null as fail message as given to the constructor,"
-                + " which is not allowed.", this);
-        try
-        {
-            // return value can be ignored
-            String.format(failMessage, "dummy");
-        }
-        catch (IllegalFormatException ife)
-        {
-            throw new OtsRuntimeException("Default parameter constraint " + this.toString()
-                    + " has an illegal formatting of the fail message as given to the constructor."
-                    + " It should contain a single '%s'.", ife);
-        }
         this.failMessage = failMessage;
     }
 

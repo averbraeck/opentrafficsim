@@ -1,7 +1,6 @@
 package org.opentrafficsim.base.parameters.constraint;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 
 /**
  * Constraint that checks whether a collection of classes is a sub collection of constraint collection.
@@ -21,26 +20,9 @@ public final class ClassCollectionConstraint<T> extends SubCollectionConstraint<
      * Constructor.
      * @param classes acceptable classes
      */
-    private ClassCollectionConstraint(final Collection<Class<? extends T>> classes)
+    public ClassCollectionConstraint(final Collection<Class<? extends T>> classes)
     {
         super(classes);
-    }
-
-    /**
-     * Creates a new instance with given collection.
-     * @param objs acceptable classes
-     * @param <T> type class
-     * @return new instance with given collection
-     */
-    @SafeVarargs
-    public static <T> ClassCollectionConstraint<T> newInstance(final Class<? extends T>... objs)
-    {
-        Collection<Class<? extends T>> collection = new LinkedHashSet<>();
-        for (Class<? extends T> clazz : objs)
-        {
-            collection.add(clazz);
-        }
-        return new ClassCollectionConstraint<>(collection);
     }
 
     @Override

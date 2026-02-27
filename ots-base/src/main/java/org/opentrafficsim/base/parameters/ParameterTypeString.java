@@ -12,7 +12,6 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
 public class ParameterTypeString extends ParameterType<String>
 {
 
@@ -59,12 +58,6 @@ public class ParameterTypeString extends ParameterType<String>
             final Constraint<? super String> constraint)
     {
         super(id, description, String.class, defaultValue, constraint);
-    }
-
-    @Override
-    public final String printValue(final Parameters parameters) throws ParameterException
-    {
-        return parameters.getParameter(this);
     }
 
     @Override

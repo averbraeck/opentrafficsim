@@ -29,6 +29,7 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 
 /**
+ * Test for {@link Parameters}.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -37,20 +38,14 @@ import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class ParametersTest implements ConstraintInterface
+class ParametersTest implements ConstraintInterface
 {
-
-    /** */
-    private ParametersTest()
-    {
-        // do not instantiate test class
-    }
 
     /**
      * Defaults tests.
      */
     @Test
-    public void defaultsTest()
+    void defaultsTest()
     {
         Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
         try
@@ -68,7 +63,7 @@ public final class ParametersTest implements ConstraintInterface
      * Constructor tests.
      */
     @Test
-    public void constructorTest()
+    void constructorTest()
     {
         // Check Parameters constructor
         ParameterSet params = new ParameterSet();
@@ -114,7 +109,7 @@ public final class ParametersTest implements ConstraintInterface
      * Parameter value default range tests.
      */
     @Test
-    public void defaultRangeTest()
+    void defaultRangeTest()
     {
         // Check default values that should work
         checkDefaultValue(1.0, POSITIVE, false);
@@ -224,7 +219,7 @@ public final class ParametersTest implements ConstraintInterface
      * Parameter value custom constraint tests.
      */
     @Test
-    public void customConstraintTest()
+    void customConstraintTest()
     {
 
         // Check values that should work
@@ -301,7 +296,7 @@ public final class ParametersTest implements ConstraintInterface
      * @throws ParameterException should not be thrown, is for untested methods (in this test) that throw the exception
      */
     @Test
-    public void claimTest() throws ParameterException
+    void claimTest() throws ParameterException
     {
         ParameterTypeInteger a = new ParameterTypeInteger("a", "along", 0);
 
@@ -323,7 +318,7 @@ public final class ParametersTest implements ConstraintInterface
      * @throws ParameterException should not be thrown, is for untested methods (in this test) that throw the exception
      */
     @Test
-    public void setResetTest() throws ParameterException
+    void setResetTest() throws ParameterException
     {
         ParameterTypeInteger a = new ParameterTypeInteger("a", "along", 0);
 
@@ -424,7 +419,7 @@ public final class ParametersTest implements ConstraintInterface
      * @throws ParameterException Should not be thrown, is for untested methods (in this test) that throw the exception.
      */
     @Test
-    public void equalizeTest() throws ParameterException
+    void equalizeTest() throws ParameterException
     {
         // equal double values from different parameters should be equal
         ParameterTypeDouble a1 = new ParameterTypeDouble("a", "along", 0.0);
@@ -461,7 +456,7 @@ public final class ParametersTest implements ConstraintInterface
      * Test that exceptions are thrown when trying to use null values.
      */
     @Test
-    public void testNullNotAllowed()
+    void testNullNotAllowed()
     {
         // null default value
         try
@@ -508,7 +503,7 @@ public final class ParametersTest implements ConstraintInterface
      * @throws InstantiationException Reflection.
      */
     @Test
-    public void checkDefaultValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+    void checkDefaultValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException, SecurityException
     {
         // @formatter:off
@@ -658,7 +653,7 @@ public final class ParametersTest implements ConstraintInterface
      * @throws ParameterException parameter exception
      */
     @Test
-    public void mergeTest() throws ParameterException
+    void mergeTest() throws ParameterException
     {
         ParameterSet paramsA = new ParameterSet();
         paramsA.setDefaultParameter(ParameterTypes.A);
@@ -677,7 +672,7 @@ public final class ParametersTest implements ConstraintInterface
      * Tests the correct creation of a column.
      */
     @Test
-    public void columnTest()
+    void columnTest()
     {
         Column<Acceleration> col = ParameterTypes.A.getColumn("m/s2");
         assertEquals(col.getId(), ParameterTypes.A.getId());

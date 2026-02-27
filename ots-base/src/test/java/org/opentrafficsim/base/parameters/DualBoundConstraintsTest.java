@@ -3,10 +3,15 @@ package org.opentrafficsim.base.parameters;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.function.Function;
+
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.constraint.DualBound;
 
 /**
+ * Test {@link DualBound}.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -34,32 +39,48 @@ public final class DualBoundConstraintsTest
     @Test
     public void testNumericalConstraints()
     {
+        loopCases((d) -> d, Double.class);
+        loopCases((d) -> Duration.ofSI(d), Duration.class);
+    }
+
+    /**
+     * Test cases for a type.
+     * @param <T> type
+     * @param function function from double to type
+     * @param clazz class of value type
+     */
+    public <T extends Number> void loopCases(final Function<Double, T> function, final Class<T> clazz)
+    {
         for (double low : testValues)
         {
             for (double high : testValues)
             {
-                checkConstraint(low, high, false, false);
-                checkConstraint(low, high, false, true);
-                checkConstraint(low, high, true, false);
-                checkConstraint(low, high, true, true);
+                checkConstraint(low, high, false, false, function, clazz);
+                checkConstraint(low, high, false, true, function, clazz);
+                checkConstraint(low, high, true, false, function, clazz);
+                checkConstraint(low, high, true, true, function, clazz);
             }
         }
     }
 
     /**
      * Create a DoubleBound for the given values and test it.
+     * @param <T> type
      * @param low the low limit of the DoubleBound
      * @param high the high limit of the DoubleBound
      * @param includeLow does the DoubleBound include the low limit value
      * @param includeHigh does the DoubleBound include the high limit value
+     * @param clazz class of value type
+     * @param function function from double to type
      */
-    public void checkConstraint(final double low, final double high, final boolean includeLow, final boolean includeHigh)
+    public <T extends Number> void checkConstraint(final double low, final double high, final boolean includeLow,
+            final boolean includeHigh, final Function<Double, T> function, final Class<T> clazz)
     {
         if (high < low || (high == low && (!includeLow || !includeHigh)))
         {
             try
             {
-                create(low, high, includeLow, includeHigh);
+                create(low, high, includeLow, includeHigh, function, clazz);
             }
             catch (IllegalArgumentException iae)
             {
@@ -68,7 +89,7 @@ public final class DualBoundConstraintsTest
         }
         else
         {
-            DualBound<Double> db = create(low, high, includeLow, includeHigh);
+            DualBound<T> db = create(low, high, includeLow, includeHigh, function, clazz);
             // if (includeLow)
             // {
             // assertTrue("DoubleBound includes low", db.includesLowerBound());
@@ -90,38 +111,39 @@ public final class DualBoundConstraintsTest
             assertTrue(db.toString().indexOf("DualBound") >= 0, "toString returns something sensible");
             for (double testValue : testValues)
             {
-                boolean actualResult = db.accept(testValue);
+                T typeValue = function.apply(testValue);
+                boolean actualResult = db.accept(typeValue);
                 // System.out.println("testValue=" + testValue + ", DoubleBound=" + db.toString() + ", actualResult="
                 // + actualResult);
-                if (testValue < low)
+                if (typeValue.doubleValue() < low)
                 {
                     assertFalse(actualResult, "test value below range should fail");
                 }
-                if (testValue == low && includeLow && low != high)
+                if (typeValue.doubleValue() == low && includeLow && low != high)
                 {
                     assertTrue(actualResult, "test value at low end of range should not fail");
                 }
-                if (testValue == low && testValue != high && includeLow)
+                if (typeValue.doubleValue() == low && typeValue.doubleValue() != high && includeLow)
                 {
                     assertTrue(actualResult, "test value at low end of range should not fail");
                 }
-                if (testValue > low && testValue < high)
+                if (typeValue.doubleValue() > low && typeValue.doubleValue() < high)
                 {
                     assertTrue(actualResult, "test value within range should not fail");
                 }
-                if (testValue == high && testValue != low && includeHigh)
+                if (typeValue.doubleValue() == high && typeValue.doubleValue() != low && includeHigh)
                 {
                     assertTrue(actualResult, "test value at high end of range should not fail");
                 }
-                if (testValue == high && includeHigh)
+                if (typeValue.doubleValue() == high && includeHigh)
                 {
                     assertTrue(actualResult, "test value at high end of range should not fail");
                 }
-                if (testValue == high && !includeHigh && low != high)
+                if (typeValue.doubleValue() == high && !includeHigh && low != high)
                 {
                     assertFalse(actualResult, "test value at high end of range should fail");
                 }
-                if (testValue > high)
+                if (typeValue.doubleValue() > high)
                 {
                     assertFalse(actualResult, "test value above range should fail");
                 }
@@ -131,26 +153,49 @@ public final class DualBoundConstraintsTest
 
     /**
      * Creates a dual bound depending on exclusion.
+     * @param <T> type
      * @param low lower bound
      * @param high upper bound
      * @param includeLow whether to include the lower bound
      * @param includeHigh whether to include the upper bound
+     * @param function function from double to type
+     * @param clazz class of value type
      * @return dual bound depending on exclusion
      */
-    private DualBound<Double> create(final double low, final double high, final boolean includeLow, final boolean includeHigh)
+    @SuppressWarnings("unchecked")
+    private <T extends Number> DualBound<T> create(final double low, final double high, final boolean includeLow,
+            final boolean includeHigh, final Function<Double, T> function, final Class<T> clazz)
     {
+        if (DoubleScalar.class.isAssignableFrom(clazz))
+        {
+            Function<Double, DoubleScalar<?, ?>> doubleFunction = (Function<Double, DoubleScalar<?, ?>>) function;
+            if (includeLow && includeHigh)
+            {
+                return (DualBound<T>) DualBound.closed(doubleFunction.apply(low), doubleFunction.apply(high));
+            }
+            else if (includeLow)
+            {
+                return (DualBound<T>) DualBound.leftClosedRightOpen(doubleFunction.apply(low), doubleFunction.apply(high));
+            }
+            else if (includeHigh)
+            {
+                return (DualBound<T>) DualBound.leftOpenRightClosed(doubleFunction.apply(low), doubleFunction.apply(high));
+            }
+            return (DualBound<T>) DualBound.open(doubleFunction.apply(low), doubleFunction.apply(high));
+        }
+        Function<Double, Double> doubleFunction = (Function<Double, Double>) function;
         if (includeLow && includeHigh)
         {
-            return DualBound.closed(low, high);
+            return (DualBound<T>) DualBound.closed(doubleFunction.apply(low), doubleFunction.apply(high));
         }
         else if (includeLow)
         {
-            return DualBound.leftClosedRightOpen(low, high);
+            return (DualBound<T>) DualBound.leftClosedRightOpen(doubleFunction.apply(low), doubleFunction.apply(high));
         }
         else if (includeHigh)
         {
-            return DualBound.leftOpenRightClosed(low, high);
+            return (DualBound<T>) DualBound.leftOpenRightClosed(doubleFunction.apply(low), doubleFunction.apply(high));
         }
-        return DualBound.open(low, high);
+        return (DualBound<T>) DualBound.open(doubleFunction.apply(low), doubleFunction.apply(high));
     }
 }

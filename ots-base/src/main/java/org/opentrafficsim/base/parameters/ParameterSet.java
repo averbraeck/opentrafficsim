@@ -263,7 +263,7 @@ public class ParameterSet implements Parameters
                 }
                 catch (IllegalAccessException iace)
                 {
-                    // parameter type not public
+                    // should not happen, we set it accessible
                     throw new OtsRuntimeException(iace);
                 }
                 catch (ParameterException pe)
@@ -339,6 +339,7 @@ public class ParameterSet implements Parameters
      */
     private static class Empty extends Dimensionless
     {
+
         /** */
         private static final long serialVersionUID = 20160414L;
 
