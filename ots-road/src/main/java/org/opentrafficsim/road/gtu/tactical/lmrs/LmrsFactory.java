@@ -915,6 +915,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         // Alternate default values in case of social interactions, including distributions for the speed-leading strategy
         if (get(this.tailgating, gtuType))
         {
+            parameters.setDefaultParameter(Tailgating.DEV_RHO);
             parameters.setParameter(ParameterTypes.TMAX, Duration.ofSI(1.6));
         }
         if (get(this.socioLaneChange, gtuType) || get(this.socioSpeed, gtuType))

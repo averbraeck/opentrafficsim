@@ -170,10 +170,11 @@ public interface Tailgating
      * Add lateral deviation intent based on level of social pressure.
      * @param context tactical information such as parameters and car-following model
      * @param rho level of social pressure
+     * @throws ParameterException when the deviation parameter is not present
      */
-    static void deviate(final TacticalContextEgo context, final double rho)
+    static void deviate(final TacticalContextEgo context, final double rho) throws ParameterException
     {
-        if (context.getParameters().getOptionalParameter(DEV_RHO).orElse(false))
+        if (context.getParameters().getParameter(DEV_RHO))
         {
             LanePosition position = context.getPosition();
             // TODO: direction depends on left/right traffic
