@@ -1171,7 +1171,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // typing
         DocumentListener documentListener = Actions.documentListener(() ->
         {
-            if (!OtsEditor.this.treeTable.isEditing())
+            if (!table.isEditing())
             {
                 // the pop-up should not be made visible if the editor is in a non-editing transient mode
                 return;
@@ -1197,13 +1197,21 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // place the pop-up
         SwingUtilities.invokeLater(() ->
         {
+            Rectangle rectangle = field.getBounds();
+            if (rectangle.getWidth() == 0 || rectangle.getHeight() == 0)
+            {
+                /*
+                 * First time requesting a pop-up on this table while user was editing in the other table. State of the field is
+                 * not correct so we don't know where to place the pop-up. Should rarely happen, let's suppress pop-up.
+                 */
+                return;
+            }
             table.setComponentPopupMenu(popup);
             popup.setMinimumSize(popup.getSize());
             popup.pack();
             popup.setInvoker(table);
             popup.setVisible(true);
             field.requestFocus();
-            Rectangle rectangle = field.getBounds();
             placePopup(popup, rectangle, table);
         });
 
@@ -1370,7 +1378,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private void placePopup(final JPopupMenu popup, final Rectangle rectangle, final JComponent parent)
     {
         Point pAttributes = parent.getLocationOnScreen();
-        // cannot use screen size in case of multiple monitors, so we keep the popup on the JFrame rather than the window
+        // cannot use screen size in case of multiple monitors, so we keep the pop-up on the JFrame rather than the window
         Dimension windowSize = OtsEditor.this.getSize();
         Point pWindow = OtsEditor.this.getLocationOnScreen();
         if (pAttributes.y + (int) rectangle.getMaxY() + popup.getBounds().getHeight() > windowSize.height + pWindow.y - 1)

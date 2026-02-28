@@ -79,9 +79,9 @@ public class AttributesMouseListener extends MouseAdapter
     }
 
     @Override
-    public void mouseReleased(final MouseEvent e)
+    public void mousePressed(final MouseEvent e)
     {
-        // show popup for attributes with a selection of allowable values (xsd:keyref, xsd:enumeration)
+        // show pop-up for attributes with a selection of allowable values (xsd:keyref, xsd:enumeration)
         int col = this.attributesTable.columnAtPoint(e.getPoint());
         if (this.attributesTable.convertColumnIndexToModel(col) == AttributesTableModel.VALUE_COLUMN)
         {
