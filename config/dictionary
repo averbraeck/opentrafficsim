@@ -29,6 +29,7 @@ drawable
 dupuis
 dutch
 egoistic
+equidistant
 errata
 et
 euclidean
@@ -85,12 +86,16 @@ phi
 placeholders
 platoon
 plottable
+polyline
 presentable
 quantile
 quantiles
 quartic
 radians
+radii
 reachability
+renderable
+renderables
 rijkswaterstaat
 schakel
 serializable
@@ -119,6 +124,7 @@ unsubscribe
 urgency
 varargs
 verbraeck
+voronoi
 wouter
 xsd
 yen
