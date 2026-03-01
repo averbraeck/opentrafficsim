@@ -940,8 +940,8 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
             // we assume the reference point is within the contour of the Gtu.
             double rear = Math.max(0.0, getReference().dx().si - getRear().dx().si);
             double front = path.getLength() + Math.max(0.0, getFront().dx().si - getReference().dx().si);
-            Point2d p0 = path.getLocationExtendedSI(-rear);
-            Point2d pn = path.getLocationExtendedSI(front);
+            Point2d p0 = path.getLocationExtended(-rear);
+            Point2d pn = path.getLocationExtended(front);
             List<Point2d> pList = path.getPointList();
             pList.add(0, p0);
             pList.add(pn);

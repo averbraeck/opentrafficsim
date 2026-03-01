@@ -63,7 +63,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         this.link = link;
         this.id = id;
         this.centerLine = geometry.centerLine();
-        this.location = geometry.centerLine().getLocationPointFractionExtended(0.5);
+        this.location = geometry.centerLine().getLocationFractionExtended(0.5);
         this.absoluteContour = geometry.absoluteContour();
         this.relativeContour =
                 new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));

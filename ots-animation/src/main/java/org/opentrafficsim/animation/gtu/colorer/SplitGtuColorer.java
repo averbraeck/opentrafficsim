@@ -96,7 +96,7 @@ public class SplitGtuColorer extends AbstractLegendColorer<Gtu, Gtu>
         }
 
         // split
-        double preAngle = preLink.getDesignLine().getLocationPointFraction(1.0).getDirZ();
+        double preAngle = preLink.getDesignLine().getLocationFraction(1.0).getDirZ();
         double angleLeft = 0.0;
         double angleRight = 0.0;
         Link linkLeft = null;
@@ -104,8 +104,8 @@ public class SplitGtuColorer extends AbstractLegendColorer<Gtu, Gtu>
         for (Link nextLink : nextLinks)
         {
             double angle = nextLink.getStartNode().equals(link.getStartNode())
-                    ? nextLink.getDesignLine().getLocationPointFraction(0.0).getDirZ()
-                    : nextLink.getDesignLine().getLocationPointFraction(1.0).getDirZ() + Math.PI;
+                    ? nextLink.getDesignLine().getLocationFraction(0.0).getDirZ()
+                    : nextLink.getDesignLine().getLocationFraction(1.0).getDirZ() + Math.PI;
             angle -= preAngle; // difference with from
             while (angle < -Math.PI)
             {

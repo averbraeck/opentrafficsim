@@ -9,7 +9,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -233,7 +232,7 @@ public class OperationalPlan
      */
     public DirectedPoint2d getEndLocation()
     {
-        return this.path.getLocationPointFraction(Math.min(1.0, this.totalLength.si / this.path.getLength()));
+        return this.path.getLocationFraction(Math.min(1.0, this.totalLength.si / this.path.getLength()));
     }
 
     /**
@@ -293,7 +292,7 @@ public class OperationalPlan
         Throw.when(time.lt(this.startTime), OperationalPlanException.class, "Requested time is before start time.");
         Throw.when(time.gt(this.getEndTime()), OperationalPlanException.class, "Requested time is beyond end time.");
         double fraction = this.totalLength.eq0() ? 0.0 : getTraveledDistance(time).si / this.totalLength.si;
-        return this.path.getLocationPointFraction(fraction, 0.01);
+        return this.path.getLocationFraction(fraction, 0.01);
     }
 
     /**
@@ -306,7 +305,7 @@ public class OperationalPlan
     public final DirectedPoint2d getLocation(final Duration time, final RelativePosition pos) throws OperationalPlanException
     {
         double distanceSI = getTraveledDistance(time).si + pos.dx().si;
-        return this.path.getLocationExtendedSI(distanceSI);
+        return this.path.getLocationExtended(distanceSI);
     }
 
     /**

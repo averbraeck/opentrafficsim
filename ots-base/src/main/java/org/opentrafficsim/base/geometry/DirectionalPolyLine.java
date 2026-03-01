@@ -8,6 +8,7 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 
 /**
  * Adds a direction at the start and end point relative to its super class {@code OtsLine2d}, as the first and last segment may
@@ -98,7 +99,7 @@ public class DirectionalPolyLine extends OtsLine2d
      */
     public double projectFractional(final double x, final double y, final FractionalFallback fallback)
     {
-        return projectFractional(this.startDirection, this.endDirection, x, y, fallback);
+        return projectFractionalAt(this.startDirection, this.endDirection, x, y, fallback);
     }
 
     /**

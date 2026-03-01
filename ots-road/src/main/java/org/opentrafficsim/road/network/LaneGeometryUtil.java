@@ -100,7 +100,7 @@ public final class LaneGeometryUtil
             final ContinuousPiecewiseLinearFunction offset, final ContinuousPiecewiseLinearFunction width,
             final LaneType laneType, final Map<GtuType, Speed> speedLimits)
     {
-        OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
+        OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationFraction(0.0), link.getLength().si);
         return new Lane(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType, speedLimits);
     }
 
@@ -116,7 +116,7 @@ public final class LaneGeometryUtil
     public static Stripe createStraightStripe(final StripeData type, final String id, final CrossSectionLink link,
             final Length offset, final Length width)
     {
-        OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
+        OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationFraction(0.0), link.getLength().si);
         ContinuousPiecewiseLinearFunction offsetFunc = ContinuousPiecewiseLinearFunction.of(0.0, offset.si, 1.0, offset.si);
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         return new Stripe(id, type, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc));
@@ -136,7 +136,7 @@ public final class LaneGeometryUtil
     public static Object createStraightShoulder(final CrossSectionLink link, final String id, final Length startOffset,
             final Length endOffset, final Length startWidth, final Length endWidth, final LaneType laneType)
     {
-        OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
+        OffsetCurve2d designLine = new Straight2d(link.getDesignLine().getLocationFraction(0.0), link.getLength().si);
         ContinuousPiecewiseLinearFunction offset = ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
         ContinuousPiecewiseLinearFunction width = ContinuousPiecewiseLinearFunction.of(0.0, startWidth.si, 1.0, endWidth.si);
         return new Shoulder(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType);

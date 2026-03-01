@@ -159,7 +159,7 @@ public final class OperationalPlanTest
             Duration relTime = new Duration(deltaT, DurationUnit.SI);
             double expectedDistance = startSpeed.si * deltaT + 0.5 * a.si * deltaT * deltaT;
             double fraction = expectedDistance / path.getLength();
-            Point2d expectedPosition = path.getLocationPointFraction(fraction);
+            Point2d expectedPosition = path.getLocationFraction(fraction);
             DirectedPoint2d actualPosition = op.getLocation(absTime);
             assertEquals(0, expectedPosition.distance(actualPosition), 0.002, "Position at abs time " + deltaT);
             actualPosition = op.getLocationFromStart(relTime);
@@ -207,7 +207,7 @@ public final class OperationalPlanTest
             double fraction = step / 10d;
             Duration when = startTime.plus(endTime.minus(startTime).times(fraction));
             DirectedPoint2d actualLocation = csp.getLocation(when);
-            Point2d expectedLocation = path.getLocationPointFraction(fraction);
+            Point2d expectedLocation = path.getLocationFraction(fraction);
             assertEquals(0, expectedLocation.distance(actualLocation), 0.001, "actual location matches expected location");
         }
     }
@@ -251,7 +251,7 @@ public final class OperationalPlanTest
                     assertEquals(a.si, cap.getAcceleration(endTime).si, 0.0001, "acceleration is the same at any time");
                     // S(t) v0 * t + 0.5 * a * t * t
                     double distance = startSpeed.si * fractionTime.si + 0.5 * a.si * fractionTime.si * fractionTime.si;
-                    Point2d expectedPoint = path.getLocationPointFraction(distance / path.getLength());
+                    Point2d expectedPoint = path.getLocationFraction(distance / path.getLength());
                     DirectedPoint2d p = cap.getLocationFromStart(fractionTime);
                     assertEquals(0, expectedPoint.distance(p), 0.001, "position along the way matches");
                 }

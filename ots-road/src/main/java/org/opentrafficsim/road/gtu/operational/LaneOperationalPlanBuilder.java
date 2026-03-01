@@ -20,9 +20,9 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.math.AngleUtil;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -138,7 +138,7 @@ public final class LaneOperationalPlanBuilder
                 deviative = true;
                 Lane lane = gtu.getPosition().lane().getAdjacentLane(simplePlan.getLaneChangeDirection(), gtu.getType())
                         .orElseThrow(() -> new IllegalStateException("Starting lane change without adjacent lane."));
-                double fraction = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
+                double fraction = lane.getCenterLine().projectFractionalAt(lane.getLink().getStartNode().getHeading(),
                         lane.getLink().getEndNode().getHeading(), gtu.getLocation().x, gtu.getLocation().y,
                         FractionalFallback.ENDPOINT);
                 nearestPosition = new LanePosition(lane, lane.getLength().times(fraction));

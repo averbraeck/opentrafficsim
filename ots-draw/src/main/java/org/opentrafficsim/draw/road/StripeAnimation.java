@@ -15,7 +15,7 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
-import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.OtsRenderable;

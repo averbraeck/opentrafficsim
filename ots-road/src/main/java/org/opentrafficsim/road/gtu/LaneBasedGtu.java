@@ -28,9 +28,9 @@ import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -498,7 +498,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     {
         DirectedPoint2d p = Try.assign(() -> getOperationalPlan(time).getLocation(time, getReference()),
                 "Operational plan at time is not valid at time.");
-        double f = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
+        double f = lane.getCenterLine().projectFractionalAt(lane.getLink().getStartNode().getHeading(),
                 lane.getLink().getEndNode().getHeading(), p.x, p.y, FractionalFallback.ORTHOGONAL_EXTENDED);
         return lane.getLength().times(f).plus(relativePosition.dx());
     }
@@ -557,7 +557,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         {
             for (Lane checkLane : nearestLink.getLanesAndShoulders())
             {
-                double fraction = checkLane.getCenterLine().projectOrthogonalSnap(location.x, location.y);
+                double fraction = checkLane.getCenterLine().projectOrthogonalSnapAt(location.x, location.y);
                 DirectedPoint2d point = checkLane.getCenterLine().getLocationFraction(fraction);
                 double dist = point.distance(location);
                 if (dist < minDist)
@@ -600,7 +600,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     @SuppressWarnings("hiddenfield")
     protected Length getDeviation(final Lane lane, final Point2d location)
     {
-        double fraction = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
+        double fraction = lane.getCenterLine().projectFractionalAt(lane.getLink().getStartNode().getHeading(),
                 lane.getLink().getEndNode().getHeading(), location.x, location.y, FractionalFallback.ORTHOGONAL_EXTENDED);
         DirectedPoint2d a = lane.getCenterLine().getLocationFractionExtended(fraction);
         Point2d b = new Point2d(a.x + Math.cos(a.dirZ), a.y + Math.sin(a.dirZ));
@@ -1034,7 +1034,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             {
                 // Same link, different lane: lane change so project position on target lane (position1) to searchLane
                 Point2d point = position1.getLocation();
-                double fraction = searchLane.getCenterLine().projectFractional(searchLane.getLink().getStartNode().getHeading(),
+                double fraction = searchLane.getCenterLine().projectFractionalAt(searchLane.getLink().getStartNode().getHeading(),
                         searchLane.getLink().getEndNode().getHeading(), point.x, point.y, FractionalFallback.ENDPOINT);
                 to = searchLane.getLength().times(fraction);
             }
@@ -1192,12 +1192,12 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         if (relativePosition.dx().gt0())
         {
             // as the position is downstream of the reference, we need to attach some distance at the end
-            points.add(path.getLocationExtendedSI(path.getLength() + relativePosition.dx().si));
+            points.add(path.getLocationExtended(path.getLength() + relativePosition.dx().si));
             adjust = -relativePosition.dx().si;
         }
         else if (relativePosition.dx().lt0())
         {
-            points.add(0, path.getLocationExtendedSI(relativePosition.dx().si));
+            points.add(0, path.getLocationExtended(relativePosition.dx().si));
             adjust = 0.0;
         }
         else

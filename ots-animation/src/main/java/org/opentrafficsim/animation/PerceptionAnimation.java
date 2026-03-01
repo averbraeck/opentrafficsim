@@ -130,7 +130,7 @@ public class PerceptionAnimation extends OtsRenderable<ChannelAttention>
                     {
                         // on a conflict we take a point 25m upstream, or the upstream conflicting node if closer
                         double x = conflict.getOtherConflict().getLongitudinalPosition().si - 25.0;
-                        point = conflict.getOtherConflict().getLane().getCenterLine().getLocationExtendedSI(x < 0.0 ? 0.0 : x);
+                        point = conflict.getOtherConflict().getLane().getCenterLine().getLocationExtended(x < 0.0 ? 0.0 : x);
                     }
                     else
                     {

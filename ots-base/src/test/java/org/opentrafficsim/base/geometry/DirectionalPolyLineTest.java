@@ -7,7 +7,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 
 /**
  * Test for DirectionalPolyLine.

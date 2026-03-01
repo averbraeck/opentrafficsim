@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.djunits.unit.DirectionUnit;
@@ -22,7 +23,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 
 /**
  * <p>
@@ -237,14 +238,14 @@ public final class OtsLine2dTest
             final double expectedZRotation)
     {
         double length = line.getLength();
-        checkDirectedPoint2d(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
+        checkDirectedPoint2d(line.getLocationExtended(fraction * length), expectedPoint, expectedZRotation);
         Length typedLength = new Length(fraction * length, LengthUnit.METER);
         checkDirectedPoint2d(line.getLocationExtended(typedLength), expectedPoint, expectedZRotation);
         if (fraction < 0 || fraction > 1)
         {
             try
             {
-                line.getLocationSI(fraction * length);
+                line.getLocation(fraction * length);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
             catch (IllegalArgumentException ne)
@@ -262,7 +263,7 @@ public final class OtsLine2dTest
             }
             try
             {
-                line.getLocationPointFraction(fraction);
+                line.getLocationFraction(fraction);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
             catch (IllegalArgumentException ne)
@@ -272,9 +273,9 @@ public final class OtsLine2dTest
         }
         else
         {
-            checkDirectedPoint2d(line.getLocationSI(fraction * length), expectedPoint, expectedZRotation);
+            checkDirectedPoint2d(line.getLocation(fraction * length), expectedPoint, expectedZRotation);
             checkDirectedPoint2d(line.getLocation(typedLength), expectedPoint, expectedZRotation);
-            checkDirectedPoint2d(line.getLocationPointFraction(fraction), expectedPoint, expectedZRotation);
+            checkDirectedPoint2d(line.getLocationFraction(fraction), expectedPoint, expectedZRotation);
         }
 
     }
@@ -765,25 +766,25 @@ public final class OtsLine2dTest
         OtsLine2d line =
                 new OtsLine2d(new Point2d(0, 0), new Point2d(1, 1), new Point2d(2, 0), new Point2d(3, 1), new Point2d(4, 0));
         double fraction;
-        fraction = line.projectFractional(zeroDir, zeroDir, 1.5, -5.0, FractionalFallback.ORTHOGONAL);
+        fraction = line.projectFractionalAt(zeroDir, zeroDir, 1.5, -5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(1.5, .5), Math.atan2(-1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 1.5, 5.0, FractionalFallback.ORTHOGONAL);
+        fraction = line.projectFractionalAt(zeroDir, zeroDir, 1.5, 5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(1.5, .5), Math.atan2(-1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 2.5, -5.0, FractionalFallback.ORTHOGONAL);
+        fraction = line.projectFractionalAt(zeroDir, zeroDir, 2.5, -5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(2.5, .5), Math.atan2(1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 2.5, 5.0, FractionalFallback.ORTHOGONAL);
+        fraction = line.projectFractionalAt(zeroDir, zeroDir, 2.5, 5.0, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(2.5, .5), Math.atan2(1, 1));
         // test correct projection with parallel helper lines on line ---
         line = new OtsLine2d(new Point2d(0, 0), new Point2d(2, 2), new Point2d(4, 4), new Point2d(6, 6));
-        fraction = line.projectFractional(zeroDir, zeroDir, 2, 4, FractionalFallback.ORTHOGONAL);
+        fraction = line.projectFractionalAt(zeroDir, zeroDir, 2, 4, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(3, 3), Math.atan2(1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, 4, 2, FractionalFallback.ORTHOGONAL);
+        fraction = line.projectFractionalAt(zeroDir, zeroDir, 4, 2, FractionalFallback.ORTHOGONAL);
         checkGetLocation(line, fraction, new Point2d(3, 3), Math.atan2(1, 1));
         // test correct projection without parallel helper lines on just some line
         line = new OtsLine2d(new Point2d(-2, -2), new Point2d(2, -2), new Point2d(2, 2), new Point2d(-2, 2));
         for (double f = 0; f < 0; f += .1)
         {
-            fraction = line.projectFractional(zeroDir, zeroDir, 1, -1 + f * 2, FractionalFallback.ORTHOGONAL); // from y = -1 to
+            fraction = line.projectFractionalAt(zeroDir, zeroDir, 1, -1 + f * 2, FractionalFallback.ORTHOGONAL); // from y = -1 to
                                                                                                                // 1, projecting
                                                                                                                // to 3rd
             // segment
@@ -799,10 +800,10 @@ public final class OtsLine2dTest
             for (int j = 0; j < d.length; j++)
             {
                 // on outside of slight bend
-                fraction = line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ENDPOINT);
+                fraction = line.projectFractionalAt(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ENDPOINT);
                 if (Math.abs(fraction - 0.5) > 0.001)
                 {
-                    line.projectFractional(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ENDPOINT);
+                    line.projectFractionalAt(zeroDir, zeroDir, 4 - d[j], 4 + d[j], FractionalFallback.ENDPOINT);
                 }
                 if (e[i] >= 1e-3)
                 {
@@ -833,7 +834,7 @@ public final class OtsLine2dTest
                 {
                     for (double y : new double[] {0, 1e-3, 1e-6, 1e-9, 1e-12})
                     {
-                        double f = line.projectFractional(start, end, x, y, FractionalFallback.ORTHOGONAL);
+                        double f = line.projectFractionalAt(start, end, x, y, FractionalFallback.ORTHOGONAL);
                         assertTrue(f >= 0.0 && f <= 1.0, "Fractional projection on circle is not between 0.0 and 1.0.");
                     }
                 }
@@ -858,14 +859,14 @@ public final class OtsLine2dTest
             {
                 for (double y = -1; y <= 2; y += 0.1)
                 {
-                    double f = line.projectFractional(zeroDir, zeroDir, x, y, FractionalFallback.ORTHOGONAL);
+                    double f = line.projectFractionalAt(zeroDir, zeroDir, x, y, FractionalFallback.ORTHOGONAL);
                     assertTrue(f >= 0.0 && f <= 1.0, "Fractional projection on random line is not between 0.0 and 1.0.");
                 }
             }
         }
         // 2-point line
         line = new OtsLine2d(new Point2d(0, 0), new Point2d(1, 1));
-        fraction = line.projectFractional(zeroDir, zeroDir, .5, 1, FractionalFallback.ORTHOGONAL);
+        fraction = line.projectFractionalAt(zeroDir, zeroDir, .5, 1, FractionalFallback.ORTHOGONAL);
         assertTrue(Math.abs(fraction - 0.5) < 0.001, "Projection on line with single segment is not correct.");
         // square test (THIS TEST IS NOT YET SUCCESSFUL, THE POINTS ARE PROJECTED ORTHOGONALLY TO BEFORE END!!!)
         // {@formatter:off}
@@ -983,27 +984,27 @@ public final class OtsLine2dTest
     {
         // Single segment line is always straight
         OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30)});
-        Length radius = line.getProjectedRadius(0.5);
-        assertTrue(Double.isNaN(radius.getSI()), "should be NaN");
+        Optional<Length> radius = line.radiusAtFraction(0.5);
+        assertTrue(radius.isEmpty(), "should be empty -> nor radius");
         // Two segment line that is perfectly straight
         line = new OtsLine2d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30), new Point2d(30, 40)});
-        radius = line.getProjectedRadius(0.5);
-        assertTrue(Double.isNaN(radius.getSI()), "should be NaN");
+        radius = line.radiusAtFraction(0.5);
+        assertTrue(radius.isEmpty(), "should be empty -> nor radius");
         // Two segment line that is not straight
         line = new OtsLine2d(new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40)});
         // for a 2-segment OtsLine2d, the result should be independent of the fraction
         for (int step = 0; step <= 10; step++)
         {
             double fraction = step / 10.0;
-            radius = line.getProjectedRadius(fraction);
-            assertEquals(12, radius.si, 0.1, "radius should be about 12");
+            radius = line.radiusAtFraction(fraction);
+            assertEquals(12, radius.get().si, 0.1, "radius should be about 12");
         }
         // Now a bit harder
         line = new OtsLine2d(
                 new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40), new Point2d(30, 30)});
         if (VERBOSE)
         {
-            System.out.println("radius is " + radius);
+            System.out.println("radius is " + radius.get());
             System.out.println(Export.toPlot(line));
         }
         double boundary = 1 / (2 + Math.sqrt(2));
@@ -1011,7 +1012,7 @@ public final class OtsLine2dTest
         for (int percentage = 0; percentage <= 100; percentage++)
         {
             double fraction = percentage / 100.0;
-            double radiusAtFraction = line.getProjectedRadius(fraction).si;
+            double radiusAtFraction = line.radiusAtFraction(fraction).get().si;
             // Point2d pointAtFraction = line.getLocationSI(fraction * length);
             // System.out.println(
             // "At fraction " + fraction + " (point " + pointAtFraction + "), radius at fraction " + radiusAtFraction);
