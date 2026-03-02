@@ -7,9 +7,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -42,8 +39,8 @@ import org.opentrafficsim.base.logger.Logger;
 import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 
 /**
- * Application with global appearance control. Subclasses should call {@link #setDefaultFont} before any
- * GUI elements are created (unless this is the first GUI element). Subclasses should call
+ * Application with global appearance control. Subclasses should call {@link #setDefaultFont} before any GUI elements are
+ * created (unless this is the first GUI element). Subclasses should call
  * {@link #setAppearance}{@code (}{@link #getAppearance}{@code )} once all elements have been added to the GUI.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -72,7 +69,21 @@ public class AppearanceApplication extends JFrame
     }
 
     /** Properties for the frame appearance (not simulation related). */
-    private Properties frameProperties;
+    private static final PropertiesStore FRAME_PROPERTIES;
+
+    /** Appearance property key. */
+    private static final String APPEARANCE_KEY = "appearance";
+
+    /** font size property key. */
+    private static final String FONTR_SCALE_KEY = "fontScale";
+
+    static
+    {
+        Properties defaults = new Properties();
+        defaults.setProperty(APPEARANCE_KEY, "GRAY");
+        defaults.setProperty(FONTR_SCALE_KEY, "Normal");
+        FRAME_PROPERTIES = new PropertiesStore(defaults, "appearance", "appearance user settings");
+    }
 
     /** Pop-up menu with options. */
     private final JPopupMenu popMenu;
@@ -122,52 +133,16 @@ public class AppearanceApplication extends JFrame
             // accept no icon set
         }
 
-        // Listener to write frame properties on frame close
-        String sep = System.getProperty("file.separator");
-        String propertiesFile = System.getProperty("user.home") + sep + "OTS" + sep + "properties.ini";
-        addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(final WindowEvent windowEvent)
-            {
-                try
-                {
-                    File f = new File(propertiesFile);
-                    f.getParentFile().mkdirs();
-                    FileWriter writer = new FileWriter(f);
-                    AppearanceApplication.this.frameProperties.store(writer, "OTS user settings");
-                }
-                catch (IOException exception)
-                {
-                    Logger.ots().error("Could not store properties at {}.", propertiesFile);
-                }
-            }
-        });
-
-        // Set default frame properties and load properties from file (if any)
-        Properties defaults = new Properties();
-        defaults.setProperty("Appearance", "GRAY");
-        defaults.setProperty("FontScale", "Normal");
-        this.frameProperties = new Properties(defaults);
         try
         {
-            FileReader reader = new FileReader(propertiesFile);
-            this.frameProperties.load(reader);
-        }
-        catch (IOException ioe)
-        {
-            // ok, use defaults
-        }
-        try
-        {
-            this.appearance = Appearance.valueOf(this.frameProperties.getProperty("Appearance").toUpperCase());
+            this.appearance = Appearance.valueOf(FRAME_PROPERTIES.getProperty(APPEARANCE_KEY).toUpperCase());
         }
         catch (IllegalArgumentException ex)
         {
             Logger.ots().trace("Unable to load saved appearance. Using GRAY instead.");
             this.appearance = Appearance.GRAY;
         }
-        this.fontScaleName = this.frameProperties.getProperty("FontScale");
+        this.fontScaleName = FRAME_PROPERTIES.getProperty(FONTR_SCALE_KEY);
 
         /** Menu class to only accept the font of an Appearance. */
         class AppearanceControlMenu extends JMenu implements AppearanceControl
@@ -269,8 +244,8 @@ public class AppearanceApplication extends JFrame
             setAppearance(c.nextElement(), appearance);
         }
         setAppearance(getContentPane(), appearance);
-        this.frameProperties.setProperty("Appearance", appearance.toString());
-        this.frameProperties.setProperty("FontScale", this.fontScaleName);
+        FRAME_PROPERTIES.setProperty(APPEARANCE_KEY, appearance.toString(), false);
+        FRAME_PROPERTIES.setProperty(FONTR_SCALE_KEY, this.fontScaleName);
     }
 
     /**

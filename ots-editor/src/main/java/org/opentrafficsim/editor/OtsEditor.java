@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -112,6 +113,7 @@ import org.opentrafficsim.swing.gui.Appearance;
 import org.opentrafficsim.swing.gui.AppearanceApplication;
 import org.opentrafficsim.swing.gui.AppearanceControlButton;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
+import org.opentrafficsim.swing.gui.PropertiesStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -226,21 +228,54 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private TimerTask autosave;
 
     /** Navigation (F3/F4). */
-    private final Navigation navigation = new Navigation(this, APPLICATION_STORE.getInt("max_navigate"));
+    private final Navigation navigation = new Navigation(this, PROPERTIES_STORE.getInt(MAX_NAVIGATE_STEPS_KEY));
 
     // copy/paste
 
     /** Node in clipboard (sort of...). */
     private XsdTreeNode clipboard;
 
-    /** Whether the node in the clipboard was cut. */
+    /** Whether the node in the clip-board was cut. */
     private boolean cut;
 
     /** Actions that can be performed on the editor. */
     private Actions actions;
 
     /** Application store for preferences and recent files. */
-    private static final ApplicationStore APPLICATION_STORE = new ApplicationStore("OTS", "editor");
+    private static final PropertiesStore PROPERTIES_STORE;
+
+    /** Key to store expression color. */
+    private static final String EXPRESSION_COLOR_KEY = "expressionColor";
+
+    /** Key to store invalid color. */
+    private static final String INVALID_COLOR_KEY = "invalidColor";
+
+    /** Key to store max number of recent files. */
+    private static final String MAX_RECENT_FILES_KEY = "maxRecentFiles";
+
+    /** Key to store max tooltip length. */
+    private static final String MAX_TOOLTIP_LENGTH_KEY = "maxTooltipLength";
+
+    /** Key to store max number of drop-down items. */
+    private static final String MAX_DROPDOWN_ITEMS_KEY = "maxDropdownItems";
+
+    /** Key to store max number of navigation steps. */
+    private static final String MAX_NAVIGATE_STEPS_KEY = "maxNavigateSteps";
+
+    /** Key to store recent files. */
+    private static final String RECENT_FILES_KEY = "recentFiles";
+
+    static
+    {
+        Properties defaults = new Properties();
+        defaults.setProperty(EXPRESSION_COLOR_KEY, PropertiesStore.valueToString(new Color(252, 250, 239)));
+        defaults.setProperty(INVALID_COLOR_KEY, PropertiesStore.valueToString(new Color(255, 240, 240)));
+        defaults.setProperty(MAX_RECENT_FILES_KEY, PropertiesStore.valueToString(10));
+        defaults.setProperty(MAX_TOOLTIP_LENGTH_KEY, PropertiesStore.valueToString(96));
+        defaults.setProperty(MAX_DROPDOWN_ITEMS_KEY, PropertiesStore.valueToString(20));
+        defaults.setProperty(MAX_NAVIGATE_STEPS_KEY, PropertiesStore.valueToString(50));
+        PROPERTIES_STORE = new PropertiesStore(defaults, "editor", "editor user settings");
+    }
 
     /** Menu with recent files. */
     private JMenu recentFilesMenu;
@@ -423,7 +458,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public static Color getInvalidColor()
     {
-        return APPLICATION_STORE.getColor("invalid_color");
+        return PROPERTIES_STORE.getColor(INVALID_COLOR_KEY);
     }
 
     /**
@@ -432,7 +467,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public static Color getExpressionColor()
     {
-        return APPLICATION_STORE.getColor("expression_color");
+        return PROPERTIES_STORE.getColor(EXPRESSION_COLOR_KEY);
     }
 
     /**
@@ -671,7 +706,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private void updateRecentFileMenu()
     {
         this.recentFilesMenu.removeAll();
-        List<String> files = APPLICATION_STORE.getRecentFiles("recent_files");
+        List<String> files = PROPERTIES_STORE.getList(RECENT_FILES_KEY);
         if (!files.isEmpty())
         {
             for (String file : files)
@@ -688,7 +723,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                         {
                             if (dialogs().confirmRemoveRecentFile())
                             {
-                                APPLICATION_STORE.removeRecentFile("recent_files", file);
+                                PROPERTIES_STORE.removeFromList(RECENT_FILES_KEY, file);
                                 updateRecentFileMenu();
                             }
                         }
@@ -704,7 +739,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         {
             if (dialogs().confirmClearRecentFiles())
             {
-                APPLICATION_STORE.clearProperty("recent_files");
+                PROPERTIES_STORE.clearProperty(RECENT_FILES_KEY);
                 updateRecentFileMenu();
             }
         });
@@ -1122,7 +1157,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         JPopupMenu popup = new JPopupMenu();
         int index = 0;
         boolean includeRemove = currentValue != null && !currentValue.isEmpty();
-        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items") - (includeRemove ? 1 : 0);
+        int maxDropdown = PROPERTIES_STORE.getInt(MAX_DROPDOWN_ITEMS_KEY) - (includeRemove ? 1 : 0);
         for (String option : this.dropdownOptions)
         {
             JMenuItem item = new JMenuItem(option);
@@ -1283,7 +1318,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private boolean showOptionsInScope(final JPopupMenu popup, final boolean includeRemove, final Pattern pattern)
     {
         int optionIndex = 0;
-        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items") - (includeRemove ? 1 : 0);
+        int maxDropdown = PROPERTIES_STORE.getInt(MAX_DROPDOWN_ITEMS_KEY) - (includeRemove ? 1 : 0);
         JMenuItem first = null;
         JMenuItem last = null;
         boolean anyAbove = false;
@@ -1466,7 +1501,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             this.treeTable.updateUI(); // knowing/changing the directory may change validation status through imports
             if (updateRecentFiles)
             {
-                APPLICATION_STORE.addRecentFile("recent_files", file.getAbsolutePath());
+                PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
+                        PROPERTIES_STORE.getInt(MAX_RECENT_FILES_KEY));
                 updateRecentFileMenu();
             }
             return true;
@@ -1594,7 +1630,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             // end of fix
             if (storeAsRecent)
             {
-                APPLICATION_STORE.addRecentFile("recent_files", file.getAbsolutePath());
+                PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
+                        PROPERTIES_STORE.getInt(MAX_RECENT_FILES_KEY));
                 updateRecentFileMenu();
             }
         }
@@ -1623,7 +1660,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public static String limitTooltip(final String message)
     {
-        int maxTooltipLength = APPLICATION_STORE.getInt("max_tooltip_length");
+        int maxTooltipLength = PROPERTIES_STORE.getInt(MAX_TOOLTIP_LENGTH_KEY);
         if (message == null || message.length() < maxTooltipLength)
         {
             return message;
