@@ -75,13 +75,13 @@ public class AppearanceApplication extends JFrame
     private static final String APPEARANCE_KEY = "appearance";
 
     /** font size property key. */
-    private static final String FONTR_SCALE_KEY = "fontScale";
+    private static final String FONT_SCALE_KEY = "fontScale";
 
     static
     {
         Properties defaults = new Properties();
         defaults.setProperty(APPEARANCE_KEY, "GRAY");
-        defaults.setProperty(FONTR_SCALE_KEY, "Normal");
+        defaults.setProperty(FONT_SCALE_KEY, "Normal");
         FRAME_PROPERTIES = new PropertiesStore(defaults, "appearance", "appearance user settings");
     }
 
@@ -142,7 +142,7 @@ public class AppearanceApplication extends JFrame
             Logger.ots().trace("Unable to load saved appearance. Using GRAY instead.");
             this.appearance = Appearance.GRAY;
         }
-        this.fontScaleName = FRAME_PROPERTIES.getProperty(FONTR_SCALE_KEY);
+        this.fontScaleName = FRAME_PROPERTIES.getProperty(FONT_SCALE_KEY);
 
         /** Menu class to only accept the font of an Appearance. */
         class AppearanceControlMenu extends JMenu implements AppearanceControl
@@ -245,7 +245,7 @@ public class AppearanceApplication extends JFrame
         }
         setAppearance(getContentPane(), appearance);
         FRAME_PROPERTIES.setProperty(APPEARANCE_KEY, appearance.toString(), false);
-        FRAME_PROPERTIES.setProperty(FONTR_SCALE_KEY, this.fontScaleName);
+        FRAME_PROPERTIES.setProperty(FONT_SCALE_KEY, this.fontScaleName);
     }
 
     /**
