@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,6 +111,12 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     /** Pattern to split leading zeros from the rest of a number. */
     private static final Pattern LEADING_ZEROS = Pattern.compile("^([+-]?)(0*)((:?0|[1-9]\\d*)(:?[\\.,]\\d+)?)$");
 
+    /** Collapsed icon. */
+    private static final Icon COLLAPSED_ICON = IconUtil.of("Collapsed24.png").imageSize(12, 12).get();
+
+    /** Expanded icon. */
+    private static final Icon EXPANDED_ICON = IconUtil.of("Expanded24.png").imageSize(12, 12).get();
+
     /** OTS search panel. */
     private final OtsSearchPanel otsSearchPanel;
 
@@ -121,6 +128,9 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
 
     /** Demo panel. */
     private JPanel demoPanel = null;
+
+    /** Whether the current toggle section is visible. */
+    private boolean toggleSectionVisible = true;
 
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
@@ -436,6 +446,71 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     }
 
     /**
+     * Adds a button that can hide all toggles in a section. The section is defined as laying between two section buttons.
+     * @param name name of the section that can be hidden
+     */
+    public void startToggleSection(final String name)
+    {
+        class AppearanceJToggleButton extends JCheckBox implements AppearanceControl
+        {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isForeground()
+            {
+                return true;
+            }
+
+            @Override
+            public OptionalInt getFontSize()
+            {
+                return OptionalInt.empty();
+            }
+        }
+        JToggleButton toggle = new AppearanceJToggleButton();
+        toggle.setSelectedIcon(EXPANDED_ICON);
+        toggle.setIcon(COLLAPSED_ICON);
+        String key = "toggle.section." + PropertiesStore.key(name);
+        boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(true);
+        toggle.setSelected(toggleOn);
+        PROPERTIES.setBoolean(key, toggleOn);
+        this.toggleSectionVisible = toggleOn;
+        toggle.setText(toggleOn ? null : name);
+        toggle.setContentAreaFilled(false);
+        toggle.setBorder(null);
+        Dimension dim = new Dimension(64, 14);
+        toggle.setMinimumSize(dim);
+        toggle.setPreferredSize(dim);
+        toggle.setMaximumSize(dim);
+        toggle.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                boolean inSection = false;
+                PROPERTIES.setBoolean(key, toggle.isSelected());
+                toggle.setText(toggle.isSelected() ? null : name);
+                for (Component component : OtsSimulationPanel.this.togglePanel.getComponents())
+                {
+                    if (component.equals(toggle))
+                    {
+                        inSection = true;
+                    }
+                    else if (inSection && component instanceof AppearanceJToggleButton)
+                    {
+                        break;
+                    }
+                    else if (inSection)
+                    {
+                        component.setVisible(toggle.isSelected());
+                    }
+                }
+            }
+        });
+        this.togglePanel.add(toggle);
+    }
+
+    /**
      * Add a button for toggling an animation class on or off. Button icons for which 'nextToPrevious' is true will be placed to
      * the right of the previous button, which should be the corresponding button for id buttons. An example is an icon for
      * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids. Other buttons can be placed next to the
@@ -458,7 +533,6 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         button.setIcon(unIcon);
         button.setPreferredSize(new Dimension(32, 28));
         button.setName(name);
-        button.setEnabled(true);
         String key = "toggle." + PropertiesStore.key(name);
         boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(initiallyVisible);
         button.setSelected(toggleOn);
@@ -471,11 +545,14 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         if (nextToPrevious && this.togglePanel.getComponentCount() > 0)
         {
             JPanel lastToggleBox = (JPanel) this.togglePanel.getComponent(this.togglePanel.getComponentCount() - 1);
+            button.setVisible(true);
             lastToggleBox.add(button);
         }
         else
         {
             JPanel toggleBox = new JPanel();
+            toggleBox.setVisible(this.toggleSectionVisible);
+            button.setVisible(true);
             toggleBox.setLayout(new BoxLayout(toggleBox, BoxLayout.X_AXIS));
             toggleBox.add(button);
             this.togglePanel.add(toggleBox);
@@ -507,7 +584,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         JToggleButton button;
         button = new JCheckBox(name);
         button.setText(separatedName(name));
-        button.setEnabled(true);
+        button.setVisible(this.toggleSectionVisible);
         String key = "toggle." + PropertiesStore.key(name);
         boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(initiallyVisible);
         button.setSelected(toggleOn);
@@ -539,6 +616,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     public void addToggleText(final String text)
     {
         JPanel textBox = new JPanel();
+        textBox.setVisible(this.toggleSectionVisible);
         textBox.setLayout(new BoxLayout(textBox, BoxLayout.X_AXIS));
         textBox.add(new JLabel(text));
         this.togglePanel.add(textBox);
@@ -575,7 +653,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         JToggleButton button;
         button = new JCheckBox(displayName);
         button.setName(layerName);
-        button.setEnabled(true);
+        button.setVisible(this.toggleSectionVisible);
         String key = "toggle.gis." + PropertiesStore.key(layerName);
         boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(initiallyVisible);
         button.setSelected(toggleOn);

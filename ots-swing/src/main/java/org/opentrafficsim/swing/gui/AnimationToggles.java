@@ -1,7 +1,9 @@
 package org.opentrafficsim.swing.gui;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.opentrafficsim.animation.PerceptionAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
@@ -41,40 +43,49 @@ public final class AnimationToggles
 {
 
     /** Toggles. */
-    private static final List<Toggle> TOGGLES = new ArrayList<>();
+    private static final Map<String, List<Toggle>> TOGGLES = new LinkedHashMap<>();
 
     static
     {
-        TOGGLES.add(new Toggle("Node", NodeData.class, "Node24.png", "Show/hide nodes", true, false, false));
-        TOGGLES.add(new Toggle("NodeId", NodeAnimation.Text.class, "Id24.png", "Show/hide node ids", false, false, true));
-        TOGGLES.add(new Toggle("Link", LinkData.class, "Link24.png", "Show/hide links", true, false, false));
-        TOGGLES.add(new Toggle("LinkId", LinkAnimation.Text.class, "Id24.png", "Show/hide link ids", false, false, true));
-        TOGGLES.add(
-                new Toggle("Priority", PriorityData.class, "Priority24.png", "Show/hide link priority", true, false, false));
-        TOGGLES.add(new Toggle("Lane", LaneData.class, "Lane24.png", "Show/hide lanes", true, true, false));
-        TOGGLES.add(new Toggle("LaneId", LaneAnimation.Text.class, "Id24.png", "Show/hide lane ids", false, false, true));
-        TOGGLES.add(new Toggle("Stripe", StripeData.class, "Stripe24.png", "Show/hide stripes", true, true, false));
-        TOGGLES.add(new Toggle("LaneCenter", CenterLine.class, "CenterLine24.png", "Show/hide lane center lines", false, false,
+        List<Toggle> list = new ArrayList<>();
+        list.add(new Toggle("Node", NodeData.class, "Node24.png", "Show/hide nodes", true, false, false));
+        list.add(new Toggle("NodeId", NodeAnimation.Text.class, "Id24.png", "Show/hide node ids", false, false, true));
+        list.add(new Toggle("Link", LinkData.class, "Link24.png", "Show/hide links", true, false, false));
+        list.add(new Toggle("LinkId", LinkAnimation.Text.class, "Id24.png", "Show/hide link ids", false, false, true));
+        list.add(new Toggle("Priority", PriorityData.class, "Priority24.png", "Show/hide link priority", true, false, false));
+        TOGGLES.put("network", list);
+
+        list = new ArrayList<>();
+        list.add(new Toggle("Lane", LaneData.class, "Lane24.png", "Show/hide lanes", true, true, false));
+        list.add(new Toggle("LaneId", LaneAnimation.Text.class, "Id24.png", "Show/hide lane ids", false, false, true));
+        list.add(new Toggle("Stripe", StripeData.class, "Stripe24.png", "Show/hide stripes", true, true, false));
+        list.add(new Toggle("LaneCenter", CenterLine.class, "CenterLine24.png", "Show/hide lane center lines", false, false,
                 true));
-        TOGGLES.add(new Toggle("Shoulder", ShoulderData.class, "Shoulder24.png", "Show/hide shoulders", true, true, false));
-        TOGGLES.add(new Toggle("GTU", GtuData.class, "Gtu24.png", "Show/hide GTUs", true, true, false));
-        TOGGLES.add(new Toggle("GTUId", DefaultCarAnimation.Text.class, "Id24.png", "Show/hide GTU ids", false, false, true));
-        TOGGLES.add(new Toggle("Perception", PerceptionAnimation.ChannelAttention.class, "Perception24.png",
+        list.add(new Toggle("Shoulder", ShoulderData.class, "Shoulder24.png", "Show/hide shoulders", true, true, false));
+        TOGGLES.put("lane", list);
+
+        list = new ArrayList<>();
+        list.add(new Toggle("GTU", GtuData.class, "Gtu24.png", "Show/hide GTUs", true, true, false));
+        list.add(new Toggle("GTUId", DefaultCarAnimation.Text.class, "Id24.png", "Show/hide GTU ids", false, false, true));
+        list.add(new Toggle("Perception", PerceptionAnimation.ChannelAttention.class, "Perception24.png",
                 "Show/hide perception (circle = attention, color = perception delay)", false, false, false));
-        TOGGLES.add(new Toggle("Detector", DetectorData.class, "Detector24.png", "Show/hide detectors", true, false, false));
-        TOGGLES.add(
-                new Toggle("DetectorId", DetectorData.Text.class, "Id24.png", "Show/hide detector ids", false, false, true));
-        TOGGLES.add(new Toggle("Light", TrafficLightData.class, "TrafficLight24.png", "Show/hide traffic lights", true, true,
+        TOGGLES.put("GTU", list);
+
+        list = new ArrayList<>();
+        list.add(new Toggle("Detector", DetectorData.class, "Detector24.png", "Show/hide detectors", true, false, false));
+        list.add(new Toggle("DetectorId", DetectorData.Text.class, "Id24.png", "Show/hide detector ids", false, false, true));
+        list.add(new Toggle("Light", TrafficLightData.class, "TrafficLight24.png", "Show/hide traffic lights", true, true,
                 false));
-        TOGGLES.add(new Toggle("LightId", TrafficLightAnimation.Text.class, "Id24.png", "Show/hide traffic light ids", false,
+        list.add(new Toggle("LightId", TrafficLightAnimation.Text.class, "Id24.png", "Show/hide traffic light ids", false,
                 false, true));
-        TOGGLES.add(new Toggle("Conflict", ConflictData.class, "Conflict24.png", "Show/hide conflicts", true, false, false));
-        TOGGLES.add(new Toggle("Generator", GtuGeneratorPositionData.class, "Generator24.png", "Show/hide generators", true,
-                false, false));
-        TOGGLES.add(new Toggle("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "Queue24.png",
+        list.add(new Toggle("Conflict", ConflictData.class, "Conflict24.png", "Show/hide conflicts", true, false, false));
+        list.add(new Toggle("Generator", GtuGeneratorPositionData.class, "Generator24.png", "Show/hide generators", true, false,
+                false));
+        list.add(new Toggle("GeneratorQ", GtuGeneratorPositionAnimation.Queue.class, "Queue24.png",
                 "Show/hide generator queues", false, false, true));
-        TOGGLES.add(new Toggle("Bus", BusStopData.class, "BusStop24.png", "Show/hide bus stops", true, false, false));
-        TOGGLES.add(new Toggle("BusId", BusStopAnimation.Text.class, "Id24.png", "Show/hide bus stop ids", false, false, true));
+        list.add(new Toggle("Bus", BusStopData.class, "BusStop24.png", "Show/hide bus stops", true, false, false));
+        list.add(new Toggle("BusId", BusStopAnimation.Text.class, "Id24.png", "Show/hide bus stop ids", false, false, true));
+        TOGGLES.put("objects", list);
     }
 
     /**
@@ -91,7 +102,12 @@ public final class AnimationToggles
      */
     public static void setTextAnimationTogglesFull(final OtsSimulationPanel panel)
     {
-        TOGGLES.forEach((t) -> panel.addToggleAnimationButtonText(t.name(), t.locatableClass(), t.tooltip(), t.visibleFull()));
+        TOGGLES.entrySet().forEach((e) ->
+        {
+            panel.startToggleSection(e.getKey());
+            e.getValue().forEach(
+                    (t) -> panel.addToggleAnimationButtonText(t.name(), t.locatableClass(), t.tooltip(), t.visibleFull()));
+        });
     }
 
     /**
@@ -100,8 +116,12 @@ public final class AnimationToggles
      */
     public static void setTextAnimationTogglesStandard(final OtsSimulationPanel panel)
     {
-        TOGGLES.forEach(
-                (t) -> panel.addToggleAnimationButtonText(t.name(), t.locatableClass(), t.tooltip(), t.visibleStandard()));
+        TOGGLES.entrySet().forEach((e) ->
+        {
+            panel.startToggleSection(e.getKey());
+            e.getValue().forEach(
+                    (t) -> panel.addToggleAnimationButtonText(t.name(), t.locatableClass(), t.tooltip(), t.visibleStandard()));
+        });
     }
 
     /**
@@ -110,8 +130,12 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesFull(final OtsSimulationPanel panel)
     {
-        TOGGLES.forEach((t) -> panel.addToggleAnimationButtonIcon(t.name(), t.locatableClass(), t.icon(), t.tooltip(),
-                t.visibleFull(), t.nextToPrevious()));
+        TOGGLES.entrySet().forEach((e) ->
+        {
+            panel.startToggleSection(e.getKey());
+            e.getValue().forEach((t) -> panel.addToggleAnimationButtonIcon(t.name(), t.locatableClass(), t.icon(), t.tooltip(),
+                    t.visibleFull(), t.nextToPrevious()));
+        });
     }
 
     /**
@@ -120,8 +144,12 @@ public final class AnimationToggles
      */
     public static void setIconAnimationTogglesStandard(final OtsSimulationPanel panel)
     {
-        TOGGLES.forEach((t) -> panel.addToggleAnimationButtonIcon(t.name(), t.locatableClass(), t.icon(), t.tooltip(),
-                t.visibleStandard(), t.nextToPrevious()));
+        TOGGLES.entrySet().forEach((e) ->
+        {
+            panel.startToggleSection(e.getKey());
+            e.getValue().forEach((t) -> panel.addToggleAnimationButtonIcon(t.name(), t.locatableClass(), t.icon(), t.tooltip(),
+                    t.visibleStandard(), t.nextToPrevious()));
+        });
     }
 
     /**
@@ -152,7 +180,7 @@ public final class AnimationToggles
      */
     public static void showAnimationFull(final OtsSimulationPanel panel)
     {
-        TOGGLES.forEach((t) ->
+        TOGGLES.values().forEach((v) -> v.forEach((t) ->
         {
             if (t.visibleFull())
             {
@@ -162,7 +190,7 @@ public final class AnimationToggles
             {
                 hideAnimationClass(panel, t.locatableClass());
             }
-        });
+        }));
     }
 
     /**
@@ -171,7 +199,7 @@ public final class AnimationToggles
      */
     public static void showAnimationStandard(final OtsSimulationPanel panel)
     {
-        TOGGLES.forEach((t) ->
+        TOGGLES.values().forEach((v) -> v.forEach((t) ->
         {
             if (t.visibleStandard())
             {
@@ -181,7 +209,7 @@ public final class AnimationToggles
             {
                 hideAnimationClass(panel, t.locatableClass());
             }
-        });
+        }));
     }
 
     /**
