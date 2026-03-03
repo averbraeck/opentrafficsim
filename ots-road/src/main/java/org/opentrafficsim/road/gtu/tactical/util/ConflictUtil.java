@@ -124,6 +124,7 @@ public final class ConflictUtil
     /** Cross standing vehicles on crossings. We allow this to prevent dead-locks. A better model should render this useless. */
     private static final boolean CROSSSTANDING = true;
 
+    /** Registry of crossing events as one GTU, is crossing some stand-still other GTU. */
     private static final ThreadLocal<Map<String, Set<String>>> CROSSEVENTS =
             ThreadLocal.withInitial(() -> new LinkedHashMap<>());
 
