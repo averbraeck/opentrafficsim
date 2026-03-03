@@ -3,7 +3,9 @@ package org.opentrafficsim.road.gtu.tactical.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -121,6 +123,9 @@ public final class ConflictUtil
 
     /** Cross standing vehicles on crossings. We allow this to prevent dead-locks. A better model should render this useless. */
     private static final boolean CROSSSTANDING = true;
+
+    private static final ThreadLocal<Map<String, Set<String>>> CROSSEVENTS =
+            ThreadLocal.withInitial(() -> new LinkedHashMap<>());
 
     /**
      * Do not instantiate.
@@ -639,7 +644,23 @@ public final class ConflictUtil
                         a = Acceleration.min(a, CarFollowingUtil.stop(context, conflict.getDistance()));
                     }
                 }
-                // conflicting vehicle stand-still, ignore even at conflict
+                else
+                {
+                    // conflicting vehicle stand-still, ignore even at conflict
+                    if (tteOa.duration()
+                            .lt(context.getParameters().getOptionalParameter(ParameterTypes.DT).orElse(Duration.ofSI(0.5))))
+                    {
+                        // report only if the GTU is likely to enter the conflict in the next time step
+                        Map<String, Set<String>> map = CROSSEVENTS.get();
+                        if (map.computeIfAbsent(context.getId(), (id) -> new LinkedHashSet<>()).add(conflictingGTU.getId()))
+                        {
+                            int count = map.values().stream().reduce(0, (c, s) -> Integer.valueOf(c + s.size()),
+                                    (c1, c2) -> Integer.valueOf(c1 + c2));
+                            Logger.ots().info("GTU {} passes through GTU {} at crossing [{}].", context.getId(),
+                                    conflictingGTU.getId(), count);
+                        }
+                    }
+                }
             }
         }
         return a;
