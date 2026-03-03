@@ -186,6 +186,33 @@ public final class ConflictUtil
         // Distance until first stationary leader, minus spaces required for stationary intermediate vehicle and minus ego
         Space space = leaders.collect(new AvailableSpace());
         Length availableSpace = space.availableSpace().minus(passableDistance(context.getLength(), context.getParameters()));
+        /*
+         * We subtract any space that is likely not to be used by a queue ahead. This is the length of all crossing and merge
+         * conflicts between the first leader, and the first stand-still leader. If the rear of the first stand-still leader is
+         * on a conflict, only the length of that conflict up to the rear is subtracted. If the first non-split conflict is a
+         * merge, it's length is never subtracted. That would prevent taking priority when its given for zip-merging.
+         */
+        Length firstLeader = leaders.isEmpty() ? Length.POS_MAXVALUE : leaders.first().getDistance();
+        boolean first = true;
+        for (PerceivedConflict conflict : conflicts)
+        {
+            if (conflict.getDistance().gt(space.firstStationary()))
+            {
+                break;
+            }
+
+            if (!conflict.isSplit())
+            {
+                Length conflictEnd = conflict.getDistance().plus(conflict.getLength());
+                if ((!first || conflict.isCrossing()) && conflictEnd.gt(firstLeader))
+                {
+                    Length effectiveEnd = Length.min(space.firstStationary(), conflictEnd);
+                    Length effectiveLength = effectiveEnd.minus(conflict.getDistance());
+                    availableSpace = availableSpace.minus(effectiveLength);
+                }
+                first = false;
+            }
+        }
 
         for (PerceivedConflict conflict : conflicts)
         {
@@ -1179,7 +1206,7 @@ public final class ConflictUtil
          */
         public boolean addVehicle(final LaneBasedGtu gtu, final Length h)
         {
-            if (gtu.getSpeed().eq0())
+            if (gtu.getSpeed().si < 5.0 / 3.6 && gtu.getAcceleration().le0())
             {
                 this.firstStationary = h;
                 return true;
