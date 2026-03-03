@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -84,6 +85,12 @@ public class PropertiesStore
     /** Counter to skip intermediate context limitation requests. */
     private final AtomicLong limitContextRequest = new AtomicLong(0);
 
+    /** Scheduler to delay saving. */
+    private final ScheduledExecutorService saveScheduler;
+
+    /** Counter to skip intermediate saving requests. */
+    private final AtomicLong saveRequest = new AtomicLong(0);
+
     /**
      * Constructor. To populate the default {@link Properties} use the various static {@code valueToString} methods.
      * @param properties properties pre-loaded with defaults
@@ -106,9 +113,11 @@ public class PropertiesStore
         this.properties = props;
         this.context = context;
         this.description = description; // can be null
-        save(); // saves defaults on missing values or completely missing file
         this.limitContextScheduler = Executors
                 .newSingleThreadScheduledExecutor((runnable) -> new Thread(runnable, this.context + "-context-limiter"));
+        this.saveScheduler =
+                Executors.newSingleThreadScheduledExecutor((runnable) -> new Thread(runnable, this.context + "-saver"));
+        save(); // saves defaults on missing values or completely missing file
     }
 
     /**
@@ -127,17 +136,26 @@ public class PropertiesStore
      */
     public void save()
     {
-        File f = Paths.get(System.getProperty("user.home"), CONFIG, OTS, safeContext(this.context)).toFile();
-        f.getParentFile().mkdirs();
-        try
+        long request = this.saveRequest.incrementAndGet();
+        this.saveScheduler.schedule(() ->
         {
-            FileWriter writer = new FileWriter(f);
-            this.properties.store(writer, this.description);
-        }
-        catch (IOException exception)
-        {
-            // ignore
-        }
+            // If a newer request arrived, skip
+            if (request != this.saveRequest.get())
+            {
+                return;
+            }
+            File f = Paths.get(System.getProperty("user.home"), CONFIG, OTS, safeContext(this.context)).toFile();
+            f.getParentFile().mkdirs();
+            try
+            {
+                FileWriter writer = new FileWriter(f);
+                this.properties.store(writer, this.description);
+            }
+            catch (IOException exception)
+            {
+                // ignore
+            }
+        }, 500L, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -208,6 +226,32 @@ public class PropertiesStore
         Throw.whenNull(key, "key");
         this.properties.remove(key);
         save();
+    }
+
+    /**
+     * Returns a key that complies to upper/lower case convention.
+     * @param key key
+     * @return key that complies to upper/lower case convention
+     */
+    public static String key(final String key)
+    {
+        String s = key;
+        if (s.matches("^[A-Z]+$"))
+        {
+            return s.toLowerCase(Locale.ROOT);
+        }
+        Matcher m1 = Pattern.compile("^[A-Z]+(?=[A-Z][a-z])").matcher(s);
+        if (m1.find())
+        {
+            s = m1.replaceFirst(m1.group().toLowerCase(Locale.ROOT));
+            return s;
+        }
+        Matcher m2 = Pattern.compile("^[A-Z](?=[a-z])").matcher(s);
+        if (m2.find())
+        {
+            s = m2.replaceFirst(m2.group().toLowerCase(Locale.ROOT));
+        }
+        return s;
     }
 
     /**
@@ -388,7 +432,21 @@ public class PropertiesStore
     public Color getColor(final String key)
     {
         Throw.whenNull(key, "key");
-        return this.colorCache.computeIfAbsent(key, (k) -> stringToColor(this.properties.getProperty(k)));
+        return this.colorCache.computeIfAbsent(key, (k) ->
+        {
+            String value = getProperty(k);
+            return value == null ? null : stringToColor(value);
+        });
+    }
+
+    /**
+     * Returns color that might not be given for given key.
+     * @param key key
+     * @return color that might not be given
+     */
+    public Optional<Color> getOptionalColor(final String key)
+    {
+        return Optional.ofNullable(getColor(key));
     }
 
     /**
@@ -434,10 +492,24 @@ public class PropertiesStore
      * @param key key
      * @return int
      */
-    public int getInt(final String key)
+    public Integer getInteger(final String key)
     {
         Throw.whenNull(key, "key");
-        return this.intCache.computeIfAbsent(key, (k) -> Integer.valueOf(getProperty(k)));
+        return this.intCache.computeIfAbsent(key, (k) ->
+        {
+            String value = getProperty(k);
+            return value == null ? null : Integer.valueOf(value);
+        });
+    }
+
+    /**
+     * Returns int that might not be given for given key.
+     * @param key key
+     * @return int that might not be given
+     */
+    public Optional<Integer> getOptionalInteger(final String key)
+    {
+        return Optional.ofNullable(getInteger(key));
     }
 
     /**
@@ -469,10 +541,24 @@ public class PropertiesStore
      * @param key key
      * @return boolean
      */
-    public boolean getBoolean(final String key)
+    public Boolean getBoolean(final String key)
     {
         Throw.whenNull(key, "key");
-        return this.booleanCache.computeIfAbsent(key, (k) -> Boolean.valueOf(getProperty(k)));
+        return this.booleanCache.computeIfAbsent(key, (k) ->
+        {
+            String value = getProperty(k);
+            return value == null ? null : Boolean.valueOf(value);
+        });
+    }
+
+    /**
+     * Returns boolean that might not be given for given key.
+     * @param key key
+     * @return boolean that might not be given
+     */
+    public Optional<Boolean> getOptionalBoolean(final String key)
+    {
+        return Optional.ofNullable(getBoolean(key));
     }
 
     /**

@@ -68,6 +68,7 @@ import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
+import org.opentrafficsim.swing.gui.PropertiesStore;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
@@ -90,9 +91,6 @@ public final class EditorMap extends JPanel implements EventListener
 
     /** */
     private static final long serialVersionUID = 20231010L;
-
-    /** Color for toolbar and toggle bar. */
-    private static final Color BAR_COLOR = Color.LIGHT_GRAY;
 
     /** All types that are valid to show in the map. */
     private static final Set<String> TYPES = Set.of(XsdPaths.CENTROID, XsdPaths.CONNECTOR, XsdPaths.NODE, XsdPaths.LINK,
@@ -288,6 +286,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
             }
         };
+        this.visualizationPanel.setShowGrid(OtsEditor.PROPERTIES_STORE.getOptionalBoolean("map.grid").orElse(true));
         this.updater.addListener(this.visualizationPanel, AnimatorInterface.UPDATE_ANIMATION_EVENT);
 
         /*-
@@ -387,7 +386,6 @@ public final class EditorMap extends JPanel implements EventListener
         setupTools();
 
         this.togglePanel = new JPanel();
-        this.togglePanel.setBackground(BAR_COLOR);
         setAnimationToggles();
         this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
         add(this.togglePanel, BorderLayout.WEST);
@@ -398,7 +396,6 @@ public final class EditorMap extends JPanel implements EventListener
      */
     private void setupTools()
     {
-        this.toolPanel.setBackground(BAR_COLOR);
         this.toolPanel.setMinimumSize(new Dimension(350, 28));
         this.toolPanel.setPreferredSize(new Dimension(350, 28));
         this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
@@ -545,6 +542,7 @@ public final class EditorMap extends JPanel implements EventListener
         grid.addActionListener((e) ->
         {
             this.visualizationPanel.setShowGrid(!this.visualizationPanel.isShowGrid());
+            OtsEditor.PROPERTIES_STORE.setBoolean("map.grid", this.visualizationPanel.isShowGrid());
             this.updater.update();
         });
         this.toolPanel.add(grid);
@@ -602,7 +600,7 @@ public final class EditorMap extends JPanel implements EventListener
     }
 
     /**
-     * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
+     * Add a button for toggling an animation class on or off. Button icons for which 'idButton' is true will be placed to the
      * right of the previous button, which should be the corresponding button without the id. An example is an icon for
      * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
      * @param name the name of the button
@@ -624,7 +622,10 @@ public final class EditorMap extends JPanel implements EventListener
         button.setPreferredSize(new Dimension(32, 28));
         button.setName(name);
         button.setEnabled(true);
-        button.setSelected(initiallyVisible);
+        String key = "map.toggle." + PropertiesStore.key(name);
+        boolean toggleOn = OtsEditor.PROPERTIES_STORE.getOptionalBoolean(key).orElse(initiallyVisible);
+        button.setSelected(toggleOn);
+        OtsEditor.PROPERTIES_STORE.setBoolean(key, toggleOn);
         button.setActionCommand(name);
         button.setToolTipText(toolTipText);
         button.addActionListener(new ActionListener()
@@ -637,6 +638,7 @@ public final class EditorMap extends JPanel implements EventListener
                 {
                     Class<? extends Locatable> locatableClass = EditorMap.this.toggleLocatableMap.get(actionCommand);
                     EditorMap.this.visualizationPanel.toggleClass(locatableClass);
+                    OtsEditor.PROPERTIES_STORE.setBoolean(key, EditorMap.this.visualizationPanel.isShowClass(locatableClass));
                     EditorMap.this.togglePanel.repaint();
                 }
             }
@@ -657,7 +659,7 @@ public final class EditorMap extends JPanel implements EventListener
             toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         }
 
-        if (initiallyVisible)
+        if (toggleOn)
         {
             this.visualizationPanel.showClass(locatableClass);
         }

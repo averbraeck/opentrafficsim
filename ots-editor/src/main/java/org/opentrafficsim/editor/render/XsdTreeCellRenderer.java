@@ -92,7 +92,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         {
             if (node.isIncluded())
             {
-                setForeground(OtsEditor.INACTIVE_COLOR);
+                setForeground(OtsEditor.getInactiveColor());
             }
             else
             {
@@ -130,7 +130,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         else
         {
             setOpaque(false);
-            setForeground(OtsEditor.INACTIVE_COLOR);
+            setForeground(OtsEditor.getInactiveColor());
             setBorder(new EmptyBorder(0, 0, 0, 0));
         }
         return this;

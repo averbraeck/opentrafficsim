@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,6 +88,10 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         UIManager.put("TabbedPane.contentBorderInsets", new Insets(1, 0, 1, 0));
     }
 
+    /** Properties. */
+    public static final PropertiesStore PROPERTIES =
+            new PropertiesStore(new Properties(), "simulation", "simulation user settings");
+
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
 
@@ -124,10 +129,10 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     private Map<Class<? extends Locatable>, JToggleButton> toggleButtons = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle GIS layers . */
-    private Map<String, GisMapInterface> toggleGISMap = new LinkedHashMap<>();
+    private Map<String, GisMapInterface> toggleGisMap = new LinkedHashMap<>();
 
     /** Set of GIS layer names to toggle buttons. */
-    private Map<String, JToggleButton> toggleGISButtons = new LinkedHashMap<>();
+    private Map<String, JToggleButton> toggleGisButtons = new LinkedHashMap<>();
 
     /** GTU color panel. */
     private OtsGtuColorPanel gtuColorPanel = null;
@@ -274,7 +279,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
         borderLayoutPanel.add(this.togglePanel, BorderLayout.WEST);
         this.otsAnimationPanel = new OtsAnimationPanel(extent, this.simulator, network);
-        this.otsAnimationPanel.showGrid(false);
+        this.otsAnimationPanel.showGrid(PROPERTIES.getOptionalBoolean("grid").orElse(false));
         borderLayoutPanel.add(this.otsAnimationPanel, BorderLayout.CENTER);
 
         // animationTopBarPanel > OtsGtuColorPanel, buttons, infoTextPanel
@@ -454,7 +459,10 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         button.setPreferredSize(new Dimension(32, 28));
         button.setName(name);
         button.setEnabled(true);
-        button.setSelected(initiallyVisible);
+        String key = "toggle." + PropertiesStore.key(name);
+        boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(initiallyVisible);
+        button.setSelected(toggleOn);
+        PROPERTIES.setBoolean(key, toggleOn);
         button.setActionCommand(name);
         button.setToolTipText(toolTipText);
         button.addActionListener(this);
@@ -474,7 +482,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
             toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         }
 
-        if (initiallyVisible)
+        if (toggleOn)
         {
             this.otsAnimationPanel.showClass(locatableClass);
         }
@@ -500,7 +508,10 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         button = new JCheckBox(name);
         button.setText(separatedName(name));
         button.setEnabled(true);
-        button.setSelected(initiallyVisible);
+        String key = "toggle." + PropertiesStore.key(name);
+        boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(initiallyVisible);
+        button.setSelected(toggleOn);
+        PROPERTIES.setBoolean(key, toggleOn);
         button.setActionCommand(name);
         button.setToolTipText(toolTipText);
         button.addActionListener(this);
@@ -509,7 +520,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
 
         this.togglePanel.add(button);
 
-        if (initiallyVisible)
+        if (toggleOn)
         {
             this.otsAnimationPanel.showClass(locatableClass);
         }
@@ -540,13 +551,13 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * @param gisMap the GIS map for which the toggles have to be added
      * @param toolTipText the tool tip text to show when hovering over the button
      */
-    public void addAllToggleGISButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
+    public void addAllToggleGisButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
     {
         addToggleText(" ");
         addToggleText(header);
         for (String layerName : gisMap.getMap().getLayerMap().keySet())
         {
-            addToggleGISButtonText(layerName, layerName, gisMap, toolTipText);
+            addToggleGisButtonText(layerName, layerName, gisMap, toolTipText, true);
         }
     }
 
@@ -556,15 +567,20 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * @param displayName the name to display next to the tick box
      * @param gisMap the map
      * @param toolTipText the tool tip text
+     * @param initiallyVisible whether the layer is initially shown or not
      */
-    public void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
-            final String toolTipText)
+    public void addToggleGisButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
+            final String toolTipText, final boolean initiallyVisible)
     {
         JToggleButton button;
         button = new JCheckBox(displayName);
         button.setName(layerName);
         button.setEnabled(true);
-        button.setSelected(true);
+        String key = "toggle.gis." + PropertiesStore.key(layerName);
+        boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(initiallyVisible);
+        button.setSelected(toggleOn);
+        PROPERTIES.setBoolean(key, toggleOn);
+        button.setSelected(toggleOn);
         button.setActionCommand(layerName);
         button.setToolTipText(toolTipText);
         button.addActionListener(this);
@@ -575,22 +591,20 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         this.togglePanel.add(toggleBox);
         toggleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        this.toggleGISMap.put(layerName, gisMap.getMap());
-        this.toggleGISButtons.put(layerName, button);
+        this.toggleGisMap.put(layerName, gisMap.getMap());
+        this.toggleGisButtons.put(layerName, button);
     }
 
     /**
      * Set a GIS layer to be shown in the animation to true.
      * @param layerName the name of the GIS-layer that has to be shown
      */
-    public void showGISLayer(final String layerName)
+    public void showGisLayer(final String layerName)
     {
-        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
-        if (gisMap != null)
+        GisMapInterface gisMap = this.toggleGisMap.get(layerName);
+        if (gisMap != null && !gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName)))
         {
-            gisMap.showLayer(layerName);
-            this.toggleGISButtons.get(layerName).setSelected(true);
-            this.otsAnimationPanel.repaint();
+            toggleGisLayer(layerName);
         }
     }
 
@@ -598,14 +612,12 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Set a GIS layer to be hidden in the animation to true.
      * @param layerName the name of the GIS-layer that has to be hidden
      */
-    public void hideGISLayer(final String layerName)
+    public void hideGisLayer(final String layerName)
     {
-        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
-        if (gisMap != null)
+        GisMapInterface gisMap = this.toggleGisMap.get(layerName);
+        if (gisMap != null && gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName)))
         {
-            gisMap.hideLayer(layerName);
-            this.toggleGISButtons.get(layerName).setSelected(false);
-            this.otsAnimationPanel.repaint();
+            toggleGisLayer(layerName);
         }
     }
 
@@ -613,20 +625,23 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      * Toggle a GIS layer to be displayed in the animation to its reverse value.
      * @param layerName the name of the GIS-layer that has to be turned off or vice versa
      */
-    public void toggleGISLayer(final String layerName)
+    public void toggleGisLayer(final String layerName)
     {
-        GisMapInterface gisMap = this.toggleGISMap.get(layerName);
+        GisMapInterface gisMap = this.toggleGisMap.get(layerName);
         if (gisMap != null)
         {
-            if (gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName)))
+            boolean show = !gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName));
+            String key = "toggle.gis." + PropertiesStore.key(layerName);
+            PROPERTIES.setBoolean(key, show);
+            if (show)
             {
-                gisMap.hideLayer(layerName);
-                this.toggleGISButtons.get(layerName).setSelected(false);
+                gisMap.showLayer(layerName);
+                this.toggleGisButtons.get(layerName).setSelected(true);
             }
             else
             {
-                gisMap.showLayer(layerName);
-                this.toggleGISButtons.get(layerName).setSelected(true);
+                gisMap.hideLayer(layerName);
+                this.toggleGisButtons.get(layerName).setSelected(false);
             }
             this.otsAnimationPanel.repaint();
         }
@@ -643,31 +658,32 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
             {
                 this.otsAnimationPanel.resetZoomY();
             }
-            if (actionCommand.equals("Home"))
+            else if (actionCommand.equals("Home"))
             {
                 this.otsAnimationPanel.resetZoomY();
                 this.otsAnimationPanel.home();
             }
-            if (actionCommand.equals("ZoomAll"))
+            else if (actionCommand.equals("ZoomAll"))
             {
                 this.otsAnimationPanel.resetZoomY();
                 this.otsAnimationPanel.zoomAll();
             }
-            if (actionCommand.equals("Grid"))
+            else if (actionCommand.equals("Grid"))
             {
                 this.otsAnimationPanel.showGrid(!this.otsAnimationPanel.isShowGrid());
+                PROPERTIES.setBoolean("grid", this.otsAnimationPanel.isShowGrid());
             }
-
-            if (this.toggleLocatableMap.containsKey(actionCommand))
+            else if (this.toggleLocatableMap.containsKey(actionCommand))
             {
                 Class<? extends Locatable> locatableClass = this.toggleLocatableMap.get(actionCommand);
                 this.otsAnimationPanel.toggleClass(locatableClass);
+                String key = "toggle." + PropertiesStore.key(actionCommand);
+                PROPERTIES.setBoolean(key, this.otsAnimationPanel.isShowClass(locatableClass));
                 this.togglePanel.repaint();
             }
-
-            if (this.toggleGISMap.containsKey(actionCommand))
+            else if (this.toggleGisMap.containsKey(actionCommand))
             {
-                this.toggleGISLayer(actionCommand);
+                this.toggleGisLayer(actionCommand);
                 this.togglePanel.repaint();
             }
         }

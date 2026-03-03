@@ -30,10 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +114,6 @@ import org.opentrafficsim.swing.gui.Appearance;
 import org.opentrafficsim.swing.gui.AppearanceApplication;
 import org.opentrafficsim.swing.gui.AppearanceControlButton;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
-import org.opentrafficsim.swing.gui.PropertiesStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -132,13 +132,13 @@ import de.javagl.treetable.JTreeTable;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OtsEditor extends AppearanceApplication implements EventProducer
+public class OtsEditor extends AppearanceApplication implements EventProducer, OtsEditorProperties
 {
 
     /** */
     private static final long serialVersionUID = 20230217L;
 
-    /** Event when a a new file is started. */
+    /** Event when a new file is started. */
     public static final EventType NEW_FILE = new EventType("NEWFILE",
             new MetaData("New file", "New file", new ObjectDescriptor("Root", "New root element", XsdTreeNodeRoot.class)));
 
@@ -149,19 +149,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /** Width of the divider between parts of the screen. */
     private static final int DIVIDER_SIZE = 4;
 
-    /** Time between autosaves. */
-    private static final long AUTOSAVE_PERIOD_MS = 60000;
-
     /** Whether to update the windows as the split is being dragged. */
     private static final boolean UPDATE_SPLIT_WHILE_DRAGGING = true;
 
-    /** Color for inactive nodes (text). */
-    public static final Color INACTIVE_COLOR = new Color(160, 160, 160);
-
-    /** Indent for first item shown in dropdown. */
+    /** Indent for first item shown in drop-down. */
     private int dropdownIndent = 0;
 
-    /** All items eligible to be shown in a dropdown, i.e. they match the currently typed value. */
+    /** All items eligible to be shown in a drop-down, i.e. they match the currently typed value. */
     private List<String> dropdownOptions = new ArrayList<>();
 
     /** Listener on text field editor that can remove itself. */
@@ -224,15 +218,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /** Undo unit, storing all actions. */
     private Undo undo;
 
-    /** Auto save task. */
-    private TimerTask autosave;
+    /** Auto save scheduler. */
+    private ScheduledExecutorService autosave;
+
+    /** Number of auto-save request. */
+    private AtomicLong autosaveRequest = new AtomicLong(0L);
 
     /** Navigation (F3/F4). */
-    private final Navigation navigation = new Navigation(this, PROPERTIES_STORE.getInt(MAX_NAVIGATE_STEPS_KEY));
+    private final Navigation navigation = new Navigation(this, PROPERTIES_STORE.getInteger(MAX_NAVIGATE_STEPS_KEY));
 
     // copy/paste
 
-    /** Node in clipboard (sort of...). */
+    /** Node in clip-board (sort of...). */
     private XsdTreeNode clipboard;
 
     /** Whether the node in the clip-board was cut. */
@@ -240,42 +237,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /** Actions that can be performed on the editor. */
     private Actions actions;
-
-    /** Application store for preferences and recent files. */
-    private static final PropertiesStore PROPERTIES_STORE;
-
-    /** Key to store expression color. */
-    private static final String EXPRESSION_COLOR_KEY = "expressionColor";
-
-    /** Key to store invalid color. */
-    private static final String INVALID_COLOR_KEY = "invalidColor";
-
-    /** Key to store max number of recent files. */
-    private static final String MAX_RECENT_FILES_KEY = "maxRecentFiles";
-
-    /** Key to store max tooltip length. */
-    private static final String MAX_TOOLTIP_LENGTH_KEY = "maxTooltipLength";
-
-    /** Key to store max number of drop-down items. */
-    private static final String MAX_DROPDOWN_ITEMS_KEY = "maxDropdownItems";
-
-    /** Key to store max number of navigation steps. */
-    private static final String MAX_NAVIGATE_STEPS_KEY = "maxNavigateSteps";
-
-    /** Key to store recent files. */
-    private static final String RECENT_FILES_KEY = "recentFiles";
-
-    static
-    {
-        Properties defaults = new Properties();
-        defaults.setProperty(EXPRESSION_COLOR_KEY, PropertiesStore.valueToString(new Color(252, 250, 239)));
-        defaults.setProperty(INVALID_COLOR_KEY, PropertiesStore.valueToString(new Color(255, 240, 240)));
-        defaults.setProperty(MAX_RECENT_FILES_KEY, PropertiesStore.valueToString(10));
-        defaults.setProperty(MAX_TOOLTIP_LENGTH_KEY, PropertiesStore.valueToString(96));
-        defaults.setProperty(MAX_DROPDOWN_ITEMS_KEY, PropertiesStore.valueToString(20));
-        defaults.setProperty(MAX_NAVIGATE_STEPS_KEY, PropertiesStore.valueToString(50));
-        PROPERTIES_STORE = new PropertiesStore(defaults, "editor", "editor user settings");
-    }
 
     /** Menu with recent files. */
     private JMenu recentFilesMenu;
@@ -468,6 +429,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public static Color getExpressionColor()
     {
         return PROPERTIES_STORE.getColor(EXPRESSION_COLOR_KEY);
+    }
+
+    /**
+     * Returns the inactive cell color.
+     * @return the inactive cell color
+     */
+    public static Color getInactiveColor()
+    {
+        return PROPERTIES_STORE.getColor(INACTIVE_COLOR_KEY);
     }
 
     /**
@@ -895,10 +865,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         new XsdTreeEditorListener(this, this.treeTable, this.attributesTable);
 
         // throws selection events and updates the attributes table
-        // this listener will make sure no choice popup is presented by a left-click on expand/collapse, even for a choice node
-        // this listener makes sure that a choice popup can be presented again after a left-click on an expansion/collapse node
+        // this listener will make sure no choice pop-up is presented by a left-click on expand/collapse, even for a choice node
+        // this listener makes sure that a choice pop-up can be presented again after a left-click on an expansion/collapse node
         // it also shows the tooltip in tree nodes
-        // this listener opens the attributes of a node, and presents the popup for a choice or for addition/deletion of nodes
+        // this listener opens the attributes of a node, and presents the pop-up for a choice or for addition/deletion of nodes
         new XsdTreeListener(this, this.treeTable, this.attributesTable);
 
         // listener to keyboard shortcuts and key events that should start (i.e. end previous) undo actions
@@ -908,7 +878,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
         this.rightSplitPane.setDividerLocation(dividerLocation);
 
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) treeModel.getRoot();
+        final XsdTreeNodeRoot root = (XsdTreeNodeRoot) treeModel.getRoot();
         EventListener listener = new ChangesListener(this, this.scenario);
         root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
         root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
@@ -917,22 +887,24 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         setUnsavedChanges(false);
         if (this.autosave != null)
         {
-            this.autosave.cancel();
+            this.autosave.shutdown();
         }
-        this.autosave = new TimerTask()
+        this.autosave = Executors.newSingleThreadScheduledExecutor((runnable) -> new Thread(runnable, "autosave-scheduler"));
+        long autisaveMs = PROPERTIES_STORE.getInteger(AUTOSAVE_MS_KEY);
+        long request = this.autosaveRequest.incrementAndGet();
+        this.autosave.scheduleAtFixedRate(() ->
         {
-            @Override
-            public void run()
+            if (request != this.autosaveRequest.get())
             {
-                autosave(root);
+                return;
             }
-        };
-        new Timer().scheduleAtFixedRate(this.autosave, AUTOSAVE_PERIOD_MS, AUTOSAVE_PERIOD_MS);
+            OtsEditor.this.autosave(root);
+        }, autisaveMs, autisaveMs, TimeUnit.MILLISECONDS);
         setAppearance(getAppearance()); // because of new AppearanceControlTreeTable
     }
 
     /**
-     * Autosave current state.
+     * Auto-save current state.
      * @param root root node
      */
     private void autosave(final XsdTreeNodeRoot root)
@@ -1157,7 +1129,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         JPopupMenu popup = new JPopupMenu();
         int index = 0;
         boolean includeRemove = currentValue != null && !currentValue.isEmpty();
-        int maxDropdown = PROPERTIES_STORE.getInt(MAX_DROPDOWN_ITEMS_KEY) - (includeRemove ? 1 : 0);
+        int maxDropdown = PROPERTIES_STORE.getInteger(MAX_DROPDOWN_ITEMS_KEY) - (includeRemove ? 1 : 0);
         for (String option : this.dropdownOptions)
         {
             JMenuItem item = new JMenuItem(option);
@@ -1318,7 +1290,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private boolean showOptionsInScope(final JPopupMenu popup, final boolean includeRemove, final Pattern pattern)
     {
         int optionIndex = 0;
-        int maxDropdown = PROPERTIES_STORE.getInt(MAX_DROPDOWN_ITEMS_KEY) - (includeRemove ? 1 : 0);
+        int maxDropdown = PROPERTIES_STORE.getInteger(MAX_DROPDOWN_ITEMS_KEY) - (includeRemove ? 1 : 0);
         JMenuItem first = null;
         JMenuItem last = null;
         boolean anyAbove = false;
@@ -1502,7 +1474,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             if (updateRecentFiles)
             {
                 PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
-                        PROPERTIES_STORE.getInt(MAX_RECENT_FILES_KEY));
+                        PROPERTIES_STORE.getInteger(MAX_RECENT_FILES_KEY));
                 updateRecentFileMenu();
             }
             return true;
@@ -1626,12 +1598,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
             content = content.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.lineSeparator());
-            Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
+            byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+            Files.write(file.toPath(), bytes);
             // end of fix
             if (storeAsRecent)
             {
                 PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
-                        PROPERTIES_STORE.getInt(MAX_RECENT_FILES_KEY));
+                        PROPERTIES_STORE.getInteger(MAX_RECENT_FILES_KEY));
                 updateRecentFileMenu();
             }
         }
@@ -1660,7 +1633,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public static String limitTooltip(final String message)
     {
-        int maxTooltipLength = PROPERTIES_STORE.getInt(MAX_TOOLTIP_LENGTH_KEY);
+        int maxTooltipLength = PROPERTIES_STORE.getInteger(MAX_TOOLTIP_LENGTH_KEY);
         if (message == null || message.length() < maxTooltipLength)
         {
             return message;

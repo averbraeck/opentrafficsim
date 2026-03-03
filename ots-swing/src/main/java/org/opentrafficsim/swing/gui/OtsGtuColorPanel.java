@@ -54,6 +54,9 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
     /** GTU colorer that is currently active. */
     private Colorer<? super Gtu> gtuColorer;
 
+    /** GTU colorer from properties. */
+    private String lastGtuColorer;
+
     /**
      * Constructor.
      */
@@ -64,6 +67,8 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
         this.add(this.comboBoxGTUColor);
         this.add(this.legendPanel);
         this.comboBoxGTUColor.addActionListener(this);
+        // remember this state, as adding each colorer triggers an event that overwrites this property
+        this.lastGtuColorer = OtsSimulationPanel.PROPERTIES.getProperty("gtuColorer");
     }
 
     /**
@@ -72,13 +77,15 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
      */
     public void addGtuColorer(final Colorer<? super Gtu> colorer)
     {
-        if (this.gtuColorer == null)
+        Predicate<Gtu> predicate = (gtu) -> colorer.equals(OtsGtuColorPanel.this.gtuColorer);
+        PredicatedColorer predicatedColorer = new PredicatedColorer(predicate, colorer);
+        this.comboBoxGTUColor.addItem(predicatedColorer);
+        this.gtuColorerManager.add(predicate, colorer);
+        if (this.gtuColorer == null || colorer.getName().equals(this.lastGtuColorer))
         {
             this.gtuColorer = colorer;
+            this.comboBoxGTUColor.setSelectedItem(predicatedColorer);
         }
-        Predicate<Gtu> predicate = (gtu) -> colorer.equals(OtsGtuColorPanel.this.gtuColorer);
-        this.comboBoxGTUColor.addItem(new PredicatedColorer(predicate, colorer));
-        this.gtuColorerManager.add(predicate, colorer);
         rebuildLegend();
     }
 
@@ -98,6 +105,7 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
         if (null != newColorerWrapper)
         {
             this.gtuColorer = newColorerWrapper.colorer();
+            OtsSimulationPanel.PROPERTIES.setProperty("gtuColorer", this.gtuColorer.getName());
             rebuildLegend();
         }
     }
