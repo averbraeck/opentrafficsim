@@ -12,6 +12,7 @@ package org.opentrafficsim.draw.egtf;
  */
 public class Quantity<T extends Number, K>
 {
+
     /** Standard quantity for speed. */
     public static final Quantity<Double, double[][]> SPEED_SI = new Quantity<>("Speed", true, Converter.SI);
 
@@ -55,19 +56,20 @@ public class Quantity<T extends Number, K>
 
     /**
      * Returns a quantity with {@code double[][]} containing SI values as output format.
+     * @param <Z> value type
      * @param name name
      * @return quantity with {@code double[][]} containing SI values as output format
      */
-    public static Quantity<?, double[][]> si(final String name)
+    public static <Z extends Number> Quantity<Z, double[][]> si(final String name)
     {
-        return new SI<>(name);
+        return new Quantity<>(name, Converter.SI);
     }
 
     /**
      * Returns the name.
      * @return name
      */
-    public final String getName()
+    public String getName()
     {
         return this.name;
     }
@@ -76,7 +78,7 @@ public class Quantity<T extends Number, K>
      * Returns whether this quantity is speed.
      * @return whether this quantity is speed
      */
-    final boolean isSpeed()
+    boolean isSpeed()
     {
         return this.speed;
     }
@@ -86,7 +88,7 @@ public class Quantity<T extends Number, K>
      * @param data filtered data
      * @return output data
      */
-    final K convert(final double[][] data)
+    K convert(final double[][] data)
     {
         return this.converter.convert(data);
     }
@@ -134,30 +136,6 @@ public class Quantity<T extends Number, K>
     public String toString()
     {
         return "Quantity [name=" + this.name + "]";
-    }
-
-    /**
-     * Class to return in {@code double[][]} output format.
-     * @param <T> data type
-     */
-    private static class SI<T extends Number> extends Quantity<T, double[][]>
-    {
-
-        /**
-         * Constructor.
-         * @param name String name
-         */
-        SI(final String name)
-        {
-            super(name, Converter.SI);
-        }
-
-        @Override
-        public String toString()
-        {
-            return "SI []";
-        }
-
     }
 
 }

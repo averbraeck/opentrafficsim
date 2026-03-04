@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djutils.exceptions.Throw;
 import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.draw.BoundsPaintScale;
-import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.Quantity;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.sampling.SamplingException;
@@ -20,7 +19,8 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataNumber;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 
 /**
- * Contour data plot for any numerical extended trajectory data.
+ * Contour data plot for any numerical extended trajectory data. For extended trajectory data valued with a DJUNITS type,
+ * sub-class {@link UnitPlot} is available.
  * <p>
  * Copyright (c) 2026-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -77,15 +77,7 @@ public class ContourPlotExtendedData<Z extends Number> extends AbstractContourPl
     private static <Z extends Number> ExtendedContourDataType<Z> constructDataType(final ExtendedDataNumber<?> extendedDataType,
             final Function<Double, Z> valueConverter)
     {
-        Quantity<Z, double[][]> quantity =
-                new Quantity<>("extended_data_" + extendedDataType.getId(), new Converter<double[][]>()
-                {
-                    @Override
-                    public double[][] convert(final double[][] filteredData)
-                    {
-                        return filteredData;
-                    }
-                });
+        Quantity<Z, double[][]> quantity = Quantity.si("extended_data_" + extendedDataType.getId());
         return new ExtendedContourDataType<>(extendedDataType, quantity, valueConverter);
     }
 
