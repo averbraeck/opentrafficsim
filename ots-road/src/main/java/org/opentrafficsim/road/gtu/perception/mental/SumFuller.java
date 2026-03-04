@@ -2,7 +2,9 @@ package org.opentrafficsim.road.gtu.perception.mental;
 
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -69,6 +71,9 @@ public class SumFuller<T extends Task> extends Fuller
     /** Tasks causing task demand. */
     private final Set<T> tasks;
 
+    /** Map of tasks as derived from suppliers. */
+    private final Map<String, T> taskMap;
+
     /**
      * Constructor with custom situational awareness.
      * @param tasks tasks
@@ -80,6 +85,8 @@ public class SumFuller<T extends Task> extends Fuller
         Throw.whenNull(tasks, "Tasks may not be null.");
         this.tasks = new LinkedHashSet<>();
         this.tasks.addAll(tasks);
+        this.taskMap = new LinkedHashMap<>();
+        tasks.forEach((t) -> this.taskMap.put(t.getId(), t));
     }
 
     @Override
@@ -115,6 +122,12 @@ public class SumFuller<T extends Task> extends Fuller
     public ImmutableSet<T> getTasks()
     {
         return new ImmutableLinkedHashSet<>(this.tasks, Immutable.WRAP);
+    }
+
+    @Override
+    public Optional<Task> getTask(final String taskId)
+    {
+        return Optional.ofNullable(this.taskMap.get(taskId));
     }
 
     @Override

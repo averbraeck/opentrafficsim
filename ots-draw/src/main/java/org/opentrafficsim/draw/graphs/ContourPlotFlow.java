@@ -29,8 +29,8 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
     public ContourPlotFlow(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
         // flow is present by default, hence null contour data type
-        super(caption, scheduler, dataPool, null, createPaintScale(), new Frequency(500.0, FrequencyUnit.PER_HOUR), "%.0f/h",
-                "flow %.1f veh/h");
+        super(caption, scheduler, dataPool, null, createPaintScale(),
+                new LabelData<>(new Frequency(500.0, FrequencyUnit.PER_HOUR), "%.0f/h", "flow %.1f veh/h"));
     }
 
     /**

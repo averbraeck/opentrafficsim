@@ -29,8 +29,8 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
     public ContourPlotDensity(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
         // density is present by default, hence null contour data type
-        super(caption, scheduler, dataPool, null, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
-                "%.0f/km", "density %.1f veh/km");
+        super(caption, scheduler, dataPool, null, createPaintScale(),
+                new LabelData<>(new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER), "%.0f/km", "density %.1f veh/km"));
     }
 
     /**

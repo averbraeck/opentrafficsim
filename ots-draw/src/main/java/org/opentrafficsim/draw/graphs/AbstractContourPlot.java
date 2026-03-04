@@ -33,14 +33,8 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /** Color scale for the graph. */
     private final BoundsPaintScale paintScale;
 
-    /** Difference of successive values in the legend. */
-    private final Z legendStep;
-
-    /** Format string used to create the captions in the legend. */
-    private final String legendFormat;
-
-    /** Format string used to create status label (under the mouse). */
-    private final String valueFormat;
+    /** Label data. */
+    private final LabelData<Z> labelData;
 
     /** Data pool. */
     private final ContourDataSource dataPool;
@@ -54,27 +48,21 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /**
      * Constructor with specified paint scale.
      * @param caption caption
-     * @param scheduler scheduler.
+     * @param scheduler scheduler
      * @param dataPool data pool
      * @param contourDataType contour data type
      * @param paintScale paint scale
-     * @param legendStep increment between color legend entries
-     * @param legendFormat format string for the captions in the color legend
-     * @param valueFormat format string used to create status label (under the mouse)
+     * @param labelData label data
      */
-    @SuppressWarnings("parameternumber")
     public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
-            final ContourDataType<Z, ?> contourDataType, final BoundsPaintScale paintScale, final Z legendStep,
-            final String legendFormat, final String valueFormat)
+            final ContourDataType<Z, ?> contourDataType, final BoundsPaintScale paintScale, final LabelData<Z> labelData)
     {
         super(caption, dataPool.getUpdateInterval(), scheduler, dataPool.getSamplerData(), dataPool.getPath(),
                 dataPool.getDelay());
         this.dataPool = dataPool;
         this.contourDataType = contourDataType;
         this.paintScale = paintScale;
-        this.legendStep = legendStep;
-        this.legendFormat = legendFormat;
-        this.valueFormat = valueFormat;
+        this.labelData = labelData;
         this.blockRenderer = new XyInterpolatedBlockRenderer(this);
         this.blockRenderer.setPaintScale(this.paintScale);
         this.blockRenderer.setBlockHeight(dataPool.getGranularity(Dimension.DISTANCE));
@@ -84,38 +72,31 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     }
 
     /**
-     * Constructor with default paint scale.
+     * Constructor with default paint scale (red at minimum, yellow at mid-point, green at maximum).
      * @param caption caption
-     * @param scheduler scheduler.
+     * @param scheduler scheduler
      * @param dataPool data pool
      * @param contourDataType contour data type
-     * @param legendStep increment between color legend entries
-     * @param legendFormat format string for the captions in the color legend
-     * @param minValue minimum value
-     * @param maxValue maximum value
-     * @param valueFormat format string used to create status label (under the mouse)
+     * @param bounds paint scale bounds
+     * @param labelData label data
      */
-    @SuppressWarnings("parameternumber")
     public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
-            final ContourDataType<Z, ?> contourDataType, final Z legendStep, final String legendFormat, final Z minValue,
-            final Z maxValue, final String valueFormat)
+            final ContourDataType<Z, ?> contourDataType, final Bounds<Z> bounds, final LabelData<Z> labelData)
     {
-        this(caption, scheduler, dataPool, contourDataType, createPaintScale(minValue, maxValue), legendStep, legendFormat,
-                valueFormat);
+        this(caption, scheduler, dataPool, contourDataType, createPaintScale(bounds), labelData);
     }
 
     /**
      * Creates a default paint scale from red, via yellow to green.
-     * @param minValue minimum value
-     * @param maxValue maximum value
+     * @param bounds paint scale bounds
      * @return default paint scale
      */
-    private static BoundsPaintScale createPaintScale(final Number minValue, final Number maxValue)
+    private static BoundsPaintScale createPaintScale(final Bounds<?> bounds)
     {
-        Throw.when(minValue.doubleValue() >= maxValue.doubleValue(), IllegalArgumentException.class,
-                "Minimum value %s is below or equal to maxumum value %s.", minValue, maxValue);
-        double[] boundaries =
-                {minValue.doubleValue(), (minValue.doubleValue() + maxValue.doubleValue()) / 2.0, maxValue.doubleValue()};
+        Throw.when(bounds.minimum().doubleValue() >= bounds.maximum().doubleValue(), IllegalArgumentException.class,
+                "Minimum value %s is above or equal to maximum value %s.", bounds.minimum(), bounds.maximum());
+        double[] boundaries = {bounds.minimum().doubleValue(),
+                (bounds.minimum().doubleValue() + bounds.maximum().doubleValue()) / 2.0, bounds.maximum().doubleValue()};
         Color[] colorValues = {Color.RED, Color.YELLOW, Color.GREEN};
         return new BoundsPaintScale(boundaries, colorValues);
     }
@@ -132,12 +113,13 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         LegendItemCollection legend = new LegendItemCollection();
         for (int i = 0;; i++)
         {
-            double value = this.paintScale.getLowerBound() + i * this.legendStep.doubleValue();
+            double value = this.paintScale.getLowerBound() + i * this.labelData.legendStep().doubleValue();
             if (value > this.paintScale.getUpperBound() + 1e-6)
             {
                 break;
             }
-            legend.add(new LegendItem(String.format(this.legendFormat, scale(value)), this.paintScale.getPaint(value)));
+            legend.add(new LegendItem(String.format(this.labelData.legendFormat(), scale(value)),
+                    this.paintScale.getPaint(value)));
         }
         legend.add(new LegendItem("No data", Color.BLACK));
         plot.setFixedLegendItems(legend);
@@ -298,7 +280,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         int item = j * this.dataPool.getBinCount(Dimension.DISTANCE) + i;
         double zValue = scale(
                 getValue(item, this.dataPool.getGranularity(Dimension.DISTANCE), this.dataPool.getGranularity(Dimension.TIME)));
-        return String.format("time %.0fs, distance %.0fm, " + this.valueFormat, domainValue, rangeValue, zValue);
+        return String.format("time %.0fs, distance %.0fm, " + this.labelData.labelFormat(), domainValue, rangeValue, zValue);
     }
 
     @Override
@@ -342,6 +324,27 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     public XyInterpolatedBlockRenderer getBlockRenderer()
     {
         return this.blockRenderer;
+    }
+
+    /**
+     * Bounds for the color bounds scale.
+     * @param minimum minimum value
+     * @param maximum maximum value
+     * @param <Z> value type
+     */
+    public record Bounds<Z extends Number>(Z minimum, Z maximum)
+    {
+    }
+
+    /**
+     * Input container for label input.
+     * @param legendStep increment between color legend entries
+     * @param legendFormat format string for the captions in the color legend, for example {@code %.1fm/s} for {@code 30.2m/s}
+     * @param labelFormat format string used to create status label (under the mouse), e.g. {@code desired speed %.1f m/s}
+     * @param <Z> value type
+     */
+    public record LabelData<Z extends Number>(Z legendStep, String legendFormat, String labelFormat)
+    {
     }
 
 }

@@ -29,8 +29,8 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
     public ContourPlotSpeed(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
         // speed is present by default, hence null contour data type
-        super(caption, scheduler, dataPool, null, createPaintScale(), new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h",
-                "speed %.1f km/h");
+        super(caption, scheduler, dataPool, null, createPaintScale(),
+                new LabelData<>(new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h", "speed %.1f km/h"));
     }
 
     /**

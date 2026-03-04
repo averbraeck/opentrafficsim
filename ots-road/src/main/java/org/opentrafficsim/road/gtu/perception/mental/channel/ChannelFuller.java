@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -24,6 +25,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.mental.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.perception.mental.FactorEstimation;
 import org.opentrafficsim.road.gtu.perception.mental.Fuller;
+import org.opentrafficsim.road.gtu.perception.mental.Task;
 
 /**
  * Fuller implementation with perception channels. This is based on a set of task suppliers, which may either provide static
@@ -89,6 +91,9 @@ public class ChannelFuller extends Fuller implements ChannelMental
     /** Set of tasks as derived from suppliers. */
     private Set<ChannelTask> tasks;
 
+    /** Map of tasks as derived from suppliers. */
+    private Map<String, ChannelTask> taskMap;
+
     /** Mappings from object to channel. */
     private Map<Object, Object> channelMapping = new LinkedHashMap<>();
 
@@ -119,6 +124,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
         // Gather all channels and their maximum task demand
         Map<Object, Double> channelTaskDemand = new LinkedHashMap<>();
         Set<ChannelTask> gatheredTasks = new LinkedHashSet<>();
+        Map<String, ChannelTask> gatheredTaskMap = new LinkedHashMap<>();
         for (Function<LanePerception, Set<ChannelTask>> taskFunction : this.taskSuppliers)
         {
             for (ChannelTask task : taskFunction.apply(perception)) // if applicable will (re)map objects to channel keys
@@ -131,9 +137,11 @@ public class ChannelFuller extends Fuller implements ChannelMental
                 }
                 channelTaskDemand.merge(task.getChannel(), td, Math::max); // map to max value
                 gatheredTasks.add(task);
+                gatheredTaskMap.put(task.getId(), task);
             }
         }
         this.tasks = gatheredTasks;
+        this.taskMap = gatheredTaskMap;
 
         // Apply attention matrix and couple channel to indices
         double[] tdArray = new double[channelTaskDemand.size()];
@@ -182,6 +190,12 @@ public class ChannelFuller extends Fuller implements ChannelMental
     public ImmutableSet<ChannelTask> getTasks()
     {
         return new ImmutableLinkedHashSet<ChannelTask>(this.tasks, Immutable.WRAP);
+    }
+
+    @Override
+    public Optional<Task> getTask(final String taskId)
+    {
+        return Optional.ofNullable(this.taskMap.get(taskId));
     }
 
     /**

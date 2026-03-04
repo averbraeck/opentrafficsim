@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.perception.mental;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVE;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -90,5 +91,12 @@ public abstract class Fuller implements Mental
      * @return tasks
      */
     public abstract ImmutableSet<? extends Task> getTasks();
+
+    /**
+     * Returns task with given id.
+     * @param taskId task id
+     * @return task with given id, empty if the task is not present
+     */
+    public abstract Optional<Task> getTask(String taskId);
 
 }

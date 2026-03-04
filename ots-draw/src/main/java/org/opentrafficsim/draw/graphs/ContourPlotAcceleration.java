@@ -110,8 +110,8 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
      */
     public ContourPlotAcceleration(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, scheduler, dataPool, CONTOUR_DATA_TYPE, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI),
-                "%.0fm/s\u00B2", "acceleration %.2f m/s\u00B2");
+        super(caption, scheduler, dataPool, CONTOUR_DATA_TYPE, createPaintScale(),
+                new LabelData<>(new Acceleration(1.0, AccelerationUnit.SI), "%.1fm/s\u00B2", "acceleration %.2f m/s\u00B2"));
     }
 
     /**
