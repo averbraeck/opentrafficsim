@@ -1240,7 +1240,6 @@ public final class ConflictBuilder
             }
             // TODO: make parallel
             buildConflicts(lanes, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList(), conflictId);
-            Logger.setLogLevel(Level.DEBUG);
         }
     }
 
