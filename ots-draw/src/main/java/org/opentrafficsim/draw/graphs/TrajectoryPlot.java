@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.swing.SwingUtilities;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -30,7 +34,6 @@ import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.ColorbarColorer;
 import org.opentrafficsim.draw.colorer.Colorer;
@@ -56,6 +59,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  */
 public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 {
+
     /** Single shape to provide due to non-null requirement, but actually not used. */
     private static final Shape NO_SHAPE = new Line2D.Float(0, 0, 0, 0);
 
@@ -97,6 +101,16 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /** Color bar. */
     private PaintScaleLegend colorbar;
+
+    /** Snapshot that is set on the Swing EDT such that it is not set during painting. */
+    private volatile TrajSnapshot snapshot =
+            new TrajSnapshot(new OffsetTrajectory[0], new int[0], new Stroke[0], 0, new boolean[0]);
+
+    /** Snapshot that the worker calculated. */
+    private final AtomicReference<TrajSnapshot> pendingSnapshot = new AtomicReference<>();
+
+    /** Makes sure the snapshot is only set once. */
+    private final AtomicBoolean adoptionPosted = new AtomicBoolean(false);
 
     static
     {
@@ -176,7 +190,89 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                     this.knownTrajectories.put(lane, to);
                 }
             }
+            publishSnapshotFromWorker();
         });
+    }
+
+    /**
+     * Calculate fresh snapshot and ask the Swing EDT to set it as the data to use. The Swing EDT will not do this during
+     * painting.
+     */
+    private void publishSnapshotFromWorker()
+    {
+        TrajSnapshot fresh = buildSnapshotFromLists(); // heavy, off-EDT
+        this.pendingSnapshot.set(fresh);
+
+        // coalesce adoptions to avoid flooding EDT
+        if (this.adoptionPosted.compareAndSet(false, true))
+        {
+            SwingUtilities.invokeLater(() ->
+            {
+                try
+                {
+                    TrajSnapshot pending = this.pendingSnapshot.getAndSet(null);
+                    if (pending != null)
+                    {
+                        // single point where the visible snapshot changes
+                        this.snapshot = pending;
+                        // notify on EDT; painting will occur after this runnable completes
+                        notifyPlotChange();
+                    }
+                }
+                finally
+                {
+                    this.adoptionPosted.set(false);
+                }
+            });
+        }
+    }
+
+    /**
+     * Build snapshot from collected data.
+     * @return snapshot
+     */
+    private TrajSnapshot buildSnapshotFromLists()
+    {
+        // Gather sizes
+        int laneCount = this.curves.size();
+        int totalSeries = 0;
+        for (int i = 0; i < laneCount; i++)
+        {
+            totalSeries += this.curves.get(i).size();
+        }
+
+        // Allocate arrays
+        OffsetTrajectory[] series = new OffsetTrajectory[totalSeries];
+        int[] laneOfSeries = new int[totalSeries];
+        Stroke[] strokeOfSeries = (laneCount > 1) ? new Stroke[totalSeries] : null;
+        boolean[] laneVisibleSnap = new boolean[laneCount];
+
+        for (int i = 0; i < laneCount; i++)
+        {
+            laneVisibleSnap[i] = this.laneVisible.get(i);
+        }
+
+        // Fill (contiguously per lane)
+        int k = 0;
+        for (int lane = 0; lane < laneCount; lane++)
+        {
+            List<OffsetTrajectory> laneCurves = this.curves.get(lane);
+            List<Stroke> laneStrokes = (laneCount > 1) ? this.strokes.get(lane) : null;
+            for (int j = 0; j < laneCurves.size(); j++)
+            {
+                series[k] = laneCurves.get(j);
+                laneOfSeries[k] = lane;
+                if (strokeOfSeries != null)
+                {
+                    strokeOfSeries[k] = laneStrokes.get(j);
+                }
+                k++;
+            }
+        }
+
+        // Atomic publish for EDT readers
+        return new TrajSnapshot(series, laneOfSeries, (strokeOfSeries != null ? strokeOfSeries : new Stroke[0]), laneCount,
+                laneVisibleSnap);
     }
 
     /**
@@ -270,15 +366,16 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     @Override
     public int getSeriesCount()
     {
-        int n = 0;
-        for (int i = 0; i < this.curves.size(); i++)
-        {
-            List<OffsetTrajectory> list = this.curves.get(i);
-            int m = list.size();
-            this.curvesPerLane.set(i, m);
-            n += m;
-        }
-        return n;
+        return this.snapshot.getSeriesCount();
+        // int n = 0;
+        // for (int i = 0; i < this.curves.size(); i++)
+        // {
+        // List<OffsetTrajectory> list = this.curves.get(i);
+        // int m = list.size();
+        // this.curvesPerLane.set(i, m);
+        // n += m;
+        // }
+        // return n;
     }
 
     /**
@@ -312,8 +409,10 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     @Override
     public int getItemCount(final int series)
     {
-        OffsetTrajectory trajectory = getTrajectory(series);
-        return trajectory == null ? 0 : trajectory.size();
+        OffsetTrajectory t = this.snapshot.series()[series];
+        return t == null ? 0 : t.size();
+        // OffsetTrajectory trajectory = getTrajectory(series);
+        // return trajectory == null ? 0 : trajectory.size();
     }
 
     @Override
@@ -325,7 +424,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     @Override
     public double getXValue(final int series, final int item)
     {
-        return getTrajectory(series).getT(item);
+        return this.snapshot.series()[series].getT(item);
+        // return getTrajectory(series).getT(item);
     }
 
     @Override
@@ -337,38 +437,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     @Override
     public double getYValue(final int series, final int item)
     {
-        return getTrajectory(series).getX(item);
-    }
-
-    /**
-     * Get the trajectory of the series number.
-     * @param series series
-     * @return trajectory of the series number
-     */
-    private OffsetTrajectory getTrajectory(final int series)
-    {
-        int[] n = getLaneAndSeriesNumber(series);
-        return this.curves.get(n[0]).get(n[1]);
-    }
-
-    /**
-     * Returns the lane number, and series number within the lane data.
-     * @param series overall series number
-     * @return lane number, and series number within the lane data
-     */
-    private int[] getLaneAndSeriesNumber(final int series)
-    {
-        int n = series;
-        for (int i = 0; i < this.curves.size(); i++)
-        {
-            int m = this.curvesPerLane.get(i);
-            if (n < m)
-            {
-                return new int[] {i, n};
-            }
-            n -= m;
-        }
-        throw new OtsRuntimeException("Discrepancy between series number and available data.");
+        return this.snapshot.series()[series].getX(item);
+        // return getTrajectory(series).getX(item);
     }
 
     /**
@@ -396,34 +466,46 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             setDefaultLinesVisible(true);
             setDefaultShapesVisible(false);
             setDrawSeriesLineAsPath(true);
+            setDefaultCreateEntities(false);
+            setDefaultItemLabelsVisible(false);
         }
 
         @SuppressWarnings("synthetic-access")
         @Override
         public boolean isSeriesVisible(final int series)
         {
-            int[] n = getLaneAndSeriesNumber(series);
-            return TrajectoryPlot.this.laneVisible.get(n[0]);
+            int lane = TrajectoryPlot.this.snapshot.laneOfSeries()[series];
+            return TrajectoryPlot.this.snapshot.laneVisible()[lane];
+            // int[] n = getLaneAndSeriesNumber(series);
+            // return TrajectoryPlot.this.laneVisible.get(n[0]);
         }
 
         @SuppressWarnings("synthetic-access")
         @Override
         public Stroke getSeriesStroke(final int series)
         {
-            if (TrajectoryPlot.this.curves.size() == 1)
+            if (TrajectoryPlot.this.snapshot.laneCount() == 1)
             {
                 return STROKES[0];
             }
-            int[] n = getLaneAndSeriesNumber(series);
-            return TrajectoryPlot.this.strokes.get(n[0]).get(n[1]);
+            Stroke s = TrajectoryPlot.this.snapshot.strokeOfSeries()[series];
+            return (s != null ? s : STROKES[0]);
+            // if (TrajectoryPlot.this.curves.size() == 1)
+            // {
+            // return STROKES[0];
+            // }
+            // int[] n = getLaneAndSeriesNumber(series);
+            // return TrajectoryPlot.this.strokes.get(n[0]).get(n[1]);
         }
 
         @SuppressWarnings("synthetic-access")
         @Override
         public Paint getSeriesPaint(final int series)
         {
-            int[] n = getLaneAndSeriesNumber(series);
-            return COLORMAP[n[0] % COLORMAP.length];
+            int lane = TrajectoryPlot.this.snapshot.laneOfSeries[series];
+            return COLORMAP[lane % COLORMAP.length];
+            // int[] n = getLaneAndSeriesNumber(series);
+            // return COLORMAP[n[0] % COLORMAP.length];
         }
 
         @Override
@@ -433,7 +515,9 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             {
                 return getSeriesPaint(row);
             }
-            return TrajectoryPlot.this.colorer.getColor(new TrajectorySection(getTrajectory(row), column));
+            return TrajectoryPlot.this.colorer
+                    .getColor(new TrajectorySection(TrajectoryPlot.this.snapshot.series()[row], column));
+            // return TrajectoryPlot.this.colorer.getColor(new TrajectorySection(getTrajectory(row), column));
         }
 
         /**
@@ -480,9 +564,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     @Override
     public String toString()
     {
-        return "TrajectoryPlot [graphUpdater=" + this.graphUpdater + ", knownTrajectories=" + this.knownTrajectories
-                + ", curves=" + this.curves + ", strokes=" + this.strokes + ", curvesPerLane=" + this.curvesPerLane
-                + ", legend=" + this.legend + ", laneVisible=" + this.laneVisible + "]";
+        return "TrajectoryPlot []";
     }
 
     /**
@@ -501,6 +583,28 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     public List<Boolean> getLaneVisible()
     {
         return this.laneVisible;
+    }
+
+    /**
+     * Read-only view used by the EDT.
+     * @param series trajectories to paint
+     * @param laneOfSeries lane within which the series fall
+     * @param strokeOfSeries stroke to use per series
+     * @param laneCount number of lanes
+     * @param laneVisible whether a lane is visible
+     */
+    private record TrajSnapshot(OffsetTrajectory[] series, int[] laneOfSeries, Stroke[] strokeOfSeries, int laneCount,
+            boolean[] laneVisible) // optional, for legends or debugging
+    {
+
+        /**
+         * Returns the number of series.
+         * @return number of series
+         */
+        int getSeriesCount()
+        {
+            return this.series().length;
+        }
     }
 
 }
