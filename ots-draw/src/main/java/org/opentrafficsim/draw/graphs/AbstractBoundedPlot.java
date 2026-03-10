@@ -7,6 +7,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.plot.XYPlot;
+import org.opentrafficsim.draw.graphs.AbstractPlot.PaintState;
 
 /**
  * Plot that allows hard bounds to be set, with upper and lower bound independent. Manual zooming and auto ranges are bounded
@@ -18,8 +19,9 @@ import org.jfree.chart.plot.XYPlot;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <S> paint state type
  */
-public abstract class AbstractBoundedPlot extends AbstractPlot
+public abstract class AbstractBoundedPlot<S extends PaintState> extends AbstractPlot<S>
 {
 
     /** Lower bound of domain axis. */
@@ -61,7 +63,6 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
             /** Whether to listen, this prevents a stack overflow. */
             private boolean listen = true;
 
-            @SuppressWarnings("synthetic-access")
             @Override
             public void axisChanged(final AxisChangeEvent event)
             {
@@ -80,7 +81,6 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
             /** Whether to listen, this prevents a stack overflow. */
             private boolean listen = true;
 
-            @SuppressWarnings("synthetic-access")
             @Override
             public void axisChanged(final AxisChangeEvent event)
             {

@@ -6,6 +6,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
+import org.opentrafficsim.draw.graphs.ContourDataSource.ContourEdieDataType;
 
 /**
  * Contour plot for speed.
@@ -23,14 +24,13 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
     /**
      * Constructor.
      * @param caption caption
-     * @param scheduler scheduler.
-     * @param dataPool data pool
+     * @param source data source
      */
-    public ContourPlotSpeed(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
+    public ContourPlotSpeed(final String caption, final ContourDataSource source)
     {
         // speed is present by default, hence null contour data type
-        super(caption, scheduler, dataPool, null, createPaintScale(),
-                new LabelData<>(new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h", "speed %.1f km/h"));
+        super(caption, source, ContourEdieDataType.SPEED, createPaintScale(),
+                new LabelData<>(new Speed(40.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h", "speed %.1f km/h"));
     }
 
     /**
@@ -39,7 +39,7 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
      */
     private static BoundsPaintScale createPaintScale()
     {
-        double[] boundaries = {0.0, 30.0 / 3.6, 60.0 / 3.6, 110.0 / 3.6, 160.0 / 3.6};
+        double[] boundaries = {0.0, 40.0 / 3.6, 80.0 / 3.6, 120.0 / 3.6, 160.0 / 3.6};
         Color[] colorValues = Colors.reverse(Colors.GREEN_RED_DARK);
         return new BoundsPaintScale(boundaries, colorValues);
     }
@@ -57,15 +57,9 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
     }
 
     @Override
-    protected double getValue(final int item, final double cellLength, final double cellSpan)
-    {
-        return getDataPool().getSpeed(item);
-    }
-
-    @Override
     public String toString()
     {
-        return "ContourPlotSpeed []";
+        return "ContourPlotSpeed [" + getCaption() + "]";
     }
 
 }

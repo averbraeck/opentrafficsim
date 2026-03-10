@@ -134,25 +134,25 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
 
         RoadSampler sampler = new RoadSampler(network);
         GraphPath.initRecording(sampler, path);
-        ContourDataSource dataPool = new ContourDataSource(sampler.getSamplerData(), path);
+        PlotScheduler scheduler = new OtsPlotScheduler(network.getSimulator());
+        ContourDataSource source = new ContourDataSource(sampler.getSamplerData(), path, scheduler);
         TablePanel charts = new TablePanel(3, 2);
         SwingPlot plot = null;
-        PlotScheduler scheduler = new OtsPlotScheduler(network.getSimulator());
 
         plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("TrajectoryPlot", Duration.ofSI(10.0), scheduler, sampler.getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
-        plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", scheduler, dataPool));
+        plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", source));
         charts.setCell(plot.getContentPane(), 1, 0);
 
-        plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", scheduler, dataPool));
+        plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", source));
         charts.setCell(plot.getContentPane(), 2, 0);
 
-        plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", scheduler, dataPool));
+        plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", source));
         charts.setCell(plot.getContentPane(), 1, 1);
 
-        plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", scheduler, dataPool));
+        plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", source));
         charts.setCell(plot.getContentPane(), 2, 1);
 
         simulation.getTabbedPane().addTab(simulation.getTabbedPane().getTabCount(), "statistics ", charts);

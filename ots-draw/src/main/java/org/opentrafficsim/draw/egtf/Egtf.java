@@ -41,7 +41,7 @@ import java.util.stream.IntStream;
  * Output can be requested from the EGTF using a {@code Kernel}, a spatiotemporal pattern determining measurement weights. The
  * {@code Kernel} defines an optional maximum spatial and temporal range for measurements to consider, and uses a {@code Shape}
  * to determine the weight for a given distance and time from the estimated point. By default this is an exponential function. A
- * Gaussian kernel is also available, while any other shape could be also be implemented.
+ * Gaussian kernel is also available, while any other shape could also be implemented.
  * <p>
  * Parameters from the EGTF are found in the following places:
  * <ul>
@@ -455,7 +455,7 @@ public class Egtf
      * Returns the wave speed in congestion.
      * @return wave speed in congestion
      */
-    final double getWaveSpeedCongestion()
+    double getWaveSpeedCongestion()
     {
         return this.cCong;
     }
@@ -464,7 +464,7 @@ public class Egtf
      * Returns the wave speed in free flow.
      * @return wave speed in free flow
      */
-    final double getWaveSpeedFreeFlow()
+    double getWaveSpeedFreeFlow()
     {
         return this.cFree;
     }
@@ -733,10 +733,10 @@ public class Egtf
         }
 
         // initialize data
-        int n = 1 + (int) ((xMax - xMin) / xStep);
+        int n = (int) Math.ceil((xMax - xMin) / xStep);
         double[] location = new double[n];
         IntStream.range(0, n).forEach(i -> location[i] = xMin + i * xStep);
-        n = 1 + (int) ((tMax - tMin) / tStep);
+        n = (int) Math.ceil((tMax - tMin) / tStep);
         double[] time = new double[n];
         IntStream.range(0, n).forEach(j -> time[j] = tMin + j * tStep);
         Map<Quantity<?, ?>, double[][]> map = new LinkedHashMap<>();
@@ -821,18 +821,18 @@ public class Egtf
                 double[][] vCong = Convolution.convolution(phiCong, zEntry.getValue());
                 if (notifyListeners((step + 0.25) / steps))
                 {
-                    return null;
+                    return Optional.empty();
                 }
                 double[][] vFree = Convolution.convolution(phiFree, zEntry.getValue());
                 if (notifyListeners((step + 0.5) / steps))
                 {
-                    return null;
+                    return Optional.empty();
                 }
                 double[][] count = dataCount.get(dataStream);
                 double[][] nCong = Convolution.convolution(phiCong, count);
                 if (notifyListeners((step + 0.75) / steps))
                 {
-                    return null;
+                    return Optional.empty();
                 }
                 double[][] nFree = Convolution.convolution(phiFree, count);
                 double[][] wSource = new double[vCong.length][vCong[0].length];
@@ -854,7 +854,7 @@ public class Egtf
         step++;
         if (notifyListeners(step / steps))
         {
-            return null;
+            return Optional.empty();
         }
 
         // sum available data sources per quantity
@@ -943,18 +943,18 @@ public class Egtf
                     zCong = Convolution.convolution(phiCong, zEntry.getValue());
                     if (notifyListeners((step + (streamCounter + 0.25) / zEntries.size()) / steps))
                     {
-                        return null;
+                        return Optional.empty();
                     }
                     zFree = Convolution.convolution(phiFree, zEntry.getValue());
                     if (notifyListeners((step + (streamCounter + 0.5) / zEntries.size()) / steps))
                     {
-                        return null;
+                        return Optional.empty();
                     }
                     double[][] count = dataCount.get(dataStream);
                     nCong = Convolution.convolution(phiCong, count);
                     if (notifyListeners((step + (streamCounter + 0.75) / zEntries.size()) / steps))
                     {
-                        return null;
+                        return Optional.empty();
                     }
                     nFree = Convolution.convolution(phiFree, count);
                 }
@@ -979,7 +979,7 @@ public class Egtf
                 streamCounter++;
                 if (notifyListeners((step + streamCounter / zEntries.size()) / steps))
                 {
-                    return null;
+                    return Optional.empty();
                 }
             }
             for (int i = 0; i < location.length; i++)
@@ -1022,7 +1022,7 @@ public class Egtf
     /**
      * Interrupt the calculation.
      */
-    public final void interrupt()
+    public void interrupt()
     {
         this.interrupted = true;
     }
@@ -1031,7 +1031,7 @@ public class Egtf
      * Add listener.
      * @param listener listener
      */
-    public final void addListener(final EgtfListener listener)
+    public void addListener(final EgtfListener listener)
     {
         this.listeners.add(listener);
     }
@@ -1040,7 +1040,7 @@ public class Egtf
      * Remove listener.
      * @param listener listener
      */
-    public final void removeListener(final EgtfListener listener)
+    public void removeListener(final EgtfListener listener)
     {
         this.listeners.remove(listener);
     }

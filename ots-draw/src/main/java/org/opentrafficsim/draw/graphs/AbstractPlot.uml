@@ -1,0 +1,48 @@
+@startuml
+
+title Plot paint state updates and calculation
+
+participant Swing
+participant PlotScheduler as Scheduler
+participant AbstractPlot as Plot
+participant BlockingQueue as Queue
+
+==Swing EDT==
+Swing -> Plot: property change
+note right: sync: set props
+activate Plot #0066c4
+Plot -> Queue: offer(<i>t</i>)
+deactivate Plot
+Swing -> Plot: setUpdateInterval()
+note right: remember new update interval
+
+==Asynchronous==
+Scheduler <- Plot: scheduleUpdateNow()
+note right: scheduler thread may be busy
+
+==Scheduler Thread==
+Scheduler -> Plot: update()
+note right: set new update interval
+loop
+    Scheduler <- Plot: scheduleUpdate()
+    note right: also at init
+    Scheduler -> Plot: update()
+    Plot -> Queue: offer(<i>t</i>)
+    end
+
+==Plot Worker Thread==
+... Whenever a <i>t</i> is offered ...
+Plot <- Queue: calculatePaintState(<i>t</i>)
+note left: sync: gather props
+activate Plot #0066c4
+deactivate Plot
+Plot -> Plot: offerPaintState()
+note left: intermediate or final state
+Swing <- Plot
+
+==Swing EDT==
+Swing -> Plot: setPaintState()
+Swing <- Plot: notifyPlotChange()
+Swing -> Swing: paint()
+
+@enduml

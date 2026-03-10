@@ -124,6 +124,7 @@ public final class GraphUtil
 
     /**
      * Returns a chart listener that allows the series to be enabled and disabled by clicking on the respective legend item.
+     * @param plot plot
      * @param legend legend
      * @param visibility visibility of each series; the listener will store visibility in this list, which an
      *            {@code AbstractRenderer} can use in {@code isSeriesVisible(series)} to show or hide the series
@@ -131,8 +132,8 @@ public final class GraphUtil
      * @return listener that will allow series to be enabled and disabled by clicking on the respective legend item
      */
     @SuppressWarnings("unchecked")
-    public static <K> ChartMouseListener getToggleSeriesByLegendListener(final LegendItemCollection legend,
-            final List<Boolean> visibility)
+    public static <K> ChartMouseListener getToggleSeriesByLegendListener(final AbstractPlot<?> plot,
+            final LegendItemCollection legend, final List<Boolean> visibility)
     {
         Map<K, Paint> colors = new LinkedHashMap<>();
         Map<K, Integer> series = new LinkedHashMap<>();
@@ -160,6 +161,7 @@ public final class GraphUtil
                     visibility.set(s, visible);
                     legend.get(s).setLabelPaint(visible ? Color.BLACK : Color.LIGHT_GRAY);
                     legend.get(s).setFillPaint(visible ? colors.get(key) : Color.LIGHT_GRAY);
+                    plot.notifyPlotChange();
                 }
             }
 

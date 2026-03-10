@@ -15,7 +15,6 @@ import java.awt.image.WritableRaster;
 
 import org.djutils.exceptions.Throw;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.entity.EntityCollection;
 import org.jfree.chart.plot.CrosshairState;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -29,7 +28,7 @@ import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.draw.ColorPaintScale;
 
 /**
- * Renderer for blocks that are filled with bidirectionally interpolated colors. It extends a {@code XYBlockRenderer} and
+ * Renderer for blocks that are filled with bi-directionally interpolated colors. It extends a {@code XYBlockRenderer} and
  * requires a small extension of the underlying dataset ({@code XyInterpolatedDataset}). The interpolation is performed in the
  * {@code drawItem} method. This class imposes two constraints on the functionality of the super class: i) no BlockAnchor may be
  * set as this is tightly related to the interpolation, and ii) only paint scales of type {@code ColorPaintScale} can be used,
@@ -95,11 +94,11 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
         this.interpolate = interpolate;
         if (interpolate)
         {
-            super.setBlockAnchor(RectangleAnchor.TOP_LEFT); // reversed y axis
+            super.setBlockAnchor(RectangleAnchor.CENTER);
         }
         else
         {
-            super.setBlockAnchor(RectangleAnchor.CENTER);
+            super.setBlockAnchor(RectangleAnchor.TOP_LEFT); // reversed y axis
         }
     }
 
@@ -227,6 +226,7 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
         g2.setStroke(new BasicStroke(1.0f));
         g2.draw(block);
 
+        /*- skip this code from super, we don't need it for what we use this class for
         if (isItemLabelVisible(series, item))
         {
             drawItemLabel(g2, orientation, dataset, series, item, block.getCenterX(), block.getCenterY(), y < 0.0);
@@ -241,7 +241,7 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
         if (entities != null)
         {
             addEntity(entities, block, dataset, series, item, block.getCenterX(), block.getCenterY());
-        }
+        }*/
     }
 
     /**

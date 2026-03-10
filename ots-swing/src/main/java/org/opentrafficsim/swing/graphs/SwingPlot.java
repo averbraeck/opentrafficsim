@@ -48,7 +48,7 @@ public class SwingPlot extends JFrame
 
     /** The JFreeChart plot. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    protected final AbstractPlot plot;
+    protected final AbstractPlot<?> plot;
 
     /** Status label. */
     private JLabel statusLabel;
@@ -63,7 +63,7 @@ public class SwingPlot extends JFrame
      * Construct a new Swing container for an AbstractPlot.
      * @param plot the plot to embed
      */
-    public SwingPlot(final AbstractPlot plot)
+    public SwingPlot(final AbstractPlot<?> plot)
     {
         this.plot = plot;
         // status label
@@ -211,7 +211,6 @@ public class SwingPlot extends JFrame
         this.detach = new JMenuItem("Show in detached window");
         this.detach.addActionListener(new ActionListener()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -223,7 +222,7 @@ public class SwingPlot extends JFrame
                 window.addWindowListener(new WindowAdapter()
                 {
                     @Override
-                    public void windowClosing(@SuppressWarnings("hiding") final WindowEvent e)
+                    public void windowClosing(final WindowEvent e)
                     {
                         add(SwingPlot.this.chartPanel, BorderLayout.CENTER);
                         add(SwingPlot.this.statusLabel, BorderLayout.SOUTH);
@@ -275,7 +274,7 @@ public class SwingPlot extends JFrame
      * Retrieve the plot.
      * @return the plot
      */
-    public AbstractPlot getPlot()
+    public AbstractPlot<?> getPlot()
     {
         return this.plot;
     }

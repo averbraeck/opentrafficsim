@@ -2,11 +2,11 @@ package org.opentrafficsim.draw.graphs;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.plot.XYPlot;
+import org.opentrafficsim.draw.graphs.AbstractPlot.PaintState;
 
 /**
  * Plots with space-time. This class adds some zoom control, where a user can manually select a zoom range, or the plot
@@ -18,18 +18,19 @@ import org.jfree.chart.plot.XYPlot;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <S> paint state type
  */
-public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
+public abstract class AbstractSpaceTimePlot<S extends PaintState> extends AbstractBoundedPlot<S>
 {
 
     /** Initial end time of plot. */
-    private final Time initialEnd;
+    private final Duration initialEnd;
 
     /** Whether to update the axes. */
     private boolean autoBoundAxes = true;
 
     /** Whether to disable auto bounds on the axes on any change on the axes. */
-    private boolean virtualAutoBounds = false;
+    private boolean programmaticBoundChanges = false;
 
     /** Fixed domain range. */
     private Double fixedDomainRange = null;
@@ -38,12 +39,12 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
      * Constructor.
      * @param caption caption
      * @param updateInterval regular update interval (simulation time)
-     * @param scheduler scheduler.
+     * @param scheduler scheduler
      * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
      * @param initialEnd initial end time of plots, will be expanded if simulation time exceeds it
      */
     public AbstractSpaceTimePlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
-            final Duration delay, final Time initialEnd)
+            final Duration delay, final Duration initialEnd)
     {
         super(scheduler, caption, updateInterval, delay);
         this.initialEnd = initialEnd;
@@ -62,13 +63,12 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
         // axis listeners to enable/disable auto zoom
         xyPlot.getDomainAxis().addChangeListener(new AxisChangeListener()
         {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void axisChanged(final AxisChangeEvent event)
             {
-                if (!AbstractSpaceTimePlot.this.virtualAutoBounds)
+                if (!AbstractSpaceTimePlot.this.programmaticBoundChanges)
                 {
-                    // the axis was changed, but not by a command from this class, auto bounds should be disabled
+                    // axis was changed, but not by a command from this class (i.e. user zoomed), auto bounds should be disabled
                     AbstractSpaceTimePlot.this.autoBoundAxes = false;
                 }
             }
@@ -76,17 +76,16 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
     }
 
     @Override
-    public void update()
+    protected void setPaintState()
     {
-        if (getUpdateTime() != null && this.initialEnd != null)
-        {
-            setUpperDomainBound(Math.max(getUpdateTime().si, this.initialEnd.si));
-        }
+        super.setPaintState();
+        this.programmaticBoundChanges = true;
+        setUpperDomainBound(Math.max(getAvailableTime().si, this.initialEnd.si));
+        this.programmaticBoundChanges = false;
         if (this.autoBoundAxes && getChart() != null) // null during construction
         {
             setAutoBounds(getChart().getXYPlot());
         }
-        super.update();
     }
 
     /**
@@ -107,22 +106,22 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
      */
     private void setAutoBounds(final XYPlot plot)
     {
-        // disables the axis change listener from registering a user input that is actually an update of bounds as the time
-        // increases
-        this.virtualAutoBounds = true;
-        if (this.fixedDomainRange != null && getUpdateTime().si > 0.0)
+        // disables the axis change listener from registering user input that is actually an update of bounds as time increases
+        this.programmaticBoundChanges = true;
+        if (this.fixedDomainRange != null && getAvailableTime().si > 0.0)
         {
-            plot.getDomainAxis().setRange(Math.max(getUpdateTime().si - this.fixedDomainRange, 0.0), getUpdateTime().si);
+            setLowerDomainBound(Math.max(getAvailableTime().si - this.fixedDomainRange, 0.0));
+            setUpperDomainBound(Math.max(getAvailableTime().si, this.initialEnd.si));
         }
         else
         {
             super.setAutoBoundDomain(plot); // super to skip setting autoBoundAxes = true
         }
         super.setAutoBoundRange(plot); // super to skip setting autoBoundAxes = true
-        this.virtualAutoBounds = false;
+        this.programmaticBoundChanges = false;
     }
 
-    /** {@inheritDoc} This implementation overrides to enable it's own form of auto bounds. */
+    /** {@inheritDoc} This implementation overrides to reset user-disabled auto-bounds. */
     @Override
     public final void setAutoBoundDomain(final XYPlot plot)
     {
@@ -130,7 +129,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
         this.autoBoundAxes = true;
     }
 
-    /** {@inheritDoc} This implementation overrides to enable it's own form of auto bounds. */
+    /** {@inheritDoc} This implementation overrides to reset user-disabled auto-bounds. */
     @Override
     public final void setAutoBoundRange(final XYPlot plot)
     {
@@ -139,8 +138,8 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
     }
 
     /**
-     * Returns the total path length.
-     * @return total path length
+     * Returns the total space.
+     * @return total space
      */
     protected abstract Length getEndLocation();
 

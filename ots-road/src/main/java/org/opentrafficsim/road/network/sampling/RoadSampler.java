@@ -276,7 +276,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             }
             else
             {
-                Set<Lane> lanes = this.activeLanesPerGtu.get(gtu.getId());
+                Set<Lane> lanes = this.activeLanesPerGtu.computeIfAbsent(gtu.getId(), (key) -> new LinkedHashSet<>());
                 lanes.remove(lane);
                 if (lanes.isEmpty())
                 {

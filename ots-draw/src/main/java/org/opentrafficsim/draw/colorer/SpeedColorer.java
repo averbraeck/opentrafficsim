@@ -44,17 +44,19 @@ public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed>
      */
     public SpeedColorer(final Function<? super T, Optional<Speed>> valueFunction, final Speed maximumSpeed)
     {
-        this(valueFunction, new BoundsPaintScale(new double[] {0.0, maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR) / 2.0,
-                maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)}, Colors.reverse(Colors.GREEN_RED)));
+        this(valueFunction,
+                new BoundsPaintScale(new double[] {0.0, .25 * maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR),
+                        .5 * maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR), .75 * maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR),
+                        maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)}, Colors.reverse(Colors.GREEN_RED_DARK)));
     }
 
     /**
-     * Constructor constructing a range to 150km/h.
+     * Constructor constructing a range to 160km/h.
      * @param valueFunction value function
      */
     public SpeedColorer(final Function<? super T, Optional<Speed>> valueFunction)
     {
-        this(valueFunction, new Speed(150.0, SpeedUnit.KM_PER_HOUR));
+        this(valueFunction, new Speed(160.0, SpeedUnit.KM_PER_HOUR));
     }
 
     @Override

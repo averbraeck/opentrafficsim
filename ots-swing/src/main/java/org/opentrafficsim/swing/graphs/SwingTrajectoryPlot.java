@@ -99,7 +99,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
             }
             else
             {
-                // Make sure a single-lane plot has some colorer, even if non will be set through addColorer()
+                // Make sure a single-lane plot has some colorer, even if none will be set through addColorer()
                 plot.setColorer(new FixedTrajectoryColorer(Colors.OTS_BLUE, "Blue"));
             }
         }
@@ -127,7 +127,6 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
             public void actionPerformed(final ActionEvent e)
             {
                 SwingTrajectoryPlot.this.getPlot().setColorer(colorer);
-                SwingTrajectoryPlot.this.getPlot().update();
             }
         });
         this.colorButtonGroup.add(menuItem);
@@ -161,8 +160,8 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
     protected Optional<ChartMouseListener> getChartMouseListener()
     {
         // Second listener for legend clicks
-        ChartMouseListener toggle = getPlot().getPath().getNumberOfSeries() < 2 ? null
-                : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
+        ChartMouseListener toggle = getPlot().getLaneCount() < 2 ? null
+                : GraphUtil.getToggleSeriesByLegendListener(getPlot(), getPlot().getLegend(), getPlot().getLaneVisible());
         return Optional.of(new ChartMouseListener()
         {
             @Override

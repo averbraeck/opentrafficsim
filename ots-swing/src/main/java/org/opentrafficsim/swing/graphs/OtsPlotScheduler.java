@@ -24,8 +24,11 @@ public class OtsPlotScheduler implements PlotScheduler
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
 
-    /** Lastest update event per plot. */
-    private final Map<AbstractPlot, SimEventInterface<Duration>> events = new LinkedHashMap<>();
+    /** Latest update event per plot. */
+    private final Map<AbstractPlot<?>, SimEventInterface<Duration>> events = new LinkedHashMap<>();
+
+    /** Whether a last event was scheduled given replication time. */
+    private boolean scheduledLastEvent = false;
 
     /**
      * Constructor.
@@ -43,19 +46,39 @@ public class OtsPlotScheduler implements PlotScheduler
     }
 
     @Override
-    public void cancelEvent(final AbstractPlot abstractPlot)
+    public void cancelEvent(final AbstractPlot<?> abstractPlot)
     {
         SimEventInterface<Duration> event = this.events.get(abstractPlot);
         if (event != null)
         {
             this.simulator.cancelEvent(event);
         }
+        this.scheduledLastEvent = false;
     }
 
     @Override
-    public void scheduleUpdate(final Duration time, final AbstractPlot abstractPlot)
+    public void scheduleUpdate(final Duration time, final AbstractPlot<?> abstractPlot)
     {
-        this.events.put(abstractPlot, this.simulator.scheduleEventAbs(time, () -> abstractPlot.update()));
+        if (this.scheduledLastEvent)
+        {
+            return;
+        }
+        cancelEvent(abstractPlot);
+        // in case the time is beyond the replication time, schedule one last event at the replication time
+        this.scheduledLastEvent = time.si > this.simulator.getReplication().getEndTime().si;
+        Duration t = this.scheduledLastEvent ? this.simulator.getReplication().getEndTime() : time;
+        this.events.put(abstractPlot, this.simulator.scheduleEventAbs(t, () -> abstractPlot.update()));
+    }
+
+    @Override
+    public void scheduleUpdateNow(final AbstractPlot<?> abstractPlot)
+    {
+        if (this.scheduledLastEvent)
+        {
+            return;
+        }
+        cancelEvent(abstractPlot);
+        this.events.put(abstractPlot, this.simulator.scheduleEventNow(() -> abstractPlot.update()));
     }
 
 }

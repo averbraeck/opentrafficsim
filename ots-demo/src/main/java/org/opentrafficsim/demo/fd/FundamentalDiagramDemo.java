@@ -61,9 +61,9 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactory;
+import org.opentrafficsim.draw.graphs.FdDataSource;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.FdLine;
-import org.opentrafficsim.draw.graphs.FundamentalDiagram.FdSource;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.GraphCrossSection;
 import org.opentrafficsim.draw.graphs.GraphPath;
@@ -162,7 +162,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     private Set<FundamentalDiagram> funamentalDiagrams = new LinkedHashSet<>();
 
     /** Sources by name for each cross-section. */
-    private Map<String, FdSource> fdSourceMap = new LinkedHashMap<>();
+    private Map<String, FdDataSource> fdSourceMap = new LinkedHashMap<>();
 
     /** Panel of trajectory graph. */
     private Container trajectoryPanel;
@@ -657,7 +657,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 throw new OtsRuntimeException("Unable to create cross section.", exception);
             }
             Duration aggregationTime = Duration.ofSI(30.0);
-            FdSource source = FundamentalDiagram.sourceFromSampler(this.sampler, crossSection, true, aggregationTime, false);
+            FdDataSource source =
+                    FdDataSource.sourceFromSampler(this.sampler, this.scheduler, crossSection, true, aggregationTime, false);
             this.fdSourceMap.put(String.format("%.2f", i / 1000.0).replace(",", "."), source);
         }
 
@@ -690,7 +691,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             @Override
             protected void addPopUpMenuItems(final JPopupMenu popupMenu)
             {
-                // disable
+                // disable: always fixed time range
             }
         };
         this.trajectoryPanel = swingTrajectoryPlot.getContentPane();
@@ -735,7 +736,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         this.splitPanel.add(this.graphPanel);
 
         // compose a combined source if required
-        FdSource source;
+        FdDataSource source;
         if (this.absoluteCrossSection2.equals("None") && this.absoluteCrossSection3.equals("None"))
         {
             source = this.fdSourceMap.get(this.absoluteCrossSection1);
@@ -743,11 +744,11 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             {
                 source = this.fdSourceMap.get(this.absoluteCrossSection1);
             }
-            source.clearFundamentalDiagrams();
+            source.clearPlots();
         }
         else
         {
-            Map<String, FdSource> sources = new LinkedHashMap<>();
+            Map<String, FdDataSource> sources = new LinkedHashMap<>();
             sources.put(this.absoluteCrossSection1 + "km", this.fdSourceMap.get(this.absoluteCrossSection1));
             if (!this.absoluteCrossSection2.equals("None"))
             {
@@ -757,11 +758,11 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             {
                 sources.put(this.absoluteCrossSection3 + "km", this.fdSourceMap.get(this.absoluteCrossSection3));
             }
-            for (FdSource subSource : sources.values())
+            for (FdDataSource subSource : sources.values())
             {
-                subSource.clearFundamentalDiagrams();
+                subSource.clearPlots();
             }
-            source = FundamentalDiagram.combinedSource(sources);
+            source = FdDataSource.combinedSource(sources);
         }
 
         // because "Aggregate" and "Theoretical" looks ugly in the legend, we set the actual location as legend label
@@ -769,14 +770,13 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
         // create the fundamental diagrams
         FundamentalDiagram fdPlota =
-                new FundamentalDiagram("Density-speed", Quantity.DENSITY, Quantity.SPEED, this.scheduler, source, this.fdLine);
+                new FundamentalDiagram("Density-speed", Quantity.DENSITY, Quantity.SPEED, source, this.fdLine);
         FundamentalDiagram fdPlotb =
-                new FundamentalDiagram("Density-flow", Quantity.DENSITY, Quantity.FLOW, this.scheduler, source, this.fdLine);
-        FundamentalDiagram fdPlotc =
-                new FundamentalDiagram("Flow-speed", Quantity.FLOW, Quantity.SPEED, this.scheduler, source, this.fdLine);
+                new FundamentalDiagram("Density-flow", Quantity.DENSITY, Quantity.FLOW, source, this.fdLine);
+        FundamentalDiagram fdPlotc = new FundamentalDiagram("Flow-speed", Quantity.FLOW, Quantity.SPEED, source, this.fdLine);
 
         // recalculate over past data
-        source.recalculate(getSimulator().getSimulatorTime());
+        source.calculatePaintStateSafe(getSimulator().getSimulatorTime());
 
         // store graphs so changes to setting may affect the graphs
         this.funamentalDiagrams.clear();
@@ -785,9 +785,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         this.funamentalDiagrams.add(fdPlotc);
 
         // create swing plots and add them to the graph panel
-        Container fda = new SwingFundamentalDiagramNoControl(fdPlota).getContentPane();
-        Container fdb = new SwingFundamentalDiagramNoControl(fdPlotb).getContentPane();
-        Container fdc = new SwingFundamentalDiagramNoControl(fdPlotc).getContentPane();
+        Container fda = new SwingFundamentalDiagram(fdPlota).getContentPane();
+        Container fdb = new SwingFundamentalDiagram(fdPlotb).getContentPane();
+        Container fdc = new SwingFundamentalDiagram(fdPlotc).getContentPane();
         Dimension preferredGraphSize = new Dimension(375, 230);
         fda.setPreferredSize(preferredGraphSize);
         fdb.setPreferredSize(preferredGraphSize);
@@ -820,33 +820,11 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     }
 
     /**
-     * Class to disable aggregation period and update frequency.
-     */
-    private class SwingFundamentalDiagramNoControl extends SwingFundamentalDiagram
-    {
-        /** */
-        private static final long serialVersionUID = 20251121L;
-
-        /**
-         * @param plot fundamental diagram
-         */
-        SwingFundamentalDiagramNoControl(final FundamentalDiagram plot)
-        {
-            super(plot);
-        }
-
-        @Override
-        protected void addPopUpMenuItems(final JPopupMenu popupMenu)
-        {
-            // disable
-        }
-    }
-
-    /**
      * Fundamental diagram line class based on local settings.
      */
     private final class DynamicFdLine implements FdLine
     {
+    	
         /** Map of points for each quantity. */
         private Map<Quantity, double[]> map = new LinkedHashMap<>();
 
@@ -912,6 +890,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             this.map.put(Quantity.FLOW, q);
             this.map.put(Quantity.SPEED, v);
         }
+        
     }
 
 }

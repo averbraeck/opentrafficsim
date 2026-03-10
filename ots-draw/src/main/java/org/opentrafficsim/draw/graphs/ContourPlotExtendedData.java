@@ -11,6 +11,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.egtf.Quantity;
+import org.opentrafficsim.draw.graphs.ContourDataSource.ContourAdditionalDataType;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -34,35 +35,33 @@ public class ContourPlotExtendedData<Z extends Number> extends AbstractContourPl
     /**
      * Constructor with default paint scale (red at minimum, yellow at mid-point, green at maximum).
      * @param caption caption
-     * @param scheduler scheduler
-     * @param dataPool data pool
+     * @param source data source
      * @param extendedDataType extended data type
      * @param valueConverter value converter
      * @param bounds paint scale bounds
      * @param labelData label data
      */
-    public ContourPlotExtendedData(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
+    public ContourPlotExtendedData(final String caption, final ContourDataSource source,
             final ExtendedDataNumber<?> extendedDataType, final Function<Double, Z> valueConverter, final Bounds<Z> bounds,
             final LabelData<Z> labelData)
     {
-        super(caption, scheduler, dataPool, constructDataType(extendedDataType, valueConverter), bounds, labelData);
+        super(caption, source, constructDataType(extendedDataType, valueConverter), bounds, labelData);
     }
 
     /**
      * Constructor with specified paint scale.
      * @param caption caption
-     * @param scheduler scheduler
-     * @param dataPool data pool
+     * @param source data source
      * @param extendedDataType extended data type
      * @param valueConverter value converter
      * @param paintScale paint scale
      * @param labelData label data
      */
-    public ContourPlotExtendedData(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
+    public ContourPlotExtendedData(final String caption, final ContourDataSource source,
             final ExtendedDataNumber<?> extendedDataType, final Function<Double, Z> valueConverter,
             final BoundsPaintScale paintScale, final LabelData<Z> labelData)
     {
-        super(caption, scheduler, dataPool, constructDataType(extendedDataType, valueConverter), paintScale, labelData);
+        super(caption, source, constructDataType(extendedDataType, valueConverter), paintScale, labelData);
     }
 
     /**
@@ -94,16 +93,17 @@ public class ContourPlotExtendedData<Z extends Number> extends AbstractContourPl
     }
 
     @Override
-    protected double getValue(final int item, final double cellLength, final double cellSpan)
+    public String toString()
     {
-        return getDataPool().get(item, getContourDataType());
+        return "ContourPlotExtendedData [" + getCaption() + "]";
     }
 
     /**
      * Attention contour data type.
      * @param <Z> value type
      */
-    private static class ExtendedContourDataType<Z extends Number> implements ContourDataType<Z, ArithmeticMean<Double, Double>>
+    private static class ExtendedContourDataType<Z extends Number>
+            implements ContourAdditionalDataType<Z, ArithmeticMean<Double, Double>>
     {
 
         /** Extended data type. */
@@ -150,14 +150,8 @@ public class ContourPlotExtendedData<Z extends Number> extends AbstractContourPl
                         trajectory = trajectory.subSet(xFrom.get(i), xTo.get(i), tFrom, tTo);
                         try
                         {
-                            float[] out = trajectory.getExtendedData(this.dataType);
-                            for (float f : out)
-                            {
-                                if (!Float.isNaN(f))
-                                {
-                                    intermediate.add((double) f, 1.0);
-                                }
-                            }
+                            ContourDataType.weightedNaN(trajectory.getExtendedData(this.dataType), trajectory.getX(),
+                                    intermediate);
                         }
                         catch (SamplingException ex)
                         {
@@ -179,6 +173,12 @@ public class ContourPlotExtendedData<Z extends Number> extends AbstractContourPl
         public Quantity<Z, ?> getQuantity()
         {
             return this.quantity;
+        }
+
+        @Override
+        public boolean normalize()
+        {
+            return false;
         }
 
     };
@@ -206,18 +206,16 @@ public class ContourPlotExtendedData<Z extends Number> extends AbstractContourPl
         /**
          * Constructor with default paint scale (red at minimum, yellow at mid-point, green at maximum).
          * @param caption caption
-         * @param scheduler scheduler
-         * @param dataPool data pool
+         * @param source data source
          * @param extendedDataType extended data type
          * @param bounds paint scale bounds
          * @param legendStep legend step
          * @param unit unit to display values in
          */
-        public UnitPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
-                final ExtendedDataNumber<?> extendedDataType, final Bounds<Z> bounds, final Z legendStep, final U unit)
+        public UnitPlot(final String caption, final ContourDataSource source, final ExtendedDataNumber<?> extendedDataType,
+                final Bounds<Z> bounds, final Z legendStep, final U unit)
         {
-            super(caption, scheduler, dataPool, extendedDataType, getConverter(legendStep), bounds,
-                    constructLabelData(legendStep, unit));
+            super(caption, source, extendedDataType, getConverter(legendStep), bounds, constructLabelData(legendStep, unit));
             this.one = legendStep.divide(legendStep.si);
             this.unit = unit;
         }
@@ -225,18 +223,16 @@ public class ContourPlotExtendedData<Z extends Number> extends AbstractContourPl
         /**
          * Constructor with specified paint scale.
          * @param caption caption
-         * @param scheduler scheduler
-         * @param dataPool data pool
+         * @param source data source
          * @param extendedDataType extended data type
          * @param paintScale paint scale
          * @param legendStep legend step
          * @param unit unit to display values in
          */
-        public UnitPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
-                final ExtendedDataNumber<?> extendedDataType, final BoundsPaintScale paintScale, final Z legendStep,
-                final U unit)
+        public UnitPlot(final String caption, final ContourDataSource source, final ExtendedDataNumber<?> extendedDataType,
+                final BoundsPaintScale paintScale, final Z legendStep, final U unit)
         {
-            super(caption, scheduler, dataPool, extendedDataType, getConverter(legendStep), paintScale,
+            super(caption, source, extendedDataType, getConverter(legendStep), paintScale,
                     constructLabelData(legendStep, unit));
             this.one = legendStep.divide(legendStep.si);
             this.unit = unit;

@@ -10,6 +10,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.IntervalXYDataset;
+import org.opentrafficsim.draw.graphs.AbstractPlot.PaintState;
+import org.opentrafficsim.draw.graphs.DistributionPlotExtendedData.DistributionPaintState;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
@@ -29,13 +31,14 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
  * @param <G> GTU data type that needs to be consistent between the sampler data and the extended data type
  * @param <Z> value type that needs to be consistent between extended data type and label data
  */
-public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> extends AbstractPlot implements IntervalXYDataset
+public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> extends AbstractPlot<DistributionPaintState>
+        implements IntervalXYDataset
 {
 
     /** Sampler data. */
     private final SamplerData<G> samplerData;
 
-    /** KPI lane directions registered in the sampler. */
+    /** Lanes registered in the sampler. */
     private final GraphPath<? extends LaneData<?>> path;
 
     /** Data type. */
@@ -213,12 +216,14 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
     }
 
     @Override
-    protected void increaseTime(final Duration time)
+    protected DistributionPaintState emptyPaintState()
     {
-        if (this.path == null)
-        {
-            return; // initializing
-        }
+        return new DistributionPaintState(Duration.ZERO);
+    }
+
+    @Override
+    protected void calculatePaintState(final Duration time)
+    {
         for (Section<? extends LaneData<?>> section : this.path.getSections())
         {
             for (LaneData<?> lane : section.sections())
@@ -227,6 +232,7 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
             }
         }
         this.lastUpdateTime = time.si;
+        offerPaintState(new DistributionPaintState(time));
     }
 
     /**
@@ -256,6 +262,18 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
         }
     }
 
+    @Override
+    public void setAutoBoundDomain(final XYPlot plot)
+    {
+        // don't need to do anything, override to prevent exception thrown in super
+    }
+
+    @Override
+    public void setAutoBoundRange(final XYPlot plot)
+    {
+        // don't need to do anything, override to prevent exception thrown in super
+    }
+
     /**
      * Input container for label input.
      * @param <Z> value type
@@ -267,6 +285,7 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
      */
     public record LabelData<Z extends Number>(String caption, String xLabel, Z minimum, Z step, Z maximum)
     {
+    	
         /**
          * Constructor.
          * @param caption caption
@@ -281,6 +300,15 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
                     "maximum must be greater than minimum");
             Throw.when(step.doubleValue() <= 0.0, IllegalArgumentException.class, "step must be greater than 0");
         }
+        
+    }
+
+    /**
+     * Only contains time. The y-values are cumulative so direct internal storage suffices.
+     * @param getAvailableTime available time
+     */
+    public record DistributionPaintState(Duration getAvailableTime) implements PaintState
+    {
     }
 
 }

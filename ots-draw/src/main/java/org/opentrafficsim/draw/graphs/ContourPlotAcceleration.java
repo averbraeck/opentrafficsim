@@ -15,6 +15,7 @@ import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.Quantity;
+import org.opentrafficsim.draw.graphs.ContourDataSource.ContourAdditionalDataType;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -53,8 +54,8 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
             });
 
     /** Contour data type. */
-    private static final ContourDataType<Acceleration, ArithmeticMean<Double, Double>> CONTOUR_DATA_TYPE =
-            new ContourDataType<Acceleration, ArithmeticMean<Double, Double>>()
+    private static final ContourAdditionalDataType<Acceleration, ArithmeticMean<Double, Double>> CONTOUR_DATA_TYPE =
+            new ContourAdditionalDataType<Acceleration, ArithmeticMean<Double, Double>>()
             {
                 @Override
                 public ArithmeticMean<Double, Double> identity()
@@ -75,12 +76,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                             if (GraphUtil.considerTrajectory(trajectory, tFrom, tTo))
                             {
                                 trajectory = trajectory.subSet(xFrom.get(i), xTo.get(i), tFrom, tTo);
-                                float[] t = trajectory.getT();
-                                float[] a = trajectory.getA();
-                                for (int j = 0; j < t.length - 1; j++)
-                                {
-                                    intermediate.add((double) a[j], (double) (t[j + 1] - t[j]));
-                                }
+                                ContourDataType.weighted(trajectory.getA(), trajectory.getX(), intermediate);
                             }
                         }
                     }
@@ -93,11 +89,16 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                     return Acceleration.ofSI(intermediate.getMean());
                 }
 
-                @SuppressWarnings("synthetic-access")
                 @Override
                 public Quantity<Acceleration, ?> getQuantity()
                 {
                     return QUANTITY;
+                }
+
+                @Override
+                public boolean normalize()
+                {
+                    return false;
                 }
 
             };
@@ -105,13 +106,12 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
     /**
      * Constructor.
      * @param caption caption
-     * @param scheduler scheduler.
-     * @param dataPool data pool
+     * @param source data source
      */
-    public ContourPlotAcceleration(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
+    public ContourPlotAcceleration(final String caption, final ContourDataSource source)
     {
-        super(caption, scheduler, dataPool, CONTOUR_DATA_TYPE, createPaintScale(),
-                new LabelData<>(new Acceleration(1.0, AccelerationUnit.SI), "%.1fm/s\u00B2", "acceleration %.2f m/s\u00B2"));
+        super(caption, source, CONTOUR_DATA_TYPE, createPaintScale(),
+                new LabelData<>(Acceleration.ofSI(1.0), "%.1fm/s\u00B2", "acceleration %.2f m/s\u00B2"));
     }
 
     /**
@@ -138,15 +138,9 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
     }
 
     @Override
-    protected double getValue(final int item, final double cellLength, final double cellSpan)
-    {
-        return getDataPool().get(item, CONTOUR_DATA_TYPE);
-    }
-
-    @Override
     public String toString()
     {
-        return "ContourPlotAcceleration []";
+        return "ContourPlotAcceleration [" + getCaption() + "]";
     }
 
 }

@@ -6,6 +6,7 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
+import org.opentrafficsim.draw.graphs.ContourDataSource.ContourEdieDataType;
 
 /**
  * Contour plot for flow.
@@ -23,13 +24,12 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
     /**
      * Constructor.
      * @param caption caption
-     * @param scheduler scheduler.
-     * @param dataPool data pool
+     * @param source data source
      */
-    public ContourPlotFlow(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
+    public ContourPlotFlow(final String caption, final ContourDataSource source)
     {
         // flow is present by default, hence null contour data type
-        super(caption, scheduler, dataPool, null, createPaintScale(),
+        super(caption, source, ContourEdieDataType.FLOW, createPaintScale(),
                 new LabelData<>(new Frequency(500.0, FrequencyUnit.PER_HOUR), "%.0f/h", "flow %.1f veh/h"));
     }
 
@@ -57,15 +57,9 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
     }
 
     @Override
-    protected double getValue(final int item, final double cellLength, final double cellSpan)
-    {
-        return getDataPool().getTotalDistance(item) / (cellLength * cellSpan);
-    }
-
-    @Override
     public String toString()
     {
-        return "ContourPlotFlow []";
+        return "ContourPlotFlow [" + getCaption() + "]";
     }
 
 }

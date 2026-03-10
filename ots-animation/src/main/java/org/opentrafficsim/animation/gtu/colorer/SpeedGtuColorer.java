@@ -43,7 +43,7 @@ public class SpeedGtuColorer extends SpeedColorer<Gtu>
     }
 
     /**
-     * Constructor constructing a range to 150km/h.
+     * Constructor constructing a range to 160km/h.
      */
     public SpeedGtuColorer()
     {

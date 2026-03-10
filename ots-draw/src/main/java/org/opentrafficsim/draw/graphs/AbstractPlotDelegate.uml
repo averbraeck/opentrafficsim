@@ -1,0 +1,56 @@
+@startuml
+
+title Plot paint state updates and calculation - with delegate
+
+participant Swing
+participant PlotScheduler as Scheduler
+participant AbstractPlot as Plot
+participant PlotDelegate as Delegate
+collections DelegatePlots as Plots
+participant BlockingQueue as Queue
+
+==Swing EDT==
+Swing -> Plot: property change
+Plot -> Delegate: delegate
+note right: sync: set props
+activate Delegate #0066c4
+deactivate Delegate
+Plots <- Delegate: property change
+note right: e.g. pub/sub & update GUI
+Plot -> Queue: offer(<i>t</i>)
+Delegate -> Plots: setUpdateInterval()
+Plot <- Plots
+note right: only on first plot
+note left: remember new update interval
+
+==Asynchronous==
+Scheduler <- Plot: scheduleUpdateNow()
+note right: scheduler thread may be busy
+
+==Scheduler Thread==
+Scheduler -> Plot: update()
+note right: set new update interval
+loop
+    Scheduler <- Plot: scheduleUpdate()
+    note right: only on first plot; also at init
+    Scheduler -> Plot: update()
+    Plot -> Queue: offer(<i>t</i>)
+    end
+
+==Plot Worker Thread==
+... Whenever a <i>t</i> is offered ... 
+Plot <- Queue: calculatePaintState(<i>t</i>)
+Plot -> Delegate: delegate
+note right: sync: gather props
+activate Delegate #0066c4
+deactivate Delegate
+Plots <- Delegate: offerPaintState()
+note right: intermediate or final state
+Swing <- Plots
+
+==Swing EDT==
+Swing -> Plots: setPaintState()
+Swing <- Plots: notifyPlotChange()
+Swing -> Swing: paint()
+
+@enduml

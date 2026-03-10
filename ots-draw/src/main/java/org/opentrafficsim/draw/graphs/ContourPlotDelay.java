@@ -15,7 +15,7 @@ import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.Quantity;
-import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
+import org.opentrafficsim.draw.graphs.ContourDataSource.ContourAdditionalDataType;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -60,74 +60,79 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
     });
 
     /** Contour data type. */
-    private static final ContourDataType<Duration, Duration> CONTOUR_DATA_TYPE = new ContourDataType<Duration, Duration>()
-    {
-        @Override
-        public Duration identity()
-        {
-            return Duration.ZERO;
-        }
-
-        @Override
-        public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories,
-                final List<Length> xFrom, final List<Length> xTo, final Duration tFrom, final Duration tTo)
-        {
-            double sumActualTime = 0.0;
-            double sumRefTime = 0.0;
-            for (int i = 0; i < trajectories.size(); i++)
+    private static final ContourAdditionalDataType<Duration, Duration> CONTOUR_DATA_TYPE =
+            new ContourAdditionalDataType<Duration, Duration>()
             {
-                TrajectoryGroup<?> trajectoryGroup = trajectories.get(i);
-                for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
+                @Override
+                public Duration identity()
                 {
-                    if (GraphUtil.considerTrajectory(trajectory, tFrom, tTo))
+                    return Duration.ZERO;
+                }
+
+                @Override
+                public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories,
+                        final List<Length> xFrom, final List<Length> xTo, final Duration tFrom, final Duration tTo)
+                {
+                    double sumActualTime = 0.0;
+                    double sumRefTime = 0.0;
+                    for (int i = 0; i < trajectories.size(); i++)
                     {
-                        trajectory = trajectory.subSet(xFrom.get(i), xTo.get(i), tFrom, tTo);
-                        try
+                        TrajectoryGroup<?> trajectoryGroup = trajectories.get(i);
+                        for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
                         {
-                            FloatSpeedVector ref = trajectory.getExtendedData(ReferenceSpeed.INSTANCE);
-                            float[] v = trajectory.getV();
-                            float[] x = trajectory.getX();
-                            for (int j = 0; j < v.length - 1; j++)
+                            if (GraphUtil.considerTrajectory(trajectory, tFrom, tTo))
                             {
-                                sumRefTime += (x[j + 1] - x[j]) / ref.get(j).si;
+                                trajectory = trajectory.subSet(xFrom.get(i), xTo.get(i), tFrom, tTo);
+                                try
+                                {
+                                    FloatSpeedVector ref = trajectory.getExtendedData(ReferenceSpeed.INSTANCE);
+                                    float[] v = trajectory.getV();
+                                    float[] x = trajectory.getX();
+                                    for (int j = 0; j < v.length - 1; j++)
+                                    {
+                                        sumRefTime += (x[j + 1] - x[j]) / ref.get(j).si;
+                                    }
+                                }
+                                catch (SamplingException | ValueRuntimeException exception)
+                                {
+                                    throw new OtsRuntimeException("Unexpected exception while calculating delay.", exception);
+                                }
+                                sumActualTime += trajectory.getTotalDuration().si;
                             }
                         }
-                        catch (SamplingException | ValueRuntimeException exception)
-                        {
-                            throw new OtsRuntimeException("Unexpected exception while calculating delay.", exception);
-                        }
-                        sumActualTime += trajectory.getTotalDuration().si;
                     }
+                    return Duration.ofSI(intermediate.si + sumActualTime - sumRefTime);
                 }
-            }
-            return Duration.ofSI(intermediate.si + sumActualTime - sumRefTime);
-        }
 
-        @Override
-        public Duration finalize(final Duration intermediate)
-        {
-            return intermediate;
-        }
+                @Override
+                public Duration finalize(final Duration intermediate)
+                {
+                    return intermediate;
+                }
 
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public Quantity<Duration, ?> getQuantity()
-        {
-            return QUANTITY;
-        }
+                @Override
+                public Quantity<Duration, ?> getQuantity()
+                {
+                    return QUANTITY;
+                }
 
-    };
+                @Override
+                public boolean normalize()
+                {
+                    return true;
+                }
+
+            };
 
     /**
      * Constructor. In case this plot is created live, the sampler of the sample data in the data source needs to have the
      * extended data type {@code ReferenceSpeed.INSTANCE} registered.
      * @param caption caption
-     * @param scheduler scheduler.
-     * @param dataPool data pool
+     * @param source source pool
      */
-    public ContourPlotDelay(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
+    public ContourPlotDelay(final String caption, final ContourDataSource source)
     {
-        super(caption, scheduler, dataPool, CONTOUR_DATA_TYPE, createPaintScale(),
+        super(caption, source, CONTOUR_DATA_TYPE, createPaintScale(),
                 new LabelData<>(new Duration(0.05, DurationUnit.SI), "%.1f/km", "delay %.1f /km"));
     }
 
@@ -155,9 +160,9 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
     }
 
     @Override
-    protected double getValue(final int item, final double cellLength, final double cellSpan)
+    public String toString()
     {
-        return getDataPool().get(item, CONTOUR_DATA_TYPE) / (cellLength * cellSpan);
+        return "ContourPlotDelay [" + getCaption() + "]";
     }
 
 }

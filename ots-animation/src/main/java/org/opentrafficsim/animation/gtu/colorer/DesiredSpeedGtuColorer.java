@@ -51,8 +51,10 @@ public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed>
     public DesiredSpeedGtuColorer(final Speed minimumSpeed, final Speed maximumSpeed)
     {
         this(new BoundsPaintScale(new double[] {minimumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR),
-                (minimumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR) + maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)) / 2.0,
-                maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)}, Colors.reverse(Colors.GREEN_RED), Color.WHITE));
+                .75 * minimumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR) + .25 * maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR),
+                .5 * minimumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR) + .5 * maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR),
+                .25 * minimumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR) + .75 * maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR),
+                maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)}, Colors.reverse(Colors.GREEN_RED_DARK), Color.WHITE));
     }
 
     @Override

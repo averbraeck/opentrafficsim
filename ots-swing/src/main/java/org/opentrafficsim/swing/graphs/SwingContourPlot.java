@@ -53,9 +53,9 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
     public SwingContourPlot(final AbstractContourPlot<?> plot)
     {
         super(plot);
-        plot.getDataPool().addListener(this, ContourDataSource.GRANULARITY);
-        plot.getDataPool().addListener(this, ContourDataSource.INTERPOLATE);
-        plot.getDataPool().addListener(this, ContourDataSource.SMOOTH);
+        plot.addListener(this, ContourDataSource.GRANULARITY);
+        plot.addListener(this, ContourDataSource.INTERPOLATE);
+        plot.addListener(this, ContourDataSource.SMOOTH);
     }
 
     @Override
@@ -65,19 +65,18 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
         this.spaceGranularityButtons = new LinkedHashMap<>();
         super.addPopUpMenuItems(popupMenu);
         JMenu spaceGranularityMenu = buildMenu("Distance granularity", "%.0f m", 1000, "%.0f km", "setSpaceGranularity",
-                getPlot().getDataPool().getGranularities(Dimension.DISTANCE),
-                getPlot().getDataPool().getGranularity(Dimension.DISTANCE), this.spaceGranularityButtons);
+                getPlot().getGranularities(Dimension.DISTANCE), getPlot().getGranularity(Dimension.DISTANCE),
+                this.spaceGranularityButtons);
         popupMenu.insert(spaceGranularityMenu, 0);
         JMenu timeGranularityMenu = buildMenu("Time granularity", "%.0f s", 60.0, "%.0f min", "setTimeGranularity",
-                getPlot().getDataPool().getGranularities(Dimension.TIME),
-                getPlot().getDataPool().getGranularity(Dimension.TIME), this.timeGranularityButtons);
+                getPlot().getGranularities(Dimension.TIME), getPlot().getGranularity(Dimension.TIME),
+                this.timeGranularityButtons);
         popupMenu.insert(timeGranularityMenu, 1);
         this.smoothCheckBox = new JCheckBoxMenuItem("Adaptive smoothing method", false);
         this.smoothCheckBox.addActionListener((e) ->
         {
             SwingContourPlot.this.ignoreEvent = true;
-            getPlot().getDataPool().setSmooth(((JCheckBoxMenuItem) e.getSource()).isSelected());
-            getPlot().notifyPlotChange();
+            getPlot().setSmooth(((JCheckBoxMenuItem) e.getSource()).isSelected());
             SwingContourPlot.this.ignoreEvent = false;
         });
         popupMenu.insert(this.smoothCheckBox, 2);
@@ -86,9 +85,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
         {
             SwingContourPlot.this.ignoreEvent = true;
             boolean interpolate = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-            getPlot().getBlockRenderer().setInterpolate(interpolate);
-            getPlot().getDataPool().setInterpolate(interpolate);
-            getPlot().notifyPlotChange();
+            getPlot().setInterpolate(interpolate);
             SwingContourPlot.this.ignoreEvent = false;
         });
         popupMenu.insert(this.interpolateCheckBox, 3);
@@ -126,13 +123,13 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
                 {
                     double granularity = SwingContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
                     // offer instead of setting as data pool may be working in the background using the granularity
-                    getPlot().getDataPool().offerGranularity(Dimension.DISTANCE, granularity);
+                    getPlot().setGranularity(Dimension.DISTANCE, granularity);
                 }
                 else if (command.equalsIgnoreCase("setTimeGranularity"))
                 {
                     double granularity = SwingContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
                     // offer instead of setting as data pool may be working in the background using the granularity
-                    getPlot().getDataPool().offerGranularity(Dimension.TIME, granularity);
+                    getPlot().setGranularity(Dimension.TIME, granularity);
                 }
                 else
                 {

@@ -5,7 +5,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.swing.ButtonGroup;
@@ -15,6 +17,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.annotations.XYAnnotation;
@@ -24,6 +28,7 @@ import org.jfree.chart.entity.AxisEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.Range;
+import org.opentrafficsim.draw.graphs.FdDataSource;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram;
 import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.draw.graphs.GraphUtil;
@@ -38,10 +43,19 @@ import org.opentrafficsim.draw.graphs.GraphUtil;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SwingFundamentalDiagram extends SwingPlot
+public class SwingFundamentalDiagram extends SwingPlot implements EventListener
 {
     /** */
     private static final long serialVersionUID = 20190823L;
+
+    /** Whether to ignore events as this is itself the plot causing change of aggregationPeriod/updatesPerPeriod. */
+    private boolean ignoreEvent = false;
+
+    /** Aggregation period UI buttons. */
+    private Map<JRadioButtonMenuItem, Double> aggregationPeriodButtons;
+
+    /** Updates per period UI buttons. */
+    private Map<JRadioButtonMenuItem, Integer> updatesPerPeriodButtons;
 
     /**
      * Construct a new Swing container for FundamentalDiagram plot.
@@ -50,13 +64,15 @@ public class SwingFundamentalDiagram extends SwingPlot
     public SwingFundamentalDiagram(final FundamentalDiagram plot)
     {
         super(plot);
+        plot.addListener(this, FdDataSource.UPDATES_PER_PERIOD);
+        plot.addListener(this, FdDataSource.AGGREGATION_PERIOD);
     }
 
     @Override
     protected Optional<ChartMouseListener> getChartMouseListener()
     {
-        ChartMouseListener toggle = !getPlot().hasLineFD() && getPlot().getSource().getNumberOfSeries() < 2 ? null
-                : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
+        ChartMouseListener toggle = !getPlot().hasLineFD() && getPlot().getNumberOfSeries() < 2 ? null
+                : GraphUtil.getToggleSeriesByLegendListener(getPlot(), getPlot().getLegend(), getPlot().getLaneVisible());
         return Optional.of(new ChartMouseListener()
         {
             @Override
@@ -81,10 +97,16 @@ public class SwingFundamentalDiagram extends SwingPlot
                     int series = itemEntity.getSeriesIndex();
                     for (int i = 0; i < getPlot().getItemCount(series) - 1; i++)
                     {
-                        XYLineAnnotation annotation = new XYLineAnnotation(getPlot().getXValue(series, i),
-                                getPlot().getYValue(series, i), getPlot().getXValue(series, i + 1),
-                                getPlot().getYValue(series, i + 1), new BasicStroke(1.0f), Color.WHITE);
-                        getPlot().getChart().getXYPlot().addAnnotation(annotation);
+                        double x0 = getPlot().getXValue(series, i);
+                        double y0 = getPlot().getYValue(series, i);
+                        double x1 = getPlot().getXValue(series, i + 1);
+                        double y1 = getPlot().getYValue(series, i + 1);
+                        if (!Double.isNaN(x0) && !Double.isNaN(y0) && !Double.isNaN(x1) && !Double.isNaN(y1))
+                        {
+                            XYLineAnnotation annotation =
+                                    new XYLineAnnotation(x0, y0, x1, y1, new BasicStroke(1.0f), Color.WHITE);
+                            getPlot().getChart().getXYPlot().addAnnotation(annotation);
+                        }
                     }
                 }
                 else if (event.getEntity() instanceof AxisEntity)
@@ -126,7 +148,7 @@ public class SwingFundamentalDiagram extends SwingPlot
                     {
                         clearText = false;
                         int item = itemEntity.getItem();
-                        double t = item * getPlot().getSource().getUpdateInterval().si;
+                        double t = item * getPlot().getUpdateInterval().si;
                         getPlot().setTimeInfo(String.format(", %.0fs", t));
                         double x = getPlot().getXValue(series, item);
                         double y = getPlot().getYValue(series, item);
@@ -196,38 +218,26 @@ public class SwingFundamentalDiagram extends SwingPlot
         super.addPopUpMenuItems(popupMenu);
         popupMenu.insert(new JPopupMenu.Separator(), 0);
 
+        this.aggregationPeriodButtons = new LinkedHashMap<>();
+        this.updatesPerPeriodButtons = new LinkedHashMap<>();
+
         JMenu updMenu = new JMenu("Update frequency");
         ButtonGroup updGroup = new ButtonGroup();
-        for (int f : getPlot().getSource().getPossibleUpdateFrequencies())
+        for (int f : getPlot().getPossibleUpdatesPerPeriod())
         {
             String format = "%dx";
             JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, f));
-            item.setSelected(f == 1);
+            this.updatesPerPeriodButtons.put(item, f);
+            item.setSelected(f == getPlot().getDefaultUpdatesPerPeriod());
             item.addActionListener(new ActionListener()
             {
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-
-                    if ((int) (.5 + getPlot().getSource().getAggregationPeriod().si
-                            / getPlot().getSource().getUpdateInterval().si) != f)
-                    {
-                        Duration interval = Duration.ofSI(getPlot().getSource().getAggregationPeriod().si / f);
-                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
-                        {
-                            diagram.setUpdateInterval(interval);
-                        }
-                        // the above setUpdateInterval also recalculates the virtual last update time
-                        // add half an interval to avoid any rounding issues
-                        getPlot().getSource().setUpdateInterval(interval, getPlot().getUpdateTime().plus(interval.times(0.5)));
-
-                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
-                        {
-                            diagram.getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
-                            diagram.getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
-                            diagram.notifyPlotChange();
-                        }
-                    }
+                    SwingFundamentalDiagram.this.ignoreEvent = true;
+                    getPlot().getChart().getXYPlot().clearAnnotations();
+                    getPlot().setUpdatesPerPeriod(f);
+                    SwingFundamentalDiagram.this.ignoreEvent = false;
                 }
             });
             updGroup.add(item);
@@ -237,44 +247,27 @@ public class SwingFundamentalDiagram extends SwingPlot
 
         JMenu aggMenu = new JMenu("Aggregation period");
         ButtonGroup aggGroup = new ButtonGroup();
-        for (double t : getPlot().getSource().getPossibleAggregationPeriods())
+        for (Duration t : getPlot().getPossibleAggregationPeriods())
         {
-            double t2 = t;
+            double t2 = t.si;
             String format = "%.0f s";
-            if (t >= 60.0)
+            if (t.si >= 60.0)
             {
-                t2 = t / 60.0;
+                t2 = t.si / 60.0;
                 format = "%.0f min";
             }
             JRadioButtonMenuItem item = new JRadioButtonMenuItem(String.format(format, t2));
-            item.setSelected(t == getPlot().getSource().getAggregationPeriod().si);
+            this.aggregationPeriodButtons.put(item, t.si);
+            item.setSelected(t.si == getPlot().getDefaultAggregationPeriod().si);
             item.addActionListener(new ActionListener()
             {
-
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
-                    if (getPlot().getSource().getAggregationPeriod().si != t)
-                    {
-                        int n = (int) (0.5 + getPlot().getSource().getAggregationPeriod().si
-                                / getPlot().getSource().getUpdateInterval().si);
-                        Duration period = Duration.ofSI(t);
-                        Duration interval = period.divide(n);
-                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
-                        {
-                            diagram.setUpdateInterval(interval);
-                        }
-                        // add half an interval to avoid any rounding issues
-                        getPlot().getSource().setAggregationPeriod(period);
-                        getPlot().getSource().setUpdateInterval(period.divide(n),
-                                getPlot().getUpdateTime().plus(period.divide(n).times(0.5)));
-                        for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
-                        {
-                            diagram.getChart().getXYPlot().zoomDomainAxes(0.0, null, null);
-                            diagram.getChart().getXYPlot().zoomRangeAxes(0.0, null, null);
-                            diagram.notifyPlotChange();
-                        }
-                    }
+                    SwingFundamentalDiagram.this.ignoreEvent = true;
+                    getPlot().getChart().getXYPlot().clearAnnotations();
+                    getPlot().setAggregationPeriod(t);
+                    SwingFundamentalDiagram.this.ignoreEvent = false;
                 }
 
             });
@@ -292,6 +285,33 @@ public class SwingFundamentalDiagram extends SwingPlot
     public FundamentalDiagram getPlot()
     {
         return (FundamentalDiagram) super.getPlot();
+    }
+
+    @Override
+    public void notify(final Event event)
+    {
+        if (this.ignoreEvent)
+        {
+            return;
+        }
+        if (event.getType().equals(FdDataSource.AGGREGATION_PERIOD))
+        {
+            Object[] payload = (Object[]) event.getContent();
+            Duration aggregation = (Duration) payload[0];
+            for (JRadioButtonMenuItem button : this.aggregationPeriodButtons.keySet())
+            {
+                button.setSelected(Math.abs(this.aggregationPeriodButtons.get(button) - aggregation.si) < 0.001);
+            }
+        }
+        else if (event.getType().equals(FdDataSource.UPDATES_PER_PERIOD))
+        {
+            Object[] payload = (Object[]) event.getContent();
+            int n = (int) payload[0];
+            for (JRadioButtonMenuItem button : this.updatesPerPeriodButtons.keySet())
+            {
+                button.setSelected(this.updatesPerPeriodButtons.get(button) == n);
+            }
+        }
     }
 
 }

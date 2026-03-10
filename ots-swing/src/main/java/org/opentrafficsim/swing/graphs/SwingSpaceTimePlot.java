@@ -28,7 +28,7 @@ public class SwingSpaceTimePlot extends SwingPlot
      * Construct a new Swing container for SpaceTimePlot.
      * @param plot the plot to embed
      */
-    public SwingSpaceTimePlot(final AbstractSpaceTimePlot plot)
+    public SwingSpaceTimePlot(final AbstractSpaceTimePlot<?> plot)
     {
         super(plot);
     }
@@ -51,9 +51,9 @@ public class SwingSpaceTimePlot extends SwingPlot
     }
 
     @Override
-    public AbstractSpaceTimePlot getPlot()
+    public AbstractSpaceTimePlot<?> getPlot()
     {
-        return (AbstractSpaceTimePlot) super.getPlot();
+        return (AbstractSpaceTimePlot<?>) super.getPlot();
     }
 
 }
