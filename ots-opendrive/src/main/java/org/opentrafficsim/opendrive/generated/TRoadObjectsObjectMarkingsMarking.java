@@ -64,7 +64,7 @@ import jakarta.xml.bind.annotation.XmlType;
     })
     protected List<Object> gAdditionalData;
     /**
-     * Side of the bounding box described in <object> element in the local coordinate system u/v. For values see UML model.
+     * Side of the bounding box described in &lt;object&gt; element in the local coordinate system u/v. For values see UML model.
      * 
      */
     @XmlAttribute(name = "side")
@@ -188,7 +188,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Side of the bounding box described in <object> element in the local coordinate system u/v. For values see UML model.
+     * Side of the bounding box described in &lt;object&gt; element in the local coordinate system u/v. For values see UML model.
      * 
      * @return
      *     possible object is

@@ -38,19 +38,19 @@ import jakarta.xml.bind.annotation.XmlType;
 {
 
     /**
-     * Unique ID of the <road> element (track) that accompanies the platform
+     * Unique ID of the &lt;road&gt; element (track) that accompanies the platform
      * 
      */
     @XmlAttribute(name = "roadId", required = true)
     protected String roadId;
     /**
-     * Minimum s-coordinate on <road> element that has an adjacent platform
+     * Minimum s-coordinate on &lt;road&gt; element that has an adjacent platform
      * 
      */
     @XmlAttribute(name = "sStart", required = true)
     protected double sStart;
     /**
-     * Maximum s-coordiante on <road> element that has an adjacent platform
+     * Maximum s-coordiante on &lt;road&gt; element that has an adjacent platform
      * 
      */
     @XmlAttribute(name = "sEnd", required = true)
@@ -63,7 +63,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected EStationPlatformSegmentSide side;
 
     /**
-     * Unique ID of the <road> element (track) that accompanies the platform
+     * Unique ID of the &lt;road&gt; element (track) that accompanies the platform
      * 
      * @return
      *     possible object is
@@ -88,7 +88,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Minimum s-coordinate on <road> element that has an adjacent platform
+     * Minimum s-coordinate on &lt;road&gt; element that has an adjacent platform
      * 
      */
     public double getSStart() {
@@ -104,7 +104,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Maximum s-coordiante on <road> element that has an adjacent platform
+     * Maximum s-coordiante on &lt;road&gt; element that has an adjacent platform
      * 
      */
     public double getSEnd() {

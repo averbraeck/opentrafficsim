@@ -65,7 +65,7 @@ import jakarta.xml.bind.annotation.XmlType;
     @XmlAttribute(name = "sEnd", required = true)
     protected double sEnd;
     /**
-     * Orientation of the CRG data set relative to the parent <road> element
+     * Orientation of the CRG data set relative to the parent &lt;road&gt; element
      * 
      */
     @XmlAttribute(name = "orientation", required = true)
@@ -176,7 +176,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Orientation of the CRG data set relative to the parent <road> element
+     * Orientation of the CRG data set relative to the parent &lt;road&gt; element
      * 
      * @return
      *     possible object is

@@ -58,7 +58,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     protected double space;
     /**
      * Lateral offset from the lane border.
-     * If <sway> element is present, the lateral offset follows the sway.
+     * If &lt;sway&gt; element is present, the lateral offset follows the sway.
      * 
      */
     @XmlAttribute(name = "tOffset", required = true)
@@ -83,7 +83,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     @XmlJavaTypeAdapter(LengthAdapter.class)
     protected Length width;
     /**
-     * Line color. If given, this attribute supersedes the definition in the <roadMark> element. For values see UML Model.
+     * Line color. If given, this attribute supersedes the definition in the &lt;roadMark&gt; element. For values see UML Model.
      * 
      */
     @XmlAttribute(name = "color")
@@ -132,7 +132,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
 
     /**
      * Lateral offset from the lane border.
-     * If <sway> element is present, the lateral offset follows the sway.
+     * If &lt;sway&gt; element is present, the lateral offset follows the sway.
      * 
      */
     public double getTOffset() {
@@ -214,7 +214,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Line color. If given, this attribute supersedes the definition in the <roadMark> element. For values see UML Model.
+     * Line color. If given, this attribute supersedes the definition in the &lt;roadMark&gt; element. For values see UML Model.
      * 
      * @return
      *     possible object is

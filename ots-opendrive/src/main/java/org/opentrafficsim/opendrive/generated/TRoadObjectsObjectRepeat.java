@@ -49,7 +49,7 @@ import jakarta.xml.bind.annotation.XmlType;
 {
 
     /**
-     * s-coordinate of start position, overrides the corresponding argument in the original <object> record
+     * s-coordinate of start position, overrides the corresponding argument in the original &lt;object&gt; record
      * 
      */
     @XmlAttribute(name = "s", required = true)
@@ -141,7 +141,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected Double radiusEnd;
 
     /**
-     * s-coordinate of start position, overrides the corresponding argument in the original <object> record
+     * s-coordinate of start position, overrides the corresponding argument in the original &lt;object&gt; record
      * 
      */
     public double getS() {

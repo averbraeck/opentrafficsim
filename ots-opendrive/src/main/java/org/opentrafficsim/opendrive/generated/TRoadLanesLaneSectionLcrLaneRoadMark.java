@@ -72,7 +72,7 @@ import org.opentrafficsim.road.network.StripeData;
     })
     protected List<Object> gAdditionalData;
     /**
-     * s-coordinate of start position of the <roadMark> element, relative to the position of the preceding <laneSection> element
+     * s-coordinate of start position of the &lt;roadMark&gt; element, relative to the position of the preceding &lt;laneSection&gt; element
      * 
      */
     @XmlAttribute(name = "sOffset", required = true)
@@ -103,7 +103,7 @@ import org.opentrafficsim.road.network.StripeData;
     @XmlAttribute(name = "material")
     protected String material;
     /**
-     * Width of the road mark. This attribute is optional if detailed definition is given by <line> element.
+     * Width of the road mark. This attribute is optional if detailed definition is given by &lt;line&gt; element.
      * 
      */
     @XmlAttribute(name = "width")
@@ -239,7 +239,7 @@ import org.opentrafficsim.road.network.StripeData;
     }
 
     /**
-     * s-coordinate of start position of the <roadMark> element, relative to the position of the preceding <laneSection> element
+     * s-coordinate of start position of the &lt;roadMark&gt; element, relative to the position of the preceding &lt;laneSection&gt; element
      * 
      */
     public double getSOffset() {
@@ -355,7 +355,7 @@ import org.opentrafficsim.road.network.StripeData;
     }
 
     /**
-     * Width of the road mark. This attribute is optional if detailed definition is given by <line> element.
+     * Width of the road mark. This attribute is optional if detailed definition is given by &lt;line&gt; element.
      * 
      * @return
      *     possible object is

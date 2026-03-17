@@ -46,13 +46,13 @@ import jakarta.xml.bind.annotation.XmlType;
     protected String length;
     /**
      * Lateral offset from the lane border.
-     * If <sway> element is present, the lateral offset follows the sway.
+     * If &lt;sway&gt; element is present, the lateral offset follows the sway.
      * 
      */
     @XmlAttribute(name = "tOffset", required = true)
     protected double tOffset;
     /**
-     * Offset of start position of the <line> element, relative to the @sOffset  given in the <roadMark> element
+     * Offset of start position of the &lt;line&gt; element, relative to the @sOffset  given in the &lt;roadMark&gt; element
      * 
      */
     @XmlAttribute(name = "sOffset", required = true)
@@ -64,7 +64,7 @@ import jakarta.xml.bind.annotation.XmlType;
     @XmlAttribute(name = "rule")
     protected ERoadMarkRule rule;
     /**
-     * Line width. This attribute supersedes the definition in the <roadMark> element.
+     * Line width. This attribute supersedes the definition in the &lt;roadMark&gt; element.
      * 
      */
     @XmlAttribute(name = "width")
@@ -97,7 +97,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
     /**
      * Lateral offset from the lane border.
-     * If <sway> element is present, the lateral offset follows the sway.
+     * If &lt;sway&gt; element is present, the lateral offset follows the sway.
      * 
      */
     public double getTOffset() {
@@ -113,7 +113,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Offset of start position of the <line> element, relative to the @sOffset  given in the <roadMark> element
+     * Offset of start position of the &lt;line&gt; element, relative to the @sOffset  given in the &lt;roadMark&gt; element
      * 
      */
     public double getSOffset() {
@@ -154,7 +154,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Line width. This attribute supersedes the definition in the <roadMark> element.
+     * Line width. This attribute supersedes the definition in the &lt;roadMark&gt; element.
      * 
      * @return
      *     possible object is

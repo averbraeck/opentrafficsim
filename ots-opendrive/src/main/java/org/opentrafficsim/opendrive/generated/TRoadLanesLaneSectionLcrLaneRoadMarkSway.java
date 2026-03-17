@@ -39,7 +39,7 @@ import jakarta.xml.bind.annotation.XmlType;
 {
 
     /**
-     * s-coordinate of start position of the <sway> element, relative to the @sOffset given in the <roadMark> element
+     * s-coordinate of start position of the &lt;sway&gt; element, relative to the @sOffset given in the &lt;roadMark&gt; element
      * 
      */
     @XmlAttribute(name = "ds", required = true)
@@ -70,7 +70,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected double d;
 
     /**
-     * s-coordinate of start position of the <sway> element, relative to the @sOffset given in the <roadMark> element
+     * s-coordinate of start position of the &lt;sway&gt; element, relative to the @sOffset given in the &lt;roadMark&gt; element
      * 
      */
     public double getDs() {

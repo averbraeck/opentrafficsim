@@ -92,7 +92,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected double dv;
     /**
      * Range of parameter p. 
-     * - Case arcLength: p in [0, @length of <geometry>]
+     * - Case arcLength: p in [0, @length of &lt;geometry&gt;]
      * - Case normalized: p in [0, 1]
      * 
      */
@@ -229,7 +229,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
     /**
      * Range of parameter p. 
-     * - Case arcLength: p in [0, @length of <geometry>]
+     * - Case arcLength: p in [0, @length of &lt;geometry&gt;]
      * - Case normalized: p in [0, 1]
      * 
      * @return

@@ -87,14 +87,54 @@
               <value>@SuppressWarnings("all") public enum </value>
             </replacement>
             <!-- Fix OpenDRIVE "<element>" tags. These appear in generated java classes from the OpenDRIVE xsd files. The
-            documentation annotation is placed in the javadoc, in which escaped html tags are un-escaped. -->
-            <replacement>
-              <token><![CDATA[<(?=(?s).*\s \* <p>Java class for )]]></token>
-              <value>&amp;lt;</value>
+            documentation annotation is placed in the javadoc, in which escaped html tags are un-escaped. We fix this in three 
+            steps. -->
+            <!-- Step 1) Recognize all lines within a block comment and tag them with @@CEND@@ at the end of the line. -->
+            <!-- (\r\n?|\n) = any new line character (?: = non-catching group) -->
+            <!-- [ \t]* = indentation by white space or tabs -->
+            <!-- \* = block comment continuation star (regular code lines can start with *, this is prevented later) -->
+            <!-- [^\r\n]* = anything up to the next new line character -->
+            <!-- ?= = positive non-consuming lookahead (does not move regex pointer) -->
+            <!-- (?!/\*\*) = negative lookahead, forbid looking past /** -->
+            <!-- [\s\S] = any characters, including new lines -->
+            <!-- *? = as few as possible -->
+            <!-- \*/ = block comment close */ -->
+            <!-- Note: the positive lookahead makes sure we are within a block comment; there's a */ and no /** before it -->
+            <!-- $0 = the entire match -->
+            <replacement>   
+              <token>((\r\n?|\n)[ \t]*\*[^\r\n]*)(?=((?!/\*\*)[\s\S])*?\*/)</token>
+              <value>$0@@CEND@@</value>
             </replacement>
-            <replacement>
-              <token><![CDATA[>(?=(?s).*\s \* <p>Java class for )]]></token>
-              <value>&amp;gt;</value>
+            <!-- Step 2) Replace all <element> on tagged lines with &lt;element&gt;. -->
+            <!-- <![CDATA[ ... ]]> required dues to use of < > in pattern -->
+            <!-- < = opening bracket -->
+            <!-- (?!p>) etc. = skip all regular html tags that do not need to be closed -->
+            <!-- ([A-Za-z][A-Za-z0-9 ]*) = match tag name, however it was typed in XSD documentation (#2) -->
+            <!-- ?= = positive non-consuming lookahead (does not move regex pointer) -->
+            <!-- [^\r\n]* = no new line characters -->
+            <!-- @@CEND@@ = our tag at the end of block comment lines from step 1 -->
+            <!-- We have now made sure we are on a tagged line. -->
+            <!-- (?!\*/) = negative lookahead, forbid looking past */, i.e. block comment close -->
+            <!-- [\s\S] = any characters, including new lines -->
+            <!-- *? = as few as possible -->
+            <!-- \*/ = block comment close */ -->
+            <!-- The previous seems redundant (no match */ until match */) but it guarantees to match the first occurrence. -->
+            <!-- Also, check */ when already @@CEND@@: defensive check to changes between steps 1 & 2, malformed code, etc. -->
+            <!-- (?!...) = negative lookahead, ensures the matching closing tag does not appear anywhere before the next */ -->
+            <!-- (?:(?!\*/)[\s\S])*? = match any characters but not beyond */ (?: = non-catching group) -->
+            <!-- </\2> = match closing tag of tag we matched earlier (#2) -->
+            <!-- This last bit makes sure there is no closing tag later in the block comment. -->
+            <replacement>     
+              <token><![CDATA[(<(?!p>)(?!br>)(?!hr>)(?!img>)(?!input>)(?!meta>)(?!link>)(?!area>)(?!base>)(?!col>)(?!embed>)(?!param>)(?!source>)(?!track>)(?!wbr>)([A-Za-z][A-Za-z0-9 ]*)>)(?=[^\r\n]*@@CEND@@)(?=(?:(?!\*/)[\s\S])*?\*/)(?!(?:(?!\*/)[\s\S])*?</\2>)]]></token>
+              <value>&amp;lt;$2&amp;gt;</value>
+            </replacement>
+            <!-- Step 3) Remove all @@CEND@@. -->
+            <!-- @@CEND@@ = our tag at the end of block comment lines from step 1 -->
+            <!-- (\r\n?|\n) = make sure @@CEND@@ is at end of the line, as matched in step 1 to not remove other occurances -->
+            <!-- (?=((?!/\*\*)[\s\S])*?\*/) = same 'within block comment' check as step 1 to not remove other occurances -->
+            <replacement>     
+              <token>@@CEND@@(\r\n?|\n)(?=((?!/\*\*)[\s\S])*?\*/)</token>
+              <value>$1</value>
             </replacement>
           </replacements>
         </configuration>

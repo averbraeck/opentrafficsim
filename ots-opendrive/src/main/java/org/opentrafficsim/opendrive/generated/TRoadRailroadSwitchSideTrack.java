@@ -53,7 +53,7 @@ import jakarta.xml.bind.annotation.XmlType;
     })
     protected List<Object> gAdditionalData;
     /**
-     * Unique ID of the side track, that is, the <road> element
+     * Unique ID of the side track, that is, the &lt;road&gt; element
      * 
      */
     @XmlAttribute(name = "id", required = true)
@@ -109,7 +109,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Unique ID of the side track, that is, the <road> element
+     * Unique ID of the side track, that is, the &lt;road&gt; element
      * 
      * @return
      *     possible object is

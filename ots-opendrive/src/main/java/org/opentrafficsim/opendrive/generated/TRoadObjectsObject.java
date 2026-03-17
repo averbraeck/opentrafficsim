@@ -109,7 +109,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected double zOffset;
     /**
      * Type of object. For values, see UML.
-     * For a parking space, the <parkingSpace> element may be used additionally.
+     * For a parking space, the &lt;parkingSpace&gt; element may be used additionally.
      * 
      */
     @XmlAttribute(name = "type")
@@ -491,7 +491,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
     /**
      * Type of object. For values, see UML.
-     * For a parking space, the <parkingSpace> element may be used additionally.
+     * For a parking space, the &lt;parkingSpace&gt; element may be used additionally.
      * 
      * @return
      *     possible object is

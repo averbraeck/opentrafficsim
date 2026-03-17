@@ -40,7 +40,7 @@ import org.opentrafficsim.opendrive.bindings.SpeedUnitAdapter;
 {
 
     /**
-     * s-coordinate of start position, relative to the position of the preceding <laneSection> element
+     * s-coordinate of start position, relative to the position of the preceding &lt;laneSection&gt; element
      * 
      */
     @XmlAttribute(name = "sOffset", required = true)
@@ -60,7 +60,7 @@ import org.opentrafficsim.opendrive.bindings.SpeedUnitAdapter;
     protected SpeedUnit unit;
 
     /**
-     * s-coordinate of start position, relative to the position of the preceding <laneSection> element
+     * s-coordinate of start position, relative to the position of the preceding &lt;laneSection&gt; element
      * 
      */
     public double getSOffset() {

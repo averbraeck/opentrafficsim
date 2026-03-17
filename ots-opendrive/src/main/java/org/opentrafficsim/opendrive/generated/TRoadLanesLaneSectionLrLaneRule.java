@@ -36,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlType;
 {
 
     /**
-     * s-coordinate of start position, relative to the position of the preceding <laneSection> element
+     * s-coordinate of start position, relative to the position of the preceding &lt;laneSection&gt; element
      * 
      */
     @XmlAttribute(name = "sOffset", required = true)
@@ -52,7 +52,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected String value;
 
     /**
-     * s-coordinate of start position, relative to the position of the preceding <laneSection> element
+     * s-coordinate of start position, relative to the position of the preceding &lt;laneSection&gt; element
      * 
      */
     public double getSOffset() {
