@@ -10,8 +10,8 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opentrafficsim.opendrive.bindings.Stripe.Type;
-import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
+import org.opentrafficsim.opendrive.bindings.StripeDataAdapter;
+import org.opentrafficsim.road.network.StripeData;
 
 
 /**
@@ -82,8 +82,8 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
      * 
      */
     @XmlAttribute(name = "type", required = true)
-    @XmlJavaTypeAdapter(StripeTypeAdapter.class)
-    protected Type roadMarkType;
+    @XmlJavaTypeAdapter(StripeDataAdapter.class)
+    protected StripeData roadMarkType;
     /**
      * Weight of the road mark. This attribute is optional if detailed definition is given below. For values see UML model.
      * 
@@ -262,7 +262,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
      *     {@link String }
      *     
      */
-    public Type getRoadMarkType() {
+    public StripeData getRoadMarkType() {
         return roadMarkType;
     }
 
@@ -275,7 +275,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
      *     
      * @see #getRoadMarkType()
      */
-    public void setRoadMarkType(Type value) {
+    public void setRoadMarkType(StripeData value) {
         this.roadMarkType = value;
     }
 

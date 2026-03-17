@@ -63,6 +63,23 @@ public class StripeData
     }
 
     /**
+     * Returns a copy of the data. As this is a mutable object that may represent a type, each stripe should hold a copy of its
+     * input.
+     * @return copy of the data
+     */
+    // TODO this is a bad way to define types and mutable data
+    public StripeData copy()
+    {
+        StripeData out = new StripeData(new ArrayList<>(), this.left, this.right);
+        out.elements.addAll(this.elements);
+        out.permeabilityMap.putAll(this.permeabilityMap);
+        out.lateralSync = this.lateralSync;
+        out.phaseSync = this.phaseSync;
+        out.period = this.period;
+        return out;
+    }
+
+    /**
      * Returns the elements.
      * @return elements
      */
@@ -222,12 +239,7 @@ public class StripeData
      */
     public Length getWidth()
     {
-        Length width = Length.ZERO;
-        for (StripeElement element : getElements())
-        {
-            width = width.plus(element.width());
-        }
-        return width;
+        return Length.ofSI(this.elements.stream().mapToDouble((e) -> e.width().si).sum());
     }
 
     /**

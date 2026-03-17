@@ -1,11 +1,12 @@
 package org.opentrafficsim.opendrive.bindings;
 
 import org.opentrafficsim.opendrive.generated.ETrafficRule;
+import org.opentrafficsim.road.network.LaneKeepingPolicy;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * LaneKeepingPolicy adapter.
+ * Adapter between {@code ETrafficRule} and {@link LaneKeepingPolicy}.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

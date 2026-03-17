@@ -46,7 +46,7 @@ public class Stripe extends CrossSectionElement
     {
         super(link, id, geometry);
         Throw.whenNull(data, "Type may not be null.");
-        this.data = data;
+        this.data = data.copy();
     }
 
     /**

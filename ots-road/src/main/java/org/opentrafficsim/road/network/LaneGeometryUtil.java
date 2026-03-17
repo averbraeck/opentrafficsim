@@ -42,11 +42,10 @@ public final class LaneGeometryUtil
      */
     public static Polygon2d getContour(final PolyLine2d leftEdge, final PolyLine2d rightEdge)
     {
-        Point2d[] points = new Point2d[leftEdge.size() + rightEdge.size() + 1];
+        Point2d[] points = new Point2d[leftEdge.size() + rightEdge.size()];
         System.arraycopy(leftEdge.getPointList().toArray(), 0, points, 0, leftEdge.size());
         System.arraycopy(rightEdge.reverse().getPointList().toArray(), 0, points, leftEdge.size(), rightEdge.size());
-        points[points.length - 1] = points[0]; // close loop
-        return new Polygon2d(0.0, points);
+        return new Polygon2d(1e-3, points);
     }
 
     /**

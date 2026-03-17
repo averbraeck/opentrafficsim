@@ -11,9 +11,9 @@ import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.opendrive.bindings.LaneKeepingPolicy;
 import org.opentrafficsim.opendrive.bindings.LaneKeepingPolicyAdapter;
 import org.opentrafficsim.opendrive.bindings.LengthAdapter;
+import org.opentrafficsim.road.network.LaneKeepingPolicy;
 
 
 /**

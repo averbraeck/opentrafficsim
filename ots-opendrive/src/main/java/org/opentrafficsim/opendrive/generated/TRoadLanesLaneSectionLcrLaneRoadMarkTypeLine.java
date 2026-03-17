@@ -5,6 +5,9 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.opendrive.bindings.LengthAdapter;
 
 
 /**
@@ -45,7 +48,8 @@ import jakarta.xml.bind.annotation.XmlType;
      * 
      */
     @XmlAttribute(name = "length", required = true)
-    protected String length;
+    @XmlJavaTypeAdapter(LengthAdapter.class)
+    protected Length length;
     /**
      * Length of the gap between the visible parts
      * 
@@ -76,7 +80,8 @@ import jakarta.xml.bind.annotation.XmlType;
      * 
      */
     @XmlAttribute(name = "width")
-    protected String width;
+    @XmlJavaTypeAdapter(LengthAdapter.class)
+    protected Length width;
     /**
      * Line color. If given, this attribute supersedes the definition in the <roadMark> element. For values see UML Model.
      * 
@@ -92,7 +97,7 @@ import jakarta.xml.bind.annotation.XmlType;
      *     {@link String }
      *     
      */
-    public String getLength() {
+    public Length getLength() {
         return length;
     }
 
@@ -105,7 +110,7 @@ import jakarta.xml.bind.annotation.XmlType;
      *     
      * @see #getLength()
      */
-    public void setLength(String value) {
+    public void setLength(Length value) {
         this.length = value;
     }
 
@@ -191,7 +196,7 @@ import jakarta.xml.bind.annotation.XmlType;
      *     {@link String }
      *     
      */
-    public String getWidth() {
+    public Length getWidth() {
         return width;
     }
 
@@ -204,7 +209,7 @@ import jakarta.xml.bind.annotation.XmlType;
      *     
      * @see #getWidth()
      */
-    public void setWidth(String value) {
+    public void setWidth(Length value) {
         this.width = value;
     }
 

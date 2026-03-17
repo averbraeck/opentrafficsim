@@ -194,7 +194,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
     /**
      * Create a new line that covers a sub-section of this line.
      * @param start length along this line where the sub-section starts, valid range [0..<i>end</i>)
-     * @param end length along this line where the sub-section ends, valid range (<i>start</i>..<i>length</i> (length is the
+     * @param end length along this line where the sub-section ends, valid range (<i>start</i>..<i>length</i>] (length is the
      *            length of this line)
      * @return extracted line
      */

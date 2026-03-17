@@ -15,7 +15,7 @@ import org.djutils.math.AngleUtil;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @see OtsLine2d#projectFractional
+ * @see OtsLine2d#projectFractionalAt
  */
 public final class FractionalProjectionHelper
 {
@@ -53,7 +53,10 @@ public final class FractionalProjectionHelper
     /** Intersection of last two unit-offset segments (end direction-independent). */
     private Point2d lastOffsetIntersection;
 
-    /** Cached helpers for {@code null} start and end direction. Often used by {@link OtsLine2d#getProjectedVertexRadius}. */
+    /**
+     * Cached helpers for {@code null} start and end direction. Often used by {@link OtsLine2d#radiusAtFraction} and
+     * {@link OtsLine2d#radiusAtVertex(int)}.
+     */
     private EdgeHelpers edgeNullNull; // cached helpers for (null,null)
 
     /** Last none-both-{@code null} directions. */
@@ -158,7 +161,7 @@ public final class FractionalProjectionHelper
      * @param y y-coordinate of point to project
      * @param fallback fallback method for when fractional projection fails
      * @return fractional position along this line of the fractional projection on that line of a point
-     * @see OtsLine2d#projectFractional
+     * @see OtsLine2d#projectFractionalAt
      */
     public synchronized double projectFractionalAt(final Direction start, final Direction end, final double x, final double y,
             final FractionalFallback fallback)
@@ -218,7 +221,7 @@ public final class FractionalProjectionHelper
                 // Compute fraction within segment
                 final double segActual = a.distance(b);
                 final double along = a.distance(p);
-                bestSegFrac = segActual > 0.0 ? (along / segActual) : 0.0;
+                bestSegFrac = Math.min(1.0, Math.max(0.0, segActual > 0.0 ? (along / segActual) : 0.0));
                 bestSeg = i;
             }
         }

@@ -358,7 +358,8 @@ public final class ConflictBuilder
                     }
                     if (Double.isNaN(fraction1))
                     {
-                        Logger.ots().info("Fixing fractions of merge conflict{}", paddedConflictId);
+                        Logger.ots().info("Fixing fractions of merge conflict between lane {} and {}", lane1.getFullId(),
+                                lane2.getFullId());
                         fraction1 = 0;
                         fraction2 = 0;
                     }

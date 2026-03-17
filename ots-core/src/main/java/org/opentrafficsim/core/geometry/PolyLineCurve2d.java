@@ -14,7 +14,7 @@ import org.djutils.math.functions.MathFunction.TupleSt;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 
 /**
- * Curve based on a poly line implementing all the features of {@link OffsetCurve2d}.
+ * Curve based on a polyline implementing all the features of {@link OffsetCurve2d}.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -24,7 +24,7 @@ import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 public class PolyLineCurve2d implements OffsetCurve2d
 {
 
-    /** Poly line. */
+    /** Polyline. */
     private final PolyLine2d line;
 
     /** Start direction. */
@@ -35,7 +35,7 @@ public class PolyLineCurve2d implements OffsetCurve2d
 
     /**
      * Constructor.
-     * @param line poly line
+     * @param line polyline
      * @param startDirection start direction
      * @param endDirection end direction
      */

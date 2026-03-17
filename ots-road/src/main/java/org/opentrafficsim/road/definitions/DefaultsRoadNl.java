@@ -114,29 +114,29 @@ public class DefaultsRoadNl extends DefaultsRoad
     /** Standard dashes. */
     private static final LengthVector DASH = new LengthVector(new double[] {9.0, 3.0});
 
-    /** Solid stripe. */
+    /** Solid stripe "|". */
     public static final StripeData SOLID = new StripeData(List.of(StripeElement.continuous(CM20, Color.WHITE)), false, false);
 
-    /** Left-permeable stripe. */
+    /** Left-permeable stripe "|:". */
     public static final StripeData LEFT = new StripeData(List.of(StripeElement.continuous(CM20, Color.WHITE),
             StripeElement.gap(CM20), StripeElement.dashed(CM20, Color.WHITE, DASH)), true, false);
 
-    /** Right-permable stripe. */
+    /** Right-permable stripe ":|". */
     public static final StripeData RIGHT = new StripeData(List.of(StripeElement.dashed(CM20, Color.WHITE, DASH),
             StripeElement.gap(CM20), StripeElement.continuous(CM20, Color.WHITE)), false, true);
 
-    /** Dashed stripe. */
+    /** Dashed stripe ":". */
     public static final StripeData DASHED = new StripeData(List.of(StripeElement.dashed(CM20, Color.WHITE, DASH)), true, true);
 
-    /** Double solid stripe. */
+    /** Double solid stripe "||". */
     public static final StripeData DOUBLE_SOLID = new StripeData(List.of(StripeElement.continuous(CM20, Color.WHITE),
             StripeElement.gap(CM20), StripeElement.continuous(CM20, Color.WHITE)), false, false);
 
-    /** Double dashed stripe. */
+    /** Double dashed stripe "::". */
     public static final StripeData DOUBLE_DASHED = new StripeData(List.of(StripeElement.dashed(CM20, Color.WHITE, DASH),
             StripeElement.gap(CM20), StripeElement.dashed(CM20, Color.WHITE, DASH)), true, true);
 
-    /** Block stripe. */
+    /** Block stripe ".". */
     public static final StripeData BLOCK = new StripeData(
             List.of(StripeElement.dashed(CM20.times(2.0), Color.WHITE, new LengthVector(new double[] {3.0, 1.0}))), true, true);
 
