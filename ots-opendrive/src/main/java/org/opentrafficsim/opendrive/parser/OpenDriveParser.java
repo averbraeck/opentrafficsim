@@ -19,12 +19,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -43,6 +45,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.base.AlphabeticIdGenerator;
@@ -57,10 +60,13 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.opendrive.bindings.SpeedUnitAdapter;
+import org.opentrafficsim.opendrive.generated.EAccessRestrictionType;
 import org.opentrafficsim.opendrive.generated.EContactPoint;
 import org.opentrafficsim.opendrive.generated.ELaneType;
+import org.opentrafficsim.opendrive.generated.ERoadLanesLaneSectionLrLaneAccessRule;
 import org.opentrafficsim.opendrive.generated.ERoadLinkElementType;
 import org.opentrafficsim.opendrive.generated.ERoadMarkRule;
+import org.opentrafficsim.opendrive.generated.ERoadType;
 import org.opentrafficsim.opendrive.generated.EUnitSpeed;
 import org.opentrafficsim.opendrive.generated.OpenDrive;
 import org.opentrafficsim.opendrive.generated.OpenDriveElement;
@@ -148,25 +154,88 @@ public final class OpenDriveParser
     /** Shoulder lane type. */
     private static final LaneType SHOULDER = new LaneType("Shoulder");
 
+    /** Lane type that allows all GTU types. Used when access is restricted to NONE. */
+    private static final LaneType ALLOW_ALL_LANE_TYPE = new LaneType("ALLOW_ALL_LANE_TYPE")
+    {
+        @Override
+        public boolean isCompatible(final GtuType gtuType)
+        {
+            return true;
+        }
+
+        @Override
+        public Boolean isCompatibleOnInfraLevel(final GtuType gtuType)
+        {
+            return true;
+        }
+    };
+
     /** Default link types. */
-    private static final Map<String, LinkType> LINK_TYPES = new LinkedHashMap<>();
+    private static final Map<ERoadType, LinkType> DEFAULT_LINK_TYPES = new LinkedHashMap<>();
 
     static
     {
-        LINK_TYPES.put("UNKNOWN", DefaultsNl.ROAD);
-        LINK_TYPES.put("RURAL", DefaultsNl.PROVINCIAL);
-        LINK_TYPES.put("MOTORWAY", DefaultsNl.HIGHWAY);
-        LINK_TYPES.put("TOWN", DefaultsNl.URBAN);
-        LINK_TYPES.put("LOW_SPEED", DefaultsNl.RESIDENTIAL);
-        LINK_TYPES.put("PEDESTRIAN", new LinkType("NL.PEDESTRIAN", DefaultsNl.URBAN));
-        LINK_TYPES.put("BICYCLE", new LinkType("NL.BICYCLE", DefaultsNl.URBAN));
-        LINK_TYPES.put("TOWN_EXPRESSWAY", DefaultsNl.FREEWAY);
-        LINK_TYPES.put("TOWN_COLLECTOR", DefaultsNl.RURAL);
-        LINK_TYPES.put("TOWN_ATERIAL", DefaultsNl.RURAL);
-        LINK_TYPES.put("TOWN_PRIVATE", DefaultsNl.RURAL);
-        LINK_TYPES.put("TOWN_LOCAL", DefaultsNl.RURAL);
-        LINK_TYPES.put("TOWN_PLAY_STREET", DefaultsNl.RESIDENTIAL);
+        DEFAULT_LINK_TYPES.put(ERoadType.UNKNOWN, DefaultsNl.ROAD);
+        DEFAULT_LINK_TYPES.put(ERoadType.RURAL, DefaultsNl.PROVINCIAL);
+        DEFAULT_LINK_TYPES.put(ERoadType.MOTORWAY, DefaultsNl.HIGHWAY);
+        DEFAULT_LINK_TYPES.put(ERoadType.TOWN, DefaultsNl.URBAN);
+        DEFAULT_LINK_TYPES.put(ERoadType.LOW_SPEED, DefaultsNl.RESIDENTIAL);
+        DEFAULT_LINK_TYPES.put(ERoadType.PEDESTRIAN, new LinkType("NL.PEDESTRIAN", DefaultsNl.URBAN));
+        DEFAULT_LINK_TYPES.put(ERoadType.BICYCLE, new LinkType("NL.BICYCLE", DefaultsNl.URBAN));
+        DEFAULT_LINK_TYPES.put(ERoadType.TOWN_EXPRESSWAY, DefaultsNl.FREEWAY);
+        DEFAULT_LINK_TYPES.put(ERoadType.TOWN_COLLECTOR, DefaultsNl.URBAN);
+        DEFAULT_LINK_TYPES.put(ERoadType.TOWN_ARTERIAL, DefaultsNl.URBAN);
+        DEFAULT_LINK_TYPES.put(ERoadType.TOWN_PRIVATE, DefaultsNl.URBAN);
+        DEFAULT_LINK_TYPES.put(ERoadType.TOWN_LOCAL, DefaultsNl.URBAN);
+        DEFAULT_LINK_TYPES.put(ERoadType.TOWN_PLAY_STREET, DefaultsNl.RESIDENTIAL);
     };
+
+    /** Default lane types. */
+    private static final Map<ERoadType, LaneType> DEFAULT_LANE_TYPES = new LinkedHashMap<>();
+
+    static
+    {
+        DEFAULT_LANE_TYPES.put(ERoadType.UNKNOWN, DefaultsRoadNl.ONE_WAY_LANE);
+        DEFAULT_LANE_TYPES.put(ERoadType.RURAL, DefaultsRoadNl.RURAL_ROAD);
+        DEFAULT_LANE_TYPES.put(ERoadType.MOTORWAY, DefaultsRoadNl.HIGHWAY);
+        DEFAULT_LANE_TYPES.put(ERoadType.TOWN, DefaultsRoadNl.URBAN_ROAD);
+        DEFAULT_LANE_TYPES.put(ERoadType.LOW_SPEED, DefaultsRoadNl.RESIDENTIAL_ROAD);
+        DEFAULT_LANE_TYPES.put(ERoadType.PEDESTRIAN, DefaultsRoadNl.FOOTPATH);
+        DEFAULT_LANE_TYPES.put(ERoadType.BICYCLE, DefaultsRoadNl.MOPED_PATH);
+        DEFAULT_LANE_TYPES.put(ERoadType.TOWN_EXPRESSWAY, DefaultsRoadNl.FREEWAY);
+        DEFAULT_LANE_TYPES.put(ERoadType.TOWN_COLLECTOR, DefaultsRoadNl.URBAN_ROAD);
+        DEFAULT_LANE_TYPES.put(ERoadType.TOWN_ARTERIAL, DefaultsRoadNl.URBAN_ROAD);
+        DEFAULT_LANE_TYPES.put(ERoadType.TOWN_PRIVATE, DefaultsRoadNl.URBAN_ROAD);
+        DEFAULT_LANE_TYPES.put(ERoadType.TOWN_LOCAL, DefaultsRoadNl.URBAN_ROAD);
+        DEFAULT_LANE_TYPES.put(ERoadType.TOWN_PLAY_STREET, DefaultsRoadNl.RESIDENTIAL_ROAD);
+    };
+
+    /** Link type function from country code and OpenDRIVE road type to link type. */
+    private BiFunction<String, ERoadType, LinkType> linkTypeFunction =
+            (countryCode, roadType) -> DEFAULT_LINK_TYPES.get(roadType);
+
+    /** Lane type function from country code, OpenDRIVE road type and OpenDRIVE lane type to OTS lane type. */
+    private LaneTypeFunction laneTypeFunction = (countryCode, roadType, laneType) ->
+    {
+        if (SHOULDER_TYPES.contains(laneType))
+        {
+            return Optional.of(SHOULDER);
+        }
+        else if (LANE_TYPES.contains(laneType))
+        {
+            return Optional.ofNullable(DEFAULT_LANE_TYPES.get(roadType));
+        }
+        return Optional.empty();
+    };
+
+    /** Cached lane types that follow naming convention like FREEWAY_DENY_BUS. */
+    private Map<String, LaneType> restrictedLaneTypeMap = new LinkedHashMap<>();
+
+    /** Return what lane types are shoulders function. */
+    private Function<ELaneType, Boolean> isShoulderFunction = (laneType) -> SHOULDER_TYPES.contains(laneType);
+
+    /** Access restriction function. */
+    private Function<EAccessRestrictionType, GtuType> accessRestrictionFunction;
 
     /** Node id generator. */
     private final AlphabeticIdGenerator nodeIdGenerator = new AlphabeticIdGenerator("Node");
@@ -212,6 +281,7 @@ public final class OpenDriveParser
      * @param useRoadName whether to use the road name to identify origins and destinations
      * @return parser for method chaining
      */
+    @SuppressWarnings("hiddenfield")
     public OpenDriveParser setUseRoadName(final boolean useRoadName)
     {
         this.useRoadName = useRoadName;
@@ -219,7 +289,57 @@ public final class OpenDriveParser
     }
 
     /**
-     * Parse OpenDrive XML (.xodr) input file and build OpenDRIVE object.
+     * Sets the link type function.
+     * @param linkTypeFunction produces link types for country code and OpenDRIVE link types.
+     * @return parser for method chaining
+     */
+    @SuppressWarnings("hiddenfield")
+    public OpenDriveParser setLinkTypeFunction(final BiFunction<String, ERoadType, LinkType> linkTypeFunction)
+    {
+        this.linkTypeFunction = linkTypeFunction;
+        return this;
+    }
+
+    /**
+     * Sets the lane type function.
+     * @param laneTypeFunction produces the lane types for country code, OpenDRIVE link type and OpenDRIVE lane type. Should
+     *            return {@code Optional.ofNullable(null)} to indicate a non-supported and non-explicitly ignored lane type.
+     * @return parser for method chaining
+     */
+    @SuppressWarnings("hiddenfield")
+    public OpenDriveParser setLaneTypeFunction(final LaneTypeFunction laneTypeFunction)
+    {
+        this.laneTypeFunction = laneTypeFunction;
+        return this;
+    }
+
+    /**
+     * Sets the function that returns what lane types are shoulders.
+     * @param isShoulderFunction function that returns what lane types are shoulders
+     * @return parser for method chaining
+     */
+    @SuppressWarnings("hiddenfield")
+    public OpenDriveParser setIsShoulderFunction(final Function<ELaneType, Boolean> isShoulderFunction)
+    {
+        this.isShoulderFunction = isShoulderFunction;
+        return this;
+    }
+
+    /**
+     * Set access restriction function.
+     * @param accessRestrictionFunction produces GTU type for OpenDRIVE access restriction.
+     * @return parser for method chaining
+     */
+    @SuppressWarnings("hiddenfield")
+    public OpenDriveParser setAccessRestrictionFunction(
+            final Function<EAccessRestrictionType, GtuType> accessRestrictionFunction)
+    {
+        this.accessRestrictionFunction = accessRestrictionFunction;
+        return this;
+    }
+
+    /**
+     * Parse OpenDrive XML (.XODR) input file and build OpenDRIVE object.
      * @param filename file name, including path.
      * @return parser
      * @throws MalformedURLException if the file cannot be made in to a URL
@@ -235,8 +355,8 @@ public final class OpenDriveParser
     }
 
     /**
-     * Parse OpenDrive XML (.xodr) string and build OpenDRIVE object using UTF-8 character encoding.
-     * @param string the xml string
+     * Parse OpenDrive XML (.XODR) string and build OpenDRIVE object using UTF-8 character encoding.
+     * @param string the XML string
      * @return parser
      * @throws JAXBException when the parsing fails
      * @throws ParserConfigurationException on error with parser configuration
@@ -249,8 +369,8 @@ public final class OpenDriveParser
     }
 
     /**
-     * Parse OpenDrive XML (.xodr) string and build OpenDRIVE object.
-     * @param string the xml string
+     * Parse OpenDrive XML (.XODR) string and build OpenDRIVE object.
+     * @param string the XML string
      * @param charset character set
      * @return parser
      * @throws JAXBException when the parsing fails
@@ -264,8 +384,8 @@ public final class OpenDriveParser
     }
 
     /**
-     * Parse OpenDrive XML (.xodr) input stream and build OpenDRIVE object.
-     * @param xmlStream the xml stream
+     * Parse OpenDrive XML (.XODR) input stream and build OpenDRIVE object.
+     * @param xmlStream the XML stream
      * @return Open Drive tag
      * @throws JAXBException when the parsing fails
      * @throws ParserConfigurationException on error with parser configuration
@@ -292,7 +412,7 @@ public final class OpenDriveParser
     }
 
     /**
-     * This class adds name space to elements, so .xodr that do not include the name space can still be parsed.
+     * This class adds name space to elements, so .XODR that do not include the name space can still be parsed.
      */
     private static class XmlNamespaceFilter extends XMLFilterImpl
     {
@@ -321,19 +441,6 @@ public final class OpenDriveParser
      */
     public void build(final RoadNetwork network) throws NetworkException
     {
-        build(network, (roadType) -> LINK_TYPES
-                .get((roadType.contains(".") ? roadType.substring(roadType.indexOf(".") + 1) : roadType).toUpperCase()));
-    }
-
-    /**
-     * Build network.
-     * @param network network
-     * @param linkTypeFunction produces link types for OpenDRIVE link types. String contains country code if provided, e.g.
-     *            DE.RURAL.
-     * @throws NetworkException network exception
-     */
-    public void build(final RoadNetwork network, final Function<String, LinkType> linkTypeFunction) throws NetworkException
-    {
         this.net = network;
         this.roadMap.clear();
         this.junctionMap.clear();
@@ -341,7 +448,7 @@ public final class OpenDriveParser
         this.openDrive.getRoad().forEach((road) -> this.roadMap.put(road.getId(), road));
         this.openDrive.getJunction().forEach((junction) -> this.junctionMap.put(junction.getId(), junction));
 
-        buildNetwork(linkTypeFunction);
+        buildNetwork();
     }
 
     /**
@@ -389,10 +496,9 @@ public final class OpenDriveParser
 
     /**
      * Build the nodes, links and lanes in the network.
-     * @param linkTypeFunction produces link types for OpenDRIVE link types
      * @throws NetworkException on network exception
      */
-    private void buildNetwork(final Function<String, LinkType> linkTypeFunction) throws NetworkException
+    private void buildNetwork() throws NetworkException
     {
         for (Entry<String, TRoad> roadEntry : this.roadMap.entrySet())
         {
@@ -470,10 +576,10 @@ public final class OpenDriveParser
                     sEndLaneSection = road.getLength().si;
                 }
                 TRoadType roadType = roadTypes.floorEntry(sFrom).getValue();
-                String roadTypeId = roadType.getCountry() == null ? roadType.getType().name()
-                        : roadType.getCountry() + "." + roadType.getType().name();
-                LinkType linkType = linkTypeFunction.apply(roadTypeId);
-                Speed roadSpeed = roadType.getSpeed() == null ? null
+                LinkType linkType = this.linkTypeFunction.apply(roadType.getCountry(), roadType.getType());
+                Throw.when(linkType == null, NetworkException.class, "No link type defined for road type {} on country {}.",
+                        roadType.getType().name(), roadType.getCountry());
+                Speed roadTypeSpeed = roadType.getSpeed() == null ? null
                         : getSpeed(roadType.getSpeed().getMax(), roadType.getSpeed().getUnit());
 
                 // subtract geometry from road
@@ -498,8 +604,8 @@ public final class OpenDriveParser
                         last ? roadDesignLine.getEndPoint().dirZ : endPointForward.dirZ);
 
                 // make link and the lanes and stripes on it
-                LinkData linkData = new LinkData(road, id, linkType, roadTypeId, roadSpeed, roadOffset, linkDesignLine, sFrom,
-                        sTo, sEndLaneSection, laneSection);
+                LinkData linkData = new LinkData(road, id, linkType, roadType.getCountry(), roadType.getType(), roadTypeSpeed,
+                        roadOffset, linkDesignLine, sFrom, sTo, sEndLaneSection, laneSection);
                 if (forward)
                 {
                     endNodeForward = makeLink(linkData, startNodeForward, endPointForward, true);
@@ -608,11 +714,9 @@ public final class OpenDriveParser
         // lanes
         for (TRoadLanesLaneSectionLrLane lane : lanes)
         {
-            String id = forward ? ((TRoadLanesLaneSectionRightLane) lane).getId().toString()
-                    : ((TRoadLanesLaneSectionLeftLane) lane).getId().toString();
             ContinuousPiecewiseLinearFunction nextEdgeOffset = getEdgeOffset(lane.getBorderOrWidth(), linkData.sFrom,
                     linkData.sTo, linkData.laneSection.getS(), linkData.sEndLaneSection, prevEdgeOffset, offsetSign);
-            PolyLine2d nextEdge = makeLane(lane, id, link, linkData, prevEdgeOffset, prevEdge, nextEdgeOffset, forward);
+            PolyLine2d nextEdge = makeLane(lane, link, linkData, prevEdgeOffset, prevEdge, nextEdgeOffset, forward);
 
             TRoadLanesLaneSectionLcrLaneRoadMark mark =
                     getLaneProperty(linkData.laneSection, lane, linkData.sFrom, lane.getRoadMark(), (rm) -> rm.getSOffset());
@@ -621,6 +725,44 @@ public final class OpenDriveParser
             prevEdgeOffset = nextEdgeOffset;
             prevEdge = nextEdge;
         }
+
+        // TODO OTS can better support signs, including "end of speed limit" signs
+        // TODO how to apply speed signs in speed limit prospect -> repeat each link until merge?
+
+        // signals
+        // TRoadSignals signals = linkData.road.getSignals();
+        // List<TRoadSignalsSignal> sign = signals.getSignal();
+        // sign.get(0).getCountry(); // DE
+        // sign.get(0).getType(); // 274
+        // sign.get(0).getCountryRevision(); // 2013
+        // sign.get(0).getSubtype(); // 3
+        // sign.get(0).getValue(); // 120
+        // sign.get(0).getUnit(); // km/h
+        // sign.get(0).getS();
+        // sign.get(0).getOrientation(); // "+", "-" or "none" (=both...!!!)
+
+        // Default: all lanes, otherwise possibly multiple ranges
+        // List<TRoadObjectsObjectLaneValidity> val = sign.get(0).getValidity();
+        // val.get(0).getFromLane();
+        // val.get(0).getToLane();
+
+        // signal references -> become signals based on copied information from referenced signal
+        // List<TRoadSignalsSignalReference> refs = signals.getSignalReference();
+        // refs.get(0).getS();
+        // refs.get(0).getOrientation();
+        // List<TRoadObjectsObjectLaneValidity> vals = refs.get(0).getValidity();
+        // refs.get(0).getId(); // refers to signal id in database -> country, type, country revision, subtype, value, unit
+
+        // Dependencies are application specific
+        // List<TRoadSignalsSignalDependency> deps = sign.get(0).getDependency();
+        // deps.get(0).getId(); // String, ID of the controlled signal
+        // deps.get(0).getType(); // String, type of the dependency, free text, depending on application
+
+        // List<TRoadSignalsSignalReference2> refs2 = sign.get(0).getReference();
+        // refs2.get(0).getElementId(); // ID of the controlled signal ... or object I suppose????
+        // refs2.get(0).getElementType(); // ERoadSignalsSignalReferenceElementType, OBJECT or SIGNAL
+        // refs2.get(0).getType(); // String, type of the dependency, free text, depending on application
+
         return endNode;
     }
 
@@ -629,8 +771,9 @@ public final class OpenDriveParser
      * @param road road tag
      * @param id link id supplier
      * @param linkType link type
-     * @param roadTypeId e.g. DE.URBAN or MOTORWAY
-     * @param roadSpeed speed on road
+     * @param countryCode country code
+     * @param roadType road type
+     * @param roadTypeSpeed speed on road type
      * @param roadOffset offset on road level
      * @param linkDesignLine design line of the link
      * @param sFrom link from distance on road
@@ -638,16 +781,15 @@ public final class OpenDriveParser
      * @param sEndLaneSection fraction on road where the lane section stops (can be &gt; sTo due to other discontinuities)
      * @param laneSection lane section on road
      */
-    private record LinkData(TRoad road, Supplier<String> id, LinkType linkType, String roadTypeId, Speed roadSpeed,
-            ContinuousPiecewiseLinearFunction roadOffset, OffsetCurve2d linkDesignLine, double sFrom, Double sTo,
-            double sEndLaneSection, TRoadLanesLaneSection laneSection)
+    private record LinkData(TRoad road, Supplier<String> id, LinkType linkType, String countryCode, ERoadType roadType,
+            Speed roadTypeSpeed, ContinuousPiecewiseLinearFunction roadOffset, OffsetCurve2d linkDesignLine, double sFrom,
+            Double sTo, double sEndLaneSection, TRoadLanesLaneSection laneSection)
     {
     }
 
     /**
      * Creates a lane, or shoulder, based on a lane tag.
      * @param lane lane tag
-     * @param id lane id
      * @param link link
      * @param linkData link data
      * @param prevEdgeOffset offsets of previous edge
@@ -657,10 +799,12 @@ public final class OpenDriveParser
      * @return next edge
      * @throws NetworkException when no cross-section slice is defined
      */
-    private static PolyLine2d makeLane(final TRoadLanesLaneSectionLrLane lane, final String id, final CrossSectionLink link,
-            final LinkData linkData, final ContinuousPiecewiseLinearFunction prevEdgeOffset, final PolyLine2d prevEdge,
+    private PolyLine2d makeLane(final TRoadLanesLaneSectionLrLane lane, final CrossSectionLink link, final LinkData linkData,
+            final ContinuousPiecewiseLinearFunction prevEdgeOffset, final PolyLine2d prevEdge,
             final ContinuousPiecewiseLinearFunction nextEdgeOffset, final boolean forward) throws NetworkException
     {
+        String id = forward ? ((TRoadLanesLaneSectionRightLane) lane).getId().toString()
+                : ((TRoadLanesLaneSectionLeftLane) lane).getId().toString();
         if (Math.abs(prevEdgeOffset.get(0.0) - nextEdgeOffset.get(0.0)) < MAX_DEVIATION
                 && Math.abs(prevEdgeOffset.get(0.5) - nextEdgeOffset.get(0.5)) < MAX_DEVIATION
                 && Math.abs(prevEdgeOffset.get(1.0) - nextEdgeOffset.get(1.0)) < MAX_DEVIATION)
@@ -669,39 +813,100 @@ public final class OpenDriveParser
             return prevEdge;
         }
 
-        // TODO lane type and speed map
-        TRoadLanesLaneSectionLrLaneAccess access =
-                getLaneProperty(linkData.laneSection, lane, linkData.sFrom, lane.getAccess(), (ac) -> ac.getSOffset());
-        TRoadLanesLaneSectionLrLaneSpeed speed =
-                getLaneProperty(linkData.laneSection, lane, linkData.sFrom, lane.getSpeed(), (sp) -> sp.getSOffset());
-
-        ELaneType laneType = lane.getType();
-        String roadTypeId = linkData.roadTypeId(); // ERoadType with possible country before it
-
-        Map<GtuType, Speed> laneSpeeds = speed == null ? Collections.emptyMap()
-                : Map.of(DefaultsNl.ROAD_USER, new Speed(speed.getMax(), speed.getUnit()));
-        Speed roadSpeed = linkData.roadSpeed;
-
-        PolyLine2d nextEdge = id.startsWith("-") ? linkData.linkDesignLine.toPolyLine(OFFSET_FLATTENER, nextEdgeOffset)
-                : linkData.linkDesignLine.toPolyLine(OFFSET_FLATTENER, nextEdgeOffset).reverse(); // negative id's are forward
-        if (LANE_TYPES.contains(lane.getType()))
+        Optional<LaneType> laneTypeOpt = this.laneTypeFunction.apply(linkData.countryCode, linkData.roadType, lane.getType());
+        if (!laneTypeOpt.isEmpty())
         {
+            LaneType laneType = laneTypeOpt.get();
+            Throw.when(laneType == null, NetworkException.class,
+                    "No lane type defined for country {}, road type {}, lane type {}.", linkData.countryCode, linkData.roadType,
+                    lane.getType());
+            TRoadLanesLaneSectionLrLaneAccess access =
+                    getLaneProperty(linkData.laneSection, lane, linkData.sFrom, lane.getAccess(), (ac) -> ac.getSOffset());
+            laneType = parseLaneAccess(linkData.countryCode, linkData.roadType, laneType, access);
             CrossSectionGeometry geometry =
                     getCrossSectionGeometry(linkData.linkDesignLine, prevEdgeOffset, nextEdgeOffset, forward);
-            if (SHOULDER_TYPES.contains(lane.getType()))
+            if (this.isShoulderFunction.apply(lane.getType()))
             {
-                // Shoulder(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry, final LaneType
-                // laneType)
-                new Shoulder(link, id, geometry, SHOULDER);
+                new Shoulder(link, id, geometry, laneType);
             }
             else
             {
-                // TODO Use mapper from linkData.roadTypeId & lane.getType() to lane type
-                // TODO In case of restriction, create child lane type following standard name addition: FREEWAY_DENY_BUS
-                new Lane(link, id, geometry, DefaultsRoadNl.FREEWAY, laneSpeeds);
+                // TODO speed signs
+                // precedence: speed signs > lane speed > road type speed
+                Speed speedLimit;
+                TRoadLanesLaneSectionLrLaneSpeed laneSpeed =
+                        getLaneProperty(linkData.laneSection, lane, linkData.sFrom, lane.getSpeed(), (sp) -> sp.getSOffset());
+                if (laneSpeed != null)
+                {
+                    speedLimit = new Speed(laneSpeed.getMax(), laneSpeed.getUnit());
+                }
+                else
+                {
+                    speedLimit = linkData.roadTypeSpeed;
+                }
+                if (speedLimit == null)
+                {
+                    Logger.ots().info("No speed limit on lane {} on link {} for road type {}", id, link.getId(),
+                            linkData.roadType);
+                }
+                Map<GtuType, Speed> laneSpeeds =
+                        speedLimit == null ? Collections.emptyMap() : Map.of(DefaultsNl.ROAD_USER, speedLimit);
+                new Lane(link, id, geometry, laneType, laneSpeeds);
             }
         }
+
+        PolyLine2d nextEdge = id.startsWith("-") ? linkData.linkDesignLine.toPolyLine(OFFSET_FLATTENER, nextEdgeOffset)
+                : linkData.linkDesignLine.toPolyLine(OFFSET_FLATTENER, nextEdgeOffset).reverse(); // negative id's are forward
         return nextEdge;
+    }
+
+    /**
+     * Return lane type that includes access restriction.
+     * @param countryCode country code
+     * @param roadType road type
+     * @param laneType base lane type
+     * @param access access restriction
+     * @return lane type that includes access restriction
+     */
+    private LaneType parseLaneAccess(final String countryCode, final ERoadType roadType, final LaneType laneType,
+            final TRoadLanesLaneSectionLrLaneAccess access)
+    {
+        LaneType out = laneType;
+        if (access != null)
+        {
+            boolean allow = access.getRule().equals(ERoadLanesLaneSectionLrLaneAccessRule.ALLOW);
+            if (access.getRestriction().equals(EAccessRestrictionType.NONE))
+            {
+                if (!allow)
+                {
+                    Logger.ots().info("Ignoring access restriction 'not allowing NONE' as this is nonsensical.");
+                }
+                else
+                {
+                    out = ALLOW_ALL_LANE_TYPE;
+                }
+            }
+            else
+            {
+                GtuType accessGtuType = this.accessRestrictionFunction.apply(access.getRestriction());
+                String laneTypeId = (countryCode == null ? "" : countryCode + ".") + roadType.name().toUpperCase()
+                        + (allow ? "_ALLOW_" : "_DENY_" + accessGtuType.getId());
+                out = this.restrictedLaneTypeMap.computeIfAbsent(laneTypeId, (id) ->
+                {
+                    LaneType restrictedType = new LaneType(id, laneType);
+                    if (allow)
+                    {
+                        restrictedType.addCompatibleGtuType(accessGtuType);
+                    }
+                    else
+                    {
+                        restrictedType.addIncompatibleGtuType(accessGtuType);
+                    }
+                    return restrictedType;
+                });
+            }
+        }
+        return out;
     }
 
     /**
@@ -1285,21 +1490,6 @@ public final class OpenDriveParser
     }
 
     /**
-     * Record of a connection. A connection is defined as:
-     * <ul>
-     * <li>On a junction it is always the connecting point of the other road.</li>
-     * <li>If both end-points are START or END, it is defined by the road with lower id.</li>
-     * <li>Else it is defined by the road with START end-point.</li>
-     * </ul>
-     * @param id road id
-     * @param contactPoint contact point on road
-     * @param forward whether the direction is in the design line direction, or opposite
-     */
-    private record Connection(String id, EContactPoint contactPoint, boolean forward)
-    {
-    }
-
-    /**
      * Return connection between two links. A connection is defined as:
      * <ul>
      * <li>On a junction it is always the connecting point of the other road.</li>
@@ -1329,6 +1519,37 @@ public final class OpenDriveParser
                 || (!forward && ((start && other.getContactPoint().equals(EContactPoint.START))
                         || (!start && other.getContactPoint().equals(EContactPoint.END))));
         return new Connection(other.getElementId(), other.getContactPoint(), forwardOnOtherRoad);
+    }
+
+    /**
+     * Record of a connection. A connection is defined as:
+     * <ul>
+     * <li>On a junction it is always the connecting point of the other road.</li>
+     * <li>If both end-points are START or END, it is defined by the road with lower id.</li>
+     * <li>Else it is defined by the road with START end-point.</li>
+     * </ul>
+     * @param id road id
+     * @param contactPoint contact point on road
+     * @param forward whether the direction is in the design line direction, or opposite
+     */
+    private record Connection(String id, EContactPoint contactPoint, boolean forward)
+    {
+    }
+
+    /**
+     * Function for lane types.
+     */
+    @FunctionalInterface
+    public interface LaneTypeFunction
+    {
+        /**
+         * Return lane type for input.
+         * @param countryCode country code of road
+         * @param roadType road type
+         * @param laneType lane type
+         * @return lane type, empty if explicitly not supported, containing {@code null} if exception should be thrown
+         */
+        Optional<LaneType> apply(String countryCode, ERoadType roadType, ELaneType laneType);
     }
 
 }
