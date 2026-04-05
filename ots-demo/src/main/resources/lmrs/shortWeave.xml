@@ -35,7 +35,7 @@
       <ots:LinkType Id="HIGHWAY">
         <ots:Compatibility GtuType="NL.VEHICLE" />
         <ots:SpeedLimit>120km/h</ots:SpeedLimit>
-        <ots:GtuTypeSpeedLimit Id="TRUCK">80km/h</ots:GtuTypeSpeedLimit>
+        <ots:GtuTypeSpeedLimit Id="NL.TRUCK">80km/h</ots:GtuTypeSpeedLimit>
       </ots:LinkType>
       <ots:LinkType Id="LOCAL">
         <ots:Compatibility GtuType="NL.VEHICLE" />
