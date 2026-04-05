@@ -5,6 +5,7 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.tactical.util.SpeedLimitUtil;
 
 /**
  * GTU representation in road sampler.
@@ -35,19 +36,19 @@ public class GtuDataRoad implements GtuData
      * Get GTU.
      * @return GTU.
      */
-    public final LaneBasedGtu getGtu()
+    public LaneBasedGtu getGtu()
     {
         return this.gtu;
     }
 
     @Override
-    public final String getId()
+    public String getId()
     {
         return this.gtu.getId();
     }
 
     @Override
-    public final String getOriginId()
+    public String getOriginId()
     {
         try
         {
@@ -60,7 +61,7 @@ public class GtuDataRoad implements GtuData
     }
 
     @Override
-    public final String getDestinationId()
+    public String getDestinationId()
     {
         try
         {
@@ -73,35 +74,27 @@ public class GtuDataRoad implements GtuData
     }
 
     @Override
-    public final String getGtuTypeId()
+    public String getGtuTypeId()
     {
         return this.gtu.getType().getId();
     }
 
     @Override
-    public final String getRouteId()
+    public String getRouteId()
     {
         return this.gtu.getStrategicalPlanner().getRoute()
                 .orElseThrow(() -> new OtsRuntimeException("Could not get id of route.")).getId();
     }
 
     @Override
-    public final Speed getReferenceSpeed()
+    public Speed getReferenceSpeed()
     {
-        try
-        {
-            double v1 = this.gtu.getPosition().lane().getSpeedLimit(this.gtu.getType()).si;
-            double v2 = this.gtu.getMaximumSpeed().si;
-            return Speed.ofSI(v1 < v2 ? v1 : v2);
-        }
-        catch (NetworkException exception)
-        {
-            throw new OtsRuntimeException("Could not obtain reference speed from GTU " + this.gtu, exception);
-        }
+        return SpeedLimitUtil.getDesiredSpeedProxy(this.gtu.getPosition().lane().getSpeedLimits(this.gtu.getType()),
+                this.gtu.getMaximumSpeed());
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "GtuData [gtu=" + this.gtu + "]";
     }

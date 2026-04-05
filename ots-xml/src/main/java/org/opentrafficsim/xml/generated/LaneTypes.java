@@ -40,7 +40,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
     private static final long serialVersionUID = 10102L;
     @XmlElement(name = "LaneType")
-    protected List<LaneType> laneType;
+    protected List<SpeedLimitInfraType> laneType;
 
     /**
      * Gets the value of the laneType property.
@@ -60,14 +60,14 @@ import jakarta.xml.bind.annotation.XmlType;
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link LaneType }
+     * {@link SpeedLimitInfraType }
      * </p>
      * 
      * 
      * @return
      *     The value of the laneType property.
      */
-    public List<LaneType> getLaneType() {
+    public List<SpeedLimitInfraType> getLaneType() {
         if (laneType == null) {
             laneType = new ArrayList<>();
         }

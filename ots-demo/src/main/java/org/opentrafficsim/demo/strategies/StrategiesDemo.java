@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
@@ -73,12 +74,14 @@ import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel.DemoPanelPosition;
 import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import picocli.CommandLine.Option;
@@ -522,18 +525,19 @@ public class StrategiesDemo extends AbstractSimulationScript
         this.carMid = car.getLength().times(0.5).minus(car.getFront());
 
         double radius = 150;
-        Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
+        LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR),
+                Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
         Node nodeA = new Node(network, "A", new Point2d(-radius, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
         Node nodeB = new Node(network, "B", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
         OffsetCurve2d half1 = new Arc2d(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Math.PI);
-        List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
-                DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
-                        .addLanes(DefaultsRoadNl.DASHED).getLanes();
+        List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT, half1)
+                .leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimits).addLanes(DefaultsRoadNl.DASHED)
+                .getLanes();
         OffsetCurve2d half2 = new Arc2d(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Math.PI);
-        List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
-                DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
-                        .addLanes(DefaultsRoadNl.DASHED).getLanes();
+        List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT, half2)
+                .leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimits).addLanes(DefaultsRoadNl.DASHED)
+                .getLanes();
 
         LmrsFactory<Lmrs> lmrsFactory = new LmrsFactory<>(Lmrs::new).set(Setting.SOCIO_TAILGATING, true)
                 .set(Setting.SOCIO_LANE_CHANGE, true).set(Setting.SOCIO_SPEED, true)
@@ -545,6 +549,8 @@ public class StrategiesDemo extends AbstractSimulationScript
         lmrsFactory.addParameter(ParameterTypes.TMAX, Duration.ofSI(1.6));
         lmrsFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.A, Acceleration.ofSI(0.4));
         lmrsFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.FSPEED, 1.0);
+        lmrsFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.FSPEED_GTU,
+                new DistNormal(this.stream, 85.0 / 80.0, 2.5 / 80.0));
         this.factory = new LaneBasedStrategicalRoutePlannerFactory(lmrsFactory, lmrsFactory);
 
         for (int i = 0; i < lanes1.size(); i++)

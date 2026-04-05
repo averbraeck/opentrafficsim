@@ -19,9 +19,10 @@ import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.GtuTypeAssumptions;
 import org.opentrafficsim.road.gtu.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+import org.opentrafficsim.road.network.speed.SpeedLimit;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Interface for perceived surrounding GTU's, adding signals, maneuver and behavioral information.
@@ -84,9 +85,15 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
     }
 
     @Override
-    default SpeedLimitInfo getSpeedLimitInfo()
+    default SpeedLimits getSpeedLimits()
     {
-        return getBehavior().getSpeedLimitInfo();
+        return getBehavior().getSpeedLimits();
+    }
+
+    @Override
+    default Speed getMaximumSpeed()
+    {
+        return getBehavior().getMaximumSpeed();
     }
 
     @Override
@@ -348,17 +355,16 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
         Parameters getParameters();
 
         /**
-         * Many models that observe a GTU need to predict the imminent behavior of that GTU. Having a model of the speed info
-         * profile for the observed GTU can help with predicting its future behavior. The speed limit info that is returned can
-         * be on a continuum between the actual speed limit model of the observed GTU and the own speed limit model of the
-         * observing GTU, not making any assumptions about the observed GTU. When successive observations of the GTU take place,
-         * parameters about its behavior, such as the maximum speed it accepts, can be estimated more accurately. Another
-         * interesting easy-to-implement solution is to return a speed limit info object per GTU type, where the returned
-         * information of a truck -- with a maximum allowed speed on 80 km/h -- can differ from that of a car -- which can have
-         * a maximum allowed speed of 100 km/h on the same road.
+         * Returns a speed limit model that helps in determining the expected behavior of the observed GTU.
          * @return a speed limit model that helps in determining the expected behavior of the observed GTU
          */
-        SpeedLimitInfo getSpeedLimitInfo();
+        SpeedLimits getSpeedLimits();
+
+        /**
+         * Returns the maximum speed.
+         * @return maximum speed
+         */
+        Speed getMaximumSpeed();
 
         /**
          * Returns the perceived desired speed of the neighbor.
@@ -463,8 +469,8 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
             CarFollowingModel carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
             return new Behavior()
             {
-                /** Speed limit info. */
-                private SpeedLimitInfo speedLimitInfo;
+                /** Speed limits. */
+                private SpeedLimits speedLimits;
 
                 /** Desired speed. */
                 private Speed desiredSpeed;
@@ -483,19 +489,24 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
                 }
 
                 @Override
-                public SpeedLimitInfo getSpeedLimitInfo()
+                public SpeedLimits getSpeedLimits()
                 {
-                    if (this.speedLimitInfo == null)
+                    if (this.speedLimits == null)
                     {
-                        this.speedLimitInfo = new SpeedLimitInfo();
-                        this.speedLimitInfo.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, gtu.getMaximumSpeed());
-                        this.speedLimitInfo.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
-                                gtuTypeAssumptions == null
-                                        ? Try.assign(() -> gtu.getLane().getSpeedLimit(gtu.getType()),
-                                                "Unable to obtain speed limit for GTU on lane where it is at.")
-                                        : gtuTypeAssumptions.getLaneTypeMaxSpeed(gtu.getType(), gtu.getLane().getType()));
+                        this.speedLimits = gtuTypeAssumptions == null
+                                ? Try.assign(() -> gtu.getLane().getSpeedLimits(gtu.getType()),
+                                        "Unable to obtain speed limit for GTU on lane where it is at.")
+                                : new SpeedLimits(new SpeedLimit(
+                                        gtuTypeAssumptions.getLaneTypeMaxSpeed(gtu.getType(), gtu.getLane().getType()), false),
+                                        null);
                     }
-                    return this.speedLimitInfo;
+                    return this.speedLimits;
+                }
+
+                @Override
+                public Speed getMaximumSpeed()
+                {
+                    return gtu.getMaximumSpeed();
                 }
 
                 @Override
@@ -505,12 +516,12 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
                     {
                         try
                         {
-                            this.desiredSpeed = getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimitInfo());
+                            this.desiredSpeed =
+                                    getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimits(), getMaximumSpeed());
                         }
                         catch (ParameterException ex)
                         {
-                            this.desiredSpeed = Try.assign(() -> gtu.getLane().getSpeedLimit(gtu.getType()),
-                                    "Unable to obtain speed limit for GTU on lane where it is at.");
+                            this.desiredSpeed = SpeedLimitUtil.getDesiredSpeedProxy(getSpeedLimits(), getMaximumSpeed());
                         }
                     }
                     return this.desiredSpeed;

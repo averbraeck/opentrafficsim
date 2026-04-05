@@ -8,7 +8,6 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -93,7 +92,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
+                simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsSimulationPanel simulationPanel =
                         new OtsSimulationPanel(otsModel.getNetwork(), new OtsSimulationPanelDecorator()

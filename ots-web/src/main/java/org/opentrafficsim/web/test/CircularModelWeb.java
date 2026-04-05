@@ -3,7 +3,6 @@ package org.opentrafficsim.web.test;
 import java.util.Collections;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -51,7 +50,7 @@ public class CircularModelWeb extends OtsWebServer
         CircularRoadModel model = new CircularRoadModel(simulator);
         if (TabbedParameterDialog.process(model.getInputParameterMap()))
         {
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
+            simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
                     HistoryManagerDevs.noHistory(simulator));
             new CircularModelWeb("Circular Road", simulator, model);
         }

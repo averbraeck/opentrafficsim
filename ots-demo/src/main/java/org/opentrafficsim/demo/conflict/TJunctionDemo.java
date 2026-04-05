@@ -1,13 +1,21 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
+import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DsolException;
@@ -56,7 +64,17 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
         {
             OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
-            OtsSimulationPanel simulationPanel = new OtsSimulationPanel(junctionModel.getNetwork());
+            OtsSimulationPanel simulationPanel =
+                    new OtsSimulationPanel(junctionModel.getNetwork(), new OtsSimulationPanelDecorator()
+                    {
+                        @Override
+                        public List<Colorer<? super Gtu>> getGtuColorers()
+                        {
+                            List<Colorer<? super Gtu>> colorers = new ArrayList<>(DEFAULT_GTU_COLORERS);
+                            colorers.set(colorers.size() - 2, new SpeedGtuColorer(new Speed(60.0, SpeedUnit.KM_PER_HOUR)));
+                            return colorers;
+                        }
+                    });
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", simulationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             simulationPanel.enableSimulationControlButtons();

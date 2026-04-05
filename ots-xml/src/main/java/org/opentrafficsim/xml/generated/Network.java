@@ -26,6 +26,24 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
+ *         <choice maxOccurs="unbounded" minOccurs="0">
+ *           <element ref="{http://www.opentrafficsim.org/ots}Node" minOccurs="0"/>
+ *           <element ref="{http://www.opentrafficsim.org/ots}Link" minOccurs="0"/>
+ *           <element ref="{http://www.opentrafficsim.org/ots}Centroid" minOccurs="0"/>
+ *           <element ref="{http://www.opentrafficsim.org/ots}Connector" minOccurs="0"/>
+ *           <element ref="{http://www.w3.org/2001/XInclude}include" minOccurs="0"/>
+ *         </choice>
+ *         <element name="GtuTypeSpeedLimits" minOccurs="0">
+ *           <complexType>
+ *             <complexContent>
+ *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 <sequence>
+ *                   <element ref="{http://www.opentrafficsim.org/ots}GtuTypeSpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
+ *                 </sequence>
+ *               </restriction>
+ *             </complexContent>
+ *           </complexType>
+ *         </element>
  *         <element name="Conflicts" minOccurs="0">
  *           <complexType>
  *             <complexContent>
@@ -41,13 +59,6 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
  *           </complexType>
  *         </element>
  *         <element name="Flattener" type="{http://www.opentrafficsim.org/ots}FlattenerType" minOccurs="0"/>
- *         <choice maxOccurs="unbounded" minOccurs="0">
- *           <element ref="{http://www.opentrafficsim.org/ots}Node" minOccurs="0"/>
- *           <element ref="{http://www.opentrafficsim.org/ots}Link" minOccurs="0"/>
- *           <element ref="{http://www.opentrafficsim.org/ots}Centroid" minOccurs="0"/>
- *           <element ref="{http://www.opentrafficsim.org/ots}Connector" minOccurs="0"/>
- *           <element ref="{http://www.w3.org/2001/XInclude}include" minOccurs="0"/>
- *         </choice>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
@@ -58,13 +69,14 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "conflicts",
-    "flattener",
     "node",
     "link",
     "centroid",
     "connector",
-    "include"
+    "include",
+    "gtuTypeSpeedLimits",
+    "conflicts",
+    "flattener"
 })
 @XmlRootElement(name = "Network")
 @SuppressWarnings("all") public class Network
@@ -72,15 +84,6 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
 {
 
     private static final long serialVersionUID = 10102L;
-    /**
-     * Default width is 2m. None creates no conflicts. Relative width is
-     *               relative to lane width. Otherwise specify width.
-     * 
-     */
-    @XmlElement(name = "Conflicts")
-    protected Network.Conflicts conflicts;
-    @XmlElement(name = "Flattener")
-    protected FlattenerType flattener;
     @XmlElement(name = "Node")
     protected List<Node> node;
     @XmlElement(name = "Link")
@@ -91,56 +94,17 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     protected List<Connector> connector;
     @XmlElement(namespace = "http://www.w3.org/2001/XInclude")
     protected List<IncludeType> include;
-
+    @XmlElement(name = "GtuTypeSpeedLimits")
+    protected Network.GtuTypeSpeedLimits gtuTypeSpeedLimits;
     /**
      * Default width is 2m. None creates no conflicts. Relative width is
      *               relative to lane width. Otherwise specify width.
      * 
-     * @return
-     *     possible object is
-     *     {@link Network.Conflicts }
-     *     
      */
-    public Network.Conflicts getConflicts() {
-        return conflicts;
-    }
-
-    /**
-     * Sets the value of the conflicts property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Network.Conflicts }
-     *     
-     * @see #getConflicts()
-     */
-    public void setConflicts(Network.Conflicts value) {
-        this.conflicts = value;
-    }
-
-    /**
-     * Gets the value of the flattener property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FlattenerType }
-     *     
-     */
-    public FlattenerType getFlattener() {
-        return flattener;
-    }
-
-    /**
-     * Sets the value of the flattener property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FlattenerType }
-     *     
-     */
-    public void setFlattener(FlattenerType value) {
-        this.flattener = value;
-    }
+    @XmlElement(name = "Conflicts")
+    protected Network.Conflicts conflicts;
+    @XmlElement(name = "Flattener")
+    protected FlattenerType flattener;
 
     /**
      * Gets the value of the node property.
@@ -302,6 +266,80 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
         return this.include;
     }
 
+    /**
+     * Gets the value of the gtuTypeSpeedLimits property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Network.GtuTypeSpeedLimits }
+     *     
+     */
+    public Network.GtuTypeSpeedLimits getGtuTypeSpeedLimits() {
+        return gtuTypeSpeedLimits;
+    }
+
+    /**
+     * Sets the value of the gtuTypeSpeedLimits property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Network.GtuTypeSpeedLimits }
+     *     
+     */
+    public void setGtuTypeSpeedLimits(Network.GtuTypeSpeedLimits value) {
+        this.gtuTypeSpeedLimits = value;
+    }
+
+    /**
+     * Default width is 2m. None creates no conflicts. Relative width is
+     *               relative to lane width. Otherwise specify width.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Network.Conflicts }
+     *     
+     */
+    public Network.Conflicts getConflicts() {
+        return conflicts;
+    }
+
+    /**
+     * Sets the value of the conflicts property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Network.Conflicts }
+     *     
+     * @see #getConflicts()
+     */
+    public void setConflicts(Network.Conflicts value) {
+        this.conflicts = value;
+    }
+
+    /**
+     * Gets the value of the flattener property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link FlattenerType }
+     *     
+     */
+    public FlattenerType getFlattener() {
+        return flattener;
+    }
+
+    /**
+     * Sets the value of the flattener property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link FlattenerType }
+     *     
+     */
+    public void setFlattener(FlattenerType value) {
+        this.flattener = value;
+    }
+
 
     /**
      * <p>Java class for anonymous complex type</p>.
@@ -442,6 +480,72 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
          */
         public void setRelativeWidth(DoubleType value) {
             this.relativeWidth = value;
+        }
+
+    }
+
+
+    /**
+     * <p>Java class for anonymous complex type</p>.
+     * 
+     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * 
+     * <pre>{@code
+     * <complexType>
+     *   <complexContent>
+     *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       <sequence>
+     *         <element ref="{http://www.opentrafficsim.org/ots}GtuTypeSpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
+     *       </sequence>
+     *     </restriction>
+     *   </complexContent>
+     * </complexType>
+     * }</pre>
+     * 
+     * 
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+        "gtuTypeSpeedLimit"
+    })
+    public static class GtuTypeSpeedLimits
+        implements Serializable
+    {
+
+        private static final long serialVersionUID = 10102L;
+        @XmlElement(name = "GtuTypeSpeedLimit")
+        protected List<GtuTypeSpeedLimit> gtuTypeSpeedLimit;
+
+        /**
+         * Gets the value of the gtuTypeSpeedLimit property.
+         * 
+         * <p>This accessor method returns a reference to the live list,
+         * not a snapshot. Therefore any modification you make to the
+         * returned list will be present inside the JAXB object.
+         * This is why there is not a <CODE>set</CODE> method for the gtuTypeSpeedLimit property.</p>
+         * 
+         * <p>
+         * For example, to add a new item, do as follows:
+         * </p>
+         * <pre>
+         * getGtuTypeSpeedLimit().add(newItem);
+         * </pre>
+         * 
+         * 
+         * <p>
+         * Objects of the following type(s) are allowed in the list
+         * {@link GtuTypeSpeedLimit }
+         * </p>
+         * 
+         * 
+         * @return
+         *     The value of the gtuTypeSpeedLimit property.
+         */
+        public List<GtuTypeSpeedLimit> getGtuTypeSpeedLimit() {
+            if (gtuTypeSpeedLimit == null) {
+                gtuTypeSpeedLimit = new ArrayList<>();
+            }
+            return this.gtuTypeSpeedLimit;
         }
 
     }

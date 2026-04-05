@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.tactical.following;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Desired speed model.
@@ -21,10 +21,11 @@ public interface DesiredSpeedModel
     /**
      * Determines the desired speed.
      * @param parameters parameters
-     * @param speedInfo info regarding the desired speed for car-following
+     * @param speedLimits speed limits
+     * @param maxVehicleSpeed maximum speed of the vehicle
      * @throws ParameterException if parameter exception occurs
      * @return desired speed
      */
-    Speed desiredSpeed(Parameters parameters, SpeedLimitInfo speedInfo) throws ParameterException;
+    Speed desiredSpeed(Parameters parameters, SpeedLimits speedLimits, Speed maxVehicleSpeed) throws ParameterException;
 
 }

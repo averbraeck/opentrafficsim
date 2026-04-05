@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -144,7 +143,7 @@ public final class TestFixedTimeController
 
         String ftcId = "FTCid";
         OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
                 HistoryManagerDevs.noHistory(simulator));
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -297,7 +296,7 @@ public final class TestFixedTimeController
 
         String ftcId = "FTCid";
         OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
                 HistoryManagerDevs.noHistory(simulator));
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -360,7 +359,7 @@ public final class TestFixedTimeController
                                 signalGroups.add(sg);
                                 String ftcId = "FTCid";
                                 OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-                                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
+                                simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
                                         HistoryManagerDevs.noHistory(simulator));
                                 Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
                                 String networkId = "networkID";

@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
@@ -17,6 +16,7 @@ import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.conflict.ConflictPriority;
 import org.opentrafficsim.road.network.conflict.ConflictRule;
 import org.opentrafficsim.road.network.conflict.ConflictType;
+import org.opentrafficsim.road.network.speed.SpeedLimit;
 
 /**
  * Perceived intersection conflict with given input values.
@@ -56,7 +56,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
     private final Length conflictingVisibility;
 
     /** Speed limit on the conflicting lane. */
-    private final Speed conflictingSpeedLimit;
+    private final SpeedLimit conflictingSpeedLimit;
 
     /** Link of conflicting conflict. */
     private final CrossSectionLink conflictingLink;
@@ -107,7 +107,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
             final ConflictPriority conflictPriority, final Class<? extends ConflictRule> conflictRuleType,
             final Length conflictingLength, final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> upstreamConflictingGTUs,
             final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> downstreamConflictingGTUs,
-            final Length conflictingVisibility, final Speed conflictingSpeedLimit, final CrossSectionLink conflictingLink,
+            final Length conflictingVisibility, final SpeedLimit conflictingSpeedLimit, final CrossSectionLink conflictingLink,
             final Width width, final PerceivedObject stopLine, final PerceivedObject conflictingStopLine,
             final LateralDirectionality turn, final Lane lane)
     {
@@ -192,7 +192,7 @@ public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implemen
     }
 
     @Override
-    public Speed getConflictingSpeedLimit()
+    public SpeedLimit getConflictingSpeedLimit()
     {
         return this.conflictingSpeedLimit;
     }

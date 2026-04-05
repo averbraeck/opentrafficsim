@@ -15,7 +15,6 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -73,7 +72,7 @@ public final class GtuTest
         OtsSimulatorInterface simulator = new OtsSimulator("testAbstractGTU");
         Network perceivableContext = new Network("network", simulator);
         GtuModel model = new GtuModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model,
+        simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model,
                 HistoryManagerDevs.noHistory(simulator));
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {

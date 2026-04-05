@@ -25,9 +25,12 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.BySpeed;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition.ByValue;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
+import org.opentrafficsim.road.gtu.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.CrossSectionLink;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LanePosition;
+import org.opentrafficsim.road.network.speed.SpeedLimit;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -175,8 +178,9 @@ public interface GeneratorPositions
                 GeneratorLinkPosition linkPosition =
                         position.draw(gtuType, stream, characteristics.getDestination(), characteristics.getRoute());
                 Speed desiredSpeed = characteristics.getStrategicalPlannerFactory()
-                        .peekDesiredSpeed(gtuType, linkPosition.speedLimit(gtuType), characteristics.getMaximumSpeed())
-                        .orElseGet(() -> linkPosition.speedLimit(gtuType));
+                        .peekDesiredSpeed(gtuType, linkPosition.getSpeedLimits(gtuType), characteristics.getMaximumSpeed())
+                        .orElseGet(() -> SpeedLimitUtil.getDesiredSpeedProxy(linkPosition.getSpeedLimits(gtuType),
+                                characteristics.getMaximumSpeed()));
                 return linkPosition.draw(gtuType, unplaced.get(linkPosition.getLink()), desiredSpeed);
             }
 
@@ -190,14 +194,6 @@ public interface GeneratorPositions
 
     /**
      * Class representing a vehicle generation lane, providing elementary information for randomly drawing links and lanes.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class GeneratorLanePosition
     {
@@ -298,14 +294,6 @@ public interface GeneratorPositions
 
     /**
      * Class representing a vehicle generation link to provide individual generation positions.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class GeneratorLinkPosition
     {
@@ -472,41 +460,51 @@ public interface GeneratorPositions
          * @param gtuType GTU type
          * @return speed limit
          */
-        public Speed speedLimit(final GtuType gtuType)
+        public SpeedLimits getSpeedLimits(final GtuType gtuType)
         {
-            Speed speedLimit = null;
+            SpeedLimits speedLimits = null;
             for (GeneratorLanePosition pos : this.positions)
             {
-                try
+                SpeedLimits limits = pos.getPosition().lane().getSpeedLimits(gtuType);
+                if (speedLimits == null)
                 {
-                    Speed limit = pos.getPosition().lane().getSpeedLimit(gtuType);
-                    if (speedLimit == null || limit.lt(speedLimit))
-                    {
-                        speedLimit = limit;
-                    }
+                    speedLimits = limits;
                 }
-                catch (NetworkException exception)
+                else
                 {
-                    // ignore
+                    // create combination of minimum
+                    speedLimits = new SpeedLimits(minimumNullable(speedLimits.laneSpeedLimit(), limits.laneSpeedLimit()),
+                            minimumNullable(speedLimits.gtuTypeSpeedLimit(), limits.gtuTypeSpeedLimit()));
                 }
             }
-            Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
+            Throw.when(speedLimits == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
                     gtuType);
-            return speedLimit;
+            return speedLimits;
         }
 
     }
 
     /**
+     * Returns the minimum non-null speed limit.
+     * @param limit1 speed limit 1
+     * @param limit2 speed limit 2
+     * @return minimum non-null speed limit
+     */
+    private static SpeedLimit minimumNullable(final SpeedLimit limit1, final SpeedLimit limit2)
+    {
+        if (limit1 == null)
+        {
+            return limit2;
+        }
+        if (limit2 == null)
+        {
+            return limit1;
+        }
+        return limit1.speed().lt(limit2.speed()) ? limit1 : limit2;
+    }
+
+    /**
      * Class representing a vehicle generation zone to provide individual generation positions.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class GeneratorZonePosition
     {
@@ -588,14 +586,6 @@ public interface GeneratorPositions
 
     /**
      * Set of lane biases per GTU type.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class LaneBiases
     {
@@ -655,14 +645,6 @@ public interface GeneratorPositions
 
     /**
      * Vehicle generation lateral bias. Includes a lane maximum, e.g. trucks only on 2 right-hand lanes.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     final class LaneBias
     {

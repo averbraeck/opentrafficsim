@@ -24,7 +24,6 @@ import org.opentrafficsim.animation.data.AnimationLinkData;
 import org.opentrafficsim.animation.data.AnimationNodeData;
 import org.opentrafficsim.animation.data.AnimationPriorityData;
 import org.opentrafficsim.animation.data.AnimationShoulderData;
-import org.opentrafficsim.animation.data.AnimationSpeedSignData;
 import org.opentrafficsim.animation.data.AnimationStripeData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightDetectorData;
@@ -55,8 +54,6 @@ import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
 import org.opentrafficsim.draw.road.PriorityAnimation;
-import org.opentrafficsim.draw.road.SpeedSignAnimation;
-import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.draw.road.StripeAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
@@ -71,7 +68,6 @@ import org.opentrafficsim.road.network.Shoulder;
 import org.opentrafficsim.road.network.Stripe;
 import org.opentrafficsim.road.network.conflict.Conflict;
 import org.opentrafficsim.road.network.object.BusStop;
-import org.opentrafficsim.road.network.object.SpeedSign;
 import org.opentrafficsim.road.network.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.object.detector.TrafficLightDetector;
@@ -393,13 +389,6 @@ public class DefaultAnimationFactory implements EventListener
                 TrafficLight trafficLight = (TrafficLight) object;
                 Renderable2d<TrafficLightData> objectAnimation =
                         new TrafficLightAnimation(new AnimationTrafficLightData(trafficLight), this.simulator);
-                this.animatedLocatedObjects.put(object, objectAnimation);
-            }
-            else if (object instanceof SpeedSign)
-            {
-                SpeedSign speedSign = (SpeedSign) object;
-                Renderable2d<SpeedSignData> objectAnimation =
-                        new SpeedSignAnimation(new AnimationSpeedSignData(speedSign), this.simulator);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof BusStop)

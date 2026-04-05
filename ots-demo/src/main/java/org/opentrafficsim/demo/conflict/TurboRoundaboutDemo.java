@@ -1,13 +1,21 @@
 package org.opentrafficsim.demo.conflict;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
+import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.language.DsolException;
@@ -56,7 +64,17 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
         {
             OtsAnimator simulator = new OtsAnimator("TurboRoundaboutDemo");
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
-            OtsSimulationPanel simulationPanel = new OtsSimulationPanel(junctionModel.getNetwork());
+            OtsSimulationPanel simulationPanel =
+                    new OtsSimulationPanel(junctionModel.getNetwork(), new OtsSimulationPanelDecorator()
+                    {
+                        @Override
+                        public List<Colorer<? super Gtu>> getGtuColorers()
+                        {
+                            List<Colorer<? super Gtu>> colorers = new ArrayList<>(DEFAULT_GTU_COLORERS);
+                            colorers.set(colorers.size() - 2, new SpeedGtuColorer(new Speed(60.0, SpeedUnit.KM_PER_HOUR)));
+                            return colorers;
+                        }
+                    });
             TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", simulationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             simulationPanel.enableSimulationControlButtons();

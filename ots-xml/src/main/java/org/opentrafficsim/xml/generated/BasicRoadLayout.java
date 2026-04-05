@@ -31,7 +31,6 @@ import org.opentrafficsim.xml.bindings.types.LaneKeepingPolicyType;
  *           <element name="Lane" type="{http://www.opentrafficsim.org/ots}CseLane" maxOccurs="unbounded" minOccurs="0"/>
  *           <element name="Shoulder" type="{http://www.opentrafficsim.org/ots}CseShoulder" maxOccurs="unbounded" minOccurs="0"/>
  *         </choice>
- *         <element ref="{http://www.opentrafficsim.org/ots}SpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
  *       </sequence>
  *       <attribute name="LaneKeeping" type="{http://www.opentrafficsim.org/ots}LaneKeepingType" />
  *     </restriction>
@@ -43,8 +42,7 @@ import org.opentrafficsim.xml.bindings.types.LaneKeepingPolicyType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BasicRoadLayout", propOrder = {
-    "stripeOrLaneOrShoulder",
-    "speedLimit"
+    "stripeOrLaneOrShoulder"
 })
 @XmlSeeAlso({
     org.opentrafficsim.xml.generated.Link.RoadLayout.class,
@@ -61,8 +59,6 @@ import org.opentrafficsim.xml.bindings.types.LaneKeepingPolicyType;
         @XmlElement(name = "Shoulder", type = CseShoulder.class)
     })
     protected List<Serializable> stripeOrLaneOrShoulder;
-    @XmlElement(name = "SpeedLimit")
-    protected List<SpeedLimit> speedLimit;
     @XmlAttribute(name = "LaneKeeping")
     @XmlJavaTypeAdapter(LaneKeepingPolicyAdapter.class)
     protected LaneKeepingPolicyType laneKeeping;
@@ -99,38 +95,6 @@ import org.opentrafficsim.xml.bindings.types.LaneKeepingPolicyType;
             stripeOrLaneOrShoulder = new ArrayList<>();
         }
         return this.stripeOrLaneOrShoulder;
-    }
-
-    /**
-     * Gets the value of the speedLimit property.
-     * 
-     * <p>This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the speedLimit property.</p>
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * </p>
-     * <pre>
-     * getSpeedLimit().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link SpeedLimit }
-     * </p>
-     * 
-     * 
-     * @return
-     *     The value of the speedLimit property.
-     */
-    public List<SpeedLimit> getSpeedLimit() {
-        if (speedLimit == null) {
-            speedLimit = new ArrayList<>();
-        }
-        return this.speedLimit;
     }
 
     /**

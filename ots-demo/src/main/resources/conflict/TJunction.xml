@@ -44,7 +44,7 @@
     <ots:LinkTypes>
       <ots:LinkType Id="URBAN">
         <ots:Compatibility GtuType="NL.VEHICLE" />
-        <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50km/h" />
+        <ots:SpeedLimit>50km/h</ots:SpeedLimit>
       </ots:LinkType>
     </ots:LinkTypes>
     <ots:LaneTypes>
@@ -116,9 +116,6 @@
     </ots:RoadLayouts>
   </ots:Definitions>
   <ots:Network>
-    <ots:Conflicts>
-      <ots:DefaultWidth />
-    </ots:Conflicts>
     <ots:Node Coordinate="(300,0)" Direction="0 deg(E)" Id="BLE" />
     <ots:Node Coordinate="(0,-300)" Direction="270 deg(E)" Id="BLS" />
     <ots:Node Coordinate="(-300,0)" Direction="0 deg(E)" Id="BLW" />
@@ -190,6 +187,9 @@
       <ots:Bezier />
       <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
     </ots:Link>
+    <ots:Conflicts>
+      <ots:DefaultWidth />
+    </ots:Conflicts>
   </ots:Network>
   <ots:Demand>
     <ots:ShortestRoute GtuType="NL.CAR" Id="EW">

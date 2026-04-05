@@ -34,6 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
@@ -99,6 +100,7 @@ import org.opentrafficsim.road.network.StripeData;
 import org.opentrafficsim.road.network.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.conflict.ConflictBuilder.FixedWidthGenerator;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -237,6 +239,9 @@ public final class OpenDriveParser
     /** Access restriction function. */
     private Function<EAccessRestrictionType, GtuType> accessRestrictionFunction;
 
+    /** GTU type speed limits. */
+    private Map<GtuType, Speed> gtuTypeSpeedLimits = Map.of(DefaultsNl.TRUCK, new Speed(80.0, SpeedUnit.KM_PER_HOUR));
+
     /** Node id generator. */
     private final AlphabeticIdGenerator nodeIdGenerator = new AlphabeticIdGenerator("Node");
 
@@ -327,7 +332,7 @@ public final class OpenDriveParser
 
     /**
      * Set access restriction function.
-     * @param accessRestrictionFunction produces GTU type for OpenDRIVE access restriction.
+     * @param accessRestrictionFunction produces GTU type for OpenDRIVE access restriction
      * @return parser for method chaining
      */
     @SuppressWarnings("hiddenfield")
@@ -335,6 +340,18 @@ public final class OpenDriveParser
             final Function<EAccessRestrictionType, GtuType> accessRestrictionFunction)
     {
         this.accessRestrictionFunction = accessRestrictionFunction;
+        return this;
+    }
+
+    /**
+     * Set GTU type speed limits.
+     * @param gtuTypeLimits GTU type speed limits
+     * @return parser for method chaining
+     */
+    public OpenDriveParser setGtuTypeLimits(final Map<GtuType, Speed> gtuTypeLimits)
+    {
+        this.gtuTypeSpeedLimits = new LinkedHashMap<>();
+        this.gtuTypeSpeedLimits.putAll(gtuTypeLimits);
         return this;
     }
 
@@ -831,8 +848,7 @@ public final class OpenDriveParser
             }
             else
             {
-                // TODO speed signs
-                // precedence: speed signs > lane speed > road type speed
+                // precedence: speed signs (ignored) > lane speed > road type speed
                 Speed speedLimit;
                 TRoadLanesLaneSectionLrLaneSpeed laneSpeed =
                         getLaneProperty(linkData.laneSection, lane, linkData.sFrom, lane.getSpeed(), (sp) -> sp.getSOffset());
@@ -849,12 +865,9 @@ public final class OpenDriveParser
                     Logger.ots().info("No speed limit on lane {} on link {} for road type {}", id, link.getId(),
                             linkData.roadType);
                 }
-                Map<GtuType, Speed> laneSpeeds =
-                        speedLimit == null ? Collections.emptyMap() : Map.of(DefaultsNl.ROAD_USER, speedLimit);
-                new Lane(link, id, geometry, laneType, laneSpeeds);
+                new Lane(link, id, geometry, laneType, new LaneSpeedLimits(speedLimit, this.gtuTypeSpeedLimits));
             }
         }
-
         PolyLine2d nextEdge = id.startsWith("-") ? linkData.linkDesignLine.toPolyLine(OFFSET_FLATTENER, nextEdgeOffset)
                 : linkData.linkDesignLine.toPolyLine(OFFSET_FLATTENER, nextEdgeOffset).reverse(); // negative id's are forward
         return nextEdge;

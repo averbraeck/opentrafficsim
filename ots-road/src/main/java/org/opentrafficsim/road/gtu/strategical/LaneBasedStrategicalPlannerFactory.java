@@ -9,6 +9,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * A factory class is used to generate strategical planners as the strategical planner is state-full.
@@ -39,13 +40,13 @@ public interface LaneBasedStrategicalPlannerFactory<T extends LaneBasedStrategic
      * Peek to see the desired speed of the next GTU to be generated at the given location. The default implementation returns
      * {@code null}, at which point the GTU generator will use some other speed.
      * @param gtuType GTU type
-     * @param speedLimit speed limit
-     * @param maxGtuSpeed maximum GTU speed
+     * @param speedLimits speed limits
+     * @param maxVehicleSpeed maximum vehicle speed
      * @return desired speed of the next GTU to be generated at the given location, may be empty at which point the GTU
      *         generator will use some other speed
      * @throws GtuException on parameter exception or network exception
      */
-    default Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
+    default Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final SpeedLimits speedLimits, final Speed maxVehicleSpeed)
             throws GtuException
     {
         return Optional.empty();

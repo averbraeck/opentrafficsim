@@ -12,7 +12,7 @@ import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Very simple car-following model factory only for testing.
@@ -96,14 +96,15 @@ public class FixedCarFollowing implements CarFollowingModelFactory<FixedCarFollo
         }
 
         @Override
-        public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+        public Speed desiredSpeed(final Parameters parameters, final SpeedLimits speedInfo, final Speed maxVehicleSpeed)
+                throws ParameterException
         {
             return FixedCarFollowing.this.desiredSpeed;
         }
 
         @Override
-        public Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-                final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends PerceivedObject> leaders)
+        public Acceleration followingAcceleration(final Parameters parameters, final Speed speed, final SpeedLimits speedLimits,
+                final Speed maxVehicleSpeed, final PerceptionIterable<? extends PerceivedObject> leaders)
                 throws ParameterException
         {
             return FixedCarFollowing.this.acceleration;

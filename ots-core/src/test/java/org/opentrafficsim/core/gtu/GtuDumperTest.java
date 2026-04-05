@@ -17,7 +17,6 @@ import javax.naming.NamingException;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.math.AngleUtil;
 import org.junit.jupiter.api.Test;
@@ -83,7 +82,7 @@ public final class GtuDumperTest implements OtsModelInterface
         // System.out.println("containerDir is " + this.containerDir);
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
-        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this,
+        this.simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this,
                 HistoryManagerDevs.noHistory(this.simulator));
         this.simulator.scheduleEventAbs(Duration.ofSI(40.0), () -> createGtu());
         this.simulator.start();
@@ -226,7 +225,7 @@ public final class GtuDumperTest implements OtsModelInterface
         this.containerDir = containerPath.toFile();
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
-        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this,
+        this.simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this,
                 HistoryManagerDevs.noHistory(this.simulator));
         try
         {

@@ -26,7 +26,8 @@ import org.opentrafficsim.road.network.Shoulder;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 
 /**
- * Utilities to create {@code GraphPath}s and {@code GraphCrossSection}s for graphs, based on lanes.
+ * Utilities to create {@code GraphPath}s and {@code GraphCrossSection}s for graphs, based on lanes. These utilities only
+ * support lanes with speed limits.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -79,7 +80,7 @@ public final class GraphLaneUtil
             LaneDataRoad laneData = new LaneDataRoad(lane);
             List<LaneDataRoad> list = new ArrayList<>();
             list.add(laneData);
-            Speed speed = lane.getLowestSpeedLimit();
+            Speed speed = lane.getSpeedLimit().get().speed();
             Length length = lane.getLength();
             sections.add(new Section<>(length, speed, list));
             set.add(lane);
@@ -138,8 +139,8 @@ public final class GraphLaneUtil
                 }
                 else
                 {
-                    sectionSpeed = sectionSpeed == null ? lane.getLowestSpeedLimit()
-                            : Speed.min(sectionSpeed, lane.getLowestSpeedLimit());
+                    sectionSpeed = sectionSpeed == null ? lane.getSpeedLimit().get().speed()
+                            : Speed.min(sectionSpeed, lane.getSpeedLimit().get().speed());
                     sectionLanes.add(new LaneDataRoad(lane));
                     seenLanes.add(lane);
                 }
@@ -221,7 +222,7 @@ public final class GraphLaneUtil
         List<LaneDataRoad> lanes = new ArrayList<>();
         lanes.add(new LaneDataRoad(lane));
         List<Section<LaneDataRoad>> sections = new ArrayList<>();
-        Speed speed = lane.getLowestSpeedLimit();
+        Speed speed = lane.getSpeedLimit().get().speed();
         sections.add(new Section<>(lane.getLength(), speed, lanes));
         return new GraphPath<>(name, sections);
     }
@@ -244,7 +245,7 @@ public final class GraphLaneUtil
         names.add(name);
         positions.add(lanePosition.position());
         list.add(new LaneDataRoad(lanePosition.lane()));
-        Speed speed = lanePosition.lane().getLowestSpeedLimit();
+        Speed speed = lanePosition.lane().getSpeedLimit().get().speed();
         return createCrossSection(names, list, positions, speed);
     }
 
@@ -280,7 +281,7 @@ public final class GraphLaneUtil
         Speed speed = null;
         for (Lane lane : lanes)
         {
-            speed = speed == null ? lane.getLowestSpeedLimit() : Speed.min(speed, lane.getLowestSpeedLimit());
+            speed = speed == null ? lane.getSpeedLimit().get().speed() : Speed.min(speed, lane.getSpeedLimit().get().speed());
             list.add(new LaneDataRoad(lane));
             positions.add(lane.getLength().times(linkPosition.fractionalLongitudinalPosition()));
         }

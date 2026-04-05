@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -65,6 +66,7 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.bindings.types.StringType;
@@ -97,6 +99,12 @@ public final class DemandParser
 
     /** Default no lane-change distance if value is not specified and its injections or there are adjacent lanes. */
     private static final Length DEFAULT_NO_LC_DISTANCE = OdOptions.NO_LC_DIST.getDefaultValue();
+
+    /** Shortest path weight for links that should not be used. */
+    private static final double BIG_WEIGHT = 1000000.0;
+
+    /** Speed to apply with link length for any non-connector and non-CrossSectionLink link, and to A* heuristic. */
+    private static final Speed NO_ROAD_SPEED = new Speed(250.0, SpeedUnit.KM_PER_HOUR);
 
     /** */
     private DemandParser()
@@ -165,8 +173,7 @@ public final class DemandParser
             if (shortestRouteTag.getFreeFlowTime() != null)
             {
                 // Free flow time
-                Speed maxSpeed = new Speed(250.0, SpeedUnit.KM_PER_HOUR);
-                AStarAdmissibleHeuristic<Node> aStarHeuristicTime = getTimeAStarHeuristic(maxSpeed);
+                AStarAdmissibleHeuristic<Node> aStarHeuristicTime = getTimeAStarHeuristic(NO_ROAD_SPEED);
                 linkWeight = new LinkWeight()
                 {
                     @Override
@@ -174,11 +181,18 @@ public final class DemandParser
                     {
                         if (link.isConnector())
                         {
-                            return 1000000;
+                            return BIG_WEIGHT;
                         }
-                        Speed speedLimit = link instanceof CrossSectionLink
-                                ? getLinkSpeedLimit((CrossSectionLink) link, gtuType) : maxSpeed;
-                        return link.getLength().si / speedLimit.si;
+                        if (link instanceof CrossSectionLink crossLink)
+                        {
+                            Optional<Speed> speedLimit = getLinkSpeedLimit(crossLink, gtuType);
+                            if (speedLimit.isPresent())
+                            {
+                                return link.getLength().si / speedLimit.get().si;
+                            }
+                            return BIG_WEIGHT;
+                        }
+                        return link.getLength().si / NO_ROAD_SPEED.si;
                     }
 
                     @Override
@@ -193,8 +207,7 @@ public final class DemandParser
                 // Balance time and distance
                 LinearDensity perDistance = shortestRouteTag.getDistanceAndFreeFlowTime().getDistanceCost().get(eval);
                 Frequency perTime = shortestRouteTag.getDistanceAndFreeFlowTime().getTimeCost().get(eval);
-                Speed maxSpeed = new Speed(250.0, SpeedUnit.KM_PER_HOUR);
-                AStarAdmissibleHeuristic<Node> aStarHeuristicTime = getTimeAStarHeuristic(maxSpeed);
+                AStarAdmissibleHeuristic<Node> aStarHeuristicTime = getTimeAStarHeuristic(NO_ROAD_SPEED);
                 linkWeight = new LinkWeight()
                 {
                     @Override
@@ -202,11 +215,19 @@ public final class DemandParser
                     {
                         if (link.isConnector())
                         {
-                            return 1000000.0;
+                            return BIG_WEIGHT;
                         }
-                        Speed speedLimit = link instanceof CrossSectionLink
-                                ? getLinkSpeedLimit((CrossSectionLink) link, gtuType) : maxSpeed;
-                        return link.getLength().si * perDistance.si + (link.getLength().si / speedLimit.si) * perTime.si;
+                        if (link instanceof CrossSectionLink crossLink)
+                        {
+                            Optional<Speed> speedLimit = getLinkSpeedLimit(crossLink, gtuType);
+                            if (speedLimit.isPresent())
+                            {
+                                return link.getLength().si * perDistance.si
+                                        + (link.getLength().si / speedLimit.get().si) * perTime.si;
+                            }
+                            return BIG_WEIGHT;
+                        }
+                        return link.getLength().si * perDistance.si + (link.getLength().si / NO_ROAD_SPEED.si) * perTime.si;
                     }
 
                     @Override
@@ -243,48 +264,34 @@ public final class DemandParser
 
     /**
      * Returns the speed limit representative for the link. This is the highest speed limit defined on any lane for the GTU
-     * type, or the maximum speed limit for any GTU type if no speed limit is defined for the given GTU type.
+     * type.
      * @param link link.
      * @param gtuType GTU type.
      * @return speed limit representative for the link
      */
-    private static Speed getLinkSpeedLimit(final CrossSectionLink link, final GtuType gtuType)
+    private static Optional<Speed> getLinkSpeedLimit(final CrossSectionLink link, final GtuType gtuType)
     {
-        Speed speed = null;
+        Speed maxSpeedAnyLane = null;
         for (Lane lane : link.getLanes())
         {
             if (lane.getType().isCompatible(gtuType))
             {
-                try
+                SpeedLimits speedLimits = lane.getSpeedLimits(gtuType, link.getSimulator().getTimeOfDay());
+                Speed minLaneSpeed = null;
+                if (speedLimits.laneSpeedLimit() != null)
                 {
-                    Speed laneSpeed = lane.getSpeedLimit(gtuType);
-                    speed = speed == null || laneSpeed.gt(speed) ? laneSpeed : speed;
+                    minLaneSpeed = minLaneSpeed == null || speedLimits.laneSpeedLimit().speed().lt(minLaneSpeed)
+                            ? speedLimits.laneSpeedLimit().speed() : minLaneSpeed;
                 }
-                catch (NetworkException e)
+                if (speedLimits.gtuTypeSpeedLimit() != null)
                 {
-                    // just skip
+                    minLaneSpeed = minLaneSpeed == null || speedLimits.gtuTypeSpeedLimit().speed().lt(minLaneSpeed)
+                            ? speedLimits.gtuTypeSpeedLimit().speed() : minLaneSpeed;
                 }
+                maxSpeedAnyLane = maxSpeedAnyLane == null || minLaneSpeed.gt(maxSpeedAnyLane) ? minLaneSpeed : maxSpeedAnyLane;
             }
         }
-        if (speed == null)
-        {
-            for (Lane lane : link.getLanes())
-            {
-                if (lane.getType().isCompatible(gtuType))
-                {
-                    try
-                    {
-                        Speed laneSpeed = lane.getHighestSpeedLimit();
-                        speed = speed == null || laneSpeed.gt(speed) ? laneSpeed : speed;
-                    }
-                    catch (NetworkException e)
-                    {
-                        // just skip
-                    }
-                }
-            }
-        }
-        return speed;
+        return Optional.ofNullable(maxSpeedAnyLane);
     }
 
     /**

@@ -3,7 +3,6 @@ package org.opentrafficsim.core.dsol;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -34,7 +33,7 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
 
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
-     * @param startTime the start time of the simulation
+     * @param startTimeOfDay the start time of the simulation
      * @param warmupPeriod the warm up period of the simulation (use Duration.ZERO if you don't know what this is)
      * @param runLength the duration of the simulation
      * @param model the simulation to execute
@@ -42,13 +41,13 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created
      */
-    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model,
+    void initialize(Duration startTimeOfDay, Duration warmupPeriod, Duration runLength, OtsModelInterface model,
             HistoryManager historyManager) throws SimRuntimeException, NamingException;
 
     /**
      * Initialize a simulation engine without animation and prescribed replication number; the easy way. PauseOnError is set to
      * true;
-     * @param startTime the start time of the simulation
+     * @param startTimeOfDay the start time of the simulation
      * @param warmupPeriod the warm up period of the simulation (use Duration.ZERO if you don't know what this is)
      * @param runLength the duration of the simulation
      * @param model the simulation to execute
@@ -57,17 +56,8 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when context for the animation cannot be created
      */
-    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model,
+    void initialize(Duration startTimeOfDay, Duration warmupPeriod, Duration runLength, OtsModelInterface model,
             HistoryManager historyManager, int replicationNr) throws SimRuntimeException, NamingException;
-
-    /**
-     * Return the absolute start time of the replication.
-     * @return the absolute start time of the replication
-     */
-    default Time getStartTime()
-    {
-        return getReplication().getStartTimeAbs();
-    }
 
     @Override
     OtsReplication getReplication();
@@ -76,6 +66,15 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
     default ContextInterface getContext()
     {
         return getReplication().getContext();
+    }
+
+    /**
+     * Returns the current time-of-day, a value in the range [0 24)h.
+     * @return current time-of-day
+     */
+    default Duration getTimeOfDay()
+    {
+        return Duration.ofSI((getReplication().getStartTimeOfDay().si + getSimulatorTime().si) % 86400.0);
     }
 
 }

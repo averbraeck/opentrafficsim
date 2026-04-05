@@ -52,6 +52,7 @@ import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneGeometryUtil;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
@@ -145,8 +146,8 @@ public class OdApplierTest
         this.model = createModelMock();
         this.simulator = createSimulatorMock();
         HistoryManagerDevs historyManager = Mockito.mock(HistoryManagerDevs.class);
-        this.replication = new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.ofSI(10.0),
-                historyManager);
+        this.replication = new OtsReplication("replication for ODApplierTest", Duration.ZERO, Duration.ZERO,
+                Duration.ofSI(10.0), historyManager);
         Mockito.when(this.simulator.getReplication()).thenReturn(this.replication);
         this.time = Time.ZERO;
         makeNetwork();
@@ -168,11 +169,11 @@ public class OdApplierTest
         this.lanes.put("lane1",
                 LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.ofSI(1.75), Length.ofSI(1.75), Length.ofSI(3.5),
                         Length.ofSI(3.5), DefaultsRoadNl.HIGHWAY,
-                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
+                        new LaneSpeedLimits(Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)))));
         this.lanes.put("lane2",
                 LaneGeometryUtil.createStraightLane(linkAB, "lane2", Length.ofSI(-1.75), Length.ofSI(-1.75), Length.ofSI(3.5),
                         Length.ofSI(3.5), DefaultsRoadNl.HIGHWAY,
-                        Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
+                        new LaneSpeedLimits(Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR)))));
         Set<GtuType> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(DefaultsNl.VEHICLE);
     }

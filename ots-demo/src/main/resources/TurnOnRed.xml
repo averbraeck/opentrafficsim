@@ -22,7 +22,7 @@
     <ots:LinkTypes>
       <ots:LinkType Id="URBAN">
         <ots:Compatibility GtuType="CAR" />
-        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="50km/h" />
+        <ots:SpeedLimit>50km/h</ots:SpeedLimit>
       </ots:LinkType>
     </ots:LinkTypes>
     <ots:StripeTypes>
@@ -76,7 +76,6 @@
         </ots:Shoulder>
         <ots:Lane Id="lane1" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
-          <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="40km/h" />
         </ots:Lane>
         <ots:Shoulder>
           <ots:Width>2m</ots:Width>
@@ -165,9 +164,6 @@
     </ots:DetectorTypes>
   </ots:Definitions>
   <ots:Network>
-    <ots:Conflicts>
-      <ots:DefaultWidth />
-    </ots:Conflicts>
     <ots:Node Coordinate="(8,300)" Direction="90deg(E)" Id="AN" />
     <ots:Node Coordinate="(8,23.5)" Direction="90deg(E)" Id="ANI" />
     <ots:Node Coordinate="(-8,300)" Direction="270deg(E)" Id="AS" />
@@ -298,6 +294,9 @@
       <ots:Straight />
       <ots:DefinedLayout>2turnlane</ots:DefinedLayout>
     </ots:Link>
+    <ots:Conflicts>
+      <ots:DefaultWidth />
+    </ots:Conflicts>
   </ots:Network>
   <ots:Demand>
     <ots:Od Id="demand" SinkType="sink">

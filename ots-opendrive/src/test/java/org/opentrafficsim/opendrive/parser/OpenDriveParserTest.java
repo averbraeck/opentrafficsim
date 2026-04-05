@@ -8,7 +8,6 @@ import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -54,7 +53,7 @@ public final class OpenDriveParserTest
     {
         OtsAnimator sim = new OtsAnimator("animator");
         OpenDriveModel model = new OpenDriveModel(sim, "/xodr/UC_Motorway-Exit-Entry.xodr");
-        sim.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
+        sim.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
                 new HistoryManagerDevs(sim, Duration.ofSI(5.0), Duration.ofSI(10.0)));
 
         OtsSimulationPanel animationPanel = new OtsSimulationPanel(model.getNetwork().getExtent(), model.getNetwork());

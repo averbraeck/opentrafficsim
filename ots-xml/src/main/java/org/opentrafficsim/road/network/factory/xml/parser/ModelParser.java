@@ -478,7 +478,7 @@ public final class ModelParser
             {
                 // default
                 tacticalPlannerFactory = new LmrsFactory<>(Lmrs::new).set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true)
-                        .set(Setting.ACCELERATION_CONFLICTS, true);
+                        .set(Setting.ACCELERATION_CONFLICTS, true).set(Setting.ACCELERATION_SPEED_LIMIT_TRANSITION, true);
             }
 
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;

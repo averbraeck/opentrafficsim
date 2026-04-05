@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -16,7 +17,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -33,7 +33,6 @@ import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.gtu.tactical.lmrs.Lmrs;
@@ -44,6 +43,7 @@ import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -80,15 +80,17 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("abstractLaneBasedGtuTest");
         RoadNetwork network = new RoadNetwork("lane base gtu test network", simulator);
         OtsModelInterface model = new DummyModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model,
+        simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model,
                 HistoryManagerDevs.noHistory(simulator));
         Node nodeAFrom = new Node(network, "AFrom", new Point2d(0, 0), Direction.ZERO);
         Node nodeATo = new Node(network, "ATo", new Point2d(1000, 0), Direction.ZERO);
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
 
-        Lane[] lanesGroupA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
+        LaneSpeedLimits speedLimits =
+                new LaneSpeedLimits(new Speed(100, KM_PER_HOUR), Map.of(DefaultsNl.TRUCK, new Speed(80, KM_PER_HOUR)));
+        Lane[] lanesGroupA =
+                LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType, speedLimits, simulator);
         // A GTU can exist on several lanes at once; create another lane group to test that
         // Node nodeBFrom = new Node(network, "BFrom", new Point2d(10, 0), Direction.ZERO);
         // Node nodeBTo = new Node(network, "BTo", new Point2d(1000, 0), Direction.ZERO);
@@ -280,8 +282,8 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         // A GTU can exist on several lanes at once; create another lane group to test that
         Node nodeCFrom = new Node(network, "CFrom", new Point2d(10, 100), Direction.ZERO);
         Node nodeCTo = new Node(network, "CTo", new Point2d(1000, 0), Direction.ZERO);
-        Lane[] lanesGroupC = LaneFactory.makeMultiLane(network, "C", nodeCFrom, nodeCTo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
+        Lane[] lanesGroupC =
+                LaneFactory.makeMultiLane(network, "C", nodeCFrom, nodeCTo, null, 3, laneType, speedLimits, simulator);
         for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
         {
             LanePosition pos = car.getPosition();

@@ -12,8 +12,7 @@ import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Abstract tactical planner factory which uses a car-following model factory for supplying peeked desired speed and headway. To
@@ -107,15 +106,12 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
     }
 
     @Override
-    public final Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
-            final Parameters parameters) throws GtuException
+    public final Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final SpeedLimits speedLimits,
+            final Speed maxVehicleSpeed, final Parameters parameters) throws GtuException
     {
         try
         {
-            SpeedLimitInfo sli = new SpeedLimitInfo();
-            sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, maxGtuSpeed);
-            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, speedLimit);
-            return Optional.of(peekCarFollowingModel().desiredSpeed(parameters, sli));
+            return Optional.of(peekCarFollowingModel().desiredSpeed(parameters, speedLimits, maxVehicleSpeed));
         }
         catch (ParameterException exception)
         {

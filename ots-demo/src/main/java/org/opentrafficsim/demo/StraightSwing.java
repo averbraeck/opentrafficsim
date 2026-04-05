@@ -7,7 +7,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -84,7 +83,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
             final StraightModel otsModel = new StraightModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(1500.0), otsModel,
+                simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(1500.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsSimulationPanel simulationPanel =
                         new OtsSimulationPanel(otsModel.getNetwork(), new OtsSimulationPanelDecorator()

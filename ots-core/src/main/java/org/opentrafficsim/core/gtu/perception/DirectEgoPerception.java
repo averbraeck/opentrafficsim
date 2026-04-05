@@ -17,7 +17,6 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @param <G> GTU type
  * @param <P> perception type
  */
-
 public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends AbstractPerceptionCategory<G, P>
         implements EgoPerception<G, P>
 {
@@ -32,31 +31,37 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
     }
 
     @Override
-    public final Acceleration getAcceleration()
+    public Acceleration getAcceleration()
     {
-        return computeIfAbsent("acceleration", () -> getGtu().getAcceleration());
+        return getGtu().getAcceleration();
     }
 
     @Override
-    public final Speed getSpeed()
+    public Speed getSpeed()
     {
-        return computeIfAbsent("speed", () -> getGtu().getSpeed());
+        return getGtu().getSpeed();
     }
 
     @Override
-    public final Length getLength()
+    public Speed getMaximumSpeed()
     {
-        return computeIfAbsent("length", () -> getGtu().getLength());
+        return getGtu().getMaximumSpeed();
     }
 
     @Override
-    public final Length getWidth()
+    public Length getLength()
     {
-        return computeIfAbsent("width", () -> getGtu().getWidth());
+        return getGtu().getLength();
     }
 
     @Override
-    public final String toString()
+    public Length getWidth()
+    {
+        return getGtu().getWidth();
+    }
+
+    @Override
+    public String toString()
     {
         return "DirectEgoPerception " + cacheAsString();
     }

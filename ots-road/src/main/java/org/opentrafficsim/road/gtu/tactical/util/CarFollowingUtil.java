@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.ObjectType;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObjectBase;
 import org.opentrafficsim.road.gtu.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Static methods regarding car-following for composition in tactical planners.
@@ -55,7 +55,7 @@ public final class CarFollowingUtil
     {
         Throw.whenNull(context, "context");
         return followSingleLeader(context.getCarFollowingModel(), context.getParameters(), context.getSpeed(),
-                context.getSpeedLimitInfo(), distance, leaderSpeed);
+                context.getSpeedLimits(), context.getMaximumSpeed(), distance, leaderSpeed);
     }
 
     /**
@@ -71,7 +71,7 @@ public final class CarFollowingUtil
     {
         Throw.whenNull(context, "context");
         return followSingleLeader(context.getCarFollowingModel(), context.getParameters(), context.getSpeed(),
-                context.getSpeedLimitInfo(), leader);
+                context.getSpeedLimits(), context.getMaximumSpeed(), leader);
     }
 
     /**
@@ -79,7 +79,8 @@ public final class CarFollowingUtil
      * @param carFollowingModel car-following model
      * @param parameters parameters
      * @param speed current speed
-     * @param speedLimitInfo speed limit info
+     * @param speedLimits speed limits
+     * @param maxVehicleSpeed maximum vehicle speed
      * @param distance distance
      * @param leaderSpeed speed of the leader
      * @return acceleration for following the object
@@ -87,16 +88,11 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final Length distance, final Speed leaderSpeed)
-            throws ParameterException
+            final Speed speed, final SpeedLimits speedLimits, final Speed maxVehicleSpeed, final Length distance,
+            final Speed leaderSpeed) throws ParameterException
     {
-        Throw.whenNull(carFollowingModel, "carFollowingModel");
-        Throw.whenNull(parameters, "parameters");
-        Throw.whenNull(speed, "speed");
-        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
-        Throw.whenNull(distance, "distance");
-        Throw.whenNull(leaderSpeed, "leaderSpeed");
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, createLeader(distance, leaderSpeed));
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimits, maxVehicleSpeed,
+                createLeader(distance, leaderSpeed));
     }
 
     /**
@@ -104,21 +100,19 @@ public final class CarFollowingUtil
      * @param carFollowingModel car-following model
      * @param parameters parameters
      * @param speed current speed
-     * @param speedLimitInfo speed limit info
+     * @param speedLimits speed limits
+     * @param maxVehicleSpeed maximum vehicle speed
      * @param leader leader
      * @return acceleration for following the object
      * @throws NullPointerException if any input is {@code null}
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final PerceivedObject leader) throws ParameterException
+            final Speed speed, final SpeedLimits speedLimits, final Speed maxVehicleSpeed, final PerceivedObject leader)
+            throws ParameterException
     {
-        Throw.whenNull(carFollowingModel, "carFollowingModel");
-        Throw.whenNull(parameters, "parameters");
-        Throw.whenNull(speed, "speed");
-        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
-        Throw.whenNull(leader, "leader");
-        return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, new PerceptionIterableSet<>(leader));
+        return carFollowingModel.followingAcceleration(parameters, speed, speedLimits, maxVehicleSpeed,
+                new PerceptionIterableSet<>(leader));
     }
 
     /**
@@ -133,7 +127,7 @@ public final class CarFollowingUtil
     {
         Throw.whenNull(context, "context");
         return context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
-                context.getSpeedLimitInfo(), createLeader(distance, Speed.ZERO));
+                context.getSpeedLimits(), context.getMaximumSpeed(), createLeader(distance, Speed.ZERO));
     }
 
     /**
@@ -168,7 +162,7 @@ public final class CarFollowingUtil
         Throw.whenNull(context, "context");
         PerceptionIterableSet<PerceivedObject> leaders = new PerceptionIterableSet<>();
         return context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
-                context.getSpeedLimitInfo(), leaders);
+                context.getSpeedLimits(), context.getMaximumSpeed(), leaders);
     }
 
     /*-
@@ -293,7 +287,7 @@ public final class CarFollowingUtil
                 distance.plus(context.getCarFollowingModel().desiredHeadway(context.getParameters(), virtualSpeed));
         // calculate acceleration towards virtual vehicle with car-following model
         return context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
-                context.getSpeedLimitInfo(), createLeader(virtualDistance, virtualSpeed));
+                context.getSpeedLimits(), context.getMaximumSpeed(), createLeader(virtualDistance, virtualSpeed));
     }
 
     /**

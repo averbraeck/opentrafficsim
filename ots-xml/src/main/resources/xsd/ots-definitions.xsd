@@ -35,6 +35,20 @@
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
+  
+  <xsd:complexType name="SpeedLimitInfraType">
+    <xsd:complexContent>
+      <xsd:extension base="ots:GtuCompatibleInfraType">
+        <xsd:sequence>
+          <xsd:choice minOccurs="0">
+            <xsd:element name="SpeedLimit" type="ots:SpeedLimit" />
+            <xsd:element name="TemporalSpeedLimit" type="ots:TemporalSpeedLimit" />
+          </xsd:choice>
+          <xsd:element ref="ots:GtuTypeSpeedLimit" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
 
   <xsd:element name="GtuType">
     <xsd:complexType>
@@ -88,12 +102,11 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="LaneType">
-    <xsd:complexType>
-      <xsd:complexContent>
-        <xsd:extension base="ots:GtuCompatibleInfraType" />
-      </xsd:complexContent>
-    </xsd:complexType>
+  <xsd:element name="LaneType" type="ots:SpeedLimitInfraType">
+    <xsd:key name="laneTypeSpeedLimitGtuTypeId">
+      <xsd:selector xpath="ots:GtuTypeSpeedLimit" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
   </xsd:element>
 
   <xsd:element name="LaneTypes">
@@ -144,16 +157,11 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="LinkType">
-    <xsd:complexType>
-      <xsd:complexContent>
-        <xsd:extension base="ots:GtuCompatibleInfraType">
-          <xsd:sequence>
-            <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
-          </xsd:sequence>
-        </xsd:extension>
-      </xsd:complexContent>
-    </xsd:complexType>
+  <xsd:element name="LinkType" type="ots:SpeedLimitInfraType">
+    <xsd:key name="linkTypeSpeedLimitGtuTypeId">
+      <xsd:selector xpath="ots:GtuTypeSpeedLimit" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
   </xsd:element>
 
   <xsd:element name="LinkTypes">
@@ -180,10 +188,41 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="SpeedLimit">
+  <xsd:complexType name="SpeedLimit">
+    <xsd:simpleContent>
+      <xsd:extension base="ots:PositiveSpeedType">
+        <xsd:attribute name="Enforced" type="ots:boolean" use="optional" default="false" />
+        <xsd:attribute name="GtuTypeAware" type="ots:boolean" use="optional" default="false" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="TemporalSpeedLimit">
+    <xsd:sequence>
+      <xsd:element name="SpeedLimit" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="ots:SpeedLimit">
+              <xsd:attribute name="StartTimeOfDay" type="ots:PositiveDurationType" use="required" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="GtuTypeSpeedLimit">
     <xsd:complexType>
-      <xsd:attribute name="GtuType" type="ots:string" use="required" />
-      <xsd:attribute name="LegalSpeedLimit" type="ots:SpeedType" use="required" />
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en">Legal speed limit that applies to a GTU type within a context. For example
+          80km/h for trucks anywhere within a country, i.e. a network. (Unless lower local speed limits apply.)
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleContent>
+        <xsd:extension base="ots:PositiveSpeedType">
+          <xsd:attribute name="Id" type="ots:string" use="required" />
+        </xsd:extension>
+      </xsd:simpleContent>
     </xsd:complexType>
   </xsd:element>
 
@@ -219,9 +258,6 @@
   <xsd:complexType name="CseLane">
     <xsd:complexContent>
       <xsd:extension base="ots:CrossSectionElement">
-        <xsd:sequence>
-          <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
-        </xsd:sequence>
         <xsd:attribute name="Id" type="ots:IdType" use="required" />
         <xsd:attribute name="LaneType" type="ots:string" use="required" />
       </xsd:extension>
@@ -390,7 +426,6 @@
         <xsd:element name="Lane" type="ots:CseLane" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="Shoulder" type="ots:CseShoulder" minOccurs="0" maxOccurs="unbounded" />
       </xsd:choice>
-      <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
     <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" />
   </xsd:complexType>

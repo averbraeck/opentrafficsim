@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Provides bundled and easy-access information that tactical models and their components need regarding the ego-vehicle or a
@@ -45,10 +45,10 @@ public interface TacticalContext extends Identifiable
     CarFollowingModel getCarFollowingModel();
 
     /**
-     * Returns the speed limit info at the current location.
-     * @return speed limit info
+     * Returns the speed limits at the current location.
+     * @return speed limits
      */
-    SpeedLimitInfo getSpeedLimitInfo();
+    SpeedLimits getSpeedLimits();
 
     /**
      * Returns the desired speed from the car-following model.
@@ -86,6 +86,12 @@ public interface TacticalContext extends Identifiable
      * @return ego speed
      */
     Speed getSpeed();
+
+    /**
+     * Returns the maximum seed.
+     * @return maximum speed
+     */
+    Speed getMaximumSpeed();
 
     /**
      * Return ego acceleration.

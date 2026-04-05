@@ -1,13 +1,16 @@
 package org.opentrafficsim.road.network;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
+import org.opentrafficsim.road.network.speed.SpeedLimit;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * This class is mostly the same as a Lane. But as a shoulder it can be recognized by algorithms and models to be responded to
@@ -21,6 +24,9 @@ import org.opentrafficsim.core.network.NetworkException;
 public class Shoulder extends Lane
 {
 
+    /** Nearest lane. */
+    private Lane lane;
+
     /**
      * Constructor specifying geometry.
      * @param link link
@@ -30,7 +36,7 @@ public class Shoulder extends Lane
      */
     public Shoulder(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry, final LaneType laneType)
     {
-        super(link, id, geometry, laneType, new LinkedHashMap<>());
+        super(link, id, geometry, laneType, new LaneSpeedLimits(Map.of()));
     }
 
     /**
@@ -57,19 +63,50 @@ public class Shoulder extends Lane
     }
 
     @Override
-    public Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
+    public SpeedLimits getSpeedLimits(final GtuType gtuType)
     {
-        LateralDirectionality[] lats = getLink().getLaneKeepingPolicy().equals(LaneKeepingPolicy.KEEPRIGHT)
-                ? new LateralDirectionality[] {LateralDirectionality.RIGHT, LateralDirectionality.LEFT}
-                : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.RIGHT};
-        for (LateralDirectionality lat : lats)
-        {
-            Optional<Lane> adjacentLane = getAdjacentLane(lat, gtuType);
-            if (adjacentLane.isPresent())
-            {
-                return adjacentLane.get().getSpeedLimit(gtuType);
-            }
-        }
-        return Speed.ZERO;
+        return getLane().getSpeedLimits(gtuType);
     }
+
+    @Override
+    public SpeedLimits getSpeedLimits(final GtuType gtuType, final Duration timeOfDay)
+    {
+        return getLane().getSpeedLimits(gtuType, timeOfDay);
+    }
+
+    @Override
+    public Optional<SpeedLimit> getSpeedLimit()
+    {
+        return getLane().getSpeedLimit();
+    }
+
+    @Override
+    public Optional<SpeedLimit> getSpeedLimit(final Duration timeOfDay)
+    {
+        return getLane().getSpeedLimit(timeOfDay);
+    }
+
+    /**
+     * Returns the closest (at the start) lane to this shoulder.
+     * @return the closest (at the start) lane to this shoulder
+     */
+    private Lane getLane()
+    {
+        if (this.lane == null)
+        {
+            double minDist = Double.POSITIVE_INFINITY;
+            for (Lane laneInLink : getLink().getLanes())
+            {
+                double dist = laneInLink.getCenterLine().getFirst().distance(getCenterLine().getFirst());
+                if (dist < minDist)
+                {
+                    this.lane = laneInLink;
+                    minDist = dist;
+                }
+            }
+            Throw.when(this.lane == null, IllegalStateException.class, "Shoulder is on a link without any lane.");
+        }
+        return this.lane;
+    }
+
 }

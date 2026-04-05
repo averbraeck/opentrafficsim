@@ -25,6 +25,7 @@ import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
@@ -66,20 +67,19 @@ public final class CurveTest
         RoadNetwork network = new RoadNetwork("curve test network", simulator);
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-        Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
+        LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(50, SpeedUnit.KM_PER_HOUR));
         Node origin = new Node(network, "origin", new Point2d(10, 10), Direction.ZERO);
         Node curveStart = new Node(network, "curveStart", new Point2d(100, 10), Direction.ZERO);
         Node curveEnd = new Node(network, "curveEnd", new Point2d(150, 60), new Direction(90, DirectionUnit.EAST_DEGREE));
         Node destination =
                 new Node(network, "destination", new Point2d(150, 150), new Direction(90, DirectionUnit.EAST_DEGREE));
         Lane[] straight1 = LaneFactory.makeMultiLane(network, "straight1", origin, curveStart, null, laneCount, laneType,
-                speedLimit, simulator, DefaultsNl.VEHICLE);
+                speedLimits, simulator);
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,
-                speedLimit, simulator, DefaultsNl.VEHICLE);
+                speedLimits, simulator);
         OtsLine2d curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
         Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd,
-                curveLine.getPointList().toArray(new Point2d[curveLine.size()]), laneCount, laneType, speedLimit, simulator,
-                DefaultsNl.VEHICLE);
+                curveLine.getPointList().toArray(new Point2d[curveLine.size()]), laneCount, laneType, speedLimits, simulator);
         Lane[][] laneSets = new Lane[][] {straight1, curve, straight2};
         Length initialPosition = new Length(5, LengthUnit.METER);
         Speed speed = new Speed(10, SpeedUnit.SI);

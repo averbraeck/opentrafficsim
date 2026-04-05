@@ -114,7 +114,8 @@ import org.opentrafficsim.road.network.control.rampmetering.RwsSwitch;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.object.detector.LoopDetector;
 import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
@@ -266,7 +267,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         // parameters
         StreamInterface stream = sim.getModel().getStream("generation");
-        this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 1200));
+        this.parameterFactory.addParameter(ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0));
 
         Node nodeA = new Node(network, "A", new Point2d(0, 0), Direction.ZERO);
         Node nodeB = new Node(network, "B", new Point2d(3000, 0), Direction.ZERO);
@@ -279,22 +280,23 @@ public class RampMeteringDemo extends AbstractSimulationScript
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.ofSI(3.6);
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
-        Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
-        Speed rampSpeedLimit = new Speed(70, SpeedUnit.KM_PER_HOUR);
-        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)
+        LaneSpeedLimits speedLimit = new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR),
+                Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
+        LaneSpeedLimits rampSpeedLimits = new LaneSpeedLimits(new Speed(70, SpeedUnit.KM_PER_HOUR));
+        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, sim, policy)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED).getLanes();
         List<Stripe> stripes = new ArrayList<>();
-        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, sim, policy, DefaultsNl.VEHICLE)
+        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, sim, policy)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit)
                 .addLanes(stripes, DefaultsRoadNl.DASHED, DefaultsRoadNl.BLOCK).getLanes();
         stripes.get(2).addPermeability(this.car, LateralDirectionality.LEFT); // prevent right lane changes over block stripe
-        List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy, DefaultsNl.VEHICLE)
+        List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy)
                 .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED)
                 .addShoulder(laneWidth, LateralDirectionality.RIGHT, new LaneType("SHOULDER")).getLanes();
-        List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, sim, policy, DefaultsNl.VEHICLE)
-                .setOffsetEnd(laneWidth.times(1.5).neg()).leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimit).addLanes()
-                .getLanes();
-        List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)
+        List<Lane> lanesEF =
+                new LaneFactory(network, nodeE, nodeF, freeway, sim, policy).setOffsetEnd(laneWidth.times(1.5).neg())
+                        .leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimits).addLanes().getLanes();
+        List<Lane> lanesFB = new LaneFactory(network, nodeF, nodeB, freeway, sim, policy)
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         // detectors
@@ -736,13 +738,13 @@ public class RampMeteringDemo extends AbstractSimulationScript
             // check gap
             InfrastructurePerception infra =
                     this.gtu.getTacticalPlanner().getPerception().getPerceptionCategory(InfrastructurePerception.class);
-            SpeedLimitInfo sli = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+            SpeedLimits speedLimits = infra.getSpeedLimits(RelativeLane.CURRENT);
             NeighborsPerception neighbors =
                     this.gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class);
             if (infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, this.direction).gt0()
                     && !neighbors.isGtuAlongside(this.direction)
-                    && acceptGap(neighbors.getFirstFollowers(this.direction), sli, false)
-                    && acceptGap(neighbors.getFirstLeaders(this.direction), sli, true))
+                    && acceptGap(neighbors.getFirstFollowers(this.direction), speedLimits, false)
+                    && acceptGap(neighbors.getFirstLeaders(this.direction), speedLimits, true))
             {
                 // gaps accepted, start lane change
                 SimpleOperationalPlan plan =
@@ -763,7 +765,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 {
                     PerceivedGtu leader = leaders.first();
                     Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings,
-                            this.gtu.getSpeed(), sli, leader);
+                            this.gtu.getSpeed(), speedLimits, this.gtu.getMaximumSpeed(), leader);
                     a = Acceleration.max(a, this.settings.getParameter(ParameterTypes.B).neg());
                     simplePlan.minimizeAcceleration(a);
                 }
@@ -790,19 +792,21 @@ public class RampMeteringDemo extends AbstractSimulationScript
         /**
          * Checks whether a gap can be accepted.
          * @param neighbors neighbors
-         * @param sli speed limit info
+         * @param speedLimits speed limit info
          * @param leaders whether we are dealing with leaders, or followers
          * @return whether the gap is accepted
          * @throws ParameterException if a parameter is not defined
          */
-        private boolean acceptGap(final Set<PerceivedGtu> neighbors, final SpeedLimitInfo sli, final boolean leaders)
+        private boolean acceptGap(final Set<PerceivedGtu> neighbors, final SpeedLimits speedLimits, final boolean leaders)
                 throws ParameterException
         {
             for (PerceivedGtu neighbor : neighbors)
             {
-                Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings,
-                        leaders ? this.gtu.getSpeed() : neighbor.getSpeed(), sli, neighbor.getDistance(),
-                        leaders ? neighbor.getSpeed() : this.gtu.getSpeed());
+                Speed followerSpeed = leaders ? this.gtu.getSpeed() : neighbor.getSpeed();
+                Speed maxSpeed = leaders ? this.gtu.getMaximumSpeed() : neighbor.getMaximumSpeed();
+                Speed leaderSpeed = leaders ? neighbor.getSpeed() : this.gtu.getSpeed();
+                Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings, followerSpeed,
+                        speedLimits, maxSpeed, neighbor.getDistance(), leaderSpeed);
                 if (a.lt(this.settings.getParameter(ParameterTypes.B).neg()))
                 {
                     return false;

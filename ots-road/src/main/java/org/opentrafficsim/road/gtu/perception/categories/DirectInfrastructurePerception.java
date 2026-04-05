@@ -1,18 +1,25 @@
 package org.opentrafficsim.road.gtu.perception.categories;
 
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableSortedSet;
+import org.djutils.math.AngleUtil;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
+import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
@@ -20,12 +27,13 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.structure.LaneRecord;
 import org.opentrafficsim.road.gtu.perception.structure.LaneStructure;
+import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneAccessLaw;
 import org.opentrafficsim.road.network.LaneChangeInfo;
 import org.opentrafficsim.road.network.Shoulder;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+import org.opentrafficsim.road.network.object.SpeedBump;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Perceives information concerning the infrastructure, including splits, lanes, speed limits and road markings. This category
@@ -60,48 +68,48 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
     }
 
     @Override
-    public final SortedSet<LaneChangeInfo> getLegalLaneChangeInfo(final RelativeLane lane)
+    public SortedSet<LaneChangeInfo> getLegalLaneChangeInfo(final RelativeLane lane)
     {
         return computeIfAbsent("legalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL), lane);
     }
 
     @Override
-    public final SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(final RelativeLane lane)
+    public SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(final RelativeLane lane)
     {
         return computeIfAbsent("physicalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.PHYSICAL), lane);
     }
 
     @Override
-    public final SpeedLimitProspect getSpeedLimitProspect(final RelativeLane lane)
+    public SpeedLimits getSpeedLimits(final RelativeLane lane)
     {
-        return computeIfAbsent("speedLimitProspect", () -> computeSpeedLimitProspect(lane), lane);
+        return computeIfAbsent("speedLimitProspect", () -> computeSpeedLimits(lane), lane);
     }
 
     @Override
-    public final Length getLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
+    public Length getLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
         return computeIfAbsent("legalLaneChange", () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.LEGAL),
                 fromLane, lat);
     }
 
     @Override
-    public final Length getPhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
+    public Length getPhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
         return computeIfAbsent("physicalLaneChange", () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.PHYSICAL),
                 fromLane, lat);
     }
 
     @Override
-    public final SortedSet<RelativeLane> getCrossSection()
+    public SortedSet<RelativeLane> getCrossSection()
     {
         return computeIfAbsent("crossSection", () -> getLaneStructure().getRootCrossSection());
     }
 
     /**
      * Compute lane change info.
-     * @param lane lane.
-     * @param laneLaw lane change law.
-     * @return lane change info.
+     * @param lane lane
+     * @param laneLaw lane change law
+     * @return lane change info
      */
     private SortedSet<LaneChangeInfo> computeLaneChangeInfo(final RelativeLane lane, final LaneAccessLaw laneLaw)
     {
@@ -145,28 +153,21 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
     /**
      * Compute speed limit prospect.
-     * @param lane lane.
-     * @return speed limit prospect.
+     * @param lane lane
+     * @return speed limit prospect
      */
-    private SpeedLimitProspect computeSpeedLimitProspect(final RelativeLane lane)
+    private SpeedLimits computeSpeedLimits(final RelativeLane lane)
     {
-        // TODO: this is very limited information regarding what the prospect could have, is this is only maximum vehicle speed,
-        // and legal speed on the lane
-        SpeedLimitProspect slp = new SpeedLimitProspect(getGtu().getOdometer());
-        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGtu().getMaximumSpeed(), getGtu());
-        Lane l = getLaneStructure().getRootRecord(lane).getLane();
-        GtuType gtuType = getGtu().getType();
-        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, Try.assign(() -> l.getSpeedLimit(getGtu().getType()),
-                OtsRuntimeException.class, "No speed limit for GTU type %s on lane %s.", gtuType, l.getFullId()), l);
-        return slp;
+        return getLaneStructure().getRootRecord(lane).getLane().getSpeedLimits(getPerception().getGtu().getType(),
+                getPerception().getGtu().getSimulator().getTimeOfDay());
     }
 
     /**
      * Compute lane change possibility.
-     * @param fromLane lane to possibly change from.
-     * @param lat direction to change to.
-     * @param accessLaw legal or physical.
-     * @return length over which a lane change is possible, or not for a negative value.
+     * @param fromLane lane to possibly change from
+     * @param lat direction to change to
+     * @param accessLaw legal or physical
+     * @return length over which a lane change is possible, or not for a negative value
      */
     private Length computeLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat,
             final LaneAccessLaw accessLaw)
@@ -224,10 +225,10 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
     /**
      * Returns whether the lane change is possible.
-     * @param record record.
-     * @param lat direction of lane change.
-     * @param accessLaw legal or physical.
-     * @return whether the lane change is possible.
+     * @param record record
+     * @param lat direction of lane change
+     * @param accessLaw legal or physical
+     * @return whether the lane change is possible
      */
     private boolean canChange(final LaneRecord record, final LateralDirectionality lat, final LaneAccessLaw accessLaw)
     {
@@ -236,9 +237,106 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
                 : !record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty();
     }
 
+    @Override
+    public SortedMap<Length, DirectedPoint2d> getPathScan()
+    {
+        return computeIfAbsent("pathScan", () -> computePathScan());
+    }
+
+    /**
+     * Compute path scan.
+     * @return path scan
+     */
+    private SortedMap<Length, DirectedPoint2d> computePathScan()
+    {
+        SortedMap<Length, DirectedPoint2d> out = new TreeMap<>();
+        EgoPerception<?, ?> ego =
+                Try.assign(() -> getPerception().getPerceptionCategory(EgoPerception.class), "No ego perception.");
+        Parameters parameters = getPerception().getGtu().getParameters();
+
+        // distance step based on current speed and model time step
+        Length step = Length.max(ego.getLength(),
+                parameters.getOptionalParameter(ParameterTypes.DT).orElseThrow().times(ego.getSpeed()));
+
+        // horizon based on braking distance from current speed and b
+        double b = parameters.getOptionalParameter(ParameterTypes.B).orElseThrow().si;
+        double brakeTime = ego.getSpeed().si / b;
+        double brakeDistance = ego.getSpeed().si * brakeTime - .5 * b * brakeTime * brakeTime;
+
+        // scan for integer number of steps
+        int last = ((int) Math.ceil(brakeDistance / step.si)) + 1; // +1 as this is exclusive
+        branchPath(step, 1, last, getPerception().getGtu().getLocation().dirZ,
+                getLaneStructure().getRootRecord(RelativeLane.CURRENT), out);
+
+        return out;
+    }
+
+    /**
+     * Branches along downstream lanes to find relevant points.
+     * @param step step between points
+     * @param first first index (earlier already found in branch)
+     * @param last last index (exclusive)
+     * @param prevPhi angle of previous point
+     * @param record lane record
+     * @param map map to store output in
+     */
+    private void branchPath(final Length step, final int first, final int last, final double prevPhi, final LaneRecord record,
+            final SortedMap<Length, DirectedPoint2d> map)
+    {
+        double phi = prevPhi;
+        for (int i = first; i < last; i++)
+        {
+            Length ahead = step.times(i);
+            if (ahead.gt(record.getStartDistance().plus(record.getLength())))
+            {
+                for (LaneRecord next : record.getNext())
+                {
+                    branchPath(step, i, last, phi, next, map);
+                }
+                return;
+            }
+            Length position = ahead.minus(record.getStartDistance());
+            DirectedPoint2d point = record.getLane().getCenterLine().getLocation(position);
+            // ignore if essentially the same direction as the previous point
+            if (Math.abs(AngleUtil.normalizeAroundZero(point.dirZ - phi)) > 1e-3)
+            {
+                phi = point.dirZ;
+                map.merge(ahead, point, (p1, p2) ->
+                {
+                    double angle1 = AngleUtil.normalizeAroundZero(p1.dirZ - getGtu().getLocation().dirZ);
+                    double angle2 = AngleUtil.normalizeAroundZero(p2.dirZ - getGtu().getLocation().dirZ);
+                    return Math.abs(angle1) > Math.abs(angle2) ? p1 : p2;
+                });
+            }
+        }
+    }
+
+    @Override
+    public Optional<DistancedObject<Speed>> getSpeedBump()
+    {
+        return computeIfAbsent("speedBump", () -> computeSpeedBump());
+    }
+
+    /**
+     * Compute speed bump.
+     * @return speed bump
+     */
+    private Optional<DistancedObject<Speed>> computeSpeedBump()
+    {
+        Iterable<Entry<SpeedBump>> speedBumps =
+                getLaneStructure().getDownstreamObjects(RelativeLane.CURRENT, SpeedBump.class, RelativePosition.FRONT, true);
+        for (Entry<SpeedBump> entry : speedBumps)
+        {
+            // first speed bump only
+            return Optional
+                    .of(new DistancedObject<>(entry.object().getSpeed(getPerception().getGtu().getType()), entry.distance()));
+        }
+        return Optional.empty();
+    }
+
     /**
      * Returns the lane structure.
-     * @return lane structure.
+     * @return lane structure
      */
     private LaneStructure getLaneStructure()
     {

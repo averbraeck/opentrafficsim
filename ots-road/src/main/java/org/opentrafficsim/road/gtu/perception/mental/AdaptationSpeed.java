@@ -29,6 +29,9 @@ public class AdaptationSpeed implements BehavioralAdaptation
     /** Base value for the desired speed. */
     private Double fSpeed0;
 
+    /** Base value for the desired speed relative to GTU type speed limit. */
+    private Double fSpeedGtu0;
+
     /**
      * Constructor.
      */
@@ -43,12 +46,14 @@ public class AdaptationSpeed implements BehavioralAdaptation
         if (this.fSpeed0 == null)
         {
             this.fSpeed0 = parameters.getParameter(ParameterTypes.FSPEED);
+            this.fSpeedGtu0 = parameters.getParameter(ParameterTypes.FSPEED_GTU);
         }
         double tsCrit = parameters.getOptionalParameter(SumFuller.TS_CRIT).orElse(1.0);
         double eps = parameters.getParameter(Fuller.TS) - tsCrit;
         eps = eps < 0.0 ? 0.0 : (eps >= 0.999 ? 0.999 : eps);
         double factor = 1.0 - parameters.getParameter(BETA_V0) * eps;
         parameters.setClaimedParameter(ParameterTypes.FSPEED, this.fSpeed0 * factor, this);
+        parameters.setClaimedParameter(ParameterTypes.FSPEED_GTU, this.fSpeedGtu0 * factor, this);
     }
 
 }

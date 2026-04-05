@@ -913,7 +913,8 @@ public class XsdTreeNode extends LocalEventProducer
             boolean isDefaultBoolean = false;
             if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type").orElse(null)))
             {
-                isDefaultBoolean = getDefaultAttributeValue(index).equals(value);
+                Optional<String> defaultValue = getDefaultAttributeValue(index);
+                isDefaultBoolean = defaultValue.isPresent() && defaultValue.get().equals(value);
             }
             this.attributeValues.set(index, (value == null || value.isEmpty() || isDefaultBoolean) ? null : value);
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))

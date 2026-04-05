@@ -1,20 +1,15 @@
 package org.opentrafficsim.road.gtu.control;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Class that splits the desired acceleration of a controller in a fixed linear free term, and a term for following determined
@@ -48,17 +43,9 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
             final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings)
             throws ParameterException
     {
-        SpeedLimitInfo speedInfo;
-        try
-        {
-            speedInfo = gtu.getTacticalPlanner().getPerception().getPerceptionCategory(InfrastructurePerception.class)
-                    .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
-        }
-        catch (OperationalPlanException exception)
-        {
-            throw new OtsRuntimeException("Infrastructure perception is not available.", exception);
-        }
-        Speed v0 = gtu.getTacticalPlanner().getCarFollowingModel().desiredSpeed(gtu.getParameters(), speedInfo);
+        SpeedLimits speedLimits = gtu.getLane().getSpeedLimits(gtu.getType());
+        Speed v0 = gtu.getTacticalPlanner().getCarFollowingModel().desiredSpeed(gtu.getParameters(), speedLimits,
+                gtu.getMaximumSpeed());
         Acceleration a = Acceleration.ofSI(settings.getParameter(KF) * (v0.si - gtu.getSpeed().si));
         if (leaders.isEmpty())
         {

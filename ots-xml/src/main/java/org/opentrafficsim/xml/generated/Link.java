@@ -126,7 +126,11 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *                 <complexContent>
  *                   <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                     <sequence>
- *                       <element ref="{http://www.opentrafficsim.org/ots}SpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
+ *                       <choice minOccurs="0">
+ *                         <element name="SpeedLimit" type="{http://www.opentrafficsim.org/ots}SpeedLimit"/>
+ *                         <element name="TemporalSpeedLimit" type="{http://www.opentrafficsim.org/ots}TemporalSpeedLimit"/>
+ *                       </choice>
+ *                       <element ref="{http://www.opentrafficsim.org/ots}GtuTypeSpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
  *                     </sequence>
  *                     <attribute name="Lane" use="required" type="{http://www.opentrafficsim.org/ots}string" />
  *                   </restriction>
@@ -1299,7 +1303,11 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      *   <complexContent>
      *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       <sequence>
-     *         <element ref="{http://www.opentrafficsim.org/ots}SpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
+     *         <choice minOccurs="0">
+     *           <element name="SpeedLimit" type="{http://www.opentrafficsim.org/ots}SpeedLimit"/>
+     *           <element name="TemporalSpeedLimit" type="{http://www.opentrafficsim.org/ots}TemporalSpeedLimit"/>
+     *         </choice>
+     *         <element ref="{http://www.opentrafficsim.org/ots}GtuTypeSpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
      *       </sequence>
      *       <attribute name="Lane" use="required" type="{http://www.opentrafficsim.org/ots}string" />
      *     </restriction>
@@ -1311,7 +1319,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "speedLimit"
+        "speedLimit",
+        "temporalSpeedLimit",
+        "gtuTypeSpeedLimit"
     })
     public static class LaneOverride
         implements Serializable
@@ -1319,7 +1329,11 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
         private static final long serialVersionUID = 10102L;
         @XmlElement(name = "SpeedLimit")
-        protected List<SpeedLimit> speedLimit;
+        protected SpeedLimit speedLimit;
+        @XmlElement(name = "TemporalSpeedLimit")
+        protected TemporalSpeedLimit temporalSpeedLimit;
+        @XmlElement(name = "GtuTypeSpeedLimit")
+        protected List<GtuTypeSpeedLimit> gtuTypeSpeedLimit;
         @XmlAttribute(name = "Lane", required = true)
         @XmlJavaTypeAdapter(StringAdapter.class)
         protected StringType lane;
@@ -1327,33 +1341,81 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         /**
          * Gets the value of the speedLimit property.
          * 
+         * @return
+         *     possible object is
+         *     {@link SpeedLimit }
+         *     
+         */
+        public SpeedLimit getSpeedLimit() {
+            return speedLimit;
+        }
+
+        /**
+         * Sets the value of the speedLimit property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link SpeedLimit }
+         *     
+         */
+        public void setSpeedLimit(SpeedLimit value) {
+            this.speedLimit = value;
+        }
+
+        /**
+         * Gets the value of the temporalSpeedLimit property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link TemporalSpeedLimit }
+         *     
+         */
+        public TemporalSpeedLimit getTemporalSpeedLimit() {
+            return temporalSpeedLimit;
+        }
+
+        /**
+         * Sets the value of the temporalSpeedLimit property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link TemporalSpeedLimit }
+         *     
+         */
+        public void setTemporalSpeedLimit(TemporalSpeedLimit value) {
+            this.temporalSpeedLimit = value;
+        }
+
+        /**
+         * Gets the value of the gtuTypeSpeedLimit property.
+         * 
          * <p>This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the speedLimit property.</p>
+         * This is why there is not a <CODE>set</CODE> method for the gtuTypeSpeedLimit property.</p>
          * 
          * <p>
          * For example, to add a new item, do as follows:
          * </p>
          * <pre>
-         * getSpeedLimit().add(newItem);
+         * getGtuTypeSpeedLimit().add(newItem);
          * </pre>
          * 
          * 
          * <p>
          * Objects of the following type(s) are allowed in the list
-         * {@link SpeedLimit }
+         * {@link GtuTypeSpeedLimit }
          * </p>
          * 
          * 
          * @return
-         *     The value of the speedLimit property.
+         *     The value of the gtuTypeSpeedLimit property.
          */
-        public List<SpeedLimit> getSpeedLimit() {
-            if (speedLimit == null) {
-                speedLimit = new ArrayList<>();
+        public List<GtuTypeSpeedLimit> getGtuTypeSpeedLimit() {
+            if (gtuTypeSpeedLimit == null) {
+                gtuTypeSpeedLimit = new ArrayList<>();
             }
-            return this.speedLimit;
+            return this.gtuTypeSpeedLimit;
         }
 
         /**

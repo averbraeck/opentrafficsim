@@ -3,10 +3,12 @@ package org.opentrafficsim.demo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -38,6 +40,7 @@ import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
@@ -68,7 +71,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     private Length minimumDistance = new Length(0, METER);
 
     /** The speed limit. */
-    private Speed speedLimit = new Speed(100, KM_PER_HOUR);
+    private LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(100, SpeedUnit.KM_PER_HOUR),
+            Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
@@ -224,7 +228,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                 coordsHalf1[i] = new Point2d(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
-                    laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
+                    laneType, this.speedLimits, this.simulator);
             Point2d[] coordsHalf2 = new Point2d[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
@@ -232,7 +236,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                 coordsHalf2[i] = new Point2d(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
-                    laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
+                    laneType, this.speedLimits, this.simulator);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
                 this.paths.get(laneIndex).add(lanes1[laneIndex]);

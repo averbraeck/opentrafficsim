@@ -17,7 +17,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -132,7 +131,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
             xmlModel.getStreams().putAll(map);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), xmlModel,
+            simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), xmlModel,
                     new HistoryManagerDevs(simulator, Duration.ofSI(5.0), Duration.ofSI(10.0)));
             OtsSimulationPanel simulationPanel = new OtsSimulationPanel(xmlModel.getNetwork());
             simulationPanel.enableSimulationControlButtons();

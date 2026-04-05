@@ -43,6 +43,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.conflict.Conflict;
 import org.opentrafficsim.road.network.conflict.ConflictType;
 import org.opentrafficsim.road.network.conflict.DefaultConflictRule;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 /**
  * Test the Conflict class.
@@ -90,7 +91,7 @@ public final class ConflictTest implements EventListener
         CrossSectionLink linkA = new CrossSectionLink(network, "Link A", nodeAFrom, nodeATo, linkType,
                 new OtsLine2d(pointAFrom, pointATo), null, LaneKeepingPolicy.KEEPRIGHT);
         Lane laneA = LaneGeometryUtil.createStraightLane(linkA, "lane A", Length.ZERO, new Length(2, LengthUnit.METER),
-                laneType, Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
+                laneType, new LaneSpeedLimits(Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR))));
         laneA.addListener(this, Lane.OBJECT_ADD_EVENT);
 
         Point2d pointBFrom = new Point2d(30, -15);
@@ -102,7 +103,7 @@ public final class ConflictTest implements EventListener
         CrossSectionLink linkB = new CrossSectionLink(network, "Link B", nodeBFrom, nodeBTo, linkType,
                 new OtsLine2d(pointBFrom, pointBTo), null, LaneKeepingPolicy.KEEPRIGHT);
         Lane laneB = LaneGeometryUtil.createStraightLane(linkB, "lane B", Length.ZERO, new Length(4, LengthUnit.METER),
-                laneType, Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
+                laneType, new LaneSpeedLimits(Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR))));
         laneB.addListener(this, Lane.OBJECT_ADD_EVENT);
         // The intersection of the link design lines is at 50, 0
         if (VERBOSE)

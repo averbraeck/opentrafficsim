@@ -56,6 +56,7 @@ import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.Stripe;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.sim0mq.Sim0MQException;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -334,7 +335,7 @@ public final class TransceiverTest
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
         Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", Length.ZERO, new Length(3, LengthUnit.METER), laneType,
-                Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
+                new LaneSpeedLimits(Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR))));
         Length width = new Length(20, LengthUnit.DECIMETER);
         Stripe stripe = LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.DASHED, "1", link, Length.ZERO, width);
         String stripeId = stripe.getId();

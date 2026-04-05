@@ -29,9 +29,11 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.Compatibility;
 import org.opentrafficsim.xml.generated.GtuTemplate;
+import org.opentrafficsim.xml.generated.GtuTypeSpeedLimit;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.SpeedLimit;
 import org.opentrafficsim.xml.generated.StripeType;
+import org.opentrafficsim.xml.generated.TemporalSpeedLimit;
 
 /**
  * DefinitionParser parses the XML nodes of the Definitions tag: org.opentrafficsim.xml.generated.GtuType, GtuTemplate,
@@ -58,7 +60,7 @@ public final class DefinitionsParser
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
      * @param laneBiases map of lane biases for the OD parser
-     * @param linkTypeSpeedLimitMap map with speed limit information per link type
+     * @param infraSpeedLimitMap map with speed limit information per link type
      * @param stripes stripes
      * @param eval expression evaluator.
      * @return the parsed definitions
@@ -66,28 +68,30 @@ public final class DefinitionsParser
      */
     public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
             final Map<String, RoadLayout> roadLayoutMap, final Map<String, GtuTemplate> gtuTemplates,
-            final Map<String, LaneBias> laneBiases, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
+            final Map<String, LaneBias> laneBiases, final Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap,
             final Map<String, StripeType> stripes, final Eval eval) throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
 
         // Consumers specify specific checks and how tags or type instances should be stored in the maps
-        BiConsumerThrows<org.opentrafficsim.xml.generated.LinkType, LinkType> linkTypeConsumer = new BiConsumerThrows<>()
-        {
-            @Override
-            public void accept(final org.opentrafficsim.xml.generated.LinkType linkTag, final LinkType linkType)
-                    throws XmlParserException
-            {
-                Map<GtuType, Speed> map = new LinkedHashMap<>();
-                linkTypeSpeedLimitMap.put(linkType, map);
-                for (SpeedLimit speedLimitTag : linkTag.getSpeedLimit())
+        BiConsumerThrows<org.opentrafficsim.xml.generated.SpeedLimitInfraType, GtuCompatibleInfraType<?, ?>> infraTypeConsumer =
+                new BiConsumerThrows<>()
                 {
-                    GtuType gtuType = getDefinition(GtuType.class, parsedDefinitions, speedLimitTag.getGtuType(),
-                            "LinkType(.SpeedLimit)", linkTag.getId(), "GtuType", eval);
-                    map.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(eval));
-                }
-            }
-        };
+                    @Override
+                    public void accept(final org.opentrafficsim.xml.generated.SpeedLimitInfraType infraTag,
+                            final GtuCompatibleInfraType<?, ?> linkType) throws XmlParserException
+                    {
+                        Map<GtuType, Speed> gtuTypeSpeedLimits = new LinkedHashMap<>();
+                        for (GtuTypeSpeedLimit gtuTypeSpeedLimitTag : infraTag.getGtuTypeSpeedLimit())
+                        {
+                            GtuType gtuType = getDefinition(GtuType.class, parsedDefinitions, gtuTypeSpeedLimitTag.getId(),
+                                    "GtuTypeSpeedLimit of LinkType or LaneType", infraTag.getId(), "Id", eval);
+                            gtuTypeSpeedLimits.put(gtuType, gtuTypeSpeedLimitTag.getValue().get(eval));
+                        }
+                        infraSpeedLimitMap.put(linkType, new SpeedLimits(infraTag.getSpeedLimit(),
+                                infraTag.getTemporalSpeedLimit(), gtuTypeSpeedLimits));
+                    }
+                };
         BiConsumerThrows<org.opentrafficsim.xml.generated.GtuTemplate, Object> gtuTemplateConsumer = new BiConsumerThrows<>()
         {
             @Override
@@ -130,9 +134,9 @@ public final class DefinitionsParser
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.GtuTypes.class,
                 org.opentrafficsim.xml.generated.GtuType.class, GtuType.class, null, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
-                org.opentrafficsim.xml.generated.LinkType.class, LinkType.class, linkTypeConsumer, eval);
+                org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LinkType.class, infraTypeConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
-                org.opentrafficsim.xml.generated.LaneType.class, LaneType.class, null, eval);
+                org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LaneType.class, infraTypeConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.DetectorTypes.class,
                 org.opentrafficsim.xml.generated.DetectorType.class, DetectorType.class, null, eval);
 
@@ -184,7 +188,7 @@ public final class DefinitionsParser
         for (L typesTag : ParseUtil.getObjectsOfType(definitions.getIncludeAndGtuTypesAndGtuTemplates(), typesTagClass))
         {
             for (G g : Try.assign(
-                    () -> (List<G>) ClassUtil.resolveMethod(typesTagClass, "get" + typeTagClass.getSimpleName(), null)
+                    () -> (List<G>) ClassUtil.resolveMethod(typesTagClass, resolveName(typesTagClass, typeTagClass), null)
                             .invoke(typesTag),
                     XmlParserException.class, "Unable to obtain %s from %s", typeTagClass.getSimpleName(),
                     typesTagClass.getSimpleName()))
@@ -250,6 +254,24 @@ public final class DefinitionsParser
                 }
             }
         }
+    }
+
+    /**
+     * Resolves the method name to obtain type tag from tag containing those types.
+     * @param typesTagClass types tag, e.g. GtuTypes
+     * @param typeTagClass type tag, e.g. GtuType
+     * @return method name to obtain type tag from tag containing those types
+     */
+    private static String resolveName(final Class<?> typesTagClass, final Class<?> typeTagClass)
+    {
+        String simpleName = typeTagClass.getSimpleName();
+        if ("SpeedLimitInfraType".equals(simpleName))
+        {
+            // LinkType and LaneType are a SpeedLimitInfraType, use LinkTypes -> LinkType or LaneTypes -> LaneType
+            simpleName = typesTagClass.getSimpleName();
+            return "get" + simpleName.substring(0, simpleName.length() - 1);
+        }
+        return "get" + simpleName;
     }
 
     /**
@@ -367,12 +389,6 @@ public final class DefinitionsParser
 
     /**
      * BiConsumer with throws.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <G> tag type
      * @param <T> type type
      */
@@ -386,6 +402,59 @@ public final class DefinitionsParser
          * @throws XmlParserException when tag refers to non existent type
          */
         void accept(G g, T t) throws XmlParserException;
+    }
+
+    /**
+     * Speed limit information to combine from different levels for each lane.
+     * @param speedLimit speed limit
+     * @param temporalSpeedLimit temporal speed limit
+     * @param gtuTypeSpeedLimits GTU type speed limits
+     */
+    public record SpeedLimits(SpeedLimit speedLimit, TemporalSpeedLimit temporalSpeedLimit,
+            Map<GtuType, Speed> gtuTypeSpeedLimits)
+    {
+
+        /**
+         * Creates new speed limits where the narrower-scope limits overrule the speed limits of this object.
+         * @param narrower narrower speed limits
+         * @return combined overruled speed limits
+         */
+        public SpeedLimits overrule(final SpeedLimits narrower)
+        {
+            SpeedLimit speed;
+            TemporalSpeedLimit temporalSpeed;
+            if (narrower.speedLimit() != null)
+            {
+                speed = narrower.speedLimit();
+                temporalSpeed = null;
+            }
+            else if (narrower.temporalSpeedLimit() != null)
+            {
+                speed = null;
+                temporalSpeed = narrower.temporalSpeedLimit();
+            }
+            else
+            {
+                speed = speedLimit();
+                temporalSpeed = temporalSpeedLimit();
+            }
+            Map<GtuType, Speed> map;
+            if (narrower.gtuTypeSpeedLimits() == null || narrower.gtuTypeSpeedLimits().isEmpty())
+            {
+                map = gtuTypeSpeedLimits();
+            }
+            else if (gtuTypeSpeedLimits() == null || gtuTypeSpeedLimits().isEmpty())
+            {
+                map = narrower.gtuTypeSpeedLimits();
+            }
+            else
+            {
+                map = new LinkedHashMap<GtuType, Speed>(gtuTypeSpeedLimits());
+                map.putAll(narrower.gtuTypeSpeedLimits());
+            }
+            return new SpeedLimits(speed, temporalSpeed, map);
+        }
+
     }
 
 }

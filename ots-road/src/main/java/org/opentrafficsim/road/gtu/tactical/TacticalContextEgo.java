@@ -27,7 +27,7 @@ import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerceptio
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.LanePosition;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Wraps a {@link LaneBasedGtu} and provides bundled and easy-access information that tactical models and their components need
@@ -67,8 +67,8 @@ public class TacticalContextEgo implements TacticalContext
     /** Car-following model. */
     private CarFollowingModel carFollowingModel;
 
-    /** Speed limit info. */
-    private SpeedLimitInfo speedLimitInfo;
+    /** Speed limits. */
+    private SpeedLimits speedLimits;
 
     /** Ego length. */
     private Length length;
@@ -78,6 +78,9 @@ public class TacticalContextEgo implements TacticalContext
 
     /** Ego speed. */
     private Speed speed;
+
+    /** Ego maximum speed. */
+    private Speed maxSpeed;
 
     /** Ego acceleration. */
     private Acceleration acceleration;
@@ -138,8 +141,8 @@ public class TacticalContextEgo implements TacticalContext
                     .orElseThrow(() -> new NoSuchElementException(
                             "To obtain car-following acceleration a neighbors perception category is required."))
                     .getLeaders(RelativeLane.CURRENT);
-            this.carFollowingAcceleration =
-                    getCarFollowingModel().followingAcceleration(getParameters(), getSpeed(), getSpeedLimitInfo(), leaders);
+            this.carFollowingAcceleration = getCarFollowingModel().followingAcceleration(getParameters(), getSpeed(),
+                    getSpeedLimits(), getMaximumSpeed(), leaders);
         }
         return this.carFollowingAcceleration;
     }
@@ -234,15 +237,15 @@ public class TacticalContextEgo implements TacticalContext
     }
 
     @Override
-    public SpeedLimitInfo getSpeedLimitInfo()
+    public SpeedLimits getSpeedLimits()
     {
-        if (this.speedLimitInfo == null)
+        if (this.speedLimits == null)
         {
-            this.speedLimitInfo = getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class)
+            this.speedLimits = getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class)
                     .orElseThrow(() -> new NoSuchElementException("No infrastructure perception category."))
-                    .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+                    .getSpeedLimits(RelativeLane.CURRENT);
         }
-        return this.speedLimitInfo;
+        return this.speedLimits;
     }
 
     @Override
@@ -250,7 +253,7 @@ public class TacticalContextEgo implements TacticalContext
     {
         if (this.desiredSpeed == null)
         {
-            this.desiredSpeed = getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimitInfo());
+            this.desiredSpeed = getCarFollowingModel().desiredSpeed(getParameters(), getSpeedLimits(), getMaximumSpeed());
         }
         return this.desiredSpeed;
     }
@@ -293,6 +296,13 @@ public class TacticalContextEgo implements TacticalContext
     }
 
     @Override
+    public Speed getMaximumSpeed()
+    {
+        checkEgo();
+        return this.maxSpeed;
+    }
+
+    @Override
     public Acceleration getAcceleration()
     {
         checkEgo();
@@ -311,6 +321,7 @@ public class TacticalContextEgo implements TacticalContext
             this.length = ego.getLength();
             this.width = ego.getWidth();
             this.speed = ego.getSpeed();
+            this.maxSpeed = ego.getMaximumSpeed();
             this.acceleration = ego.getAcceleration();
         }
     }

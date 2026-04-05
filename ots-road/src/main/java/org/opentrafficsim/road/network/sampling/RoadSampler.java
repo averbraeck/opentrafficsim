@@ -33,7 +33,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 /**
- * Implementation of kpi sampler for OTS.
+ * Implementation of KPI sampler for OTS.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -126,13 +126,13 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final Duration now()
+    public Duration now()
     {
         return this.simulator.getSimulatorTime();
     }
 
     @Override
-    public final void scheduleStartRecording(final Duration time, final LaneDataRoad lane)
+    public void scheduleStartRecording(final Duration time, final LaneDataRoad lane)
     {
         try
         {
@@ -145,7 +145,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final void scheduleStopRecording(final Duration time, final LaneDataRoad lane)
+    public void scheduleStopRecording(final Duration time, final LaneDataRoad lane)
     {
         try
         {
@@ -158,7 +158,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final void initRecording(final LaneDataRoad lane)
+    public void initRecording(final LaneDataRoad lane)
     {
         Lane roadLane = lane.getLane();
         // @docs/02-model-structure/djutils.md#event-producers-and-listeners
@@ -184,7 +184,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final void finalizeRecording(final LaneDataRoad lane)
+    public void finalizeRecording(final LaneDataRoad lane)
     {
         Lane roadLane = lane.getLane();
         roadLane.removeListener(this, Lane.GTU_ADD_EVENT);
@@ -193,7 +193,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     @Override
     // @docs/02-model-structure/djutils.md#event-producers-and-listeners (if-structure + add/removeListener(...))
-    public final void notify(final Event event)
+    public void notify(final Event event)
     {
         if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))
         {
@@ -360,7 +360,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "RoadSampler [samplingInterval=" + this.samplingInterval + "]";
     }

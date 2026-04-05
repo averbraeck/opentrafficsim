@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -45,7 +44,7 @@ public final class ParserTest
     {
         OtsSimulator simulator = new OtsSimulator("Test");
         final TestModel testModel = new TestModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), testModel,
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), testModel,
                 HistoryManagerDevs.noHistory(simulator));
 
         // test node

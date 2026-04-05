@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -33,6 +34,7 @@ import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.CurveFlattener;
@@ -63,6 +65,7 @@ import org.opentrafficsim.road.network.conflict.ConflictBuilder.FixedWidthGenera
 import org.opentrafficsim.road.network.conflict.ConflictBuilder.RelativeWidthGenerator;
 import org.opentrafficsim.road.network.conflict.ConflictBuilder.WidthGenerator;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.parser.DefinitionsParser.SpeedLimits;
 import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets;
@@ -70,6 +73,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseDa
 import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization;
 import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization.SynchronizableStripe;
 import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
@@ -78,18 +82,19 @@ import org.opentrafficsim.xml.generated.CseShoulder;
 import org.opentrafficsim.xml.generated.CseStripe;
 import org.opentrafficsim.xml.generated.CseStripe.Custom;
 import org.opentrafficsim.xml.generated.FlattenerType;
+import org.opentrafficsim.xml.generated.GtuTypeSpeedLimit;
 import org.opentrafficsim.xml.generated.Link;
 import org.opentrafficsim.xml.generated.Link.LaneOverride;
 import org.opentrafficsim.xml.generated.Link.StripeOverride;
 import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.RoadLayout;
-import org.opentrafficsim.xml.generated.SpeedLimit;
 import org.opentrafficsim.xml.generated.StripeCompatibility;
 import org.opentrafficsim.xml.generated.StripeElements.Gap;
 import org.opentrafficsim.xml.generated.StripeElements.Line;
 import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed;
 import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed.GapDash;
 import org.opentrafficsim.xml.generated.StripeType;
+import org.opentrafficsim.xml.generated.TemporalSpeedLimit;
 import org.opentrafficsim.xml.generated.TrafficLightType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -339,7 +344,7 @@ public final class NetworkParser
      * @param definitions parsed definitions.
      * @param network the Network tag
      * @param roadLayoutMap the map of the tags of the predefined RoadLayout tags in Definitions
-     * @param linkTypeSpeedLimitMap map of speed limits per link type
+     * @param infraSpeedLimitMap map of speed limits per link type
      * @param designLines design lines per link id.
      * @param stripes defined stripes
      * @param flatteners flattener per link id.
@@ -350,17 +355,31 @@ public final class NetworkParser
      * @throws GtuException when construction of the Strategical Planner failed
      */
     static void applyRoadLayouts(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
-            final Map<String, RoadLayout> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
+            final Map<String, RoadLayout> roadLayoutMap,
+            final Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap,
             final Map<String, OffsetCurve2d> designLines, final Map<String, CurveFlattener> flatteners,
             final Map<String, StripeType> stripes, final Eval eval)
             throws NetworkException, XmlParserException, SimRuntimeException, GtuException
     {
+        Map<GtuType, Speed> networkGtuTypeSpeedLimits = new LinkedHashMap<GtuType, Speed>();
+        if (network.getGtuTypeSpeedLimits() != null)
+        {
+            for (GtuTypeSpeedLimit gtuTypeSpeedLimit : network.getGtuTypeSpeedLimits().getGtuTypeSpeedLimit())
+            {
+                GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeSpeedLimit.getId().get(eval));
+                Speed speed = gtuTypeSpeedLimit.getValue().get(eval);
+                networkGtuTypeSpeedLimits.put(gtuType, speed);
+            }
+        }
+        SpeedLimits networkSpeedLimits = new SpeedLimits(null, null, networkGtuTypeSpeedLimits);
+
         Map<Stripe, SynchronizableStripe<Stripe>> stripesSync = new LinkedHashMap<>();
         for (Link xmlLink : network.getLink())
         {
             CrossSectionLink csl = getLink(otsNetwork, xmlLink.getId());
             List<CrossSectionElement> cseList = new ArrayList<>();
             Map<String, Lane> lanes = new LinkedHashMap<>();
+            Map<CseLane, SpeedLimits> overruleSpeedLimits = new LinkedHashMap<>();
 
             // Get the RoadLayout (either defined here, or via pointer to Definitions)
             BasicRoadLayout roadLayoutTag;
@@ -380,11 +399,15 @@ public final class NetworkParser
                     {
                         if (lane.getId().equals(laneOverride.getLane().get(eval)))
                         {
-                            if (laneOverride.getSpeedLimit().size() > 0)
+                            Map<GtuType, Speed> gtuTypeSpeedLimits = new LinkedHashMap<>();
+                            for (GtuTypeSpeedLimit gtuTypeSpeedLimit : laneOverride.getGtuTypeSpeedLimit())
                             {
-                                lane.getSpeedLimit().clear();
-                                lane.getSpeedLimit().addAll(laneOverride.getSpeedLimit());
+                                GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeSpeedLimit.getId().get(eval));
+                                Speed speed = gtuTypeSpeedLimit.getValue().get(eval);
+                                gtuTypeSpeedLimits.put(gtuType, speed);
                             }
+                            overruleSpeedLimits.put(lane, new SpeedLimits(laneOverride.getSpeedLimit(),
+                                    laneOverride.getTemporalSpeedLimit(), gtuTypeSpeedLimits));
                         }
                     }
                 }
@@ -460,32 +483,55 @@ public final class NetworkParser
                 CrossSectionGeometry geometry = CrossSectionGeometry.of(designLine, flattener, offset, width);
 
                 // Lane
-                if (cseTag instanceof CseLane)
+                if (cseTag instanceof CseLane laneTag)
                 {
-                    CseLane laneTag = (CseLane) cseTag;
                     LaneType laneType = definitions.getOrThrow(LaneType.class, laneTag.getLaneType().get(eval));
-                    Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
+
+                    // collect overruled speed limits
                     LinkType linkType = csl.getType();
-                    speedLimitMap.putAll(linkTypeSpeedLimitMap.computeIfAbsent(linkType, (l) -> new LinkedHashMap<>()));
-                    for (SpeedLimit speedLimitTag : roadLayoutTag.getSpeedLimit())
+                    SpeedLimits speedLimits = networkSpeedLimits;
+                    if (infraSpeedLimitMap.containsKey(linkType))
                     {
-                        GtuType gtuType = definitions.getOrThrow(GtuType.class, speedLimitTag.getGtuType().get(eval));
-                        speedLimitMap.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(eval));
+                        speedLimits = speedLimits.overrule(infraSpeedLimitMap.get(linkType));
                     }
-                    for (SpeedLimit speedLimitTag : laneTag.getSpeedLimit())
+                    if (infraSpeedLimitMap.containsKey(laneType))
                     {
-                        GtuType gtuType = definitions.getOrThrow(GtuType.class, speedLimitTag.getGtuType().get(eval));
-                        speedLimitMap.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(eval));
+                        speedLimits = speedLimits.overrule(infraSpeedLimitMap.get(laneType));
                     }
-                    Lane lane = new Lane(csl, laneTag.getId(), geometry, laneType, speedLimitMap);
+                    if (overruleSpeedLimits.containsKey(laneTag))
+                    {
+                        speedLimits = speedLimits.overrule(overruleSpeedLimits.get(laneTag));
+                    }
+                    // write speed limits in object for lane
+                    LaneSpeedLimits laneSpeedLimits = speedLimits.gtuTypeSpeedLimits() == null ? new LaneSpeedLimits()
+                            : new LaneSpeedLimits(speedLimits.gtuTypeSpeedLimits());
+                    if (speedLimits.speedLimit() != null)
+                    {
+                        Speed speed = speedLimits.speedLimit().getValue().get(eval);
+                        boolean enforced = speedLimits.speedLimit().getEnforced().get(eval);
+                        boolean gtuTypeAware = speedLimits.speedLimit().getGtuTypeAware().get(eval);
+                        laneSpeedLimits.addSpeedLimit(speed, enforced, gtuTypeAware);
+                    }
+                    else if (speedLimits.temporalSpeedLimit() != null)
+                    {
+                        for (TemporalSpeedLimit.SpeedLimit speedLimit : speedLimits.temporalSpeedLimit().getSpeedLimit())
+                        {
+                            Duration timeOfDay = Duration.ofSI(speedLimit.getStartTimeOfDay().get(eval).si % 86400.0);
+                            Speed speed = speedLimit.getValue().get(eval);
+                            boolean enforced = speedLimit.getEnforced().get(eval);
+                            boolean gtuTypeAware = speedLimit.getGtuTypeAware().get(eval);
+                            laneSpeedLimits.addSpeedLimit(timeOfDay, speed, enforced, gtuTypeAware);
+                        }
+                    }
+
+                    Lane lane = new Lane(csl, laneTag.getId(), geometry, laneType, laneSpeedLimits);
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
                 }
 
                 // Shoulder
-                else if (cseTag instanceof CseShoulder)
+                else if (cseTag instanceof CseShoulder shoulderTag)
                 {
-                    CseShoulder shoulderTag = (CseShoulder) cseTag;
                     LaneType laneType = SHOULDER;
                     String id = shoulderTag.getId() != null ? shoulderTag.getId() : UUID.randomUUID().toString();
                     CrossSectionElement shoulder = new Shoulder(csl, id, geometry, laneType);

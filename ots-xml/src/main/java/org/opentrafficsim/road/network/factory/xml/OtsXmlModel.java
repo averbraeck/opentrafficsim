@@ -6,7 +6,6 @@ import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -92,7 +91,7 @@ public abstract class OtsXmlModel extends AbstractOtsModel
         try
         {
             this.xmlParser = new XmlParser(this.network).setResource(resource).setScenario(scenario);
-            getSimulator().initialize(Time.ZERO, this.xmlParser.getWarmupPeriod(), this.xmlParser.getRunLength(), this,
+            getSimulator().initialize(Duration.ZERO, this.xmlParser.getWarmupPeriod(), this.xmlParser.getRunLength(), this,
                     new HistoryManagerDevs(getSimulator(), this.xmlParser.getHistory(), Duration.ofSI(10.0)));
         }
         catch (SimRuntimeException | NamingException | JAXBException | SAXException | ParserConfigurationException

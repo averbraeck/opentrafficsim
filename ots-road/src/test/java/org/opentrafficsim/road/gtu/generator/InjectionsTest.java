@@ -19,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.data.Column;
 import org.djutils.data.ListTable;
 import org.djutils.data.Table;
@@ -59,6 +58,7 @@ import org.opentrafficsim.road.network.LaneGeometryUtil;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -213,7 +213,7 @@ public final class InjectionsTest
         // test GTU characteristics and generator positions
         // -- network
         OtsSimulatorInterface simulator = new OtsSimulator("net");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class),
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class),
                 HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("network", simulator);
         Node nodeA = new Node(network, "A", new Point2d(0.0, 0.0), Direction.ZERO);
@@ -222,9 +222,9 @@ public final class InjectionsTest
                 new OtsLine2d(nodeA.getPoint(), nodeB.getPoint()), null, LaneKeepingPolicy.KEEPRIGHT);
         Length laneWidth = Length.ofSI(3.5);
         LaneGeometryUtil.createStraightLane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY,
-                Collections.emptyMap());
+                new LaneSpeedLimits(Collections.emptyMap()));
         LaneGeometryUtil.createStraightLane(linkAB, "Lane2", laneWidth, laneWidth, DefaultsRoadNl.FREEWAY,
-                Collections.emptyMap());
+                new LaneSpeedLimits(Collections.emptyMap()));
         // -- table
         Table arrivals2 = new ListTable("id", "", Set.of(time, length)); // no GTU type column
         UnitTest.testFail(() -> fullInjections(arrivals2, network).asLaneBasedGtuCharacteristicsGenerator(),
@@ -314,7 +314,7 @@ public final class InjectionsTest
     {
         // A small test network with two completely separated lanes on different links
         OtsSimulatorInterface simulator = new OtsSimulator("simulator");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), Mockito.mock(OtsModelInterface.class),
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), Mockito.mock(OtsModelInterface.class),
                 HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("network", simulator);
         Point2d pointA = new Point2d(0.0, 0.0);
@@ -329,11 +329,11 @@ public final class InjectionsTest
                 new OtsLine2d(pointA, pointB), null, LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkCD = new CrossSectionLink(network, "CD", nodeC, nodeD, DefaultsNl.FREEWAY,
                 new OtsLine2d(pointC, pointD), null, LaneKeepingPolicy.KEEPRIGHT);
-        Map<GtuType, Speed> speedLimit = Map.of(DefaultsNl.CAR, Speed.ofSI(25.0));
+        LaneSpeedLimits speedLimits = new LaneSpeedLimits(Map.of(DefaultsNl.CAR, Speed.ofSI(25.0)));
         Lane lane1 = LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.ZERO, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY,
-                speedLimit);
+                speedLimits);
         Lane lane2 = LaneGeometryUtil.createStraightLane(linkCD, "lane2", Length.ZERO, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY,
-                speedLimit);
+                speedLimits);
 
         // Columns
         Column<Duration> time = new Column<>(Injections.TIME_COLUMN, "", Duration.class, "s");
@@ -359,8 +359,7 @@ public final class InjectionsTest
         LmrsFactory<Lmrs> tacticalFactory = new LmrsFactory<>(Lmrs::new).setStream(stream);
         LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
-        Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL,
-                strategicalPlannerFactory, stream,
+        Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL, strategicalPlannerFactory, stream,
                 Duration.ofSI(60.0));
         new LaneBasedGtuGenerator("id", injections.asArrivalsSupplier(), injections.asLaneBasedGtuCharacteristicsGenerator(),
                 injections.asGeneratorPositions(), network, simulator, injections.asRoomChecker(), injections.asIdSupplier());

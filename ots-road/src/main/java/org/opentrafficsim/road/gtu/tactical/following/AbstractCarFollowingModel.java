@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Default implementation where desired speed and headway are pre-calculated for car-following.
@@ -49,29 +49,24 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     }
 
     @Override
-    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+    public final Speed desiredSpeed(final Parameters parameters, final SpeedLimits speedLimits, final Speed maxVehicleSpeed)
+            throws ParameterException
     {
-        Throw.whenNull(parameters, "Parameters may not be null.");
-        Throw.whenNull(speedInfo, "Speed limit info may not be null.");
-        return this.desiredSpeedModel.desiredSpeed(parameters, speedInfo);
+        return this.desiredSpeedModel.desiredSpeed(parameters, speedLimits, maxVehicleSpeed);
     }
 
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends PerceivedObject> leaders)
-            throws ParameterException
+            final SpeedLimits speedLimits, final Speed maxVehicleSpeed,
+            final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
-        Throw.whenNull(parameters, "Parameters may not be null.");
-        Throw.whenNull(speed, "Speed may not be null.");
-        Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
-        Throw.whenNull(leaders, "Leaders may not be null.");
         // Catch negative headway
         if (!leaders.isEmpty() && leaders.first().getDistance().si <= 0)
         {
             return new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI);
         }
         // Forward to method with desired speed and headway predetermined by this car-following model.
-        Acceleration acc = followingAcceleration(parameters, speed, desiredSpeed(parameters, speedLimitInfo),
+        Acceleration acc = followingAcceleration(parameters, speed, desiredSpeed(parameters, speedLimits, maxVehicleSpeed),
                 desiredHeadway(parameters, speed), leaders);
         return acc;
     }

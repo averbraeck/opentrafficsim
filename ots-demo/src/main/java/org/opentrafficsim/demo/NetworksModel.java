@@ -3,7 +3,6 @@ package org.opentrafficsim.demo;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -64,6 +63,7 @@ import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
@@ -125,7 +125,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private Supplier<Route> routeSupplierRamp;
 
     /** The speed limit. */
-    private Speed speedLimit = new Speed(60, KM_PER_HOUR);
+    private LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(60, SpeedUnit.KM_PER_HOUR));
 
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
@@ -226,29 +226,28 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             if (merge)
             {
                 rampLanes = LaneFactory.makeMultiLane(this.network, "From2a to From2b", from2a, from2b, null, lanesOnBranch, 0,
-                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
+                        lanesOnCommon - lanesOnBranch, laneType, this.speedLimits, this.simulator);
                 LaneFactory.makeMultiLaneBezier(this.network, "From2b to FirstVia", from2a, from2b, firstVia, secondVia,
-                        lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
-                        this.simulator, DefaultsNl.VEHICLE);
+                        lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimits,
+                        this.simulator);
             }
             else
             {
                 LaneFactory.makeMultiLaneBezier(this.network, "SecondVia to end2a", firstVia, secondVia, end2a, end2b,
-                        lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimit,
-                        this.simulator, DefaultsNl.VEHICLE);
+                        lanesOnBranch, lanesOnCommon - lanesOnBranch, lanesOnCommon - lanesOnBranch, laneType, this.speedLimits,
+                        this.simulator);
                 setupSink(LaneFactory.makeMultiLane(this.network, "end2a to end2b", end2a, end2b, null, lanesOnBranch,
-                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE),
-                        laneType);
+                        lanesOnCommon - lanesOnBranch, 0, laneType, this.speedLimits, this.simulator), laneType);
             }
 
             Lane[] startLanes = LaneFactory.makeMultiLane(this.network, "From to FirstVia", from, firstVia, null,
-                    merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimit, this.simulator,
-                    DefaultsNl.VEHICLE);
+                    merge ? lanesOnMain : lanesOnCommonCompressed, laneType, this.speedLimits, this.simulator);
             Lane[] common = LaneFactory.makeMultiLane(this.network, "FirstVia to SecondVia", firstVia, secondVia, null,
-                    lanesOnCommon, laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
-            setupSink(LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null,
-                    merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimit, this.simulator,
-                    DefaultsNl.VEHICLE), laneType);
+                    lanesOnCommon, laneType, this.speedLimits, this.simulator);
+            setupSink(
+                    LaneFactory.makeMultiLane(this.network, "SecondVia to end", secondVia, end, null,
+                            merge ? lanesOnCommonCompressed : lanesOnMain, laneType, this.speedLimits, this.simulator),
+                    laneType);
 
             if (merge)
             {
@@ -476,9 +475,8 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             ContinuousPiecewiseLinearFunction width =
                     ContinuousPiecewiseLinearFunction.of(0.0, lane.getWidth(1.0).si, 1.0, lane.getWidth(1.0).si);
             // Overtaking left and right allowed on the sinkLane
-            Lane sinkLane =
-                    new Lane(endLink, lane.getId() + "." + "sinkLane", CrossSectionGeometry.of(designLine, null, offset, width),
-                            laneType, Map.of(DefaultsNl.VEHICLE, this.speedLimit));
+            Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane",
+                    CrossSectionGeometry.of(designLine, null, offset, width), laneType, this.speedLimits);
             new SinkDetector(sinkLane, new Length(10.0, METER), DefaultsNl.ROAD_USERS);
         }
         return lanes;

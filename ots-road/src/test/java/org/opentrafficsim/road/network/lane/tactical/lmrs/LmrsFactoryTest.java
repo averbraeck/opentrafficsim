@@ -34,6 +34,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.perception.mental.SumFuller;
@@ -118,8 +119,10 @@ public class LmrsFactoryTest
 
         // Minimal GTU identity setup
         when(this.carGtu.getType()).thenReturn(this.carType);
+        when(this.carGtu.getBookkeeping()).thenReturn(LaneBookkeeping.START);
         when(this.carType.getId()).thenReturn("NL.CAR");
         when(this.truckGtu.getType()).thenReturn(this.truckType);
+        when(this.truckGtu.getBookkeeping()).thenReturn(LaneBookkeeping.START);
         when(this.truckType.getId()).thenReturn("NL.TRUCK");
 
         // Provider always returns the mocked planner
@@ -395,6 +398,7 @@ public class LmrsFactoryTest
         when(child.getParent()).thenReturn(Optional.of(parent));
         LaneBasedGtu childGtu = mock(LaneBasedGtu.class);
         when(childGtu.getType()).thenReturn(child);
+        when(childGtu.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // Provider
         LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
@@ -428,6 +432,7 @@ public class LmrsFactoryTest
         when(car.getParent()).thenReturn(Optional.of(vehicle));
         LaneBasedGtu carGtuVehicle = mock(LaneBasedGtu.class);
         when(carGtuVehicle.getType()).thenReturn(car);
+        when(carGtuVehicle.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // Truck GTU
         GtuType truck = mock(GtuType.class);
@@ -435,6 +440,7 @@ public class LmrsFactoryTest
         when(truck.getParent()).thenReturn(Optional.of(vehicle));
         LaneBasedGtu truckGtuVehicle = mock(LaneBasedGtu.class);
         when(truckGtuVehicle.getType()).thenReturn(truck);
+        when(truckGtuVehicle.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // Van GTU
         GtuType van = mock(GtuType.class);
@@ -442,6 +448,7 @@ public class LmrsFactoryTest
         when(van.getParent()).thenReturn(Optional.of(vehicle));
         LaneBasedGtu vanGtuVehicle = mock(LaneBasedGtu.class);
         when(vanGtuVehicle.getType()).thenReturn(van);
+        when(vanGtuVehicle.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // Bus GTU
         GtuType bus = mock(GtuType.class);
@@ -449,6 +456,7 @@ public class LmrsFactoryTest
         when(bus.getParent()).thenReturn(Optional.empty()); // no parent
         LaneBasedGtu busGtu = mock(LaneBasedGtu.class);
         when(busGtu.getType()).thenReturn(bus);
+        when(busGtu.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // Taxi GTU
         GtuType taxi = mock(GtuType.class);
@@ -456,6 +464,7 @@ public class LmrsFactoryTest
         when(taxi.getParent()).thenReturn(Optional.of(vehicle)); // not provided to factory, but a parent
         LaneBasedGtu taxiGtuVehicle = mock(LaneBasedGtu.class);
         when(taxiGtuVehicle.getType()).thenReturn(taxi);
+        when(taxiGtuVehicle.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // Motor GTU
         GtuType motor = mock(GtuType.class);
@@ -463,6 +472,7 @@ public class LmrsFactoryTest
         when(motor.getParent()).thenReturn(Optional.empty()); // not provided to factory, no parent
         LaneBasedGtu motorGtu = mock(LaneBasedGtu.class);
         when(motorGtu.getType()).thenReturn(motor);
+        when(motorGtu.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // ACC GTU
         GtuType acc = mock(GtuType.class);
@@ -470,6 +480,7 @@ public class LmrsFactoryTest
         when(acc.getParent()).thenReturn(Optional.of(van)); // not provided to factory, but a parent with a parent
         LaneBasedGtu accGtuVan = mock(LaneBasedGtu.class);
         when(accGtuVan.getType()).thenReturn(acc);
+        when(accGtuVan.getBookkeeping()).thenReturn(LaneBookkeeping.START);
 
         // Provider
         LmrsFactory.TacticalPlannerProvider<AbstractIncentivesTacticalPlanner> provdr = mock();
@@ -519,6 +530,7 @@ public class LmrsFactoryTest
     void tailgatingEnablesTailgatingBehavior() throws GtuException
     {
         LmrsFactory<AbstractIncentivesTacticalPlanner> fact = new LmrsFactory<>(List.of(this.carType), this.carProvider);
+        fact.set(LmrsFactory.Setting.SOCIO_PRESSURE, true);
         fact.set(LmrsFactory.Setting.SOCIO_TAILGATING, true);
         fact.create(this.carGtu);
 

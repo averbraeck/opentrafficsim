@@ -17,6 +17,7 @@ import org.opentrafficsim.core.parameters.ParameterFactoryDefault;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Factory for creating {@code LaneBasedStrategicalRoutePlanner} using any {@code LaneBasedTacticalPlannerFactory}.
@@ -86,10 +87,10 @@ public class LaneBasedStrategicalRoutePlannerFactory
     }
 
     @Override
-    public Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
+    public Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final SpeedLimits speedLimits, final Speed maxVehicleSpeed)
             throws GtuException
     {
-        return this.tacticalPlannerFactory.peekDesiredSpeed(gtuType, speedLimit, maxGtuSpeed, peekParameters(gtuType));
+        return this.tacticalPlannerFactory.peekDesiredSpeed(gtuType, speedLimits, maxVehicleSpeed, peekParameters(gtuType));
     }
 
     @Override

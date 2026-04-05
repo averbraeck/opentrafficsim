@@ -108,19 +108,19 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
             return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(4.19)),
-                    new ConstantSupplier<>(Length.ofSI(1.7)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+                    new ConstantSupplier<>(Length.ofSI(1.7)), new ConstantSupplier<>(new Speed(180.0, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(TRUCK))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
             return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
                     new ConstantSupplier<>(Length.ofSI(2.55)),
-                    new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
+                    new ContinuousDistSpeed(new DistNormal(randomStream, 90.0, 2.5), SpeedUnit.KM_PER_HOUR));
         }
         else if (gtuType.equals(BUS))
         {
             return new GtuTemplate(originalGtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
-                    new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
+                    new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(100.0, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(VAN))
         {

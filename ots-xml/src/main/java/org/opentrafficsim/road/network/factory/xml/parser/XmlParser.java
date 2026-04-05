@@ -17,7 +17,6 @@ import javax.xml.transform.sax.SAXSource;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
@@ -25,13 +24,12 @@ import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterType;
+import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
-import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
@@ -41,6 +39,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtu
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.parser.DefinitionsParser.SpeedLimits;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.GtuTemplate;
@@ -336,9 +335,9 @@ public final class XmlParser
         Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GtuTemplate> gtuTemplates = new LinkedHashMap<>();
         Map<String, LaneBias> laneBiases = new LinkedHashMap<>();
-        Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
+        Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap = new LinkedHashMap<>();
         Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutMap, gtuTemplates,
-                laneBiases, linkTypeSpeedLimitMap, stripes, eval);
+                laneBiases, infraSpeedLimitMap, stripes, eval);
 
         // network
         Network network = ots.getNetwork();
@@ -348,7 +347,7 @@ public final class XmlParser
         Map<String, CurveFlattener> flatteners = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
                 flatteners, eval);
-        NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, linkTypeSpeedLimitMap, designLines,
+        NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, infraSpeedLimitMap, designLines,
                 flatteners, stripes, eval);
         NetworkParser.buildConflicts(otsNetwork, network, eval);
 

@@ -68,8 +68,11 @@ public class ParameterTypes implements ConstraintInterface
     /** Look-back distance. */
     public static final ParameterTypeLength LOOKBACK;
 
-    /** Speed limit adherence factor. */
+    /** Lane speed limit adherence factor. */
     public static final ParameterTypeDouble FSPEED;
+
+    /** GTU type speed limit adherence factor. */
+    public static final ParameterTypeDouble FSPEED_GTU;
 
     /** Speed threshold below which traffic is considered congested. */
     public static final ParameterTypeSpeed VCONG;
@@ -170,7 +173,9 @@ public class ParameterTypes implements ConstraintInterface
 
         LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance", Length.ofSI(200.0), POSITIVE);
 
-        FSPEED = new ParameterTypeDouble("fSpeed", "Speed limit adherence factor", 1.0, POSITIVE);
+        FSPEED = new ParameterTypeDouble("fSpeed", "Lane speed limit adherence factor", 1.0, POSITIVE);
+
+        FSPEED_GTU = new ParameterTypeDouble("fSpeedGtu", "GTU type speed limit adherence factor", 1.0, POSITIVE);
 
         VCONG = new ParameterTypeSpeed("vCong", "Speed threshold below which traffic is considered congested",
                 new Speed(60, SpeedUnit.KM_PER_HOUR), POSITIVE);

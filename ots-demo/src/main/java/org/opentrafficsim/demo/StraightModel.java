@@ -55,6 +55,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.object.trafficlight.TrafficLightColor;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
@@ -105,7 +106,8 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     private List<Lane> path = new ArrayList<>();
 
     /** The speed limit on all Lanes. */
-    private Speed speedLimit = new Speed(120, KM_PER_HOUR);
+    private LaneSpeedLimits speedLimit = new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR),
+            Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
 
     /**
      * Constructor.
@@ -126,14 +128,13 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             Node to = new Node(this.network, "To", new Point2d(this.maximumDistance.getSI(), 0), Direction.ZERO);
             Node end = new Node(this.network, "End", new Point2d(this.maximumDistance.getSI() + 50.0, 0), Direction.ZERO);
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator,
-                    DefaultsNl.VEHICLE);
+            this.lane = LaneFactory.makeLane(this.network, "Lane", from, to, null, laneType, this.speedLimit, this.simulator);
             this.path.add(this.lane);
             CrossSectionLink endLink = LaneFactory.makeLink(this.network, "endLink", to, end, null, this.simulator);
             // No overtaking, single lane
             Lane sinkLane = LaneGeometryUtil.createStraightLane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
-                    Map.of(DefaultsNl.VEHICLE, this.speedLimit));
+                    this.speedLimit);
             new SinkDetector(sinkLane, new Length(10.0, METER), DefaultsNl.ROAD_USERS);
             this.path.add(sinkLane);
 

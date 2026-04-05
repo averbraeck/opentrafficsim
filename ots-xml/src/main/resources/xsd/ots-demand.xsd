@@ -35,10 +35,11 @@
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="SinkType" type="ots:string" use="required" />
       <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR">
-      <xsd:annotation>
-        <xsd:appinfo>
-                        <ots:defaultValue>PASSIVIMO</ots:defaultValue>
-                      </xsd:appinfo></xsd:annotation>
+        <xsd:annotation>
+          <xsd:appinfo>
+            <ots:defaultValue>PASSIVIMO</ots:defaultValue>
+          </xsd:appinfo>
+        </xsd:annotation>
       </xsd:attribute>
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
       <xsd:attribute name="Options" type="ots:string" use="optional" />

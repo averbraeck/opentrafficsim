@@ -12,7 +12,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -42,6 +41,7 @@ import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -103,7 +103,7 @@ public final class CarTest implements UNITS
     {
         OtsSimulatorInterface simulator = new OtsSimulator("CarTest");
         Model model = new Model(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+        simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                 HistoryManagerDevs.noHistory(simulator));
         return simulator;
     }
@@ -158,7 +158,7 @@ public final class CarTest implements UNITS
         Length latPos = new Length(0.0, METER);
         Length width = new Length(4.0, METER);
         return LaneGeometryUtil.createStraightLane(link12, "lane.1", latPos, latPos, width, width, laneType,
-                Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR)));
+                new LaneSpeedLimits(Map.of(DefaultsNl.VEHICLE, new Speed(100, KM_PER_HOUR))));
     }
 
     /** The helper model. */

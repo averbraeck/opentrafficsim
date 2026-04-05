@@ -35,7 +35,7 @@
   <xsd:element name="Run">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="StartTime" type="ots:PositiveTimeType" minOccurs="0" default="0s" />
+        <xsd:element name="StartTimeOfDay" type="ots:PositiveDurationType" minOccurs="0" default="0s" />
         <xsd:element name="WarmupPeriod" type="ots:PositiveDurationType" minOccurs="0" default="0s" />
         <xsd:element name="RunLength" type="ots:PositiveDurationType" minOccurs="1" default="1h" />
         <xsd:element name="History" type="ots:PositiveDurationType" minOccurs="0" default="0s" />

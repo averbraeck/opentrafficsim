@@ -4,12 +4,10 @@ import java.util.Optional;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
-import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.OtsRuntimeException;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataSpeed;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Speed limit for trajectories.
@@ -21,13 +19,13 @@ import org.opentrafficsim.road.network.sampling.GtuDataRoad;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
+public class SpeedLimitData extends ExtendedDataSpeed<GtuDataRoad>
 {
 
     /**
      * Constructor.
      */
-    public SpeedLimit()
+    public SpeedLimitData()
     {
         super("speedLimit", "Speed limit");
     }
@@ -35,17 +33,22 @@ public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
     @Override
     public final Optional<FloatSpeed> getValue(final GtuDataRoad gtu)
     {
-        Throw.whenNull(gtu, "GTU may not be null.");
         LaneBasedGtu laneGtu = gtu.getGtu();
-        try
+        SpeedLimits speedLimit = laneGtu.getLane().getSpeedLimits(laneGtu.getType());
+        if (speedLimit.laneSpeedLimit() == null)
         {
-            return Optional
-                    .ofNullable(new FloatSpeed(laneGtu.getPosition().lane().getSpeedLimit(laneGtu.getType()).si, SpeedUnit.SI));
+            if (speedLimit.gtuTypeSpeedLimit() == null)
+            {
+                return Optional.empty();
+            }
+            return Optional.of(new FloatSpeed(speedLimit.gtuTypeSpeedLimit().speed().si, SpeedUnit.SI));
         }
-        catch (NetworkException exception)
+        if (speedLimit.gtuTypeSpeedLimit() == null)
         {
-            throw new OtsRuntimeException("Could not obtain speed limit.", exception);
+            return Optional.of(new FloatSpeed(speedLimit.laneSpeedLimit().speed().si, SpeedUnit.SI));
         }
+        double v = Math.min(speedLimit.laneSpeedLimit().speed().si, speedLimit.gtuTypeSpeedLimit().speed().si);
+        return Optional.of(new FloatSpeed(v, SpeedUnit.SI));
     }
 
     @Override

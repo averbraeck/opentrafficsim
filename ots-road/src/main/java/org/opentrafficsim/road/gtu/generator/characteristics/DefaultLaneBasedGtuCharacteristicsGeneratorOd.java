@@ -132,8 +132,9 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
      */
     public static LaneBasedStrategicalRoutePlannerFactory defaultLmrs(final StreamInterface stream)
     {
-        return new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory<>(Lmrs::new).setStream(stream)
-                .set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true).set(Setting.ACCELERATION_CONFLICTS, true));
+        return new LaneBasedStrategicalRoutePlannerFactory(
+                new LmrsFactory<>(Lmrs::new).setStream(stream).set(Setting.ACCELERATION_TRAFFIC_LIGHTS, true)
+                        .set(Setting.ACCELERATION_CONFLICTS, true).set(Setting.ACCELERATION_SPEED_LIMIT_TRANSITION, true));
     }
 
     /**

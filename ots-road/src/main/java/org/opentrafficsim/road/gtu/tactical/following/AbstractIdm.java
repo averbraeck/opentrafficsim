@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.tactical.following;
 
-import java.util.Optional;
-
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -16,8 +15,7 @@ import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
-import org.opentrafficsim.road.gtu.tactical.util.SpeedLimitUtil;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Implementation of the IDM. See <a
@@ -50,11 +48,14 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     /** Adjustment deceleration parameter type. */
     protected static final ParameterTypeAcceleration B0 = ParameterTypes.B0;
 
-    /** Speed limit adherence factor parameter type. */
+    /** Lane speed limit adherence factor parameter type. */
     protected static final ParameterTypeDouble FSPEED = ParameterTypes.FSPEED;
 
-    /** Maximum comfortable acceleration in the lateral direction. */
-    protected static final ParameterTypeAcceleration A_LAT = SpeedLimitUtil.A_LAT;
+    /** GTU type speed limit adherence factor parameter type. */
+    protected static final ParameterTypeDouble FSPEED_GTU = ParameterTypes.FSPEED_GTU;
+
+    /** Speed to which FSPEED is applied if there is no speed limit. */
+    private static final Speed NO_SPEED_LIMIT_SPEED = new Speed(130.0, SpeedUnit.KM_PER_HOUR);
 
     /** Acceleration flattening. */
     // @docs/06-behavior/parameters.md
@@ -200,7 +201,9 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     }
 
     /**
-     * IDM desired speed model.
+     * IDM desired speed model. This model returns the minimum of fSpeed'*laneSpeedLimit and fSpeedGtu'*gtuTypeSpeedLimit if
+     * both exist, or one of them if one exists. If both do not exist this model returns fSpeed*130km/h. For both fSpeed' and
+     * fSpeedGtu', if the speed limit is enforced the value is the minimum of fSpeed/fSpeedGtu (respectively) and 1.0.
      */
     public static class IdmDesiredSpeedModel implements DesiredSpeedModel, Stateless<IdmDesiredSpeedModel>
     {
@@ -222,21 +225,40 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         }
 
         @Override
-        public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+        public Speed desiredSpeed(final Parameters parameters, final SpeedLimits speedLimits, final Speed maxVehicleSpeed)
+                throws ParameterException
         {
-            Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).times(parameters.getParameter(FSPEED));
-            Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
-            Optional<Acceleration> aLat = parameters.getOptionalParameter(A_LAT);
-            if (aLat.isPresent())
+            Speed speed = null;
+            if (speedLimits.laneSpeedLimit() != null)
             {
-                Optional<Length> radius = SpeedLimitUtil.getCurveRadius(speedInfo);
-                if (radius.isPresent())
+                double laneFactor = parameters.getParameter(FSPEED);
+                if (speedLimits.laneSpeedLimit().enforced() && laneFactor > 1.0)
                 {
-                    Speed radiusSpeed = SpeedLimitUtil.getSpeedForLateralAcceleration(radius.get(), aLat.get());
-                    return Speed.min(consideredSpeed, maxVehicleSpeed, radiusSpeed);
+                    laneFactor = 1.0;
+                }
+                speed = speedLimits.laneSpeedLimit().speed().times(laneFactor);
+            }
+            if (speedLimits.gtuTypeSpeedLimit() != null)
+            {
+                double gtuTypeFactor = parameters.getParameter(FSPEED_GTU);
+                if (speedLimits.gtuTypeSpeedLimit().enforced() && gtuTypeFactor > 1.0)
+                {
+                    gtuTypeFactor = 1.0;
+                }
+                if (speed == null)
+                {
+                    speed = speedLimits.gtuTypeSpeedLimit().speed().times(gtuTypeFactor);
+                }
+                else
+                {
+                    speed = Speed.min(speed, speedLimits.gtuTypeSpeedLimit().speed().times(gtuTypeFactor));
                 }
             }
-            return Speed.min(consideredSpeed, maxVehicleSpeed);
+            else if (speed != null)
+            {
+                return Speed.min(maxVehicleSpeed, speed);
+            }
+            return Speed.min(maxVehicleSpeed, NO_SPEED_LIMIT_SPEED.times(parameters.getParameter(FSPEED)));
         }
     }
 

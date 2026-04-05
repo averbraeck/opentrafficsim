@@ -40,7 +40,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
     private static final long serialVersionUID = 10102L;
     @XmlElement(name = "LinkType")
-    protected List<LinkType> linkType;
+    protected List<SpeedLimitInfraType> linkType;
 
     /**
      * Gets the value of the linkType property.
@@ -60,14 +60,14 @@ import jakarta.xml.bind.annotation.XmlType;
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link LinkType }
+     * {@link SpeedLimitInfraType }
      * </p>
      * 
      * 
      * @return
      *     The value of the linkType property.
      */
-    public List<LinkType> getLinkType() {
+    public List<SpeedLimitInfraType> getLinkType() {
         if (linkType == null) {
             linkType = new ArrayList<>();
         }

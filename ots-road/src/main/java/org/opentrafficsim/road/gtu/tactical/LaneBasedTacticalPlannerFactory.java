@@ -8,6 +8,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * A factory class is used to generate tactical planners as the tactical planner is state-full.
@@ -35,14 +36,14 @@ public interface LaneBasedTacticalPlannerFactory<T extends LaneBasedTacticalPlan
      * Peek to see the desired speed of the next GTU to be generated at the given location. The default implementation returns
      * {@code null}, at which point the GTU generator will use some other speed.
      * @param gtuType GTU type
-     * @param speedLimit speed limit
-     * @param maxGtuSpeed maximum GTU speed
+     * @param speedLimits speed limits
+     * @param maxVehicleSpeed maximum vehicle speed
      * @param parameters parameters for the next GTU
      * @return desired speed of the next GTU to be generated at the given location, may be empty at which point the GTU
      *         generator will use some other speed
      * @throws GtuException on any exception
      */
-    default Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
+    default Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final SpeedLimits speedLimits, final Speed maxVehicleSpeed,
             final Parameters parameters) throws GtuException
     {
         return Optional.empty();

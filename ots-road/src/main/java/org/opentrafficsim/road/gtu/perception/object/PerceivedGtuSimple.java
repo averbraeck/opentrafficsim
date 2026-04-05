@@ -95,7 +95,6 @@ public class PerceivedGtuSimple extends PerceivedObjectBase implements Perceived
                 Maneuver.of(gtu));
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -105,7 +104,6 @@ public class PerceivedGtuSimple extends PerceivedObjectBase implements Perceived
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -126,7 +124,6 @@ public class PerceivedGtuSimple extends PerceivedObjectBase implements Perceived
                 && Objects.equals(this.signals, other.signals) && Objects.equals(this.width, other.width);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

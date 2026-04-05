@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Methods that a car-following model has to implement. The parameters are supplied to obtain parameters. The phrase
@@ -43,12 +43,13 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
      * </ul>
      * @param parameters parameters
      * @param speed current speed
-     * @param speedLimitInfo info regarding the desired speed for car-following
+     * @param speedLimits speed limits
+     * @param maxVehicleSpeed maximum vehicle speed
      * @param leaders set of leader headways and speeds, ordered by headway (closest first)
      * @throws ParameterException if parameter exception occurs
      * @return car-following acceleration
      */
-    Acceleration followingAcceleration(Parameters parameters, Speed speed, SpeedLimitInfo speedLimitInfo,
+    Acceleration followingAcceleration(Parameters parameters, Speed speed, SpeedLimits speedLimits, Speed maxVehicleSpeed,
             PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException;
 
     /**

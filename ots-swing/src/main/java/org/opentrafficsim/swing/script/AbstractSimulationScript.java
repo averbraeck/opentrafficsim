@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.cli.Checkable;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
@@ -68,8 +67,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     private long seed;
 
     /** Start time. */
-    @Option(names = {"-s", "--startTime"}, description = "Start time", defaultValue = "0s")
-    private Time startTime;
+    @Option(names = {"-s", "--startTime"}, description = "Start time (of day)", defaultValue = "0s")
+    private Duration startTime;
 
     /** Warm-up time. */
     @Option(names = {"-w", "--warmupTime"}, description = "Warm-up time", defaultValue = "0s")
@@ -124,7 +123,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * Returns the start time.
      * @return start time
      */
-    public Time getStartTime()
+    public Duration getStartTime()
     {
         return this.startTime;
     }

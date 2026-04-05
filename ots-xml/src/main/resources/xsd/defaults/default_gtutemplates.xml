@@ -34,7 +34,7 @@
       <ots:Constant C="2.55" />
     </ots:WidthDist>
     <ots:MaxSpeedDist SpeedUnit="km/h">
-      <ots:Constant C="90" />
+      <ots:Constant C="100" />
     </ots:MaxSpeedDist>
   </ots:GtuTemplate>
 

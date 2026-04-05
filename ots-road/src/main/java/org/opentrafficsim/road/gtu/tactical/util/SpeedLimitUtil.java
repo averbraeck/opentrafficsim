@@ -1,13 +1,16 @@
 package org.opentrafficsim.road.gtu.tactical.util;
 
+import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
+import org.djutils.math.AngleUtil;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
@@ -15,11 +18,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
-import org.opentrafficsim.road.network.speed.SpeedLimitType;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypeSpeedLegal;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Static methods regarding speed limits for composition in tactical planners.
@@ -47,79 +46,14 @@ public final class SpeedLimitUtil
             "Maximum comfortable lateral acceleration", Acceleration.ofSI(1.0), NumericConstraint.POSITIVE);
 
     /**
-     * Returns the minimum speed of the applicable speed limit types MAX_LEGAL_VEHICLE_SPEED, ROAD_CLASS, FIXED_SIGN and
-     * DYNAMIC_SIGN. ROAD_CLASS is only used if FIXED_SIGN and DYNAMIC_SIGN are not present.
-     * @param speedLimitInfo speed limit info
-     * @return minimum of speed of speed limit types
-     * @throws NullPointerException if speed limit info is null
-     */
-    public static Speed getLegalSpeedLimit(final SpeedLimitInfo speedLimitInfo)
-    {
-        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
-        SpeedLimitTypeSpeedLegal[] speedLimitTypes;
-        if (speedLimitInfo.containsType(SpeedLimitTypes.FIXED_SIGN)
-                || speedLimitInfo.containsType(SpeedLimitTypes.DYNAMIC_SIGN))
-        {
-            speedLimitTypes = new SpeedLimitTypeSpeedLegal[] {SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED,
-                    SpeedLimitTypes.FIXED_SIGN, SpeedLimitTypes.DYNAMIC_SIGN};
-        }
-        else
-        {
-            speedLimitTypes =
-                    new SpeedLimitTypeSpeedLegal[] {SpeedLimitTypes.MAX_LEGAL_VEHICLE_SPEED, SpeedLimitTypes.ROAD_CLASS};
-        }
-        Speed result = Speed.POSITIVE_INFINITY;
-        for (SpeedLimitTypeSpeedLegal lsl : speedLimitTypes)
-        {
-            if (speedLimitInfo.containsType(lsl))
-            {
-                Speed s = speedLimitInfo.getSpeedInfo(lsl);
-                result = s.lt(result) ? s : result;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Returns the speed of speed limit type MAX_VEHICLE_SPEED.
-     * @param speedLimitInfo speed limit info
-     * @return speed of speed limit type MAX_VEHICLE_SPEED
-     * @throws NullPointerException if speed limit info is null
-     */
-    public static Speed getMaximumVehicleSpeed(final SpeedLimitInfo speedLimitInfo)
-    {
-        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
-        return speedLimitInfo.getSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED);
-    }
-
-    /**
-     * Return the radius of the curvature speed limit type.
-     * @param speedLimitInfo speed limit info
-     * @return radius of the curvature speed limit type, empty if no such speed limit type
-     * @throws NullPointerException if speed limit info is null
-     */
-    public static Optional<Length> getCurveRadius(final SpeedLimitInfo speedLimitInfo)
-    {
-        Throw.whenNull(speedLimitInfo, "speedLimitInfo");
-        if (!speedLimitInfo.containsType(SpeedLimitTypes.CURVATURE))
-        {
-            return Optional.empty();
-        }
-        return Optional.of(speedLimitInfo.getSpeedInfo(SpeedLimitTypes.CURVATURE).radius());
-    }
-
-    /**
      * Returns the speed for which the given lateral acceleration follows in the curve.
      * @param radius curve radius
      * @param acceleration acceleration to result from speed in curve
      * @return speed for which the given lateral acceleration follows in the curve
-     * @throws NullPointerException if radius or acceleration is null
      * @throws IllegalArgumentException if radius or acceleration is negative or zero
      */
     public static Speed getSpeedForLateralAcceleration(final Length radius, final Acceleration acceleration)
     {
-        Throw.whenNull(radius, "radius");
-        Throw.whenNull(acceleration, "acceleration");
         Throw.when(radius.le0(), IllegalArgumentException.class, "Radius mus be greater than zero.");
         Throw.when(acceleration.le0(), IllegalArgumentException.class, "Radius mus be greater than zero.");
         // a=v*v/r => v=sqrt(a*r)
@@ -139,22 +73,35 @@ public final class SpeedLimitUtil
     public static Acceleration considerSpeedLimitTransitions(final TacticalContextEgo context, final RelativeLane lane)
             throws ParameterException, OperationalPlanException
     {
-        SpeedLimitProspect speedLimitProspect =
-                context.getPerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(lane);
-        Acceleration out = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+        Acceleration out = Acceleration.POSITIVE_INFINITY;
 
-        // decelerate for curves and speed bumps
-        for (SpeedLimitType<?> speedLimitType : new SpeedLimitType[] {SpeedLimitTypes.CURVATURE, SpeedLimitTypes.SPEED_BUMP})
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        Optional<DistancedObject<Speed>> speedBump = infra.getSpeedBump();
+        if (speedBump.isPresent())
         {
-            for (Length distance : speedLimitProspect.getDownstreamDistances(speedLimitType))
+            out = CarFollowingUtil.approachTargetSpeed(context, speedBump.get().distance(), speedBump.get().object());
+        }
+
+        /*
+         * Each segment of the path has a length and a change in angle. This gives a value of curvature if we assume an arc, and
+         * thus a radius. Using a maximum lateral acceleration we can compute the maximum speed on the segment.
+         */
+        Acceleration aLat = context.getParameters().getParameter(A_LAT);
+        double d0 = 0.0;
+        double phi0 = context.getPosition().getLocation().dirZ;
+        Speed minSpeed = context.getSpeed();
+        for (Entry<Length, DirectedPoint2d> entry : infra.getPathScan().entrySet())
+        {
+            double d1 = entry.getKey().si;
+            double phi1 = entry.getValue().dirZ;
+            double deltaPhi = Math.abs(AngleUtil.normalizeAroundZero(phi1 - phi0));
+            Speed targetSpeed = getSpeedForLateralAcceleration(Length.ofSI(.5 * (d1 - d0) / deltaPhi), aLat);
+            d0 = d1;
+            phi0 = phi1;
+            if (targetSpeed.lt(minSpeed))
             {
-                SpeedLimitInfo speedLimitInfo = speedLimitProspect.buildSpeedLimitInfo(distance, speedLimitType);
-                Speed targetSpeed = context.getCarFollowingModel().desiredSpeed(context.getParameters(), speedLimitInfo);
-                Acceleration a = CarFollowingUtil.approachTargetSpeed(context, distance, targetSpeed);
-                if (a.lt(out))
-                {
-                    out = a;
-                }
+                minSpeed = targetSpeed;
+                out = Acceleration.min(out, CarFollowingUtil.approachTargetSpeed(context, entry.getKey(), targetSpeed));
             }
         }
 
@@ -163,6 +110,26 @@ public final class SpeedLimitUtil
         // after the change.
 
         return out;
+    }
+
+    /**
+     * Returns desired speed proxy as the minimum of maximum vehicle speed and present speed limits.
+     * @param speedLimits speed limits
+     * @param maxVehicleSpeed maximum vehicle speed
+     * @return desired speed proxy
+     */
+    public static Speed getDesiredSpeedProxy(final SpeedLimits speedLimits, final Speed maxVehicleSpeed)
+    {
+        Speed desiredSpeedProxy = maxVehicleSpeed;
+        if (speedLimits.laneSpeedLimit() != null)
+        {
+            desiredSpeedProxy = Speed.min(desiredSpeedProxy, speedLimits.laneSpeedLimit().speed());
+        }
+        if (speedLimits.gtuTypeSpeedLimit() != null)
+        {
+            desiredSpeedProxy = Speed.min(desiredSpeedProxy, speedLimits.gtuTypeSpeedLimit().speed());
+        }
+        return desiredSpeedProxy;
     }
 
 }

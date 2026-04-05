@@ -1,13 +1,15 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.util.Map;
+
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -36,6 +38,7 @@ import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.object.detector.LaneDetector;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.eventlists.EventListInterface;
@@ -71,7 +74,7 @@ public final class DetectorTest implements UNITS
         // We need a simulator, but for that we first need something that implements OtsModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("SensorTest");
         OtsModelInterface model = new DummyModelForSensorTest(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+        simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                 HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("sensor test network", simulator);
         // Now we need a set of Lanes
@@ -82,10 +85,10 @@ public final class DetectorTest implements UNITS
         // so car won't run off lane B in 100 s.
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
-        Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
-        Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
+        LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR),
+                Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
+        Lane[] lanesA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType, speedLimits, simulator);
+        Lane[] lanesB = LaneFactory.makeMultiLane(network, "B", nodeATo, nodeBTo, null, 3, laneType, speedLimits, simulator);
 
         // put a sensor on each of the lanes at the end of LaneA
         for (Lane lane : lanesA)

@@ -7,7 +7,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.perception.HistoryManager;
 
@@ -40,18 +39,18 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsSi
     }
 
     @Override
-    public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+    public void initialize(final Duration startTimeOfDay, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model, final HistoryManager historyManager) throws SimRuntimeException, NamingException
     {
-        initialize(startTime, warmupPeriod, runLength, model, historyManager, ++this.lastReplication);
+        initialize(startTimeOfDay, warmupPeriod, runLength, model, historyManager, ++this.lastReplication);
     }
 
     @Override
-    public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
+    public void initialize(final Duration startTimeOfDay, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model, final HistoryManager historyManager, final int replicationnr)
             throws SimRuntimeException, NamingException
     {
-        initialize(model, new OtsReplication("rep" + replicationnr, startTime, warmupPeriod, runLength, historyManager));
+        initialize(model, new OtsReplication("rep" + replicationnr, startTimeOfDay, warmupPeriod, runLength, historyManager));
     }
 
     @Override

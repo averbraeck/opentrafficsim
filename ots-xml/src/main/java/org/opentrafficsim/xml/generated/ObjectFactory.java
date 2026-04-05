@@ -31,6 +31,8 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
 @XmlRegistry
 @SuppressWarnings("all") public class ObjectFactory {
 
+    private static final QName _LaneType_QNAME = new QName("http://www.opentrafficsim.org/ots", "LaneType");
+    private static final QName _LinkType_QNAME = new QName("http://www.opentrafficsim.org/ots", "LinkType");
     private static final QName _Include_QNAME = new QName("http://www.w3.org/2001/XInclude", "include");
     private static final QName _Fallback_QNAME = new QName("http://www.w3.org/2001/XInclude", "fallback");
     private static final QName _GtuColorersDefault_QNAME = new QName("http://www.opentrafficsim.org/ots", "Default");
@@ -298,6 +300,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public ControlType.SignalGroup createControlTypeSignalGroup() {
         return new ControlType.SignalGroup();
+    }
+
+    /**
+     * Create an instance of {@link TemporalSpeedLimit }
+     * 
+     * @return
+     *     the new instance of {@link TemporalSpeedLimit }
+     */
+    public TemporalSpeedLimit createTemporalSpeedLimit() {
+        return new TemporalSpeedLimit();
     }
 
     /**
@@ -681,23 +693,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link LaneType }
+     * Create an instance of {@link SpeedLimitInfraType }
      * 
      * @return
-     *     the new instance of {@link LaneType }
+     *     the new instance of {@link SpeedLimitInfraType }
      */
-    public LaneType createLaneType() {
-        return new LaneType();
-    }
-
-    /**
-     * Create an instance of {@link GtuCompatibleInfraType }
-     * 
-     * @return
-     *     the new instance of {@link GtuCompatibleInfraType }
-     */
-    public GtuCompatibleInfraType createGtuCompatibleInfraType() {
-        return new GtuCompatibleInfraType();
+    public SpeedLimitInfraType createSpeedLimitInfraType() {
+        return new SpeedLimitInfraType();
     }
 
     /**
@@ -731,26 +733,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link LinkType }
-     * 
-     * @return
-     *     the new instance of {@link LinkType }
-     */
-    public LinkType createLinkType() {
-        return new LinkType();
-    }
-
-    /**
-     * Create an instance of {@link SpeedLimit }
-     * 
-     * @return
-     *     the new instance of {@link SpeedLimit }
-     */
-    public SpeedLimit createSpeedLimit() {
-        return new SpeedLimit();
-    }
-
-    /**
      * Create an instance of {@link LinkTypes }
      * 
      * @return
@@ -771,6 +753,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link GtuCompatibleInfraType }
+     * 
+     * @return
+     *     the new instance of {@link GtuCompatibleInfraType }
+     */
+    public GtuCompatibleInfraType createGtuCompatibleInfraType() {
+        return new GtuCompatibleInfraType();
+    }
+
+    /**
      * Create an instance of {@link DetectorTypes }
      * 
      * @return
@@ -778,6 +770,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public DetectorTypes createDetectorTypes() {
         return new DetectorTypes();
+    }
+
+    /**
+     * Create an instance of {@link GtuTypeSpeedLimit }
+     * 
+     * @return
+     *     the new instance of {@link GtuTypeSpeedLimit }
+     */
+    public GtuTypeSpeedLimit createGtuTypeSpeedLimit() {
+        return new GtuTypeSpeedLimit();
     }
 
     /**
@@ -1281,6 +1283,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link Network.GtuTypeSpeedLimits }
+     * 
+     * @return
+     *     the new instance of {@link Network.GtuTypeSpeedLimits }
+     */
+    public Network.GtuTypeSpeedLimits createNetworkGtuTypeSpeedLimits() {
+        return new Network.GtuTypeSpeedLimits();
+    }
+
+    /**
      * Create an instance of {@link Network.Conflicts }
      * 
      * @return
@@ -1428,6 +1440,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public ParameterTypeLong createParameterTypeLong() {
         return new ParameterTypeLong();
+    }
+
+    /**
+     * Create an instance of {@link org.opentrafficsim.xml.generated.SpeedLimit }
+     * 
+     * @return
+     *     the new instance of {@link org.opentrafficsim.xml.generated.SpeedLimit }
+     */
+    public org.opentrafficsim.xml.generated.SpeedLimit createSpeedLimit() {
+        return new org.opentrafficsim.xml.generated.SpeedLimit();
     }
 
     /**
@@ -2111,6 +2133,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link TemporalSpeedLimit.SpeedLimit }
+     * 
+     * @return
+     *     the new instance of {@link TemporalSpeedLimit.SpeedLimit }
+     */
+    public TemporalSpeedLimit.SpeedLimit createTemporalSpeedLimitSpeedLimit() {
+        return new TemporalSpeedLimit.SpeedLimit();
+    }
+
+    /**
      * Create an instance of {@link ScenarioType.Od }
      * 
      * @return
@@ -2518,6 +2550,32 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public DefaultAnimationType.Shoulder createDefaultAnimationTypeShoulder() {
         return new DefaultAnimationType.Shoulder();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SpeedLimitInfraType }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link SpeedLimitInfraType }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://www.opentrafficsim.org/ots", name = "LaneType")
+    public JAXBElement<SpeedLimitInfraType> createLaneType(SpeedLimitInfraType value) {
+        return new JAXBElement<>(_LaneType_QNAME, SpeedLimitInfraType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SpeedLimitInfraType }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link SpeedLimitInfraType }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://www.opentrafficsim.org/ots", name = "LinkType")
+    public JAXBElement<SpeedLimitInfraType> createLinkType(SpeedLimitInfraType value) {
+        return new JAXBElement<>(_LinkType_QNAME, SpeedLimitInfraType.class, null, value);
     }
 
     /**

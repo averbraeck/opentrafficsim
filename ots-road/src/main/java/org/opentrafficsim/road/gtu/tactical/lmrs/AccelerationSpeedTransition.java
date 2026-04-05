@@ -10,7 +10,7 @@ import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.SpeedLimitUtil;
 
 /**
- * Acceleration incentive for speed limit transitions.
+ * Acceleration incentive for speed transitions (curvature and speed bumps).
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -19,15 +19,15 @@ import org.opentrafficsim.road.gtu.tactical.util.SpeedLimitUtil;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class AccelerationSpeedLimitTransition
-        implements AccelerationIncentive, Stateless<AccelerationSpeedLimitTransition>
+public final class AccelerationSpeedTransition
+        implements AccelerationIncentive, Stateless<AccelerationSpeedTransition>
 {
 
     /** Singleton instance. */
-    public static final AccelerationSpeedLimitTransition SINGLETON = new AccelerationSpeedLimitTransition();
+    public static final AccelerationSpeedTransition SINGLETON = new AccelerationSpeedTransition();
 
     @Override
-    public AccelerationSpeedLimitTransition get()
+    public AccelerationSpeedTransition get()
     {
         return SINGLETON;
     }
@@ -35,7 +35,7 @@ public final class AccelerationSpeedLimitTransition
     /**
      * Constructor.
      */
-    private AccelerationSpeedLimitTransition()
+    private AccelerationSpeedTransition()
     {
         //
     }

@@ -3,7 +3,6 @@ package org.opentrafficsim.web.test;
 import java.util.Collections;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -48,7 +47,7 @@ public class TJunctionDemo extends OtsWebServer
         OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
         simulator.setAnimation(false);
         TJunctionModel junctionModel = new TJunctionModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
                 HistoryManagerDevs.noHistory(simulator));
         new TJunctionDemo("T-Junction demo", simulator, junctionModel);
     }

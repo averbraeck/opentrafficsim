@@ -746,8 +746,10 @@ public final class ConflictUtil
                 // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
                 Length length = Length.ofSI(4.0);
                 PerceivedGtuSimple conflictGtu = new PerceivedGtuSimple("virtual " + UUID.randomUUID().toString(),
-                        DefaultsNl.CAR, length, Length.ofSI(2.0), Kinematics.dynamicBehind(conflict.getConflictingVisibility(),
-                                conflict.getConflictingSpeedLimit(), Acceleration.ZERO, true, length, conflict.getLength()),
+                        DefaultsNl.CAR, length, Length.ofSI(2.0),
+                        Kinematics.dynamicBehind(conflict.getConflictingVisibility(),
+                                conflict.getConflictingSpeedLimit().speed(), Acceleration.ZERO, true, length,
+                                conflict.getLength()),
                         Signals.NONE, Maneuver.NONE);
                 conflictingVehicles = Set.of(conflictGtu);
             }

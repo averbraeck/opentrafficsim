@@ -96,14 +96,12 @@ public final class RunParser
             throws XmlParserException
     {
         int numberReplications = run.getNumberReplications() == null ? 1 : run.getNumberReplications().get(eval);
-        Time startTime = run.getStartTime() == null ? Time.ZERO : run.getStartTime().get(eval);
+        Duration startTimeOfDay = run.getStartTimeOfDay() == null ? Duration.ZERO : run.getStartTimeOfDay().get(eval);
         Duration warmupPeriod = run.getWarmupPeriod() == null ? Duration.ZERO : run.getWarmupPeriod().get(eval);
         Duration runLength = run.getRunLength() == null ? new Duration(1.0, DurationUnit.HOUR) : run.getRunLength().get(eval);
 
-        // TODO: do we want a real Time here or a Duration?
-        // If it should be a Time, create an ExperimentRunControl that can take a Time as first argument
         ExperimentRunControl<Duration> runControl = new ExperimentRunControl<>("RunControl for " + networkId,
-                startTime.minus(Time.ZERO), warmupPeriod, runLength, numberReplications);
+                startTimeOfDay, warmupPeriod, runLength, numberReplications);
 
         return runControl;
     }

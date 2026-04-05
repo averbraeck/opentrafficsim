@@ -54,7 +54,6 @@ import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Network;
@@ -94,6 +93,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingFundamentalDiagram;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
@@ -126,7 +126,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     private double truckFraction = 0.05;
 
     /** Speed limit. */
-    private Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
+    private LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(120.0, SpeedUnit.KM_PER_HOUR),
+            Map.of(DefaultsNl.TRUCK, new Speed(80.0, SpeedUnit.KM_PER_HOUR)));
 
     /** Tmin. */
     private Duration tMin = Duration.ofSI(0.56);
@@ -213,13 +214,12 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.ofSI(3.5);
         LaneType laneType = DefaultsRoadNl.FREEWAY;
-        Speed speedLim = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
 
-        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, laneType, speedLim).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
+        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, linkType, sim, policy)
+                .leftToRight(3.0, laneWidth, laneType, this.speedLimits).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, linkType, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(2.0, laneWidth, laneType, speedLim).addLanes(DefaultsRoadNl.DASHED).getLanes();
+        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, linkType, sim, policy)
+                .leftToRight(2.0, laneWidth, laneType, this.speedLimits).addLanes(DefaultsRoadNl.DASHED).getLanes();
 
         // Generator
         // inter-arrival time generator
@@ -236,6 +236,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // GTU characteristics generator
         LaneBasedTacticalPlannerFactory<Lmrs> tacticalPlannerFactory = new LmrsFactory<>(Lmrs::new).setStream(stream);
         DistNormal fSpeed = new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0);
+        DistNormal fSpeedGtu = new DistNormal(stream, 85.0 / 80.0, 2.5 / 80.0);
         ParameterFactory parametersFactory = new ParameterFactory()
         {
             @Override
@@ -250,6 +251,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                     parameters.setParameter(ParameterTypes.A, Acceleration.ofSI(2.0));
                 }
                 parameters.setParameter(ParameterTypes.FSPEED, fSpeed.draw()); // also for trucks due to low speed limit option
+                parameters.setParameter(ParameterTypes.FSPEED_GTU, fSpeedGtu.draw());
                 parameters.setParameter(ParameterTypes.TMIN, FundamentalDiagramDemo.this.tMin);
                 parameters.setParameter(ParameterTypes.TMAX, FundamentalDiagramDemo.this.tMax);
             }
@@ -582,16 +584,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             @Override
             public void stateChanged(final ChangeEvent e)
             {
-                FundamentalDiagramDemo.this.speedLimit = new Speed(((JSlider) e.getSource()).getValue(), SpeedUnit.KM_PER_HOUR);
+                FundamentalDiagramDemo.this.speedLimits
+                        .addSpeedLimit(new Speed(((JSlider) e.getSource()).getValue(), SpeedUnit.KM_PER_HOUR));
                 FundamentalDiagramDemo.this.fdLine.update();
                 notifyPlotsChanged();
-                for (Link link : getNetwork().getLinkMap().values())
-                {
-                    for (Lane lane : ((CrossSectionLink) link).getLanes())
-                    {
-                        lane.setSpeedLimit(DefaultsNl.VEHICLE, FundamentalDiagramDemo.this.speedLimit);
-                    }
-                }
             }
         });
         controlPanel.add(vSlider);
@@ -824,7 +820,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
      */
     private final class DynamicFdLine implements FdLine
     {
-    	
+
         /** Map of points for each quantity. */
         private Map<Quantity, double[]> map = new LinkedHashMap<>();
 
@@ -847,7 +843,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         {
             // harmonic mean of desired speed of cars and trucks
             HarmonicMean<Speed, Double> meanSpeed = new HarmonicMean<>();
-            Speed carSpeed = FundamentalDiagramDemo.this.speedLimit.times(123.7 / 120.0);
+            Speed carSpeed = FundamentalDiagramDemo.this.speedLimits.getSpeedLimit(Duration.ZERO).get().speed();
             meanSpeed.add(carSpeed, 1.0 - FundamentalDiagramDemo.this.truckFraction);
             Speed truckSpeed = Speed.min(carSpeed, new Speed(85.0, SpeedUnit.KM_PER_HOUR));
             meanSpeed.add(truckSpeed, FundamentalDiagramDemo.this.truckFraction);
@@ -890,7 +886,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             this.map.put(Quantity.FLOW, q);
             this.map.put(Quantity.SPEED, v);
         }
-        
+
     }
 
 }

@@ -84,6 +84,7 @@ import org.opentrafficsim.road.gtu.tactical.following.Idm;
 import org.opentrafficsim.road.gtu.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.tactical.following.IdmPlusMulti;
 import org.opentrafficsim.road.gtu.tactical.util.ConflictUtil;
+import org.opentrafficsim.road.gtu.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
@@ -92,8 +93,7 @@ import org.opentrafficsim.road.gtu.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.VoluntaryIncentive;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormalTrunc;
@@ -335,6 +335,9 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     /** Distribution of fSpeed. */
     private DistNormalTrunc fSpeedDist;
 
+    /** Distribution of fSpeedGtu. */
+    private DistNormalTrunc fSpeedGtuDist;
+
     /** LMRS provider. */
     private final List<TacticalPlannerProvider<T>> lmrsProvider;
 
@@ -551,7 +554,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     // Social interactions
 
     /** Enables social pressure exerted to the (potential) leader. */
-    @Option(names = {"--tailgating"}, description = "Enables social pressure exerted to the (potential) leader.",
+    @Option(names = {"--socialPressure"}, description = "Enables social pressure exerted to the (potential) leader.",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> socialPressure = listOf(false);
 
@@ -670,6 +673,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         this.vGainDist = new ContinuousDistSpeed(new DistLogNormal(stream, 3.379, 0.4), SpeedUnit.KM_PER_HOUR);
         this.sigmaDist = new DistTriangular(stream, 0.0, 0.25, 1.0);
         this.fSpeedDist = new DistNormalTrunc(stream, 123.7 / 120.0, 0.1, 0.8, 50.0);
+        this.fSpeedGtuDist = new DistNormalTrunc(stream, 85.0 / 80.0, 2.5 / 80.0, 0.8, 50.0);
         return this;
     }
 
@@ -806,13 +810,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     }
 
     @Override
-    public Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
+    public Optional<Speed> peekDesiredSpeed(final GtuType gtuType, final SpeedLimits speedLimits, final Speed maxVehicleSpeed,
             final Parameters parameters) throws GtuException
     {
-        SpeedLimitInfo sli = new SpeedLimitInfo();
-        sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, maxGtuSpeed);
-        sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, speedLimit);
-        return Try.assign(() -> Optional.of(peekCarFollowingModel(gtuType).desiredSpeed(parameters, sli)),
+        return Try.assign(
+                () -> Optional.of(peekCarFollowingModel(gtuType).desiredSpeed(parameters, speedLimits, maxVehicleSpeed)),
                 IllegalStateException.class, "Parameter for desired speed missing.");
     }
 
@@ -841,6 +843,10 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         if (IdmPlusMultiFunction.SINGLETON.equals(get(this.carFollowingModel, gtuType)))
         {
             parameters.setDefaultParameter(IdmPlusMulti.NLEADERS);
+        }
+        if (get(this.accelerationSpeedLimitTransition, gtuType))
+        {
+            parameters.setDefaultParameter(SpeedLimitUtil.A_LAT);
         }
 
         // Fuller
@@ -924,6 +930,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             parameters.setParameter(LmrsParameters.SOCIO, this.sigmaDist.draw());
         }
         parameters.setParameter(ParameterTypes.FSPEED, this.fSpeedDist.draw());
+        parameters.setParameter(ParameterTypes.FSPEED_GTU, this.fSpeedGtuDist.draw());
         return parameters;
     }
 
@@ -988,7 +995,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         // Acceleration incentives
         if (get(this.accelerationSpeedLimitTransition, gtuType))
         {
-            tacticalPlanner.addAccelerationIncentive(AccelerationSpeedLimitTransition.SINGLETON);
+            tacticalPlanner.addAccelerationIncentive(AccelerationSpeedTransition.SINGLETON);
         }
         if (get(this.accelerationTrafficLights, gtuType))
         {

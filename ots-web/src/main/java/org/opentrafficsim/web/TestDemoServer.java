@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djunits.value.vfloat.scalar.base.FloatScalar;
 import org.djutils.io.ResourceResolver;
@@ -198,7 +197,7 @@ public class TestDemoServer
                     OtsSimulatorInterface simulator = model.getSimulator();
                     try
                     {
-                        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
+                        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
                                 HistoryManagerDevs.noHistory(simulator));
                         OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);

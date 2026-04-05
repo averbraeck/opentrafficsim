@@ -8,9 +8,7 @@ import java.rmi.RemoteException;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.perception.HistoryManager;
@@ -45,7 +43,7 @@ public final class OtsReplicationTest
     public void otsReplicationTest() throws NamingException, RemoteException
     {
         String id = "id";
-        Time startTime = new Time(100, TimeUnit.BASE_SECOND);
+        Duration startTimeOfDay = new Duration(100, DurationUnit.SECOND);
         Duration warmupPeriod = new Duration(200, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OtsSimulatorInterface simulator = new OtsSimulator("Simulator for OTSReplicationTest");
@@ -56,8 +54,8 @@ public final class OtsReplicationTest
         HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);
         assertEquals(listenerCount + 1, simulator.numberOfListeners(Replication.END_REPLICATION_EVENT),
                 "history manager has subscribed to our simulator");
-        OtsReplication replication = new OtsReplication(id, startTime, warmupPeriod, runLength, ourHM);
-        assertEquals(startTime, replication.getStartTimeAbs(), "startTime can be retrieved");
+        OtsReplication replication = new OtsReplication(id, startTimeOfDay, warmupPeriod, runLength, ourHM);
+        assertEquals(startTimeOfDay, replication.getStartTimeOfDay(), "startTime can be retrieved");
         assertEquals(warmupPeriod, replication.getWarmupPeriod(), "warmupPeriod can be retrieved");
         assertEquals(runLength, replication.getRunLength(), "runLength can be retrieved");
         simulator.initialize(model, replication);

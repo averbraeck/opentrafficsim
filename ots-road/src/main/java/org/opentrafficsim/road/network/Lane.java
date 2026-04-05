@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
@@ -38,6 +37,9 @@ import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
 import org.opentrafficsim.road.network.object.detector.LaneDetector;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
+import org.opentrafficsim.road.network.speed.SpeedLimit;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
@@ -63,14 +65,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /** Type of lane to deduce compatibility with GTU types. */
     private final LaneType laneType;
 
-    /**
-     * The speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90 km/h.
-     * If the speed limit is the same for a family of GTU types, that family name (e.g., GtuType.VEHICLE) can be used. <br>
-     */
-    private final Map<GtuType, Speed> speedLimitMap = new LinkedHashMap<>();
-
-    /** Cached speed limits; these are cleared when a speed limit is changed. */
-    private final Map<GtuType, Speed> cachedSpeedLimits = new LinkedHashMap<>();
+    /** Speed limit information. */
+    private final LaneSpeedLimits speedLimits;
 
     /**
      * Detectors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of detectors is
@@ -182,14 +178,14 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param id the id of this lane within the link; should be unique within the link
      * @param geometry geometry
      * @param laneType lane type
-     * @param speedLimitMap the speed limit on this lane, specified per GTU Type
+     * @param laneSpeedLimits speed limits
      */
     public Lane(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry, final LaneType laneType,
-            final Map<GtuType, Speed> speedLimitMap)
+            final LaneSpeedLimits laneSpeedLimits)
     {
         super(link, id, geometry);
+        this.speedLimits = laneSpeedLimits;
         this.laneType = laneType;
-        this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(link), this);
     }
 
@@ -347,7 +343,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param detector the detector to add
      * @throws NetworkException when the position of the detector is beyond (or before) the range of this Lane
      */
-    public final void addDetector(final LaneDetector detector) throws NetworkException
+    public void addDetector(final LaneDetector detector) throws NetworkException
     {
         double position = detector.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
@@ -376,7 +372,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param detector the detector to remove.
      * @throws NetworkException when the detector was not found on this Lane
      */
-    public final void removeDetector(final LaneDetector detector) throws NetworkException
+    public void removeDetector(final LaneDetector detector) throws NetworkException
     {
         fireTimedEvent(Lane.DETECTOR_REMOVE_EVENT, new Object[] {detector.getId(), detector},
                 detector.getSimulator().getSimulatorTime());
@@ -401,8 +397,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtuType the GTU type to provide the detectors for
      * @return list of the detectors in the specified range. This is a defensive copy.
      */
-    public final List<LaneDetector> getDetectors(final Length minimumPosition, final Length maximumPosition,
-            final GtuType gtuType)
+    public List<LaneDetector> getDetectors(final Length minimumPosition, final Length maximumPosition, final GtuType gtuType)
     {
         List<LaneDetector> detectorList = new ArrayList<>(1);
         for (List<LaneDetector> dets : this.detectors.values())
@@ -425,7 +420,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtuType the GTU type to provide the detectors for
      * @return list of the detectors, in ascending order for the location on the Lane
      */
-    public final List<LaneDetector> getDetectors(final GtuType gtuType)
+    public List<LaneDetector> getDetectors(final GtuType gtuType)
     {
         List<LaneDetector> detectorList = new ArrayList<>(1);
         for (List<LaneDetector> dets : this.detectors.values())
@@ -445,7 +440,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Retrieve the list of all Detectors of this Lane. The resulting list is a defensive copy.
      * @return list of the detectors, in ascending order for the location on the Lane
      */
-    public final List<LaneDetector> getDetectors()
+    public List<LaneDetector> getDetectors()
     {
         if (this.detectors == null)
         {
@@ -467,7 +462,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtuType the GTU type to provide the detectors for
      * @return all detectors on this lane for the given GtuType as a map per distance
      */
-    public final SortedMap<Double, List<LaneDetector>> getDetectorMap(final GtuType gtuType)
+    public SortedMap<Double, List<LaneDetector>> getDetectorMap(final GtuType gtuType)
     {
         SortedMap<Double, List<LaneDetector>> detectorMap = new TreeMap<>();
         for (double d : this.detectors.keySet())
@@ -497,7 +492,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param laneBasedObject the laneBasedObject to add
      * @throws NetworkException when the position of the laneBasedObject is beyond (or before) the range of this Lane
      */
-    public final synchronized void addLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
+    public synchronized void addLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
         double position = laneBasedObject.getLongitudinalPosition().si;
         if (position < 0 || position > getLength().getSI())
@@ -525,7 +520,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param laneBasedObject the laneBasedObject to remove.
      * @throws NetworkException when the laneBasedObject was not found on this Lane
      */
-    public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
+    public synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
         fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject}, getLink().getSimulator().getSimulatorTime());
         List<LaneBasedObject> laneBasedObjectList =
@@ -549,7 +544,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param maximumPosition the maximum distance on the Lane (inclusive)
      * @return list of the laneBasedObject in the specified range. This is a defensive copy.
      */
-    public final List<LaneBasedObject> getLaneBasedObjects(final Length minimumPosition, final Length maximumPosition)
+    public List<LaneBasedObject> getLaneBasedObjects(final Length minimumPosition, final Length maximumPosition)
     {
         List<LaneBasedObject> laneBasedObjectList = new ArrayList<>(1);
         for (List<LaneBasedObject> lbol : this.laneBasedObjects.values())
@@ -569,7 +564,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Retrieve the list of all LaneBasedObjects of this Lane. The resulting list is a defensive copy.
      * @return list of the laneBasedObjects, in ascending order for the location on the Lane
      */
-    public final List<LaneBasedObject> getLaneBasedObjects()
+    public List<LaneBasedObject> getLaneBasedObjects()
     {
         if (this.laneBasedObjects == null)
         {
@@ -590,7 +585,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Retrieve the list of LaneBasedObjects of this Lane. The resulting Map is a defensive copy.
      * @return all laneBasedObjects on this lane
      */
-    public final SortedMap<Double, List<LaneBasedObject>> getLaneBasedObjectMap()
+    public SortedMap<Double, List<LaneBasedObject>> getLaneBasedObjectMap()
     {
         SortedMap<Double, List<LaneBasedObject>> laneBasedObjectMap = new TreeMap<>();
         for (double d : this.laneBasedObjects.keySet())
@@ -610,7 +605,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param fraction fraction relative to the lane length.
      * @return the longitudinal length corresponding to the fraction.
      */
-    public final Length position(final double fraction)
+    public Length position(final double fraction)
     {
         if (getLength().getDisplayUnit().isBaseSIUnit())
         {
@@ -624,7 +619,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param fraction fraction relative to the lane length.
      * @return length corresponding to the fraction, in SI units.
      */
-    public final double positionSI(final double fraction)
+    public double positionSI(final double fraction)
     {
         return getLength().si * fraction;
     }
@@ -634,7 +629,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position relative length on the lane (may be less than zero or larger than the lane length).
      * @return fraction relative to the lane length.
      */
-    public final double fraction(final Length position)
+    public double fraction(final Length position)
     {
         return position.si / getLength().si;
     }
@@ -644,7 +639,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param positionSI relative length on the lane in SI units (may be less than zero or larger than the lane length).
      * @return fraction relative to the lane length.
      */
-    public final double fractionSI(final double positionSI)
+    public double fractionSI(final double positionSI)
     {
         return positionSI / getLength().si;
     }
@@ -695,7 +690,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *         lane change operation)
      * @throws GtuException when longitudinalPosition is negative or exceeds the length of this Lane
      */
-    public final int addGtu(final LaneBasedGtu gtu, final Length longitudinalPosition) throws GtuException
+    public int addGtu(final LaneBasedGtu gtu, final Length longitudinalPosition) throws GtuException
     {
         return addGtu(gtu, longitudinalPosition.getSI() / getLength().getSI());
     }
@@ -707,7 +702,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position last position of the GTU
      */
     // @docs/02-model-structure/djutils.md#event-producers-and-listeners
-    public final void removeGtu(final LaneBasedGtu gtu, final boolean removeFromParentLink, final Length position)
+    public void removeGtu(final LaneBasedGtu gtu, final boolean removeFromParentLink, final Length position)
     {
         boolean contained = this.gtuList.remove(gtu);
         if (contained)
@@ -732,7 +727,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return the last GTU on this lane in the given direction, empty if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final Optional<LaneBasedGtu> getLastGtu() throws GtuException
+    public Optional<LaneBasedGtu> getLastGtu() throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
@@ -746,7 +741,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return the first GTU on this lane in the given direction, empty if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final Optional<LaneBasedGtu> getFirstGtu() throws GtuException
+    public Optional<LaneBasedGtu> getFirstGtu() throws GtuException
     {
         if (this.gtuList.size() == 0)
         {
@@ -762,9 +757,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param relativePosition RelativePosition.TYPE; the relative position we want to compare against
      * @param when the simulation time for which to evaluate the positions.
      * @return the first GTU before a position on this lane in the given direction, empty if no GTU could be found.
-     * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final Optional<LaneBasedGtu> getGtuAhead(final Length position, final RelativePosition.Type relativePosition,
+    public Optional<LaneBasedGtu> getGtuAhead(final Length position, final RelativePosition.Type relativePosition,
             final Duration when)
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
@@ -792,7 +786,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param when the time for which to evaluate the positions.
      * @return the first GTU after a position on this lane in the given direction, empty if no GTU could be found.
      */
-    public final Optional<LaneBasedGtu> getGtuBehind(final Length position, final RelativePosition.Type relativePosition,
+    public Optional<LaneBasedGtu> getGtuBehind(final Length position, final RelativePosition.Type relativePosition,
             final Duration when)
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
@@ -885,7 +879,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position the position after which the relative position of an object will be searched.
      * @return the first object(s) before a position on this lane in the given direction, empty if no object could be found.
      */
-    public final List<LaneBasedObject> getObjectAhead(final Length position)
+    public List<LaneBasedObject> getObjectAhead(final Length position)
     {
         for (double distance : this.laneBasedObjects.keySet())
         {
@@ -904,7 +898,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position the position after which the relative position of an object will be searched.
      * @return the first object(s) after a position on this lane in the given direction, empty if no object could be found.
      */
-    public final List<LaneBasedObject> getObjectBehind(final Length position)
+    public List<LaneBasedObject> getObjectBehind(final Length position)
     {
         NavigableMap<Double, List<LaneBasedObject>> reverseLBO =
                 (NavigableMap<Double, List<LaneBasedObject>>) this.laneBasedObjects;
@@ -941,7 +935,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return set of Lanes following this lane for the given GTU type.
      */
     // TODO this should return something immutable
-    public final Set<Lane> nextLanes(final GtuType gtuType)
+    public Set<Lane> nextLanes(final GtuType gtuType)
     {
         if (!this.nextLanes.containsKey(gtuType))
         {
@@ -1010,7 +1004,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return set of Lanes following this lane for the given GTU type.
      */
     // TODO this should return something immutable
-    public final Set<Lane> prevLanes(final GtuType gtuType)
+    public Set<Lane> prevLanes(final GtuType gtuType)
     {
         if (!this.prevLanes.containsKey(gtuType))
         {
@@ -1073,7 +1067,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return the set of lanes that are accessible, empty if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane> accessibleAdjacentLanesPhysical(final LateralDirectionality lateralDirection, final GtuType gtuType)
+    public Set<Lane> accessibleAdjacentLanesPhysical(final LateralDirectionality lateralDirection, final GtuType gtuType)
     {
         return neighbors(lateralDirection, gtuType, false);
     }
@@ -1091,7 +1085,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return the set of lanes that are accessible, empty if there is no lane that is accessible with a matching driving
      *         direction.
      */
-    public final Set<Lane> accessibleAdjacentLanesLegal(final LateralDirectionality lateralDirection, final GtuType gtuType)
+    public Set<Lane> accessibleAdjacentLanesLegal(final LateralDirectionality lateralDirection, final GtuType gtuType)
     {
         return neighbors(lateralDirection, gtuType, true);
     }
@@ -1140,99 +1134,48 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     }
 
     /**
-     * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks
-     * 90 km/h.
-     * @param gtuType the GTU type to provide the speed limit for
-     * @return the speedLimit.
-     * @throws NetworkException on network inconsistency
+     * Get the speed limits of this lane at the current time-of-day, which can differ per GTU type. E.g., a vehicle type speed
+     * limit may apply to trucks.
+     * @param gtuType the GTU type to provide the speed limits for
+     * @return speed limits
      */
-    public Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
+    public SpeedLimits getSpeedLimits(final GtuType gtuType)
     {
-        Speed speedLimit = this.cachedSpeedLimits.get(gtuType);
-        if (speedLimit == null)
-        {
-            if (this.speedLimitMap.containsKey(gtuType))
-            {
-                speedLimit = this.speedLimitMap.get(gtuType);
-            }
-            else
-            {
-                speedLimit = getSpeedLimit(gtuType.getParent().orElseThrow(
-                        () -> new NetworkException("No speed limit set for GtuType " + gtuType + " on lane " + toString())));
-            }
-            this.cachedSpeedLimits.put(gtuType, speedLimit);
-        }
-        return speedLimit;
+        return this.speedLimits.getSpeedLimits(gtuType, getLink().getSimulator().getTimeOfDay());
     }
 
     /**
-     * Get the lowest speed limit of this lane.
-     * @return the lowest speedLimit.
-     * @throws NetworkException on network inconsistency
+     * Get the speed limits of this lane, which can differ per GTU type. E.g., a vehicle type speed limit may apply to trucks.
+     * @param gtuType the GTU type to provide the speed limits for
+     * @param timeOfDay time-of-day
+     * @return speed limits
      */
-    public final Speed getLowestSpeedLimit() throws NetworkException
+    public SpeedLimits getSpeedLimits(final GtuType gtuType, final Duration timeOfDay)
     {
-        Throw.when(this.speedLimitMap.isEmpty(), NetworkException.class, "Lane %s has no speed limits set.", toString());
-        Speed out = Speed.POSITIVE_INFINITY;
-        for (GtuType gtuType : this.speedLimitMap.keySet())
-        {
-            out = Speed.min(out, this.speedLimitMap.get(gtuType));
-        }
-        return out;
+        return this.speedLimits.getSpeedLimits(gtuType, timeOfDay);
     }
 
     /**
-     * Get the highest speed limit of this lane.
-     * @return the highest speedLimit.
-     * @throws NetworkException on network inconsistency
+     * Returns the speed limit at the current time-of-day.
+     * @return speed limit, empty if no speed limit given
      */
-    public final Speed getHighestSpeedLimit() throws NetworkException
+    public Optional<SpeedLimit> getSpeedLimit()
     {
-        Throw.when(this.speedLimitMap.isEmpty(), NetworkException.class, "Lane %s has no speed limits set.", toString());
-        Speed out = Speed.ZERO;
-        for (GtuType gtuType : this.speedLimitMap.keySet())
-        {
-            out = Speed.max(out, this.speedLimitMap.get(gtuType));
-        }
-        return out;
+        return this.speedLimits.getSpeedLimit(getLink().getSimulator().getTimeOfDay());
     }
 
     /**
-     * Set the speed limit of this lane, which can differ per GTU type. Cars might be allowed to drive 120 km/h and trucks 90
-     * km/h. If the speed limit is the same for all GTU types, GtuType.ALL will be used. This means that the settings can be
-     * used additive, or subtractive. <br>
-     * In <b>additive use</b>, do not set the speed limit for GtuType.ALL. Now, one by one, the allowed maximum speeds for each
-     * of the GTU Types have be added. Do this when there are few GTU types or the speed limits per TU type are very different.
-     * <br>
-     * In <b>subtractive use</b>, set the speed limit for GtuType.ALL to the most common one. Override the speed limit for
-     * certain GtuTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
-     * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
-     * GtuType.ALL to 120 km/h, and for TRUCK to 90 km/h.
-     * @param gtuType the GTU type to provide the speed limit for
-     * @param speedLimit the speed limit for this gtu type
+     * Returns the speed limit.
+     * @param timeOfDay time-of-day
+     * @return speed limit, empty if no speed limit given
      */
-    public final void setSpeedLimit(final GtuType gtuType, final Speed speedLimit)
+    public Optional<SpeedLimit> getSpeedLimit(final Duration timeOfDay)
     {
-        this.speedLimitMap.put(gtuType, speedLimit);
-        this.cachedSpeedLimits.clear();
-    }
-
-    /**
-     * Remove the set speed limit for a GtuType. If the speed limit for GtuType.ALL will be removed, there will not be a
-     * 'default' speed limit anymore. If the speed limit for a certain GtuType is removed, its speed limit will default to the
-     * speed limit of GtuType.ALL. <br>
-     * <b>Note</b>: if no speed limit is known for a GtuType, getSpeedLimit will throw a NetworkException when the speed limit
-     * is retrieved for that GtuType.
-     * @param gtuType the GTU type to provide the speed limit for
-     */
-    public final void removeSpeedLimit(final GtuType gtuType)
-    {
-        this.speedLimitMap.remove(gtuType);
-        this.cachedSpeedLimits.clear();
+        return this.speedLimits.getSpeedLimit(timeOfDay);
     }
 
     @Override
-    public final LaneType getType()
+    public LaneType getType()
     {
         return this.laneType;
     }
@@ -1241,7 +1184,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Returns GTU list.
      * @return gtuList.
      */
-    public final ImmutableList<LaneBasedGtu> getGtuList()
+    public ImmutableList<LaneBasedGtu> getGtuList()
     {
         // TODO let HistoricalArrayList return an Immutable (WRAP) of itself
         return this.gtuList == null ? new ImmutableArrayList<>(new ArrayList<>())
@@ -1253,7 +1196,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param time simulation time
      * @return list of GTU's at the specified times
      */
-    public final List<LaneBasedGtu> getGtuList(final Duration time)
+    public List<LaneBasedGtu> getGtuList(final Duration time)
     {
         if (time.equals(this.gtuListTime))
         {
@@ -1268,7 +1211,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Returns the number of GTU's.
      * @return number of GTU's.
      */
-    public final int numberOfGtus()
+    public int numberOfGtus()
     {
         return this.gtuList.size();
     }
@@ -1278,7 +1221,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param time simulation time
      * @return number of GTU's.
      */
-    public final int numberOfGtus(final Duration time)
+    public int numberOfGtus(final Duration time)
     {
         return getGtuList(time).size();
     }
@@ -1288,7 +1231,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtu gtu to get the index of
      * @return index of the given GTU, or -1 if not present
      */
-    public final int indexOfGtu(final LaneBasedGtu gtu)
+    public int indexOfGtu(final LaneBasedGtu gtu)
     {
         return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) ->
         {
@@ -1301,7 +1244,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param index index of the GTU
      * @return the index'th GTU
      */
-    public final LaneBasedGtu getGtu(final int index)
+    public LaneBasedGtu getGtu(final int index)
     {
         return this.gtuList.get(index);
     }
@@ -1312,7 +1255,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param time simulation time
      * @return the index'th GTU
      */
-    public final LaneBasedGtu getGtu(final int index, final Duration time)
+    public LaneBasedGtu getGtu(final int index, final Duration time)
     {
         return getGtuList(time).get(index);
     }
@@ -1322,7 +1265,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param fraction fractional position
      * @return covered distance driven to the given fractional position
      */
-    public final Length coveredDistance(final double fraction)
+    public Length coveredDistance(final double fraction)
     {
         return getLength().times(fraction);
     }
@@ -1332,7 +1275,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param fraction fractional position
      * @return remaining distance to be driven from the given fractional position
      */
-    public final Length remainingDistance(final double fraction)
+    public Length remainingDistance(final double fraction)
     {
         return getLength().times(1.0 - fraction);
     }
@@ -1343,13 +1286,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return fraction along the design line for having covered the given distance
      */
     @Deprecated
-    public final double fractionAtCoveredDistance(final Length distance)
+    public double fractionAtCoveredDistance(final Length distance)
     {
         return fraction(distance);
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         CrossSectionLink link = getLink();
         return String.format("Lane %s of %s", getId(), link.getId());

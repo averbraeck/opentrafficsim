@@ -157,8 +157,9 @@ public final class LmrsUtil implements LmrsParameters
                     // step
                     lmrsData.isNewLeader(leaders.first());
                 }
-                a = Acceleration.min(a, context.getCarFollowingModel().followingAcceleration(context.getParameters(),
-                        context.getSpeed(), context.getSpeedLimitInfo(), neighbors.getLeaders(RelativeLane.LEFT)));
+                a = Acceleration.min(a,
+                        context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
+                                context.getSpeedLimits(), context.getMaximumSpeed(), neighbors.getLeaders(RelativeLane.LEFT)));
             }
         }
         else if (!desire.leftIsLargerOrEqual() && desire.right() >= dFree)
@@ -176,8 +177,9 @@ public final class LmrsUtil implements LmrsParameters
                     // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
                     lmrsData.isNewLeader(leaders.first());
                 }
-                a = Acceleration.min(a, context.getCarFollowingModel().followingAcceleration(context.getParameters(),
-                        context.getSpeed(), context.getSpeedLimitInfo(), neighbors.getLeaders(RelativeLane.RIGHT)));
+                a = Acceleration.min(a,
+                        context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
+                                context.getSpeedLimits(), context.getMaximumSpeed(), neighbors.getLeaders(RelativeLane.RIGHT)));
             }
         }
 

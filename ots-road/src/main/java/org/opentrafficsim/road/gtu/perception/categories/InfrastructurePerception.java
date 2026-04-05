@@ -1,12 +1,17 @@
 package org.opentrafficsim.road.gtu.perception.categories;
 
+import java.util.Optional;
+import java.util.SortedMap;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.point.DirectedPoint2d;
+import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.network.LaneChangeInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * <p>
@@ -26,7 +31,7 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      * Suppose vehicle A needs to take the off-ramp, and that behavior is that the minimum distance per required lane change
      * determines how critical it is. First, 400m before the lane-drop, the off-ramp is critical. 300m downstream, the lane-drop
      * is critical. Info is sorted by distance, closest first.
-     * 
+     *
      * <pre>
      * _______
      * _ _A_ _\_________
@@ -35,11 +40,11 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      *          \_______
      *     (-)        Lane-drop: 1 lane change  in 400m (400m per lane change)
      *     (--------) Off-ramp:  3 lane changes in 900m (300m per lane change, critical)
-     *     
+     *
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
-     * 
+     *
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
@@ -51,7 +56,7 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      * Suppose vehicle A needs to take the off-ramp, and that behavior is that the minimum distance per required lane change
      * determines how critical it is. First, 400m before the lane-drop, the off-ramp is critical. 300m downstream, the lane-drop
      * is critical. Info is sorted by distance, closest first.
-     * 
+     *
      * <pre>
      * _______
      * _ _A_ _\_________
@@ -60,22 +65,34 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      *          \_______
      *     (-)        Lane-drop: 1 lane change  in 400m (400m per lane change)
      *     (--------) Off-ramp:  3 lane changes in 900m (300m per lane change, critical)
-     *     
+     *
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
-     * 
+     *
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
     SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(RelativeLane lane);
 
     /**
-     * Returns the prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane relative lateral lane
-     * @return prospect for speed limits on a lane
+     * Returns the current speed limits.
+     * @param lane lane for the speed limits
+     * @return current speed limits.
      */
-    SpeedLimitProspect getSpeedLimitProspect(RelativeLane lane);
+    SpeedLimits getSpeedLimits(RelativeLane lane);
+
+    /**
+     * Relevant points in path from scanning.
+     * @return relevant points in path from scanning
+     */
+    SortedMap<Length, DirectedPoint2d> getPathScan();
+
+    /**
+     * Returns speed bump information.
+     * @return distance and speed of first downstream speed bump.
+     */
+    Optional<DistancedObject<Speed>> getSpeedBump();
 
     /**
      * Returns the distance over which a lane change remains legally possible. Negative values indicate the distance over which

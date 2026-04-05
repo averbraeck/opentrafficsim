@@ -33,6 +33,12 @@ public interface EgoPerception<G extends Gtu, P extends Perception<G>> extends P
     Speed getSpeed();
 
     /**
+     * Returns the maximum speed.
+     * @return maximum speed
+     */
+    Speed getMaximumSpeed();
+
+    /**
      * Returns the length.
      * @return length
      */

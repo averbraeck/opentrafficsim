@@ -8,9 +8,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.draw.OtsRenderable;
-import org.opentrafficsim.road.network.object.SpeedSign;
+import org.opentrafficsim.road.network.Lane;
+import org.opentrafficsim.road.network.object.AbstractLaneBasedObject;
+import org.opentrafficsim.road.network.object.LaneBasedObject;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be
@@ -22,7 +27,6 @@ import org.opentrafficsim.road.network.object.SpeedSign;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 @SuppressWarnings("all")
-// Note: there is also a SpeedSignAnimation in ots-draw. This class simply exists to notify required changes in the manual code.
 
 // @docs/08-tutorials/visualization.md#how-to-add-an-animation
 public class SpeedSignAnimation extends OtsRenderable<SpeedSign>
@@ -61,4 +65,25 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSign>
         Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(str, g);
         g.drawString(str, (float) -stringBounds.getCenterX(), (float) -stringBounds.getCenterY());
     }
+}
+
+@SuppressWarnings("all")
+// Dummy class for SpeedSignAnimation
+class SpeedSign extends AbstractLaneBasedObject
+{
+
+    final Speed speed;
+
+    protected SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final Speed speed)
+            throws NetworkException
+    {
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition));
+        this.speed = speed;
+    }
+
+    public Speed getSpeed()
+    {
+        return this.speed;
+    }
+
 }

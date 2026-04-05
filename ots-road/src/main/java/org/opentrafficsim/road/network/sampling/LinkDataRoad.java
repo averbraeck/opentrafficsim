@@ -37,13 +37,13 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
      * Return link.
      * @return link.
      */
-    public final CrossSectionLink getLink()
+    public CrossSectionLink getLink()
     {
         return this.link;
     }
 
     @Override
-    public final List<LaneDataRoad> getLanes()
+    public List<LaneDataRoad> getLanes()
     {
         List<LaneDataRoad> lanes = new ArrayList<>();
         for (Lane lane : this.link.getLanes())
@@ -54,19 +54,19 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
     }
 
     @Override
-    public final Length getLength()
+    public Length getLength()
     {
         return this.link.getLength();
     }
 
     @Override
-    public final String getId()
+    public String getId()
     {
         return this.link.getId();
     }
 
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -75,7 +75,7 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
     }
 
     @Override
-    public final boolean equals(final Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -105,7 +105,7 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "LinkData [link=" + this.link + "]";
     }

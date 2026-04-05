@@ -10,10 +10,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.opentrafficsim.xml.bindings.PositiveDurationAdapter;
 import org.opentrafficsim.xml.bindings.PositiveIntegerAdapter;
-import org.opentrafficsim.xml.bindings.PositiveTimeAdapter;
 import org.opentrafficsim.xml.bindings.types.DurationType;
 import org.opentrafficsim.xml.bindings.types.IntegerType;
-import org.opentrafficsim.xml.bindings.types.TimeType;
 
 
 /**
@@ -26,7 +24,7 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
- *         <element name="StartTime" type="{http://www.opentrafficsim.org/ots}PositiveTimeType" minOccurs="0"/>
+ *         <element name="StartTimeOfDay" type="{http://www.opentrafficsim.org/ots}PositiveDurationType" minOccurs="0"/>
  *         <element name="WarmupPeriod" type="{http://www.opentrafficsim.org/ots}PositiveDurationType" minOccurs="0"/>
  *         <element name="RunLength" type="{http://www.opentrafficsim.org/ots}PositiveDurationType"/>
  *         <element name="History" type="{http://www.opentrafficsim.org/ots}PositiveDurationType" minOccurs="0"/>
@@ -42,7 +40,7 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "startTime",
+    "startTimeOfDay",
     "warmupPeriod",
     "runLength",
     "history",
@@ -55,9 +53,9 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
 {
 
     private static final long serialVersionUID = 10102L;
-    @XmlElement(name = "StartTime", type = String.class, defaultValue = "0s")
-    @XmlJavaTypeAdapter(PositiveTimeAdapter.class)
-    protected TimeType startTime;
+    @XmlElement(name = "StartTimeOfDay", type = String.class, defaultValue = "0s")
+    @XmlJavaTypeAdapter(PositiveDurationAdapter.class)
+    protected DurationType startTimeOfDay;
     @XmlElement(name = "WarmupPeriod", type = String.class, defaultValue = "0s")
     @XmlJavaTypeAdapter(PositiveDurationAdapter.class)
     protected DurationType warmupPeriod;
@@ -74,27 +72,27 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
     protected RandomStreams randomStreams;
 
     /**
-     * Gets the value of the startTime property.
+     * Gets the value of the startTimeOfDay property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public TimeType getStartTime() {
-        return startTime;
+    public DurationType getStartTimeOfDay() {
+        return startTimeOfDay;
     }
 
     /**
-     * Sets the value of the startTime property.
+     * Sets the value of the startTimeOfDay property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setStartTime(TimeType value) {
-        this.startTime = value;
+    public void setStartTimeOfDay(DurationType value) {
+        this.startTimeOfDay = value;
     }
 
     /**

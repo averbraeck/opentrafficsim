@@ -124,10 +124,19 @@
             <xsd:element name="LaneOverride" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
                 <xsd:sequence>
-                  <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
+                  <xsd:choice minOccurs="0">
+                    <xsd:element name="SpeedLimit" type="ots:SpeedLimit" />
+                    <xsd:element name="TemporalSpeedLimit" type="ots:TemporalSpeedLimit" />
+                  </xsd:choice>
+                  <xsd:element ref="ots:GtuTypeSpeedLimit" minOccurs="0" maxOccurs="unbounded" />
                 </xsd:sequence>
                 <xsd:attribute name="Lane" type="ots:string" use="required" />
               </xsd:complexType>
+              <!-- LaneOverride.GtuTypeSpeedLimit.Id key -->
+              <xsd:key name="laneOverrideSpeedLimitGtuTypeId">
+                <xsd:selector xpath="ots:GtuTypeSpeedLimit" />
+                <xsd:field xpath="@Id" />
+              </xsd:key>
             </xsd:element>
             <xsd:element name="StripeOverride" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
@@ -145,11 +154,11 @@
             </xsd:element>
           </xsd:sequence>
         </xsd:choice>
-
+        
         <xsd:element name="TrafficLight" type="ots:TrafficLightType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="TrafficLightSensor" type="ots:TrafficLightDetectorType" minOccurs="0"
           maxOccurs="unbounded" />
-
+          
       </xsd:sequence>
 
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
@@ -176,20 +185,40 @@
       <xsd:selector xpath="ots:StripeOverride" />
       <xsd:field xpath="@Stripe" />
     </xsd:key>
+    
+    <!-- Link.GtuTypeSpeedLimits.GtuTypeSpeedLimit.Id key -->
+    <xsd:key name="linkGtuTypeSpeedLimitsKey">
+      <xsd:selector xpath="ots:GtuTypeSpeedLimits/ots:GtuTypeSpeedLimit" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
 
   </xsd:element>
 
   <xsd:element name="Network">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="Conflicts" minOccurs="0" maxOccurs="1">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element ref="ots:Node" minOccurs="0" maxOccurs="1" />
+          <xsd:element ref="ots:Link" minOccurs="0" maxOccurs="1" />
+          <xsd:element ref="ots:Centroid" minOccurs="0" maxOccurs="1" />
+          <xsd:element ref="ots:Connector" minOccurs="0" maxOccurs="1" />
+          <xsd:element ref="xi:include" minOccurs="0" maxOccurs="1" />
+        </xsd:choice>
+        <xsd:element name="GtuTypeSpeedLimits" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element ref="ots:GtuTypeSpeedLimit" minOccurs="0" maxOccurs="unbounded" />
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Conflicts" minOccurs="0">
           <xsd:annotation>
             <xsd:documentation xml:lang="en">Default width is 2m. None creates no conflicts. Relative width is
               relative to lane width. Otherwise specify width.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:complexType>
-            <xsd:choice minOccurs="1" maxOccurs="1">
+            <xsd:choice>
               <xsd:element name="None" type="ots:EmptyType" />
               <xsd:element name="DefaultWidth" type="ots:EmptyType" />
               <xsd:element name="FixedWidth" type="ots:LengthType" />
@@ -198,15 +227,9 @@
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="Flattener" type="ots:FlattenerType" minOccurs="0" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element ref="ots:Node" minOccurs="0" maxOccurs="1" />
-          <xsd:element ref="ots:Link" minOccurs="0" maxOccurs="1" />
-          <xsd:element ref="ots:Centroid" minOccurs="0" maxOccurs="1" />
-          <xsd:element ref="ots:Connector" minOccurs="0" maxOccurs="1" />
-          <xsd:element ref="xi:include" minOccurs="0" maxOccurs="1" />
-        </xsd:choice>
       </xsd:sequence>
     </xsd:complexType>
+    
   </xsd:element>
 
   <!-- ================================================================================================== -->

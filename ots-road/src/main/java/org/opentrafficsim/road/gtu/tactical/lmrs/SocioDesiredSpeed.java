@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.gtu.tactical.following.Initialisable;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
+import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
  * Wrapper of a base-desired speed model. The speed may be increased due to social pressure from the follower.
@@ -56,9 +56,10 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
     }
 
     @Override
-    public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+    public Speed desiredSpeed(final Parameters parameters, final SpeedLimits speedLimits, final Speed maxVehicleSpeed)
+            throws ParameterException
     {
-        Speed desiredSpeed = this.baseModel.desiredSpeed(parameters, speedInfo);
+        Speed desiredSpeed = this.baseModel.desiredSpeed(parameters, speedLimits, maxVehicleSpeed);
         if (this.gtu == null)
         {
             return desiredSpeed;

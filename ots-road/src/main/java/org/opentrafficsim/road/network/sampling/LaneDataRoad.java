@@ -33,31 +33,31 @@ public class LaneDataRoad implements LaneData<LaneDataRoad>
      * Returns the lane.
      * @return lane.
      */
-    public final Lane getLane()
+    public Lane getLane()
     {
         return this.lane;
     }
 
     @Override
-    public final Length getLength()
+    public Length getLength()
     {
         return this.lane.getLength();
     }
 
     @Override
-    public final LinkDataRoad getLinkData()
+    public LinkDataRoad getLinkData()
     {
         return new LinkDataRoad(this.lane.getLink());
     }
 
     @Override
-    public final String getId()
+    public String getId()
     {
         return this.lane.getId();
     }
 
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -66,7 +66,7 @@ public class LaneDataRoad implements LaneData<LaneDataRoad>
     }
 
     @Override
-    public final boolean equals(final Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -96,7 +96,7 @@ public class LaneDataRoad implements LaneData<LaneDataRoad>
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "LaneData [lane=" + this.lane + "]";
     }

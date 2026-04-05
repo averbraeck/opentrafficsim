@@ -138,7 +138,6 @@ public final class DefaultDecorator
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
         new AttributesStringFunction(editor, "Ots.Network.Link.StripeOverride", "Stripe");
         new AttributesStringFunction(editor, "Ots.Network.Link.TrafficLight", "Lane");
-        new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
         new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination", "Category");
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
@@ -149,7 +148,10 @@ public final class DefaultDecorator
         new AttributesStringFunction(editor, "Ots.Control.FixedTime.Cycle", "SignalGroupId", "Offset", "PreGreen", "Green",
                 "Yellow");
         new AttributesStringFunction(editor, ".LaneBias", "GtuType");
-        new AttributesStringFunction(editor, ".Compatibility", "GtuType", "Compatible");
+        new AttributesStringFunction(editor, "LaneOverride.Compatibility", "GtuType", "Compatible");
+        new AttributesStringFunction(editor, "LaneType.Compatibility", "GtuType", "Compatible");
+        new AttributesStringFunction(editor, "LinkType.Compatibility", "GtuType", "Compatible");
+        new AttributesStringFunction(editor, "DetectorType.Compatibility", "GtuType", "Compatible");
         new AttributesStringFunction(editor, "Ots.Models.Model.GtuTypeParameters", "GtuType");
         new AttributesStringFunction(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.GtuTypeModel", "GtuType");
         new OdOptionsItemStringFunction(editor);

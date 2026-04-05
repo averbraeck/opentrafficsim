@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OtsModel;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
@@ -46,12 +44,12 @@ public final class OtsSimulatorTest
     {
         String id = "Simulator for OtsSimulator test";
         OtsSimulator simulator = new OtsSimulator(id);
-        Time startTime = new Time(10, TimeUnit.BASE_SECOND);
+        Duration startTimeOfDay = new Duration(10, DurationUnit.SECOND);
         Duration warmupDuration = new Duration(20, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OtsModel model = new OtsModel(simulator);
-        simulator.initialize(startTime, warmupDuration, runLength, model, HistoryManagerDevs.noHistory(simulator));
-        assertEquals(startTime, simulator.getStartTime(), "startTime is returned");
+        simulator.initialize(startTimeOfDay, warmupDuration, runLength, model, HistoryManagerDevs.noHistory(simulator));
+        assertEquals(startTimeOfDay, simulator.getTimeOfDay(), "startTime is returned");
         assertEquals(warmupDuration, simulator.getReplication().getWarmupPeriod(), "warmupDuration is returned");
         assertEquals(runLength, simulator.getReplication().getRunLength(), "runLength is returned");
         assertTrue(simulator.toString().startsWith("OtsSimulator"), "toString returns something descriptive");

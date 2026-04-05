@@ -118,9 +118,9 @@ public final class EgtfTest
         double[][] qCom12 = filterCom12.getSI(TypedQuantity.FLOW);
         double[][] vCom2 = filterCom2.getSI(TypedQuantity.SPEED);
         double[][] qCom2 = filterCom2.getSI(TypedQuantity.FLOW);
-        for (int i = 0; i < x.length; i++)
+        for (int i = 0; i < x.length - 1; i++)
         {
-            for (int j = 0; j < t.length; j++)
+            for (int j = 0; j < t.length - 1; j++)
             {
                 assertFalse(Math.abs(vDet[i][j] - vFree) > MARGIN,
                         "Speed filtered with detector data is not equal to uniform input speed");

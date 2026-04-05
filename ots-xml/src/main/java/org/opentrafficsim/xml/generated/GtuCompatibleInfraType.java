@@ -35,9 +35,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "compatibility"
 })
 @XmlSeeAlso({
-    DetectorType.class,
-    LinkType.class,
-    LaneType.class
+    SpeedLimitInfraType.class,
+    DetectorType.class
 })
 @SuppressWarnings("all") public class GtuCompatibleInfraType
     extends HierarchicalType

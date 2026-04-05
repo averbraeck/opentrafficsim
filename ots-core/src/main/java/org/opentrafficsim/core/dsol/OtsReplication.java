@@ -3,7 +3,6 @@ package org.opentrafficsim.core.dsol;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.HistoryManager;
 
@@ -22,25 +21,26 @@ public class OtsReplication extends SingleReplication<Duration>
     /** History manager. */
     private final HistoryManager historyManager;
 
-    /** The (absolute) start time of the replication. */
-    private final Time startTimeAbs;
+    /** Start time of day. */
+    private final Duration startTimeOfDay;
 
     /**
      * Create a new OtsReplication.
      * @param id id of the new OtsReplication
-     * @param startTime the start time of the new OtsReplication
-     * @param warmupPeriod the warmup period of the new OtsReplication
+     * @param startTimeOfDay the start time of the new OtsReplication
+     * @param warmupPeriod the warm-up period of the new OtsReplication
      * @param runLength the run length of the new OtsReplication
      * @param historyManager history manager
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OtsReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength,
+    public OtsReplication(final String id, final Duration startTimeOfDay, final Duration warmupPeriod, final Duration runLength,
             final HistoryManager historyManager) throws NamingException
     {
         super(id, Duration.ZERO, warmupPeriod, runLength);
         Throw.whenNull(historyManager, "historyManager");
-        this.startTimeAbs = startTime;
+        Throw.whenNull(startTimeOfDay, "startTimeOfDay");
         this.historyManager = historyManager;
+        this.startTimeOfDay = startTimeOfDay;
     }
 
     /**
@@ -54,12 +54,12 @@ public class OtsReplication extends SingleReplication<Duration>
     }
 
     /**
-     * Return the absolute start time of the simulation.
-     * @return the absolute start time of the simulation
+     * Returns the start time-of-day.
+     * @return start time-of-day
      */
-    public Time getStartTimeAbs()
+    public Duration getStartTimeOfDay()
     {
-        return this.startTimeAbs;
+        return this.startTimeOfDay;
     }
 
     @Override
@@ -67,4 +67,5 @@ public class OtsReplication extends SingleReplication<Duration>
     {
         return "OtsReplication []";
     }
+
 }

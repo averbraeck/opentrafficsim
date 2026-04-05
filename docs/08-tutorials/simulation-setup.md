@@ -44,15 +44,14 @@ The autorun parameter triggers animation when false. These, and other, parameter
         Point2d pointB = new Point2d(500, 0);
         Node nodeA = new Node(network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(network, "B", pointB, Direction.ZERO);
-        GtuType car = DefaultsNl.CAR;
         LinkType freewayLink = DefaultsNl.FREEWAY;
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine3d(pointA, pointB),
                 null, LaneKeepingPolicy.KEEPRIGHT);
         LaneGeometryUtil.createStraightLane(link, "Left", Length.ofSI(1.75), Length.ofSI(3.5), freewayLane,
-                Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
+                new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR)));
         LaneGeometryUtil.createStraightLane(link, "Right", Length.ofSI(-1.75), Length.ofSI(3.5), freewayLane,
-                Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
+                new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR)));
         LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "1", link, Length.ofSI(3.5), 
                 Length.ofSI(0.2));
         LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.DASHED, "2", link, Length.ofSI(0.0), 

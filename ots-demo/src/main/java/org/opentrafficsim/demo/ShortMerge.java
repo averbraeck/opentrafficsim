@@ -75,7 +75,6 @@ import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
-import org.opentrafficsim.road.network.object.SpeedSign;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
@@ -152,7 +151,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     private static void setAnimationToggles(final OtsSimulationPanel simulationPanel)
     {
         AnimationToggles.setIconAnimationTogglesStandard(simulationPanel);
-        AnimationToggles.showAnimationClass(simulationPanel, SpeedSign.class);
     }
 
     /**
@@ -321,6 +319,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             ParameterFactoryByType bcFactory = new ParameterFactoryByType();
             bcFactory.addParameter(car, ParameterTypes.FSPEED, new DistNormal(stream, 123.7 / 120, 12.0 / 120));
             bcFactory.addParameter(car, LmrsParameters.SOCIO, new DistNormal(stream, 0.5, 0.1));
+            bcFactory.addParameter(truck, ParameterTypes.FSPEED_GTU, new DistNormal(stream, 85.0 / 80.0, 2.5 / 80.0));
             bcFactory.addParameter(truck, ParameterTypes.A, new Acceleration(0.8, AccelerationUnit.SI));
             bcFactory.addParameter(truck, LmrsParameters.SOCIO, new DistNormal(stream, 0.5, 0.1));
             bcFactory.addParameter(Tailgating.RHO, Tailgating.RHO.getDefaultValue());
@@ -333,8 +332,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             // speed generators
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 160, 200), SpeedUnit.KM_PER_HOUR);
-            ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
-                    new ContinuousDistDoubleScalar.Rel<>(new DistUniform(stream, 80, 95), SpeedUnit.KM_PER_HOUR);
+            ConstantSupplier<Speed> speedTruck = new ConstantSupplier<>(new Speed(95.0, SpeedUnit.KM_PER_HOUR));
             // strategical planner factory
             LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory, bcFactory);
@@ -379,9 +377,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             }
             makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, roomChecker,
                     bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
-
-            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), Length.ofSI(10), new Speed(130.0, SpeedUnit.KM_PER_HOUR),
-                    DefaultsNl.VEHICLE, Duration.ZERO, new Duration(24, DurationUnit.HOUR));
 
         }
 

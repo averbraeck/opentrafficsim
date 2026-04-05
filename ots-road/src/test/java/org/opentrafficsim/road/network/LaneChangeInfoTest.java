@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -12,7 +13,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.junit.jupiter.api.Test;
@@ -30,6 +30,7 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -64,7 +65,7 @@ public final class LaneChangeInfoTest
         // Preparations
         OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
         OtsSimulatorInterface simulator = new OtsSimulator("Lane change info test");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), model, HistoryManagerDevs.noHistory(simulator));
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600), model, HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("Lane change info test network", simulator);
         GtuType car = DefaultsNl.CAR;
 
@@ -72,7 +73,8 @@ public final class LaneChangeInfoTest
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
         Length laneWidth = Length.ofSI(3.5);
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
-        Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
+        LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR),
+                Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
 
         /*-
          * A   B   C   D   E   F   G   H        nodes
@@ -97,31 +99,31 @@ public final class LaneChangeInfoTest
         Node nodeH2 = new Node(network, "H2", new Point2d(3500, 3.5), Direction.ZERO);
 
         // Lanes
-        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(4.0, laneWidth, freewayLane, speedLimit)
+        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, simulator, policy)
+                .leftToRight(4.0, laneWidth, freewayLane, speedLimits)
                 .addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED).getLanes();
-        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
+        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, simulator, policy)
+                .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.LEFT, DefaultsRoadNl.DASHED)
+        List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, simulator, policy)
+                .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.LEFT, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesDE = new LaneFactory(network, nodeD, nodeE, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, freewayLane, speedLimit)
+        List<Lane> lanesDE = new LaneFactory(network, nodeD, nodeE, freeway, simulator, policy)
+                .leftToRight(3.0, laneWidth, freewayLane, speedLimits)
                 .addLanes(DefaultsRoadNl.LEFT, DefaultsRoadNl.DASHED, DefaultsRoadNl.RIGHT).getLanes();
-        List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
+        List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, simulator, policy)
+                .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesEF2 = new LaneFactory(network, nodeE, nodeF2, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(0.0, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
-        List<Lane> lanesFG = new LaneFactory(network, nodeF, nodeG, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(4.0, laneWidth, freewayLane, speedLimit)
+        List<Lane> lanesEF2 = new LaneFactory(network, nodeE, nodeF2, freeway, simulator, policy)
+                .leftToRight(0.0, laneWidth, freewayLane, speedLimits).addLanes().getLanes();
+        List<Lane> lanesFG = new LaneFactory(network, nodeF, nodeG, freeway, simulator, policy)
+                .leftToRight(4.0, laneWidth, freewayLane, speedLimits)
                 .addLanes(DefaultsRoadNl.LEFT, DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED).getLanes();
-        List<Lane> lanesGH = new LaneFactory(network, nodeG, nodeH, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(3.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
+        List<Lane> lanesGH = new LaneFactory(network, nodeG, nodeH, freeway, simulator, policy)
+                .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesGH2 = new LaneFactory(network, nodeG, nodeH2, freeway, simulator, policy, DefaultsNl.VEHICLE)
-                .leftToRight(4.0, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
+        List<Lane> lanesGH2 = new LaneFactory(network, nodeG, nodeH2, freeway, simulator, policy)
+                .leftToRight(4.0, laneWidth, freewayLane, speedLimits).addLanes().getLanes();
 
         // Preparation
         LaneAccessLaw law = LaneAccessLaw.LEGAL;

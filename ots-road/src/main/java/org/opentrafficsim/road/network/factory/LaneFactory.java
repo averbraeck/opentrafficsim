@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.factory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.stream.IntStream;
 
@@ -11,7 +10,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.draw.curve.Straight2d;
@@ -26,7 +24,6 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.geometry.PolyLineCurve2d;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -41,6 +38,7 @@ import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.Stripe;
 import org.opentrafficsim.road.network.StripeData;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 /**
  * <p>
@@ -79,11 +77,8 @@ public final class LaneFactory
     /** Lane type to use. */
     private LaneType laneType0;
 
-    /** Speed limit to use. */
-    private Speed speedLimit0;
-
-    /** Parent GTU type of relevant GTUs. */
-    private GtuType gtuType;
+    /** Speed limits to use. */
+    private LaneSpeedLimits laneSpeedLimits0;
 
     /** Created lanes. */
     private final List<Lane> lanes = new ArrayList<>();
@@ -99,14 +94,12 @@ public final class LaneFactory
      * @param type link type
      * @param simulator simulator
      * @param policy lane keeping policy
-     * @param gtuType parent GTU type of relevant GTUs.
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final RoadNetwork network, final Node from, final Node to, final LinkType type,
-            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final GtuType gtuType)
-            throws NetworkException
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy) throws NetworkException
     {
-        this(network, from, to, type, simulator, policy, gtuType, makeLine(from, to));
+        this(network, from, to, type, simulator, policy, makeLine(from, to));
     }
 
     /**
@@ -117,18 +110,16 @@ public final class LaneFactory
      * @param type link type
      * @param simulator simulator
      * @param policy lane keeping policy
-     * @param gtuType parent GTU type of relevant GTUs.
      * @param line line
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final RoadNetwork network, final Node from, final Node to, final LinkType type,
-            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final GtuType gtuType,
-            final OffsetCurve2d line) throws NetworkException
+            final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final OffsetCurve2d line)
+            throws NetworkException
     {
         this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type,
                 new OtsLine2d(line.toPolyLine(SEGMENTS)), null, policy);
         this.line = line;
-        this.gtuType = gtuType;
     }
 
     /**
@@ -168,16 +159,16 @@ public final class LaneFactory
      * @param leftLanes number of lanes left from the link design line
      * @param laneWidth lane width
      * @param laneType lane type
-     * @param speedLimit speed limit
+     * @param speedLimits speed limits
      * @return LaneFactory this lane factory for method chaining
      */
     public LaneFactory leftToRight(final double leftLanes, final Length laneWidth, final LaneType laneType,
-            final Speed speedLimit)
+            final LaneSpeedLimits speedLimits)
     {
         this.offset = laneWidth.times(leftLanes);
         this.laneWidth0 = laneWidth.neg();
         this.laneType0 = laneType;
-        this.speedLimit0 = speedLimit;
+        this.laneSpeedLimits0 = speedLimits;
         Length width = DefaultsRoadNl.SOLID.getWidth();
         Length offsetStripeStart = this.offset.plus(this.offsetStart);
         Length offsetStripeEnd = this.offset.plus(this.offsetEnd);
@@ -194,16 +185,16 @@ public final class LaneFactory
      * @param rightLanes number of lanes right from the link design line
      * @param laneWidth lane width
      * @param laneType lane type
-     * @param speedLimit speed limit
+     * @param speedLimits speed limits
      * @return LaneFactory this lane factory for method chaining
      */
     public LaneFactory rightToLeft(final double rightLanes, final Length laneWidth, final LaneType laneType,
-            final Speed speedLimit)
+            final LaneSpeedLimits speedLimits)
     {
         this.offset = laneWidth.times(-rightLanes);
         this.laneWidth0 = laneWidth;
         this.laneType0 = laneType;
-        this.speedLimit0 = speedLimit;
+        this.laneSpeedLimits0 = speedLimits;
         Length width = DefaultsRoadNl.SOLID.getWidth();
         Length offsetStripeStart = this.offset.plus(this.offsetStart);
         Length offsetStripeEnd = this.offset.plus(this.offsetEnd);
@@ -278,7 +269,7 @@ public final class LaneFactory
 
             this.lanes.add(new Lane(this.link, "Lane " + (this.lanes.size() + 1),
                     CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc), this.laneType0,
-                    Map.of(this.gtuType, this.speedLimit0)));
+                    this.laneSpeedLimits0));
             this.offset = this.offset.plus(this.laneWidth0);
 
             Length width = type.getWidth();
@@ -387,24 +378,22 @@ public final class LaneFactory
      * @param latPosAtEnd the lateral position of the new Lane with respect to the design line of the link at the end of the
      *            link
      * @param width the width of the new Lane
-     * @param speedLimit the speed limit on the new Lane
+     * @param speedLimits speed limits
      * @param simulator the simulator
-     * @param gtuType parent GTU type of relevant GTUs
      * @return Lane
      * @throws NetworkException on network inconsistency
      */
     @SuppressWarnings("checkstyle:parameternumber")
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType,
-            final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
-            final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException
+            final Length latPosAtStart, final Length latPosAtEnd, final Length width, final LaneSpeedLimits speedLimits,
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         OffsetCurve2d line = new PolyLineCurve2d(link.getDesignLine(), link.getStartNode().getLocation().dirZ,
                 link.getEndNode().getLocation().dirZ);
         ContinuousPiecewiseLinearFunction offsetFunc =
                 ContinuousPiecewiseLinearFunction.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si);
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
-        return new Lane(link, id, CrossSectionGeometry.of(line, SEGMENTS, offsetFunc, widthFunc), laneType,
-                Map.of(gtuType, speedLimit));
+        return new Lane(link, id, CrossSectionGeometry.of(line, SEGMENTS, offsetFunc, widthFunc), laneType, speedLimits);
     }
 
     /**
@@ -416,21 +405,20 @@ public final class LaneFactory
      * @param intermediatePoints intermediate coordinates or null to create a straight road; the intermediate points may contain
      *            the coordinates of the from node and to node
      * @param laneType type of the new Lane
-     * @param speedLimit the speed limit on the new Lane
+     * @param speedLimits speed limits
      * @param simulator the simulator
-     * @param gtuType parent GTU type of relevant GTUs
      * @return the new Lane
      * @throws NetworkException on network inconsistency
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane makeLane(final RoadNetwork network, final String name, final Node from, final Node to,
-            final Point2d[] intermediatePoints, final LaneType laneType, final Speed speedLimit,
-            final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException
+            final Point2d[] intermediatePoints, final LaneType laneType, final LaneSpeedLimits speedLimits,
+            final OtsSimulatorInterface simulator) throws NetworkException
     {
         Length width = new Length(4.0, LengthUnit.METER);
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
         Length latPos = new Length(0.0, LengthUnit.METER);
-        return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimit, simulator, gtuType);
+        return makeLane(link, "lane", laneType, latPos, latPos, width, speedLimits, simulator);
     }
 
     /**
@@ -447,16 +435,15 @@ public final class LaneFactory
      * @param laneOffsetAtStart extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd extra offset from design line in lane widths at end of link
      * @param laneType type of the new Lanes
-     * @param speedLimit the speed limit on all lanes
+     * @param speedLimits speed limits
      * @param simulator the simulator
-     * @param gtuType parent GTU type of relevant GTUs
      * @return array containing the new Lanes
      * @throws NetworkException on topological problems
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final Node from, final Node to,
             final Point2d[] intermediatePoints, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
-            final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator, final GtuType gtuType)
+            final LaneType laneType, final LaneSpeedLimits speedLimits, final OtsSimulatorInterface simulator)
             throws NetworkException
     {
         final CrossSectionLink link = makeLink(network, name, from, to, intermediatePoints, simulator);
@@ -467,8 +454,8 @@ public final class LaneFactory
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
             Length latPosAtStart = new Length((-0.5 - laneIndex - laneOffsetAtStart) * width.getSI(), LengthUnit.SI);
             Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
-            result[laneIndex] = makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimit,
-                    simulator, gtuType);
+            result[laneIndex] =
+                    makeLane(link, "lane." + laneIndex, laneType, latPosAtStart, latPosAtEnd, width, speedLimits, simulator);
         }
         return result;
     }
@@ -485,20 +472,18 @@ public final class LaneFactory
      *            the coordinates of the from node and to node
      * @param laneCount number of lanes in the road
      * @param laneType type of the new Lanes
-     * @param speedLimit Speed the speed limit (applies to all generated lanes)
+     * @param speedLimits speed limits
      * @param simulator the simulator
-     * @param gtuType parent GTU type of relevant GTUs
      * @return array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final Node from, final Node to,
-            final Point2d[] intermediatePoints, final int laneCount, final LaneType laneType, final Speed speedLimit,
-            final OtsSimulatorInterface simulator, final GtuType gtuType) throws NamingException, NetworkException
+            final Point2d[] intermediatePoints, final int laneCount, final LaneType laneType, final LaneSpeedLimits speedLimits,
+            final OtsSimulatorInterface simulator) throws NamingException, NetworkException
     {
-        return makeMultiLane(network, name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimit, simulator,
-                gtuType);
+        return makeMultiLane(network, name, from, to, intermediatePoints, laneCount, 0, 0, laneType, speedLimits, simulator);
     }
 
     /**
@@ -515,9 +500,8 @@ public final class LaneFactory
      * @param laneOffsetAtStart extra offset from design line in lane widths at start of link
      * @param laneOffsetAtEnd extra offset from design line in lane widths at end of link
      * @param laneType type of the new Lanes
-     * @param speedLimit the speed limit on all lanes
+     * @param speedLimits speed limits
      * @param simulator the simulator
-     * @param gtuType parent GTU type of relevant GTUs
      * @return array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
@@ -525,7 +509,7 @@ public final class LaneFactory
     @SuppressWarnings("checkstyle:parameternumber")
     public static Lane[] makeMultiLaneBezier(final RoadNetwork network, final String name, final Node n1, final Node n2,
             final Node n3, final Node n4, final int laneCount, final int laneOffsetAtStart, final int laneOffsetAtEnd,
-            final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator, final GtuType gtuType)
+            final LaneType laneType, final LaneSpeedLimits speedLimits, final OtsSimulatorInterface simulator)
             throws NamingException, NetworkException
     {
         DirectedPoint2d dp1 = new DirectedPoint2d(n2.getPoint().x, n2.getPoint().y,
@@ -553,9 +537,8 @@ public final class LaneFactory
             ContinuousPiecewiseLinearFunction offsetFunc =
                     ContinuousPiecewiseLinearFunction.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si);
             ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
-            result[laneIndex] =
-                    new Lane(link, "lane." + laneIndex, CrossSectionGeometry.of(designLine, SEGMENTS, offsetFunc, widthFunc),
-                            laneType, Map.of(gtuType, speedLimit));
+            result[laneIndex] = new Lane(link, "lane." + laneIndex,
+                    CrossSectionGeometry.of(designLine, SEGMENTS, offsetFunc, widthFunc), laneType, speedLimits);
         }
         return result;
     }

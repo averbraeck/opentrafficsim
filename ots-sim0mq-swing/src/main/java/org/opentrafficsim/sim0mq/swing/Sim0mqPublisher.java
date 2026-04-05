@@ -26,7 +26,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
@@ -239,7 +238,8 @@ public final class Sim0mqPublisher
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));
             this.model.getStreams().putAll(map);
-            animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, HistoryManagerDevs.noHistory(animator));
+            animator.initialize(Duration.ZERO, warmupTime, simulationDuration, this.model,
+                    HistoryManagerDevs.noHistory(animator));
             this.publisher = new Publisher(this.network);
             this.animationPanel = new OtsSimulationPanel(this.model.getNetwork());
             new OtsSimulationApplication<Sim0mqOtsModel>(this.model, this.animationPanel);

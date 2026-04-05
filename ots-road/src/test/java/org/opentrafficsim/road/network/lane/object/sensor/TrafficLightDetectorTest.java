@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -14,7 +15,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -47,6 +47,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.object.detector.SinkDetector;
 import org.opentrafficsim.road.network.object.detector.TrafficLightDetector;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -87,7 +88,8 @@ public final class TrafficLightDetectorTest implements EventListener
         Node prevNode = null;
         Lane[] result = new Lane[lengths.length];
         LaneType laneType = DefaultsRoadNl.FREEWAY;
-        Speed speedLimit = new Speed(50, SpeedUnit.KM_PER_HOUR);
+        LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(50, SpeedUnit.KM_PER_HOUR),
+                Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
         double cumulativeLength = 0;
         for (int nodeNumber = 0; nodeNumber <= lengths.length; nodeNumber++)
         {
@@ -98,7 +100,7 @@ public final class TrafficLightDetectorTest implements EventListener
                 Node toNode = node;
                 int laneOffset = 0;
                 result[nodeNumber - 1] = LaneFactory.makeMultiLane(network, "Link" + nodeNumber, fromNode, toNode, null, 1,
-                        laneOffset, laneOffset, laneType, speedLimit, simulator, DefaultsNl.VEHICLE)[0];
+                        laneOffset, laneOffset, laneType, speedLimits, simulator)[0];
                 System.out.println("Created lane with center line " + result[nodeNumber - 1].getCenterLine());
             }
             if (nodeNumber < lengths.length)
@@ -158,7 +160,7 @@ public final class TrafficLightDetectorTest implements EventListener
                 System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
                 OtsSimulatorInterface simulator = new OtsSimulator("TrafficLightSensorTest");
                 Model model = new Model(simulator);
-                simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+                simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                         HistoryManagerDevs.noHistory(simulator));
                 Lane[] lanes = buildNetwork(lengthList, simulator);
                 RoadNetwork network = (RoadNetwork) lanes[0].getLink().getNetwork();

@@ -15,7 +15,6 @@ import javax.swing.JRadioButton;
 
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -90,7 +89,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             final NetworksModel otsModel = new NetworksModel(simulator);
             if (NetworksParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
+                simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsSimulationPanel simulationPanel =
                         new OtsSimulationPanel(otsModel.getNetwork(), new OtsSimulationPanelDecorator()

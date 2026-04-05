@@ -33,8 +33,8 @@
       <ots:LinkType Id="FREEWAY">
         <ots:Compatibility GtuType="CAR"/>
         <ots:Compatibility GtuType="TRUCK"/>
-        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="100km/h"/>
-        <ots:SpeedLimit GtuType="TRUCK" LegalSpeedLimit="90km/h"/>
+        <ots:SpeedLimit>100km/h</ots:SpeedLimit>
+        <ots:GtuTypeSpeedLimit Id="TRUCK">80km/h</ots:GtuTypeSpeedLimit>
       </ots:LinkType>
     </ots:LinkTypes>
     <ots:StripeTypes>

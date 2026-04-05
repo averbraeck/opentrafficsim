@@ -12,7 +12,6 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
@@ -60,6 +59,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.Stripe;
 import org.opentrafficsim.road.network.object.RoadSideDistraction;
 import org.opentrafficsim.road.network.object.RoadSideDistraction.TrapezoidProfile;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
@@ -116,7 +116,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
         {
             OtsAnimator simulator = new OtsAnimator("HFDemo");
             final HumanFactorsModel junctionModel = new HumanFactorsModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
+            simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
                     new HistoryManagerDevs(simulator, Duration.ofSI(3.0), Duration.ofSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
             OtsSimulationPanel simulationPanel =
@@ -229,7 +229,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             Node nodeA = new Node(this.network, "A", p1);
             Node nodeB = new Node(this.network, "B", p2);
 
-            Map<GtuType, Speed> speedLimit = Map.of(DefaultsNl.VEHICLE, new Speed(130.0, SpeedUnit.KM_PER_HOUR));
+            LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(130, SpeedUnit.KM_PER_HOUR),
+                    Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
 
             OtsLine2d centerLine = new OtsLine2d(p1, p2);
             CrossSectionLink link = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.HIGHWAY, centerLine,
@@ -246,7 +247,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             OtsLine2d offsetLine2 = centerLine.offsetLine(offset2);
             Lane left = new Lane(link, "LEFT", new CrossSectionGeometry(offsetLine2, getContour(offsetLine2, width2),
                     ContinuousPiecewiseLinearFunction.of(0.0, offset2), ContinuousPiecewiseLinearFunction.of(0.0, width2)),
-                    DefaultsRoadNl.HIGHWAY, speedLimit);
+                    DefaultsRoadNl.HIGHWAY, speedLimits);
 
             double offset3 = 0.0;
             double width3 = 0.2;
@@ -259,7 +260,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             OtsLine2d offsetLine4 = centerLine.offsetLine(offset4);
             Lane right = new Lane(link, "RIGHT", new CrossSectionGeometry(offsetLine4, getContour(offsetLine4, width4),
                     ContinuousPiecewiseLinearFunction.of(0.0, offset4), ContinuousPiecewiseLinearFunction.of(0.0, width4)),
-                    DefaultsRoadNl.HIGHWAY, speedLimit);
+                    DefaultsRoadNl.HIGHWAY, speedLimits);
 
             double offset5 = -3.5;
             double width5 = 0.2;

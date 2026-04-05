@@ -24,6 +24,9 @@ public class AdaptationSpeedChannel extends FactorAdaptation
     /** Base value for the desired speed. */
     private Double fSpeed0;
 
+    /** Base value for the desired speed relative to GTU type speed limit. */
+    private Double fSpeedGtu0;
+
     /**
      * Constructor.
      */
@@ -39,8 +42,11 @@ public class AdaptationSpeedChannel extends FactorAdaptation
         if (this.fSpeed0 == null)
         {
             this.fSpeed0 = parameters.getParameter(ParameterTypes.FSPEED);
+            this.fSpeedGtu0 = parameters.getParameter(ParameterTypes.FSPEED_GTU);
         }
-        parameters.setClaimedParameter(ParameterTypes.FSPEED, this.fSpeed0 / getFactor(parameters, BETA_V0), this);
+        double factor = getFactor(parameters, BETA_V0);
+        parameters.setClaimedParameter(ParameterTypes.FSPEED, this.fSpeed0 / factor, this);
+        parameters.setClaimedParameter(ParameterTypes.FSPEED_GTU, this.fSpeedGtu0 / factor, this);
     }
 
 }

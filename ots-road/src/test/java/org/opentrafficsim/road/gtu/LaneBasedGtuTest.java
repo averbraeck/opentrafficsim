@@ -8,17 +8,18 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -34,7 +35,6 @@ import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
@@ -52,6 +52,7 @@ import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
+import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -100,7 +101,7 @@ public final class LaneBasedGtuTest implements UNITS
         RoadNetwork network = new RoadNetwork("leader follower parallel gtu test network", simulator);
 
         Model model = new Model(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+        simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                 HistoryManagerDevs.noHistory(simulator));
         GtuType carType = DefaultsNl.CAR;
         GtuType truckType = DefaultsNl.TRUCK;
@@ -120,8 +121,10 @@ public final class LaneBasedGtuTest implements UNITS
             Node fromNode = nodes.get(i - 1);
             Node toNode = nodes.get(i);
             String linkName = fromNode.getId() + "-" + toNode.getId();
+            LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(120, SpeedUnit.KM_PER_HOUR),
+                    Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
             Lane[] lanes = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, laneCount, laneType,
-                    new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
+                    speedLimits, simulator);
             links.add(lanes[0].getLink());
         }
         // Create a long truck with its front (reference) one meter in the last link on the 3rd lane
@@ -394,7 +397,7 @@ public final class LaneBasedGtuTest implements UNITS
             RoadNetwork network = new RoadNetwork("test", simulator);
             // Create a car with constant acceleration
             Model model = new Model(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+            simulator.initialize(Duration.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                     HistoryManagerDevs.noHistory(simulator));
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(Duration.ofSI(60.0));
@@ -414,8 +417,10 @@ public final class LaneBasedGtuTest implements UNITS
             Node fromNode = new Node(network, "Node A", new Point2d(0, 0), Direction.ZERO);
             Node toNode = new Node(network, "Node B", new Point2d(1000, 0), Direction.ZERO);
             String linkName = "AB";
-            Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType,
-                    new Speed(200, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE)[0];
+            LaneSpeedLimits speedLimits = new LaneSpeedLimits(new Speed(200, SpeedUnit.KM_PER_HOUR),
+                    Map.of(DefaultsNl.TRUCK, new Speed(80, SpeedUnit.KM_PER_HOUR)));
+            Lane lane = LaneFactory.makeMultiLane(network, linkName, fromNode, toNode, null, 1, laneType, speedLimits,
+                    simulator)[0];
             Length carPosition = new Length(100, METER);
             Set<LanePosition> carPositions = new LinkedHashSet<>(1);
             carPositions.add(new LanePosition(lane, carPosition));
