@@ -85,20 +85,22 @@ public class ScenarioManager {
         List<Future<?>> futures = new ArrayList<>();
 
         for (Map.Entry<String, ScenarioEntry> entry : this.scenarios.entrySet()) {
-
+            System.out.println("Processing scenario: " + entry.getKey());
             String scenarioName = entry.getKey();
             Class<? extends ScenarioGenerator> genClass = entry.getValue().generatorClass;
+            System.out.println("  Found generator class: " + genClass.getName());
             List<ScenarioParameters> variations = entry.getValue().parameterVariations;
 
+            System.out.println("  Found " + variations.size() + " parameter variations for scenario '" + scenarioName + "'.");
             File scenarioFolder = new File(this.outputRoot, scenarioName);
             scenarioFolder.mkdirs();
 
             for (ScenarioParameters paramsVariation : variations) {
-
+              System.out.println("  Processing parameter variation: " + paramsVariation);
               // Create unique folder for this variation
               File variationFolder = new File(scenarioFolder, "variation_" + UUID.randomUUID().toString());
               variationFolder.mkdirs();
-
+              System.out.println("    Created folder for variation: " + variationFolder.getAbsolutePath());
               // Save runParams as a text file in variationFolder
               File paramsFile = new File(variationFolder, "runParams.txt");
               try (FileWriter writer = new FileWriter(paramsFile)) {
@@ -106,20 +108,19 @@ public class ScenarioManager {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+              System.out.println("    Saved parameter variation to: " + paramsFile.getAbsolutePath());
                 for (int run = 0; run < this.replications; run++) {
-
+                    System.out.println("    Starting run " + (run + 1) + "/" + this.replications + " for variation: " + paramsVariation);
                     // → create NEW ScenarioGenerator instance
-                    ScenarioGenerator generator =
-                        genClass.getDeclaredConstructor().newInstance();
-
+                    ScenarioGenerator generator = genClass.getDeclaredConstructor().newInstance();
+                    System.out.println("      Created generator instance: " + generator.getClass().getName());
                     ScenarioParameters defaultParams = generator.getDefaultParameters();
-
+                    System.out.println("      Default parameters: " + defaultParams);
                     // copy parameters
                     ScenarioParameters runParams = paramsVariation.copy();
                     long seed = defaultParams.getSeed() + run;
-                    defaultParams.setSeed(seed);
-
+                    runParams.setSeed(seed);
+                    System.out.println("      Running with seed: " + seed);
                     // build output folder
                     File runFolder = new File(variationFolder, "run_seed_" + seed);
                     runFolder.mkdirs();

@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Time;
+
 /**
  * ScenarioParameters
  * ------------------
@@ -115,6 +118,65 @@ public class ScenarioParameters {
     public static final String KEY_NETWORK_NAME = "networkName";
     public static final String KEY_RANDOM_STREAM = "randomStream";
     public static final String KEY_MERGE_SHARE = "mergeShare";
+    public static final String KEY_START_TIME = "startTime";
+    public static final String KEY_WARMUP_TIME = "warmupTime";
+    public static final String KEY_SIMULATION_TIME = "simulationTime";
+
+ // ----------------------------------------------------------------------
+    // Time & Duration Parameters
+    // ----------------------------------------------------------------------
+
+    /**
+     * Sets the start time of the simulation.
+     * @param startTime Time; the start time
+     * @return this ScenarioParameters instance for fluent chaining
+     */
+    public ScenarioParameters setStartTime(final Time startTime) {
+        return set(KEY_START_TIME, startTime);
+    }
+
+    /**
+     * Returns the start time.
+     * @return Time; the start time, or null if not set
+     */
+    public Time getStartTime() {
+        return get(KEY_START_TIME, Time.class);
+    }
+
+    /**
+     * Sets the warmup duration of the simulation (time without sampling).
+     * @param warmupTime Duration; the warmup time
+     * @return this ScenarioParameters instance for fluent chaining
+     */
+    public ScenarioParameters setWarmupTime(final org.djunits.value.vdouble.scalar.Duration warmupTime) {
+        return set(KEY_WARMUP_TIME, warmupTime);
+    }
+
+    /**
+     * Returns the warmup duration.
+     * @return Duration; the warmup time, or null if not set
+     */
+    public Duration getWarmupTime() {
+        return get(KEY_WARMUP_TIME, Duration.class);
+    }
+
+    /**
+     * Sets the total simulation duration.
+     * @param simulationTime Duration; the simulation duration
+     * @return this ScenarioParameters instance for fluent chaining
+     */
+    public ScenarioParameters setSimulationTime(final Duration simulationTime) {
+        return set(KEY_SIMULATION_TIME, simulationTime);
+    }
+
+    /**
+     * Returns the simulation duration.
+     * @return Duration; the simulation time, or null if not set
+     */
+    public Duration getSimulationTime() {
+        return get(KEY_SIMULATION_TIME, Duration.class);
+    }
+
 
     // ----- demand -----
     public ScenarioParameters setDemand(final double vehPerHour) {
@@ -124,6 +186,7 @@ public class ScenarioParameters {
     public Double getDemand() {
         return get(KEY_DEMAND, Double.class);
     }
+
 
     // ----- truck share -----
     public ScenarioParameters setTruckShare(final double share) {

@@ -118,9 +118,9 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class MergeScenario extends ScenarioGenerator
 {
 
-    protected MergeScenario(final String name)
+    public MergeScenario()
     {
-        super(name);
+        super("MergeScenario");
     }
 
     @Override
@@ -248,8 +248,8 @@ public class MergeScenario extends ScenarioGenerator
             public Parameters getParameters() throws ParameterException {
                 Parameters parameters = getDefaultParameters();
 
-                parameters.setParameter(ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
-                parameters.setParameter(ParameterTypes.TMIN, new Duration(0.5, DurationUnit.SI));
+                parameters.setParameter(ParameterTypes.TMAX, new Duration(0.7, DurationUnit.SI));
+                parameters.setParameter(ParameterTypes.TMIN, new Duration(0.6, DurationUnit.SI));
                 parameters.setParameter(MirovaParameters.socioSpeedSensitivity, 0.75);
                 DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 20, 50);
                 parameters.setParameter(MirovaParameters.vGain, new Speed(vGain.draw(), SpeedUnit.KM_PER_HOUR));
@@ -267,8 +267,8 @@ public class MergeScenario extends ScenarioGenerator
     {
         LmrsFactory lmrsTacticalPlannerFactoryCars = new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory());
 
-        lmrsTacticalPlannerFactoryCars.getParameters().setParameter(ParameterTypes.TMAX, new Duration(0.6, DurationUnit.SI));
-        lmrsTacticalPlannerFactoryCars.getParameters().setParameter(ParameterTypes.TMIN, new Duration(0.5, DurationUnit.SI));
+        lmrsTacticalPlannerFactoryCars.getParameters().setParameter(ParameterTypes.TMAX, new Duration(0.7, DurationUnit.SI));
+        lmrsTacticalPlannerFactoryCars.getParameters().setParameter(ParameterTypes.TMIN, new Duration(0.6, DurationUnit.SI));
         //DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 20, 50);
         //lmrsTacticalPlannerFactoryCars.getParameters().setParameter(LmrsParameters.VGAIN, new Speed(30, SpeedUnit.KM_PER_HOUR));
 
@@ -297,8 +297,8 @@ public class MergeScenario extends ScenarioGenerator
             @Override
             public Parameters getParameters() throws ParameterException {
                 Parameters parameters = getDefaultParameters();
-                parameters.setParameter(ParameterTypes.TMAX, new Duration(1.0, DurationUnit.SI));
-                parameters.setParameter(ParameterTypes.TMIN, new Duration(0.9, DurationUnit.SI));
+                parameters.setParameter(ParameterTypes.TMAX, new Duration(0.9, DurationUnit.SI));
+                parameters.setParameter(ParameterTypes.TMIN, new Duration(0.8, DurationUnit.SI));
                 DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 90, 110);
                 parameters.setParameter(MirovaParameters.vGain, new Speed(vGain.draw(), SpeedUnit.KM_PER_HOUR)); // higher vGain for trucks to reduce discretionary lane changes
                 parameters.setParameter(MirovaParameters.socioSpeedSensitivity, 0.75); // more conservative lane changes for trucks
@@ -318,8 +318,8 @@ public class MergeScenario extends ScenarioGenerator
     {
         LmrsFactory lmrsTacticalPlannerFactoryTrucks = new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory());
 
-        lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(ParameterTypes.TMAX, new Duration(1.0, DurationUnit.SI));
-        lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(ParameterTypes.TMIN, new Duration(0.9, DurationUnit.SI));
+        lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(ParameterTypes.TMAX, new Duration(0.9, DurationUnit.SI));
+        lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(ParameterTypes.TMIN, new Duration(0.8, DurationUnit.SI));
         //DistContinuous vGain = new DistUniform(MergeScenario.this.stream, 90, 110);
         //lmrsTacticalPlannerFactoryTrucks.getParameters().setParameter(LmrsParameters.VGAIN, new Speed(30, SpeedUnit.KM_PER_HOUR)); // higher vGain for trucks to reduce discretionary lane changes
 
@@ -524,26 +524,26 @@ public class MergeScenario extends ScenarioGenerator
     public void buildRoadSamplers() throws NetworkException {
 
         RoadSampler sampler = RoadSampler.build(this.network)
-                .registerExtendedDataType(new ExtendedDataRelaxedHeadway())
-                .registerExtendedDataType(new ExtendedDataHeadwayRelaxationProgress())
-                .registerExtendedDataType(new ExtendedDataRelaxationTargetHeadway())
-                .registerExtendedDataType(new ExtendedDataActionState())
-                .registerExtendedDataType(new ExtendedDataLaneChangeDesireLeft())
-                .registerExtendedDataType(new ExtendedDataLaneChangeDesireRight())
-                .registerExtendedDataType(new ExtendedDataIsChangingLane())
-                .registerExtendedDataType(new ExtendedDataLaneChangePlan())
-                .registerExtendedDataType(new ExtendedDataLaneChangePlanDirection())
-                .registerExtendedDataType(new ExtendedDataFrontGapTimeHeadway())
-                .registerExtendedDataType(new ExtendedDataFrontGapDeltaSpeed())
-                .registerExtendedDataType(new ExtendedDataFrontGapDistance())
-                //.registerExtendedDataType(new ExtendedDataW99DrivingMode())
-                .registerExtendedDataType(new ExtendedDataFollowerDecelRight())
-                .registerExtendedDataType(new ExtendedDataFollowerDecelLeft())
-                .registerExtendedDataType(new ExtendedDataEgoDecelRight())
-                .registerExtendedDataType(new ExtendedDataEgoDecelLeft())
-                //.registerExtendedDataType(new ExtendedDataCurrentCFAcceleration())
-                .registerExtendedDataType(new ExtendedDataCurrentDesiredSpeed())
-                //.registerExtendedDataType(new ExtendedDataSocioSpeedPressure())
+//                .registerExtendedDataType(new ExtendedDataRelaxedHeadway())
+//                .registerExtendedDataType(new ExtendedDataHeadwayRelaxationProgress())
+//                .registerExtendedDataType(new ExtendedDataRelaxationTargetHeadway())
+//                .registerExtendedDataType(new ExtendedDataActionState())
+//                .registerExtendedDataType(new ExtendedDataLaneChangeDesireLeft())
+//                .registerExtendedDataType(new ExtendedDataLaneChangeDesireRight())
+//                .registerExtendedDataType(new ExtendedDataIsChangingLane())
+//                .registerExtendedDataType(new ExtendedDataLaneChangePlan())
+//                .registerExtendedDataType(new ExtendedDataLaneChangePlanDirection())
+//                .registerExtendedDataType(new ExtendedDataFrontGapTimeHeadway())
+//                .registerExtendedDataType(new ExtendedDataFrontGapDeltaSpeed())
+//                .registerExtendedDataType(new ExtendedDataFrontGapDistance())
+//                //.registerExtendedDataType(new ExtendedDataW99DrivingMode())
+//                .registerExtendedDataType(new ExtendedDataFollowerDecelRight())
+//                .registerExtendedDataType(new ExtendedDataFollowerDecelLeft())
+//                .registerExtendedDataType(new ExtendedDataEgoDecelRight())
+//                .registerExtendedDataType(new ExtendedDataEgoDecelLeft())
+//                //.registerExtendedDataType(new ExtendedDataCurrentCFAcceleration())
+//                .registerExtendedDataType(new ExtendedDataCurrentDesiredSpeed())
+//                //.registerExtendedDataType(new ExtendedDataSocioSpeedPressure())
                 .create();
 
         ImmutableMap<String, Link> linkMap = this.network.getLinkMap();

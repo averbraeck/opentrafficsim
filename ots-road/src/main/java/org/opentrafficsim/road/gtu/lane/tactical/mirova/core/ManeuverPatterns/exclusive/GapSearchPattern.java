@@ -358,7 +358,7 @@ public class GapSearchPattern extends ManeuverPattern {
             RelativeLane targetLane = this.pattern.getTargetDirection().isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
             Speed vCong = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
 
-            if (macro.getAverageSpeed(targetLane).si <= vCong.si || infra.getDistanceToLaneEnd().si <= 150.0) {
+            if (macro.getAverageSpeed(targetLane).si <= vCong.si || infra.getDistanceToLaneEnd().si <= 200.0) {
                 return transitionTo(new congestedGapSearchState(this.maneuverPattern));
             }
 

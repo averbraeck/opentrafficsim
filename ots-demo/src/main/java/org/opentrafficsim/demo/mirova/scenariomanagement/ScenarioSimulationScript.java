@@ -49,14 +49,32 @@ public class ScenarioSimulationScript extends AbstractSimulationScriptBase {
      * @param p ScenarioParameters
      */
     private void applyParameters(final ScenarioParameters p) {
-//        if (p.getSeed() != null) setSeed(p.getSeed());
-//        if (p.getStartTime() != null) setStartTime(p.getStartTime());
-//        if (p.getWarmupTime() != null) setWarmupTime(p.getWarmupTime());
-//        if (p.getSimulationTime() != null) setSimulationTime(p.getSimulationTime());
-//        if (p.getHistoryTime() != null) setHistoryTime(p.getHistoryTime());
-//
-//        setGuiEnabled(p.isGuiEnabled());
-//        setAutorun(!p.isGuiEnabled());    // autorun=headless
+        if (p == null) {
+            return;
+        }
+
+        if (p.getSeed() != null) {
+            setSeed(p.getSeed());
+        }
+
+        if (p.getStartTime() != null) {
+            setStartTime(p.getStartTime());
+        }
+
+        if (p.getWarmupTime() != null) {
+            setWarmupTime(p.getWarmupTime());
+        }
+
+        if (p.getSimulationTime() != null) {
+            setSimulationTime(p.getSimulationTime());
+        }
+
+        // Falls du in Zukunft noch GUI-Einstellungen per Parameter regeln willst:
+        // Boolean enableGui = p.get("enableGui", Boolean.class);
+        // if (enableGui != null) {
+        //     setGuiEnabled(enableGui);
+        //     setAutorun(!enableGui);
+        // }
     }
 
     // ------------------------------------------------------------
