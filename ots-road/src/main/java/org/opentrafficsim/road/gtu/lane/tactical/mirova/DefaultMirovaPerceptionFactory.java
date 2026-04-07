@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova;
 
-
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -18,26 +17,41 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNe
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 
 /**
- * Perception factory with EgoPerception, InfrastructurePerception, NeighborsPerception and IntersectionPerception.
+ * Perception factory for the MiRoVA framework.
  * <p>
- * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Initializes the essential perception categories for the GTU, forming the basic data
+ * foundation for Layer 1 (Perception & Context) in the MiRoVA architecture. This includes:
+ * <ul>
+ * <li>Ego perception (speed, acceleration, etc.)</li>
+ * <li>Infrastructure perception (lanes, speed limits, lane drops)</li>
+ * <li>Neighbors perception (leaders, followers, adjacent vehicles)</li>
+ * <li>Intersection perception (traffic lights, conflicts)</li>
+ * <li>Anticipation of downstream traffic states</li>
+ * </ul>
+ * <p>
+ * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ *
+ * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class DefaultMirovaPerceptionFactory implements PerceptionFactory
 {
 
     /**
-     * Constructor.
+     * Constructor for the default MiRoVA perception factory.
      */
     public DefaultMirovaPerceptionFactory()
     {
-        //
+        // default constructor
     }
 
+    /**
+     * Generates the perception module for the given GTU with all required categories.
+     *
+     * @param gtu the lane-based GTU for which to generate the perception module
+     * @return the fully initialized {@link LanePerception} module
+     */
     @Override
     public LanePerception generatePerception(final LaneBasedGtu gtu)
     {
@@ -51,11 +65,20 @@ public class DefaultMirovaPerceptionFactory implements PerceptionFactory
         return perception;
     }
 
+    /**
+     * Retrieves the default parameters required for the perception categories.
+     *
+     * @return a {@link Parameters} set containing default perception parameters
+     * @throws ParameterException if a parameter fails to initialize
+     */
     @Override
     public Parameters getParameters() throws ParameterException
     {
-        return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKAHEAD).setDefaultParameter(ParameterTypes.LOOKBACKOLD)
-                .setDefaultParameter(ParameterTypes.PERCEPTION).setDefaultParameter(ParameterTypes.LOOKBACK);
+        return new ParameterSet()
+                .setDefaultParameter(ParameterTypes.LOOKAHEAD)
+                .setDefaultParameter(ParameterTypes.LOOKBACKOLD)
+                .setDefaultParameter(ParameterTypes.PERCEPTION)
+                .setDefaultParameter(ParameterTypes.LOOKBACK);
     }
 
 }
