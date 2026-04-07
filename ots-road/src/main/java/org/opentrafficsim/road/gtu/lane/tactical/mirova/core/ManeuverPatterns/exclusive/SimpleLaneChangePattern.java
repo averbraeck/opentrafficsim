@@ -1,9 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters.DMAND;
-
-import java.util.Set;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -16,80 +12,72 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.DiscretionaryLaneChangePatternOld.ActionStateCompleteLaneChange;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 
 /**
- * A dedicated Maneuver Pattern for executing a simple lane change.
+ * A dedicated Maneuver Pattern for executing a simple, direct lane change.
  * <p>
- * This pattern is typically invoked via delegation from a tactical pattern (e.g. AutobahnFreeDriving)
- * when a lane change decision has been made and a gap found.
+ * This pattern represents a Finite State Machine (FSM) in <b>Layer 4 (Procedure & Action)</b>.
+ * It is typically invoked when a lane change decision has been finalized and safety has been verified.
+ * It manages the physical transition between lanes, including speed adaptation to target leaders.
+ * </p>
  * <p>
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
+ *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class SimpleLaneChangePattern extends ManeuverPattern
 {
-    /** The target direction for the lane change. Defaults to NONE until set. */
+    /** The target direction for the lane change. */
     private LateralDirectionality targetDirection = LateralDirectionality.NONE;
 
-    /** State to indicate the pattern has completed its job. */
-    private boolean finished = false;
-
     /**
-     * Constructor.
-     * @param knowledgeChunk The context chunk (can be null/dummy if strictly used for delegation).
+     * Constructs a new SimpleLaneChangePattern.
+     *
+     * @param vehicle the tactical planner associated with the ego vehicle
      */
     public SimpleLaneChangePattern(final MirovaTacticalPlanner vehicle)
     {
         super(PatternType.EXCLUSIVE, vehicle);
         this.targetDirection = this.vehicle.getLaneChangeDesire().dominantDirection();
         this.initialActionState = () -> new PerformLaneChangeState(this);
-        // Required context: None specific, assumes caller checked feasibility
         this.requiredContextKeys.add("Ego");
+        this.requiredContextKeys.add("Neighbors");
+        this.requiredContextKeys.add("Infrastructure");
     }
 
     /**
      * Prepares the pattern for a specific direction.
-     * Should be called by the Planner before setting this as active.
+     *
      * @param direction LateralDirectionality (LEFT or RIGHT)
      */
     public void setLaneChangeDirection(final LateralDirectionality direction)
     {
         this.targetDirection = direction;
-
     }
 
     @Override
     public boolean checkContext() throws ParameterException
     {
-    try
-    {
-        InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-        EgoContext ego = this.vehicle.getContext(EgoContext.class);
-        Speed speedLimit = infra.getLegalSpeedLimit();
-        Speed egoSpeed = ego.getEgoSpeed();
-        if (this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DFREE)
-               // && egoSpeed.gt(speedLimit.times(0.25))
-                ){
-            return true;
+        try
+        {
+            // Trigger if discretionary desire exceeds the threshold
+            return this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters()
+                    .getParameter(MirovaParameters.DFREE);
+        }
+        catch (ParameterException exception)
+        {
+            return false;
         }
     }
-    catch (ParameterException exception)
-    {
-        exception.printStackTrace();
-    }
-
-    return false; }
 
     @Override
     public boolean checkAbility() throws ParameterException
@@ -99,78 +87,68 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
         try
         {
-            if (neigh.getIfLaneChangePossible(this.targetDirection))
-            {
-                return true;
-            }
+            // Verify if the gap and legal conditions allow for a safe transition
+            return (this.targetDirection.isLeft() || this.targetDirection.isRight())
+                    && neigh.getIfLaneChangePossible(this.targetDirection);
         }
         catch (GtuException | NetworkException exception)
         {
-            exception.printStackTrace();
+            return false;
         }
-        return false;
     }
 
+    /* =========================================================================================
+     * STATE: PERFORM_LANE_CHANGE
+     * ========================================================================================= */
 
-    public static class PerformLaneChangeState extends ActionState {
-
-        /** Target direction of the lane change (LEFT or RIGHT). */
+    /**
+     * Action state responsible for the actual lateral movement and longitudinal synchronization.
+     */
+    public static class PerformLaneChangeState extends ActionState
+    {
+        /** Target direction of the lane change. */
         private final LateralDirectionality direction;
 
-
-        /** Cached origin lane to detect completion. */
+        /** Origin lane used to detect when the vehicle has fully crossed over. */
         private final Lane originLane;
 
+        /** Flag to prevent starting the move if speed is too low or gaps closed in the last micro-tick. */
         private Boolean startCondition = true;
 
+        /** Indicates if a slower lane change duration is used (congested mode). */
         private boolean slowLaneChange = false;
 
-
-        // ----------------------------------------------------------------------
-        // Construction
-        // ----------------------------------------------------------------------
-
-        /** ActionStatePerformLaneChange constructor.
-         * @param pattern
-         * @param direction
-         * @throws ParameterException
+        /**
+         * Constructor using the dominant desire direction.
+         *
+         * @param p the parent maneuver pattern
          */
-        public PerformLaneChangeState(final ManeuverPattern p) {
-            super(p);
-            this.direction = this.vehicle.getLaneChangeDesire().dominantDirection();
-            this.originLane = this.vehicle.getGtu().getLane();
-
-            EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            if (ego.getEgoSpeed().si < 7.0) {
-                this.slowLaneChange = true;
-                // Reduce the lane change duration to 1.5s for more efficient merging in congested conditions.
-                try
-                {
-                    this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR, this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
-                }
-                catch (ParameterException exception)
-                {
-                    exception.printStackTrace();
-                }
-            }
+        public PerformLaneChangeState(final ManeuverPattern p)
+        {
+            this(p, p.getMirovaTacticalPlanner().getLaneChangeDesire().dominantDirection());
         }
 
-        /** ActionStatePerformLaneChange constructor.
-         * @param pattern
-         * @param direction
+        /**
+         * Constructor for a specific direction.
+         *
+         * @param p         the parent maneuver pattern
+         * @param direction the lateral direction
          */
-        public PerformLaneChangeState(final ManeuverPattern p, final LateralDirectionality direction) {
+        public PerformLaneChangeState(final ManeuverPattern p, final LateralDirectionality direction)
+        {
             super(p);
             this.direction = direction;
             this.originLane = this.vehicle.getGtu().getLane();
 
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            if (ego.getEgoSpeed().si < 7.0) {
+            if (ego.getEgoSpeed().si < 7.0)
+            {
                 this.slowLaneChange = true;
-                // Reduce the lane change duration to 1.5s for more efficient merging in congested conditions.
                 try
                 {
-                    this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR, this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
+                    // Use longer duration for congested merging efficiency
+                    this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR,
+                            this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
                 }
                 catch (ParameterException exception)
                 {
@@ -179,123 +157,77 @@ public class SimpleLaneChangePattern extends ManeuverPattern
             }
         }
 
-        // ----------------------------------------------------------------------
-        // Core control logic
-        // ----------------------------------------------------------------------
-
-        /**
-         * Executes longitudinal control using a simplified Two-Leader Car-Following logic.
-         * <p>
-         * The ego vehicle simultaneously considers the leader on its current lane and
-         * the leader on the target lane. The resulting acceleration is the most restrictive
-         * (minimum) across these influences.
-         * </p>
-         * @throws NetworkException
-         * @throws GtuException
-         */
         @Override
-        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
+        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
+        {
             this.vehicle.setRunningManeuver(true);
             this.maneuverPattern.setRunning(true);
-            this.maneuverPattern.setCurrentActionState(this);
 
             InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
             NeighborsContext neighborsCtx = this.vehicle.getContext(NeighborsContext.class);
             EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
 
             Speed egoSpeed = egoCtx.getEgoSpeed();
-            Parameters params = this.vehicle.getGtu().getParameters();
+            Parameters params = this.vehicle.getParameters();
 
-            this.vehicle.setTargetDesiredHeadway(this.vehicle.getParameters().getParameter(ParameterTypes.T)
-                    .times(this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange)));
+            // Adjust target headway during the maneuver for increased safety/compaction
+            this.vehicle.setTargetDesiredHeadway(params.getParameter(ParameterTypes.T).times(
+                    params.getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange)));
 
-            // Start with relaxed car-following acceleration (already includes Desire effects)
+            // Base acceleration from current lane car-following
             Acceleration minAcc = egoCtx.getCurrentCarFollowingAcceleration();
 
-
-            // Add target-lane leader constraint
-            if (this.vehicle.getGtu().getLane() == this.originLane) {
-                // Only consider target-lane leader if still on origin lane;
+            // Synchronize with leader on the target lane
+            if (this.vehicle.getGtu().getLane().equals(this.originLane))
+            {
                 HeadwayGtu targetLeader = neighborsCtx.getLeader(this.direction);
-                if (targetLeader != null) {
-                    Acceleration aTarget = CarFollowingUtil.followSingleLeader(
-                            this.vehicle.getCarFollowingModel(),
-                            params,
-                            egoSpeed,
-                            infraCtx.getCurrentSpeedLimit(),
-                            targetLeader.getDistance(),
+                if (targetLeader != null)
+                {
+                    Acceleration aTarget = CarFollowingUtil.followSingleLeader(this.vehicle.getCarFollowingModel(),
+                            params, egoSpeed, infraCtx.getCurrentSpeedLimit(), targetLeader.getDistance(),
                             targetLeader.getSpeed());
                     minAcc = Acceleration.min(minAcc, aTarget);
                 }
             }
 
-            SimpleOperationalPlan plan = new SimpleOperationalPlan(
-                    minAcc,
-                    this.maneuverPattern.getPatternSpecificTimestep(),
-                    this.direction);
+            SimpleOperationalPlan plan = new SimpleOperationalPlan(minAcc,
+                    this.maneuverPattern.getPatternSpecificTimestep(), this.direction);
 
-            if (!this.vehicle.getLaneChange().isChangingLane()) {
+            // Safety check before initiating lateral move
+            if (!this.vehicle.getLaneChange().isChangingLane())
+            {
                 Speed resultingSpeed = egoSpeed.plus(minAcc.times(this.maneuverPattern.getPatternSpecificTimestep()));
-                this.startCondition = (resultingSpeed.gt(Speed.instantiateSI(5.0)) || neighborsCtx.getIfLaneChangePossible(this.direction));
+                this.startCondition = (resultingSpeed.gt(Speed.instantiateSI(5.0))
+                        || neighborsCtx.getIfLaneChangePossible(this.direction));
             }
 
-            if (!this.startCondition) {
-                plan = new SimpleOperationalPlan(
-                        minAcc,
-                        this.maneuverPattern.getPatternSpecificTimestep(),
+            if (!this.startCondition)
+            {
+                plan = new SimpleOperationalPlan(minAcc, this.maneuverPattern.getPatternSpecificTimestep(),
                         LateralDirectionality.NONE);
             }
 
-//            System.out.println("GTU " + this.vehicle.getGtu().getId() + " performing lane change to " + this.direction
-//                    + " with lateral position " + this.vehicle.getGtu().getLateralPosition(this.vehicle.getGtu().getLane())
-//                    + " with acceleration " + minAcc);
-
-            if (this.direction == LateralDirectionality.LEFT) {
+            // Set turn indicators
+            if (this.direction.isLeft())
                 plan.setIndicatorIntentLeft();
-            } else if (this.direction == LateralDirectionality.RIGHT) {
+            else if (this.direction.isRight())
                 plan.setIndicatorIntentRight();
-            }
 
             return plan;
-            }
+        }
 
-        // ----------------------------------------------------------------------
-        // Transitions
-        // ----------------------------------------------------------------------
-
-        /**
-         * Proceeds to {@link ActionStateCompleteLaneChange} when the lane change is completed.
-         * @return
-         * @throws NetworkException
-         * @throws GtuException
-         * @throws IllegalArgumentException
-         * @throws NullPointerException
-         */
         @Override
-        public SimpleOperationalPlan next() throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException {
+        public SimpleOperationalPlan next()
+                throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
+        {
+            // Pattern completes when the vehicle is no longer laterally moving and has reached a new lane
             boolean finished = !this.vehicle.getLaneChange().isChangingLane()
                     && !this.originLane.equals(this.vehicle.getGtu().getLane());
 
-            if (finished) {
-                if (this.slowLaneChange) {
-                    this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
-                }
-                return finishManeuver();
-            }
-            return null;
-        }
-
-        /**
-         * Checks whether the lane-change should be aborted (safety or desire violation).
-         * @return
-         * @throws NetworkException
-         * @throws GtuException
-         */
-        @Override
-        public SimpleOperationalPlan abort() throws ParameterException, GtuException, NetworkException {
-
-            if (!this.startCondition) {
-                if (this.slowLaneChange) {
+            if (finished)
+            {
+                if (this.slowLaneChange)
+                {
                     this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
                 }
                 return finishManeuver();
@@ -304,10 +236,24 @@ public class SimpleLaneChangePattern extends ManeuverPattern
         }
 
         @Override
-        public String toString() {
+        public SimpleOperationalPlan abort() throws ParameterException, GtuException, NetworkException
+        {
+            // If the start condition failed before the move began, terminate the pattern
+            if (!this.startCondition)
+            {
+                if (this.slowLaneChange)
+                {
+                    this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                }
+                return finishManeuver();
+            }
+            return null;
+        }
+
+        @Override
+        public String toString()
+        {
             return "PerformLaneChangeState[" + this.direction + "]";
         }
-}
-
-
+    }
 }
