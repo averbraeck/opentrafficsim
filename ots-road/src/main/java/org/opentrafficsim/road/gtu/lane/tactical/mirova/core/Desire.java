@@ -7,18 +7,24 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * <p>
  * A {@code Desire} encodes the tendency of a vehicle to move laterally to the
  * left or right, separated into <b>mandatory</b> (required) and
- * <b>discretionary</b> (optional) components.
+ * <b>discretionary</b> (optional) components. This class is the primary data structure
+ * for <b>Layer 2 (Cognition / Motivation)</b> of the MiRoVA architecture.
  * The desire to stay in the current lane is implied when both left and right
  * desires remain below their activation thresholds.
  * </p>
  * <p>
  * Typical usage:
  * <ul>
- *   <li>Each {@link KnowledgeChunk} produces a directional {@code Desire} (e.g., route following, cooperation).</li>
- *   <li>These are aggregated within the vehicle to form a combined mandatory and discretionary tendency.</li>
- *   <li>Thresholds in the tactical planner decide whether a lane change is initiated.</li>
+ * <li>Each {@link org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk} produces a directional {@code Desire} (e.g., route following, cooperation).</li>
+ * <li>These are aggregated within the vehicle to form a combined mandatory and discretionary tendency.</li>
+ * <li>Thresholds in the tactical planner decide whether a lane change is initiated.</li>
  * </ul>
+ * <p>
+ * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
+ *
+ * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public final class Desire {
 
@@ -32,7 +38,7 @@ public final class Desire {
     /** Desire to move right (positive = stronger motivation). */
     private final double right;
 
-    /** Whether this desire represents a mandatory component (e.g. route-following). */
+    /** Whether this desire represents a mandatory component (e.g., route-following). */
     private final boolean mandatory;
 
     // ----------------------------------------------------------------------
@@ -52,7 +58,11 @@ public final class Desire {
         this.mandatory = mandatory;
     }
 
-    /** Returns a zero desire (no lateral preference). */
+    /**
+     * Returns a zero desire (no lateral preference).
+     *
+     * @return a desire with 0.0 magnitude in both directions
+     */
     public static Desire zero() {
         return new Desire(0.0, 0.0, false);
     }
@@ -61,11 +71,32 @@ public final class Desire {
     // Getters
     // ----------------------------------------------------------------------
 
-    public double getLeft() { return this.left; }
+    /**
+     * Gets the desire to move left.
+     *
+     * @return the leftward desire magnitude
+     */
+    public double getLeft() {
+        return this.left;
+    }
 
-    public double getRight() { return this.right; }
+    /**
+     * Gets the desire to move right.
+     *
+     * @return the rightward desire magnitude
+     */
+    public double getRight() {
+        return this.right;
+    }
 
-    public boolean isMandatory() { return this.mandatory; }
+    /**
+     * Checks whether this desire vector contains a mandatory motivation.
+     *
+     * @return true if mandatory, false if discretionary
+     */
+    public boolean isMandatory() {
+        return this.mandatory;
+    }
 
     // ----------------------------------------------------------------------
     // Combination utilities
@@ -76,7 +107,7 @@ public final class Desire {
      * The resulting desire retains the {@code mandatory} flag if any input is mandatory.
      *
      * @param other the other {@code Desire} to add
-     * @return summed {@code Desire}
+     * @return the summed {@code Desire}
      */
     public Desire add(final Desire other) {
         boolean newMandatory = this.mandatory || other.mandatory;
@@ -91,7 +122,7 @@ public final class Desire {
      * Returns a scaled version of this desire.
      *
      * @param factor scaling factor (e.g., to attenuate influence)
-     * @return scaled {@code Desire}
+     * @return the scaled {@code Desire}
      */
     public Desire scale(final double factor) {
         return new Desire(this.left * factor, this.right * factor, this.mandatory);
@@ -106,10 +137,10 @@ public final class Desire {
      * in that same direction, while the opposite side may remain unaffected.
      * </p>
      *
-     * @param mandatoryDesire   the mandatory desire component
+     * @param mandatoryDesire     the mandatory desire component
      * @param discretionaryDesire the discretionary desire component
-     * @param dSync threshold for synchronization
-     * @param dCoop threshold for cooperation (mandatory dominance)
+     * @param dSync               threshold for synchronization
+     * @param dCoop               threshold for cooperation (mandatory dominance)
      * @return the combined directional desire
      */
     public static Desire combine(final Desire mandatoryDesire, final Desire discretionaryDesire, final double dSync, final double dCoop)
@@ -129,7 +160,6 @@ public final class Desire {
         return new Desire(leftCombined, rightCombined, combinedMandatory);
     }
 
-
     // ----------------------------------------------------------------------
     // Utility functions
     // ----------------------------------------------------------------------
@@ -142,10 +172,10 @@ public final class Desire {
      * mandatory and discretionary desires.
      * </p>
      *
-     * @param mandatory the mandatory (route-following) desire for this direction
+     * @param mandatory     the mandatory (route-following) desire for this direction
      * @param discretionary the discretionary (free) desire for this direction
-     * @param dSync synchronization threshold (below which mandatory and discretionary coexist)
-     * @param dCoop cooperation threshold (above which mandatory dominates completely)
+     * @param dSync         synchronization threshold (below which mandatory and discretionary coexist)
+     * @param dCoop         cooperation threshold (above which mandatory dominates completely)
      * @return weighting factor θ_v in [0, 1]
      */
     public static double computeDiscLcWeight(
@@ -154,23 +184,22 @@ public final class Desire {
             final double dSync,
             final double dCoop)
     {
-
         double product = mandatory * discretionary;
         double absMand = Math.abs(mandatory);
 
         // Case 1: same direction (no conflict) or mandatory weak
-        if (product >= 0.0 || absMand <= dSync)
+        if (product >= 0.0 || absMand <= dSync) {
             return 1.0;
+        }
 
         // Case 2: strong conflict and mandatory very strong
-        if (absMand >= dCoop)
+        if (absMand >= dCoop) {
             return 0.0;
+        }
 
         // Case 3: conflict and mandatory moderate (linear interpolation)
         return (dCoop - absMand) / (dCoop - dSync);
     }
-
-
 
     /**
      * Returns the overall magnitude of this desire (the maximum absolute directional value).
@@ -184,14 +213,22 @@ public final class Desire {
     /**
      * Determines the dominant direction of this desire.
      *
-     * @return LateralDirectionality.LEFT or LateralDirectionality.RIGHT or null if no dominant direction
+     * @return {@link LateralDirectionality#LEFT} or {@link LateralDirectionality#RIGHT},
+     * or {@link LateralDirectionality#NONE} if no dominant direction exists
      */
     public LateralDirectionality dominantDirection() {
-        if (Math.abs(this.left - this.right) < 1e-3)
+        if (Math.abs(this.left - this.right) < 1e-3) {
             return LateralDirectionality.NONE; // No dominant direction
+        }
         return (this.left > this.right) ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
     }
 
+    /**
+     * Retrieves the desire magnitude for a specific lateral direction.
+     *
+     * @param direction the requested lateral direction
+     * @return the desire magnitude for the given direction (0.0 for NONE)
+     */
     public double getDirectionalDesire(final LateralDirectionality direction) {
         switch (direction) {
             case LEFT:
@@ -203,6 +240,11 @@ public final class Desire {
         }
     }
 
+    /**
+     * Returns a string representation of the desire vector.
+     *
+     * @return the string representation
+     */
     @Override
     public String toString() {
         return String.format("Desire[left=%.2f, right=%.2f, %s]",
