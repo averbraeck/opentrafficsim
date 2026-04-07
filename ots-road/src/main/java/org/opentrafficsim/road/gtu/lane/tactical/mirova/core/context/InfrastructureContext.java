@@ -21,6 +21,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * Context category providing infrastructure-related information relevant for
  * longitudinal control and tactical reasoning.
  * <p>
+ * Forms a central part of <b>Layer 1 (Perception & Context)</b> in the MiRoVA architecture.
  * Computes and lazily caches the following values:
  * <ul>
  * <li>Remaining distance to the end of the current and adjacent lanes</li>
@@ -35,6 +36,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
+ *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class InfrastructureContext extends ContextCategory implements UpdatableContext
@@ -399,7 +401,7 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      * evaluated lazily on demand.
      * </p>
      *
-     * @param vehicle the ego vehicle (unused)
+     * @param vehicle the ego vehicle executing the update
      */
     @Override
     public void updateFromPerception(final MirovaTacticalPlanner vehicle)
@@ -407,7 +409,6 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         // Lazy: recomputed only when requested
         markCacheValid();
     }
-
 
     /**
      * Returns a compact textual summary of the currently cached values.
