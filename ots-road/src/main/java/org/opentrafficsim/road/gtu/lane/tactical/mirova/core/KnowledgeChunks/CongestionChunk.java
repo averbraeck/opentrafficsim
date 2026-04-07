@@ -12,7 +12,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 /**
  * KnowledgeChunk designed to detect congestion and suppress discretionary lane changes.
  * <p>
- * This component addresses the instability (often referred to as "ping-pong effect") observed in
+ * This component forms part of <b>Layer 2 (Cognition / Motivation)</b> in the MiRoVA architecture.
+ * It addresses the instability (often referred to as the "ping-pong effect") observed in
  * microscopic simulations during stop-and-go waves. When the vehicle speed drops below a specific
  * threshold, this chunk generates negative desires (inhibition) for both left and right lane changes.
  * This effectively increases the "activation energy" required for a lane change, preventing the
@@ -22,7 +23,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
+ * * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class CongestionChunk extends KnowledgeChunk
 {
@@ -34,8 +35,8 @@ public class CongestionChunk extends KnowledgeChunk
 
     /**
      * Constructs a new CongestionChunk.
-     * @param vehicle MirovaTacticalPlanner; the tactical planner governing the ego agent.
-     * @throws OperationalPlanException if the planner cannot be initialized.
+     * * @param vehicle the tactical planner governing the ego agent
+     * @throws OperationalPlanException if the planner cannot be initialized
      */
     public CongestionChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
     {
@@ -49,14 +50,14 @@ public class CongestionChunk extends KnowledgeChunk
      * the configured {@code V_CONGESTION_THRESHOLD}, the traffic is deemed congested,
      * and this chunk becomes active.
      * </p>
-     * @return boolean; true if the ego speed is below the congestion threshold.
-     * @throws ParameterException if the VCONG parameter is not defined.
+     * * @return {@code true} if the ego speed is below the congestion threshold, {@code false} otherwise
+     * @throws ParameterException if the VCONG parameter is not defined or accessible
      */
     @Override
     public boolean isApplicable() throws ParameterException
     {
-        EgoContext ego = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
-        Speed congestionThreshold = this.vehicle.getParameters().getParameter(V_CONGESTION_THRESHOLD);
+        EgoContext ego = getMirovaTacticalPlanner().getContextManager().getCategory("Ego", EgoContext.class);
+        Speed congestionThreshold = getMirovaTacticalPlanner().getParameters().getParameter(V_CONGESTION_THRESHOLD);
         Speed egoSpeed = ego.getEgoSpeed();
 
         // Activation condition: Ego speed is slower than the definition of congestion.
@@ -67,12 +68,12 @@ public class CongestionChunk extends KnowledgeChunk
      * Computes the inhibitory desire to suppress lane changes.
      * <p>
      * This method applies a negative desire equivalent to the negative of the "Free" threshold
-     * (`dFree`) defined in the tactical planner. This neutralizes the base incentive to change
+     * ({@code dFree}) defined in the tactical planner. This neutralizes the base incentive to change
      * lanes for minor speed gains, effectively freezing the lane choice unless a mandatory
      * incentive (e.g., route) overrides it.
      * </p>
-     * @return Desire; an object containing negative desire values for both left and right directions.
-     * @throws ParameterException if required parameters for calculation are missing.
+     * * @return an object containing negative desire values for both left and right directions
+     * @throws ParameterException if required parameters for the calculation are missing
      */
     @Override
     public Desire computeDesire() throws ParameterException
