@@ -42,7 +42,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
     protected Text createText(final TrafficLightData source, final Contextualized contextualized, final String prefix)
     {
         float halfLength = (float) (source.getLine().getLength() / 2.0);
-        return new Text(source, source::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
+        return new Text(source, source::getId, 0.0f, halfLength + 0.2f, contextualized);
     }
 
     @Override
@@ -69,14 +69,12 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters
          * @param dy the vertical movement of the text, in meters
-         * @param textPlacement where to place the text
-         * @param color the color of the text
          * @param contextualized context provider
          */
         public Text(final TrafficLightData source, final Supplier<String> text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
+                final Contextualized contextualized)
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
+            super(source, text, dx, dy, TextAlignment.CENTER, Color.BLACK, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override

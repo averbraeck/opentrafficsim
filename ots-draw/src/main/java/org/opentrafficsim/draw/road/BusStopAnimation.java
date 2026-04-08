@@ -22,7 +22,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 /**
  * Draw bus stop.
  * <p>
- * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
+ * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
@@ -50,7 +50,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData, Text>
     protected Text createText(final BusStopData source, final Contextualized contextualized, final String prefix)
     {
         float halfLength = (float) (source.getLine().getLength() / 2.0);
-        return new Text(source, source::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
+        return new Text(source, source::getId, 0.0f, halfLength + 0.2f, contextualized);
     }
 
     @Override
@@ -78,14 +78,12 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData, Text>
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters
          * @param dy the vertical movement of the text, in meters
-         * @param textPlacement where to place the text
-         * @param color the color of the text
          * @param contextualized context provider
          */
         public Text(final BusStopData source, final Supplier<String> text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
+                final Contextualized contextualized)
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
+            super(source, text, dx, dy, TextAlignment.CENTER, Color.BLACK, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override

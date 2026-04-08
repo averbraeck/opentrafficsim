@@ -70,8 +70,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData> extends AbstractL
     protected Text<L> createText(final L source, final Contextualized contextualized, final String prefix)
     {
         float halfLength = (float) (source.getLine().getLength() / 2.0);
-        return new Text<L>(source, () -> prefix + source.getId(), 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK,
-                contextualized);
+        return new Text<L>(source, () -> prefix + source.getId(), 0.0f, halfLength + 0.2f, contextualized);
     }
 
     @Override
@@ -99,14 +98,12 @@ public class LaneDetectorAnimation<L extends LaneDetectorData> extends AbstractL
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters
          * @param dy the vertical movement of the text, in meters
-         * @param textPlacement where to place the text
-         * @param color the color of the text
          * @param contextualized context provider
          */
         public Text(final L source, final Supplier<String> text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
+                final Contextualized contextualized)
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
+            super(source, text, dx, dy, TextAlignment.CENTER, Color.BLACK, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override

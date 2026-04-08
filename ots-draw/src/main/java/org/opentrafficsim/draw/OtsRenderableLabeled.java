@@ -1,8 +1,8 @@
 package org.opentrafficsim.draw;
 
-import java.awt.Color;
-import java.util.function.Supplier;
+import javax.naming.OperationNotSupportedException;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsShape;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -93,19 +93,12 @@ public abstract class OtsRenderableLabeled<L extends OtsShape, T extends Rendera
 
         /**
          * Constructor.
-         * @param source the object for which the text is displayed
-         * @param text the text to display
-         * @param dx the horizontal movement of the text, in meters
-         * @param dy the vertical movement of the text, in meters
-         * @param textAlignment where to place the text
-         * @param color the color of the text
-         * @param contextualized context provider
-         * @param scaleDependentRendering render text only when bigger than minimum scale
+         * @throws OperationNotSupportedException whenever this constructor is called
          */
-        NoText(final L source, final Supplier<String> text, final float dx, final float dy, final TextAlignment textAlignment,
-                final Color color, final Contextualized contextualized, final ScaleDependentRendering scaleDependentRendering)
+        NoText() throws OperationNotSupportedException
         {
-            super(source, text, dx, dy, textAlignment, color, contextualized, scaleDependentRendering);
+            super(Throw.when(null, true, OperationNotSupportedException.class,
+                    "Method createText should return null when NoText is used."), null, 0.0f, 0.0f, null, null, null, null);
         }
 
     }

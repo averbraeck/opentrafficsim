@@ -69,8 +69,7 @@ public class LinkAnimation extends OtsRenderableLabeled<LinkData, Text>
     @Override
     protected Text createText(final LinkData source, final Contextualized contextualized, final String prefix)
     {
-        return new Text(source, source::getId, 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, contextualized,
-                RenderableTextSource.RENDERWHEN10);
+        return new Text(source, source::getId, contextualized);
     }
 
     @Override
@@ -137,18 +136,12 @@ public class LinkAnimation extends OtsRenderableLabeled<LinkData, Text>
          * Constructor.
          * @param source the object for which the text is displayed
          * @param text the text to display
-         * @param dx the horizontal movement of the text, in meters
-         * @param dy the vertical movement of the text, in meters
-         * @param textPlacement where to place the text
-         * @param color the color of the text
          * @param contextualized context provider
-         * @param scaleDependentRendering enables rendering in a scale dependent fashion
          */
-        public Text(final LinkData source, final Supplier<String> text, final float dx, final float dy,
-                final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
-                final ScaleDependentRendering scaleDependentRendering)
+        public Text(final LinkData source, final Supplier<String> text, final Contextualized contextualized)
         {
-            super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, contextualized, null, scaleDependentRendering);
+            super(source, text, 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, 2.0f, 12.0f, 50f, contextualized, null,
+                    RenderableTextSource.RENDERWHEN10);
         }
 
         @Override
