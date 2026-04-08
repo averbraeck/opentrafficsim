@@ -1,32 +1,35 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util;
 
-import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
-
 import java.util.ArrayList;
-import java.util.Collection;
+
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 
 /**
  * Defines a general interface for selecting the most appropriate {@link ManeuverPattern}
- * among a set of candidates for a given {@link ManeuverPattern.PatternType}.
- *
- * <p>Implementations of this interface encapsulate different selection strategies
+ * among a set of candidates.
+ * <p>
+ * This interface represents the decision-making engine of <b>Layer 3 (Decision / Strategy)</b>
+ * in the MiRoVA architecture. Implementations encapsulate different selection strategies
  * (e.g., deterministic, probabilistic, or multi-criteria evaluation) and can be
- * swapped at runtime without modifying the vehicle logic.</p>
+ * swapped at runtime via the {@link PatternSelector} without modifying the core vehicle logic.
+ * </p>
+ * <p>
+ * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  *
- * <p>Used by {@link PatternSelector} as an interchangeable strategy module.</p>
+ * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public interface PatternSelectionStrategy {
 
     /**
-     * Selects the most appropriate {@link ManeuverPattern} for the given pattern type.
+     * Evaluates a list of available maneuver patterns and selects the most appropriate one
+     * for execution based on the underlying strategy.
      *
-     * @param chunks collection of {@link KnowledgeChunk}s providing maneuver patterns
-     * @param type pattern type to filter and evaluate (e.g., COOPERATIVE)
-     * @return the best-fitting pattern, or {@code null} if none are valid
-     * @throws ParameterException if a parameter lookup or context evaluation fails
+     * @param patterns the list of maneuver patterns to evaluate
+     * @return the best-fitting pattern, or {@code null} if none are valid or selected
+     * @throws ParameterException if a parameter lookup or context evaluation fails during selection
      */
-    ManeuverPattern select(ArrayList<ManeuverPattern> patterns)
-            throws ParameterException;
+    ManeuverPattern select(ArrayList<ManeuverPattern> patterns) throws ParameterException;
 }
