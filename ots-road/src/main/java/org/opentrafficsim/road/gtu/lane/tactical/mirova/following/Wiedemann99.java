@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.following;
 
-import org.djunits.value.vdouble.scalar.*;
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -18,16 +21,22 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.mirova.following.W99ParameterTypes.*;
-
 /**
  * Compact Wiedemann-99 implementation built on top of {@link AbstractWiedemannModel}.
- *
- * <p>This class contains ONLY the model-specific formulas and thresholds.
+ * <p>
+ * This class contains ONLY the model-specific formulas and thresholds.
  * All generic structure, regime selection, free-driving logic, and perception
  * handling is inherited from {@link AbstractWiedemannModel}.
+ * </p>
+ * <p>
+ * Parameters CC0–CC9 must be present in the OTS {@link Parameters} object.
+ * </p>
+ * <p>
+ * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
  *
- * <p>Parameters CC0–CC9 must be present in the OTS {@link Parameters} object.
+ * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class Wiedemann99 extends AbstractWiedemannModel
 {
@@ -47,19 +56,19 @@ public class Wiedemann99 extends AbstractWiedemannModel
     public static final ParameterTypeAcceleration CC7 = W99ParameterTypes.CC7;
     public static final ParameterTypeAcceleration CC8 = W99ParameterTypes.CC8;
     public static final ParameterTypeAcceleration CC9 = W99ParameterTypes.CC9;
-    public static final ParameterTypeString CURRENT_DRIVING_MODE = W99ParameterTypes.currentDrivingMode;
+    public static final ParameterTypeString CURRENT_DRIVING_MODE = W99ParameterTypes.CURRENT_DRIVING_MODE;
 
-
-    /** Default IDM desired headway model. */
+    /** Default IDM desired headway model adapted for W99. */
     public static final DesiredHeadwayModel HEADWAY = new DesiredHeadwayModel()
     {
-        @Override public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+        @Override
+        public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
         {
             return Length.instantiateSI(parameters.getParameter(CC0).si + speed.si * parameters.getParameter(CC1).si);
         }
     };
 
-    /** Default IDM desired speed model. */
+    /** Default IDM desired speed model adapted for W99. */
     public static final DesiredSpeedModel DESIRED_SPEED = new DesiredSpeedModel()
     {
         @Override
@@ -71,9 +80,12 @@ public class Wiedemann99 extends AbstractWiedemannModel
         }
     };
 
-
     /**
-     * Create the W99 model with custom headway/speed models.
+     * Create the W99 model with custom headway and speed models.
+     *
+     * @param headway  the desired headway model
+     * @param vDesired the desired speed model
+     * @param stream   the stochastic stream for randomizing thresholds
      */
     public Wiedemann99(
             final DesiredHeadwayModel headway,
@@ -84,16 +96,17 @@ public class Wiedemann99 extends AbstractWiedemannModel
     }
 
     /**
-     * Convenience constructor using W99 defaults for headway & desired speed.
+     * Convenience constructor using W99 defaults for headway and desired speed.
+     *
+     * @param stream the stochastic stream for randomizing thresholds
      */
     public Wiedemann99(final StreamInterface stream)
     {
         super(HEADWAY, DESIRED_SPEED, stream);
     }
 
-
     /* ======================================================================================
-     *  THRESHOLD COMPUTATIONS (SDXC, SDXO, SDXV, SDV, SDVC, SDVO)
+     * THRESHOLD COMPUTATIONS (SDXC, SDXO, SDXV, SDV, SDVC, SDVO)
      * ====================================================================================== */
 
     @Override
@@ -107,7 +120,9 @@ public class Wiedemann99 extends AbstractWiedemannModel
         Duration cc1 = p.getParameter(CC1);     // time headway factor
 
         if (vLeader.si <= 0.0)
+        {
             return cc0;
+        }
 
         // vSlower = either follower v or jittered interpolation
         Speed vSlower;
@@ -176,9 +191,8 @@ public class Wiedemann99 extends AbstractWiedemannModel
                 : sdv;
     }
 
-
     /* ======================================================================================
-     *  REGIMES (A, B, f, w)
+     * REGIMES (A, B, f, w)
      * ====================================================================================== */
 
     @Override
@@ -210,9 +224,13 @@ public class Wiedemann99 extends AbstractWiedemannModel
             if (dvSI < 0)
             {
                 if (dxSI > cc0SI)
+                {
                     a = Math.min(aL + dvSI * dvSI / (cc0SI - dxSI), 0.0);
+                }
                 else
+                {
                     a = Math.min(aL + 0.5 * (dvSI - sdvoSI), 0.0);
+                }
             }
             else
             {
@@ -232,7 +250,6 @@ public class Wiedemann99 extends AbstractWiedemannModel
         return Acceleration.instantiateSI(a);
     }
 
-
     @Override
     protected Acceleration regimeClosingSpeedTooHigh(
             final Parameters p,
@@ -251,7 +268,6 @@ public class Wiedemann99 extends AbstractWiedemannModel
         a = Math.round(a * 100.0) / 100.0;
         return Acceleration.instantiateSI(a);
     }
-
 
     @Override
     protected Acceleration regimeFollowingOscillation(
@@ -287,7 +303,6 @@ public class Wiedemann99 extends AbstractWiedemannModel
         return Acceleration.instantiateSI(a);
     }
 
-
     @Override
     protected Acceleration regimeFreeDriving(
             final Parameters p,
@@ -303,7 +318,7 @@ public class Wiedemann99 extends AbstractWiedemannModel
             return p.getParameter(CC7);
         }
         Acceleration cc8 = p.getParameter(CC8);
-        Acceleration cc9 = p.getParameter(CC9).minus(cc8).times(3.6/80.0);
+        Acceleration cc9 = p.getParameter(CC9).minus(cc8).times(3.6 / 80.0);
 
         double dxSI = dx.si;
         double sdxoSI = sdxo.si;
@@ -315,9 +330,13 @@ public class Wiedemann99 extends AbstractWiedemannModel
 
         double a;
         if (dxSI < sdxoSI)
+        {
             a = Math.min(dvSI * dvSI / (sdxoSI - dxSI), aMax);
+        }
         else
+        {
             a = aMax;
+        }
 
         a = Math.min(a, vDes - vF);
 
@@ -327,8 +346,14 @@ public class Wiedemann99 extends AbstractWiedemannModel
     }
 
     @Override
-    public String getLongName() { return "Wiedemann99"; }
+    public String getLongName()
+    {
+        return "Wiedemann99";
+    }
 
     @Override
-    public String getName() { return "W99"; }
+    public String getName()
+    {
+        return "W99";
+    }
 }
