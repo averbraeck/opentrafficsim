@@ -44,6 +44,7 @@ euclidean
 euler
 exogenous
 fallback
+flipping
 fourier
 fresnel
 generics
@@ -71,6 +72,7 @@ kelvin
 keyref
 knoop
 knoppers
+kinematics
 kurtosis
 locatable
 longevity
@@ -100,6 +102,7 @@ platoon
 plottable
 polyline
 presentable
+proxy
 quantile
 quantiles
 quartic
@@ -114,6 +117,7 @@ serializable
 settable
 sigma
 sin
+snippets
 stateful
 strategical
 swiss
