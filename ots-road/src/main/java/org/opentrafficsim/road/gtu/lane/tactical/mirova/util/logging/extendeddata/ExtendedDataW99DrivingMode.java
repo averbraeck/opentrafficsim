@@ -1,31 +1,49 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.following;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata;
 
-import nl.tudelft.simulation.jstats.streams.StreamInterface;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.following.W99ParameterTypes;
+import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
-/**
- * Factory for creating {@link Wiedemann99} car-following models.
- * <p>
- * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
- * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
- *
- * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
- */
-public class Wiedemann99Factory extends AbstractWiedemannFactory<Wiedemann99>
+/** current W99 Driving Mode. */
+public class ExtendedDataW99DrivingMode extends ExtendedDataString<GtuData>
 {
+    /** Single instance. */
+    public static final ExtendedDataW99DrivingMode INSTANCE = new ExtendedDataW99DrivingMode();
+
     /**
-     * Constructor for the Wiedemann-99 model factory.
      *
-     * @param randomStream the random number stream used to generate stochastic parameters
      */
-    public Wiedemann99Factory(final StreamInterface randomStream)
+    public ExtendedDataW99DrivingMode()
     {
-        super(() -> new Wiedemann99(randomStream), randomStream);
+        super("W99DrivingMode", "Current W99 Driving Mode");
+    }
+
+    /** Wert je GTU (Sampler-Einstiegspunkt). */
+    @Override
+    public String getValue(final GtuData gtu)
+    {
+        if (gtu instanceof GtuDataRoad road)
+        {
+            LaneBasedGtu lgtu = road.getGtu();
+            try
+            {
+                return lgtu.getParameters().getParameter(W99ParameterTypes.CURRENT_DRIVING_MODE).toString();
+            }
+            catch (ParameterException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        return "none";
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
-        return "Wiedemann99Factory";
+        return "Current W99 Driving Mode";
     }
 }
