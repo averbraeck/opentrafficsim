@@ -128,6 +128,16 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     /** Cache key for GTU alongside right flag. */
     public static final String GTU_ALONGSIDE_RIGHT = "alongside_RIGHT";
 
+ // =========================================================================================
+    // NEUE FELDER: CUT-IN DETECTION MEMORY
+    // =========================================================================================
+
+    /** The GTU ID of the leader in the current lane from the previous simulation tick. */
+    private String lastLeaderId = null;
+
+    /** The speed of the leader in the current lane from the previous simulation tick. */
+    private Speed lastLeaderSpeed = null;
+
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -1013,9 +1023,42 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
                 "]";
     }
 
+    // =========================================================================================
+    // LIFECYCLE: UPDATE FROM PERCEPTION
+    // =========================================================================================
+
     @Override
     public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
-        // Lazy: no global update required
+        // 1. Clear the caches for the new tick first (reset lazy evaluation)
         markCacheValid();
+
+        try {
+            // 2. Retrieve the direct leader via the context's own method.
+            // Since the cache was just cleared, this implicitly triggers the perception
+            // and efficiently stores the new leader in the cache for the rest of the tick.
+            HeadwayGtu currentLeader = this.getCurrentLeader();
+
+            if (currentLeader != null) {
+                String currentId = currentLeader.getId();
+
+                // Edge detection: Is the leader ID different from the last tick?
+                if (this.lastLeaderId != null && !this.lastLeaderId.equals(currentId)) {
+                    // A new vehicle has cut in -> Notify EgoContext to evaluate relaxation
+                    EgoContext ego = vehicle.getContext(EgoContext.class);
+                    ego.evaluateAndTriggerRelaxation(currentLeader, this.lastLeaderSpeed);
+                }
+
+                // Remember the state for the next tick
+                this.lastLeaderId = currentId;
+                this.lastLeaderSpeed = currentLeader.getSpeed();
+            } else {
+                // No leader present anymore (lane is free)
+                this.lastLeaderId = null;
+                this.lastLeaderSpeed = null;
+            }
+        } catch (ParameterException | GtuException e) {
+            // Failsafe: If the EgoContext calculation fails in this tick,
+            // we safely ignore it and keep the memory intact.
+        }
     }
 }

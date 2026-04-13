@@ -1,9 +1,15 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -24,6 +30,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
  * <p>
  * The values are lazily updated once per simulation tick and cached within the
  * {@link VehicleContextManager} to optimize performance and ensure intra-tick consistency.
+ * Furthermore, it tracks ID-based relaxation states for specific leader vehicles and provides
+ * a highly efficient single-tick cache for longitudinal acceleration evaluations.
  * </p>
  * <p>
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
@@ -61,6 +69,20 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
     /** Cache key for follower deceleration threshold (right). */
     public static final String FOLLOWER_DECELERATION_THRESHOLD_RIGHT = "followerDecelerationThresholdRight";
 
+    // =========================================================================================
+    // FIELDS: RELAXATION & CACHING
+    // =========================================================================================
+
+    /** * Map of active relaxation states, tracked by the GTU ID of the respective leader.
+     * Handles the Keane and Gao (2021) 2-parameter relaxation phenomenon.
+     */
+    private final Map<String, RelaxationState> activeRelaxations = new HashMap<>();
+
+    /** * Temporary cache for longitudinal accelerations evaluated during the current time step.
+     * Key is the GTU ID of the leader. This cache is cleared at the start of every perception update.
+     */
+    private final Map<String, Acceleration> tickAccelerationCache = new HashMap<>();
+
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -72,6 +94,102 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
      */
     public EgoContext(final MirovaTacticalPlanner vehicle) {
         super("Ego", vehicle);
+    }
+
+    // =========================================================================================
+    // METHODS: SINGLE-TICK ACCELERATION CACHE
+    // =========================================================================================
+
+    /**
+     * Retrieves a cached acceleration for a specific leader ID evaluated in the current tick.
+     *
+     * @param leaderId the GTU ID of the leader
+     * @return the cached acceleration, or null if not yet evaluated in this tick
+     */
+    public Acceleration getCachedAcceleration(final String leaderId) {
+        return this.tickAccelerationCache.get(leaderId);
+    }
+
+    /**
+     * Caches a computed acceleration for a specific leader ID for the duration of the current tick.
+     *
+     * @param leaderId     the GTU ID of the leader
+     * @param acceleration the computed acceleration
+     */
+    public void cacheAcceleration(final String leaderId, final Acceleration acceleration) {
+        if (leaderId != null && acceleration != null) {
+            this.tickAccelerationCache.put(leaderId, acceleration);
+        }
+    }
+
+    // =========================================================================================
+    // METHODS: RELAXATION MANAGEMENT
+    // =========================================================================================
+
+    /**
+     * Evaluates a new cut-in situation and triggers the 2-parameter relaxation if the new leader
+     * violates the equilibrium desired headway.
+     * <p>
+     * This method is typically called by the {@code NeighborsContext} when a change in the
+     * leader ID is detected (edge trigger).
+     * </p>
+     *
+     * @param newLeader      the new headway object that just cut in
+     * @param oldLeaderSpeed the speed of the previous leader at the time of the cut-in
+     * @throws ParameterException if a required parameter is missing
+     * @throws GtuException       if GTU state cannot be accessed
+     */
+    public void evaluateAndTriggerRelaxation(final HeadwayGtu newLeader, final Speed oldLeaderSpeed)
+            throws ParameterException, GtuException {
+
+        // Compute equilibrium headway for current speed
+        Length desiredHeadway = this.vehicle.getCarFollowingModel().desiredHeadway(
+                this.vehicle.getParameters(),
+                this.getEgoSpeed());
+
+        // If the cut-in is too close, trigger the relaxation
+        if (newLeader.getDistance().lt(desiredHeadway)) {
+            Length gammaS = desiredHeadway.minus(newLeader.getDistance());
+
+            // Calculate gamma_v (Speed of old leader minus speed of new leader)
+            Speed gammaV = oldLeaderSpeed != null ? oldLeaderSpeed.minus(newLeader.getSpeed()) : Speed.ZERO;
+
+            Duration tauSpace = this.vehicle.getParameters().getParameter(MirovaParameters.RELAXATION_TAU_SPACE);
+            Duration tauSpeed = this.vehicle.getParameters().getParameter(MirovaParameters.RELAXATION_TAU_SPEED);
+
+            triggerRelaxation(newLeader.getId(), gammaS, gammaV, tauSpace, tauSpeed);
+        }
+    }
+
+    /**
+     * Explicitly registers or overwrites a relaxation state for a specific target vehicle.
+     * <p>
+     * This allows maneuver patterns to proactively trigger relaxation (e.g., accepting a small
+     * gap while preparing a lane change) before the actual cut-in happens.
+     * </p>
+     *
+     * @param leaderId            the ID of the target leader GTU
+     * @param initialSpaceDeficit the initial space headway deficit [m]
+     * @param initialSpeedDeficit the speed difference (oldLeaderSpeed - newLeaderSpeed) [m/s]
+     * @param tauSpace            the spatial relaxation time constant [s]
+     * @param tauSpeed            the speed relaxation time constant [s]
+     */
+    public void triggerRelaxation(final String leaderId, final Length initialSpaceDeficit, final Speed initialSpeedDeficit,
+            final Duration tauSpace, final Duration tauSpeed) {
+        if (initialSpaceDeficit != null && initialSpaceDeficit.si > 0.0) {
+            Duration now = this.vehicle.getGtu().getSimulator().getSimulatorTime();
+            this.activeRelaxations.put(leaderId, new RelaxationState(now, initialSpaceDeficit, initialSpeedDeficit, tauSpace, tauSpeed));
+        }
+    }
+
+    /**
+     * Retrieves the active relaxation state for a specific leader.
+     *
+     * @param leaderId the ID of the leader GTU
+     * @return the active relaxation state, or null if no relaxation is active for this leader
+     */
+    public RelaxationState getActiveRelaxationForLeader(final String leaderId) {
+        return this.activeRelaxations.get(leaderId);
     }
 
     // ----------------------------------------------------------------------
@@ -350,15 +468,35 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
     // ----------------------------------------------------------------------
 
     /**
-     * Marks the cached values as valid for the current simulation tick.
-     * <p>
-     * No immediate update is required, as values are computed lazily.
-     * </p>
+     * Marks the cached values as valid for the current simulation tick, clears the
+     * single-tick acceleration cache, and performs housekeeping on active relaxation states.
      *
      * @param vehicle the ego vehicle executing the update
      */
     @Override
     public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
+        // 1. CRITICAL: Clear the tick cache. Acceleration values from the previous tick are invalid!
+        this.tickAccelerationCache.clear();
+
+        // 2. Housekeeping for active relaxations
+        try {
+            Duration now = vehicle.getGtu().getSimulator().getSimulatorTime();
+            Iterator<Map.Entry<String, RelaxationState>> iterator = this.activeRelaxations.entrySet().iterator();
+
+            while (iterator.hasNext()) {
+                RelaxationState state = iterator.next().getValue();
+
+                // If both the space buffer (< 10cm) and speed buffer (< 0.1 m/s) have decayed,
+                // the relaxation process is finished. We remove it to free memory.
+                if (state.getVirtualSpaceBuffer(now).si < 0.1 && Math.abs(state.getVirtualSpeedBuffer(now).si) < 0.1) {
+                    iterator.remove();
+                }
+            }
+        } catch (Exception e) {
+            // Failsafe if simulator time is temporarily unavailable
+        }
+
+        // 3. Mark the context properties cache as valid (Lazy evaluation trigger)
         markCacheValid();
     }
 

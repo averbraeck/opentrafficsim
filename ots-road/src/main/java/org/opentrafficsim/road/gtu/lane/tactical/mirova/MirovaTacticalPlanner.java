@@ -28,8 +28,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunks.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern.PatternType;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util.MaxUtilityArbitrator;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util.PatternSelector;
-import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util.PlanArbitrator;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util.ScoredOperationalPlan;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.following.MirovaCarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
@@ -63,6 +66,9 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     // Tactical and Planning Components
     // ----------------------------------------------------------------------
 
+    /** Serial version UID for serialization compatibility. */
+    private static final long serialVersionUID = 1L;
+
     /** Indicates whether a maneuver pattern is currently running. */
     protected boolean runningManeuver = false;
 
@@ -74,6 +80,15 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 
     /** The lane change object handling the physical lane change constraints. */
     protected final LaneChange laneChange;
+
+    /** The maneuver pattern that won the arbitration in the previous simulation step. */
+    protected ManeuverPattern lastActivePattern = null;
+
+    /** Hysteresis multiplier to prevent rapid switching between maneuver patterns (default 1.10 = +10%). */
+    protected double hysteresisMultiplier = 1.10;
+
+    /** The arbitration strategy used to select the winning operational plan. */
+    protected PlanArbitrator planArbitrator = new MaxUtilityArbitrator();
 
     // ----------------------------------------------------------------------
     // LMRS Desire Dynamics
@@ -262,54 +277,54 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         this.operationalPlan = null;
 
         // 6. Determine operational plan
-        // 6.1 check if maneuver is running and continue if so
-        if (this.runningManeuver) {
+        // 6.1 Check if a maneuver is already running (e.g., lane change execution). If so, bypass  arbitration and use the active ActionState.
+        if (this.runningManeuver && this.currentActionState != null) {
+            // The maneuver's action states are responsible for releasing this.runningManeuver
+            // via planner.setRunningManeuver(false) once they terminate or abort.
             this.operationalPlan = this.currentActionState.update();
-        } else {
-            // 6.2 check if situation requires new exclusive maneuver
-            ManeuverPattern selectedPattern = selectPatternByType(getExclusiveManeuverPatterns());
+        }
+        else {
+            // 6.2 Arbitration: Evaluate all applicable patterns using the PlanArbitrator strategy
+            List<ScoredOperationalPlan> proposedPlans = new ArrayList<>();
+            List<ManeuverPattern> allPatterns = new ArrayList<>();
+            allPatterns.addAll(this.exclusiveManeuverPatterns);
+            allPatterns.addAll(this.parallelManeuverPatterns);
 
-            // Execute exclusive maneuver if selected
-            if (selectedPattern != null) {
-                this.operationalPlan = selectedPattern.update();
-                this.currentActionState = selectedPattern.getCurrentActionState();
-            }
-            // 6.3 if exclusive maneuver not necessary, proceed with parallel maneuver patterns
-            else {
-                ArrayList<ManeuverPattern> parallelPatterns = PatternSelector.getAllRelevantPatterns(getParallelManeuverPatterns());
+            for (ManeuverPattern pattern : allPatterns) {
+                // The pattern internally checks applicability and returns a proposed plan if applicable
+                SimpleOperationalPlan proposedPlan = pattern.update();
 
-                // Evaluate all applicable parallel patterns and select the one with the most restrictive acceleration
-                for (ManeuverPattern pattern : parallelPatterns) {
-                    SimpleOperationalPlan plan = pattern.update();
-                    if (this.operationalPlan == null) {
-                        this.operationalPlan = plan;
-                        this.currentActionState = pattern.getCurrentActionState();
-                    } else {
-                        if (this.operationalPlan.isLaneChange() && !plan.isLaneChange()) {
-                            // keep lane change over non-lane change
-                            continue;
-                        } else if (!this.operationalPlan.isLaneChange() && plan.isLaneChange()) {
-                            // prefer lane change over non-lane change
-                            this.operationalPlan = plan;
-                            this.currentActionState = pattern.getCurrentActionState();
-                        } else if (plan.getAcceleration().lt(this.operationalPlan.getAcceleration())) {
-                            // prefer more restrictive acceleration
-                            this.operationalPlan = plan;
-                            this.currentActionState = pattern.getCurrentActionState();
-                        }
+                if (proposedPlan != null) {
+                    double utility = pattern.getCurrentActionState().getUtility();
+
+                    // Apply Hysteresis to prevent flickering during the initial selection phase
+                    if (pattern.equals(this.lastActivePattern)) {
+                        utility *= this.hysteresisMultiplier;
                     }
-                }
 
-                // If no parallel pattern produced a plan, fall back to standard car-following
+                    // Wrap the proposal into the strategy-compatible object
+                    proposedPlans.add(new ScoredOperationalPlan(proposedPlan, utility, pattern, pattern.getCurrentActionState()));
+                }
+            }
+
+            // 6.3 Execute arbitration strategy if at least one plan was proposed
+            if (!proposedPlans.isEmpty()) {
+                ScoredOperationalPlan winningPlan = this.planArbitrator.arbitrate(proposedPlans);
+
+                this.operationalPlan = winningPlan.getOperationalPlan();
+                this.lastActivePattern = winningPlan.getSourcePattern();
+                this.currentActionState = winningPlan.getSourceState();
+            }
+            else {
+                // 6.4 Fallback: Pure Car-Following (only invoked if no pattern is active or returns a valid plan)
+                this.lastActivePattern = null;
+                this.currentActionState = null; // Ensure no orphaned state remains active
+
                 EgoContext egoContext = getContextManager().getCategory("Ego", EgoContext.class);
                 Acceleration cfAcceleration = egoContext.getCurrentCarFollowingAcceleration();
-                if (this.operationalPlan == null || this.operationalPlan.getAcceleration().gt(cfAcceleration)) {
-                    this.operationalPlan = new SimpleOperationalPlan(
-                            cfAcceleration,
-                            this.getGtu().getParameters().getParameter(ParameterTypes.DT),
-                            LateralDirectionality.NONE
-                    );
-                }
+                Duration dt = this.getGtu().getParameters().getParameter(ParameterTypes.DT);
+
+                this.operationalPlan = new SimpleOperationalPlan(cfAcceleration, dt, LateralDirectionality.NONE);
             }
         }
 
@@ -740,6 +755,107 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         return this.targetDesiredHeadway;
     }
 
+//    /**
+//     * Computes the longitudinal acceleration for the current time step,
+//     * considering all tactical and environmental influences provided
+//     * via the vehicle’s {@link VehicleContextManager}.
+//     * <p>
+//     * The following control components are considered:
+//     * <ul>
+//     * <li><b>Leader-following behavior:</b> based on perceived headway</li>
+//     * <li><b>Lane-end braking:</b> deceleration to enforce timely merging</li>
+//     * <li><b>Speed-limit adaptation:</b> handling of upcoming lower speed limits</li>
+//     * <li><b>Free-flow acceleration:</b> baseline term for unconstrained motion</li>
+//     * <li><b>Transition effects:</b> optional curvature or bump-based deceleration</li>
+//     * </ul>
+//     * The resulting acceleration is the minimum (most restrictive) value among all components.
+//     * </p>
+//     *
+//     * @return final longitudinal acceleration [m/s²]
+//     * @throws ParameterException if parameter retrieval fails
+//     * @throws NetworkException if the network structure cannot be queried
+//     * @throws GtuException if GTU state errors occur
+//     */
+//    public Acceleration computeLongitudinalAcceleration()
+//            throws ParameterException, GtuException, NetworkException
+//    {
+//        // 1. Retrieve context and parameters
+//        VehicleContextManager ctx = this.getContextManager();
+//        InfrastructureContext infra = ctx.getCategory("Infrastructure", InfrastructureContext.class);
+//        Parameters parameters = this.getGtu().getParameters();
+//        CarFollowingModel cfModel = this.getCarFollowingModel();
+//
+//        // Ego and environment data from context
+//        Speed egoSpeed = getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+//
+//        SpeedLimitInfo currentSpeedLimitInfo = getPerception()
+//                .getPerceptionCategory(InfrastructurePerception.class)
+//                .getSpeedLimitProspect(RelativeLane.CURRENT)
+//                .getSpeedLimitInfo(Length.ZERO);
+//        SpeedLimitInfo nextLimit = infra.getNextSpeedLimit();
+//        Speed legalSpeed = infra.getLegalSpeedLimit();
+//        Length laneEndDist = infra.getDistanceToLaneEnd();
+//
+//        // Apply relaxed headway (from Desire relaxation)
+//        parameters.setParameterResettable(ParameterTypes.T, this.getCurrentRelaxedHeadway());
+//
+//        // Candidate accelerations (we'll take the minimum)
+//        List<Acceleration> candidates = new ArrayList<>();
+//
+//        // 2. Leader-following (if a leader is detected)
+//        NeighborsPerception neighbors = getPerception().getPerceptionCategory(NeighborsPerception.class);
+//        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+//
+//        Acceleration aCf = getCarFollowingModel().followingAcceleration(
+//                parameters,
+//                egoSpeed,
+//                currentSpeedLimitInfo,
+//                leaders
+//            );
+//
+//        candidates.add(aCf);
+//
+//        // 3. Lane-end braking (encourage merging)
+//        if (infra.isLaneEndUrgent()) {
+//            Acceleration aLaneEnd = CarFollowingUtil.stop(
+//                    cfModel, parameters, egoSpeed, currentSpeedLimitInfo, laneEndDist);
+//
+//            // Only consider strong braking responses (to avoid minor fluctuations)
+//            if (aLaneEnd.ge(parameters.getParameter(ParameterTypes.BCRIT).times(0.95)) && aLaneEnd != null) {
+//                candidates.add(aLaneEnd);
+//            }
+//        }
+//
+//        // 4. Transition deceleration (e.g., curvature or bumps)
+//        Acceleration aTrans = SpeedLimitUtil.considerSpeedLimitTransitions(
+//                parameters, egoSpeed,
+//                getPerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT),
+//                cfModel);
+//        if (aTrans != null && aTrans.lt(Acceleration.POSITIVE_INFINITY)) {
+//            candidates.add(aTrans);
+//        }
+//
+//        // 5. Upcoming lower speed limit ahead
+//        if (nextLimit != null) {
+//            Speed nextLegal = SpeedLimitUtil.getLegalSpeedLimit(nextLimit);
+//            if (nextLegal.lt(legalSpeed)) {
+//                Length distanceToLimit = new Length(200.0, LengthUnit.SI);
+//                Acceleration aLimit = CarFollowingUtil.approachTargetSpeed(
+//                        cfModel, parameters, egoSpeed, nextLimit, distanceToLimit, nextLegal);
+//                if (aLimit != null) {
+//                    candidates.add(aLimit);
+//                }
+//            }
+//        }
+//
+//        // 6. Compute most restrictive acceleration
+//        Acceleration finalAcc = candidates.stream()
+//                .min(Acceleration::compareTo)
+//                .orElse(aCf);
+//
+//        return finalAcc;
+//    }
+
     /**
      * Computes the longitudinal acceleration for the current time step,
      * considering all tactical and environmental influences provided
@@ -747,13 +863,15 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
      * <p>
      * The following control components are considered:
      * <ul>
-     * <li><b>Leader-following behavior:</b> based on perceived headway</li>
-     * <li><b>Lane-end braking:</b> deceleration to enforce timely merging</li>
-     * <li><b>Speed-limit adaptation:</b> handling of upcoming lower speed limits</li>
-     * <li><b>Free-flow acceleration:</b> baseline term for unconstrained motion</li>
-     * <li><b>Transition effects:</b> optional curvature or bump-based deceleration</li>
+     * <li><b>Leader-following behavior:</b> based on perceived headway, automatically applying Keane and Gao (2021) relaxation.</li>
+     * <li><b>Speed-limit adaptation:</b> handling of upcoming lower speed limits.</li>
+     * <li><b>Transition effects:</b> optional curvature or bump-based deceleration.</li>
      * </ul>
      * The resulting acceleration is the minimum (most restrictive) value among all components.
+     * </p>
+     * <p>
+     * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      *
      * @return final longitudinal acceleration [m/s²]
@@ -761,84 +879,64 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
      * @throws NetworkException if the network structure cannot be queried
      * @throws GtuException if GTU state errors occur
      */
-    public Acceleration computeLongitudinalAcceleration()
-            throws ParameterException, GtuException, NetworkException
+    public Acceleration computeLongitudinalAcceleration() throws ParameterException, GtuException, NetworkException
     {
-        // 1. Retrieve context and parameters
-        VehicleContextManager ctx = this.getContextManager();
-        InfrastructureContext infra = ctx.getCategory("Infrastructure", InfrastructureContext.class);
-        Parameters parameters = this.getGtu().getParameters();
-        CarFollowingModel cfModel = this.getCarFollowingModel();
+        // 1. Retrieve tightly coupled contexts and parameters
+        EgoContext ego = this.getContext(EgoContext.class);
+        InfrastructureContext infra = this.getContext(InfrastructureContext.class);
+        NeighborsContext neighbors = this.getContext(NeighborsContext.class);
+        Parameters parameters = this.getParameters();
 
-        // Ego and environment data from context
-        Speed egoSpeed = getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
-
-        SpeedLimitInfo currentSpeedLimitInfo = getPerception()
-                .getPerceptionCategory(InfrastructurePerception.class)
-                .getSpeedLimitProspect(RelativeLane.CURRENT)
-                .getSpeedLimitInfo(Length.ZERO);
-        SpeedLimitInfo nextLimit = infra.getNextSpeedLimit();
-        Speed legalSpeed = infra.getLegalSpeedLimit();
-        Length laneEndDist = infra.getDistanceToLaneEnd();
-
-        // Apply relaxed headway (from Desire relaxation)
-        parameters.setParameterResettable(ParameterTypes.T, this.getCurrentRelaxedHeadway());
-
-        // Candidate accelerations (we'll take the minimum)
+        // List of candidate accelerations
         List<Acceleration> candidates = new ArrayList<>();
 
-        // 2. Leader-following (if a leader is detected)
-        NeighborsPerception neighbors = getPerception().getPerceptionCategory(NeighborsPerception.class);
-        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        // =========================================================================================
+        // SCHRITT 3: ZEITLÜCKEN-HACK WURDE HIER GELÖSCHT!
+        // parameters.setParameterResettable(ParameterTypes.T, this.getCurrentRelaxedHeadway());
+        // Das Basis-Modell bleibt ab sofort unangetastet.
+        // =========================================================================================
 
-        Acceleration aCf = getCarFollowingModel().followingAcceleration(
-                parameters,
-                egoSpeed,
-                currentSpeedLimitInfo,
-                leaders
-            );
-
+        // 2. Leader-following (incorporating automatic 2-parameter relaxation via our Utility)
+        Iterable<HeadwayGtu> currentLeaders = neighbors.getLeaders(LateralDirectionality.NONE);
+        Acceleration aCf = MirovaCarFollowingUtil.followMultipleLeaders(this, currentLeaders);
         candidates.add(aCf);
 
-        // 3. Lane-end braking (encourage merging)
-        if (infra.isLaneEndUrgent()) {
-            Acceleration aLaneEnd = CarFollowingUtil.stop(
-                    cfModel, parameters, egoSpeed, currentSpeedLimitInfo, laneEndDist);
 
-            // Only consider strong braking responses (to avoid minor fluctuations)
-            if (aLaneEnd.ge(parameters.getParameter(ParameterTypes.BCRIT).times(0.95)) && aLaneEnd != null) {
-                candidates.add(aLaneEnd);
-            }
-        }
-
-        // 4. Transition deceleration (e.g., curvature or bumps)
+        // 3. Transition deceleration (e.g., curvature or bumps)
         Acceleration aTrans = SpeedLimitUtil.considerSpeedLimitTransitions(
-                parameters, egoSpeed,
+                parameters,
+                ego.getEgoSpeed(),
                 getPerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT),
-                cfModel);
-        if (aTrans != null && aTrans.lt(Acceleration.POSITIVE_INFINITY)) {
+                this.getCarFollowingModel());
+
+        if (aTrans != null && aTrans.lt(Acceleration.POSITIVE_INFINITY))
+        {
             candidates.add(aTrans);
         }
 
-        // 5. Upcoming lower speed limit ahead
-        if (nextLimit != null) {
+        // 4. Upcoming lower speed limit ahead
+        SpeedLimitInfo nextLimit = infra.getNextSpeedLimit();
+        if (nextLimit != null)
+        {
             Speed nextLegal = SpeedLimitUtil.getLegalSpeedLimit(nextLimit);
-            if (nextLegal.lt(legalSpeed)) {
-                Length distanceToLimit = new Length(200.0, LengthUnit.SI);
-                Acceleration aLimit = CarFollowingUtil.approachTargetSpeed(
-                        cfModel, parameters, egoSpeed, nextLimit, distanceToLimit, nextLegal);
-                if (aLimit != null) {
+
+            if (nextLegal.lt(infra.getLegalSpeedLimit()))
+            {
+                Length distanceToLimit = Length.instantiateSI(200.0); // Hardcoded fallback from old logic
+                Acceleration aLimit = MirovaCarFollowingUtil.approachTargetSpeed(this, distanceToLimit, nextLegal);
+
+                if (aLimit != null)
+                {
                     candidates.add(aLimit);
                 }
             }
         }
 
-        // 6. Compute most restrictive acceleration
-        Acceleration finalAcc = candidates.stream()
+        // 5. Compute most restrictive acceleration safely
+        return candidates.stream()
+                .filter(java.util.Objects::nonNull)
                 .min(Acceleration::compareTo)
                 .orElse(aCf);
-
-        return finalAcc;
     }
 
     /**

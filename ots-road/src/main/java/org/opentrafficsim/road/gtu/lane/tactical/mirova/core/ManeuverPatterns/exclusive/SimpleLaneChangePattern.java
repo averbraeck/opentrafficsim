@@ -12,12 +12,13 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
-import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.following.MirovaCarFollowingUtil;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -183,9 +184,7 @@ public class SimpleLaneChangePattern extends ManeuverPattern
                 HeadwayGtu targetLeader = neighborsCtx.getLeader(this.direction);
                 if (targetLeader != null)
                 {
-                    Acceleration aTarget = CarFollowingUtil.followSingleLeader(this.vehicle.getCarFollowingModel(),
-                            params, egoSpeed, infraCtx.getCurrentSpeedLimit(), targetLeader.getDistance(),
-                            targetLeader.getSpeed());
+                    Acceleration aTarget = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, targetLeader);
                     minAcc = Acceleration.min(minAcc, aTarget);
                 }
             }
@@ -248,6 +247,15 @@ public class SimpleLaneChangePattern extends ManeuverPattern
                 return finishManeuver();
             }
             return null;
+        }
+
+        @Override
+        public double getUtility()
+        {
+            // Utility can be based on the lane change desire magnitude, with a small penalty for slow maneuvers
+            Desire desire = this.maneuverPattern.getMirovaTacticalPlanner().getLaneChangeDesire();
+            double baseUtility = desire.getDirectionalDesire(this.direction);
+            return this.slowLaneChange ? baseUtility * 0.8 : baseUtility;
         }
 
         @Override

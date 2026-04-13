@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTrafficContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
-import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.following.MirovaCarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -188,11 +188,8 @@ public class PreventUndercuttingPattern extends ManeuverPattern
                 Duration timeHeadwayReduced = this.vehicle.getParameters().getParameter(ParameterTypes.T).times(safetyDistanceReductionFactorLaneChange);
                 this.vehicle.getParameters().setParameterResettable(ParameterTypes.T, timeHeadwayReduced);
 
-                Acceleration aShadow = CarFollowingUtil.followSingleLeader(
-                        this.vehicle.getCarFollowingModel(),
-                        this.vehicle.getParameters(),
-                        ego.getEgoSpeed(),
-                        speedLimit,
+                Acceleration aShadow = MirovaCarFollowingUtil.followDistanceAndSpeed(
+                        this.vehicle,
                         leftDistHeadway.minus(leftLeaderLength),
                         leftLeaderSpeed);
 
@@ -203,11 +200,8 @@ public class PreventUndercuttingPattern extends ManeuverPattern
                 {
                     MacroTrafficContext macroCtx = this.vehicle.getContext(MacroTrafficContext.class);
                     Speed leftLaneSpeed = macroCtx.getAverageSpeed(RelativeLane.LEFT);
-                    aShadow = CarFollowingUtil.approachTargetSpeed(
-                            this.vehicle.getCarFollowingModel(),
-                            this.vehicle.getParameters(),
-                            ego.getEgoSpeed(),
-                            infra.getCurrentSpeedLimit(),
+                    aShadow = MirovaCarFollowingUtil.approachTargetSpeed(
+                            this.vehicle,
                             Length.instantiateSI(50.0),
                             leftLaneSpeed
                             );
@@ -391,13 +385,7 @@ public class PreventUndercuttingPattern extends ManeuverPattern
 
             // If we have a comfortable gap, we can match the left leader's speed.
             // If not, we apply a more assertive deceleration to create space for the lane change.
-            aDecel = CarFollowingUtil.followSingleLeader(
-                this.vehicle.getCarFollowingModel(),
-                this.vehicle.getParameters(),
-                ego.getEgoSpeed(),
-                speedLimit,
-                leftDistHeadway,
-                leftLeaderSpeed);
+            aDecel = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, leftLeader);
 
             this.vehicle.getParameters().resetParameter(ParameterTypes.T);
 

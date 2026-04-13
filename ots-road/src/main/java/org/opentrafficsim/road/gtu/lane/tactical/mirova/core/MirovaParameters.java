@@ -210,4 +210,22 @@ public final class MirovaParameters implements ConstraintInterface
                     "TTC to prevent undercutting",
                     Duration.instantiateSI(5.0),
                     POSITIVE);
+
+    /**
+     * Spatial relaxation time constant (Tau_s) for the Keane and Gao (2021) phenomenon.
+     */
+    public static final ParameterTypeDuration RELAXATION_TAU_SPACE = new ParameterTypeDuration(
+            "tau_relax_s",
+            "Spatial relaxation time constant",
+            Duration.instantiateSI(20.0),
+            ConstraintInterface.POSITIVE);
+
+    /**
+     * Speed relaxation time constant (Tau_v) for the Keane and Gao (2021) phenomenon.
+     */
+    public static final ParameterTypeDuration RELAXATION_TAU_SPEED = new ParameterTypeDuration(
+            "tau_relax_v",
+            "Speed relaxation time constant",
+            Duration.instantiateSI(8.0),
+            ConstraintInterface.POSITIVE);
 }

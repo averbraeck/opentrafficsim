@@ -144,6 +144,23 @@ public abstract class ActionState {
     public abstract SimpleOperationalPlan abort()
             throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException, GtuException, NetworkException;
 
+    /**
+     * Calculates and returns the utility of this specific action state.
+     * <p>
+     * The utility represents the motivation or fitness of the maneuver at this exact stage.
+     * Higher values indicate a stronger need or better suitability to execute or continue
+     * this state compared to concurrently proposed plans. This score is utilized by the
+     * tactical planner's arbitration layer.
+     * </p>
+     * * @return double; the evaluated utility score for this specific action state
+     */
+    public double getUtility() {
+        // Default implementation returns a neutral utility score.
+        // Subclasses should override this method to provide context-specific utility evaluations.
+        return 0.0;
+    }
+
+
     // ----------------------------------------------------------------------
     // Helper and lifecycle methods
     // ----------------------------------------------------------------------
