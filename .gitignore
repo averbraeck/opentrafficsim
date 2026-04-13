@@ -1,2 +1,4 @@
 **/target/
 /.flattened-pom.xml
+.claude
+/.claude

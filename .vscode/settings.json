@@ -1,0 +1,32 @@
+{
+    // Java runtime - JDK 17 as required by pom.xml (maven.compiler.release=17)
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "C:\\app\\jdk17",
+            "default": true
+        }
+    ],
+    "java.jdt.ls.java.home": "C:\\app\\jdk17",
+
+    // Maven
+    "maven.executable.path": "C:\\Program Files\\apache-maven-3.9.9\\bin\\mvn.cmd",
+    "java.maven.downloadSources": true,
+
+    // Checkstyle - matches pom.xml configLocation
+    "java.checkstyle.configuration": "${workspaceFolder}/config/dsol-checks.xml",
+    "java.checkstyle.version": "10.21.3",
+
+    // Code analysis
+    "java.compile.nullAnalysis.mode": "automatic",
+
+    // Import thresholds - high values to avoid star imports (match project style)
+    "java.sources.organizeImports.starThreshold": 99,
+    "java.sources.organizeImports.staticStarThreshold": 99,
+
+    // Do not auto-format on save (project uses dsol-code-formatter.xml; configure separately if needed)
+    "editor.formatOnSave": false,
+
+    // Encoding matches pom.xml <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    "files.encoding": "utf8"
+}

@@ -1,0 +1,68 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "NetworksSwing",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.NetworksSwing",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "StraightSwing",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.StraightSwing",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "CircularRoadSwing",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.CircularRoadSwing",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "SuperDemo",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.SuperDemo",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "ShortMerge",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.ShortMerge",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "TJunctionDemo",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.conflict.TJunctionDemo",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "FundamentalDiagramDemo",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.fd.FundamentalDiagramDemo",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "RampMeteringDemo",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.RampMeteringDemo",
+            "projectName": "ots-demo"
+        },
+        {
+            "type": "java",
+            "name": "SimpleSimulation (Mirova)",
+            "request": "launch",
+            "mainClass": "org.opentrafficsim.demo.mirova.SimpleSimulation",
+            "projectName": "ots-demo"
+        }
+    ]
+}
