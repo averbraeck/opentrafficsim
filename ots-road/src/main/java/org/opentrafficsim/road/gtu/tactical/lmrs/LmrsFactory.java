@@ -66,8 +66,8 @@ import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelMental;
 import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTask;
 import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskAcceleration;
 import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskCarFollowing;
-import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskConflict;
 import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskCooperation;
+import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskIntersection;
 import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskLaneChange;
 import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskRoadSideDistraction;
 import org.opentrafficsim.road.gtu.perception.mental.channel.ChannelTaskScan;
@@ -519,10 +519,10 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> cooperationTask = listOf(true);
 
-    /** Enables conflicts task under ATTENTION_MATRIX (default: false). */
-    @Option(names = {"--conflictsTask"}, description = "Enables conflict task.", defaultValue = "false", split = "\\|",
+    /** Enables intersection task under ATTENTION_MATRIX (default: false). */
+    @Option(names = {"--intersectionTask"}, description = "Enables intersection task.", defaultValue = "false", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
-    private List<Boolean> conflictsTask = listOf(false);
+    private List<Boolean> intersectionTask = listOf(false);
 
     /** Enables road-side distraction task (default: false). */
     @Option(names = {"--roadSideDistractionTask"}, description = "Enables road-side distraction task.", defaultValue = "false",
@@ -641,13 +641,13 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     }
 
     /**
-     * Resets the factory to the state when {@link #setOneShotMode()} was called. Note that the parameter factory resets its own
-     * state when it has set parameter values.
+     * Resets the factory to the state when {@link #setOneShotMode()} was called.
      * @param <V> setting value type
      */
     @SuppressWarnings("unchecked")
     protected <V> void resetState()
     {
+        // Note that the parameter factory (super class) resets its own state when it has set parameter values
         if (this.state == null)
         {
             return;
@@ -881,11 +881,12 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
                 {
                     parameters.setDefaultParameter(ArTaskCarFollowingExp.HEXP);
                 }
-                if (get(this.trafficLightsTask, gtuType) || get(this.conflictsTask, gtuType))
+                if (get(this.trafficLightsTask, gtuType) || get(this.intersectionTask, gtuType))
                 {
-                    // TODO parameters of enhanced intersection model
-                    parameters.setDefaultParameter(ChannelTaskConflict.HEGO);
-                    parameters.setDefaultParameter(ChannelTaskConflict.HCONF);
+                    parameters.setDefaultParameter(ChannelTaskIntersection.TD_B);
+                    parameters.setDefaultParameter(ChannelTaskIntersection.TD_C);
+                    parameters.setDefaultParameter(ChannelTaskIntersection.BETA_YL);
+                    parameters.setDefaultParameter(ChannelTaskIntersection.BETA_CON);
                 }
                 if (get(this.signalTask, gtuType))
                 {
@@ -1056,8 +1057,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             addChannelTask(taskSuppliers, get(this.signalTask, gtuType), ChannelTaskSignal.SUPPLIER);
             addChannelTask(taskSuppliers, get(this.laneChangingTask, gtuType), ChannelTaskLaneChange.SUPPLIER);
             addChannelTask(taskSuppliers, get(this.cooperationTask, gtuType), ChannelTaskCooperation.SUPPLIER);
-            // TODO update conflict channel task to better intersection/infrastructure based model
-            addChannelTask(taskSuppliers, get(this.conflictsTask, gtuType), ChannelTaskConflict.SUPPLIER);
+            addChannelTask(taskSuppliers, get(this.intersectionTask, gtuType), ChannelTaskIntersection.SUPPLIER);
             addChannelTask(taskSuppliers, get(this.roadSideDistractionTask, gtuType),
                     new ChannelTaskRoadSideDistraction.Supplier(gtu));
             addChannelTask(taskSuppliers, true, ChannelTaskScan.SUPPLIER);
@@ -1350,8 +1350,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         /** Enables cooperation task under ATTENTION_MATRIX (default: true). */
         public static final Setting<Boolean> TASK_COOPERATION = new Setting<>((factory) -> factory.cooperationTask);
 
-        /** Enables conflicts task under ATTENTION_MATRIX (default: false). */
-        public static final Setting<Boolean> TASK_CONFLICTS = new Setting<>((factory) -> factory.conflictsTask);
+        /** Enables intersection task under ATTENTION_MATRIX (default: false). */
+        public static final Setting<Boolean> TASK_INTERSECTION = new Setting<>((factory) -> factory.intersectionTask);
 
         /** Enables road-side distraction task (default: false). */
         public static final Setting<Boolean> TASK_ROADSIDE_DISTRACTION =

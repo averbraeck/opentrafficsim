@@ -584,7 +584,7 @@ public final class ModelParser
                 setForModel(lmrsFactory, t.getTrafficLights(), Setting.TASK_TRAFFIC_LIGHTS, gtuType, eval);
                 setForModel(lmrsFactory, t.getSignal(), Setting.TASK_SIGNAL, gtuType, eval);
                 setForModel(lmrsFactory, t.getCooperation(), Setting.TASK_COOPERATION, gtuType, eval);
-                setForModel(lmrsFactory, t.getIntersection(), Setting.TASK_CONFLICTS, gtuType, eval);
+                setForModel(lmrsFactory, t.getIntersection(), Setting.TASK_INTERSECTION, gtuType, eval);
                 setForModel(lmrsFactory, t.getCarFollowing(), Setting.TASK_CAR_FOLLOWING, gtuType, eval);
                 setForModel(lmrsFactory, t.getLaneChanging(), Setting.TASK_LANE_CHANGE, gtuType, eval);
                 setForModel(lmrsFactory, t.getRoadSideDistraction(), Setting.TASK_ROADSIDE_DISTRACTION, gtuType, eval);

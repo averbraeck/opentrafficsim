@@ -72,7 +72,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
     }
 
     @Override
-    public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
+    public OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
     {
         // create tactical context
@@ -151,7 +151,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "LMRS [mandatoryIncentives=" + getMandatoryIncentives() + ", voluntaryIncentives=" + getVoluntaryIncentives()
                 + ", accelerationIncentives = " + getAccelerationIncentives() + "]";
