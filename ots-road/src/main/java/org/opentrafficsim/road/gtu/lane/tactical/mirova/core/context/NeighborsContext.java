@@ -24,111 +24,149 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.following.MirovaCarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
- * Context category describing the dynamic interaction between the ego vehicle
- * and neighboring vehicles on adjacent lanes.
+ * Context category describing the dynamic interaction between the ego vehicle and neighboring vehicles on adjacent lanes.
  * <p>
- * Forms a central part of <b>Layer 1 (Perception & Context)</b> in the MiRoVA architecture.
- * Computes and stores indicators for lane-change feasibility, such as:
+ * Forms a central part of <b>Layer 1 (Perception & Context)</b> in the MiRoVA architecture. Computes and stores indicators for
+ * lane-change feasibility, such as:
  * <ul>
  * <li>Deceleration required by the ego vehicle on the target lane.</li>
  * <li>Deceleration required by the follower in the target lane.</li>
  * </ul>
- * These indicators are computed separately for both left and right directions,
- * but only if a lane change in that direction is currently legal and possible.
+ * These indicators are computed separately for both left and right directions, but only if a lane change in that direction is
+ * currently legal and possible.
  * </p>
  * <p>
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
-public class NeighborsContext extends ContextCategory implements UpdatableContext {
+public class NeighborsContext extends ContextCategory implements UpdatableContext
+{
 
     /** Cache key for ego deceleration left. */
     public static final String EGO_DECEL_LEFT = "egoDecel_LEFT";
+
     /** Cache key for ego deceleration right. */
     public static final String EGO_DECEL_RIGHT = "egoDecel_RIGHT";
+
     /** Cache key for follower deceleration left. */
     public static final String FOLLOWER_DECEL_LEFT = "followerDecel_LEFT";
+
     /** Cache key for follower deceleration right. */
     public static final String FOLLOWER_DECEL_RIGHT = "followerDecel_RIGHT";
+
     /** Cache key for front gap distance current lane. */
     public static final String FRONT_GAP_DISTANCE_CURRENT = "frontGapDistanceCurrent";
+
     /** Cache key for front gap distance left lane. */
     public static final String FRONT_GAP_DISTANCE_LEFT = "frontGapDistanceLeft";
+
     /** Cache key for front gap distance right lane. */
     public static final String FRONT_GAP_DISTANCE_RIGHT = "frontGapDistanceRight";
+
     /** Cache key for front gap delta speed current lane. */
     public static final String FRONT_GAP_DELTA_SPEED_CURRENT = "frontGapDeltaSpeedCurrent";
+
     /** Cache key for front gap delta speed left lane. */
     public static final String FRONT_GAP_DELTA_SPEED_LEFT = "frontGapDeltaSpeedLeft";
+
     /** Cache key for front gap delta speed right lane. */
     public static final String FRONT_GAP_DELTA_SPEED_RIGHT = "frontGapDeltaSpeedRight";
+
     /** Cache key for front gap time headway current lane. */
     public static final String FRONT_GAP_TIME_HEADWAY_CURRENT = "frontGapTimeHeadwayCurrent";
+
     /** Cache key for front gap time headway left lane. */
     public static final String FRONT_GAP_TIME_HEADWAY_LEFT = "frontGapTimeHeadwayLeft";
+
     /** Cache key for front gap time headway right lane. */
     public static final String FRONT_GAP_TIME_HEADWAY_RIGHT = "frontGapTimeHeadwayRight";
+
     /** Cache key for current leader. */
     public static final String CURRENT_LEADER = "currentLeader";
+
     /** Cache key for left leader. */
     public static final String LEFT_LEADER = "leftLeader";
+
     /** Cache key for right leader. */
     public static final String RIGHT_LEADER = "rightLeader";
+
     /** Cache key for current follower. */
     public static final String CURRENT_FOLLOWER = "currentFollower";
+
     /** Cache key for left follower. */
     public static final String LEFT_FOLLOWER = "leftFollower";
+
     /** Cache key for right follower. */
     public static final String RIGHT_FOLLOWER = "rightFollower";
+
     /** Cache key for leaders in current lane. */
     public static final String LEADERS_CURRENT = "leaders_CURRENT";
+
     /** Cache key for leaders in left lane. */
     public static final String LEADERS_LEFT = "leaders_LEFT";
+
     /** Cache key for leaders in right lane. */
     public static final String LEADERS_RIGHT = "leaders_RIGHT";
+
     /** Cache key for followers in current lane. */
     public static final String FOLLOWERS_CURRENT = "followers_CURRENT";
+
     /** Cache key for followers in left lane. */
     public static final String FOLLOWERS_LEFT = "followers_LEFT";
+
     /** Cache key for followers in right lane. */
     public static final String FOLLOWERS_RIGHT = "followers_RIGHT";
+
     /** Cache key for rear gap distance current lane. */
     public static final String REAR_GAP_DISTANCE_CURRENT = "rearGapDistanceCurrent";
+
     /** Cache key for rear gap distance left lane. */
     public static final String REAR_GAP_DISTANCE_LEFT = "rearGapDistanceLeft";
+
     /** Cache key for rear gap distance right lane. */
     public static final String REAR_GAP_DISTANCE_RIGHT = "rearGapDistanceRight";
+
     /** Cache key for rear gap delta speed current lane. */
     public static final String REAR_GAP_DELTA_SPEED_CURRENT = "rearGapDeltaSpeedCurrent";
+
     /** Cache key for rear gap delta speed left lane. */
     public static final String REAR_GAP_DELTA_SPEED_LEFT = "rearGapDeltaSpeedLeft";
+
     /** Cache key for rear gap delta speed right lane. */
     public static final String REAR_GAP_DELTA_SPEED_RIGHT = "rearGapDeltaSpeedRight";
+
     /** Cache key for rear gap time headway current lane. */
     public static final String REAR_GAP_TIME_HEADWAY_CURRENT = "rearGapTimeHeadwayCurrent";
+
     /** Cache key for rear gap time headway left lane. */
     public static final String REAR_GAP_TIME_HEADWAY_LEFT = "rearGapTimeHeadwayLeft";
+
     /** Cache key for rear gap time headway right lane. */
     public static final String REAR_GAP_TIME_HEADWAY_RIGHT = "rearGapTimeHeadwayRight";
+
     /** Cache key for right side overtaking ahead flag. */
     public static final String RIGHT_SIDE_OVERTAKING_AHEAD = "rightSideOvertakingAhead";
+
     /** Cache key for lane change possible left flag. */
     public static final String LANE_CHANGE_POSSIBLE_LEFT = "laneChangePossibleLeft";
+
     /** Cache key for lane change possible right flag. */
     public static final String LANE_CHANGE_POSSIBLE_RIGHT = "laneChangePossibleRight";
+
     /** Cache key for GTU alongside left flag. */
     public static final String GTU_ALONGSIDE_LEFT = "alongside_LEFT";
+
     /** Cache key for GTU alongside right flag. */
     public static final String GTU_ALONGSIDE_RIGHT = "alongside_RIGHT";
 
- // =========================================================================================
+    // =========================================================================================
     // NEUE FELDER: CUT-IN DETECTION MEMORY
     // =========================================================================================
 
@@ -144,10 +182,10 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Constructs a new {@code NeighborsContext}.
-     *
      * @param vehicle the ego vehicle associated with this context
      */
-    public NeighborsContext(final MirovaTacticalPlanner vehicle) {
+    public NeighborsContext(final MirovaTacticalPlanner vehicle)
+    {
         super("Neighbors", vehicle);
     }
 
@@ -156,79 +194,66 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     // ----------------------------------------------------------------------
 
     /**
-     * Computes the deceleration required by the ego vehicle when attempting
-     * a lane change in the specified direction.
+     * Computes the deceleration required by the ego vehicle when attempting a lane change in the specified direction.
      * <p>
-     * For each leader vehicle on the target lane, the car-following model is
-     * evaluated to determine the necessary braking effort to safely merge.
-     * The minimum (most restrictive) value across all leaders is returned.
+     * For each leader vehicle on the target lane, the car-following model is evaluated to determine the necessary braking
+     * effort to safely merge. The minimum (most restrictive) value across all leaders is returned.
      * </p>
-     *
      * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
      * @return minimum required ego deceleration [m/s²]
-     * @throws ParameterException       if a parameter lookup fails
+     * @throws ParameterException if a parameter lookup fails
      * @throws OperationalPlanException if car-following computation fails
+     * @throws GtuException if GTU state cannot be accessed
      */
     private Acceleration computeLaneChangeEgoDeceleration(final LateralDirectionality laneChangeDirection)
-            throws ParameterException, OperationalPlanException {
+            throws ParameterException, OperationalPlanException, GtuException
+    {
         Acceleration egoDeceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         NeighborsPerception neighbors = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
-        InfrastructureContext infra = this.vehicle.getContextManager()
-                .getCategory("Infrastructure", InfrastructureContext.class);
+        // InfrastructureContext infra =
+        // this.vehicle.getContextManager().getCategory("Infrastructure", InfrastructureContext.class);
 
-        // Retrieve current legal speed limit info
-        SpeedLimitInfo currentLimitInfo = infra.getCurrentSpeedLimit();
-        CarFollowingModel cfModel = this.vehicle.getCarFollowingModel();
-        Parameters params = this.vehicle.getGtu().getParameters();
-        Speed egoSpeed = this.vehicle.getContextManager()
-                .getCategory("Ego", EgoContext.class)
-                .getEgoSpeed();
+        // // Retrieve current legal speed limit info
+        // SpeedLimitInfo currentLimitInfo = infra.getCurrentSpeedLimit();
+        // CarFollowingModel cfModel = this.vehicle.getCarFollowingModel();
+        // Parameters params = this.vehicle.getGtu().getParameters();
+        // Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
 
-        for (HeadwayGtu leader : neighbors.getFirstLeaders(laneChangeDirection)) {
-            Acceleration iteraryDecel = CarFollowingUtil.followSingleLeader(
-                    cfModel,
-                    params,
-                    egoSpeed,
-                    currentLimitInfo,
-                    leader.getDistance(),
-                    leader.getSpeed());
+        for (HeadwayGtu leader : neighbors.getFirstLeaders(laneChangeDirection))
+        {
+            Acceleration iteraryDecel = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, leader);
+
             egoDeceleration = Acceleration.min(egoDeceleration, iteraryDecel);
         }
         return egoDeceleration;
     }
 
     /**
-     * Computes the deceleration required by the follower on the target lane
-     * to maintain safety if the ego vehicle were to change lanes.
+     * Computes the deceleration required by the follower on the target lane to maintain safety if the ego vehicle were to
+     * change lanes.
      * <p>
-     * This method evaluates, for each follower vehicle, the car-following model
-     * of that follower using its own parameters and perception. The result
-     * represents the minimum (most restrictive) deceleration that would be
-     * induced by the ego vehicle’s lane change.
+     * This method evaluates, for each follower vehicle, the car-following model of that follower using its own parameters and
+     * perception. The result represents the minimum (most restrictive) deceleration that would be induced by the ego vehicle’s
+     * lane change.
      * </p>
-     *
      * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
      * @return minimum required follower deceleration [m/s²]
-     * @throws ParameterException       if a parameter lookup fails
+     * @throws ParameterException if a parameter lookup fails
      * @throws OperationalPlanException if car-following computation fails
      */
     private Acceleration computeLaneChangeFollowerDeceleration(final LateralDirectionality laneChangeDirection)
-            throws ParameterException, OperationalPlanException {
+            throws ParameterException, OperationalPlanException
+    {
         Acceleration followerDecelValue = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         NeighborsPerception neighbors = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
 
-        Speed egoSpeed = this.vehicle.getContextManager()
-                .getCategory("Ego", EgoContext.class)
-                .getEgoSpeed();
+        Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
 
-        for (HeadwayGtu follower : neighbors.getFirstFollowers(laneChangeDirection)) {
-            Acceleration iteraryDecel = CarFollowingUtil.followSingleLeader(
-                    follower.getCarFollowingModel(),
-                    follower.getParameters(),
-                    follower.getSpeed(),
-                    follower.getSpeedLimitInfo(),
-                    follower.getDistance(),
-                    egoSpeed);
+        for (HeadwayGtu follower : neighbors.getFirstFollowers(laneChangeDirection))
+        {
+            Acceleration iteraryDecel =
+                    CarFollowingUtil.followSingleLeader(follower.getCarFollowingModel(), follower.getParameters(),
+                            follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), egoSpeed);
             followerDecelValue = Acceleration.min(followerDecelValue, iteraryDecel);
         }
         return followerDecelValue;
@@ -238,14 +263,15 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the ego deceleration required for a lane change.
-     *
      * @param dir the intended lane change direction
      * @return the computed ego deceleration
      */
-    public Acceleration getEgoDeceleration(final LateralDirectionality dir) {
+    public Acceleration getEgoDeceleration(final LateralDirectionality dir)
+    {
         String name = dir.isLeft() ? EGO_DECEL_LEFT : EGO_DECEL_RIGHT;
         Acceleration cached = getCachedValue(name, Acceleration.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -256,14 +282,15 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the follower deceleration induced by a lane change.
-     *
      * @param dir the intended lane change direction
      * @return the computed follower deceleration
      */
-    public Acceleration getFollowerDeceleration(final LateralDirectionality dir) {
+    public Acceleration getFollowerDeceleration(final LateralDirectionality dir)
+    {
         String name = dir.isLeft() ? FOLLOWER_DECEL_LEFT : FOLLOWER_DECEL_RIGHT;
         Acceleration cached = getCachedValue(name, Acceleration.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -274,21 +301,27 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the front gap distance in the specified direction.
-     *
      * @param dir the intended direction
      * @return the front gap distance
      */
-    public Length getFrontGapDistance(final LateralDirectionality dir) {
+    public Length getFrontGapDistance(final LateralDirectionality dir)
+    {
         String name;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             name = FRONT_GAP_DISTANCE_LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             name = FRONT_GAP_DISTANCE_RIGHT;
-        } else {
+        }
+        else
+        {
             name = FRONT_GAP_DISTANCE_CURRENT;
         }
         Length cached = getCachedValue(name, Length.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -299,21 +332,27 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the speed difference to the front gap leader in the specified direction.
-     *
      * @param dir the intended direction
      * @return the speed difference (ego speed minus leader speed)
      */
-    public Speed getFrontGapDeltaSpeed(final LateralDirectionality dir) {
+    public Speed getFrontGapDeltaSpeed(final LateralDirectionality dir)
+    {
         String name;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             name = FRONT_GAP_DELTA_SPEED_LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             name = FRONT_GAP_DELTA_SPEED_RIGHT;
-        } else {
+        }
+        else
+        {
             name = FRONT_GAP_DELTA_SPEED_CURRENT;
         }
         Speed cached = getCachedValue(name, Speed.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -324,21 +363,27 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the front gap time headway in the specified direction.
-     *
      * @param dir the intended direction
      * @return the front gap time headway
      */
-    public Duration getFrontGapTimeHeadway(final LateralDirectionality dir) {
+    public Duration getFrontGapTimeHeadway(final LateralDirectionality dir)
+    {
         String name;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             name = FRONT_GAP_TIME_HEADWAY_LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             name = FRONT_GAP_TIME_HEADWAY_RIGHT;
-        } else {
+        }
+        else
+        {
             name = FRONT_GAP_TIME_HEADWAY_CURRENT;
         }
         Duration cached = getCachedValue(name, Duration.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -349,21 +394,27 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the rear gap distance in the specified direction.
-     *
      * @param dir the intended direction
      * @return the rear gap distance
      */
-    public Length getRearGapDistance(final LateralDirectionality dir) {
+    public Length getRearGapDistance(final LateralDirectionality dir)
+    {
         String name;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             name = REAR_GAP_DISTANCE_LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             name = REAR_GAP_DISTANCE_RIGHT;
-        } else {
+        }
+        else
+        {
             name = REAR_GAP_DISTANCE_CURRENT;
         }
         Length cached = getCachedValue(name, Length.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -374,21 +425,27 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the speed difference to the rear gap follower in the specified direction.
-     *
      * @param dir the intended direction
      * @return the speed difference (ego speed minus follower speed)
      */
-    public Speed getRearGapDeltaSpeed(final LateralDirectionality dir) {
+    public Speed getRearGapDeltaSpeed(final LateralDirectionality dir)
+    {
         String name;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             name = REAR_GAP_DELTA_SPEED_LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             name = REAR_GAP_DELTA_SPEED_RIGHT;
-        } else {
+        }
+        else
+        {
             name = REAR_GAP_DELTA_SPEED_CURRENT;
         }
         Speed cached = getCachedValue(name, Speed.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -399,21 +456,27 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Lazily computes and returns the rear gap time headway in the specified direction.
-     *
      * @param dir the intended direction
      * @return the rear gap time headway
      */
-    public Duration getRearGapTimeHeadway(final LateralDirectionality dir) {
+    public Duration getRearGapTimeHeadway(final LateralDirectionality dir)
+    {
         String name;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             name = REAR_GAP_TIME_HEADWAY_LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             name = REAR_GAP_TIME_HEADWAY_RIGHT;
-        } else {
+        }
+        else
+        {
             name = REAR_GAP_TIME_HEADWAY_CURRENT;
         }
         Duration cached = getCachedValue(name, Duration.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -427,107 +490,135 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     // ----------------------------------------------------------------------
 
     /**
-     * Returns a cached iterable of all leaders in the given direction.
-     * Computes (via Perception) and caches the result if not yet available.
-     *
+     * Returns a cached iterable of all leaders in the given direction. Computes (via Perception) and caches the result if not
+     * yet available.
      * @param dir Direction to look for leaders
      * @return Iterable of HeadwayGtu (empty if no perception available)
      */
     @SuppressWarnings("unchecked")
-    public Iterable<HeadwayGtu> getLeaders(final LateralDirectionality dir) {
+    public Iterable<HeadwayGtu> getLeaders(final LateralDirectionality dir)
+    {
         String key;
         RelativeLane lane;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             key = LEADERS_LEFT;
             lane = RelativeLane.LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             key = LEADERS_RIGHT;
             lane = RelativeLane.RIGHT;
-        } else {
+        }
+        else
+        {
             key = LEADERS_CURRENT;
             lane = RelativeLane.CURRENT;
         }
 
         Iterable<HeadwayGtu> cached = getCachedValue(key, Iterable.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
-        try {
+        try
+        {
             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> result =
                     this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
             cacheValue(key, result, true);
             return result;
-        } catch (OperationalPlanException e) {
+        }
+        catch (OperationalPlanException e)
+        {
             return Collections.emptyList();
         }
     }
 
     /**
-     * Returns a cached iterable of all followers in the given direction.
-     * Computes (via Perception) and caches the result if not yet available.
-     *
+     * Returns a cached iterable of all followers in the given direction. Computes (via Perception) and caches the result if not
+     * yet available.
      * @param dir Direction to look for followers
      * @return Iterable of HeadwayGtu (empty if no perception available)
      */
     @SuppressWarnings("unchecked")
-    public Iterable<HeadwayGtu> getFollowers(final LateralDirectionality dir) {
+    public Iterable<HeadwayGtu> getFollowers(final LateralDirectionality dir)
+    {
         String key;
         RelativeLane lane;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             key = FOLLOWERS_LEFT;
             lane = RelativeLane.LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             key = FOLLOWERS_RIGHT;
             lane = RelativeLane.RIGHT;
-        } else {
+        }
+        else
+        {
             key = FOLLOWERS_CURRENT;
             lane = RelativeLane.CURRENT;
         }
 
         Iterable<HeadwayGtu> cached = getCachedValue(key, Iterable.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
-        try {
+        try
+        {
             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> result =
                     this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class).getFollowers(lane);
             cacheValue(key, result, true);
             return result;
-        } catch (OperationalPlanException e) {
+        }
+        catch (OperationalPlanException e)
+        {
             return Collections.emptyList();
         }
     }
 
     /**
-     * Returns whether there is a GTU alongside in the given direction.
-     * Computes (via Perception) and caches the result if not yet available.
-     *
+     * Returns whether there is a GTU alongside in the given direction. Computes (via Perception) and caches the result if not
+     * yet available.
      * @param dir Direction to check for alongside GTU
      * @return true if there is a GTU alongside, false if not or if perception unavailable
-     * @throws ParameterException       if a parameter lookup fails
-     * @throws NullPointerException     if perception context is null
+     * @throws ParameterException if a parameter lookup fails
+     * @throws NullPointerException if perception context is null
      * @throws IllegalArgumentException if an illegal argument is provided
      */
-    public Boolean isGtuAlongside(final LateralDirectionality dir) throws ParameterException, NullPointerException, IllegalArgumentException {
+    public Boolean isGtuAlongside(final LateralDirectionality dir)
+            throws ParameterException, NullPointerException, IllegalArgumentException
+    {
         String key;
-        if (dir.isLeft()) {
+        if (dir.isLeft())
+        {
             key = GTU_ALONGSIDE_LEFT;
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             key = GTU_ALONGSIDE_RIGHT;
-        } else {
+        }
+        else
+        {
             return false; // No alongside for current lane
         }
         Boolean cached = getCachedValue(key, Boolean.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
-        try {
+        try
+        {
             boolean result = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class).isGtuAlongside(dir);
             cacheValue(key, result, true);
             return result;
-        } catch (OperationalPlanException e) {
+        }
+        catch (OperationalPlanException e)
+        {
             return false;
         }
     }
@@ -537,31 +628,35 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     // ----------------------------------------------------------------------
 
     /**
-     * Returns the nearest leader in the specified direction.
-     * Delegates to the specific lane accessor methods.
-     *
+     * Returns the nearest leader in the specified direction. Delegates to the specific lane accessor methods.
      * @param dir the lateral direction
      * @return the nearest leader or null
      */
-    public HeadwayGtu getLeader(final LateralDirectionality dir) {
-        if (dir.isLeft()) {
+    public HeadwayGtu getLeader(final LateralDirectionality dir)
+    {
+        if (dir.isLeft())
+        {
             return getLeftLeader();
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             return getRightLeader();
-        } else {
+        }
+        else
+        {
             return getCurrentLeader();
         }
     }
 
     /**
-     * Returns the nearest leader on the current lane.
-     * Uses the cached leader list to extract the first element.
-     *
+     * Returns the nearest leader on the current lane. Uses the cached leader list to extract the first element.
      * @return the nearest leader or null
      */
-    public HeadwayGtu getCurrentLeader() {
+    public HeadwayGtu getCurrentLeader()
+    {
         HeadwayGtu cached = getCachedValue(CURRENT_LEADER, HeadwayGtu.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -574,14 +669,14 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
     /**
-     * Returns the nearest leader on the left lane.
-     * Uses the cached leader list to extract the first element.
-     *
+     * Returns the nearest leader on the left lane. Uses the cached leader list to extract the first element.
      * @return the nearest leader or null
      */
-    public HeadwayGtu getLeftLeader() {
+    public HeadwayGtu getLeftLeader()
+    {
         HeadwayGtu cached = getCachedValue(LEFT_LEADER, HeadwayGtu.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -594,14 +689,14 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
     /**
-     * Returns the nearest leader on the right lane.
-     * Uses the cached leader list to extract the first element.
-     *
+     * Returns the nearest leader on the right lane. Uses the cached leader list to extract the first element.
      * @return the nearest leader or null
      */
-    public HeadwayGtu getRightLeader() {
+    public HeadwayGtu getRightLeader()
+    {
         HeadwayGtu cached = getCachedValue(RIGHT_LEADER, HeadwayGtu.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -618,31 +713,35 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     // ----------------------------------------------------------------------
 
     /**
-     * Returns the nearest follower in the specified direction.
-     * Delegates to the specific lane accessor methods.
-     *
+     * Returns the nearest follower in the specified direction. Delegates to the specific lane accessor methods.
      * @param dir the lateral direction
      * @return the nearest follower or null
      */
-    public HeadwayGtu getFollower(final LateralDirectionality dir) {
-        if (dir.isLeft()) {
+    public HeadwayGtu getFollower(final LateralDirectionality dir)
+    {
+        if (dir.isLeft())
+        {
             return getLeftFollower();
-        } else if (dir.isRight()) {
+        }
+        else if (dir.isRight())
+        {
             return getRightFollower();
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
 
     /**
-     * Returns the nearest follower on the current lane.
-     * Uses the cached follower list to extract the first element.
-     *
+     * Returns the nearest follower on the current lane. Uses the cached follower list to extract the first element.
      * @return the nearest follower or null
      */
-    public HeadwayGtu getCurrentFollower() {
+    public HeadwayGtu getCurrentFollower()
+    {
         HeadwayGtu cached = getCachedValue(CURRENT_FOLLOWER, HeadwayGtu.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -655,14 +754,14 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
     /**
-     * Returns the nearest follower on the left lane.
-     * Uses the cached follower list to extract the first element.
-     *
+     * Returns the nearest follower on the left lane. Uses the cached follower list to extract the first element.
      * @return the nearest follower or null
      */
-    public HeadwayGtu getLeftFollower() {
+    public HeadwayGtu getLeftFollower()
+    {
         HeadwayGtu cached = getCachedValue(LEFT_FOLLOWER, HeadwayGtu.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -675,14 +774,14 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
     /**
-     * Returns the nearest follower on the right lane.
-     * Uses the cached follower list to extract the first element.
-     *
+     * Returns the nearest follower on the right lane. Uses the cached follower list to extract the first element.
      * @return the nearest follower or null
      */
-    public HeadwayGtu getRightFollower() {
+    public HeadwayGtu getRightFollower()
+    {
         HeadwayGtu cached = getCachedValue(RIGHT_FOLLOWER, HeadwayGtu.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -696,192 +795,253 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
     /**
      * Safely computes ego deceleration handling exceptions internally.
-     *
      * @param dir the lateral direction
      * @return the computed deceleration or NaN on failure
      */
-    private Acceleration computeSafeEgoDecel(final LateralDirectionality dir) {
-        try {
+    private Acceleration computeSafeEgoDecel(final LateralDirectionality dir)
+    {
+        try
+        {
             return computeLaneChangeEgoDeceleration(dir);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return new Acceleration(Double.NaN, AccelerationUnit.SI);
         }
     }
 
     /**
      * Safely computes follower deceleration handling exceptions internally.
-     *
      * @param dir the lateral direction
      * @return the computed deceleration or NaN on failure
      */
-    private Acceleration computeSafeFollowerDecel(final LateralDirectionality dir) {
-        try {
+    private Acceleration computeSafeFollowerDecel(final LateralDirectionality dir)
+    {
+        try
+        {
             return computeLaneChangeFollowerDeceleration(dir);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return new Acceleration(Double.NaN, AccelerationUnit.SI);
         }
     }
 
     /**
      * Internal logic for computing front gap distance.
-     *
      * @param dir the lateral direction
      * @return the gap distance
      */
-    private Length computeFrontGapDistance(final LateralDirectionality dir) {
-        try {
-            if (dir.isLeft()) {
+    private Length computeFrontGapDistance(final LateralDirectionality dir)
+    {
+        try
+        {
+            if (dir.isLeft())
+            {
                 HeadwayGtu leftLeader = getLeftLeader();
                 return leftLeader != null ? leftLeader.getDistance() : Length.POSITIVE_INFINITY;
-            } else if (dir.isRight()) {
+            }
+            else if (dir.isRight())
+            {
                 HeadwayGtu rightLeader = getRightLeader();
                 return rightLeader != null ? rightLeader.getDistance() : Length.POSITIVE_INFINITY;
-            } else {
+            }
+            else
+            {
                 HeadwayGtu leaderHeadway = getCurrentLeader();
                 return leaderHeadway != null ? leaderHeadway.getDistance() : Length.POSITIVE_INFINITY;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return null;
         }
     }
 
     /**
-     * Computes the speed difference between the ego vehicle and the leader in the specified direction.
-     * A positive value indicates that the ego is faster than the leader, while a negative value indicates it is slower.
-     *
+     * Computes the speed difference between the ego vehicle and the leader in the specified direction. A positive value
+     * indicates that the ego is faster than the leader, while a negative value indicates it is slower.
      * @param dir the lateral direction to check (LEFT, RIGHT, or NONE for current lane)
      * @return the speed difference (ego speed minus leader speed) or null if computation fails
      */
-    private Speed computeFrontGapDeltaSpeed(final LateralDirectionality dir) {
-        try {
+    private Speed computeFrontGapDeltaSpeed(final LateralDirectionality dir)
+    {
+        try
+        {
             Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
-            if (dir.isLeft()) {
+            if (dir.isLeft())
+            {
                 HeadwayGtu leftLeader = getLeftLeader();
                 return leftLeader != null ? egoSpeed.minus(leftLeader.getSpeed()) : Speed.NEGATIVE_INFINITY;
-            } else if (dir.isRight()) {
+            }
+            else if (dir.isRight())
+            {
                 HeadwayGtu rightLeader = getRightLeader();
                 return rightLeader != null ? egoSpeed.minus(rightLeader.getSpeed()) : Speed.NEGATIVE_INFINITY;
-            } else {
+            }
+            else
+            {
                 HeadwayGtu leaderHeadway = getCurrentLeader();
                 return leaderHeadway != null ? egoSpeed.minus(leaderHeadway.getSpeed()) : Speed.NEGATIVE_INFINITY;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return null;
         }
     }
 
     /**
      * Internal logic for computing front gap time headway.
-     *
      * @param dir the lateral direction
      * @return the time headway
      */
-    private Duration computeFrontGapTimeHeadway(final LateralDirectionality dir) {
-        try {
+    private Duration computeFrontGapTimeHeadway(final LateralDirectionality dir)
+    {
+        try
+        {
             Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
-            if (egoSpeed.le(Speed.ZERO)) {
+            if (egoSpeed.le(Speed.ZERO))
+            {
                 return Duration.POSITIVE_INFINITY;
             }
 
-            if (dir.isLeft()) {
+            if (dir.isLeft())
+            {
                 HeadwayGtu leftLeader = getLeftLeader();
-                return leftLeader != null ? Duration.instantiateSI(leftLeader.getDistance().si / egoSpeed.si) : Duration.POSITIVE_INFINITY;
-            } else if (dir.isRight()) {
-                HeadwayGtu rightLeader = getRightLeader();
-                return rightLeader != null ? Duration.instantiateSI(rightLeader.getDistance().si / egoSpeed.si) : Duration.POSITIVE_INFINITY;
-            } else {
-                HeadwayGtu leaderHeadway = getCurrentLeader();
-                return leaderHeadway != null ? Duration.instantiateSI(leaderHeadway.getDistance().si / egoSpeed.si) : Duration.POSITIVE_INFINITY;
+                return leftLeader != null ? Duration.instantiateSI(leftLeader.getDistance().si / egoSpeed.si)
+                        : Duration.POSITIVE_INFINITY;
             }
-        } catch (Exception e) {
+            else if (dir.isRight())
+            {
+                HeadwayGtu rightLeader = getRightLeader();
+                return rightLeader != null ? Duration.instantiateSI(rightLeader.getDistance().si / egoSpeed.si)
+                        : Duration.POSITIVE_INFINITY;
+            }
+            else
+            {
+                HeadwayGtu leaderHeadway = getCurrentLeader();
+                return leaderHeadway != null ? Duration.instantiateSI(leaderHeadway.getDistance().si / egoSpeed.si)
+                        : Duration.POSITIVE_INFINITY;
+            }
+        }
+        catch (Exception e)
+        {
             return null;
         }
     }
 
     /**
      * Internal logic for computing rear gap distance.
-     *
      * @param dir the lateral direction
      * @return the gap distance
      */
-    private Length computeRearGapDistance(final LateralDirectionality dir) {
-        try {
-            if (dir.isLeft()) {
+    private Length computeRearGapDistance(final LateralDirectionality dir)
+    {
+        try
+        {
+            if (dir.isLeft())
+            {
                 HeadwayGtu leftFollower = getLeftFollower();
                 return leftFollower != null ? leftFollower.getDistance() : Length.POSITIVE_INFINITY;
-            } else if (dir.isRight()) {
+            }
+            else if (dir.isRight())
+            {
                 HeadwayGtu rightFollower = getRightFollower();
                 return rightFollower != null ? rightFollower.getDistance() : Length.POSITIVE_INFINITY;
-            } else {
+            }
+            else
+            {
                 HeadwayGtu followerHeadway = getCurrentFollower();
                 return followerHeadway != null ? followerHeadway.getDistance() : Length.POSITIVE_INFINITY;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return null;
         }
     }
 
     /**
      * Internal logic for computing rear gap delta speed.
-     *
      * @param dir the lateral direction
      * @return the delta speed
      */
-    private Speed computeRearGapDeltaSpeed(final LateralDirectionality dir) {
-        try {
+    private Speed computeRearGapDeltaSpeed(final LateralDirectionality dir)
+    {
+        try
+        {
             Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
-            if (dir.isLeft()) {
+            if (dir.isLeft())
+            {
                 HeadwayGtu leftFollower = getLeftFollower();
                 return leftFollower != null ? egoSpeed.minus(leftFollower.getSpeed()) : Speed.ZERO;
-            } else if (dir.isRight()) {
+            }
+            else if (dir.isRight())
+            {
                 HeadwayGtu rightFollower = getRightFollower();
                 return rightFollower != null ? egoSpeed.minus(rightFollower.getSpeed()) : Speed.ZERO;
-            } else {
+            }
+            else
+            {
                 HeadwayGtu followerHeadway = getCurrentFollower();
                 return followerHeadway != null ? egoSpeed.minus(followerHeadway.getSpeed()) : Speed.ZERO;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return null;
         }
     }
 
     /**
      * Internal logic for computing rear gap time headway.
-     *
      * @param dir the lateral direction
      * @return the time headway
      */
-    private Duration computeRearGapTimeHeadway(final LateralDirectionality dir) {
-        try {
+    private Duration computeRearGapTimeHeadway(final LateralDirectionality dir)
+    {
+        try
+        {
             HeadwayGtu follower;
-            if (dir.isLeft()) {
+            if (dir.isLeft())
+            {
                 follower = getLeftFollower();
-            } else if (dir.isRight()) {
+            }
+            else if (dir.isRight())
+            {
                 follower = getRightFollower();
-            } else {
+            }
+            else
+            {
                 follower = getCurrentFollower();
             }
 
-            if (follower != null) {
+            if (follower != null)
+            {
                 Speed followerSpeed = getFollower(dir).getSpeed();
-                if (followerSpeed.gt(Speed.ZERO)) {
+                if (followerSpeed.gt(Speed.ZERO))
+                {
                     return Duration.instantiateSI(follower.getDistance().si / followerSpeed.si);
                 }
             }
             return Duration.POSITIVE_INFINITY;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return null;
         }
     }
 
     /**
      * Checks and lazily returns if there is a right-side overtaking situation ahead of the ego vehicle.
-     *
      * @return true if overtaking on the right is imminent, false otherwise
      */
-    public Boolean getRightSideOvertakingAhead() {
+    public Boolean getRightSideOvertakingAhead()
+    {
         Boolean cached = getCachedValue(RIGHT_SIDE_OVERTAKING_AHEAD, Boolean.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
@@ -893,20 +1053,24 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     /**
      * Checks if there is a right-side overtaking situation ahead of the ego vehicle.
      * <p>
-     * This method evaluates the speed and distance of vehicles in the left and current lanes
-     * to determine if the ego vehicle is set to overtake a slower vehicle in the left lane.
+     * This method evaluates the speed and distance of vehicles in the left and current lanes to determine if the ego vehicle is
+     * set to overtake a slower vehicle in the left lane.
      * </p>
-     *
      * @return true if a right-side overtaking situation is detected, false otherwise
      */
-    public Boolean checkRightSideOvertakingAhead() {
-        try {
+    public Boolean checkRightSideOvertakingAhead()
+    {
+        try
+        {
             Speed leftSpeedDelta = getFrontGapDeltaSpeed(LateralDirectionality.LEFT);
             Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
 
-            // german law allows right-side overtaking only if the left vehicle is at least 20 km/h slower and ego is not exceeding 60 km/h (StVO §5(4))
+            // german law allows right-side overtaking only if the left vehicle is at least 20 km/h slower and ego is not
+            // exceeding 60 km/h (StVO §5(4))
             // for now, we assume strict adherence to this rule (because we are german)
-            if (leftSpeedDelta.le(new Speed(20.0, SpeedUnit.KM_PER_HOUR)) && egoSpeed.le(new Speed(60.0, SpeedUnit.KM_PER_HOUR))) {
+            if (leftSpeedDelta.le(new Speed(20.0, SpeedUnit.KM_PER_HOUR))
+                    && egoSpeed.le(new Speed(60.0, SpeedUnit.KM_PER_HOUR)))
+            {
                 return false;
             }
 
@@ -915,7 +1079,9 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
             Duration thresholdTTC = this.vehicle.getParameters().getParameter(MirovaParameters.undercuttingTTCThreshold);
 
             return leftSpeedDelta.gt(Speed.ZERO) && leftTTC.lt(thresholdTTC);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return false;
         }
     }
@@ -923,23 +1089,25 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     /**
      * Determines if a lane change is feasible in the specified direction.
      * <p>
-     * The feasibility check considers the required decelerations for both
-     * the ego vehicle and the follower on the target lane, as well as
-     * the available headways (gaps) in front of and behind the ego vehicle.
+     * The feasibility check considers the required decelerations for both the ego vehicle and the follower on the target lane,
+     * as well as the available headways (gaps) in front of and behind the ego vehicle.
      * </p>
-     *
      * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
      * @return true if the lane change is feasible, false otherwise
      * @throws ParameterException if parameter retrieval fails
-     * @throws NetworkException   if network parsing fails
-     * @throws GtuException       if GTU access fails
+     * @throws NetworkException if network parsing fails
+     * @throws GtuException if GTU access fails
      */
-    public Boolean checkIfLaneChangeIsPossible(final LateralDirectionality laneChangeDirection) throws ParameterException, GtuException, NetworkException {
+    public Boolean checkIfLaneChangeIsPossible(final LateralDirectionality laneChangeDirection)
+            throws ParameterException, GtuException, NetworkException
+    {
 
         InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
         Boolean laneChangeLegal = infraCtx.getIfLaneAvailable(laneChangeDirection);
-        if (getFollower(laneChangeDirection) == null && getLeader(laneChangeDirection) == null && laneChangeLegal) {
-            // if there is no follower, we can be a bit more lenient on the gaps and decelerations, so we consider lane change possible
+        if (getFollower(laneChangeDirection) == null && getLeader(laneChangeDirection) == null && laneChangeLegal)
+        {
+            // if there is no follower, we can be a bit more lenient on the gaps and decelerations, so we consider lane change
+            // possible
             return true;
         }
 
@@ -947,7 +1115,8 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
         Acceleration followerDecelThreshold = egoCtx.getFollowerDecelerationThreshold(laneChangeDirection);
         Acceleration egoDecelThreshold = egoCtx.getEgoDecelerationThreshold(laneChangeDirection);
-        Double reductionFactor = this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
+        Double reductionFactor =
+                this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
 
         Acceleration egoDecel = getEgoDeceleration(laneChangeDirection);
         Acceleration followerDecel = getFollowerDeceleration(laneChangeDirection);
@@ -957,35 +1126,37 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         Length desiredRearHeadway = egoCtx.getDesiredRearHeadway(laneChangeDirection).times(reductionFactor);
         Length rearHeadway = getRearGapDistance(laneChangeDirection);
 
-        Length desiredFrontHeadway = Length.max(egoCtx.getDesiredFrontHeadway(laneChangeDirection).times(reductionFactor), vehicleLength);
+        Length desiredFrontHeadway =
+                Length.max(egoCtx.getDesiredFrontHeadway(laneChangeDirection).times(reductionFactor), vehicleLength);
         Length frontHeadway = getFrontGapDistance(laneChangeDirection);
 
-        return laneChangeLegal
-                && egoDecel.gt(egoDecelThreshold)
-                && followerDecel.gt(followerDecelThreshold)
-                && rearHeadway.gt(desiredRearHeadway)
-                && frontHeadway.gt(desiredFrontHeadway);
+        return laneChangeLegal && egoDecel.gt(egoDecelThreshold) && followerDecel.gt(followerDecelThreshold)
+                && rearHeadway.gt(desiredRearHeadway) && frontHeadway.gt(desiredFrontHeadway);
     }
 
     /**
      * Lazily evaluates and caches if a lane change is physically and safely possible in a given direction.
-     *
      * @param dir the intended lane change direction
      * @return true if possible, false otherwise
-     * @throws GtuException     if GTU limits fail
+     * @throws GtuException if GTU limits fail
      * @throws NetworkException if network queries fail
      */
-    public Boolean getIfLaneChangePossible(final LateralDirectionality dir) throws GtuException, NetworkException {
+    public Boolean getIfLaneChangePossible(final LateralDirectionality dir) throws GtuException, NetworkException
+    {
         String name = dir.isLeft() ? LANE_CHANGE_POSSIBLE_LEFT : LANE_CHANGE_POSSIBLE_RIGHT;
         Boolean cached = getCachedValue(name, Boolean.class);
-        if (cached != null) {
+        if (cached != null)
+        {
             return cached;
         }
 
         Boolean result;
-        try {
+        try
+        {
             result = checkIfLaneChangeIsPossible(dir);
-        } catch (ParameterException e) {
+        }
+        catch (ParameterException e)
+        {
             result = false;
         }
         cacheValue(name, result, true);
@@ -993,34 +1164,33 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
     @Override
-    public String toString() {
-        return "NeighborsContext[" +
-                "egoDecelLeft=" + getCachedValue(EGO_DECEL_LEFT, Acceleration.class) +
-                ", egoDecelRight=" + getCachedValue(EGO_DECEL_RIGHT, Acceleration.class) +
-                ", followerDecelLeft=" + getCachedValue(FOLLOWER_DECEL_LEFT, Acceleration.class) +
-                ", followerDecelRight=" + getCachedValue(FOLLOWER_DECEL_RIGHT, Acceleration.class) +
-                ", frontGapDistanceCurrent=" + getCachedValue(FRONT_GAP_DISTANCE_CURRENT, Length.class) +
-                ", frontGapDistanceLeft=" + getCachedValue(FRONT_GAP_DISTANCE_LEFT, Length.class) +
-                ", frontGapDistanceRight=" + getCachedValue(FRONT_GAP_DISTANCE_RIGHT, Length.class) +
-                ", frontGapDeltaSpeedCurrent=" + getCachedValue(FRONT_GAP_DELTA_SPEED_CURRENT, Speed.class) +
-                ", frontGapDeltaSpeedLeft=" + getCachedValue(FRONT_GAP_DELTA_SPEED_LEFT, Speed.class) +
-                ", frontGapDeltaSpeedRight=" + getCachedValue(FRONT_GAP_DELTA_SPEED_RIGHT, Speed.class) +
-                ", frontGapTimeHeadwayCurrent=" + getCachedValue(FRONT_GAP_TIME_HEADWAY_CURRENT, Duration.class) +
-                ", frontGapTimeHeadwayLeft=" + getCachedValue(FRONT_GAP_TIME_HEADWAY_LEFT, Duration.class) +
-                ", frontGapTimeHeadwayRight=" + getCachedValue(FRONT_GAP_TIME_HEADWAY_RIGHT, Duration.class) +
-                ", rearGapDistanceCurrent=" + getCachedValue(REAR_GAP_DISTANCE_CURRENT, Length.class) +
-                ", rearGapDistanceLeft=" + getCachedValue(REAR_GAP_DISTANCE_LEFT, Length.class) +
-                ", rearGapDistanceRight=" + getCachedValue(REAR_GAP_DISTANCE_RIGHT, Length.class) +
-                ", rearGapDeltaSpeedCurrent=" + getCachedValue(REAR_GAP_DELTA_SPEED_CURRENT, Speed.class) +
-                ", rearGapDeltaSpeedLeft=" + getCachedValue(REAR_GAP_DELTA_SPEED_LEFT, Speed.class) +
-                ", rearGapDeltaSpeedRight=" + getCachedValue(REAR_GAP_DELTA_SPEED_RIGHT, Speed.class) +
-                ", rearGapTimeHeadwayCurrent=" + getCachedValue(REAR_GAP_TIME_HEADWAY_CURRENT, Duration.class) +
-                ", rearGapTimeHeadwayLeft=" + getCachedValue(REAR_GAP_TIME_HEADWAY_LEFT, Duration.class) +
-                ", rearGapTimeHeadwayRight=" + getCachedValue(REAR_GAP_TIME_HEADWAY_RIGHT, Duration.class) +
-                ", rightSideOvertakingAhead=" + getCachedValue(RIGHT_SIDE_OVERTAKING_AHEAD, Boolean.class) +
-                ", laneChangePossibleLeft=" + getCachedValue(LANE_CHANGE_POSSIBLE_LEFT, Boolean.class) +
-                ", laneChangePossibleRight=" + getCachedValue(LANE_CHANGE_POSSIBLE_RIGHT, Boolean.class) +
-                "]";
+    public String toString()
+    {
+        return "NeighborsContext[" + "egoDecelLeft=" + getCachedValue(EGO_DECEL_LEFT, Acceleration.class) + ", egoDecelRight="
+                + getCachedValue(EGO_DECEL_RIGHT, Acceleration.class) + ", followerDecelLeft="
+                + getCachedValue(FOLLOWER_DECEL_LEFT, Acceleration.class) + ", followerDecelRight="
+                + getCachedValue(FOLLOWER_DECEL_RIGHT, Acceleration.class) + ", frontGapDistanceCurrent="
+                + getCachedValue(FRONT_GAP_DISTANCE_CURRENT, Length.class) + ", frontGapDistanceLeft="
+                + getCachedValue(FRONT_GAP_DISTANCE_LEFT, Length.class) + ", frontGapDistanceRight="
+                + getCachedValue(FRONT_GAP_DISTANCE_RIGHT, Length.class) + ", frontGapDeltaSpeedCurrent="
+                + getCachedValue(FRONT_GAP_DELTA_SPEED_CURRENT, Speed.class) + ", frontGapDeltaSpeedLeft="
+                + getCachedValue(FRONT_GAP_DELTA_SPEED_LEFT, Speed.class) + ", frontGapDeltaSpeedRight="
+                + getCachedValue(FRONT_GAP_DELTA_SPEED_RIGHT, Speed.class) + ", frontGapTimeHeadwayCurrent="
+                + getCachedValue(FRONT_GAP_TIME_HEADWAY_CURRENT, Duration.class) + ", frontGapTimeHeadwayLeft="
+                + getCachedValue(FRONT_GAP_TIME_HEADWAY_LEFT, Duration.class) + ", frontGapTimeHeadwayRight="
+                + getCachedValue(FRONT_GAP_TIME_HEADWAY_RIGHT, Duration.class) + ", rearGapDistanceCurrent="
+                + getCachedValue(REAR_GAP_DISTANCE_CURRENT, Length.class) + ", rearGapDistanceLeft="
+                + getCachedValue(REAR_GAP_DISTANCE_LEFT, Length.class) + ", rearGapDistanceRight="
+                + getCachedValue(REAR_GAP_DISTANCE_RIGHT, Length.class) + ", rearGapDeltaSpeedCurrent="
+                + getCachedValue(REAR_GAP_DELTA_SPEED_CURRENT, Speed.class) + ", rearGapDeltaSpeedLeft="
+                + getCachedValue(REAR_GAP_DELTA_SPEED_LEFT, Speed.class) + ", rearGapDeltaSpeedRight="
+                + getCachedValue(REAR_GAP_DELTA_SPEED_RIGHT, Speed.class) + ", rearGapTimeHeadwayCurrent="
+                + getCachedValue(REAR_GAP_TIME_HEADWAY_CURRENT, Duration.class) + ", rearGapTimeHeadwayLeft="
+                + getCachedValue(REAR_GAP_TIME_HEADWAY_LEFT, Duration.class) + ", rearGapTimeHeadwayRight="
+                + getCachedValue(REAR_GAP_TIME_HEADWAY_RIGHT, Duration.class) + ", rightSideOvertakingAhead="
+                + getCachedValue(RIGHT_SIDE_OVERTAKING_AHEAD, Boolean.class) + ", laneChangePossibleLeft="
+                + getCachedValue(LANE_CHANGE_POSSIBLE_LEFT, Boolean.class) + ", laneChangePossibleRight="
+                + getCachedValue(LANE_CHANGE_POSSIBLE_RIGHT, Boolean.class) + "]";
     }
 
     // =========================================================================================
@@ -1028,35 +1198,46 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     // =========================================================================================
 
     @Override
-    public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
+    public void updateFromPerception(final MirovaTacticalPlanner vehicle)
+    {
         // 1. Clear the caches for the new tick first (reset lazy evaluation)
         markCacheValid();
 
-        try {
+        try
+        {
             // 2. Retrieve the direct leader via the context's own method.
-            // Since the cache was just cleared, this implicitly triggers the perception
-            // and efficiently stores the new leader in the cache for the rest of the tick.
             HeadwayGtu currentLeader = this.getCurrentLeader();
 
-            if (currentLeader != null) {
+            if (currentLeader != null)
+            {
                 String currentId = currentLeader.getId();
 
-                // Edge detection: Is the leader ID different from the last tick?
-                if (this.lastLeaderId != null && !this.lastLeaderId.equals(currentId)) {
-                    // A new vehicle has cut in -> Notify EgoContext to evaluate relaxation
+                // BUGFIX: Check for ID change, EVEN IF lastLeaderId was null.
+                if (!currentId.equals(this.lastLeaderId))
+                {
+                    // A new vehicle has cut in, or we changed lanes.
                     EgoContext ego = vehicle.getContext(EgoContext.class);
-                    ego.evaluateAndTriggerRelaxation(currentLeader, this.lastLeaderSpeed);
+
+                    // If there was no previous leader, we were in free flow.
+                    // The "old leader speed" constraint was effectively our own ego speed.
+                    Speed referenceOldSpeed = (this.lastLeaderSpeed != null) ? this.lastLeaderSpeed : ego.getEgoSpeed();
+
+                    ego.evaluateAndTriggerRelaxation(currentLeader, referenceOldSpeed);
                 }
 
                 // Remember the state for the next tick
                 this.lastLeaderId = currentId;
                 this.lastLeaderSpeed = currentLeader.getSpeed();
-            } else {
+            }
+            else
+            {
                 // No leader present anymore (lane is free)
                 this.lastLeaderId = null;
                 this.lastLeaderSpeed = null;
             }
-        } catch (ParameterException | GtuException e) {
+        }
+        catch (ParameterException | GtuException e)
+        {
             // Failsafe: If the EgoContext calculation fails in this tick,
             // we safely ignore it and keep the memory intact.
         }

@@ -24,15 +24,14 @@ import org.opentrafficsim.road.network.lane.Lane;
 /**
  * A dedicated Maneuver Pattern for executing a simple, direct lane change.
  * <p>
- * This pattern represents a Finite State Machine (FSM) in <b>Layer 4 (Procedure & Action)</b>.
- * It is typically invoked when a lane change decision has been finalized and safety has been verified.
- * It manages the physical transition between lanes, including speed adaptation to target leaders.
+ * This pattern represents a Finite State Machine (FSM) in <b>Layer 4 (Procedure & Action)</b>. It is typically invoked when a
+ * lane change decision has been finalized and safety has been verified. It manages the physical transition between lanes,
+ * including speed adaptation to target leaders.
  * </p>
  * <p>
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class SimpleLaneChangePattern extends ManeuverPattern
@@ -42,7 +41,6 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
     /**
      * Constructs a new SimpleLaneChangePattern.
-     *
      * @param vehicle the tactical planner associated with the ego vehicle
      */
     public SimpleLaneChangePattern(final MirovaTacticalPlanner vehicle)
@@ -57,7 +55,6 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
     /**
      * Prepares the pattern for a specific direction.
-     *
      * @param direction LateralDirectionality (LEFT or RIGHT)
      */
     public void setLaneChangeDirection(final LateralDirectionality direction)
@@ -98,9 +95,10 @@ public class SimpleLaneChangePattern extends ManeuverPattern
         }
     }
 
-    /* =========================================================================================
-     * STATE: PERFORM_LANE_CHANGE
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= STATE: PERFORM_LANE_CHANGE
+     * =========================================================================================
+     */
 
     /**
      * Action state responsible for the actual lateral movement and longitudinal synchronization.
@@ -121,7 +119,6 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
         /**
          * Constructor using the dominant desire direction.
-         *
          * @param p the parent maneuver pattern
          */
         public PerformLaneChangeState(final ManeuverPattern p)
@@ -131,8 +128,7 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
         /**
          * Constructor for a specific direction.
-         *
-         * @param p         the parent maneuver pattern
+         * @param p the parent maneuver pattern
          * @param direction the lateral direction
          */
         public PerformLaneChangeState(final ManeuverPattern p, final LateralDirectionality direction)
@@ -161,7 +157,7 @@ public class SimpleLaneChangePattern extends ManeuverPattern
         @Override
         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
         {
-            this.vehicle.setRunningManeuver(true);
+            this.vehicle.commitToAction(this);
             this.maneuverPattern.setRunning(true);
 
             InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
@@ -169,11 +165,6 @@ public class SimpleLaneChangePattern extends ManeuverPattern
             EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
 
             Speed egoSpeed = egoCtx.getEgoSpeed();
-            Parameters params = this.vehicle.getParameters();
-
-            // Adjust target headway during the maneuver for increased safety/compaction
-            this.vehicle.setTargetDesiredHeadway(params.getParameter(ParameterTypes.T).times(
-                    params.getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange)));
 
             // Base acceleration from current lane car-following
             Acceleration minAcc = egoCtx.getCurrentCarFollowingAcceleration();
@@ -184,20 +175,24 @@ public class SimpleLaneChangePattern extends ManeuverPattern
                 HeadwayGtu targetLeader = neighborsCtx.getLeader(this.direction);
                 if (targetLeader != null)
                 {
+                    // FIX: Proaktives Auslösen der Relaxation gegenüber dem neuen Leader.
+                    // Verhindert starkes Abbremsen während des Einscherens in eine kleinere Lücke.
+                    egoCtx.triggerRelaxation(targetLeader);
+
                     Acceleration aTarget = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, targetLeader);
                     minAcc = Acceleration.min(minAcc, aTarget);
                 }
             }
 
-            SimpleOperationalPlan plan = new SimpleOperationalPlan(minAcc,
-                    this.maneuverPattern.getPatternSpecificTimestep(), this.direction);
+            SimpleOperationalPlan plan =
+                    new SimpleOperationalPlan(minAcc, this.maneuverPattern.getPatternSpecificTimestep(), this.direction);
 
             // Safety check before initiating lateral move
             if (!this.vehicle.getLaneChange().isChangingLane())
             {
                 Speed resultingSpeed = egoSpeed.plus(minAcc.times(this.maneuverPattern.getPatternSpecificTimestep()));
-                this.startCondition = (resultingSpeed.gt(Speed.instantiateSI(5.0))
-                        || neighborsCtx.getIfLaneChangePossible(this.direction));
+                this.startCondition =
+                        (resultingSpeed.gt(Speed.instantiateSI(5.0)) && neighborsCtx.getIfLaneChangePossible(this.direction));
             }
 
             if (!this.startCondition)
@@ -220,8 +215,8 @@ public class SimpleLaneChangePattern extends ManeuverPattern
                 throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
         {
             // Pattern completes when the vehicle is no longer laterally moving and has reached a new lane
-            boolean finished = !this.vehicle.getLaneChange().isChangingLane()
-                    && !this.originLane.equals(this.vehicle.getGtu().getLane());
+            boolean finished =
+                    !this.vehicle.getLaneChange().isChangingLane() && !this.originLane.equals(this.vehicle.getGtu().getLane());
 
             if (finished)
             {

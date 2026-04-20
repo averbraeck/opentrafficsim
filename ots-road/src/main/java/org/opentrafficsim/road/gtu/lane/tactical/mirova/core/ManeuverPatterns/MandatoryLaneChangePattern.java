@@ -34,17 +34,15 @@ import org.opentrafficsim.road.network.lane.Lane;
 /**
  * Mandatory lane change pattern with long-range anticipation for merge scenarios.
  * <p>
- * This pattern extends the traditional gap search by adding an early anticipation phase.
- * It actively looks up to extendedLookAheadDistance ahead to determine the average speed in the merge area
- * without globally increasing the continuous car-following look-ahead, thereby preserving
- * simulation performance. It implements a state machine transitioning from early anticipation
- * to active gap searching and execution.
+ * This pattern extends the traditional gap search by adding an early anticipation phase. It actively looks up to
+ * extendedLookAheadDistance ahead to determine the average speed in the merge area without globally increasing the continuous
+ * car-following look-ahead, thereby preserving simulation performance. It implements a state machine transitioning from early
+ * anticipation to active gap searching and execution.
  * </p>
  * <p>
  * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class MandatoryLaneChangePattern extends ManeuverPattern
@@ -66,7 +64,6 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
     /**
      * Constructs a new MandatoryLaneChangePattern.
-     *
      * @param vehicle the tactical planner associated with the ego vehicle
      */
     public MandatoryLaneChangePattern(final MirovaTacticalPlanner vehicle)
@@ -83,7 +80,6 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
     /**
      * Gets the lateral direction of the target lane.
-     *
      * @return the target direction
      */
     public LateralDirectionality getTargetDirection()
@@ -93,7 +89,6 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
     /**
      * Gets the currently active gap candidate.
-     *
      * @return the active gap
      */
     public GapCandidate getActiveGap()
@@ -103,7 +98,6 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
     /**
      * Sets the currently active gap candidate.
-     *
      * @param gap the gap to target
      */
     public void setActiveGap(final GapCandidate gap)
@@ -122,10 +116,12 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             Length distToMerge = infra.getDistanceToLaneChangeExtendedLookahead();
 
             // Trigger if within 1000m OR if standard desire is high
-            boolean isApproachingMerge = distToMerge.si > 0 && distToMerge.si < this.vehicle.getParameters().getParameter(MirovaParameters.extendedLookAheadDistance).si;
-            //boolean isDesireHigh = this.vehicle.getLaneChangeDesire().magnitude() >= 0.1; // Lowered threshold for early activation
+            boolean isApproachingMerge = distToMerge.si > 0 && distToMerge.si < this.vehicle.getParameters()
+                    .getParameter(MirovaParameters.extendedLookAheadDistance).si;
+            // boolean isDesireHigh = this.vehicle.getLaneChangeDesire().magnitude() >= 0.1; // Lowered threshold for early
+            // activation
 
-            return isApproachingMerge; //|| isDesireHigh;
+            return isApproachingMerge; // || isDesireHigh;
         }
         catch (Exception exception)
         {
@@ -139,13 +135,14 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         return true; // Assume the vehicle is always able to perform the maneuver if the context is right
     }
 
-    /* =========================================================================================
-     * 1) STATE: ANTICIPATE_MERGE
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 1) STATE: ANTICIPATE_MERGE
+     * =========================================================================================
+     */
 
     /**
-     * Early state where the vehicle looks far ahead to determine the speed at the merge bottleneck
-     * and softly adapts its speed, without actively forcing a gap search yet.
+     * Early state where the vehicle looks far ahead to determine the speed at the merge bottleneck and softly adapts its speed,
+     * without actively forcing a gap search yet.
      */
     public static class AnticipateMergeState extends ActionState
     {
@@ -160,16 +157,14 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
         /**
          * Constructor for the anticipation state.
-         *
          * @param p the parent maneuver pattern
-         * @throws ParameterException
          */
         public AnticipateMergeState(final ManeuverPattern p)
         {
             super(p);
             this.pattern = (MandatoryLaneChangePattern) p;
             this.active = true;
-            this.vehicle.setRunningManeuver(true);
+            this.maneuverPattern.setRunning(true);
             try
             {
                 this.SPEED_SMOOTHING_FACTOR = this.vehicle.getParameters().getParameter(ParameterTypes.DT).si * 0.25;
@@ -189,42 +184,63 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
             Acceleration acc = ego.getCurrentCarFollowingAcceleration();
             Length distToMerge = infra.getDistanceToLaneChangeExtendedLookahead();
+            Speed targetSpeed = null;
 
-            // Only anticipate if we have a valid merge ahead
-            if (distToMerge != null && distToMerge.si < params.getParameter(MirovaParameters.extendedLookAheadDistance).si)
+            // Check if we are approaching a merge within our extended lookahead
+            if (distToMerge != null && distToMerge.si > 0.0
+                    && distToMerge.si < params.getParameter(MirovaParameters.extendedLookAheadDistance).si)
             {
-                Speed rawAnticipatedSpeed = computeMergeAreaSpeed(distToMerge);
-                if (rawAnticipatedSpeed == null)
+                // 1. Proactively find the target lane on the main road using the new path-projection method
+                Lane targetMainroadLane = infra.getDownstreamAdjacentLane(this.pattern.getTargetDirection());
+
+                if (targetMainroadLane != null)
                 {
-                    // If we cannot compute a valid speed, fallback to speed limit
-                    rawAnticipatedSpeed = infra.getLegalSpeedLimit();
+                    // 2. Measure the speed of the vehicles entering the merge zone on the main road.
+                    // Focus only on the first 300m of the main road lane to capture the merge bottleneck without being
+                    // influenced by downstream conditions.
+                    targetSpeed = infra.getLaneAverageSpeed(targetMainroadLane, Length.ZERO, Length.instantiateSI(300.0),
+
+                            3, // Max 5 vehicles to keep it sharp and reactive
+                            InfrastructureContext.ScanDirection.FRONT_TO_BACK);
                 }
-                // Initialize or apply Exponential Moving Average (EMA) for stabilization
-                if (this.smoothedMergeSpeed == null)
+
+                // NULL-SAFE-GUARD: Nur berechnen, wenn wir wirklich ein targetSpeed haben
+                if (targetSpeed != null)
                 {
-                    this.smoothedMergeSpeed = rawAnticipatedSpeed;
+                    // 3. Apply Exponential Moving Average (EMA) for stabilization
+                    if (this.smoothedMergeSpeed == null)
+                    {
+                        this.smoothedMergeSpeed = targetSpeed;
+                    }
+                    else
+                    {
+                        double smoothedSi = (1.0 - this.SPEED_SMOOTHING_FACTOR) * this.smoothedMergeSpeed.si
+                                + this.SPEED_SMOOTHING_FACTOR * targetSpeed.si;
+                        this.smoothedMergeSpeed = new Speed(smoothedSi, SpeedUnit.SI);
+                    }
+
+                    // 4. Softly approach the stabilized anticipated speed over the remaining distance
+                    Acceleration aToMatch =
+                            MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.ZERO, this.smoothedMergeSpeed);
+
+                    // Fail-safe: Do not crash into direct leaders on the current ramp while anticipating
+                    Acceleration maxDecel =
+                            this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
+                    Acceleration safeAcc = Acceleration.max(Acceleration.min(acc, aToMatch), maxDecel);
+                    return new SimpleOperationalPlan(safeAcc, this.pattern.patternSpecificTimestep);
                 }
                 else
                 {
-                    double smoothedSi = (1.0 - this.SPEED_SMOOTHING_FACTOR) * this.smoothedMergeSpeed.si
-                            + this.SPEED_SMOOTHING_FACTOR * rawAnticipatedSpeed.si;
-                    this.smoothedMergeSpeed = new Speed(smoothedSi, SpeedUnit.SI);
+                    this.smoothedMergeSpeed = null;
                 }
-
-                // Softly approach the stabilized anticipated speed over the remaining distance
-                Acceleration aToMatch = MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, distToMerge, this.smoothedMergeSpeed);
-
-                return new SimpleOperationalPlan(aToMatch, this.pattern.patternSpecificTimestep);
-
             }
             else
             {
-                // Reset smoothing if we temporarily lose the merge target
+                // Reset smoothing if we temporarily lose the merge target or haven't reached the threshold yet
                 this.smoothedMergeSpeed = null;
             }
 
-            return null; // No specific plan, just maintain current behavior
-
+            return new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
         }
 
         @Override
@@ -232,8 +248,8 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         {
             InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
 
-            // Transition to active matching if we are on onramp
-            if (infra.getIfLaneAvailable(this.pattern.targetDirection))
+            // Transition to active matching once the target lane is physically adjacent to the ego vehicle
+            if (infra.getIfLaneAvailable(this.pattern.getTargetDirection()))
             {
                 return transitionTo(new MatchTargetLaneSpeedState(this.maneuverPattern));
             }
@@ -247,7 +263,8 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             try
             {
                 InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-                if (infra.getDistanceToLaneChangeExtendedLookahead().si >= this.vehicle.getParameters().getParameter(MirovaParameters.extendedLookAheadDistance).si)
+                if (infra.getDistanceToLaneChangeExtendedLookahead().si >= this.vehicle.getParameters()
+                        .getParameter(MirovaParameters.extendedLookAheadDistance).si)
                 {
                     return finishManeuver();
                 }
@@ -259,85 +276,23 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             return null;
         }
 
-        /**
-         * Temporarily increases the lookahead distance to sample speeds at the merge area.
-         * <p>
-         * Iteration over leaders is aborted early for performance reasons, as the perception
-         * returns them sorted by distance.
-         * </p>
-         *
-         * @param distanceToMerge the distance to the infrastructure bottleneck
-         * @return the raw average speed of vehicles in the merge area
-         */
-        private Speed computeMergeAreaSpeed(final Length distanceToMerge)
-        {
-            try
-            {
-                // Temporarily boost lookahead
-                Length extendedLookahead = this.vehicle.getParameters().getParameter(MirovaParameters.extendedLookAheadDistance);
-                this.vehicle.getParameters().setParameterResettable(ParameterTypes.LOOKAHEAD, extendedLookahead);
-
-                // Fetch leaders on the target lane (forces perception update for this specific call)
-                NeighborsPerception neighborsPerception = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
-                RelativeLane targetLane = this.pattern.getTargetDirection().isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
-
-                Iterable<HeadwayGtu> farLeaders = neighborsPerception.getLeaders(targetLane);
-
-                // Reset lookahead immediately to preserve global performance
-                this.vehicle.getParameters().resetParameter(ParameterTypes.LOOKAHEAD);
-
-                // Filter vehicles that are in the "merge area" (e.g., the last 300 meters before the merge)
-                double sumSpeed = 0.0;
-                int count = 0;
-                double mergeStartZone = Math.max(0.0, distanceToMerge.si - 300.0);
-                double mergeEndZone = distanceToMerge.si + 50.0;
-
-                for (HeadwayGtu gtu : farLeaders)
-                {
-                    double distSi = gtu.getDistance().si;
-
-                    if (distSi > mergeEndZone)
-                    {
-                        // Leaders are sorted ascending by distance.
-                        // Once we pass the end zone, no further GTUs will be relevant.
-                        break;
-                    }
-
-                    if (distSi >= mergeStartZone)
-                    {
-                        sumSpeed += gtu.getSpeed().si;
-                        count++;
-                    }
-                }
-
-                if (count > 0)
-                {
-                    return new Speed(sumSpeed / count, SpeedUnit.SI);
-                }
-            }
-            catch (Exception e)
-            {
-                // Fallback if perception fails
-            }
-
-            return null; // No valid speed found, will be handled in the calling method
-        }
-
-
         @Override
         public double getUtility()
         {
-            double mandatoryDesire = this.vehicle.getMandatoryLaneChangeDesire().magnitude();
-            return mandatoryDesire; // Higher desire should increase utility, but we can also factor in distance to merge or speed difference if desired
+            return this.vehicle.getMandatoryLaneChangeDesire().magnitude();
         }
 
         @Override
-        public String toString() { return "AnticipateMergeState"; }
+        public String toString()
+        {
+            return "AnticipateMergeState";
+        }
     }
 
-    /* =========================================================================================
-     * 2) STATE: MATCH_TARGET_LANE_SPEED
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 2) STATE:
+     * MATCH_TARGET_LANE_SPEED =========================================================================================
+     */
     // [Hier folgt die Logik aus dem alten MatchTargetLaneSpeedState.
     // Der Einfachheit halber gekürzt, entspricht deinem alten GapSearchPattern]
 
@@ -361,18 +316,26 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             Parameters params = this.vehicle.getParameters();
 
             Acceleration acc = ego.getCurrentCarFollowingAcceleration();
-            Speed targetLaneSpeed = infra.getIfLaneAvailable(this.pattern.targetDirection) ?
-                    (this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight()) :
-                    macro.getAverageSpeedCurrent();
+            Speed targetLaneSpeed = infra.getIfLaneAvailable(this.pattern.targetDirection)
+                    ? (this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight())
+                    : macro.getAverageSpeedCurrent();
 
-            Acceleration aToMatch = MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), targetLaneSpeed);
+            Acceleration aToMatch =
+                    MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), targetLaneSpeed);
 
-            acc = Acceleration.min(acc, Acceleration.max(aToMatch, ego.getEgoDecelerationThreshold(this.pattern.targetDirection)));
+            acc = Acceleration.min(acc,
+                    Acceleration.max(aToMatch, ego.getEgoDecelerationThreshold(this.pattern.targetDirection)));
 
             SimpleOperationalPlan plan = new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
-            if (this.pattern.getTargetDirection().isLeft()) plan.setIndicatorIntentLeft();
-            else if (this.pattern.getTargetDirection().isRight()) plan.setIndicatorIntentRight();
+            if (this.pattern.getTargetDirection().isLeft())
+            {
+                plan.setIndicatorIntentLeft();
+            }
 
+            else if (this.pattern.getTargetDirection().isRight())
+            {
+                plan.setIndicatorIntentRight();
+            }
             return plan;
         }
 
@@ -390,16 +353,21 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         public double getUtility()
         {
             double mandatoryDesire = this.vehicle.getMandatoryLaneChangeDesire().magnitude();
-            return mandatoryDesire; // Higher desire should increase utility, but we can also factor in distance to merge or speed difference if desired
+            return mandatoryDesire; // Higher desire should increase utility, but we can also factor in distance to merge or
+                                    // speed difference if desired
         }
 
         @Override
-        public SimpleOperationalPlan abort() { return null; }
+        public SimpleOperationalPlan abort()
+        {
+            return null;
+        }
     }
 
-    /* =========================================================================================
-     * 3) STATE: SEARCH_FOR_GAP
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 3) STATE: SEARCH_FOR_GAP
+     * =========================================================================================
+     */
 
     /**
      * State where the agent actively scans the target lane for a feasible gap.
@@ -430,10 +398,11 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
             if (infra.getIfLaneAvailable(this.pattern.targetDirection))
             {
-                Speed vTarget = this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft()
-                        : macro.getAverageSpeedRight();
+                Speed vTarget =
+                        this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight();
 
-                Acceleration aMatch = MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), vTarget);
+                Acceleration aMatch =
+                        MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), vTarget);
 
                 acc = Acceleration.min(acc, aMatch);
             }
@@ -475,7 +444,8 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             }
 
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            Acceleration requiredStopAccel = MirovaCarFollowingUtil.stop(this.vehicle, infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
+            Acceleration requiredStopAccel =
+                    MirovaCarFollowingUtil.stop(this.vehicle, infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
 
             if (requiredStopAccel.si < -5.0)
             {
@@ -560,12 +530,22 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         }
 
         @Override
-        public String toString() { return "SearchForGapState"; }
+        public double getUtility()
+        {
+            return this.vehicle.getMandatoryLaneChangeDesire().magnitude();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "SearchForGapState";
+        }
     }
 
-    /* =========================================================================================
-     * 4) STATE: ACCELERATE_TO_TARGET_GAP
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 4) STATE:
+     * ACCELERATE_TO_TARGET_GAP =========================================================================================
+     */
 
     /**
      * State where the vehicle actively targets the acceleration required to land in the selected gap.
@@ -597,8 +577,14 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             }
             catch (Exception e)
             {
-                try { return transitionTo(new SearchForGapState(this.maneuverPattern)); }
-                catch (Exception ex) { ex.printStackTrace(); }
+                try
+                {
+                    return transitionTo(new SearchForGapState(this.maneuverPattern));
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                }
             }
             return null;
         }
@@ -613,7 +599,8 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             if (aM == null)
             {
                 GapCandidate gap = this.pattern.getActiveGap();
-                if (gap != null) aM = gap.computeCurrentAcceleration();
+                if (gap != null)
+                    aM = gap.computeCurrentAcceleration();
             }
 
             Acceleration aCF = ego.getCurrentCarFollowingAcceleration();
@@ -640,12 +627,22 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         }
 
         @Override
-        public String toString() { return "AccelerateToTargetGapState"; }
+        public double getUtility()
+        {
+            return this.vehicle.getMandatoryLaneChangeDesire().magnitude();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "AccelerateToTargetGapState";
+        }
     }
 
-    /* =========================================================================================
-     * 5) STATE: BREAKING_END_OF_RAMP
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 5) STATE: BREAKING_END_OF_RAMP
+     * =========================================================================================
+     */
 
     /**
      * Emergency state to prevent driving off the end of the lane if no gap was found.
@@ -704,17 +701,30 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
                     return finishManeuver();
                 }
             }
-            catch (Exception e) { e.printStackTrace(); }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        public String toString() { return "BreakingEndOfRampState"; }
+        public double getUtility()
+        {
+            return this.vehicle.getMandatoryLaneChangeDesire().magnitude();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "BreakingEndOfRampState";
+        }
     }
 
-    /* =========================================================================================
-     * 6) STATE: EXECUTE_LANE_CHANGE
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 6) STATE: EXECUTE_LANE_CHANGE
+     * =========================================================================================
+     */
 
     /**
      * Final state where the actual lateral move is executed.
@@ -722,8 +732,11 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
     public static class ExecuteLaneChangeState extends ActionState
     {
         private final LateralDirectionality direction;
+
         private final Lane originLane;
+
         private final MandatoryLaneChangePattern pattern;
+
         private boolean slowLaneChange = false;
 
         /**
@@ -750,20 +763,25 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         @Override
         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
         {
-            InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
+            this.vehicle.commitToAction(this);
             NeighborsContext neighborsCtx = this.vehicle.getContext(NeighborsContext.class);
             EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
 
-            this.vehicle.setTargetDesiredHeadway(this.vehicle.getParameters().getParameter(ParameterTypes.T).times(
-                    this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange)));
+            HeadwayGtu targetLeader = neighborsCtx.getLeader(this.direction);
+            if (targetLeader != null)
+            {
+                egoCtx.triggerRelaxation(targetLeader);
+            }
 
+            // Start with relaxed car-following acceleration (already computed via Macro/Utility)
             Acceleration minAcc = egoCtx.getCurrentCarFollowingAcceleration();
 
+            // Add target-lane leader constraint cleanly using the new Utility
             if (this.vehicle.getGtu().getLane().equals(this.originLane))
             {
-                HeadwayGtu targetLeader = neighborsCtx.getLeader(this.direction);
                 if (targetLeader != null)
                 {
+                    // The Utility automatically applies the relaxation buffers we just triggered above!
                     Acceleration aTarget = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, targetLeader);
                     minAcc = Acceleration.min(minAcc, aTarget);
                 }
@@ -771,24 +789,33 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
             SimpleOperationalPlan plan =
                     new SimpleOperationalPlan(minAcc, this.pattern.patternSpecificTimestep, this.direction);
-            if (this.direction.isLeft())
+
+            if (this.direction == LateralDirectionality.LEFT)
+            {
                 plan.setIndicatorIntentLeft();
-            else
+            }
+            else if (this.direction == LateralDirectionality.RIGHT)
+            {
                 plan.setIndicatorIntentRight();
+            }
 
             return plan;
         }
 
         @Override
-        public SimpleOperationalPlan next() throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
+        public SimpleOperationalPlan next()
+                throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
         {
-            boolean finished = !this.vehicle.getLaneChange().isChangingLane()
-                    && !this.originLane.equals(this.vehicle.getGtu().getLane());
+            boolean finished =
+                    !this.vehicle.getLaneChange().isChangingLane() && !this.originLane.equals(this.vehicle.getGtu().getLane());
 
             if (finished)
             {
                 if (this.slowLaneChange)
+                {
                     this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                }
+                this.vehicle.releaseActionLock();
                 return finishManeuver();
             }
             return null;
@@ -798,7 +825,9 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException
         {
             if (this.vehicle.getLaneChange().isChangingLane())
+            {
                 return null;
+            }
 
             try
             {
@@ -806,15 +835,31 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
                         .getParameter(MirovaParameters.DMAND))
                 {
                     if (this.slowLaneChange)
+                    {
                         this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                    }
+
+                    this.vehicle.releaseActionLock(); // HIER EINFÜGEN
                     return finishManeuver();
                 }
             }
-            catch (Exception e) { e.printStackTrace(); }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        public String toString() { return "ExecuteLaneChange[" + this.direction + "]"; }
+        public double getUtility()
+        {
+            return this.vehicle.getMandatoryLaneChangeDesire().magnitude();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "ExecuteLaneChange[" + this.direction + "]";
+        }
     }
 }

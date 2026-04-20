@@ -12,20 +12,21 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 /**
  * {@code ActionStateCompleteLaneChange}
  * <p>
- * Final state of a lane-change maneuver.
- * This state performs no control actions but resets the vehicle’s tactical state
- * and flags the maneuver as finished. The next simulation step will therefore
- * return to the default tactical control logic (e.g., standard car-following).
+ * Final state of a lane-change maneuver. This state performs no control actions but resets the vehicle’s tactical state and
+ * flags the maneuver as finished. The next simulation step will therefore return to the default tactical control logic (e.g.,
+ * standard car-following).
  * </p>
- *
- * <p><b>Responsibilities:</b></p>
+ * <p>
+ * <b>Responsibilities:</b>
+ * </p>
  * <ul>
- *   <li>Reset maneuver status flags and active ActionState.</li>
- *   <li>Mark the lane change as completed in the tactical planner.</li>
- *   <li>Ensure that no residual acceleration or lateral control persists.</li>
+ * <li>Reset maneuver status flags and active ActionState.</li>
+ * <li>Mark the lane change as completed in the tactical planner.</li>
+ * <li>Ensure that no residual acceleration or lateral control persists.</li>
  * </ul>
  */
-public class ActionStateCompleteLaneChange extends ActionState {
+public class ActionStateCompleteLaneChange extends ActionState
+{
 
     /** Direction of the completed lane change (LEFT or RIGHT). */
     private final LateralDirectionality direction;
@@ -34,7 +35,8 @@ public class ActionStateCompleteLaneChange extends ActionState {
     // Construction
     // ----------------------------------------------------------------------
 
-    public ActionStateCompleteLaneChange(final ManeuverPattern pattern, final LateralDirectionality direction) {
+    public ActionStateCompleteLaneChange(final ManeuverPattern pattern, final LateralDirectionality direction)
+    {
         super(pattern);
         this.direction = direction;
     }
@@ -44,23 +46,20 @@ public class ActionStateCompleteLaneChange extends ActionState {
     // ----------------------------------------------------------------------
 
     /**
-     * Performs no control action.
-     * Instead, this method ensures that the vehicle returns to its standard
-     * control loop in the next tactical update step.
-     *
+     * Performs no control action. Instead, this method ensures that the vehicle returns to its standard control loop in the
+     * next tactical update step.
      * @return a neutral operational plan with zero acceleration (optional placeholder)
      * @throws NetworkException
      * @throws GtuException
      */
     @Override
-    public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
+    public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
+    {
         // Immediately finalize maneuver
         finalizeManeuver();
         return new SimpleOperationalPlan(
                 this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration(),
-            this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT),
-            LateralDirectionality.NONE
-        );
+                this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT), LateralDirectionality.NONE);
     }
 
     /**
@@ -68,7 +67,8 @@ public class ActionStateCompleteLaneChange extends ActionState {
      * @return
      */
     @Override
-    public SimpleOperationalPlan next() {
+    public SimpleOperationalPlan next()
+    {
         // No next state: this is terminal
         return null;
     }
@@ -78,7 +78,8 @@ public class ActionStateCompleteLaneChange extends ActionState {
      * @return
      */
     @Override
-    public SimpleOperationalPlan abort() {
+    public SimpleOperationalPlan abort()
+    {
         // No abort logic after completion
         return null;
     }
@@ -88,18 +89,20 @@ public class ActionStateCompleteLaneChange extends ActionState {
     // ----------------------------------------------------------------------
 
     /**
-     * Marks the maneuver as completed and resets the tactical vehicle state.
-     * This ensures that subsequent updates revert to normal tactical reasoning.
+     * Marks the maneuver as completed and resets the tactical vehicle state. This ensures that subsequent updates revert to
+     * normal tactical reasoning.
      */
-    private void finalizeManeuver() {
-        this.vehicle.setRunningManeuver(false);
+    private void finalizeManeuver()
+    {
+        this.vehicle.commitToAction(this);
         this.vehicle.setCurrentActionState(null);
         this.active = false;
 
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ActionStateCompleteLaneChange[" + this.direction + "]";
     }
 }

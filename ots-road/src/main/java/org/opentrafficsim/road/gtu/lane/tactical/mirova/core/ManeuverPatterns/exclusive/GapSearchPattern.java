@@ -35,15 +35,14 @@ import org.opentrafficsim.road.network.lane.Lane;
 /**
  * Mandatory lane change pattern implementing a tactical gap selection and targeted acceleration planning.
  * <p>
- * This class represents a Finite State Machine (FSM) within <b>Layer 4 (Procedure & Action)</b> of the
- * MiRoVA architecture. It handles the complex process of finding and reaching a gap in the target lane
- * when a mandatory change is required (e.g., lane end or route following).
+ * This class represents a Finite State Machine (FSM) within <b>Layer 4 (Procedure & Action)</b> of the MiRoVA architecture. It
+ * handles the complex process of finding and reaching a gap in the target lane when a mandatory change is required (e.g., lane
+ * end or route following).
  * </p>
  * <p>
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class GapSearchPattern extends ManeuverPattern
@@ -62,7 +61,6 @@ public class GapSearchPattern extends ManeuverPattern
 
     /**
      * Constructs a new GapSearchPattern.
-     *
      * @param vehicle the tactical planner associated with the ego vehicle
      */
     public GapSearchPattern(final MirovaTacticalPlanner vehicle)
@@ -78,7 +76,6 @@ public class GapSearchPattern extends ManeuverPattern
 
     /**
      * Gets the lateral direction of the target lane.
-     *
      * @return the target direction
      */
     public LateralDirectionality getTargetDirection()
@@ -88,7 +85,6 @@ public class GapSearchPattern extends ManeuverPattern
 
     /**
      * Gets the currently active gap candidate.
-     *
      * @return the active gap
      */
     public GapCandidate getActiveGap()
@@ -98,7 +94,6 @@ public class GapSearchPattern extends ManeuverPattern
 
     /**
      * Sets the currently active gap candidate.
-     *
      * @param gap the gap to target
      */
     public void setActiveGap(final GapCandidate gap)
@@ -138,9 +133,10 @@ public class GapSearchPattern extends ManeuverPattern
         }
     }
 
-    /* =========================================================================================
-     * 1) STATE: MATCH_TARGET_LANE_SPEED
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 1) STATE:
+     * MATCH_TARGET_LANE_SPEED =========================================================================================
+     */
 
     /**
      * State where the vehicle adjusts its speed to match the average flow speed of the target lane.
@@ -158,7 +154,7 @@ public class GapSearchPattern extends ManeuverPattern
             super(p);
             this.pattern = (GapSearchPattern) p;
             this.active = true;
-            this.vehicle.setRunningManeuver(true);
+            this.vehicle.commitToAction(this);
         }
 
         @Override
@@ -174,8 +170,8 @@ public class GapSearchPattern extends ManeuverPattern
 
             if (infra.getIfLaneAvailable(this.pattern.targetDirection))
             {
-                targetLaneSpeed = this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft()
-                        : macro.getAverageSpeedRight();
+                targetLaneSpeed =
+                        this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight();
             }
             else
             {
@@ -249,12 +245,16 @@ public class GapSearchPattern extends ManeuverPattern
         }
 
         @Override
-        public String toString() { return "MatchTargetLaneSpeedState"; }
+        public String toString()
+        {
+            return "MatchTargetLaneSpeedState";
+        }
     }
 
-    /* =========================================================================================
-     * 2) STATE: SEARCH_FOR_GAP
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 2) STATE: SEARCH_FOR_GAP
+     * =========================================================================================
+     */
 
     /**
      * State where the agent actively scans the target lane for a feasible gap.
@@ -285,12 +285,12 @@ public class GapSearchPattern extends ManeuverPattern
 
             if (infra.getIfLaneAvailable(this.pattern.targetDirection))
             {
-                Speed vTarget = this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft()
-                        : macro.getAverageSpeedRight();
+                Speed vTarget =
+                        this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight();
 
-                Acceleration aMatch = CarFollowingUtil.approachTargetSpeed(this.vehicle.getCarFollowingModel(),
-                        this.vehicle.getParameters(), ego.getEgoSpeed(), infra.getCurrentSpeedLimit(),
-                        Length.instantiateSI(20.0), vTarget);
+                Acceleration aMatch =
+                        CarFollowingUtil.approachTargetSpeed(this.vehicle.getCarFollowingModel(), this.vehicle.getParameters(),
+                                ego.getEgoSpeed(), infra.getCurrentSpeedLimit(), Length.instantiateSI(20.0), vTarget);
 
                 acc = Acceleration.min(acc, aMatch);
             }
@@ -332,9 +332,9 @@ public class GapSearchPattern extends ManeuverPattern
             }
 
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            Acceleration requiredStopAccel = CarFollowingUtil.stop(this.vehicle.getCarFollowingModel(),
-                    this.vehicle.getParameters(), ego.getEgoSpeed(), infra.getCurrentSpeedLimit(),
-                    infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
+            Acceleration requiredStopAccel =
+                    CarFollowingUtil.stop(this.vehicle.getCarFollowingModel(), this.vehicle.getParameters(), ego.getEgoSpeed(),
+                            infra.getCurrentSpeedLimit(), infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
 
             if (requiredStopAccel.si < -5.0)
             {
@@ -419,12 +419,16 @@ public class GapSearchPattern extends ManeuverPattern
         }
 
         @Override
-        public String toString() { return "SearchForGapState"; }
+        public String toString()
+        {
+            return "SearchForGapState";
+        }
     }
 
-    /* =========================================================================================
-     * 3) STATE: ACCELERATE_TO_TARGET_GAP
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 3) STATE:
+     * ACCELERATE_TO_TARGET_GAP =========================================================================================
+     */
 
     /**
      * State where the vehicle actively targets the acceleration required to land in the selected gap.
@@ -456,8 +460,14 @@ public class GapSearchPattern extends ManeuverPattern
             }
             catch (Exception e)
             {
-                try { return transitionTo(new SearchForGapState(this.maneuverPattern)); }
-                catch (Exception ex) { ex.printStackTrace(); }
+                try
+                {
+                    return transitionTo(new SearchForGapState(this.maneuverPattern));
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                }
             }
             return null;
         }
@@ -472,7 +482,8 @@ public class GapSearchPattern extends ManeuverPattern
             if (aM == null)
             {
                 GapCandidate gap = this.pattern.getActiveGap();
-                if (gap != null) aM = gap.computeCurrentAcceleration();
+                if (gap != null)
+                    aM = gap.computeCurrentAcceleration();
             }
 
             Acceleration aCF = ego.getCurrentCarFollowingAcceleration();
@@ -499,12 +510,16 @@ public class GapSearchPattern extends ManeuverPattern
         }
 
         @Override
-        public String toString() { return "AccelerateToTargetGapState"; }
+        public String toString()
+        {
+            return "AccelerateToTargetGapState";
+        }
     }
 
-    /* =========================================================================================
-     * 4) STATE: BREAKING_END_OF_RAMP
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 4) STATE: BREAKING_END_OF_RAMP
+     * =========================================================================================
+     */
 
     /**
      * Emergency state to prevent driving off the end of the lane if no gap was found.
@@ -564,17 +579,24 @@ public class GapSearchPattern extends ManeuverPattern
                     return finishManeuver();
                 }
             }
-            catch (Exception e) { e.printStackTrace(); }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        public String toString() { return "BreakingEndOfRampState"; }
+        public String toString()
+        {
+            return "BreakingEndOfRampState";
+        }
     }
 
-    /* =========================================================================================
-     * 5) STATE: EXECUTE_LANE_CHANGE
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 5) STATE: EXECUTE_LANE_CHANGE
+     * =========================================================================================
+     */
 
     /**
      * Final state where the actual lateral move is executed.
@@ -582,8 +604,11 @@ public class GapSearchPattern extends ManeuverPattern
     public static class ExecuteLaneChangeState extends ActionState
     {
         private final LateralDirectionality direction;
+
         private final Lane originLane;
+
         private final GapSearchPattern pattern;
+
         private boolean slowLaneChange = false;
 
         /**
@@ -610,6 +635,7 @@ public class GapSearchPattern extends ManeuverPattern
         @Override
         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
         {
+            this.vehicle.commitToAction(this);
             InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
             NeighborsContext neighborsCtx = this.vehicle.getContext(NeighborsContext.class);
             EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
@@ -642,10 +668,11 @@ public class GapSearchPattern extends ManeuverPattern
         }
 
         @Override
-        public SimpleOperationalPlan next() throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
+        public SimpleOperationalPlan next()
+                throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
         {
-            boolean finished = !this.vehicle.getLaneChange().isChangingLane()
-                    && !this.originLane.equals(this.vehicle.getGtu().getLane());
+            boolean finished =
+                    !this.vehicle.getLaneChange().isChangingLane() && !this.originLane.equals(this.vehicle.getGtu().getLane());
 
             if (finished)
             {
@@ -672,17 +699,24 @@ public class GapSearchPattern extends ManeuverPattern
                     return finishManeuver();
                 }
             }
-            catch (Exception e) { e.printStackTrace(); }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        public String toString() { return "ExecuteLaneChange[" + this.direction + "]"; }
+        public String toString()
+        {
+            return "ExecuteLaneChange[" + this.direction + "]";
+        }
     }
 
-    /* =========================================================================================
-     * 6) STATE: CONGESTED_GAP_SEARCH
-     * ========================================================================================= */
+    /*
+     * ========================================================================================= 6) STATE: CONGESTED_GAP_SEARCH
+     * =========================================================================================
+     */
 
     /**
      * State for gap searching in low-speed, congested conditions.
@@ -690,6 +724,7 @@ public class GapSearchPattern extends ManeuverPattern
     public static class CongestedGapSearchState extends ActionState
     {
         private String targetLeaderId = null;
+
         private final GapSearchPattern pattern;
 
         /**
@@ -797,12 +832,18 @@ public class GapSearchPattern extends ManeuverPattern
                     return finishManeuver();
                 }
             }
-            catch (Exception e) { e.printStackTrace(); }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        public String toString() { return "CongestedGapSearchState"; }
+        public String toString()
+        {
+            return "CongestedGapSearchState";
+        }
     }
 
     /**
@@ -830,12 +871,11 @@ public class GapSearchPattern extends ManeuverPattern
             InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
 
             HeadwayGtu leader = neigh.getLeader(this.pattern.getTargetDirection());
-            Acceleration aTarget = CarFollowingUtil.followSingleLeader(this.vehicle.getCarFollowingModel(),
-                    this.vehicle.getParameters(), ego.getEgoSpeed(), infra.getCurrentSpeedLimit(), leader.getDistance(),
-                    leader.getSpeed());
+            Acceleration aTarget =
+                    CarFollowingUtil.followSingleLeader(this.vehicle.getCarFollowingModel(), this.vehicle.getParameters(),
+                            ego.getEgoSpeed(), infra.getCurrentSpeedLimit(), leader.getDistance(), leader.getSpeed());
 
-            aTarget = Acceleration.max(aTarget,
-                    Acceleration.min(Acceleration.instantiateSI(0.5), leader.getAcceleration()));
+            aTarget = Acceleration.max(aTarget, Acceleration.min(Acceleration.instantiateSI(0.5), leader.getAcceleration()));
             aTarget = Acceleration.min(aTarget, ego.getCurrentCarFollowingAcceleration());
 
             return new SimpleOperationalPlan(aTarget, this.pattern.patternSpecificTimestep);
@@ -861,7 +901,10 @@ public class GapSearchPattern extends ManeuverPattern
                     return finishManeuver();
                 }
             }
-            catch (Exception e) { e.printStackTrace(); }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
     }
