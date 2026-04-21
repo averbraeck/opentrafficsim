@@ -249,14 +249,19 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
 
         Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
 
-        for (HeadwayGtu follower : neighbors.getFirstFollowers(laneChangeDirection))
+        HeadwayGtu follower = neighbors.getFirstFollowers(laneChangeDirection).first();
+
+        if (follower == null)
         {
-            Acceleration iteraryDecel =
-                    CarFollowingUtil.followSingleLeader(follower.getCarFollowingModel(), follower.getParameters(),
-                            follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), egoSpeed);
-            followerDecelValue = Acceleration.min(followerDecelValue, iteraryDecel);
+            return new Acceleration(0.0, AccelerationUnit.SI); // No follower, no induced deceleration
         }
-        return followerDecelValue;
+        else
+        {
+            Acceleration decel = CarFollowingUtil.followSingleLeader(follower.getCarFollowingModel(), follower.getParameters(),
+                    follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), egoSpeed);
+            return decel;
+        }
+
     }
 
     // ---- Lazy accessors for deceleration values -------------------------------------
@@ -1129,6 +1134,17 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         Length desiredFrontHeadway =
                 Length.max(egoCtx.getDesiredFrontHeadway(laneChangeDirection).times(reductionFactor), vehicleLength);
         Length frontHeadway = getFrontGapDistance(laneChangeDirection);
+
+        // if (this.vehicle.getGtu().getId().equals("99") && laneChangeDirection.isLeft())
+        // {
+        // // Debug logging for a specific test case (can be removed or adjusted as needed)
+        // System.out.println("Checking lane change possibility for " + this.vehicle.getGtu().getId() + " to the LEFT:");
+        // System.out.println(" Lane change legal: " + laneChangeLegal);
+        // System.out.println(" Ego deceleration: " + egoDecel + " (threshold: " + egoDecelThreshold + ")");
+        // System.out.println(" Follower deceleration: " + followerDecel + " (threshold: " + followerDecelThreshold + ")");
+        // System.out.println(" Rear headway: " + rearHeadway + " (desired: " + desiredRearHeadway + ")");
+        // System.out.println(" Front headway: " + frontHeadway + " (desired: " + desiredFrontHeadway + ")");
+        // }
 
         return laneChangeLegal && egoDecel.gt(egoDecelThreshold) && followerDecel.gt(followerDecelThreshold)
                 && rearHeadway.gt(desiredRearHeadway) && frontHeadway.gt(desiredFrontHeadway);

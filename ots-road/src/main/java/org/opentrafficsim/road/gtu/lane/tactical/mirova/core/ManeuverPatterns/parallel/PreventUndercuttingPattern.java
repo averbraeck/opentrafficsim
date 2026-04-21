@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.parallel;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -173,7 +175,6 @@ public class PreventUndercuttingPattern extends ManeuverPattern
                 Length leftDistHeadway = neighbors.getFrontGapDistance(leftDir);
                 Speed leftLeaderSpeed = leftLeader.getSpeed();
                 Length leftLeaderLength = leftLeader.getLength();
-                SpeedLimitInfo speedLimit = infra.getCurrentSpeedLimit();
 
                 // Calculate acceleration required to stay behind the left vehicle
                 Double safetyDistanceReductionFactorLaneChange =
@@ -183,27 +184,30 @@ public class PreventUndercuttingPattern extends ManeuverPattern
                         .times(safetyDistanceReductionFactorLaneChange);
                 this.vehicle.getParameters().setParameterResettable(ParameterTypes.T, timeHeadwayReduced);
 
-                Acceleration aShadow = MirovaCarFollowingUtil.followDistanceAndSpeed(this.vehicle,
+                // 1. Berechnung für den linken Zielfahrstreifen
+                Acceleration aShadowLeft = MirovaCarFollowingUtil.followDistanceAndSpeed(this.vehicle,
                         leftDistHeadway.minus(leftLeaderLength), leftLeaderSpeed);
 
                 this.vehicle.getParameters().resetParameter(ParameterTypes.T);
 
-                // Emergency break if required deceleration is too extreme
-                if (aShadow.lt(Acceleration.instantiateSI(-6.0)))
+                // Emergency break logic für die Ziellücke
+                if (aShadowLeft.lt(Acceleration.instantiateSI(-6.0)))
                 {
                     MacroTrafficContext macroCtx = this.vehicle.getContext(MacroTrafficContext.class);
                     Speed leftLaneSpeed = macroCtx.getAverageSpeed(RelativeLane.LEFT);
-                    aShadow =
+                    aShadowLeft =
                             MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(50.0), leftLaneSpeed);
                 }
 
-                // Limit deceleration to a comfortable level, as we are not in an emergency but just trying to avoid
-                // undercutting
+                // Limit deceleration to a comfortable level for the lane maneuver
                 Acceleration comfortableEgoDecel =
                         this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
-                aShadow = Acceleration.max(aShadow, comfortableEgoDecel);
+                aShadowLeft = Acceleration.max(aShadowLeft, comfortableEgoDecel);
 
-                return new SimpleOperationalPlan(aShadow,
+                EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
+                Acceleration aTarget = Acceleration.min(aShadowLeft, egoCtx.getCurrentCarFollowingAcceleration());
+
+                return new SimpleOperationalPlan(aTarget,
                         this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT));
             }
 
@@ -246,7 +250,11 @@ public class PreventUndercuttingPattern extends ManeuverPattern
         }
 
         /**
-         * Verifies if the shadowing state should be aborted.
+         * Verifies if the state should be aborted.
+         * <p>
+         * Abort conditions: 1. The left leader disappears or changes ID. 2. Traffic state transitions to congestion
+         * (undercutting allowed). 3. The undercutting situation is physically resolved (leader is far away or pulling away).
+         * </p>
          * @return finish maneuver if no longer required, {@code null} otherwise
          * @throws ParameterException if parameters are missing
          * @throws GtuException if GTU context fails
@@ -256,8 +264,10 @@ public class PreventUndercuttingPattern extends ManeuverPattern
         public SimpleOperationalPlan abort() throws ParameterException, GtuException, NetworkException
         {
             NeighborsContext neighbors = this.vehicle.getContext(NeighborsContext.class);
+            HeadwayGtu leftLeader = neighbors.getLeader(LateralDirectionality.LEFT);
 
-            if (neighbors.getLeader(LateralDirectionality.LEFT) == null)
+            // 1. Leader disappeared
+            if (leftLeader == null)
             {
                 return finishManeuver();
             }
@@ -266,15 +276,28 @@ public class PreventUndercuttingPattern extends ManeuverPattern
             Speed congestionThreshold = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
             boolean isFreeFlow = ego.getEgoSpeed().gt(congestionThreshold);
 
-            HeadwayGtu leftLeader = neighbors.getLeader(LateralDirectionality.LEFT);
-
-            // If the left leader changes or we are no longer at risk of undercutting, we can safely exit this pattern.
-            // Use string .equals() instead of != for object identity safety
+            // 2. Leader ID changed or traffic state changed
             if (!leftLeader.getId().equals(this.maneuverPattern.getShadowingLeftNeighborId()) || !isFreeFlow)
             {
                 return finishManeuver();
             }
-            return null;
+
+            // 3. NEW: The situation has naturally resolved (Left Leader drove away)
+            Length leftGap = neighbors.getFrontGapDistance(LateralDirectionality.LEFT);
+            Speed leftSpeed = leftLeader.getSpeed();
+            Speed egoSpeed = ego.getEgoSpeed();
+
+            // Abort if the left neighbor is far away (> 80m)
+            // OR if they are accelerating away (speed delta > 1 m/s and gap > 40m)
+            boolean isFarAway = leftGap.si > 80.0;
+            boolean isPullingAway = (leftSpeed.si > egoSpeed.si + 1.0) && (leftGap.si > 40.0);
+
+            if (isFarAway || isPullingAway)
+            {
+                return finishManeuver();
+            }
+
+            return null; // Continue maneuver
         }
 
         /**
@@ -357,7 +380,6 @@ public class PreventUndercuttingPattern extends ManeuverPattern
             this.maneuverPattern.setCurrentActionState(this);
 
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
             NeighborsContext neighbors = this.vehicle.getContext(NeighborsContext.class);
 
             LateralDirectionality leftDir = LateralDirectionality.LEFT;
@@ -368,10 +390,6 @@ public class PreventUndercuttingPattern extends ManeuverPattern
                 // Should not happen as we checked in the previous state, but we add a safety check.
                 return null;
             }
-
-            Length leftDistHeadway = neighbors.getFrontGapDistance(leftDir);
-            Speed leftLeaderSpeed = leftLeader.getSpeed();
-            SpeedLimitInfo speedLimit = infra.getCurrentSpeedLimit();
 
             // Calculate acceleration required to stay behind the left vehicle
             Double safetyDistanceReductionFactorLaneChange =
@@ -387,8 +405,10 @@ public class PreventUndercuttingPattern extends ManeuverPattern
             aDecel = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, leftLeader);
 
             this.vehicle.getParameters().resetParameter(ParameterTypes.T);
-
             aDecel = Acceleration.max(aDecel, Acceleration.instantiateSI(-2.0)); // Limit deceleration to a comfortable level
+
+            aDecel = Acceleration.min(aDecel, ego.getCurrentCarFollowingAcceleration()); // Do not decelerate more than current
+                                                                                         // following accel
 
             SimpleOperationalPlan plan =
                     new SimpleOperationalPlan(aDecel, this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT));
@@ -426,19 +446,24 @@ public class PreventUndercuttingPattern extends ManeuverPattern
         }
 
         /**
-         * Checks if preparation should be aborted.
-         * @return finish maneuver if no longer needed, null otherwise
-         * @throws ParameterException if parameter missing
-         * @throws GtuException if GTU access fails
-         * @throws NetworkException if network access fails
+         * Verifies if the state should be aborted.
+         * <p>
+         * Abort conditions: 1. The left leader disappears or changes ID. 2. Traffic state transitions to congestion
+         * (undercutting allowed). 3. The undercutting situation is physically resolved (leader is far away or pulling away).
+         * </p>
+         * @return finish maneuver if no longer required, {@code null} otherwise
+         * @throws ParameterException if parameters are missing
+         * @throws GtuException if GTU context fails
+         * @throws NetworkException if network context fails
          */
         @Override
         public SimpleOperationalPlan abort() throws ParameterException, GtuException, NetworkException
         {
             NeighborsContext neighbors = this.vehicle.getContext(NeighborsContext.class);
+            HeadwayGtu leftLeader = neighbors.getLeader(LateralDirectionality.LEFT);
 
-            // If the left leader disappears or we are no longer at risk of undercutting, we can safely exit this pattern.
-            if (neighbors.getLeader(LateralDirectionality.LEFT) == null)
+            // 1. Leader disappeared
+            if (leftLeader == null)
             {
                 return finishManeuver();
             }
@@ -447,14 +472,28 @@ public class PreventUndercuttingPattern extends ManeuverPattern
             Speed congestionThreshold = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
             boolean isFreeFlow = ego.getEgoSpeed().gt(congestionThreshold);
 
-            HeadwayGtu leftLeader = neighbors.getLeader(LateralDirectionality.LEFT);
-
+            // 2. Leader ID changed or traffic state changed
             if (!leftLeader.getId().equals(this.maneuverPattern.getShadowingLeftNeighborId()) || !isFreeFlow)
             {
                 return finishManeuver();
             }
 
-            return null;
+            // 3. NEW: The situation has naturally resolved (Left Leader drove away)
+            Length leftGap = neighbors.getFrontGapDistance(LateralDirectionality.LEFT);
+            Speed leftSpeed = leftLeader.getSpeed();
+            Speed egoSpeed = ego.getEgoSpeed();
+
+            // Abort if the left neighbor is far away (> 80m)
+            // OR if they are accelerating away (speed delta > 1 m/s and gap > 40m)
+            boolean isFarAway = leftGap.si > 80.0;
+            boolean isPullingAway = (leftSpeed.si > egoSpeed.si + 1.0) && (leftGap.si > 40.0);
+
+            if (isFarAway || isPullingAway)
+            {
+                return finishManeuver();
+            }
+
+            return null; // Continue maneuver
         }
 
         @Override

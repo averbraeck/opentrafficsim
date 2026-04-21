@@ -137,6 +137,25 @@ public class EgoContext extends ContextCategory implements UpdatableContext
         }
     }
 
+    /**
+     * Provides access to the entire tick acceleration cache, which can be useful for debugging or advanced maneuver logic that
+     * needs to
+     * @return the current tick acceleration cache map
+     */
+    public Map<String, Acceleration> getCurrentTickAccelerationCache()
+    {
+        return this.tickAccelerationCache;
+    }
+
+    /**
+     * Returns the map of active relaxation states for all leaders. This can be used by maneuver patterns or tactical logic to
+     * @return the map of active relaxations, keyed by leader GTU ID
+     */
+    public Map<String, RelaxationState> getActiveRelaxations()
+    {
+        return this.activeRelaxations;
+    }
+
     // =========================================================================================
     // METHODS: RELAXATION MANAGEMENT
     // =========================================================================================

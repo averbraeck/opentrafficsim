@@ -20,6 +20,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.MirovaParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
@@ -84,7 +85,7 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
      */
     public LateralDirectionality getTargetDirection()
     {
-        return this.targetDirection;
+        return this.vehicle.getLaneChangeDesire().dominantDirection();
     }
 
     /**
@@ -118,10 +119,12 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             // Trigger if within 1000m OR if standard desire is high
             boolean isApproachingMerge = distToMerge.si > 0 && distToMerge.si < this.vehicle.getParameters()
                     .getParameter(MirovaParameters.extendedLookAheadDistance).si;
-            // boolean isDesireHigh = this.vehicle.getLaneChangeDesire().magnitude() >= 0.1; // Lowered threshold for early
+            boolean isDesireHigh = this.vehicle.getLaneChangeDesire().magnitude() >= this.vehicle.getParameters()
+                    .getParameter(MirovaParameters.DMAND);
+            // Lowered threshold for early
             // activation
 
-            return isApproachingMerge; // || isDesireHigh;
+            return isApproachingMerge || isDesireHigh; // || isDesireHigh;
         }
         catch (Exception exception)
         {
@@ -247,14 +250,24 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException
         {
             InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-
-            // Transition to active matching once the target lane is physically adjacent to the ego vehicle
-            if (infra.getIfLaneAvailable(this.pattern.getTargetDirection()))
+            // 1. FIX: Den vergessenen ANTICIPATION_THRESHOLD anwenden!
+            boolean isLaneAvailable = infra.getIfLaneAvailable(this.pattern.getTargetDirection());
+            if (isLaneAvailable)
             {
                 return transitionTo(new MatchTargetLaneSpeedState(this.maneuverPattern));
             }
 
-            return null;
+            Length distToMerge = infra.getDistanceToLaneChangeExtendedLookahead();
+            boolean isCloseEnough = (distToMerge != null && distToMerge.si <= 250.0); // Transition when within 250m of the
+                                                                                      // merge, even if lane is not yet
+                                                                                      // available
+            // Transition, wenn die Spur physisch befahrbar wird ODER wir die 400m-Marke unterschreiten
+            if (isCloseEnough)
+            {
+                return transitionTo(new MatchTargetLaneSpeedState(this.maneuverPattern));
+            }
+
+            return null; // Bleibe in der Antizipation, wenn noch weit weg
         }
 
         @Override
@@ -344,9 +357,23 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         {
             NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
             if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection()))
+            {
                 return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
+            }
 
+            Desire mand = this.vehicle.getMandatoryLaneChangeDesire();
+            if (mand.magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND))
+            {
+                return transitionTo(new SearchForGapState(this.maneuverPattern));
+            }
+            InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+            Acceleration aStop = MirovaCarFollowingUtil.stop(this.vehicle, infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
+            if (aStop.si < -5.0)
+            {
+                return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
+            }
             return null;
+
         }
 
         @Override
@@ -401,10 +428,14 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
                 Speed vTarget =
                         this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight();
 
-                Acceleration aMatch =
-                        MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), vTarget);
+                // NEU: NULL-SAFE-GUARD
+                if (vTarget != null)
+                {
+                    Acceleration aMatch =
+                            MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), vTarget);
+                    acc = Acceleration.min(acc, aMatch);
+                }
 
-                acc = Acceleration.min(acc, aMatch);
             }
 
             SimpleOperationalPlan plan = new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
@@ -431,12 +462,16 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             RelativeLane targetLane = this.pattern.getTargetDirection().isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
             Speed vCong = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
 
-            if (macro.getAverageSpeed(targetLane).si <= vCong.si || infra.getDistanceToLaneEnd().si <= 200.0)
-            {
-                return transitionTo(new CongestedGapSearchState(this.maneuverPattern));
-            }
+            // NEU: Variablen zwischenspeichern
+            Length distToLaneEnd = infra.getDistanceToLaneEnd();
+            Speed targetLaneSpeed = macro.getAverageSpeed(targetLane);
+
+            // NEU: Sichere Auswertung der Schwellenwerte (Null-Checks)
+            boolean isCongested = (targetLaneSpeed != null && targetLaneSpeed.si <= vCong.si);
+            boolean isNearLaneEnd = (distToLaneEnd != null && distToLaneEnd.si <= 50.0);
 
             GapCandidate bestGap = findFeasibleGap();
+
             if (bestGap != null)
             {
                 this.pattern.setActiveGap(bestGap);
@@ -444,12 +479,17 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             }
 
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            Acceleration requiredStopAccel =
-                    MirovaCarFollowingUtil.stop(this.vehicle, infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
 
-            if (requiredStopAccel.si < -5.0)
+            // NEU: Notbremsen nur erlauben, wenn auch wirklich ein Spurende existiert!
+            if (distToLaneEnd != null)
             {
-                return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
+                Acceleration requiredStopAccel =
+                        MirovaCarFollowingUtil.stop(this.vehicle, distToLaneEnd.minus(RAMP_END_BUFFER));
+
+                if (requiredStopAccel.si < -5.0)
+                {
+                    return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
+                }
             }
 
             return null;
@@ -473,8 +513,63 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             return null;
         }
 
+        // /**
+        // * Searches for a kinematic gap on the target lane.
+        // * @return a valid gap or null
+        // * @throws ParameterException if parameters fail
+        // * @throws GtuException if GTU access fails
+        // * @throws NetworkException if network access fails
+        // */
+        // private GapCandidate findFeasibleGap() throws ParameterException, GtuException, NetworkException
+        // {
+        // NeighborsContext neighCtx = this.vehicle.getContext(NeighborsContext.class);
+        // MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
+        // EgoContext ego = this.vehicle.getContext(EgoContext.class);
+
+        // LateralDirectionality direction = this.pattern.getTargetDirection();
+        // RelativeLane targetLane = direction.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
+
+        // Speed vEgo = ego.getEgoSpeed();
+        // Speed vTarget = macro.getAverageSpeed(targetLane);
+
+        // if (vEgo.si > vTarget.si)
+        // {
+        // // Downstream search
+        // Iterator<HeadwayGtu> leaderIt = neighCtx.getLeaders(direction).iterator();
+        // HeadwayGtu potentialFollower = neighCtx.getFollower(direction);
+        // if (potentialFollower == null)
+        // return null;
+
+        // while (leaderIt.hasNext())
+        // {
+        // HeadwayGtu potentialLeader = leaderIt.next();
+        // GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
+        // if (candidate.computeCurrentAcceleration() != null)
+        // return candidate;
+        // potentialFollower = potentialLeader;
+        // }
+        // }
+        // else
+        // {
+        // // Upstream search
+        // Iterator<HeadwayGtu> followerIt = neighCtx.getFollowers(direction).iterator();
+        // HeadwayGtu potentialLeader = neighCtx.getLeader(direction);
+        // if (potentialLeader == null)
+        // return null;
+
+        // while (followerIt.hasNext())
+        // {
+        // HeadwayGtu potentialFollower = followerIt.next();
+        // GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
+        // if (candidate.computeCurrentAcceleration() != null)
+        // return candidate;
+        // potentialLeader = potentialFollower;
+        // }
+        // }
+        // return null;
+        // }
         /**
-         * Searches for a kinematic gap on the target lane.
+         * Searches for a kinematic gap on the target lane. (INSTRUMENTED FOR DEBUGGING)
          * @return a valid gap or null
          * @throws ParameterException if parameters fail
          * @throws GtuException if GTU access fails
@@ -482,6 +577,8 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
          */
         private GapCandidate findFeasibleGap() throws ParameterException, GtuException, NetworkException
         {
+            String gtuId = this.vehicle.getGtu().getId();
+
             NeighborsContext neighCtx = this.vehicle.getContext(NeighborsContext.class);
             MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
@@ -492,40 +589,97 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             Speed vEgo = ego.getEgoSpeed();
             Speed vTarget = macro.getAverageSpeed(targetLane);
 
+            if (vTarget == null)
+            {
+                vTarget = vEgo;
+            }
+
             if (vEgo.si > vTarget.si)
             {
-                // Downstream search
-                Iterator<HeadwayGtu> leaderIt = neighCtx.getLeaders(direction).iterator();
-                HeadwayGtu potentialFollower = neighCtx.getFollower(direction);
-                if (potentialFollower == null)
+                Iterable<HeadwayGtu> leaders = neighCtx.getLeaders(direction);
+
+                if (leaders == null)
+                {
                     return null;
+                }
+
+                Iterator<HeadwayGtu> leaderIt = leaders.iterator();
+                HeadwayGtu potentialFollower = neighCtx.getFollower(direction);
+
+                if (potentialFollower == null)
+                {
+                    return null;
+                }
 
                 while (leaderIt.hasNext())
                 {
                     HeadwayGtu potentialLeader = leaderIt.next();
-                    GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
-                    if (candidate.computeCurrentAcceleration() != null)
-                        return candidate;
+
+                    try
+                    {
+                        GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
+                        Acceleration acc = candidate.computeCurrentAcceleration();
+
+                        if (acc != null)
+                        {
+                            return candidate;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.err.println(
+                                "[CRASH-DEBUG] GTU " + gtuId + " - EXCEPTION in DOWNSTREAM computeCurrentAcceleration!");
+                        e.printStackTrace();
+                        throw e;
+                    }
+
                     potentialFollower = potentialLeader;
                 }
             }
             else
             {
-                // Upstream search
-                Iterator<HeadwayGtu> followerIt = neighCtx.getFollowers(direction).iterator();
-                HeadwayGtu potentialLeader = neighCtx.getLeader(direction);
-                if (potentialLeader == null)
+                Iterable<HeadwayGtu> followers = neighCtx.getFollowers(direction);
+
+                if (followers == null)
+                {
                     return null;
+                }
+
+                Iterator<HeadwayGtu> followerIt = followers.iterator();
+                HeadwayGtu potentialLeader = neighCtx.getLeader(direction);
+
+                if (potentialLeader == null)
+                {
+
+                    return null;
+                }
 
                 while (followerIt.hasNext())
                 {
                     HeadwayGtu potentialFollower = followerIt.next();
-                    GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
-                    if (candidate.computeCurrentAcceleration() != null)
-                        return candidate;
+
+                    try
+                    {
+                        GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
+                        Acceleration acc = candidate.computeCurrentAcceleration();
+
+                        if (acc != null)
+                        {
+                            return candidate;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.err
+                                .println("[CRASH-DEBUG] GTU " + gtuId + " - EXCEPTION in UPSTREAM computeCurrentAcceleration!");
+                        e.printStackTrace();
+                        throw e;
+                    }
+
                     potentialLeader = potentialFollower;
                 }
             }
+
             return null;
         }
 
@@ -663,12 +817,23 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         }
 
         @Override
-        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException
+        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
         {
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
             InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
 
-            Acceleration a = MirovaCarFollowingUtil.stop(this.vehicle, infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
+            Length distToLaneEnd = infra.getDistanceToLaneEnd();
+            Acceleration a;
+
+            if (distToLaneEnd != null)
+            {
+                a = MirovaCarFollowingUtil.stop(this.vehicle, distToLaneEnd.minus(RAMP_END_BUFFER));
+            }
+            else
+            {
+                // Fallback, falls wir im State sind, aber kein Ende mehr detektiert wird
+                a = ego.getCurrentCarFollowingAcceleration();
+            }
 
             SimpleOperationalPlan plan = new SimpleOperationalPlan(a, this.pattern.patternSpecificTimestep);
             if (this.pattern.getTargetDirection().isLeft())
@@ -752,12 +917,12 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             this.pattern = (MandatoryLaneChangePattern) p;
             this.originLane = this.vehicle.getGtu().getLane();
 
-            if (this.vehicle.getContext(EgoContext.class).getEgoSpeed().si < 7.0)
-            {
-                this.slowLaneChange = true;
-                this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR,
-                        this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
-            }
+            // if (this.vehicle.getContext(EgoContext.class).getEgoSpeed().si < 7.0)
+            // {
+            // this.slowLaneChange = true;
+            // this.vehicle.getParameters().setParameterResettable(ParameterTypes.LCDUR,
+            // this.vehicle.getParameters().getParameter(MirovaParameters.congestedLaneChangeDuration));
+            // }
         }
 
         @Override
@@ -811,10 +976,10 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
 
             if (finished)
             {
-                if (this.slowLaneChange)
-                {
-                    this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
-                }
+                // if (this.slowLaneChange)
+                // {
+                // this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                // }
                 this.vehicle.releaseActionLock();
                 return finishManeuver();
             }
@@ -834,10 +999,10 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
                 if (this.vehicle.getLaneChangeDesire().magnitude() < this.vehicle.getParameters()
                         .getParameter(MirovaParameters.DMAND))
                 {
-                    if (this.slowLaneChange)
-                    {
-                        this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
-                    }
+                    // if (this.slowLaneChange)
+                    // {
+                    // this.vehicle.getParameters().resetParameter(ParameterTypes.LCDUR);
+                    // }
 
                     this.vehicle.releaseActionLock(); // HIER EINFÜGEN
                     return finishManeuver();

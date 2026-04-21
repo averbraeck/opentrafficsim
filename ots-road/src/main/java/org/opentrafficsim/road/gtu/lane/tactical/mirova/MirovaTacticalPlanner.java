@@ -386,6 +386,27 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
                     (this.currentActionState != null) ? this.currentActionState.toString() : "none");
         }
 
+        // if (getGtu().getLane().getId().equals("FORWARD4"))
+        // {
+        // System.out.printf("GTU: %s @simsec: %s -> State: %s, Desire: %s, Plan Acc: %s%n", getGtu().getId(),
+        // getGtu().getSimulator().getSimulatorTime().toDisplayString(),
+        // (this.currentActionState != null) ? this.currentActionState.toString() : "none",
+        // getLaneChangeDesire().toString(), planAcc.toDisplayString());
+        // }
+        if (getGtu().getLane().getLink().getId().equals("BC")
+                && (getGtu().getId().equals("319") || getGtu().getId().equals("281") || getGtu().getId().equals("82")))
+        {
+            EgoContext egoContext = getContextManager().getCategory("Ego", EgoContext.class);
+            InfrastructureContext infra = getContextManager().getCategory("Infrastructure", InfrastructureContext.class);
+            System.out.printf("GTU: %s @simsec: %s -> State: %s, Desire: %s, Plan Acc: %s%n", getGtu().getId(),
+                    getGtu().getSimulator().getSimulatorTime().toDisplayString(),
+                    (this.currentActionState != null) ? this.currentActionState.toString() : "none",
+                    getLaneChangeDesire().toString(), planAcc.toDisplayString());
+            System.out.printf("  -> Active Relaxations: %s, Acc Cache: %s%n", egoContext.getActiveRelaxations().toString(),
+                    egoContext.getCurrentTickAccelerationCache().toString());
+            System.out.printf("  -> Distance to End of Lane right: %s%n", infra.getDistanceToLaneEnd(RelativeLane.RIGHT));
+        }
+
         return this.operationalPlan;
     }
 
@@ -857,6 +878,19 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 
         // 2. Leader-following (incorporating automatic 2-parameter relaxation via our Utility)
         Iterable<HeadwayGtu> currentLeaders = neighbors.getLeaders(LateralDirectionality.NONE);
+        double maxLeadersToConsider = getParameters().getParameter(MirovaParameters.CF_MAX_LEADERS);
+        List<HeadwayGtu> limitedLeaders = new ArrayList<>();
+        int leaderCount = 0;
+        for (HeadwayGtu leader : currentLeaders)
+        {
+            if (leaderCount >= maxLeadersToConsider)
+            {
+                break;
+            }
+            limitedLeaders.add(leader);
+            leaderCount++;
+        }
+        currentLeaders = limitedLeaders;
         Acceleration aCf = MirovaCarFollowingUtil.followMultipleLeaders(this, currentLeaders);
         candidates.add(aCf);
 

@@ -22,15 +22,14 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTraffi
 /**
  * KnowledgeChunk representing discretionary lane change incentives (speed gain, keep-right).
  * <p>
- * This component forms part of <b>Layer 2 (Cognition / Motivation)</b> in the MiRoVA architecture.
- * It produces desires toward faster or more comfortable lanes based on macroscopic traffic states
- * and ego vehicle dynamics. The logic is largely based on Schakel et al. (2012) – LMRS Equations (6–7) and (10).
+ * This component forms part of <b>Layer 2 (Cognition / Motivation)</b> in the MiRoVA architecture. It produces desires toward
+ * faster or more comfortable lanes based on macroscopic traffic states and ego vehicle dynamics. The logic is largely based on
+ * Schakel et al. (2012) – LMRS Equations (6–7) and (10).
  * </p>
  * <p>
  * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
@@ -38,10 +37,9 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 
     /**
      * Constructs a new DiscretionaryLaneChangeChunk.
-     *
      * @param vehicle the tactical planner governing the ego agent
      * @throws OperationalPlanException if the planner cannot be initialized
-     * @throws ParameterException       if required parameters are missing
+     * @throws ParameterException if required parameters are missing
      */
     public DiscretionaryLaneChangeChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException, ParameterException
     {
@@ -51,10 +49,9 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
     /**
      * Determines if the discretionary lane change logic is applicable.
      * <p>
-     * Discretionary lane changes for speed gain or keeping right are generally always applicable
-     * during normal driving operations.
+     * Discretionary lane changes for speed gain or keeping right are generally always applicable during normal driving
+     * operations.
      * </p>
-     *
      * @return {@code true} as this chunk is always applicable
      * @throws ParameterException if parameter evaluation fails
      */
@@ -66,11 +63,10 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 
     /**
      * Computes the discretionary desire to change lanes for speed gains or to adhere to a keep-right rule.
-     *
      * @return a {@link Desire} object containing discretionary desire values for left and right directions
      * @throws ParameterException if required parameters for the calculation are missing
-     * @throws GtuException       if GTU state cannot be accessed
-     * @throws NetworkException   if network state cannot be accessed
+     * @throws GtuException if GTU state cannot be accessed
+     * @throws NetworkException if network state cannot be accessed
      */
     @Override
     public Desire computeDesire() throws ParameterException, GtuException, NetworkException

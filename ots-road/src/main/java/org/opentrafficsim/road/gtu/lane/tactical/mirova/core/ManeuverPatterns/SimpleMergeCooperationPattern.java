@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -227,8 +228,9 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
      * Helper method to scan for a valid merge candidate indicating a lane change.
      * @param neighbors the neighbors context containing perception data
      * @return {@code true} if a candidate is found and locked, {@code false} otherwise
+     * @throws ParameterException if parameter retrieval fails
      */
-    protected boolean findNewCandidate(final NeighborsContext neighbors)
+    protected boolean findNewCandidate(final NeighborsContext neighbors) throws ParameterException
     {
         for (LateralDirectionality dir : this.listLanesWithCooperationNeeds)
         {
@@ -239,7 +241,8 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
                 {
                     boolean indicatesTowardsUs = (dir.isRight() && candidate.isLeftTurnIndicatorOn())
                             || (dir.isLeft() && candidate.isRightTurnIndicatorOn());
-                    if (indicatesTowardsUs)
+                    if (indicatesTowardsUs
+                            && candidate.getDistance().gt(this.vehicle.getParameters().getParameter(ParameterTypes.S0)))
                     {
                         this.activeMergeCandidateId = candidate.getId();
                         this.directionOfMergeCandidate = dir;
@@ -334,6 +337,7 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
             if (!this.maneuverPattern.listLanesWithCooperationNeeds.isEmpty())
             {
                 LateralDirectionality dir = this.maneuverPattern.listLanesWithCooperationNeeds.get(0);
+                RelativeLane relativeLane = dir.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
                 LateralDirectionality oppositeDir = dir.isLeft() ? LateralDirectionality.RIGHT : LateralDirectionality.LEFT;
                 LaneDropInfo laneDropInfo = this.maneuverPattern.anticipatedLaneDropMap.get(dir);
 
@@ -343,7 +347,7 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
                     Lane laneDropLane = laneDropInfo.getLane();
                     Lane mainroadLane = laneDropLane.getAdjacentLane(oppositeDir, null);
 
-                    if (mainroadLane != null)
+                    if (infra.getDistanceToLaneEnd(relativeLane).si > 50.0 && mainroadLane != null)
                     {
                         Length mainroadLaneLength = mainroadLane.getLength();
 
@@ -360,20 +364,20 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
                         }
                     }
                 }
-                else
-                {
-                    // 2. Antizipation im Nahbereich (Die endende Spur liegt unmittelbar neben uns)
-                    // Da wir das kooperierende Fahrzeug auf der Hauptspur sind, müssen wir die
-                    // Geschwindigkeit UNSERER Spur antizipieren, da der Stau durch den Einfädler vor uns entsteht.
-                    MacroTrafficContext macro =
-                            this.vehicle.getContextManager().getCategory("MacroTraffic", MacroTrafficContext.class);
-                    Speed downstreamSpeed = macro.getAverageSpeed(RelativeLane.CURRENT);
+                // else if (infra.getDistanceToLaneEnd(relativeLane).si > 50.0)
+                // {
+                // // 2. Antizipation im Nahbereich (Die endende Spur liegt unmittelbar neben uns)
+                // // Da wir das kooperierende Fahrzeug auf der Hauptspur sind, müssen wir die
+                // // Geschwindigkeit UNSERER Spur antizipieren, da der Stau durch den Einfädler vor uns entsteht.
+                // MacroTrafficContext macro =
+                // this.vehicle.getContextManager().getCategory("MacroTraffic", MacroTrafficContext.class);
+                // Speed downstreamSpeed = macro.getAverageSpeed(RelativeLane.CURRENT);
 
-                    if (downstreamSpeed.lt(this.vehicle.getParameters().getParameter(ParameterTypes.VCONG)))
-                    {
-                        aAnticipation = MirovaCarFollowingUtil.approachTargetSpeed(vehicle, Length.ZERO, downstreamSpeed);
-                    }
-                }
+                // if (downstreamSpeed.lt(this.vehicle.getParameters().getParameter(ParameterTypes.VCONG)))
+                // {
+                // aAnticipation = MirovaCarFollowingUtil.approachTargetSpeed(vehicle, Length.ZERO, downstreamSpeed);
+                // }
+                // }
             }
             Acceleration accCoop = this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeDecelerationThreshold);
             Acceleration finalAcceleration = Acceleration.min(aDirectLeader, Acceleration.max(aAnticipation, accCoop));
@@ -435,7 +439,8 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
             HeadwayGtu candidate = this.maneuverPattern.getActiveMergeCandidate();
 
             // Abort if candidate is gone or cancelled the indicator
-            if (candidate == null || (!candidate.isLeftTurnIndicatorOn() && !candidate.isRightTurnIndicatorOn()))
+            if (candidate == null || (!candidate.isLeftTurnIndicatorOn() && !candidate.isRightTurnIndicatorOn()
+                    && candidate.getDistance().gt(this.vehicle.getParameters().getParameter(ParameterTypes.S0))))
             {
                 return finishManeuver();
             }
@@ -485,8 +490,8 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
             // Cap cooperative braking to avoid dangerous emergency stops on the main lane
             Acceleration decelThreshold =
                     this.vehicle.getParameters().getParameter(MirovaParameters.preemptiveCooperativeDeceleration);
-            finalAcceleration = finalAcceleration.gt(decelThreshold) ? finalAcceleration : decelThreshold;
-
+            finalAcceleration = aCooperation.gt(decelThreshold) ? aCooperation : decelThreshold;
+            finalAcceleration = Acceleration.min(aDirectLeader, finalAcceleration);
             return new SimpleOperationalPlan(finalAcceleration, this.vehicle.getParameters().getParameter(ParameterTypes.DT));
         }
 
