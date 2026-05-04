@@ -85,8 +85,8 @@ public final class MirovaCarFollowingUtil
         Length perceivedDistance = leader.getDistance();
         Speed perceivedLeaderSpeed = leader.getSpeed();
 
-        Acceleration aSafe =
-                getKinematicEmergencyBrake(vehicle, leader.getSpeed(), leader.getDistance(), leader.getAcceleration());
+        // Acceleration aSafe =
+        // getKinematicEmergencyBrake(vehicle, leader.getSpeed(), leader.getDistance(), leader.getAcceleration());
 
         // 2. Check for and apply ID-based relaxation buffers
         RelaxationState activeRelaxation = ego.getActiveRelaxationForLeader(leaderId);

@@ -9,7 +9,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.following.DynamicHeadwayProvider;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -80,6 +81,9 @@ public class EgoContext extends ContextCategory implements UpdatableContext
 
     /** Cache key for follower deceleration threshold (right). */
     public static final String FOLLOWER_DECELERATION_THRESHOLD_RIGHT = "followerDecelerationThresholdRight";
+
+    /** Cache key for maximum physical acceleration. */
+    public static final String MAX_PHYSICAL_ACCELERATION = "maxPhysicalAcceleration";
 
     // =========================================================================================
     // FIELDS: RELAXATION & CACHING
@@ -161,112 +165,153 @@ public class EgoContext extends ContextCategory implements UpdatableContext
     // =========================================================================================
 
     /**
-     * Evaluates a new cut-in situation and triggers the 2-parameter relaxation if the new leader violates the equilibrium
-     * desired headway.
+     * Evaluates a new cut-in situation and triggers the 2-parameter relaxation if the new leader violates the dynamic desired
+     * headway or has a significant speed difference.
      * <p>
      * This method is typically called by the {@code NeighborsContext} when a change in the leader ID is detected (edge
-     * trigger).
+     * trigger). It leverages the {@link DynamicHeadwayProvider} to accurately assess the required spatial gap.
      * </p>
-     * @param newLeader the new headway object that just cut in
-     * @param oldLeaderSpeed the speed of the previous leader at the time of the cut-in
+     * @param newLeader HeadwayGtu; the new headway object that just cut in
+     * @param oldLeaderSpeed Speed; the speed of the previous leader at the time of the cut-in (can be null)
      * @throws ParameterException if a required parameter is missing
      * @throws GtuException if GTU state cannot be accessed
      */
     public void evaluateAndTriggerRelaxation(final HeadwayGtu newLeader, final Speed oldLeaderSpeed)
             throws ParameterException, GtuException
     {
-
-        // Compute equilibrium headway for current speed
-        Length desiredHeadway =
-                this.vehicle.getCarFollowingModel().desiredHeadway(this.vehicle.getParameters(), this.getEgoSpeed());
-
-        // If the cut-in is too close, trigger the relaxation
-        if (newLeader.getDistance().lt(desiredHeadway))
+        if (newLeader == null)
         {
-            Length gammaS = desiredHeadway.minus(newLeader.getDistance());
+            return;
+        }
 
-            // Calculate gamma_v (Speed of old leader minus speed of new leader)
-            Speed gammaV = oldLeaderSpeed != null ? oldLeaderSpeed.minus(newLeader.getSpeed()) : Speed.ZERO;
+        Parameters params = this.vehicle.getParameters();
+        CarFollowingModel cfModel = this.vehicle.getCarFollowingModel();
+        Speed egoSpeed = this.getEgoSpeed();
 
-            Duration tauSpace = this.vehicle.getParameters().getParameter(MirovaParameters.RELAXATION_TAU_SPACE);
-            Duration tauSpeed = this.vehicle.getParameters().getParameter(MirovaParameters.RELAXATION_TAU_SPEED);
+        // 1. Compute static equilibrium headway
+        Length targetHeadway = cfModel.desiredHeadway(params, egoSpeed);
 
-            triggerRelaxation(newLeader.getId(), gammaS, gammaV, tauSpace, tauSpeed);
+        // 3. Calculate spatial deficit (gamma_s)
+        Length gammaS = Length.ZERO;
+        if (newLeader.getDistance().lt(targetHeadway))
+        {
+            gammaS = targetHeadway.minus(newLeader.getDistance());
+        }
+
+        // 4. Calculate speed deficit (gamma_v)
+        Speed gammaV = oldLeaderSpeed != null ? oldLeaderSpeed.minus(newLeader.getSpeed()) : Speed.ZERO;
+
+        // 5. Trigger relaxation if there is ANY deficit (space OR speed)
+        if (gammaS.si > 0.0 || gammaV.si > 0.0)
+        {
+            Duration tauSpace = params.getParameter(MirovaParameters.RELAXATION_TAU_SPACE);
+            Duration tauSpeed = params.getParameter(MirovaParameters.RELAXATION_TAU_SPEED);
+
+            triggerRelaxation(newLeader.getId(), gammaS, gammaV, tauSpace, tauSpeed, false);
         }
     }
 
     /**
-     * Explicitly registers a relaxation state for a specific target vehicle.
+     * Explicitly registers a relaxation state for a specific target vehicle without overwriting an active state.
      * <p>
-     * If an active relaxation state already exists for the given leader ID, this method call is ignored to ensure the
-     * exponential decay process is not interrupted by continuous maneuver triggers.
+     * This is a legacy/convenience wrapper that defaults to {@code forceOverwrite = false}.
      * </p>
-     * @param leaderId the ID of the target leader GTU
-     * @param initialSpaceDeficit the initial space headway deficit [m]
-     * @param initialSpeedDeficit the speed difference (oldLeaderSpeed - newLeaderSpeed) [m/s]
-     * @param tauSpace the spatial relaxation time constant [s]
-     * @param tauSpeed the speed relaxation time constant [s]
+     * @param leaderId String; the ID of the target leader GTU
+     * @param initialSpaceDeficit Length; the initial space headway deficit [m]
+     * @param initialSpeedDeficit Speed; the speed difference (oldLeaderSpeed - newLeaderSpeed) [m/s]
+     * @param tauSpace Duration; the spatial relaxation time constant [s]
+     * @param tauSpeed Duration; the speed relaxation time constant [s]
      */
     public void triggerRelaxation(final String leaderId, final Length initialSpaceDeficit, final Speed initialSpeedDeficit,
             final Duration tauSpace, final Duration tauSpeed)
     {
+        triggerRelaxation(leaderId, initialSpaceDeficit, initialSpeedDeficit, tauSpace, tauSpeed, false);
+    }
 
-        // PREVENT OVERWRITING: Nur triggern, wenn für diesen Leader nicht schon eine Relaxation läuft!
-        if (initialSpaceDeficit != null && initialSpaceDeficit.si > 0.0 && !this.activeRelaxations.containsKey(leaderId))
+    /**
+     * Explicitly registers or updates a relaxation state for a specific target vehicle.
+     * <p>
+     * If {@code forceOverwrite} is true, an ongoing relaxation is reset. This freezes the buffer at 100% while the maneuver is
+     * being prepared but not yet physically executed.
+     * </p>
+     * @param leaderId String; the ID of the target leader GTU
+     * @param initialSpaceDeficit Length; the initial space headway deficit [m]
+     * @param initialSpeedDeficit Speed; the speed difference (oldLeaderSpeed - newLeaderSpeed) [m/s]
+     * @param tauSpace Duration; the spatial relaxation time constant [s]
+     * @param tauSpeed Duration; the speed relaxation time constant [s]
+     * @param forceOverwrite boolean; if true, any active relaxation state for this leader is overwritten
+     */
+    public void triggerRelaxation(final String leaderId, final Length initialSpaceDeficit, final Speed initialSpeedDeficit,
+            final Duration tauSpace, final Duration tauSpeed, final boolean forceOverwrite)
+    {
+        if (forceOverwrite || !this.activeRelaxations.containsKey(leaderId))
         {
-            Duration now = this.vehicle.getGtu().getSimulator().getSimulatorTime();
-            this.activeRelaxations.put(leaderId,
-                    new RelaxationState(now, initialSpaceDeficit, initialSpeedDeficit, tauSpace, tauSpeed));
+            // Verify there is actually a deficit to relax
+            if ((initialSpaceDeficit != null && initialSpaceDeficit.si > 0.0)
+                    || (initialSpeedDeficit != null && initialSpeedDeficit.si > 0.0))
+            {
+                Duration now = this.vehicle.getGtu().getSimulator().getSimulatorTime();
+                this.activeRelaxations.put(leaderId,
+                        new RelaxationState(now, initialSpaceDeficit, initialSpeedDeficit, tauSpace, tauSpeed));
+
+                // ARCHITECTURE-UPDATE: Targeted cache invalidation ensures the IDM immediately recalculates
+                this.tickAccelerationCache.remove(leaderId);
+            }
         }
     }
 
     /**
      * Proactively calculates deficits and triggers relaxation for a specific target leader.
      * <p>
-     * This convenience method is designed for maneuver patterns to easily accept smaller gaps on adjacent lanes. It
-     * automatically calculates the spatial deficit based on the current desired headway, and uses the speed difference between
-     * the ego vehicle and the target leader as the initial speed deficit.
+     * This method is designed for maneuver patterns to safely accept gaps on adjacent lanes. It leverages the
+     * {@link DynamicHeadwayProvider} and deliberately <b>overwrites</b> existing states to keep the buffer fresh while waiting
+     * for the physical lane change to start.
      * </p>
-     * @param targetLeader the target leader GTU to relax towards
+     * @param targetLeader HeadwayGtu; the target leader GTU to relax towards
      * @throws ParameterException if required relaxation parameters are missing
      */
     public void triggerRelaxation(final HeadwayGtu targetLeader) throws ParameterException
     {
-        if (targetLeader == null || this.activeRelaxations.containsKey(targetLeader.getId()))
+        // NOTE: We do NOT check !this.activeRelaxations.containsKey anymore, because we want to overwrite!
+        if (targetLeader == null)
         {
             return;
         }
 
         Parameters params = this.vehicle.getParameters();
-        Length desiredHeadway = this.vehicle.getCarFollowingModel().desiredHeadway(params, this.getEgoSpeed());
+        CarFollowingModel cfModel = this.vehicle.getCarFollowingModel();
+        Speed egoSpeed = this.getEgoSpeed();
 
-        // Only trigger if the gap is actually tighter than our equilibrium desired headway
-        if (targetLeader.getDistance().lt(desiredHeadway))
+        Length targetHeadway = cfModel.desiredHeadway(params, egoSpeed);
+
+        Length spaceDeficit = Length.ZERO;
+        if (targetLeader.getDistance().lt(targetHeadway))
         {
-            Length spaceDeficit = desiredHeadway.minus(targetLeader.getDistance());
+            spaceDeficit = targetHeadway.minus(targetLeader.getDistance());
+        }
 
-            // For proactive lane changes, the speed deficit (gamma_v) is approximated
-            // as the difference between Ego Speed and the Target Leader's Speed.
-            Speed speedDeficit = this.getEgoSpeed().minus(targetLeader.getSpeed());
+        // For proactive lane changes, speed deficit is Ego Speed minus Target Leader Speed
+        Speed speedDeficit = egoSpeed.minus(targetLeader.getSpeed());
 
+        if (spaceDeficit.si > 0.0 || speedDeficit.si > 0.0)
+        {
             Duration tauSpace = params.getParameter(MirovaParameters.RELAXATION_TAU_SPACE);
             Duration tauSpeed = params.getParameter(MirovaParameters.RELAXATION_TAU_SPEED);
 
-            // Delegate to the main method
-            triggerRelaxation(targetLeader.getId(), spaceDeficit, speedDeficit, tauSpace, tauSpeed);
+            // Force overwrite = true! Buffer will not decay until the trigger stops (i.e. physical LC starts).
+            triggerRelaxation(targetLeader.getId(), spaceDeficit, speedDeficit, tauSpace, tauSpeed, false);
         }
     }
 
     /**
      * Retrieves the active relaxation state for a specific leader.
-     * @param leaderId the ID of the leader GTU
-     * @return the active relaxation state, or null if no relaxation is active for this leader
+     * @param leaderId String; the ID of the leader GTU
+     * @return RelaxationState; the active relaxation state, or null if no relaxation is active for this leader
      */
     public RelaxationState getActiveRelaxationForLeader(final String leaderId)
     {
         return this.activeRelaxations.get(leaderId);
     }
-
     // ----------------------------------------------------------------------
     // Lazy Accessors
     // ----------------------------------------------------------------------
@@ -438,6 +483,26 @@ public class EgoContext extends ContextCategory implements UpdatableContext
         return result;
     }
 
+    /**
+     * Calculates the maximum physical acceleration currently possible based on the vehicle's speed.
+     * <p>
+     * Uses lazy evaluation to cache the result per tick. The calculation is based on an empirical piece-wise linear function
+     * representing a typical combustion engine vehicle's performance.
+     * </p>
+     * @return Acceleration; the dynamically calculated maximum physical acceleration
+     */
+    public Acceleration getMaxPhysicalAcceleration()
+    {
+        Acceleration cached = getCachedValue(MAX_PHYSICAL_ACCELERATION, Acceleration.class);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        Acceleration result = computeMaxPhysicalAcceleration();
+        cacheValue(MAX_PHYSICAL_ACCELERATION, result, true);
+        return result;
+    }
     // ----------------------------------------------------------------------
     // Safe computation wrappers
     // ----------------------------------------------------------------------
@@ -519,9 +584,15 @@ public class EgoContext extends ContextCategory implements UpdatableContext
 
     /**
      * Interpolates the acceptable follower deceleration threshold based on current lane change desire.
-     * @param dir the lateral direction
-     * @return the computed acceleration threshold
-     * @throws ParameterException if a parameter is missing
+     * <p>
+     * The calculation returns the minimum threshold if the current desire is below the mandatory lane change threshold
+     * ({@code DMAND}), the maximum threshold if the desire exceeds {@code 1.0}, and linearly interpolates between the two for
+     * intermediate desire values. Clamping is applied strictly to the interpolation fraction to ensure mathematical robustness
+     * with negative acceleration values.
+     * </p>
+     * * @param dir LateralDirectionality; the lateral direction for which the desire is evaluated
+     * @return Acceleration; the computed acceleration threshold for the following vehicle (typically a negative value)
+     * @throws ParameterException if a required parameter is missing in the vehicle's parameter set
      */
     private Acceleration computeFollowerDecelerationThreshold(final LateralDirectionality dir) throws ParameterException
     {
@@ -529,48 +600,53 @@ public class EgoContext extends ContextCategory implements UpdatableContext
                 this.vehicle.getParameters().getParameter(MirovaParameters.minFollowerDecelerationThreshold);
         Acceleration maxThreshold =
                 this.vehicle.getParameters().getParameter(MirovaParameters.maxFollowerDecelerationThreshold);
-        Double currentDirectionDesire = this.vehicle.getLaneChangeDesire().getDirectionalDesire(dir);
-        Double mandatoryDesireThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.DMAND);
 
-        Double currentThreshold;
-        if (currentDirectionDesire >= mandatoryDesireThreshold)
-        {
-            currentThreshold = minThreshold.si + (maxThreshold.si - minThreshold.si)
-                    * (currentDirectionDesire - mandatoryDesireThreshold) / (1.0 - mandatoryDesireThreshold);
-        }
-        else
-        {
-            currentThreshold = minThreshold.si;
-        }
-        currentThreshold = Math.max(maxThreshold.si, Math.min(minThreshold.si, currentThreshold));
-        return Acceleration.instantiateSI(currentThreshold);
+        // Use primitive double to avoid unnecessary autoboxing/unboxing overhead in the simulation loop
+        double currentDirectionDesire = this.vehicle.getLaneChangeDesire().getDirectionalDesire(dir);
+        double mandatoryDesireThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.DMAND);
+
+        // Calculate the interpolation fraction based on current desire
+        double fraction = (currentDirectionDesire - mandatoryDesireThreshold) / (1.0 - mandatoryDesireThreshold);
+
+        // Clamp the fraction strictly between 0.0 (min limit) and 1.0 (max limit)
+        fraction = Math.max(0.0, Math.min(1.0, fraction));
+
+        // Interpolate using the clamped fraction
+        double currentThresholdSi = minThreshold.si + fraction * (maxThreshold.si - minThreshold.si);
+
+        return Acceleration.instantiateSI(currentThresholdSi);
     }
 
     /**
      * Interpolates the acceptable ego deceleration threshold based on current lane change desire.
-     * @param dir the lateral direction
-     * @return the computed acceleration threshold
-     * @throws ParameterException if a parameter is missing
+     * <p>
+     * The calculation returns the minimum threshold if the current desire is below the mandatory lane change threshold
+     * ({@code DMAND}), the maximum threshold if the desire exceeds {@code 1.0}, and linearly interpolates between the two for
+     * intermediate desire values.
+     * </p>
+     * * @param dir LateralDirectionality; the lateral direction for which the desire is evaluated
+     * @return Acceleration; the computed acceleration threshold (typically a negative value for deceleration)
+     * @throws ParameterException if a required parameter is missing in the vehicle's parameter set
      */
     private Acceleration computeEgoDecelerationThreshold(final LateralDirectionality dir) throws ParameterException
     {
         Acceleration minThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.minEgoDecelerationThreshold);
         Acceleration maxThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.maxEgoDecelerationThreshold);
-        Double currentDirectionDesire = this.vehicle.getLaneChangeDesire().getDirectionalDesire(dir);
-        Double mandatoryDesireThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.DMAND);
+        double currentDirectionDesire = this.vehicle.getLaneChangeDesire().getDirectionalDesire(dir);
+        double mandatoryDesireThreshold = this.vehicle.getParameters().getParameter(MirovaParameters.DMAND);
 
-        Double currentThreshold;
-        if (currentDirectionDesire >= mandatoryDesireThreshold)
-        {
-            currentThreshold = minThreshold.si + (maxThreshold.si - minThreshold.si)
-                    * (currentDirectionDesire - mandatoryDesireThreshold) / (1.0 - mandatoryDesireThreshold);
-        }
-        else
-        {
-            currentThreshold = minThreshold.si;
-        }
-        currentThreshold = Math.max(maxThreshold.si, Math.min(minThreshold.si, currentThreshold));
-        return Acceleration.instantiateSI(currentThreshold);
+        // Calculate the interpolation fraction based on current desire
+        double fraction = (currentDirectionDesire - mandatoryDesireThreshold) / (1.0 - mandatoryDesireThreshold);
+
+        // Clamp the fraction to strictly bind it between 0.0 (min limit) and 1.0 (max limit)
+        // This makes the logic mathematically robust, even if maxThreshold is numerically smaller than minThreshold (negative
+        // accelerations)
+        fraction = Math.max(0.0, Math.min(1.0, fraction));
+
+        // Interpolate using the clamped fraction
+        double currentThresholdSi = minThreshold.si + fraction * (maxThreshold.si - minThreshold.si);
+
+        return Acceleration.instantiateSI(currentThresholdSi);
     }
 
     // ----------------------------------------------------------------------
@@ -613,6 +689,51 @@ public class EgoContext extends ContextCategory implements UpdatableContext
 
         // 3. Mark the context properties cache as valid (Lazy evaluation trigger)
         markCacheValid();
+    }
+
+    /**
+     * Computes the maximum physical acceleration based on an empirical piece-wise linear model.
+     * <p>
+     * The model evaluates the current speed in km/h to apply the following constraints:
+     * <ul>
+     * <li>0 to 100 km/h: linear decrease from 3.5 m/s&sup2; to 1.0 m/s&sup2;</li>
+     * <li>100 to 250 km/h: linear decrease from 1.0 m/s&sup2; to 0.0 m/s&sup2;</li>
+     * <li>Above 250 km/h: 0.0 m/s&sup2;</li>
+     * </ul>
+     * </p>
+     * @return Acceleration; the computed maximum physical acceleration
+     */
+    private Acceleration computeMaxPhysicalAcceleration()
+    {
+        double speedKmh = getEgoSpeed().getInUnit(SpeedUnit.KM_PER_HOUR);
+        double maxAccSi;
+
+        if (speedKmh < 100.0)
+        {
+            maxAccSi = 3.5 - (2.5 / 100.0) * speedKmh;
+        }
+        else if (speedKmh < 250.0)
+        {
+            maxAccSi = 1.0 - (1.0 / 150.0) * (speedKmh - 100.0);
+        }
+        else
+        {
+            maxAccSi = 0.0;
+        }
+
+        // Apply stochastic scaling factor
+        try
+        {
+            double scalingFactor = this.vehicle.getParameters().getParameter(MirovaParameters.ACCELERATION_SCALING_FACTOR);
+            maxAccSi *= scalingFactor;
+        }
+        catch (ParameterException e)
+        {
+            // Fallback: If parameter is somehow missing, we silently default to a scale of 1.0
+            // No action required, maxAccSi remains unchanged
+        }
+
+        return Acceleration.instantiateSI(maxAccSi);
     }
 
     /**

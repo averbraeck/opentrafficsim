@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -283,7 +284,6 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
         {
             NeighborsContext neighbors = this.vehicle.getContextManager().getCategory("Neighbors", NeighborsContext.class);
             EgoContext ego = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
-
             // Check for preemptive lane change (Evasion) if approaching a congested merge
             if (ego.getEgoSpeed().gt(this.vehicle.getParameters().getParameter(ParameterTypes.VCONG))
                     && this.vehicle.getParameters().getParameter(MirovaParameters.cooperativeLaneChangesEnabled))
@@ -481,17 +481,19 @@ public class SimpleMergeCooperationPattern extends ManeuverPattern implements Se
             HeadwayGtu candidate = this.maneuverPattern.getActiveMergeCandidate();
             if (candidate != null)
             {
-                aCooperation = MirovaCarFollowingUtil.followSingleLeader(vehicle, candidate);
+                if (!candidate.isParallel() || ego.getEgoSpeed().gt(new Speed(5.0, SpeedUnit.KM_PER_HOUR)))
+                {
+                    aCooperation = MirovaCarFollowingUtil.followSingleLeader(vehicle, candidate);
+                    Acceleration decelThreshold =
+                            this.vehicle.getParameters().getParameter(MirovaParameters.preemptiveCooperativeDeceleration);
+                    aCooperation = aCooperation.gt(decelThreshold) ? aCooperation : decelThreshold; // Cap cooperative braking
+                                                                                                    // to avoid dangerous
+                                                                                                    // emergency stops on the
+                                                                                                    // main lane
+                }
             }
 
-            // The vehicle applies the most restrictive acceleration required (Two-Leader Model)
-            Acceleration finalAcceleration = Acceleration.min(aDirectLeader, aCooperation);
-
-            // Cap cooperative braking to avoid dangerous emergency stops on the main lane
-            Acceleration decelThreshold =
-                    this.vehicle.getParameters().getParameter(MirovaParameters.preemptiveCooperativeDeceleration);
-            finalAcceleration = aCooperation.gt(decelThreshold) ? aCooperation : decelThreshold;
-            finalAcceleration = Acceleration.min(aDirectLeader, finalAcceleration);
+            Acceleration finalAcceleration = Acceleration.min(aCooperation, aDirectLeader);
             return new SimpleOperationalPlan(finalAcceleration, this.vehicle.getParameters().getParameter(ParameterTypes.DT));
         }
 

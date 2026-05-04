@@ -10,20 +10,22 @@ import org.opentrafficsim.demo.mirova.scenariomanagement.ScenarioSimulationScrip
 
 public class RunMerge
 {
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception
+    {
 
-        for (int run = 0; run < 10; run++)
+        for (int run = 0; run < 1; run++)
         {
             System.out.println("Starting simulation run " + (run + 1) + " of 10...");
-            File outputDir = new File("D:\\Mitarbeitende\\gw2128\\repositories\\mirova\\output\\ots\\bodegraven\\lmrs\\run_" + (run + 1));
+            File outputDir = new File(
+                    "D:\\Mitarbeitende\\gw2128\\repositories\\mirova\\output\\ots\\bodegraven\\lmrs\\run_" + (run + 1));
             ScenarioGenerator scenario = new MergeScenario();
             outputDir.mkdirs();
             scenario.setOutputDirectory(outputDir);
             ScenarioParameters params = new ScenarioParameters();
-            params.setSeed(42 + run);       // Base seed + run index for different seeds
+            params.setSeed(42 + run); // Base seed + run index for different seeds
             params.setSimulationTime(new Duration(2.0, DurationUnit.HOUR));
-            params.setTruckShare(0.1);  // 10% trucks
-            params.setMergeShare(0.2);  // 20% on-ramp demand
+            params.setTruckShare(0.1); // 10% trucks
+            params.setMergeShare(0.2); // 20% on-ramp demand
             ScenarioSimulationScript script = scenario.buildSimulationScript(params);
             script.setGuiEnabled(true);
             script.start();

@@ -12,6 +12,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 
 /**
  * Defines the specific parameters used within the MiRoVA tactical planner framework.
@@ -72,6 +73,28 @@ public final class MirovaParameters implements ConstraintInterface
                         "CONGESTED_LANE_CHANGE_DURATION", "Lane change duration in low speed, congested situations",
                         Duration.instantiateSI(1.5), POSITIVE);
 
+        /**
+         * Critical deceleration limit for the MiRoVA framework.
+         * <p>
+         * This parameter represents a comfortable but strong braking limit (e.g., stopping for a yellow light). It is strictly
+         * defined as a negative acceleration to align directly with kinematic equations.
+         * </p>
+         */
+        public static final ParameterTypeAcceleration B_CRIT =
+                        new ParameterTypeAcceleration("bCritMirova", "Critical deceleration (strictly negative acceleration)",
+                                        Acceleration.instantiateSI(-3.5), NumericConstraint.NEGATIVE);
+
+        /**
+         * Maximum physical deceleration limit for the MiRoVA framework.
+         * <p>
+         * This parameter represents the absolute emergency braking capability of the vehicle. It is strictly defined as a
+         * negative acceleration to align directly with kinematic equations.
+         * </p>
+         */
+        public static final ParameterTypeAcceleration B_MAX =
+                        new ParameterTypeAcceleration("bMaxMirova", "Maximum deceleration (strictly negative acceleration)",
+                                        Acceleration.instantiateSI(-6.0), NumericConstraint.NEGATIVE);
+
         // ----------------------------------------------------------------------
         // Social interaction parameters
         // ----------------------------------------------------------------------
@@ -115,7 +138,7 @@ public final class MirovaParameters implements ConstraintInterface
         /** Maximum deceleration for follower vehicles in lane change maneuvers. */
         public static final ParameterTypeAcceleration maxFollowerDecelerationThreshold = new ParameterTypeAcceleration(
                         "MAX_FOLLOWER_DECELERATION_THRESHOLD", "Maximum deceleration for follower vehicles in lc maneuvers",
-                        Acceleration.instantiateSI(-4.0), NEGATIVE);
+                        Acceleration.instantiateSI(-3.0), NEGATIVE);
 
         /** Deceleration threshold for ego vehicle in lane change maneuvers. */
         public static final ParameterTypeAcceleration egoDecelerationThreshold = new ParameterTypeAcceleration(
@@ -130,7 +153,7 @@ public final class MirovaParameters implements ConstraintInterface
         /** Maximum deceleration for ego vehicle in lane change maneuvers. */
         public static final ParameterTypeAcceleration maxEgoDecelerationThreshold = new ParameterTypeAcceleration(
                         "MAX_EGO_DECELERATION_THRESHOLD", "Maximum deceleration for ego vehicle in lc maneuvers",
-                        Acceleration.instantiateSI(-5.0), NEGATIVE);
+                        Acceleration.instantiateSI(-4.0), NEGATIVE);
 
         // ----------------------------------------------------------------------
         // Cooperation parameters
@@ -139,7 +162,7 @@ public final class MirovaParameters implements ConstraintInterface
         /** Deceleration threshold for cooperative maneuvers. */
         public static final ParameterTypeAcceleration cooperativeDecelerationThreshold = new ParameterTypeAcceleration(
                         "COOPERATIVE_DECELERATION_THRESHOLD", "Deceleration threshold for cooperative maneuvers",
-                        Acceleration.instantiateSI(-5.0), NEGATIVE);
+                        Acceleration.instantiateSI(-4.0), NEGATIVE);
 
         /** Deceleration for preemptive cooperative maneuvers. */
         public static final ParameterTypeAcceleration preemptiveCooperativeDeceleration = new ParameterTypeAcceleration(
@@ -176,4 +199,15 @@ public final class MirovaParameters implements ConstraintInterface
 
         public static final ParameterTypeDouble CF_MAX_LEADERS = new ParameterTypeDouble("CF_MAX_LEADERS",
                         "Maximum number of leaders considered in car-following", 2, POSITIVE);
+
+        /**
+         * Scaling factor for the maximum physical acceleration.
+         * <p>
+         * This dimensionless parameter serves as a multiplier to stochastically vary the vehicle's acceleration capabilities. A
+         * value of 1.0 represents the baseline performance, while values below 1.0 represent degraded performance (e.g., due to
+         * vehicle age or heavy load), and values above 1.0 represent higher performance (e.g., sports cars).
+         * </p>
+         */
+        public static final ParameterTypeDouble ACCELERATION_SCALING_FACTOR = new ParameterTypeDouble("aScale",
+                        "Scaling factor for the maximum physical acceleration.", 1.0, ConstraintInterface.POSITIVE);
 }

@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -196,72 +197,176 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     /**
      * Computes the deceleration required by the ego vehicle when attempting a lane change in the specified direction.
      * <p>
-     * For each leader vehicle on the target lane, the car-following model is evaluated to determine the necessary braking
-     * effort to safely merge. The minimum (most restrictive) value across all leaders is returned.
+     * Evaluates the simple kinematic calculation against all leaders on the target lane. The minimum (most restrictive) value
+     * across all leaders is returned.
      * </p>
      * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
-     * @return minimum required ego deceleration [m/s²]
+     * @return minimum required ego deceleration [m/s&sup2;]
      * @throws ParameterException if a parameter lookup fails
-     * @throws OperationalPlanException if car-following computation fails
      * @throws GtuException if GTU state cannot be accessed
      */
     private Acceleration computeLaneChangeEgoDeceleration(final LateralDirectionality laneChangeDirection)
-            throws ParameterException, OperationalPlanException, GtuException
+            throws ParameterException, GtuException
     {
-        Acceleration egoDeceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        NeighborsPerception neighbors = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
-        // InfrastructureContext infra =
-        // this.vehicle.getContextManager().getCategory("Infrastructure", InfrastructureContext.class);
 
-        // // Retrieve current legal speed limit info
-        // SpeedLimitInfo currentLimitInfo = infra.getCurrentSpeedLimit();
-        // CarFollowingModel cfModel = this.vehicle.getCarFollowingModel();
-        // Parameters params = this.vehicle.getGtu().getParameters();
-        // Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+        Iterable<HeadwayGtu> leaders = getLeaders(laneChangeDirection);
+        HeadwayGtu leader = leaders.iterator().hasNext() ? leaders.iterator().next() : null;
 
-        for (HeadwayGtu leader : neighbors.getFirstLeaders(laneChangeDirection))
+        if (leader == null)
         {
-            Acceleration iteraryDecel = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, leader);
-
-            egoDeceleration = Acceleration.min(egoDeceleration, iteraryDecel);
+            return Acceleration.ZERO;
         }
+
+        EgoContext egoCtx = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
+        Double reductionFactor =
+                this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
+        Length desiredFrontHeadway = egoCtx.getDesiredFrontHeadway(laneChangeDirection).times(reductionFactor);
+        Acceleration egoDeceleration = getGtuDeceleration(leader, getFrontGapDeltaSpeed(laneChangeDirection),
+                getFrontGapDistance(laneChangeDirection), desiredFrontHeadway);
+
         return egoDeceleration;
+    }
+
+    /**
+     * Computes the deceleration required by a follower on the target lane to maintain safety if the ego vehicle were to change
+     * lanes.
+     * <p>
+     * Evaluates a simple kinematic deceleration calculation using the vehicle's own parameters and perception.
+     * </p>
+     * @param relativeSpeed the speed difference between the ego vehicle and the follower (ego speed minus follower speed)
+     * @param currentHeadway the current gap distance between the follower and the ego vehicle
+     * @param desiredHeadway the desired gap distance based on the follower's parameters and the lane change safety reduction
+     *            factor
+     * @return minimum required deceleration [m/s&sup2;]
+     * @throws ParameterException if a parameter lookup fails
+     */
+    private Acceleration calculateDeceleration(final Speed relativeSpeed, final Length currentHeadway,
+            final Length desiredHeadway) throws ParameterException
+    {
+        Double effectiveCurrentHeadway = currentHeadway.si - desiredHeadway.si;
+
+        if (Math.abs(effectiveCurrentHeadway) < 1E-6)
+        {
+            effectiveCurrentHeadway = 1E-6; // prevent division by zero
+        }
+
+        Double resultingAcceleration = -(relativeSpeed.si * relativeSpeed.si) / (2.0 * effectiveCurrentHeadway);
+        return Acceleration.instantiateSI(resultingAcceleration);
+    }
+
+    /**
+     * Computes the deceleration required by a specific GTU (leader or follower) to maintain safety if the ego vehicle were to
+     * change lanes.
+     * @param gtu the observed neighboring GTU (leader or follower)
+     * @return minimum required deceleration [m/s&sup2;]
+     * @throws ParameterException if a parameter lookup fails
+     */
+    private Acceleration calculateDeceleration(HeadwayGtu gtu) throws ParameterException
+    {
+        Speed gtuSpeed = gtu.getSpeed();
+        Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+
+        Speed followerSpeed = gtu.isBehind() ? gtuSpeed : egoSpeed;
+        Duration desiredTimeHeadway = this.vehicle.getParameters().getParameter(ParameterTypes.T);
+        Length standstillDistance = this.vehicle.getParameters().getParameter(ParameterTypes.S0);
+        Double reductionFactor =
+                this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
+        Length desiredHeadway = standstillDistance.plus(followerSpeed.times(desiredTimeHeadway)).times(reductionFactor);
+        Speed relativeSpeed = egoSpeed.minus(gtuSpeed);
+
+        return calculateDeceleration(relativeSpeed, gtu.getDistance(), desiredHeadway);
+
+    }
+
+    /**
+     * Retrieves or computes the deceleration required by a specific GTU using a simplified kinematic formula.
+     * <p>
+     * Caches the result per GTU ID within the current simulation step to avoid redundant calculations.
+     * </p>
+     * @param gtu the observed neighboring GTU
+     * @param relativeSpeed the speed difference between the ego vehicle and the GTU
+     * @param currentHeadway the current gap distance
+     * @param desiredHeadway the desired gap distance based on parameters
+     * @return minimum required deceleration [m/s&sup2;]
+     * @throws ParameterException if a parameter lookup fails
+     */
+    public Acceleration getGtuDeceleration(final HeadwayGtu gtu, final Speed relativeSpeed, final Length currentHeadway,
+            final Length desiredHeadway) throws ParameterException
+    {
+        if (gtu == null)
+        {
+            return Acceleration.ZERO;
+        }
+
+        String cacheKey = "inducedDecel_" + gtu.getId();
+        Acceleration cached = getCachedValue(cacheKey, Acceleration.class);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        Acceleration result = calculateDeceleration(relativeSpeed, currentHeadway, desiredHeadway);
+        cacheValue(cacheKey, result, true);
+        return result;
+    }
+
+    /**
+     * Retrieves or computes the deceleration required by a specific GTU using a simplified kinematic formula.
+     * <p>
+     * Caches the result per GTU ID within the current simulation step to avoid redundant calculations.
+     * </p>
+     * @param gtu the observed neighboring GTU
+     * @return minimum required deceleration [m/s&sup2;]
+     * @throws ParameterException if a parameter lookup fails
+     */
+    public Acceleration getGtuDeceleration(final HeadwayGtu gtu) throws ParameterException
+    {
+        if (gtu == null)
+        {
+            return Acceleration.ZERO;
+        }
+
+        String cacheKey = "inducedDecel_" + gtu.getId();
+        Acceleration cached = getCachedValue(cacheKey, Acceleration.class);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        Acceleration result = calculateDeceleration(gtu);
+        cacheValue(cacheKey, result, true);
+        return result;
     }
 
     /**
      * Computes the deceleration required by the follower on the target lane to maintain safety if the ego vehicle were to
      * change lanes.
      * <p>
-     * This method evaluates, for each follower vehicle, the car-following model of that follower using its own parameters and
-     * perception. The result represents the minimum (most restrictive) deceleration that would be induced by the ego vehicle’s
-     * lane change.
+     * This method evaluates the simple kinematic deceleration for the immediate follower.
      * </p>
      * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
-     * @return minimum required follower deceleration [m/s²]
+     * @return minimum required follower deceleration [m/s&sup2;]
      * @throws ParameterException if a parameter lookup fails
-     * @throws OperationalPlanException if car-following computation fails
      */
     private Acceleration computeLaneChangeFollowerDeceleration(final LateralDirectionality laneChangeDirection)
-            throws ParameterException, OperationalPlanException
+            throws ParameterException
     {
-        Acceleration followerDecelValue = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        NeighborsPerception neighbors = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
-
-        Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
-
-        HeadwayGtu follower = neighbors.getFirstFollowers(laneChangeDirection).first();
+        Iterable<HeadwayGtu> followers = getFollowers(laneChangeDirection);
+        HeadwayGtu follower = followers.iterator().hasNext() ? followers.iterator().next() : null;
 
         if (follower == null)
         {
-            return new Acceleration(0.0, AccelerationUnit.SI); // No follower, no induced deceleration
-        }
-        else
-        {
-            Acceleration decel = CarFollowingUtil.followSingleLeader(follower.getCarFollowingModel(), follower.getParameters(),
-                    follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), egoSpeed);
-            return decel;
+            return Acceleration.ZERO;
         }
 
+        EgoContext egoCtx = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class);
+        Double reductionFactor =
+                this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
+
+        Length desiredRearHeadway = egoCtx.getDesiredRearHeadway(laneChangeDirection).times(reductionFactor);
+
+        return getGtuDeceleration(follower, getRearGapDeltaSpeed(laneChangeDirection), getRearGapDistance(laneChangeDirection),
+                desiredRearHeadway);
     }
 
     // ---- Lazy accessors for deceleration values -------------------------------------

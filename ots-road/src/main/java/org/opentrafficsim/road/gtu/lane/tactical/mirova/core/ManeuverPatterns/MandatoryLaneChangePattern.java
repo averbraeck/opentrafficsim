@@ -27,9 +27,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTrafficContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext.ScanDirection;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.following.MirovaCarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive.GapSearchPattern.BreakingEndOfRampState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive.GapSearchPattern.CongestedGapSearchState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.helpers.GapCandidate;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.helpers.HeuristicGapSelector;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -162,7 +165,7 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
          * Constructor for the anticipation state.
          * @param p the parent maneuver pattern
          */
-        public AnticipateMergeState(final ManeuverPattern p)
+        public AnticipateMergeState(final MandatoryLaneChangePattern p)
         {
             super(p);
             this.pattern = (MandatoryLaneChangePattern) p;
@@ -181,69 +184,42 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         @Override
         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
         {
+            Acceleration criticalDecelThreshold = Acceleration.instantiateSI(-2.0); // Ggf. aus Parametern holen
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
             InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-            Parameters params = this.vehicle.getParameters();
+            Acceleration aCf = ego.getCurrentCarFollowingAcceleration();
 
-            Acceleration acc = ego.getCurrentCarFollowingAcceleration();
-            Length distToMerge = infra.getDistanceToLaneChangeExtendedLookahead();
-            Speed targetSpeed = null;
-
-            // Check if we are approaching a merge within our extended lookahead
-            if (distToMerge != null && distToMerge.si > 0.0
-                    && distToMerge.si < params.getParameter(MirovaParameters.extendedLookAheadDistance).si)
+            if (aCf.gt(criticalDecelThreshold))
             {
-                // 1. Proactively find the target lane on the main road using the new path-projection method
-                Lane targetMainroadLane = infra.getDownstreamAdjacentLane(this.pattern.getTargetDirection());
-
-                if (targetMainroadLane != null)
+                Speed vEgo = ego.getEgoSpeed();
+                Speed speedLimit = infra.getLegalSpeedLimit();
+                if (vEgo.lt(speedLimit))
                 {
-                    // 2. Measure the speed of the vehicles entering the merge zone on the main road.
-                    // Focus only on the first 300m of the main road lane to capture the merge bottleneck without being
-                    // influenced by downstream conditions.
-                    targetSpeed = infra.getLaneAverageSpeed(targetMainroadLane, Length.ZERO, Length.instantiateSI(300.0),
+                    Lane targetLane = infra.getDownstreamAdjacentLane(this.pattern.getTargetDirection());
 
-                            3, // Max 5 vehicles to keep it sharp and reactive
-                            InfrastructureContext.ScanDirection.FRONT_TO_BACK);
-                }
-
-                // NULL-SAFE-GUARD: Nur berechnen, wenn wir wirklich ein targetSpeed haben
-                if (targetSpeed != null)
-                {
-                    // 3. Apply Exponential Moving Average (EMA) for stabilization
-                    if (this.smoothedMergeSpeed == null)
+                    if (targetLane != null)
                     {
-                        this.smoothedMergeSpeed = targetSpeed;
-                    }
-                    else
-                    {
-                        double smoothedSi = (1.0 - this.SPEED_SMOOTHING_FACTOR) * this.smoothedMergeSpeed.si
-                                + this.SPEED_SMOOTHING_FACTOR * targetSpeed.si;
-                        this.smoothedMergeSpeed = new Speed(smoothedSi, SpeedUnit.SI);
-                    }
+                        Speed targetLaneSpeed = infra.getLaneAverageSpeed(targetLane, Length.instantiateSI(0.0),
+                                Length.instantiateSI(150.0), 3, ScanDirection.FRONT_TO_BACK);
+                        Speed targetSpeed = Speed.max(targetLaneSpeed, new Speed(20.0, SpeedUnit.KM_PER_HOUR));
+                        targetSpeed = Speed.min(targetSpeed, speedLimit);
+                        if (ego.getEgoSpeed().gt(targetSpeed))
+                        {
+                            Acceleration aToTarget = MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle,
+                                    Length.instantiateSI(10.0), targetSpeed);
+                            Acceleration egoDecelThreshold =
+                                    this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
+                            aToTarget = Acceleration.max(aToTarget, egoDecelThreshold);
 
-                    // 4. Softly approach the stabilized anticipated speed over the remaining distance
-                    Acceleration aToMatch =
-                            MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.ZERO, this.smoothedMergeSpeed);
+                            return new SimpleOperationalPlan(aToTarget, this.pattern.patternSpecificTimestep);
+                        }
 
-                    // Fail-safe: Do not crash into direct leaders on the current ramp while anticipating
-                    Acceleration maxDecel =
-                            this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
-                    Acceleration safeAcc = Acceleration.max(Acceleration.min(acc, aToMatch), maxDecel);
-                    return new SimpleOperationalPlan(safeAcc, this.pattern.patternSpecificTimestep);
-                }
-                else
-                {
-                    this.smoothedMergeSpeed = null;
+                    }
                 }
             }
-            else
-            {
-                // Reset smoothing if we temporarily lose the merge target or haven't reached the threshold yet
-                this.smoothedMergeSpeed = null;
-            }
 
-            return new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
+            return new SimpleOperationalPlan(aCf, this.pattern.patternSpecificTimestep);
+
         }
 
         @Override
@@ -254,17 +230,7 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             boolean isLaneAvailable = infra.getIfLaneAvailable(this.pattern.getTargetDirection());
             if (isLaneAvailable)
             {
-                return transitionTo(new MatchTargetLaneSpeedState(this.maneuverPattern));
-            }
-
-            Length distToMerge = infra.getDistanceToLaneChangeExtendedLookahead();
-            boolean isCloseEnough = (distToMerge != null && distToMerge.si <= 250.0); // Transition when within 250m of the
-                                                                                      // merge, even if lane is not yet
-                                                                                      // available
-            // Transition, wenn die Spur physisch befahrbar wird ODER wir die 400m-Marke unterschreiten
-            if (isCloseEnough)
-            {
-                return transitionTo(new MatchTargetLaneSpeedState(this.maneuverPattern));
+                return transitionTo(new EvaluateTargetGapState(this.maneuverPattern));
             }
 
             return null; // Bleibe in der Antizipation, wenn noch weit weg
@@ -303,111 +269,36 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
     }
 
     /*
-     * ========================================================================================= 2) STATE:
-     * MATCH_TARGET_LANE_SPEED =========================================================================================
-     */
-    // [Hier folgt die Logik aus dem alten MatchTargetLaneSpeedState.
-    // Der Einfachheit halber gekürzt, entspricht deinem alten GapSearchPattern]
-
-    public static class MatchTargetLaneSpeedState extends ActionState
-    {
-        private final MandatoryLaneChangePattern pattern;
-
-        public MatchTargetLaneSpeedState(final ManeuverPattern p)
-        {
-            super(p);
-            this.pattern = (MandatoryLaneChangePattern) p;
-        }
-
-        @Override
-        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
-        {
-            // Wie gehabt: Geschwindigkeit an den direkten Nebenfluss anpassen
-            EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-            MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
-            Parameters params = this.vehicle.getParameters();
-
-            Acceleration acc = ego.getCurrentCarFollowingAcceleration();
-            Speed targetLaneSpeed = infra.getIfLaneAvailable(this.pattern.targetDirection)
-                    ? (this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight())
-                    : macro.getAverageSpeedCurrent();
-
-            Acceleration aToMatch =
-                    MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), targetLaneSpeed);
-
-            acc = Acceleration.min(acc,
-                    Acceleration.max(aToMatch, ego.getEgoDecelerationThreshold(this.pattern.targetDirection)));
-
-            SimpleOperationalPlan plan = new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
-            if (this.pattern.getTargetDirection().isLeft())
-            {
-                plan.setIndicatorIntentLeft();
-            }
-
-            else if (this.pattern.getTargetDirection().isRight())
-            {
-                plan.setIndicatorIntentRight();
-            }
-            return plan;
-        }
-
-        @Override
-        public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException
-        {
-            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
-            if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection()))
-            {
-                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
-            }
-
-            Desire mand = this.vehicle.getMandatoryLaneChangeDesire();
-            if (mand.magnitude() >= this.vehicle.getParameters().getParameter(MirovaParameters.DMAND))
-            {
-                return transitionTo(new SearchForGapState(this.maneuverPattern));
-            }
-            InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-            Acceleration aStop = MirovaCarFollowingUtil.stop(this.vehicle, infra.getDistanceToLaneEnd().minus(RAMP_END_BUFFER));
-            if (aStop.si < -5.0)
-            {
-                return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
-            }
-            return null;
-
-        }
-
-        @Override
-        public double getUtility()
-        {
-            double mandatoryDesire = this.vehicle.getMandatoryLaneChangeDesire().magnitude();
-            return mandatoryDesire; // Higher desire should increase utility, but we can also factor in distance to merge or
-                                    // speed difference if desired
-        }
-
-        @Override
-        public SimpleOperationalPlan abort()
-        {
-            return null;
-        }
-    }
-
-    /*
-     * ========================================================================================= 3) STATE: SEARCH_FOR_GAP
+     * ========================================================================================= STATE 1: EVALUATE TARGET GAP
      * =========================================================================================
      */
 
     /**
-     * State where the agent actively scans the target lane for a feasible gap.
+     * State that evaluates the target gap using a safety-first heuristic hierarchy.
+     * <p>
+     * It strictly evaluates kinematic constraints (Ego and Follower induced decelerations) before resolving spatial conflicts
+     * (parallel vehicles). If decelerations are critical, it immediately routes the finite state machine to escape or brake,
+     * rendering the parallel vehicle secondary until the speeds are synchronized.
+     * </p>
+     * <p>
+     * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
      */
-    public static class SearchForGapState extends ActionState
+    public static class EvaluateTargetGapState extends ActionState
     {
-        protected final MandatoryLaneChangePattern pattern;
+        /** The parent mandatory lane change pattern. */
+        private final MandatoryLaneChangePattern pattern;
+
+        /** Time horizon in seconds to evaluate overtaking maneuvers. */
+        private static final double TIME_HORIZON_S = 3.0;
 
         /**
-         * Constructor.
+         * Constructor for the evaluation state.
          * @param p the parent maneuver pattern
          */
-        public SearchForGapState(final ManeuverPattern p)
+        public EvaluateTargetGapState(final ManeuverPattern p)
         {
             super(p);
             this.pattern = (MandatoryLaneChangePattern) p;
@@ -417,82 +308,113 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         @Override
         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
         {
+            Acceleration criticalDecelThreshold = Acceleration.instantiateSI(-2.0); // Ggf. aus Parametern holen
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
             InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-            MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
+            Acceleration aCf = ego.getCurrentCarFollowingAcceleration();
+            SimpleOperationalPlan plan = null;
 
-            Acceleration acc = ego.getCurrentCarFollowingAcceleration();
-
-            if (infra.getIfLaneAvailable(this.pattern.targetDirection))
+            if (aCf.gt(criticalDecelThreshold))
             {
-                Speed vTarget =
-                        this.pattern.getTargetDirection().isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight();
-
-                // NEU: NULL-SAFE-GUARD
-                if (vTarget != null)
+                Speed vEgo = ego.getEgoSpeed();
+                Speed speedLimit = infra.getLegalSpeedLimit();
+                if (vEgo.lt(speedLimit))
                 {
-                    Acceleration aMatch =
-                            MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(20.0), vTarget);
-                    acc = Acceleration.min(acc, aMatch);
-                }
+                    MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
+                    RelativeLane targetRelativeLane =
+                            (this.pattern.getTargetDirection().isLeft()) ? RelativeLane.LEFT : RelativeLane.RIGHT;
+                    Speed targetLaneSpeed = macro.getAverageSpeed(targetRelativeLane);
 
+                    Speed targetSpeed = Speed.min(targetLaneSpeed, speedLimit);
+                    Acceleration aToTarget =
+                            MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(10.0), targetSpeed);
+                    plan = new SimpleOperationalPlan(aToTarget, this.pattern.patternSpecificTimestep);
+
+                }
+            }
+            if (plan == null)
+            {
+                plan = new SimpleOperationalPlan(aCf, this.pattern.patternSpecificTimestep);
             }
 
-            SimpleOperationalPlan plan = new SimpleOperationalPlan(acc, this.pattern.patternSpecificTimestep);
             if (this.pattern.getTargetDirection().isLeft())
+            {
                 plan.setIndicatorIntentLeft();
+            }
             else if (this.pattern.getTargetDirection().isRight())
+            {
                 plan.setIndicatorIntentRight();
+            }
 
             return plan;
+
         }
 
         @Override
         public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException
         {
             NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+            LateralDirectionality dir = this.pattern.getTargetDirection();
 
-            if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection()))
+            // 0. Physical execution check: If the gap is perfectly clear, execute immediately
+            if (neigh.getIfLaneChangePossible(dir))
             {
-                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
+                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, dir));
             }
 
-            InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
-            MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
-            RelativeLane targetLane = this.pattern.getTargetDirection().isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
-            Speed vCong = this.vehicle.getParameters().getParameter(ParameterTypes.VCONG);
-
-            // NEU: Variablen zwischenspeichern
-            Length distToLaneEnd = infra.getDistanceToLaneEnd();
-            Speed targetLaneSpeed = macro.getAverageSpeed(targetLane);
-
-            // NEU: Sichere Auswertung der Schwellenwerte (Null-Checks)
-            boolean isCongested = (targetLaneSpeed != null && targetLaneSpeed.si <= vCong.si);
-            boolean isNearLaneEnd = (distToLaneEnd != null && distToLaneEnd.si <= 50.0);
-
-            GapCandidate bestGap = findFeasibleGap();
-
-            if (bestGap != null)
-            {
-                this.pattern.setActiveGap(bestGap);
-                return transitionTo(new AccelerateToTargetGapState(this.maneuverPattern));
-            }
-
-            EgoContext ego = this.vehicle.getContext(EgoContext.class);
-
-            // NEU: Notbremsen nur erlauben, wenn auch wirklich ein Spurende existiert!
+            Length distToLaneEnd = this.vehicle.getContext(InfrastructureContext.class).getDistanceToLaneEnd();
+            // Notbremse, falls das Ende der Rampe unweigerlich näher rückt
             if (distToLaneEnd != null)
             {
                 Acceleration requiredStopAccel =
                         MirovaCarFollowingUtil.stop(this.vehicle, distToLaneEnd.minus(RAMP_END_BUFFER));
-
                 if (requiredStopAccel.si < -5.0)
                 {
-                    return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
+                    return transitionTo(new DecelEndOfRampState(this.maneuverPattern));
                 }
             }
 
-            return null;
+            // --> NEU: Übergang in den Congested Merge State bei zähfließendem Verkehr (< 15 km/h)
+            Speed egoSpeed = this.vehicle.getContext(EgoContext.class).getEgoSpeed();
+            if (egoSpeed.lt(new Speed(15.0, org.djunits.unit.SpeedUnit.KM_PER_HOUR)))
+            {
+                return transitionTo(new CongestedMergeState(this.maneuverPattern));
+            }
+
+            HeadwayGtu parallel = null;
+            HeadwayGtu actualFollower = null;
+
+            Iterable<HeadwayGtu> followers = neigh.getFollowers(dir);
+            if (followers != null)
+            {
+                for (HeadwayGtu gtu : followers)
+                {
+                    if (gtu.getDistance().si < 0.0)
+                    {
+                        parallel = gtu;
+                    }
+                    else if (actualFollower == null)
+                    {
+                        actualFollower = gtu;
+                        break; // Same logic as for leaders: Only the closest follower matters for kinematic safety
+                    }
+                }
+            }
+
+            if (actualFollower != null)
+            {
+                Acceleration followerInducedDecel = neigh.getGtuDeceleration(actualFollower);
+
+                Parameters params = this.vehicle.getParameters();
+                Acceleration followerDecelThreshold = params.getParameter(MirovaParameters.followerDecelerationThreshold);
+
+                if (followerInducedDecel.si > followerDecelThreshold.si)
+                {
+                    // Follower decel is okay now, so we can focus on the leader
+                    return transitionTo(new DownstreamMergeState(this.maneuverPattern));
+                }
+            }
+            return null; // Boundaries safe, no parallel vehicle, waiting for LaneChangePossible
         }
 
         @Override
@@ -513,176 +435,6 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             return null;
         }
 
-        // /**
-        // * Searches for a kinematic gap on the target lane.
-        // * @return a valid gap or null
-        // * @throws ParameterException if parameters fail
-        // * @throws GtuException if GTU access fails
-        // * @throws NetworkException if network access fails
-        // */
-        // private GapCandidate findFeasibleGap() throws ParameterException, GtuException, NetworkException
-        // {
-        // NeighborsContext neighCtx = this.vehicle.getContext(NeighborsContext.class);
-        // MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
-        // EgoContext ego = this.vehicle.getContext(EgoContext.class);
-
-        // LateralDirectionality direction = this.pattern.getTargetDirection();
-        // RelativeLane targetLane = direction.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
-
-        // Speed vEgo = ego.getEgoSpeed();
-        // Speed vTarget = macro.getAverageSpeed(targetLane);
-
-        // if (vEgo.si > vTarget.si)
-        // {
-        // // Downstream search
-        // Iterator<HeadwayGtu> leaderIt = neighCtx.getLeaders(direction).iterator();
-        // HeadwayGtu potentialFollower = neighCtx.getFollower(direction);
-        // if (potentialFollower == null)
-        // return null;
-
-        // while (leaderIt.hasNext())
-        // {
-        // HeadwayGtu potentialLeader = leaderIt.next();
-        // GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
-        // if (candidate.computeCurrentAcceleration() != null)
-        // return candidate;
-        // potentialFollower = potentialLeader;
-        // }
-        // }
-        // else
-        // {
-        // // Upstream search
-        // Iterator<HeadwayGtu> followerIt = neighCtx.getFollowers(direction).iterator();
-        // HeadwayGtu potentialLeader = neighCtx.getLeader(direction);
-        // if (potentialLeader == null)
-        // return null;
-
-        // while (followerIt.hasNext())
-        // {
-        // HeadwayGtu potentialFollower = followerIt.next();
-        // GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
-        // if (candidate.computeCurrentAcceleration() != null)
-        // return candidate;
-        // potentialLeader = potentialFollower;
-        // }
-        // }
-        // return null;
-        // }
-        /**
-         * Searches for a kinematic gap on the target lane. (INSTRUMENTED FOR DEBUGGING)
-         * @return a valid gap or null
-         * @throws ParameterException if parameters fail
-         * @throws GtuException if GTU access fails
-         * @throws NetworkException if network access fails
-         */
-        private GapCandidate findFeasibleGap() throws ParameterException, GtuException, NetworkException
-        {
-            String gtuId = this.vehicle.getGtu().getId();
-
-            NeighborsContext neighCtx = this.vehicle.getContext(NeighborsContext.class);
-            MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
-            EgoContext ego = this.vehicle.getContext(EgoContext.class);
-
-            LateralDirectionality direction = this.pattern.getTargetDirection();
-            RelativeLane targetLane = direction.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
-
-            Speed vEgo = ego.getEgoSpeed();
-            Speed vTarget = macro.getAverageSpeed(targetLane);
-
-            if (vTarget == null)
-            {
-                vTarget = vEgo;
-            }
-
-            if (vEgo.si > vTarget.si)
-            {
-                Iterable<HeadwayGtu> leaders = neighCtx.getLeaders(direction);
-
-                if (leaders == null)
-                {
-                    return null;
-                }
-
-                Iterator<HeadwayGtu> leaderIt = leaders.iterator();
-                HeadwayGtu potentialFollower = neighCtx.getFollower(direction);
-
-                if (potentialFollower == null)
-                {
-                    return null;
-                }
-
-                while (leaderIt.hasNext())
-                {
-                    HeadwayGtu potentialLeader = leaderIt.next();
-
-                    try
-                    {
-                        GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
-                        Acceleration acc = candidate.computeCurrentAcceleration();
-
-                        if (acc != null)
-                        {
-                            return candidate;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.err.println(
-                                "[CRASH-DEBUG] GTU " + gtuId + " - EXCEPTION in DOWNSTREAM computeCurrentAcceleration!");
-                        e.printStackTrace();
-                        throw e;
-                    }
-
-                    potentialFollower = potentialLeader;
-                }
-            }
-            else
-            {
-                Iterable<HeadwayGtu> followers = neighCtx.getFollowers(direction);
-
-                if (followers == null)
-                {
-                    return null;
-                }
-
-                Iterator<HeadwayGtu> followerIt = followers.iterator();
-                HeadwayGtu potentialLeader = neighCtx.getLeader(direction);
-
-                if (potentialLeader == null)
-                {
-
-                    return null;
-                }
-
-                while (followerIt.hasNext())
-                {
-                    HeadwayGtu potentialFollower = followerIt.next();
-
-                    try
-                    {
-                        GapCandidate candidate = new GapCandidate(potentialLeader, potentialFollower, direction, this.vehicle);
-                        Acceleration acc = candidate.computeCurrentAcceleration();
-
-                        if (acc != null)
-                        {
-                            return candidate;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.err
-                                .println("[CRASH-DEBUG] GTU " + gtuId + " - EXCEPTION in UPSTREAM computeCurrentAcceleration!");
-                        e.printStackTrace();
-                        throw e;
-                    }
-
-                    potentialLeader = potentialFollower;
-                }
-            }
-
-            return null;
-        }
-
         @Override
         public double getUtility()
         {
@@ -692,79 +444,75 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         @Override
         public String toString()
         {
-            return "SearchForGapState";
+            return "EvaluateTargetGapState";
         }
     }
 
     /*
-     * ========================================================================================= 4) STATE:
-     * ACCELERATE_TO_TARGET_GAP =========================================================================================
+     * ========================================================================================= STATE 2: DOWNSTREAM MERGE STATE
+     * (BRAKING) =========================================================================================
      */
 
     /**
-     * State where the vehicle actively targets the acceleration required to land in the selected gap.
+     * State for resolving a downstream merge conflict.
+     * <p>
+     * This state is triggered when the ego vehicle is too fast for the target gap (EgoDecelerationThreshold is violated). It
+     * overrides the standard car-following acceleration with a hard braking maneuver until the target leader can be safely
+     * followed.
+     * </p>
+     * <p>
+     * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
      */
-    public static class AccelerateToTargetGapState extends SearchForGapState
+    public static class DownstreamMergeState extends ActionState
     {
-        private Acceleration cachedAcceleration;
+        /** The parent mandatory lane change pattern. */
+        private final MandatoryLaneChangePattern pattern;
 
         /**
-         * Constructor.
+         * Constructor for the downstream merge state.
          * @param p the parent maneuver pattern
          */
-        public AccelerateToTargetGapState(final ManeuverPattern p)
+        public DownstreamMergeState(final ManeuverPattern p)
         {
             super(p);
-        }
-
-        @Override
-        public SimpleOperationalPlan abort()
-        {
-            GapCandidate gap = this.pattern.getActiveGap();
-            try
-            {
-                this.cachedAcceleration = gap.computeCurrentAcceleration();
-                if (this.cachedAcceleration == null)
-                {
-                    return transitionTo(new SearchForGapState(this.maneuverPattern));
-                }
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    return transitionTo(new SearchForGapState(this.maneuverPattern));
-                }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace();
-                }
-            }
-            return null;
+            this.pattern = (MandatoryLaneChangePattern) p;
+            this.active = true;
         }
 
         @Override
         public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
         {
             EgoContext ego = this.vehicle.getContext(EgoContext.class);
-            Acceleration aM = this.cachedAcceleration;
-            this.cachedAcceleration = null;
+            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+            Acceleration aCf = ego.getCurrentCarFollowingAcceleration();
 
-            if (aM == null)
+            // Apply hard braking, but if the car-following model demands even harder braking
+            // (e.g., to avoid crashing into the ego-lane leader), we must respect that.
+            Acceleration egoDecelThreshold =
+                    this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold);
+            Acceleration inducedDecel = ego.getEgoDecelerationThreshold(this.pattern.getTargetDirection());
+            HeadwayGtu adjacentLeader = neigh.getLeader(this.pattern.getTargetDirection());
+            if (adjacentLeader != null)
             {
-                GapCandidate gap = this.pattern.getActiveGap();
-                if (gap != null)
-                    aM = gap.computeCurrentAcceleration();
+                Acceleration putativeLeaderAccel = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, adjacentLeader);
+                inducedDecel = Acceleration.max(inducedDecel, putativeLeaderAccel);
             }
-
-            Acceleration aCF = ego.getCurrentCarFollowingAcceleration();
-            Acceleration finalAcc = (aM == null) ? aCF : Acceleration.min(aM, aCF);
+            inducedDecel = Acceleration.max(inducedDecel, egoDecelThreshold);
+            Acceleration finalAcc = Acceleration.min(aCf, inducedDecel);
 
             SimpleOperationalPlan plan = new SimpleOperationalPlan(finalAcc, this.pattern.patternSpecificTimestep);
+
             if (this.pattern.getTargetDirection().isLeft())
+            {
                 plan.setIndicatorIntentLeft();
+            }
             else if (this.pattern.getTargetDirection().isRight())
+            {
                 plan.setIndicatorIntentRight();
+            }
 
             return plan;
         }
@@ -773,9 +521,78 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException
         {
             NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
-            if (neigh.getIfLaneChangePossible(this.pattern.getTargetDirection()))
+            LateralDirectionality dir = this.pattern.getTargetDirection();
+
+            // 1. If the gap suddenly becomes perfectly clear, execute immediately
+            if (neigh.getIfLaneChangePossible(dir))
             {
-                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, this.pattern.getTargetDirection()));
+                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, dir));
+            }
+
+            Length distToLaneEnd = this.vehicle.getContext(InfrastructureContext.class).getDistanceToLaneEnd();
+            // Notbremse, falls das Ende der Rampe unweigerlich näher rückt
+            if (distToLaneEnd != null)
+            {
+                Acceleration requiredStopAccel =
+                        MirovaCarFollowingUtil.stop(this.vehicle, distToLaneEnd.minus(RAMP_END_BUFFER));
+                if (requiredStopAccel.si < -5.0)
+                {
+                    return transitionTo(new DecelEndOfRampState(this.maneuverPattern));
+                }
+            }
+
+            // --> NEU: Übergang in den Congested Merge State bei zähfließendem Verkehr (< 15 km/h)
+            Speed egoSpeed = this.vehicle.getContext(EgoContext.class).getEgoSpeed();
+            if (egoSpeed.lt(new Speed(15.0, org.djunits.unit.SpeedUnit.KM_PER_HOUR)))
+            {
+                return transitionTo(new CongestedMergeState(this.maneuverPattern));
+            }
+
+            HeadwayGtu parallel = null;
+            HeadwayGtu leader = neigh.getLeader(dir);
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            Length safeDistance = ego.getDesiredFrontHeadway(dir);
+            Double safetyReductionFactor =
+                    this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
+            if (leader != null && ((leader.isParallel() || leader.getDistance().si < safeDistance.si * safetyReductionFactor)
+                    && Math.abs(leader.getSpeed().si - ego.getEgoSpeed().si) < 1))
+            {
+                parallel = leader;
+            }
+            else
+            {
+                HeadwayGtu follower = neigh.getFollower(dir);
+                if (follower != null
+                        && ((follower.isParallel() || follower.getDistance().si < safeDistance.si * safetyReductionFactor)
+                                && Math.abs(follower.getSpeed().si - ego.getEgoSpeed().si) < 1))
+                {
+                    parallel = follower;
+                }
+            }
+
+            // --> NEU: Wenn ein paralleles Fahrzeug existiert, in den neuen State wechseln
+            if (parallel != null)
+            {
+                return transitionTo(new SolveParallelVehicleState(this.maneuverPattern));
+            }
+
+            return null; // Keep braking
+        }
+
+        @Override
+        public SimpleOperationalPlan abort()
+        {
+            try
+            {
+                if (this.vehicle.getLaneChangeDesire().magnitude() < this.vehicle.getParameters()
+                        .getParameter(MirovaParameters.DMAND))
+                {
+                    return finishManeuver();
+                }
+            }
+            catch (ParameterException | GtuException | NetworkException exception)
+            {
+                exception.printStackTrace();
             }
             return null;
         }
@@ -789,7 +606,344 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         @Override
         public String toString()
         {
-            return "AccelerateToTargetGapState";
+            return "DownstreamMergeState";
+        }
+    }
+
+    /*
+     * ========================================================================================= STATE: SOLVE PARALLEL VEHICLE
+     * =========================================================================================
+     */
+
+    /**
+     * State to resolve conflicts with a parallel vehicle on the target lane.
+     * <p>
+     * If a vehicle is driving parallel on the target lane, the ego vehicle typically decelerates slightly (-1.0 m/s&sup2;) to
+     * let the parallel vehicle pass. However, if there is sufficient distance to the end of the ramp and the car-following
+     * model allows for strong acceleration (&gt; 1.0 m/s&sup2;), the ego vehicle will accelerate maximally to merge ahead of
+     * the parallel vehicle.
+     * </p>
+     * <p>
+     * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
+     */
+    public static class SolveParallelVehicleState extends ActionState
+    {
+        /** The parent mandatory lane change pattern. */
+        private final MandatoryLaneChangePattern pattern;
+
+        /** Threshold for sufficient distance to lane end to attempt accelerating ahead [m]. */
+        private static final double SUFFICIENT_DISTANCE_THRESHOLD = 200.0;
+
+        private HeadwayGtu parallelVehicle = null;
+
+        /**
+         * Constructor for the solve parallel vehicle state.
+         * @param p the parent maneuver pattern
+         */
+        public SolveParallelVehicleState(final ManeuverPattern p)
+        {
+            super(p);
+            this.pattern = (MandatoryLaneChangePattern) p;
+            this.active = true;
+        }
+
+        @Override
+        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
+        {
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+
+            Acceleration aCf = ego.getCurrentCarFollowingAcceleration();
+            Length distToLaneEnd = infra.getDistanceToLaneEnd();
+
+            Acceleration targetAcc = aCf; // Default to car-following acceleration if no parallel vehicle or no room to maneuver
+
+            if (distToLaneEnd != null)
+            {
+                // Strategy: Check if we have enough room and momentum to overtake the parallel vehicle
+                if (distToLaneEnd != null && distToLaneEnd.si > SUFFICIENT_DISTANCE_THRESHOLD && aCf.si > 1.0
+                        && !parallelVehicle.isAhead())
+                {
+                    // Accelerate maximally to merge ahead
+                    targetAcc = ego.getMaxPhysicalAcceleration();
+                }
+                else
+                {
+                    // Default strategy: Decelerate slightly to drop behind the parallel vehicle.
+                    // We use Acceleration.min() with the Car-Following acceleration to ensure
+                    // we don't crash into a leader on our CURRENT lane while braking.
+                    Acceleration aStop = MirovaCarFollowingUtil.stop(this.vehicle, distToLaneEnd.minus(RAMP_END_BUFFER));
+                    if (distToLaneEnd.si < 100.0)
+                    {
+                        // If we are very close to the end, be more conservative with braking to avoid unnecessary hard stops
+                        aStop = Acceleration.min(aStop,
+                                this.vehicle.getParameters().getParameter(MirovaParameters.egoDecelerationThreshold));
+                    }
+                    else
+                    {
+                        // If we have more room, we can afford a stronger deceleration to ensure we drop back in time
+                        aStop = Acceleration.min(aStop, Acceleration.instantiateSI(-1.0));
+                    }
+                    targetAcc = Acceleration.min(aCf, aStop);
+                }
+            }
+            SimpleOperationalPlan plan = new SimpleOperationalPlan(targetAcc, this.pattern.patternSpecificTimestep);
+
+            // Keep the blinkers running
+            if (this.pattern.getTargetDirection().isLeft())
+            {
+                plan.setIndicatorIntentLeft();
+            }
+            else if (this.pattern.getTargetDirection().isRight())
+            {
+                plan.setIndicatorIntentRight();
+            }
+
+            return plan;
+        }
+
+        @Override
+        public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException
+        {
+            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+            LateralDirectionality dir = this.pattern.getTargetDirection();
+
+            // 1. Physical execution check: If the gap becomes perfectly clear, execute immediately
+            if (neigh.getIfLaneChangePossible(dir))
+            {
+                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, dir));
+            }
+
+            // 2. Emergency brake check: If the end of the ramp gets critically close
+            Length distToLaneEnd = this.vehicle.getContext(InfrastructureContext.class).getDistanceToLaneEnd();
+            if (distToLaneEnd != null)
+            {
+                Acceleration requiredStopAccel =
+                        MirovaCarFollowingUtil.stop(this.vehicle, distToLaneEnd.minus(RAMP_END_BUFFER));
+                if (requiredStopAccel.si < -5.0)
+                {
+                    return transitionTo(new DecelEndOfRampState(this.maneuverPattern));
+                }
+            }
+
+            // --> NEU: Übergang in den Congested Merge State bei zähfließendem Verkehr (< 15 km/h)
+            Speed egoSpeed = this.vehicle.getContext(EgoContext.class).getEgoSpeed();
+            if (egoSpeed.lt(new Speed(15.0, org.djunits.unit.SpeedUnit.KM_PER_HOUR)))
+            {
+                return transitionTo(new CongestedMergeState(this.maneuverPattern));
+            }
+
+            // 3. Check if the parallel vehicle is still blocking us
+            boolean hasParallel = false;
+            HeadwayGtu putativeLeader = neigh.getLeader(dir);
+            Length safeDistance = this.vehicle.getContext(EgoContext.class).getDesiredFrontHeadway(dir);
+            Double safetyReductionFactor =
+                    this.vehicle.getParameters().getParameter(MirovaParameters.safetyDistanceReductionFactorLaneChange);
+            if (putativeLeader != null && (putativeLeader.isParallel()
+                    || putativeLeader.getDistance().si < safeDistance.si * safetyReductionFactor))
+            {
+                hasParallel = true;
+                parallelVehicle = putativeLeader;
+            }
+            else
+            {
+                HeadwayGtu putativeFollower = neigh.getFollower(dir);
+                if (putativeFollower != null && (putativeFollower.isParallel()
+                        || putativeFollower.getDistance().si < safeDistance.si * safetyReductionFactor))
+                {
+                    hasParallel = true;
+                    parallelVehicle = putativeFollower;
+                }
+            }
+
+            // 4. If the parallel vehicle is gone (passed us or we passed it), go back to evaluating the target gap
+            if (!hasParallel)
+            {
+                return transitionTo(new EvaluateTargetGapState(this.maneuverPattern));
+            }
+
+            return null; // Stay in this state and continue resolving the conflict
+        }
+
+        @Override
+        public SimpleOperationalPlan abort()
+        {
+            try
+            {
+                if (this.vehicle.getLaneChangeDesire().magnitude() < this.vehicle.getParameters()
+                        .getParameter(MirovaParameters.DMAND))
+                {
+                    return finishManeuver();
+                }
+            }
+            catch (ParameterException | GtuException | NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public double getUtility()
+        {
+            return this.vehicle.getMandatoryLaneChangeDesire().magnitude();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "SolveParallelVehicleState";
+        }
+    }
+
+    /*
+     * ========================================================================================= STATE: CONGESTED MERGE
+     * =========================================================================================
+     */
+
+    /**
+     * State for congested merge situations when the vehicle speed drops below 15 km/h.
+     * <p>
+     * In this state, the vehicle attempts to maintain a minimum creeping speed of 15 km/h or follow the putative leader on the
+     * target lane to synchronize for a merge in heavy traffic. The resulting acceleration is bounded by the car-following
+     * acceleration of the current lane to prevent collisions. The state transitions back to gap evaluation if the speed
+     * recovers above 20 km/h.
+     * </p>
+     * <p>
+     * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
+     */
+    public static class CongestedMergeState extends ActionState
+    {
+        /** The parent mandatory lane change pattern. */
+        private final MandatoryLaneChangePattern pattern;
+
+        /** The speed threshold [km/h] below which the vehicle enters the creeping logic. */
+        private static final Speed CONGESTION_SPEED_THRESHOLD = new Speed(15.0, org.djunits.unit.SpeedUnit.KM_PER_HOUR);
+
+        /** The speed threshold [km/h] above which the vehicle returns to normal gap evaluation. */
+        private static final Speed RECOVERY_SPEED_THRESHOLD = new Speed(20.0, org.djunits.unit.SpeedUnit.KM_PER_HOUR);
+
+        /**
+         * Constructor for the congested merge state.
+         * @param p the parent maneuver pattern
+         */
+        public CongestedMergeState(final ManeuverPattern p)
+        {
+            super(p);
+            this.pattern = (MandatoryLaneChangePattern) p;
+            this.active = true;
+        }
+
+        @Override
+        public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException
+        {
+            EgoContext ego = this.vehicle.getContext(EgoContext.class);
+            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+
+            // 1. Eigene Car-Following Beschleunigung (Sicherheit nach vorne auf der eigenen Spur)
+            Acceleration aCf = ego.getCurrentCarFollowingAcceleration();
+
+            // 2. Approach Target Speed (15 km/h)
+            Acceleration aApproach = MirovaCarFollowingUtil.approachTargetSpeed(this.vehicle, Length.instantiateSI(10.0),
+                    CONGESTION_SPEED_THRESHOLD);
+
+            // 3. Folgen des Putative Leaders auf der Target Lane
+            Acceleration aMax = ego.getMaxPhysicalAcceleration(); // Fallback, falls kein Leader da ist
+            aApproach = Acceleration.min(aApproach, aMax); // Wir wollen nicht schneller beschleunigen als das aktuelle
+                                                           // Car-Following erlaubt
+            HeadwayGtu putativeLeader = neigh.getLeader(this.pattern.getTargetDirection());
+            if (putativeLeader != null)
+            {
+                aApproach =
+                        Acceleration.max(aApproach, MirovaCarFollowingUtil.followSingleLeader(this.vehicle, putativeLeader));
+            }
+
+            // 4. Logik anwenden: max(approach, followTarget), dann min(aCf, max)
+            Acceleration finalAcc = Acceleration.min(aCf, aApproach);
+
+            SimpleOperationalPlan plan = new SimpleOperationalPlan(finalAcc, this.pattern.patternSpecificTimestep);
+
+            // Blinker beibehalten
+            if (this.pattern.getTargetDirection().isLeft())
+            {
+                plan.setIndicatorIntentLeft();
+            }
+            else if (this.pattern.getTargetDirection().isRight())
+            {
+                plan.setIndicatorIntentRight();
+            }
+
+            return plan;
+        }
+
+        @Override
+        public SimpleOperationalPlan next() throws ParameterException, OperationalPlanException, NetworkException, GtuException
+        {
+            NeighborsContext neigh = this.vehicle.getContext(NeighborsContext.class);
+            LateralDirectionality dir = this.pattern.getTargetDirection();
+
+            // 1. Physischer Ausführungscheck: Wenn Lücke verfügbar, direkt wechseln
+            if (neigh.getIfLaneChangePossible(dir))
+            {
+                return transitionTo(new ExecuteLaneChangeState(this.maneuverPattern, dir));
+            }
+
+            // 2. Notbremse am Ende der Rampe
+            Length distToLaneEnd = this.vehicle.getContext(InfrastructureContext.class).getDistanceToLaneEnd();
+            if (distToLaneEnd != null)
+            {
+                Acceleration requiredStopAccel =
+                        MirovaCarFollowingUtil.stop(this.vehicle, distToLaneEnd.minus(RAMP_END_BUFFER));
+                if (requiredStopAccel.si < -5.0)
+                {
+                    return transitionTo(new BreakingEndOfRampState(this.maneuverPattern));
+                }
+            }
+
+            // 3. Recovery: Zurück in EvaluateTargetGapState, wenn wir wieder schnell genug sind (> 20 km/h)
+            Speed egoSpeed = this.vehicle.getContext(EgoContext.class).getEgoSpeed();
+            if (egoSpeed.gt(RECOVERY_SPEED_THRESHOLD))
+            {
+                return transitionTo(new EvaluateTargetGapState(this.maneuverPattern));
+            }
+
+            return null; // Bleibe im CongestedMergeState
+        }
+
+        @Override
+        public SimpleOperationalPlan abort()
+        {
+            try
+            {
+                if (this.vehicle.getLaneChangeDesire().magnitude() < this.vehicle.getParameters()
+                        .getParameter(MirovaParameters.DMAND))
+                {
+                    return finishManeuver();
+                }
+            }
+            catch (ParameterException | GtuException | NetworkException exception)
+            {
+                exception.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public double getUtility()
+        {
+            return this.vehicle.getMandatoryLaneChangeDesire().magnitude();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "CongestedMergeState";
         }
     }
 
@@ -801,7 +955,7 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
     /**
      * Emergency state to prevent driving off the end of the lane if no gap was found.
      */
-    public static class BreakingEndOfRampState extends ActionState
+    public static class DecelEndOfRampState extends ActionState
     {
         private final MandatoryLaneChangePattern pattern;
 
@@ -809,7 +963,7 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
          * Constructor.
          * @param p the parent maneuver pattern
          */
-        public BreakingEndOfRampState(final ManeuverPattern p)
+        public DecelEndOfRampState(final ManeuverPattern p)
         {
             super(p);
             this.pattern = (MandatoryLaneChangePattern) p;
@@ -882,7 +1036,7 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
         @Override
         public String toString()
         {
-            return "BreakingEndOfRampState";
+            return "DecelEndOfRampState";
         }
     }
 
@@ -941,13 +1095,17 @@ public class MandatoryLaneChangePattern extends ManeuverPattern
             // Start with relaxed car-following acceleration (already computed via Macro/Utility)
             Acceleration minAcc = egoCtx.getCurrentCarFollowingAcceleration();
 
-            // Add target-lane leader constraint cleanly using the new Utility
+            // Synchronize with leader on the target lane
             if (this.vehicle.getGtu().getLane().equals(this.originLane))
             {
-                if (targetLeader != null)
+                Iterable<HeadwayGtu> leaders = neighborsCtx.getLeaders(this.direction);
+                for (HeadwayGtu leader : leaders)
                 {
-                    // The Utility automatically applies the relaxation buffers we just triggered above!
-                    Acceleration aTarget = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, targetLeader);
+                    if (!this.vehicle.getLaneChange().isChangingLane())
+                    {
+                        egoCtx.triggerRelaxation(leader);
+                    }
+                    Acceleration aTarget = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, leader);
                     minAcc = Acceleration.min(minAcc, aTarget);
                 }
             }

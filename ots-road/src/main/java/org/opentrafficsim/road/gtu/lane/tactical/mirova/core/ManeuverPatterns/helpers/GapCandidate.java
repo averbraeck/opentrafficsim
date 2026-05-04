@@ -21,25 +21,16 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTraffi
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
 
 /**
- * Represents a potential gap on a target lane, defined by a Leader (vehicle ahead)
- * and a Follower (vehicle behind).
+ * Represents a potential gap on a target lane, defined by a Leader (vehicle ahead) and a Follower (vehicle behind).
  * <p>
- * This class encapsulates gap geometry and solves the <b>Object Identity issue</b> in OTS
- * by re-matching vehicles via persistent IDs. It is used as a helper in <b>Layer 4 (Procedure & Action)</b>
- * by the {@link org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPatterns.exclusive.GapSearchPattern}.
+ * This class encapsulates gap geometry and solves the <b>Object Identity issue</b> in OTS by re-matching vehicles via
+ * persistent IDs. It implements the car-following and gap-selection kinematics proposed by Berghaus and Oeser (2025). It is
+ * used as a helper in <b>Layer 4 (Procedure &amp; Action)</b>.
  * </p>
  * <p>
- * <b>Optimization Update:</b> This version uses an <b>Adaptive Search Heuristic</b>.
- * It tracks the last known location of the gap (Upstream, Downstream, or Straddling) to
- * determine which perception list (Leaders vs. Followers) to scan first. This allows for
- * an "Early Exit" in O(N) time for the majority of simulation steps, skipping the second
- * list traversal entirely if the gap is found intact in the expected location.
- * </p>
- * <p>
- * Copyright (c) 2025 Marvin Baumann / KIT. All rights reserved. <br>
+ * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- *
  * @author <a href="https://github.com/baumarv">Marvin Baumann</a>
  */
 public class GapCandidate
@@ -76,11 +67,11 @@ public class GapCandidate
      */
     private enum GapLocation
     {
-        /** Gap is fully ahead of Ego (Follower distance > 0). Check Leaders list first. */
+        /** Gap is fully ahead of Ego (Follower distance &gt; 0). Check Leaders list first. */
         DOWNSTREAM,
-        /** Gap is fully behind Ego (Leader distance < 0). Check Followers list first. */
+        /** Gap is fully behind Ego (Leader distance &lt; 0). Check Followers list first. */
         UPSTREAM,
-        /** Ego is inside the gap (Follower < 0 < Leader). Must check both lists. */
+        /** Ego is inside the gap (Follower &lt; 0 &lt; Leader). Must check both lists. */
         STRADDLE
     }
 
@@ -93,14 +84,14 @@ public class GapCandidate
 
     /**
      * Constructs a new GapCandidate.
-     *
-     * @param leader       the vehicle forming the front boundary
-     * @param follower     the vehicle forming the rear boundary
+     * @param leader the vehicle forming the front boundary
+     * @param follower the vehicle forming the rear boundary
      * @param gapDirection the direction relative to the ego vehicle
-     * @param vehicle      the ego vehicle tactical planner
+     * @param vehicle the ego vehicle tactical planner
      * @throws IllegalArgumentException if leader or follower are null
      */
-    public GapCandidate(final HeadwayGtu leader, final HeadwayGtu follower, final LateralDirectionality gapDirection, final MirovaTacticalPlanner vehicle)
+    public GapCandidate(final HeadwayGtu leader, final HeadwayGtu follower, final LateralDirectionality gapDirection,
+            final MirovaTacticalPlanner vehicle)
     {
         if (leader == null || follower == null)
         {
@@ -113,7 +104,6 @@ public class GapCandidate
         this.vehicle = vehicle;
         this.gapDirection = gapDirection;
 
-        // Initialize heuristic based on initial geometry
         this.lastKnownLocation = determineLocation(leader, follower);
     }
 
@@ -121,82 +111,97 @@ public class GapCandidate
     // Accessors
     // ----------------------------------------------------------------------
 
-    /** * Gets the gap leader. * @return the leader */
-    public HeadwayGtu getLeader() { return this.leader; }
+    /**
+     * * Gets the gap leader.
+     * @return the leader
+     */
+    public HeadwayGtu getLeader()
+    {
+        return this.leader;
+    }
 
-    /** * Gets the gap follower. * @return the follower */
-    public HeadwayGtu getFollower() { return this.follower; }
+    /**
+     * * Gets the gap follower.
+     * @return the follower
+     */
+    public HeadwayGtu getFollower()
+    {
+        return this.follower;
+    }
 
-    /** * Gets the lateral direction of the gap. * @return the direction */
-    public LateralDirectionality getGapDirection() { return this.gapDirection; }
+    /**
+     * * Gets the lateral direction of the gap.
+     * @return the direction
+     */
+    public LateralDirectionality getGapDirection()
+    {
+        return this.gapDirection;
+    }
 
-    /** * Gets the calculated target acceleration. * @return the acceleration */
-    public Acceleration getAM() { return this.aM; }
+    /**
+     * * Gets the calculated target acceleration.
+     * @return the acceleration
+     */
+    public Acceleration getAM()
+    {
+        return this.aM;
+    }
 
-    /** * Sets the calculated target acceleration. * @param aM the acceleration to set */
-    public void setAM(final Acceleration aM) { this.aM = aM; }
+    /**
+     * * Sets the calculated target acceleration.
+     * @param aM the acceleration to set
+     */
+    public void setAM(final Acceleration aM)
+    {
+        this.aM = aM;
+    }
 
     // ----------------------------------------------------------------------
-    // Validity & Consistency Logic (Adaptive & Optimized)
+    // Validity & Consistency Logic
     // ----------------------------------------------------------------------
 
     /**
      * Checks if the gap still exists and is valid in the current time step.
      * <p>
-     * Uses the {@link #lastKnownLocation} to prioritize the search. If the gap is found
-     * adjacent in the prioritized list, the method returns immediately (Early Exit),
-     * avoiding unnecessary iterations.
+     * Uses the {@link #lastKnownLocation} to prioritize the search, allowing early exits.
      * </p>
-     *
-     * @return {@code true} if the gap is valid and updated; {@code false} otherwise.
+     * @return {@code true} if the gap is valid and updated; {@code false} otherwise
      */
     public boolean checkGapStillValid()
     {
         NeighborsContext neighborsContext = this.vehicle.getContext(NeighborsContext.class);
         SearchState state = new SearchState();
 
-        // 1. Heuristic Decision: Where to look first?
         if (this.lastKnownLocation == GapLocation.DOWNSTREAM)
         {
-            // Expectation: Gap is ahead. Scan Leaders first.
             scanLeaders(neighborsContext.getLeaders(this.gapDirection), state);
-            if (state.isCompleteAndAdjacent()) return updateSuccess(state);
-
-            // Fallback: Scan Followers (Gap might have drifted back or we overtook it)
+            if (state.isCompleteAndAdjacent())
+                return updateSuccess(state);
             scanFollowers(neighborsContext.getFollowers(this.gapDirection), state);
         }
         else if (this.lastKnownLocation == GapLocation.UPSTREAM)
         {
-            // Expectation: Gap is behind. Scan Followers first.
             scanFollowers(neighborsContext.getFollowers(this.gapDirection), state);
-            if (state.isCompleteAndAdjacent()) return updateSuccess(state);
-
-            // Fallback: Scan Leaders (Gap might have accelerated ahead)
+            if (state.isCompleteAndAdjacent())
+                return updateSuccess(state);
             scanLeaders(neighborsContext.getLeaders(this.gapDirection), state);
         }
-        else // STRADDLE
+        else
         {
-            // Expectation: We are in the middle. We likely need information from BOTH lists.
             scanLeaders(neighborsContext.getLeaders(this.gapDirection), state);
             scanFollowers(neighborsContext.getFollowers(this.gapDirection), state);
         }
 
-        // 2. Final Logic (handles Straddle case and Cross-List verification)
         if (state.isCompleteAndAdjacent())
         {
             return updateSuccess(state);
         }
 
-        // Special Case: Straddle (Ego is between Follower and Leader)
-        // This is valid if:
-        // - Found Leader is the FIRST in Leaders list (closest ahead)
-        // - Found Follower is the FIRST in Followers list (closest behind)
         if (state.foundLeader != null && state.foundFollower != null && !state.adjacent)
         {
             if (state.leaderIsFirstInLeaders && state.followerIsFirstInFollowers)
             {
-                // It's a valid straddle
-                state.adjacent = true; // logically adjacent via Ego
+                state.adjacent = true;
                 return updateSuccess(state);
             }
         }
@@ -206,7 +211,6 @@ public class GapCandidate
 
     /**
      * Updates internal state after a successful validation and updates the heuristic location.
-     *
      * @param state the result of the search process
      * @return true representing a successful update
      */
@@ -220,18 +224,16 @@ public class GapCandidate
 
     /**
      * Determines the relative location of the gap compared to the ego vehicle.
-     *
      * @param l the leader vehicle
      * @param f the follower vehicle
      * @return the determined GapLocation
      */
     private GapLocation determineLocation(final HeadwayGtu l, final HeadwayGtu f)
     {
-        // Follower > 0 means Follower is ahead of Ego -> Gap is Downstream
-        if (f.getDistance().si >= 0.0) return GapLocation.DOWNSTREAM;
-        // Leader < 0 means Leader is behind Ego -> Gap is Upstream
-        if (l.getDistance().si <= 0.0) return GapLocation.UPSTREAM;
-
+        if (f.getDistance().si >= 0.0)
+            return GapLocation.DOWNSTREAM;
+        if (l.getDistance().si <= 0.0)
+            return GapLocation.UPSTREAM;
         return GapLocation.STRADDLE;
     }
 
@@ -241,9 +243,8 @@ public class GapCandidate
 
     /**
      * Scans the provided leaders list for the gap boundaries.
-     *
      * @param leaders the iterable of leader vehicles
-     * @param state   the mutable search state to update
+     * @param state the mutable search state to update
      */
     private void scanLeaders(final Iterable<HeadwayGtu> leaders, final SearchState state)
     {
@@ -259,9 +260,9 @@ public class GapCandidate
             if (id.equals(this.leaderId))
             {
                 state.foundLeader = gtu;
-                if (first) state.leaderIsFirstInLeaders = true;
+                if (first)
+                    state.leaderIsFirstInLeaders = true;
 
-                // Adjacency Check (Downstream logic): Follower comes BEFORE Leader in distance-sorted list
                 if (prev != null && prev.getId().equals(this.followerId))
                 {
                     state.adjacent = true;
@@ -278,9 +279,8 @@ public class GapCandidate
 
     /**
      * Scans the provided followers list for the gap boundaries.
-     *
      * @param followers the iterable of follower vehicles
-     * @param state     the mutable search state to update
+     * @param state the mutable search state to update
      */
     private void scanFollowers(final Iterable<HeadwayGtu> followers, final SearchState state)
     {
@@ -296,9 +296,9 @@ public class GapCandidate
             if (id.equals(this.followerId))
             {
                 state.foundFollower = gtu;
-                if (first) state.followerIsFirstInFollowers = true;
+                if (first)
+                    state.followerIsFirstInFollowers = true;
 
-                // Adjacency Check (Upstream logic): Leader comes BEFORE Follower in magnitude-sorted list
                 if (prev != null && prev.getId().equals(this.leaderId))
                 {
                     state.adjacent = true;
@@ -318,47 +318,24 @@ public class GapCandidate
     // ----------------------------------------------------------------------
 
     /**
-     * Recalculates the required acceleration {@code aM} for this gap based on the Berghaus & Oeser (2025) model.
-     * <p>
-     * This method performs three critical steps:
-     * <ol>
-     * <li><b>State Validation:</b> Uses heuristics to verify if the specific Leader/Follower pair still constitutes a valid gap.</li>
-     * <li><b>Coordinate Transformation:</b> Maps the OTS relative net distances to the absolute coordinate system used in the paper.
-     * The Ego front is defined as the reference point (x = 0).
-     * <ul>
-     * <li><i>x_M (Merger/Ego):</i> 0.0</li>
-     * <li><i>x_L (Leader):</i> Positive net distance to leader's rear bumper.</li>
-     * <li><i>x_F (Follower):</i> Negative distance to follower's front bumper. Calculated as {@code -(EgoLength + NetDistance)}.</li>
-     * <li><i>x_E (MergePoint):</i> Distance to the effective end of the acceleration lane (physical end minus safety buffer).</li>
-     * </ul>
-     * </li>
-     * <li><b>Model Execution:</b> Solves the equations for time horizons (Tau) and target acceleration (aM),
-     * and validates the kinematic feasibility of the maneuver.</li>
-     * </ol>
-     * </p>
-     *
-     * @return The calculated acceleration {@code aM}, or {@code null} if the gap has collapsed,
-     * the merge point has been passed, or no physically feasible solution exists.
-     * @throws ParameterException if parameters are missing.
-     * @throws GtuException if GTU state cannot be accessed.
-     * @throws NetworkException if network topology is inconsistent.
+     * Recalculates the required acceleration {@code aM} for this gap based on the Berghaus &amp; Oeser (2025) model.
+     * @return The calculated acceleration {@code aM}, or {@code null} if the gap has collapsed or is unfeasible.
+     * @throws ParameterException if parameters are missing
+     * @throws GtuException if GTU state cannot be accessed
+     * @throws NetworkException if network topology is inconsistent
      */
-    public Acceleration computeCurrentAcceleration()
-            throws ParameterException, GtuException, NetworkException {
-
-        // 1. Update Gap State
-        if (!checkGapStillValid()) {
+    public Acceleration computeCurrentAcceleration() throws ParameterException, GtuException, NetworkException
+    {
+        if (!checkGapStillValid())
+        {
             return null;
         }
 
-        // 2. Prepare Calculation Context
         EgoContext ego = this.vehicle.getContext(EgoContext.class);
         MacroTrafficContext macro = this.vehicle.getContext(MacroTrafficContext.class);
         Parameters params = this.vehicle.getParameters();
 
-        // --- COORDINATE MAPPING (Reference: Ego Front = 0) ---
         Length lM = this.vehicle.getGtu().getLength();
-
         Length[] positions = getPositions();
         Length xE = positions[0];
         Length xM = positions[1];
@@ -368,293 +345,272 @@ public class GapCandidate
         Speed vM = ego.getEgoSpeed();
 
         // Abort if we have already passed the effective merge point
-        if (xE.si <= 0.0) return null;
+        if (xE.si <= 0.0)
+            return null;
 
-        // Paper Parameters
         Duration tauLC = params.getParameter(ParameterTypes.LCDUR);
         Length dxMin = params.getParameter(ParameterTypes.S0);
         Duration Tdes = params.getParameter(ParameterTypes.T);
 
-        // 3. Compute Time Horizons (Tau)
         Duration tauELeader = computeTauELeader(xL, xE, xM, this.leader.getSpeed(), vM, dxMin, Tdes);
-        if (tauELeader.si <= 0.0) return null; // Collision inevitable
+        if (tauELeader.si <= 0.0)
+            return null;
 
-        Duration tauEFollower = computeTauEFollower(xE, xM, xF, this.follower.getSpeed(), dxMin, Tdes);
-        if (tauEFollower.si <= 0.0) return null; // Collision inevitable
+        Duration tauEFollower = computeTauEFollower(xE, xF, this.follower.getSpeed(), dxMin, Tdes);
+        if (tauEFollower.si <= 0.0)
+            return null;
 
         if (tauELeader.gt(MAX_CONVERGENCE_TIME) || tauEFollower.gt(MAX_CONVERGENCE_TIME))
         {
             return null;
         }
 
-        // 4. Compute Acceleration aM
-        Acceleration calculatedAM = computeMergeAcceleration(xE, xM, vM, this.leader, this.follower,
-                tauELeader, tauEFollower, dxMin, Tdes, tauLC, ego.getCurrentCarFollowingAcceleration());
+        Acceleration calculatedAM = computeMergeAcceleration(xE, xM, vM, this.leader, xL, tauELeader, dxMin, Tdes, tauLC);
 
-        // 5. Check Realism of Acceleration
-        if (!isAccelerationRealizable(calculatedAM, params)) {
+        if (!isAccelerationRealizable(calculatedAM))
+        {
             return null;
         }
 
-        // 6. Check Feasibility (Equations 26 & 27)
         Speed vTargetLane = this.gapDirection.isLeft() ? macro.getAverageSpeedLeft() : macro.getAverageSpeedRight();
 
-        boolean feasible = isGapFeasible(
-                xE, xM, vM, lM,
-                xL, this.leader.getSpeed(),
-                xF, this.follower.getSpeed(),
-                calculatedAM, tauELeader, tauEFollower, tauLC, dxMin, vTargetLane
-        );
+        boolean feasible = isGapFeasible(xM, vM, lM, xL, this.leader.getSpeed(), xF, this.follower.getSpeed(), calculatedAM,
+                tauELeader, tauEFollower, tauLC, dxMin);
 
-        if (feasible) {
+        if (feasible)
+        {
             this.aM = calculatedAM;
             this.lastComputedAM = calculatedAM;
             return calculatedAM;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
-     * Computes the key positions in the absolute coordinate system.
-     *
+     * Computes the key positions in the absolute coordinate system where Ego Center is x = 0.
      * @return Array of positions: [xE, xM, xL, xF]
-     * @throws ParameterException if parameters are missing.
-     * @throws GtuException if GTU state cannot be accessed.
-     * @throws NetworkException if network topology is inconsistent.
+     * @throws ParameterException if parameters are missing
+     * @throws GtuException if GTU state cannot be accessed
+     * @throws NetworkException if network topology is inconsistent
      */
-    private Length[] getPositions() throws ParameterException, GtuException, NetworkException {
+    private Length[] getPositions() throws ParameterException, GtuException, NetworkException
+    {
         InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
         Length emergencyBuffer = this.vehicle.getParameters().getParameter(MirovaParameters.emergencyStoppingDistance);
         Length lM = this.vehicle.getGtu().getLength();
-        Length lF = this.follower.getLength();
-        Length lL = this.leader.getLength();
-        Length xE = infra.getDistanceToLaneEnd().minus(emergencyBuffer);
+
+        // Define Ego Center strictly at x = 0.0
         Length xM = Length.ZERO;
-        Length deltaxL = this.leader.getDistance();
-        Length deltaxF = this.follower.getDistance().plus(lM);
 
-        Length xL;
-        Length xF;
+        // Lane end distance in OTS is relative to Ego Front. We shift it to Ego Center.
+        Length xE = infra.getDistanceToLaneEnd().minus(emergencyBuffer).plus(lM.divide(2.0));
 
-        switch (this.lastKnownLocation) {
-            case DOWNSTREAM:
-                xL = Length.instantiateSI(xM.si + deltaxL.si + lL.si/2.0 + lM.si/2.0);
-                xF = Length.instantiateSI(xM.si + deltaxF.si + lF.si/2.0 + lM.si/2.0);
-                break;
-            case UPSTREAM:
-                xL = Length.instantiateSI(xM.si - deltaxL.si - lL.si/2.0 - lM.si/2.0);
-                xF = Length.instantiateSI(xM.si - deltaxF.si - lF.si/2.0 - lM.si/2.0);
-                break;
-            case STRADDLE:
-                xL = Length.instantiateSI(xM.si + deltaxL.si + lL.si/2.0 + lM.si/2.0);
-                xF = Length.instantiateSI(xM.si - deltaxF.si - lF.si/2.0 - lM.si/2.0);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported gap location: " + this.lastKnownLocation);
-        }
+        Length xL = getCenterPosition(this.leader, lM);
+        Length xF = getCenterPosition(this.follower, lM);
 
         return new Length[] {xE, xM, xL, xF};
     }
 
-    // ----------------------------------------------------------------------
-    // Math Helpers (Berghaus & Oeser Implementation)
-    // ----------------------------------------------------------------------
+    /**
+     * Calculates the absolute center position of a given GTU based on its net distance. * @param gtu the GTU to calculate the
+     * position for
+     * @param egoLength the length of the ego vehicle
+     * @return the absolute center position
+     */
+    private Length getCenterPosition(final HeadwayGtu gtu, final Length egoLength)
+    {
+        double netDist = gtu.getDistance().si;
+        if (netDist >= 0.0)
+        {
+            return Length.instantiateSI(netDist + egoLength.si / 2.0 + gtu.getLength().si / 2.0);
+        }
+        else
+        {
+            return Length.instantiateSI(netDist - egoLength.si / 2.0 - gtu.getLength().si / 2.0);
+        }
+    }
 
     /**
-     * Computes {@code tau_E,Leader} according to Eq. (12).
-     * <p>
-     * Represents the time horizon until the leader constraint becomes active.
-     * Calculated as the smallest positive root of the quadratic equation derived from the kinematic constraints.
-     * </p>
-     *
-     * @param xL    Leader rear position
-     * @param xE    Merge point position
-     * @param xM    Merger (Ego) front position
-     * @param vL    Leader speed
-     * @param vM    Merger (Ego) speed
+     * Computes the time horizon until the leader constraint becomes active.
+     * @param xL Leader center position
+     * @param xE Merge point position
+     * @param xM Merger (Ego) center position
+     * @param vL Leader speed
+     * @param vM Merger (Ego) speed
      * @param dxMin Minimum distance (s0)
-     * @param Tdes  Desired time headway (T)
-     * @return The time horizon Tau, or a specialized value if no solution exists.
+     * @param Tdes Desired time headway (T)
+     * @return The time horizon Tau
      */
-    private Duration computeTauELeader(final Length xL, final Length xE, final Length xM, final Speed vL, final Speed vM, final Length dxMin, final Duration Tdes) {
-        double vLsi = Math.max(vL.si, 0.1); // Avoid division by zero
-
-        // Term alpha from Eq. (12)
-        double alpha = xL.si - xE.si - this.leader.getLength().si/2.0 - this.vehicle.getGtu().getLength().si/2.0 - dxMin.si + (Tdes.si * vM.si);
-
-        // Discriminant
+    private Duration computeTauELeader(final Length xL, final Length xE, final Length xM, final Speed vL, final Speed vM,
+            final Length dxMin, final Duration Tdes)
+    {
+        double vLsi = Math.max(vL.si, 0.1);
+        double alpha = xL.si - xE.si - this.leader.getLength().si / 2.0 - this.vehicle.getGtu().getLength().si / 2.0 - dxMin.si
+                + (Tdes.si * vM.si);
         double inside = alpha * alpha + 8.0 * vLsi * Tdes.si * (xE.si - xM.si);
         double sqrtTerm = Math.sqrt(Math.max(0.0, inside));
-
         double base = -alpha;
-
-        // Select the smallest positive solution
         double numerator = (base - sqrtTerm > 0.0) ? Math.min(base + sqrtTerm, base - sqrtTerm) : base + sqrtTerm;
 
         return Duration.instantiateSI(numerator / (2.0 * vLsi));
     }
 
     /**
-     * Computes {@code tau_E,Follower} according to Eq. (24).
-     * <p>
-     * Represents the time horizon based on the follower approaching from behind.
-     * Solved from the linear kinematic equation.
-     * </p>
-     *
-     * @param xE    Merge point position
-     * @param xM    Merger (Ego) front position
-     * @param xF    Follower front position (negative)
-     * @param vF    Follower speed
+     * Computes the time horizon based on the follower approaching from behind.
+     * @param xE Merge point position
+     * @param xF Follower center position
+     * @param vF Follower speed
      * @param dxMin Minimum distance (s0)
-     * @param Tdes  Desired time headway (T)
-     * @return The time horizon Tau.
+     * @param Tdes Desired time headway (T)
+     * @return The time horizon Tau
      */
-    private Duration computeTauEFollower(final Length xE, final Length xM, final Length xF, final Speed vF, final Length dxMin, final Duration Tdes) {
-        Double tauEFollowerSI = (xE.si - xF.si - dxMin.si - this.vehicle.getGtu().getLength().si/2.0 - this.follower.getLength().si/2.0) / vF.si - Tdes.si;
+    private Duration computeTauEFollower(final Length xE, final Length xF, final Speed vF, final Length dxMin,
+            final Duration Tdes)
+    {
+        Double tauEFollowerSI =
+                (xE.si - xF.si - dxMin.si - this.vehicle.getGtu().getLength().si / 2.0 - this.follower.getLength().si / 2.0)
+                        / vF.si - Tdes.si;
         return Duration.instantiateSI(tauEFollowerSI);
     }
 
     /**
      * Determines the optimal merge acceleration {@code aM}.
-     * <p>
-     * This calculates the minimum acceleration required to satisfy constraints from:
-     * <ul>
-     * <li>The Leader (Eq. 10 & 14): Aiming for desired headway or zero headway.</li>
-     * <li>The Follower (Eq. 25): Ensuring the follower can maintain their headway.</li>
-     * <li>The current Car-Following model: Ensuring safety on the current lane.</li>
-     * </ul>
-     * The result is the minimum of these values (safest common denominator).
-     * </p>
-     *
-     * @param xE           Merge point position
-     * @param xM           Merger front position
-     * @param vM           Merger speed
-     * @param leader       Leader vehicle
-     * @param follower     Follower vehicle
-     * @param tauELeader   Tau Leader
-     * @param tauEFollower Tau Follower
-     * @param dxMin        Minimum distance
-     * @param Tdes         Desired headway
-     * @param tauLC        Lane change duration
-     * @param aCF          Current car-following acceleration
-     * @return The instantiated acceleration.
+     * @param xE Merge point position
+     * @param xM Merger center position
+     * @param vM Merger speed
+     * @param leader Leader vehicle
+     * @param xL Leader center position
+     * @param tauELeader Tau Leader
+     * @param dxMin Minimum distance
+     * @param Tdes Desired headway
+     * @param tauLC Lane change duration
+     * @return The instantiated acceleration
      * @throws ParameterException if a parameter lookup fails
      */
-    private Acceleration computeMergeAcceleration(final Length xE, final Length xM, final Speed vM, final HeadwayGtu leader, final HeadwayGtu follower,
-                                                  final Duration tauELeader, final Duration tauEFollower, final Length dxMin, final Duration Tdes, final Duration tauLC, final Acceleration aCF) throws ParameterException {
-
-        double vF = follower.getSpeed().si;
-
-        // --- Leader Constraint ---
+    private Acceleration computeMergeAcceleration(final Length xE, final Length xM, final Speed vM, final HeadwayGtu leader,
+            final Length xL, final Duration tauELeader, final Length dxMin, final Duration Tdes, final Duration tauLC)
+            throws ParameterException
+    {
         double tauEL = tauELeader.si;
         double aMDesiredHeadway = 2.0 * (xE.si - vM.si * tauEL - xM.si) / (tauEL * tauEL);
 
-        double deltaXLeader = leader.getDistance().si;
-        if (this.leader.isAhead()) {
-            deltaXLeader += this.vehicle.getGtu().getLength().si / 2.0 + leader.getLength().si / 2.0;
-        } else {
-            deltaXLeader = -deltaXLeader - this.vehicle.getGtu().getLength().si / 2.0 - leader.getLength().si / 2.0;
-        }
+        double tauZero = Math.max(tauELeader.si - tauLC.si, 0.01); // Protect against <= 0
 
-        double tauZero = tauELeader.si - tauLC.si;
-        double aMZeroHeadway = ((leader.getSpeed().si - vM.si) * tauZero + (deltaXLeader)) / (0.5 * tauZero * tauZero);
+        // Correct Net Distance Calculation (minus dxMin) preventing collision courses
+        double deltaXLeader =
+                (xL.si - xM.si) - leader.getLength().si / 2.0 - this.vehicle.getGtu().getLength().si / 2.0 - dxMin.si;
+
+        double aMZeroHeadway = ((leader.getSpeed().si - vM.si) * tauZero + deltaXLeader) / (0.5 * tauZero * tauZero);
 
         InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
         double speedLimit = infra.getLegalSpeedLimit().si;
-        double aFollowerbound = (speedLimit - vF) / tauZero;
 
-        double aMerger = Math.max(Math.min(Math.min(aMDesiredHeadway, aMZeroHeadway), aFollowerbound), vF/tauZero);
+        // Corrected Bounds applying to Merger (vM), not Follower (vF)
+        double aUpperBound = (speedLimit - vM.si) / tauZero;
+        double aLowerBound = -vM.si / tauZero;
+
+        double aMerger = Math.max(Math.min(Math.min(aMDesiredHeadway, aMZeroHeadway), aUpperBound), aLowerBound);
 
         return Acceleration.instantiateSI(aMerger);
     }
 
     /**
-     * Verifies the kinematic feasibility of the trajectory according to Eq. (26) and (27).
+     * Verifies the kinematic feasibility of the trajectory (Eq. 26 and 27).
      * <p>
-     * This projects the positions of Ego, Leader, and Follower to the time {@code tauPass} (completion of lane change).
-     * It checks if the minimum distance {@code s0} is respected relative to both neighbors.
+     * Modification from Berghaus &amp; Oeser: We do not only check the static minimum distance (s0 / dxMin), but strictly
+     * enforce a dynamic safety time headway. If the follower is too fast or too close, the gap is rejected, forcing the
+     * tactical planner to target an upstream gap instead.
      * </p>
-     *
-     * @param xE           Merge point position
-     * @param xM           Merger front position
-     * @param vM           Merger speed
-     * @param lM           Merger length
-     * @param xL           Leader position
-     * @param vL           Leader speed
-     * @param xF           Follower position
-     * @param vF           Follower speed
-     * @param aM           Calculated merge acceleration
-     * @param tauELeader   Tau leader
+     * @param xM Merger center position
+     * @param vM Merger speed
+     * @param lM Merger length
+     * @param xL Leader center position
+     * @param vL Leader speed
+     * @param xF Follower center position
+     * @param vF Follower speed
+     * @param aM Calculated merge acceleration
+     * @param tauELeader Tau leader
      * @param tauEFollower Tau follower
-     * @param tauLC        Lane change duration
-     * @param dxMin        Minimum gap
-     * @param vTargetLane  Average speed on the target lane
-     * @return {@code true} if the gap remains physically viable at the end of the maneuver.
+     * @param tauLC Lane change duration
+     * @param dxMin Minimum gap (s0)
+     * @return {@code true} if the gap remains physically and dynamically viable
      */
-    private boolean isGapFeasible(final Length xE, final Length xM, final Speed vM, final Length lM,
-                                  final Length xL, final Speed vL,
-                                  final Length xF, final Speed vF,
-                                  final Acceleration aM, final Duration tauELeader, final Duration tauEFollower, final Duration tauLC, final Length dxMin, final Speed vTargetLane) {
-
+    private boolean isGapFeasible(final Length xM, final Speed vM, final Length lM, final Length xL, final Speed vL,
+            final Length xF, final Speed vF, final Acceleration aM, final Duration tauELeader, final Duration tauEFollower,
+            final Duration tauLC, final Length dxMin)
+    {
         Double vGap = (vL.si + vF.si) / 2.0;
 
-        // Determine relevant time horizon tauPass
-        Duration tauPass = (vGap < vM.si)
-                ? Duration.instantiateSI(Math.max(0.0, tauELeader.si - tauLC.si))
+        Duration tauPass = (vGap < vM.si) ? Duration.instantiateSI(Math.max(0.0, tauELeader.si - tauLC.si))
                 : Duration.instantiateSI(Math.max(0.0, tauEFollower.si - tauLC.si));
 
-        // 1. Projected Ego Position (Front)
-        double xM_end_si = xM.si + vM.si * tauPass.si + 0.5 * aM.si * tauPass.si * tauPass.si;
+        // 1. Projected Positions (Centers) at the end of the maneuver
+        double xM_center_end = xM.si + vM.si * tauPass.si + 0.5 * aM.si * tauPass.si * tauPass.si;
+        double xF_center_end = xF.si + vF.si * tauPass.si;
+        double xL_center_end = xL.si + vL.si * tauPass.si;
 
-        // 2. Projected Follower Position (Front)
-        double xF_end_si = xF.si + vF.si * tauPass.si;
+        // 2. Define dynamic safety thresholds (e.g., 50% of desired headway as absolute minimum safety buffer)
+        // If the gap yields a time headway smaller than this, it is rejected.
+        double minSafeTimeHeadway = 0.8; // seconds (adjustable parameter)
 
-        // 3. Projected Leader Position (Rear)
-        double xL_end_si = xM.si + xL.si + vL.si * tauPass.si;
+        // 3. Check Rear Gap: Ego Rear - Follower Front >= (dxMin + dynamic buffer)
+        double egoRear = xM_center_end - lM.si / 2.0;
+        double followerFront = xF_center_end + this.follower.getLength().si / 2.0;
 
-        // Check Rear Gap (Follower Constraint)
-        boolean rearClear = (xM_end_si - lM.si - xF_end_si - dxMin.si) >= 0.0;
+        // Add dynamic speed-dependent buffer to the follower constraint
+        double requiredRearDistance = dxMin.si + (vF.si * minSafeTimeHeadway);
+        boolean rearClear = (egoRear - followerFront - requiredRearDistance) >= 0.0;
 
-        // Check Front Gap (Leader Constraint)
-        boolean frontClear = (xL_end_si - xM_end_si - dxMin.si) >= 0.0;
+        // 4. Check Front Gap: Leader Rear - Ego Front >= (dxMin + dynamic buffer)
+        double leaderRear = xL_center_end - this.leader.getLength().si / 2.0;
+        double egoFront = xM_center_end + lM.si / 2.0;
+
+        // Add dynamic speed-dependent buffer to the leader constraint
+        double requiredFrontDistance = dxMin.si + (vM.si * minSafeTimeHeadway);
+        boolean frontClear = (leaderRear - egoFront - requiredFrontDistance) >= 0.0;
+
+        System.out.println("Feasibility Check: GTU " + this.vehicle.getGtu().getId() + " targeting gap [L=" + this.leaderId
+                + ", F=" + this.followerId + "] at tauPass=" + String.format("%.2f", tauPass.si) + "s: RearClear=" + rearClear
+                + " (Required: " + requiredRearDistance + "m), FrontClear=" + frontClear + " (Required: "
+                + requiredFrontDistance + "m)");
 
         return rearClear && frontClear;
     }
 
     /**
-     * Checks if the calculated acceleration is within the physical limits of the vehicle.
-     * Uses tolerance to filter out mathematical singularities.
-     *
-     * @param a      The calculated acceleration
-     * @param params The vehicle parameters
+     * Checks if the calculated acceleration is within the physical limits.
+     * @param a The calculated acceleration
      * @return true if realistic, false otherwise
-     * @throws ParameterException if parameter evaluation fails
      */
-    private boolean isAccelerationRealizable(final Acceleration a, final Parameters params) throws ParameterException {
+    private boolean isAccelerationRealizable(final Acceleration a)
+    {
         double maxAcc = 1.5;
         double maxDec = -6.0;
 
-        // Tolerance of 0.5 m/s^2 for numerical stability
-        if (a.si > maxAcc + 0.5) return false;
-        if (a.si < maxDec - 0.5) return false;
+        if (a.si > maxAcc + 0.5)
+            return false;
+        if (a.si < maxDec - 0.5)
+            return false;
 
         return true;
     }
-
 
     /** Internal helper to hold search results during a tick. */
     private static class SearchState
     {
         HeadwayGtu foundLeader = null;
+
         HeadwayGtu foundFollower = null;
+
         boolean adjacent = false;
+
         boolean leaderIsFirstInLeaders = false;
+
         boolean followerIsFirstInFollowers = false;
 
         /**
          * Verifies if the search yielded a complete and adjacent gap.
-         *
          * @return true if valid, false otherwise
          */
         boolean isCompleteAndAdjacent()
@@ -666,7 +622,6 @@ public class GapCandidate
     @Override
     public String toString()
     {
-        return "GapCandidate[L=" + this.leaderId + ", F=" + this.followerId +
-               ", Loc=" + this.lastKnownLocation + "]";
+        return "GapCandidate[L=" + this.leaderId + ", F=" + this.followerId + ", Loc=" + this.lastKnownLocation + "]";
     }
 }

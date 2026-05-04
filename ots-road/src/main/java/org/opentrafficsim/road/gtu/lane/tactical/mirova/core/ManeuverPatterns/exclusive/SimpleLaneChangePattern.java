@@ -168,18 +168,23 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
             // Base acceleration from current lane car-following
             Acceleration minAcc = egoCtx.getCurrentCarFollowingAcceleration();
+            if (!this.vehicle.getLaneChange().isChangingLane())
+            {
+                // If not already changing lane, we can relax on current leaders to allow for smoother merging
+                egoCtx.triggerRelaxation(neighborsCtx.getLeader(LateralDirectionality.NONE));
+            }
 
             // Synchronize with leader on the target lane
             if (this.vehicle.getGtu().getLane().equals(this.originLane))
             {
-                HeadwayGtu targetLeader = neighborsCtx.getLeader(this.direction);
-                if (targetLeader != null)
+                Iterable<HeadwayGtu> leaders = neighborsCtx.getLeaders(this.direction);
+                for (HeadwayGtu leader : leaders)
                 {
-                    // FIX: Proaktives Auslösen der Relaxation gegenüber dem neuen Leader.
-                    // Verhindert starkes Abbremsen während des Einscherens in eine kleinere Lücke.
-                    egoCtx.triggerRelaxation(targetLeader);
-
-                    Acceleration aTarget = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, targetLeader);
+                    if (!this.vehicle.getLaneChange().isChangingLane())
+                    {
+                        egoCtx.triggerRelaxation(leader);
+                    }
+                    Acceleration aTarget = MirovaCarFollowingUtil.followSingleLeader(this.vehicle, leader);
                     minAcc = Acceleration.min(minAcc, aTarget);
                 }
             }
@@ -203,9 +208,13 @@ public class SimpleLaneChangePattern extends ManeuverPattern
 
             // Set turn indicators
             if (this.direction.isLeft())
+            {
                 plan.setIndicatorIntentLeft();
+            }
             else if (this.direction.isRight())
+            {
                 plan.setIndicatorIntentRight();
+            }
 
             return plan;
         }

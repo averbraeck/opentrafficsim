@@ -82,6 +82,12 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
     /** Cache key prefix for downstream adjacent lanes. */
     private static final String DOWNSTREAM_ADJACENT_LANE_PREFIX = "downstreamAdjacentLane_";
 
+    /** Cache key for parallel merge detection on the left. */
+    private static final String MERGE_CACHE_KEY_LEFT = "PARALLEL_MERGE_LEFT";
+
+    /** Cache key for parallel merge detection on the right. */
+    private static final String MERGE_CACHE_KEY_RIGHT = "PARALLEL_MERGE_RIGHT";
+
     /** Distance threshold [m] below which a lane-end is considered critical. */
     private static final double LANE_END_THRESHOLD = 200.0;
 
@@ -325,6 +331,38 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         }
 
         return computedDrop;
+    }
+
+    /**
+     * Determines if there is a parallel merging lane ending within the look-ahead distance.
+     * <p>
+     * This method evaluates the infrastructure topology. The result is stored in the general context cache to prevent redundant
+     * heavy topological calculations during a single time step.
+     * </p>
+     * * @param dir LateralDirectionality; the lateral direction to check for a parallel merge
+     * @return boolean; {@code true} if a parallel merge situation exists in the given direction, {@code false} otherwise
+     * @throws ParameterException if required parameters (like LOOKAHEAD) are missing
+     */
+    public boolean getParallelMerge(final LateralDirectionality dir) throws ParameterException
+    {
+        // Prevent dynamic String concatenation by routing to static constants
+        String cacheKey = (dir == LateralDirectionality.LEFT) ? MERGE_CACHE_KEY_LEFT : MERGE_CACHE_KEY_RIGHT;
+
+        // Check the general updatable context cache (assuming a method like getContextValue or direct map access exists)
+        // Adjust 'this.cache' to match the exact cache map/method naming of your base UpdatableContext class.
+        Boolean cachedValue = (Boolean) this.cache.get(cacheKey);
+        if (cachedValue != null)
+        {
+            return cachedValue; // Autounboxing to primitive boolean
+        }
+
+        // Compute if not cached
+        boolean hasMerge = computeParallelMerge(dir);
+
+        // Store in general cache
+        this.cache.put(cacheKey, hasMerge); // Autoboxing to Boolean occurs here
+
+        return hasMerge;
     }
 
     // ----------------------------------------------------------------------
@@ -594,6 +632,7 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
             for (Lane lanesAhead : pathInfo.laneList())
             {
                 Set<Lane> adjacentLanes = lanesAhead.accessibleAdjacentLanesLegal(direction, gtuType);
+
                 if (!adjacentLanes.isEmpty())
                 {
                     Lane adjacentLane = adjacentLanes.iterator().next(); // Grab the direct adjacent lane
@@ -626,10 +665,15 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
     /**
      * Executes the heavy path projection to find the first adjacent lane downstream.
      * <p>
-     * This iterates over the projected future path of the vehicle. The loop terminates immediately once a matching adjacent
-     * lane is found in the requested direction.
+     * This iterates over the projected future path of the vehicle from closest to furthest. If a specific direction is
+     * provided, it searches only in that direction. If no direction is provided ({@code null} or {@code NONE}), it tests both
+     * lateral directions and returns the very first valid adjacent lane it encounters along the downstream path.
      * </p>
-     * @param direction the lateral direction of the target merge lane
+     * <p>
+     * Copyright (c) 2026 Marvin Baumann / KIT. All rights reserved. <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @param direction the lateral direction of the target merge lane, or {@code null}/{@code NONE} to search both
      * @return the downstream adjacent lane on the main road, or {@code null} if none is found
      */
     private Lane computeDownstreamAdjacentLane(final LateralDirectionality direction)
@@ -638,18 +682,58 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         {
             LaneBasedGtu egoGtu = this.vehicle.getGtu();
             Length lookahead = this.vehicle.getParameters().getParameter(MirovaParameters.extendedLookAheadDistance);
+
             LanePathInfo pathInfo = AbstractLaneBasedTacticalPlanner.buildLanePathInfo(egoGtu, lookahead);
+            if (pathInfo == null || pathInfo.laneList().isEmpty())
+            {
+                return null; // No path ahead, so no downstream lanes
+            }
             GtuType gtuType = egoGtu.getType();
 
-            for (Lane lanesAhead : pathInfo.laneList())
+            // Bestimme, welche Richtungen überhaupt geprüft werden sollen
+            boolean searchLeft = (direction == null || direction == LateralDirectionality.NONE || direction.isLeft());
+            boolean searchRight = (direction == null || direction == LateralDirectionality.NONE || direction.isRight());
+
+            List<Lane> lanes = pathInfo.laneList();
+            if (lanes.isEmpty() || lanes.size() <= 1)
             {
-                Set<Lane> adjacentLanes = lanesAhead.accessibleAdjacentLanesLegal(direction, gtuType);
-                if (!adjacentLanes.isEmpty())
+                return null; // No path ahead, so no downstream lanes
+            }
+            Lane lastLane = lanes.get(lanes.size() - 1);
+            if (lastLane == null || lastLane.nextLanes(gtuType).isEmpty())
+            {
+                return null; // Last lane has no downstream lanes, so no adjacent lanes either
+            }
+            Lane lcLane = lastLane.nextLanes(gtuType).iterator().next();
+            if (lcLane == null)
+            {
+                return null; // No lane ahead, so no downstream lanes
+            }
+
+            // Prüfe linke Seite, falls relevant
+            if (searchLeft)
+            {
+                Set<Lane> adjacentLeft = lcLane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, gtuType);
+
+                if (adjacentLeft != null && !adjacentLeft.isEmpty())
                 {
-                    // Found the start of the parallel merge section. Return the main road lane.
-                    return adjacentLanes.iterator().next();
+                    // System.out.println("Found downstream adjacent lane in direction: LEFT");
+                    return adjacentLeft.iterator().next();
                 }
             }
+
+            // Prüfe rechte Seite, falls relevant
+            if (searchRight)
+            {
+                Set<Lane> adjacentRight = lcLane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType);
+
+                if (adjacentRight != null && !adjacentRight.isEmpty())
+                {
+                    // System.out.println("Found downstream adjacent lane in direction: RIGHT");
+                    return adjacentRight.iterator().next();
+                }
+            }
+
         }
         catch (GtuException | NetworkException | ParameterException e)
         {
@@ -703,6 +787,57 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
         {
             return this.lane;
         }
+    }
+
+    /**
+     * Computes the presence of a parallel merging lane in the specified direction.
+     * <p>
+     * The logic identifies a parallel merge scenario if a second adjacent lane exists, ends within the look-ahead distance,
+     * while the first adjacent lane continues.
+     * </p>
+     * * @param dir LateralDirectionality; the lateral direction to evaluate
+     * @return boolean; {@code true} if a merge point is detected, {@code false} otherwise
+     * @throws ParameterException if required parameters are missing
+     */
+    private boolean computeParallelMerge(final LateralDirectionality dir) throws ParameterException
+    {
+        GtuType gtuType = this.vehicle.getGtu().getType();
+        Lane currentLane = this.vehicle.getGtu().getLane();
+
+        // Defensive programming: Ensure current lane is known before accessing adjacency
+        if (currentLane == null)
+        {
+            return false;
+        }
+
+        // Safely resolve the first adjacent lane
+        Lane firstAdjacentLane = currentLane.getAdjacentLane(dir, gtuType);
+        if (firstAdjacentLane == null)
+        {
+            return false;
+        }
+
+        // Safely resolve the second adjacent lane
+        Lane secondAdjacentLane = firstAdjacentLane.getAdjacentLane(dir, gtuType);
+        if (secondAdjacentLane == null)
+        {
+            return false; // No second adjacent lane exists
+        }
+
+        // Ensure the second adjacent lane ends, but the first one continues
+        if (secondAdjacentLane.nextLanes(gtuType).isEmpty() && !firstAdjacentLane.nextLanes(gtuType).isEmpty())
+        {
+            Length distanceToMergePoint = secondAdjacentLane.getLength().minus(this.vehicle.getGtu().getLongitudinalPosition());
+            Length lookahead = this.vehicle.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
+
+            // Check if the topological merge point is within the tactical look-ahead horizon
+            if (distanceToMergePoint.lt(lookahead))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
