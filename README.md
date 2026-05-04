@@ -1,41 +1,42 @@
-# OpenTrafficSim
+# OpenTrafficSim — MiRoVA Research Fork
 
-## What is OpenTrafficSim?
+This repository is a research-oriented fork of [OpenTrafficSim (OTS)](https://opentrafficsim.org), maintained by **Marvin Baumann** at the **Karlsruhe Institute of Technology (KIT)**. It is developed as part of the **MiRoVA** project (*Migration of Road Vehicle Automation*), focusing on the modeling of human driving behavior and its interaction with automated vehicles.
 
-### Project overview
+## Purpose of this Fork
 
-OpenTrafficSim aims to bring traffic simulation to a new level by
-* Combining micro-simulation, macro-simulation and meta-simulation in a single environment
-* Combining all traffic modes (private car, buses, bicycles, pedestrians, etc.) in a single simulator
-* Providing options to link to external code, driving simulators, and data sources
-We bring together state of the art simulation techniques, software development techniques and the best people in the traffic, simulation and software fields.
+The core objective of this fork is to extend the traditional reactive stimulus-response modeling paradigm in microscopic traffic simulation. By integrating a modular tactical architecture, this framework enables driver agents to perform explicit **tactical maneuver planning**.
 
+Key research goals include:
+* Modeling structured, multi-step maneuvers using Finite State Machines (FSM).
+* Decoupling tactical intentions (cognition) from operational control (execution).
+* Representing human-like behavioral adaptations and continuity in decision-making.
 
-### Open source
+## The MiRoVA Architecture
 
-Everything in OpenTrafficSim shall have a BSD, Apache, MIT, or similar open source license ensuring that
-* OpenTrafficSim can be incorporated in part or in full in other products for any use (educational, commercial, whatever)
-* OpenTrafficSim may be extended, evolved into anything else for any purpose
+The simulation logic extends the OTS tactical layer into a modular four-layer cognitive loop. This structure ensures a clear separation between perception, internal motivation, decision-making, and physical execution.
 
+| Layer             | Component         | Responsibility                                                                            |
+| :---------------- | :---------------- | :---------------------------------------------------------------------------------------- |
+| **1: Perception** | `ContextManager`  | Filters raw simulation data into semantic contexts (Ego, Neighbors, Infrastructure).      |
+| **2: Cognition**  | `KnowledgeChunk`  | Evaluates the environment and computes physical or dimensionless desires/motivations.     |
+| **3: Decision**   | `PatternSelector` | Selects the appropriate tactical behavior (Maneuver Pattern) based on aggregated desires. |
+| **4: Procedure**  | `ManeuverPattern` | Implements the tactical logic via State Machines and generates the operational plan.      |
 
-### Project information
+## Methodology
 
-The project information, compilation info, dependencies, unit test coverage, and API for all modules of OpenTrafficSim are stored in the [OTS project documentation](https://opentrafficsim.org/docs/latest/).<br>
+### Tactical Maneuver Planning
+Instead of re-evaluating behavior purely based on instantaneous stimuli, agents follow structured tactical procedures. This approach allows for consistent behavior during complex interactions, such as merging or lane changes, by maintaining internal maneuver states over time.
 
+### Decoupled Logic
+By separating the "Motivation" (Layer 2) from the "Action" (Layer 4), the architecture allows for a more flexible modeling of driver behavior. Different motivations can lead to the same maneuver, and the same maneuver can be executed with varying operational parameters depending on the driver's state.
 
-### Who are we?
+### OTS
+OpenTrafficSim is an open-source traffic simulation framework developed at TU Delft. It supports multi-modal micro-, meso-, and macro-simulation.
+* **Official Website**: [opentrafficsim.org](https://opentrafficsim.org)
+* **Documentation**: [opentrafficsim.org/docs/latest](https://opentrafficsim.org/docs/latest/)
 
-All current contributors work at the Delft University of Technology in the Netherlands. We are not picky; if you believe you can contribute to this ambitious project, please contact us. The current group of contributors is:
-* Hans van Lint, TU Delft, faculty CEG
-* Alexander Verbraeck, TU Delft, faculty TBM
-* Peter Knoppers, TU Delft, faculty CEG
-* Wouter Schakel, TU Delft, faculty CEG
+## Contact
 
-Early contributors to the project were:
-* Guus Tamminga, TU Delft, faculty CEG
-* Yufei Yuan, TU Delft, faculty CEG
-
-
-## Where is the manual?
-
-The **technical manual** for OTS can be found at [ReadTheDocs](https://opentrafficsim.readthedocs.io) or at [opentrafficsim.org](https://opentrafficsim.org/manual). There are also demo models. A more user-oriented manual are within our future plans.
+**Marvin Baumann** [marvin.baumann@kit.edu](mailto:marvin.baumann@kit.edu)  
+Institute for Transport Studies (IfV)  
+Karlsruhe Institute of Technology (KIT)
