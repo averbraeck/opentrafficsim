@@ -8,25 +8,35 @@
         }
     ],
     "java.jdt.ls.java.home": "C:\\app\\jdk17",
-
     // Maven
     "maven.executable.path": "C:\\Program Files\\apache-maven-3.9.9\\bin\\mvn.cmd",
     "java.maven.downloadSources": true,
-
     // Checkstyle - matches pom.xml configLocation
-    "java.checkstyle.configuration": "${workspaceFolder}/config/dsol-checks.xml",
+    "java.checkstyle.configuration": "${workspaceFolder}\\config\\dsol-checks.xml",
     "java.checkstyle.version": "10.21.3",
-
     // Code analysis
     "java.compile.nullAnalysis.mode": "automatic",
-
     // Import thresholds - high values to avoid star imports (match project style)
     "java.sources.organizeImports.starThreshold": 99,
     "java.sources.organizeImports.staticStarThreshold": 99,
-
-    // Do not auto-format on save (project uses dsol-code-formatter.xml; configure separately if needed)
-    "editor.formatOnSave": false,
-
+    // Keep Java formatting on save, but disable auto-fix/cleanup actions.
+    "editor.formatOnSave": true,
     // Encoding matches pom.xml <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    "files.encoding": "utf8"
+    "files.encoding": "utf8",
+    "java.format.settings.url": "config\\dsol-code-formatter.xml",
+    "java.format.settings.profile": "DSOL",
+    "java.saveActions.organizeImports": false,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": false,
+        "source.fixAll": false
+    },
+    // Reduce automatic workspace metadata rewrites by Java tooling.
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.import.generatesMetadataFilesAtProjectRoot": false,
+    "java.import.exclusions": [
+        "**/node_modules/**",
+        "**/.git/**",
+        "**/__CREATED_BY_JAVA_LANGUAGE_SERVER__/**"
+    ],
+    "java.debug.settings.onBuildFailureProceed": true,
 }
