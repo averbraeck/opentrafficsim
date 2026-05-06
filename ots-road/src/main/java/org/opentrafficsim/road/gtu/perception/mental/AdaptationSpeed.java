@@ -24,7 +24,7 @@ public class AdaptationSpeed implements BehavioralAdaptation
 
     /** Parameter for desired speed scaling. */
     public static final ParameterTypeDouble BETA_V0 =
-            new ParameterTypeDouble("Beta_v0", "max desired speed scaling", 1.0, POSITIVEZERO);
+            new ParameterTypeDouble("beta_v0", "Maximum adaptation desired speed scaling", 1.0, POSITIVEZERO);
 
     /** Base value for the desired speed. */
     private Double fSpeed0;

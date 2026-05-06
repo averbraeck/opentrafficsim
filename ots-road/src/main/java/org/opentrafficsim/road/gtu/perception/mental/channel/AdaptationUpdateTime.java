@@ -30,7 +30,7 @@ public final class AdaptationUpdateTime implements BehavioralAdaptation, Statele
 
     /** Minimum update time. */
     public static final ParameterTypeDuration DT_MIN =
-            new ParameterTypeDuration("dt_min", "Minimum update time.", Duration.ofSI(0.3), NumericConstraint.POSITIVEZERO)
+            new ParameterTypeDuration("dt_min", "Minimum update time", Duration.ofSI(0.3), NumericConstraint.POSITIVEZERO)
             {
                 @Override
                 public void check(final Duration value, final Parameters params) throws ParameterException
@@ -43,7 +43,7 @@ public final class AdaptationUpdateTime implements BehavioralAdaptation, Statele
 
     /** Minimum update time. */
     public static final ParameterTypeDuration DT_MAX =
-            new ParameterTypeDuration("dt_max", "Maximum update time.", Duration.ofSI(2.0), NumericConstraint.POSITIVE)
+            new ParameterTypeDuration("dt_max", "Maximum update time", Duration.ofSI(2.0), NumericConstraint.POSITIVE)
             {
                 @Override
                 public void check(final Duration value, final Parameters params) throws ParameterException

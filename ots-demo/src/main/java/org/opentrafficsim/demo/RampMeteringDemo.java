@@ -489,7 +489,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                         public Parameters getParameters(final GtuType gtuType) throws ParameterException
                         {
                             ParameterSet set = new ParameterSet();
-                            set.setDefaultParameter(ParameterTypes.LANE_STRUCTURE);
+                            set.setDefaultParameter(ParameterTypes.LC_INFO);
                             set.setDefaultParameter(ParameterTypes.LOOKBACK);
                             set.setDefaultParameter(ParameterTypes.LOOKAHEAD);
                             set.setDefaultParameter(ParameterTypes.S0);

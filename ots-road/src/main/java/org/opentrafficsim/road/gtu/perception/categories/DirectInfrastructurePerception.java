@@ -53,7 +53,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 {
 
     /** Range of lane change info perception. */
-    public static final ParameterTypeLength LANE_STRUCTURE = ParameterTypes.LANE_STRUCTURE;
+    public static final ParameterTypeLength LANE_STRUCTURE = ParameterTypes.LC_INFO;
 
     /** Range of lane change possibility perception. */
     public static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;

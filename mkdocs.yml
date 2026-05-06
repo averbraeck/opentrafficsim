@@ -80,15 +80,22 @@ nav:
     - Performance indicators: 07-output/indicators.md
     - Detector data: 07-output/detector-data.md
     - Custom data: 07-output/custom-data.md
-  - 8. Tutorials:
-    - Tutorial overview: 08-tutorials/index.md
-    - Simulation setup: 08-tutorials/simulation-setup.md
-    - Development: 08-tutorials/development.md
-    - Visualization: 08-tutorials/visualization.md
-  - 9. Troubleshooting:
-    - Common issues with OTS: 09-troubleshooting/troubleshooting.md
-  - 10. References:
-    - Reference list: 10-references/references.md
+  - 8. Co-simulation:
+    - Introduction: 08-co-simulation/introduction.md
+    - Messages: 08-co-simulation/messages.md
+    - Settings and parameters: 08-co-simulation/settings-parameters.md
+    - Commands: 08-co-simulation/commands.md
+    - Protocol: 08-co-simulation/protocol.md
+    - Dead reckoning: 08-co-simulation/dead-reckoning.md
+  - 9. Tutorials:
+    - Tutorial overview: 96-tutorials/index.md
+    - Simulation setup: 96-tutorials/simulation-setup.md
+    - Development: 96-tutorials/development.md
+    - Visualization: 96-tutorials/visualization.md
+  - 10. Troubleshooting:
+    - Common issues with OTS: 97-troubleshooting/troubleshooting.md
+  - 11. References:
+    - Reference list: 98-references/references.md
   - Appendices:
     - A) Conflict areas: 99-appendices/conflict-areas.md
     - B) Queue spillback: 99-appendices/queue-spillback.md

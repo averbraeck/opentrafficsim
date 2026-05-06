@@ -342,7 +342,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private final List<TacticalPlannerProvider<T>> lmrsProvider;
 
     /** GTU type IDs in order of multi-valued arguments. */
-    @Option(names = {"--gtuTypes"}, description = "GTU type IDs in order of multi-valued arguments.",
+    @Option(names = {"--gtuTypes"}, description = "GTU type IDs in order of multi-valued arguments",
             defaultValue = "NL.CAR|NL.TRUCK", split = "\\|", splitSynopsisLabel = "|")
     private final List<String> gtuTypes;
 
@@ -352,37 +352,37 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     // LMRS
 
     /** Car-following model: IDM, IDM_PLUS (default) or IDM_PLUS_MULTI. */
-    @Option(names = {"--carFollowingModel"}, description = "Car-following model: IDM, IDM_PLUS or IDM_PLUS_MULTI.",
+    @Option(names = {"--carFollowingModel"}, description = "Car-following model: IDM, IDM_PLUS or IDM_PLUS_MULTI",
             defaultValue = "IDM_PLUS", split = "\\|", splitSynopsisLabel = "|", converter = CarFollowingModelConverter.class)
     private List<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> carFollowingModel =
             listOf(IdmPlus::new);
 
     /** Lane change synchronization: PASSIVE (default), PASSIVE_MOVING, ALIGN_GAP or ACTIVE. */
     @Option(names = {"--synchronization"},
-            description = "Lane change synchronization: PASSIVE, PASSIVE_MOVING, ALIGN_GAP or ACTIVE.",
-            defaultValue = "PASSIVE", split = "\\|", splitSynopsisLabel = "|", converter = SynchronizationConverter.class)
+            description = "Lane change synchronization: PASSIVE, PASSIVE_MOVING, ALIGN_GAP or ACTIVE", defaultValue = "PASSIVE",
+            split = "\\|", splitSynopsisLabel = "|", converter = SynchronizationConverter.class)
     private List<Synchronization> synchronization = listOf(Synchronization.PASSIVE);
 
     /** Lane change cooperation: PASSIVE (default), PASSIVE_MOVING or ACTIVE. */
-    @Option(names = {"--cooperation"}, description = "Lane change cooperation: PASSIVE, PASSIVE_MOVING or ACTIVE.",
+    @Option(names = {"--cooperation"}, description = "Lane change cooperation: PASSIVE, PASSIVE_MOVING or ACTIVE",
             defaultValue = "PASSIVE", split = "\\|", splitSynopsisLabel = "|", converter = CooperationConverter.class)
     private List<Cooperation> cooperation = listOf(Cooperation.PASSIVE);
 
     /** Lane change gap-acceptance: INFORMED (default) or EGO_HEADWAY. */
-    @Option(names = {"--gapAcceptance"}, description = "Lane change gap-acceptance: INFORMED or EGO_HEADWAY.",
+    @Option(names = {"--gapAcceptance"}, description = "Lane change gap-acceptance: INFORMED or EGO_HEADWAY",
             defaultValue = "INFORMED", split = "\\|", splitSynopsisLabel = "|", converter = GapAcceptanceConverter.class)
     private List<GapAcceptance> gapAcceptance = listOf(GapAcceptance.INFORMED);
 
     // LMRS -> Mandatory incentives
 
     /** Mandatory lane change incentive for route (default: true). */
-    @Option(names = {"--incentiveRoute"}, description = "Mandatory lane change incentive for route.", defaultValue = "true",
+    @Option(names = {"--incentiveRoute"}, description = "Mandatory lane change incentive for route", defaultValue = "true",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> incentiveRoute = listOf(true);
 
     /** Mandatory lane change incentive to join slow traffic at split and not block other traffic. */
     @Option(names = {"--incentiveGetInLane"},
-            description = "Mandatory lane change incentive to join slow traffic at split and not block other traffic.",
+            description = "Mandatory lane change incentive to join slow traffic at split and not block other traffic",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> incentiveGetInLane = listOf(false);
 
@@ -392,28 +392,28 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     // LMRS -> Voluntary incentives
 
     /** Voluntary lane change incentive for speed with courtesy (default: true). */
-    @Option(names = {"--incentiveSpeedWithCourtesy"}, description = "Voluntary lane change incentive for speed with courtesy.",
+    @Option(names = {"--incentiveSpeedWithCourtesy"}, description = "Voluntary lane change incentive for speed with courtesy",
             defaultValue = "true", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> incentiveSpeedWithCourtesy = listOf(true);
 
     /** Voluntary lane change incentive for cooperative lane changes (default: false). */
-    @Option(names = {"--incentiveCourtesy"}, description = "Voluntary lane change incentive for cooperative lane changes.",
+    @Option(names = {"--incentiveCourtesy"}, description = "Voluntary lane change incentive for cooperative lane changes",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> incentiveCourtesy = listOf(false);
 
     /** Voluntary lane change incentive to join the shortest queue (default: false). */
-    @Option(names = {"--incentiveQueue"}, description = "Voluntary lane change incentive to join the shortest queue.",
+    @Option(names = {"--incentiveQueue"}, description = "Voluntary lane change incentive to join the shortest queue",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> incentiveQueue = listOf(false);
 
     /** Voluntary lane change incentive for trucks to stay in slowest rightmost two lanes (default: false). */
     @Option(names = {"--incentiveStayRight"},
-            description = "Voluntary lane change incentive for trucks to stay in rightmost two lanes.", defaultValue = "false",
+            description = "Voluntary lane change incentive for trucks to stay in rightmost two lanes", defaultValue = "false",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> incentiveStayRight = listOf(false);
 
     /** Voluntary lane change incentive to keep to the slow lane (default: true). */
-    @Option(names = {"--incentiveKeep"}, description = "Voluntary lane change incentive to keep to the slow lane.",
+    @Option(names = {"--incentiveKeep"}, description = "Voluntary lane change incentive to keep to the slow lane",
             defaultValue = "true", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> incentiveKeep = listOf(true);
 
@@ -424,25 +424,25 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
     /** Acceleration incentive to slow down prior to a lower speed limit (default: false). */
     @Option(names = {"--accelerationSpeedLimitTransition"},
-            description = "Acceleration incentive to slow down prior to a lower speed limit.", defaultValue = "false",
+            description = "Acceleration incentive to slow down prior to a lower speed limit", defaultValue = "false",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> accelerationSpeedLimitTransition = listOf(false);
 
     /** Acceleration incentive to approach traffic lights (default: false). */
-    @Option(names = {"--accelerationTrafficLights"}, description = "Acceleration incentive to approach traffic lights.",
+    @Option(names = {"--accelerationTrafficLights"}, description = "Acceleration incentive to approach traffic lights",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> accelerationTrafficLights = listOf(false);
 
     /** Acceleration incentive to approach intersection conflicts (default: false). */
-    @Option(names = {"--accelerationConflicts"}, description = "Acceleration incentive to approach intersection conflicts.",
+    @Option(names = {"--accelerationConflicts"}, description = "Acceleration incentive to approach intersection conflicts",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> accelerationConflicts = listOf(false);
 
-    /** Acceleration incentive to not overtake traffic in the left lane (default: false). */
-    @Option(names = {"--accelerationNoRightOvertake"},
-            description = "Acceleration incentive to not overtake traffic in the left lane.", defaultValue = "false",
+    /** Acceleration incentive to not overtake traffic on the slow lane (default: false). */
+    @Option(names = {"--accelerationNoSlowLaneOvertake"},
+            description = "Acceleration incentive to not overtake traffic on the slow lane", defaultValue = "false",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
-    private List<Boolean> accelerationNoRightOvertake = listOf(false);
+    private List<Boolean> accelerationNoSlowLaneOvertake = listOf(false);
 
     /** Custom acceleration incentives. */
     private List<Set<Supplier<AccelerationIncentive>>> customAccelerationIncentives = listOf(new LinkedHashSet<>());
@@ -451,126 +451,125 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
     /** Implementation of Fuller: NONE (default), SUMMATIVE, ANTICIPATION_RELIANCE or ATTENTION_MATRIX. */
     @Option(names = {"--fullerImplementation"},
-            description = "Implementation of Fuller: NONE, SUMMATIVE, ANTICIPATION_RELIANCE or ATTENTION_MATRIX.",
+            description = "Implementation of Fuller: NONE, SUMMATIVE, ANTICIPATION_RELIANCE or ATTENTION_MATRIX",
             defaultValue = "ATTENTION_MATRIX", split = "\\|", splitSynopsisLabel = "|")
     private List<FullerImplementation> fullerImplementation = listOf(FullerImplementation.NONE);
 
-    /** Id of primary task under ANTICIPATION_RELIANCE (default: lane-changing). */
-    @Option(names = {"--primaryTask"}, description = "Id of primary task under ANTICIPATION_RELIANCE.",
+    /** ID of primary task under ANTICIPATION_RELIANCE (default: lane-changing). */
+    @Option(names = {"--primaryTask"}, description = "ID of primary task under ANTICIPATION_RELIANCE",
             defaultValue = "lane-changing", split = "\\|", splitSynopsisLabel = "|")
     private List<String> primaryTask = listOf("lane-changing");
 
     /** Enables temporal constant-speed anticipation (default: true). */
-    @Option(names = {"--anticipation"}, description = "Enables temporal constant-speed anticipation.", defaultValue = "true",
+    @Option(names = {"--anticipation"}, description = "Enables temporal constant-speed anticipation", defaultValue = "true",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> temporalAnticipation = listOf(true);
 
     /** Enables estimation of neighboring vehicles (default: true). */
-    @Option(names = {"--estimation"}, description = "Enables estimation of neighboring vehicles.", defaultValue = "true",
+    @Option(names = {"--estimation"}, description = "Enables estimation of neighboring vehicles", defaultValue = "true",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> neighborEstimation = listOf(true);
 
     /** Fraction of drivers over-estimating speed and distance [0..1] (default: 1). */
-    @Option(names = {"--fractionOverEstimation"},
-            description = "Fraction of drivers over-estimating speed and distance [0..1].", defaultValue = "0.0", split = "\\|",
-            splitSynopsisLabel = "|")
+    @Option(names = {"--fractionOverEstimation"}, description = "Fraction of drivers over-estimating speed and distance [0..1]",
+            defaultValue = "0.0", split = "\\|", splitSynopsisLabel = "|")
     private List<Double> fractionOverEstimation = listOf(1.0);
 
     // Fuller -> Tasks
 
     /** Enables car-following task (default: true). */
-    @Option(names = {"--carFollowingTask"}, description = "Enables car-following task.", defaultValue = "true", split = "\\|",
+    @Option(names = {"--carFollowingTask"}, description = "Enables car-following task", defaultValue = "true", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> carFollowingTask = listOf(true);
 
     /** Enables alternate car-following task under SUMMATIVE and ANTICIPATION_RELIANCE (default: false). */
-    @Option(names = {"--alternateCarFollowingTask"}, description = "Enables alternate car-following task (exponential).",
+    @Option(names = {"--alternateCarFollowingTask"}, description = "Enables alternate car-following task (exponential)",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> alternateCarFollowingTask = listOf(false);
 
     /** Enables free acceleration task under ATTENTION_MATRIX (default: false). */
     @Option(names = {"--freeAccelerationTask"},
-            description = "Enables free acceleration task, useful when updateTimeAdaptation is true.", defaultValue = "false",
+            description = "Enables free acceleration task, useful when updateTimeAdaptation is true", defaultValue = "false",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> freeAccelerationTask = listOf(false);
 
     /** Enables traffic lights task under ATTENTION_MATRIX (default: false). */
-    @Option(names = {"--trafficLightsTask"}, description = "Enables traffic light task.", defaultValue = "false", split = "\\|",
+    @Option(names = {"--trafficLightsTask"}, description = "Enables traffic light task", defaultValue = "false", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> trafficLightsTask = listOf(false);
 
     /** Enables signal task under ATTENTION_MATRIX (default: true). */
-    @Option(names = {"--signalTask"}, description = "Enables signal task.", defaultValue = "true", split = "\\|",
+    @Option(names = {"--signalTask"}, description = "Enables signal task", defaultValue = "true", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> signalTask = listOf(true);
 
     /** Enables lane-changing task (default: true). */
-    @Option(names = {"--laneChangingTask"}, description = "Enables lane-change task.", defaultValue = "true", split = "\\|",
+    @Option(names = {"--laneChangingTask"}, description = "Enables lane-change task", defaultValue = "true", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> laneChangingTask = listOf(true);
 
     /** Enables alternate lane-changing task under SUMMATIVE and ANTICIPATION_RELIANCE (default: false). */
-    @Option(names = {"--alternateLaneChangingTask"}, description = "Enables alternate lane-changing task (lane change desire).",
+    @Option(names = {"--alternateLaneChangingTask"}, description = "Enables alternate lane-changing task (lane change desire)",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> alternateLaneChangingTask = listOf(false);
 
     /** Enables cooperation task under ATTENTION_MATRIX (default: true). */
-    @Option(names = {"--cooperationTask"}, description = "Enables cooperation task.", defaultValue = "true", split = "\\|",
+    @Option(names = {"--cooperationTask"}, description = "Enables cooperation task", defaultValue = "true", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> cooperationTask = listOf(true);
 
     /** Enables intersection task under ATTENTION_MATRIX (default: false). */
-    @Option(names = {"--intersectionTask"}, description = "Enables intersection task.", defaultValue = "false", split = "\\|",
+    @Option(names = {"--intersectionTask"}, description = "Enables intersection task", defaultValue = "false", split = "\\|",
             splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> intersectionTask = listOf(false);
 
     /** Enables road-side distraction task (default: false). */
-    @Option(names = {"--roadSideDistractionTask"}, description = "Enables road-side distraction task.", defaultValue = "false",
+    @Option(names = {"--roadSideDistractionTask"}, description = "Enables road-side distraction task", defaultValue = "false",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> roadSideDistractionTask = listOf(false);
 
     // Fuller -> Adaptations
 
     /** Enables behavioral speed adaptation. */
-    @Option(names = {"--speedAdaptation"}, description = "Enables behavioral speed adaptation.", defaultValue = "true",
+    @Option(names = {"--speedAdaptation"}, description = "Enables behavioral speed adaptation", defaultValue = "true",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> speedAdaptation = listOf(true);
 
     /** Enables behavioral headway adaptation. */
-    @Option(names = {"--headwayAdaptation"}, description = "Enables behavioral headway adaptation.", defaultValue = "true",
+    @Option(names = {"--headwayAdaptation"}, description = "Enables behavioral headway adaptation", defaultValue = "true",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> headwayAdaptation = listOf(true);
 
     /** Enables behavioral voluntary lane change adaptation. */
-    @Option(names = {"--laneChangeAdaptation"}, description = "Enables behavioral voluntary lane change adaptation.",
+    @Option(names = {"--laneChangeAdaptation"}, description = "Enables behavioral voluntary lane change adaptation",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> laneChangeAdaptation = listOf(false);
 
     /** Enables behavioral update time adaptation under ATTENTION_MATRIX. */
-    @Option(names = {"--updateTimeAdaptation"}, description = "Enables behavioral update time adaptation.",
+    @Option(names = {"--updateTimeAdaptation"}, description = "Enables behavioral update time adaptation",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> updateTimeAdaptation = listOf(false);
 
     // Social interactions
 
     /** Enables social pressure exerted to the (potential) leader. */
-    @Option(names = {"--socialPressure"}, description = "Enables social pressure exerted to the (potential) leader.",
+    @Option(names = {"--socialPressure"}, description = "Enables social pressure exerted to the (potential) leader",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> socialPressure = listOf(false);
 
     /** Enables tailgating due to social pressure towards the leader. */
-    @Option(names = {"--tailgating"}, description = "Enables tailgating due to social pressure towards the leader.",
+    @Option(names = {"--tailgating"}, description = "Enables tailgating due to social pressure towards the leader",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> tailgating = listOf(false);
 
     /** Enables lane changes due to social pressure from the (potential) follower. */
     @Option(names = {"--socioLaneChange"},
-            description = "Enables lane changes due to social pressure from the (potential) follower.", defaultValue = "false",
+            description = "Enables lane changes due to social pressure from the (potential) follower", defaultValue = "false",
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> socioLaneChange = listOf(false);
 
     /** Enables speed increase due to social pressure from the follower. */
-    @Option(names = {"--socioSpeed"}, description = "Enables speed increase due to social pressure from the follower.",
+    @Option(names = {"--socioSpeed"}, description = "Enables speed increase due to social pressure from the follower",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> socioSpeed = listOf(false);
 
@@ -835,7 +834,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         parameters.setDefaultParameters(AbstractIdm.class);
         parameters.setDefaultParameters(ConflictUtil.class);
         parameters.setDefaultParameter(ParameterTypes.T0);
-        parameters.setDefaultParameter(ParameterTypes.LANE_STRUCTURE);
+        parameters.setDefaultParameter(ParameterTypes.LC_INFO);
         parameters.setDefaultParameter(ParameterTypes.LOOKBACK);
         parameters.setDefaultParameter(ParameterTypes.LOOKAHEAD);
         parameters.setDefaultParameter(ParameterTypes.VCONG);
@@ -1006,7 +1005,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         {
             tacticalPlanner.addAccelerationIncentive(new AccelerationConflicts());
         }
-        if (get(this.accelerationNoRightOvertake, gtuType))
+        if (get(this.accelerationNoSlowLaneOvertake, gtuType))
         {
             tacticalPlanner.addAccelerationIncentive(
                     new AccelerationNoSlowLaneOvertake(() -> tacticalPlanner.getLatestMandatoryDesire()));
@@ -1297,7 +1296,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
         /** Acceleration incentive to not overtake traffic in the left lane (default: false). */
         public static final Setting<Boolean> ACCELERATION_NO_SLOW_LANE_OVERTAKE =
-                new Setting<>((factory) -> factory.accelerationNoRightOvertake);
+                new Setting<>((factory) -> factory.accelerationNoSlowLaneOvertake);
 
         /** Custom acceleration incentives. */
         public static final Setting<Set<Supplier<AccelerationIncentive>>> CUSTOM_ACCELERATION_INCENTIVES =
@@ -1309,7 +1308,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public static final Setting<FullerImplementation> FULLER_IMPLEMENTATION =
                 new Setting<>((factory) -> factory.fullerImplementation);
 
-        /** Id of primary task under ANTICIPATION_RELIANCE (default: lane-changing). */
+        /** ID of primary task under ANTICIPATION_RELIANCE (default: lane-changing). */
         public static final Setting<String> PRIMARY_TASK = new Setting<>((factory) -> factory.primaryTask);
 
         /** Enables temporal constant-speed anticipation (default: true). */
@@ -1431,13 +1430,12 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     /**
      * Argument converter for car-following supplier.
      */
-    private static class CarFollowingModelConverter
+    public static class CarFollowingModelConverter
             implements ITypeConverter<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>>
     {
         /**
          * Constructor.
          */
-        @SuppressWarnings({"unused", "redundantModifier"}) // referred to in @Option annotation
         public CarFollowingModelConverter()
         {
             //
@@ -1483,12 +1481,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     /**
      * Argument converter for {@link Synchronization}.
      */
-    private static class SynchronizationConverter implements ITypeConverter<Synchronization>
+    public static class SynchronizationConverter implements ITypeConverter<Synchronization>
     {
         /**
          * Constructor.
          */
-        @SuppressWarnings({"unused", "redundantModifier"}) // referred to in @Option annotation
         public SynchronizationConverter()
         {
             //
@@ -1517,12 +1514,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     /**
      * Argument converter for {@link Cooperation}.
      */
-    private static class CooperationConverter implements ITypeConverter<Cooperation>
+    public static class CooperationConverter implements ITypeConverter<Cooperation>
     {
         /**
          * Constructor.
          */
-        @SuppressWarnings({"unused", "redundantModifier"}) // referred to in @Option annotation
         public CooperationConverter()
         {
             //
@@ -1549,12 +1545,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     /**
      * Argument converter for {@link GapAcceptance}.
      */
-    private static class GapAcceptanceConverter implements ITypeConverter<GapAcceptance>
+    public static class GapAcceptanceConverter implements ITypeConverter<GapAcceptance>
     {
         /**
          * Constructor.
          */
-        @SuppressWarnings({"unused", "redundantModifier"}) // referred to in @Option annotation
         public GapAcceptanceConverter()
         {
             //

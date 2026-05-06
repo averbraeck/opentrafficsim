@@ -29,7 +29,7 @@ public final class ArTaskCarFollowingExp extends AbstractArTask implements State
 
     /** Car-following task parameter. */
     public static final ParameterTypeDuration HEXP = new ParameterTypeDuration("h_exp",
-            "Exponential decay of car-following task by headway.", Duration.ofSI(3.83), NumericConstraint.POSITIVE);
+            "Exponential decay of car-following task by headway", Duration.ofSI(3.83), NumericConstraint.POSITIVE);
 
     /** Singleton instance. */
     public static final ArTaskCarFollowingExp SINGLETON = new ArTaskCarFollowingExp();

@@ -119,6 +119,7 @@ import jakarta.xml.bind.Unmarshaller;
  * <li>Road discontinuities (lane sections, road type change, road mark change, lane access change, lane speed change) are not
  * allowed in parts of lanes that should become a conflict with other lanes. Conflicts are when lanes from different links
  * split, merge or cross, i.e. have overlap.</li>
+ * <li>Signals, including speed signs, are ignored. Lane and road type speed limits should be used.</li>
  * </ul>
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>

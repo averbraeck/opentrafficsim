@@ -27,9 +27,8 @@
     <module>ots-draw</module>
     <module>ots-swing</module>
     <module>ots-web</module>
-    <module>ots-sim0mq</module>
-    <module>ots-sim0mq-kpi</module>
-    <module>ots-sim0mq-swing</module>
+    <module>ots-cosim</module>
+    <module>ots-cosim-0mq</module>
     <module>ots-xml</module>
     <module>ots-opendrive</module>
     <module>ots-demo</module>
@@ -322,19 +321,13 @@
 
       <dependency>
         <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-sim0mq</artifactId>
+        <artifactId>ots-cosim</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-sim0mq-kpi</artifactId>
-        <version>${ots.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-sim0mq-swing</artifactId>
+        <artifactId>ots-cosim-0mq</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

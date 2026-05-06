@@ -45,7 +45,7 @@ public abstract class Fuller implements Mental
     public static final ParameterTypeDouble TS = new ParameterTypeDouble("TS", "Task saturation", 0.0, POSITIVEZERO);
 
     /** Over-estimation parameter type. Negative values reflect under-estimation. */
-    public static final ParameterTypeDouble OVER_EST = new ParameterTypeDouble("OVER_EST", "Over estimation factor.", 1.0);
+    public static final ParameterTypeDouble OVER_EST = new ParameterTypeDouble("over_est", "Over estimation (1.0) or under estimation (-1.0)", 1.0);
 
     /** Behavioral adaptations depending on task saturation. */
     private final Set<BehavioralAdaptation> behavioralAdapatations;

@@ -349,7 +349,10 @@ public final class XmlParser
                 flatteners, eval);
         NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, infraSpeedLimitMap, designLines,
                 flatteners, stripes, eval);
-        NetworkParser.buildConflicts(otsNetwork, network, eval);
+        if (buildConflicts)
+        {
+            NetworkParser.buildConflicts(otsNetwork, network, eval);
+        }
 
         // routes, generators and sinks
         Demand demand = ots.getDemand();

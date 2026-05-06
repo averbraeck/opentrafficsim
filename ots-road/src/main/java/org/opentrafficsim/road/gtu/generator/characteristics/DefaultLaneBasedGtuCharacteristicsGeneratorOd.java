@@ -9,7 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;

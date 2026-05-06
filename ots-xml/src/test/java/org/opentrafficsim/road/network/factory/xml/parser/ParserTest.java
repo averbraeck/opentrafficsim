@@ -83,7 +83,7 @@ public final class ParserTest
             try
             {
                 this.network = new RoadNetwork("Test", getSimulator());
-                new XmlParser(this.network).setResource("/resources/test-network.xml").build();
+                new XmlParser(this.network).setResource("/resources/test-network.xml").setParseConflict(true).build();
             }
             catch (Exception exception)
             {

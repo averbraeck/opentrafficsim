@@ -61,7 +61,7 @@ public class GtuSpawner
      * @param defaultGtuTemplate default GTU templates.
      * @return for method chaining.
      */
-    public GtuSpawner setUseDefaultGtuTemplate(
+    public GtuSpawner setDefaultGtuTemplate(
             final BiFunction<GtuType, StreamInterface, Optional<GtuTemplate>> defaultGtuTemplate)
     {
         this.defaultGtuTemplate = defaultGtuTemplate;

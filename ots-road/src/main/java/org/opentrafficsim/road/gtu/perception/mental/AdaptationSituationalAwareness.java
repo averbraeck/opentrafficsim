@@ -39,7 +39,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
 
     /** Minimum situational awareness. */
     public static final ParameterTypeDouble SA_MIN =
-            new ParameterTypeDouble("SAmin", "Min. situational awareness", 0.5, POSITIVE)
+            new ParameterTypeDouble("SAmin", "Minimum situational awareness", 0.5, POSITIVE)
             {
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
@@ -52,7 +52,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
 
     /** Maximum situational awareness. */
     public static final ParameterTypeDouble SA_MAX =
-            new ParameterTypeDouble("SAmax", "Max. situational awareness", 1.0, POSITIVE)
+            new ParameterTypeDouble("SAmax", "Maximum situational awareness", 1.0, POSITIVE)
             {
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException

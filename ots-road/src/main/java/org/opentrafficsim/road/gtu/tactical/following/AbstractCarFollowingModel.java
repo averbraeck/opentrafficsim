@@ -72,6 +72,18 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     }
 
     /**
+     * Sets the desired speed model.
+     * @param model new model
+     * @return the model that was set before this method was called
+     */
+    public DesiredSpeedModel setDesiredSpeedModel(final DesiredSpeedModel model)
+    {
+        DesiredSpeedModel old = this.desiredSpeedModel;
+        this.desiredSpeedModel = model;
+        return old;
+    }
+
+    /**
      * Determination of car-following acceleration, possibly based on multiple leaders.
      * @param parameters parameters
      * @param speed current speed

@@ -81,38 +81,38 @@ public class ChannelTaskIntersection extends AbstractTask implements ChannelTask
     public static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Maximum ego task demand. */
-    public static final ParameterTypeDouble TD_B = new ParameterTypeDouble("TD_B",
-            "Maximum task demand due to ego distance to intersection.", 0.3 / (0.3 + 0.1), DualBound.UNITINTERVAL)
+    public static final ParameterTypeDouble TD_B = new ParameterTypeDouble("td_b",
+            "Maximum task demand due to ego distance to intersection", 0.3 / (0.3 + 0.1), DualBound.UNITINTERVAL)
     {
         @Override
         public void check(final Double value, final Parameters params) throws ParameterException
         {
             Throw.when(params.contains(TD_C) && params.getParameter(TD_C) + value >= 1.0, ParameterException.class,
-                    "Values for TD_B and TD_C should sum to a value below 1.0");
+                    "Values for td_b and td_c should sum to a value below 1.0");
         }
     };
 
     /** Ego decay parameter for distance to the yield line. */
-    public static final ParameterTypeLength BETA_YL = new ParameterTypeLength("Beta_yl",
-            "Exponential decay of conflict task by ego distance.", Length.ofSI(25.12), NumericConstraint.POSITIVEZERO);
+    public static final ParameterTypeLength BETA_YL = new ParameterTypeLength("beta_yl",
+            "Exponential decay of conflict task by ego distance", Length.ofSI(25.12), NumericConstraint.POSITIVEZERO);
 
     /** Maximum task demand due to conflicting vehicle. */
     public static final ParameterTypeDouble TD_C =
-            new ParameterTypeDouble("TD_C", "Maximum task demand due to time-to-conflict-point of conflicting vehicle.",
+            new ParameterTypeDouble("td_c", "Maximum task demand due to time-to-conflict-point of conflicting vehicle",
                     0.1 / (0.3 + 0.1), DualBound.UNITINTERVAL)
             {
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
                     Throw.when(params.contains(TD_B) && params.getParameter(TD_B) + value >= 1.0, ParameterException.class,
-                            "Values for TD_B and TD_C should sum to a value below 1.0");
+                            "Values for td_b and td_c should sum to a value below 1.0");
                 }
             };
 
     /** Conflicting vehicle decay parameter. */
-    public static final ParameterTypeDuration BETA_CON = new ParameterTypeDuration("Beta_con",
-            "Exponential decay of conflict task from time-to-conflict-point of conflicting vehicle.", Duration.ofSI(12.13),
-            NumericConstraint.POSITIVEZERO);
+    public static final ParameterTypeDuration BETA_CON =
+            new ParameterTypeDuration("beta_con", "Exponential decay of conflict task from time-to-conflict-point",
+                    Duration.ofSI(12.13), NumericConstraint.POSITIVEZERO);
 
     /** Speed of ghost vehicle when no speed limit is given. */
     private static final Speed GHOST_SPEED = new Speed(50.0, SpeedUnit.KM_PER_HOUR);

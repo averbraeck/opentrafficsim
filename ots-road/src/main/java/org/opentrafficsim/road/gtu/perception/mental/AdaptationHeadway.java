@@ -23,7 +23,7 @@ public class AdaptationHeadway extends FactorAdaptation
 
     /** Parameter for desired headway scaling. */
     public static final ParameterTypeDouble BETA_T =
-            new ParameterTypeDouble("Beta_T", "max headway scaling", 1.0, POSITIVEZERO);
+            new ParameterTypeDouble("beta_T", "Maximum adaptation headway scaling", 1.0, POSITIVEZERO);
 
     /** Base value for the minimum desired headway. */
     private Duration t0Min;

@@ -81,7 +81,7 @@ public class ParameterTypes implements ConstraintInterface
     public static final ParameterTypeDuration LCDUR;
 
     /** Length of mental map ahead. */
-    public static final ParameterTypeLength LANE_STRUCTURE;
+    public static final ParameterTypeLength LC_INFO;
 
     /** Reaction time. */
     public static final ParameterTypeDuration TR;
@@ -169,7 +169,7 @@ public class ParameterTypes implements ConstraintInterface
 
         T0 = new ParameterTypeDuration("t0", "Look-ahead time for mandatory lane changes", Duration.ofSI(43.0), POSITIVE);
 
-        LOOKAHEAD = new ParameterTypeLength("Look-ahead", "Look-ahead distance", Length.ofSI(295.0), POSITIVE);
+        LOOKAHEAD = new ParameterTypeLength("x0", "Look-ahead distance", Length.ofSI(295.0), POSITIVE);
 
         LOOKBACK = new ParameterTypeLength("Look-back", "Look-back distance", Length.ofSI(200.0), POSITIVE);
 
@@ -182,7 +182,7 @@ public class ParameterTypes implements ConstraintInterface
 
         LCDUR = new ParameterTypeDuration("lcDur", "Regular lane change duration", Duration.ofSI(3.0), POSITIVE);
 
-        LANE_STRUCTURE = new ParameterTypeLength("lane-structure", "Length over which the lane structure ahead is known",
+        LC_INFO = new ParameterTypeLength("lcInfo", "Length over which lane change information is considered",
                 new Length(2.0, LengthUnit.KILOMETER), POSITIVE);
 
         TR = new ParameterTypeDuration("Tr", "Reaction time", Duration.ofSI(0.5), POSITIVEZERO);

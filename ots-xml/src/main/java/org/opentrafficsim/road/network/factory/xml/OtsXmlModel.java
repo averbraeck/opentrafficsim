@@ -90,7 +90,7 @@ public abstract class OtsXmlModel extends AbstractOtsModel
         this.network = new RoadNetwork(getShortName(), getSimulator());
         try
         {
-            this.xmlParser = new XmlParser(this.network).setResource(resource).setScenario(scenario);
+            this.xmlParser = new XmlParser(this.network).setResource(resource).setScenario(scenario).setParseConflict(true);
             getSimulator().initialize(Duration.ZERO, this.xmlParser.getWarmupPeriod(), this.xmlParser.getRunLength(), this,
                     new HistoryManagerDevs(getSimulator(), this.xmlParser.getHistory(), Duration.ofSI(10.0)));
         }

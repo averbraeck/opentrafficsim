@@ -53,7 +53,7 @@ public class DefaultLmrsPerceptionFactory implements PerceptionFactory
     public Parameters getParameters(final GtuType gtuType) throws ParameterException
     {
         return new ParameterSet().setDefaultParameter(ParameterTypes.LOOKBACK).setDefaultParameter(ParameterTypes.LOOKAHEAD)
-                .setDefaultParameter(ParameterTypes.LANE_STRUCTURE);
+                .setDefaultParameter(ParameterTypes.LC_INFO);
     }
 
 }

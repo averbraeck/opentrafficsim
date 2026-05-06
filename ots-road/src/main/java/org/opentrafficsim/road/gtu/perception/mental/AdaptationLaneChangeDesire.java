@@ -22,7 +22,7 @@ public final class AdaptationLaneChangeDesire extends FactorAdaptation implement
 
     /** Parameter for desired speed scaling. */
     public static final ParameterTypeDouble BETA_D =
-            new ParameterTypeDouble("Beta_d", "voluntary lane change desire scaling", 1.0, POSITIVEZERO);
+            new ParameterTypeDouble("beta_d", "Voluntary lane change desire scaling", 1.0, POSITIVEZERO);
 
     /** Singleton instance. */
     public static final AdaptationLaneChangeDesire SINGLETON = new AdaptationLaneChangeDesire();
