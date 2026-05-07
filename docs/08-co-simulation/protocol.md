@@ -18,7 +18,7 @@ Data sent by sim0mq contains meta information additional to the payload. Details
 
 ## Custom protocol
 
-A custom protocol can be used. This requires implementation at both the OTS side and the side of the external simulator. The only thing that the OTS transceiver specifies is the use of message objects as defined in the package `org.opentrafficsim.cosim.messages`. This structure is depicted in Figure 8.16.
+A custom protocol can be used. This requires implementation at both the OTS side and the side of the external simulator. The only thing that the OTS transceiver specifies is the use of message objects as defined in the package `org.opentrafficsim.cosim.messages`. This structure is depicted in Figure 8.17.
 
 ![](https://www.plantuml.com/plantuml/png/PL1B2i8m4Dtd54DS2xLAGIYb80ekHA6zG8oZLDD4abG4yUwcz9EeksJUc_UPt5YcRLCBScVynYu8T5yM52PHb2Ih1Rm8W3fUaLieDPE6O_L0xOSxDCPj6J_PIelwp3ZEW1cWuvSwIY01QJhDid1_UFQ8ro5lGdhnWrPMSIL8uDBHHyGNMJyTHp9HLBKhD8-MoUQhqAWH_oVjAMwr4Sogjd50xomzw08E_h_fOvAZFBK7_W00)
 
