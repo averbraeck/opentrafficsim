@@ -13,7 +13,7 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
 
 <table border=1 id="figure-2.2" style="text-align: center">
     <tr>
-        <td width=25%><b>ots-cosim-0mq</b><br><i>sim0mq co-simulation transceiver</i></td>
+        <td width=25%><b>ots-cosim-0mq</b><br><i>sim0mq co-sim transceiver</i></td>
         <td colspan=3><b>ots-demo</b> | <b>ots-editor</b><br><i>demo's and user interface, this should be the starting point for getting to know OTS</i></td>
     </tr>
     <tr>
@@ -32,7 +32,7 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
     </tr>
     <tr>
         <td colspan=2><b>ots-core</b><br><i>core of traffic simulation including network representation</i></td>
-        <td colspan=2><b>ots-kpi</b><br><i>stand-alone key-performance-indicator module, including trajectory sampling</i></td>
+        <td colspan=2><b>ots-kpi</b><br><i>key-performance-indicator module, including trajectory sampling</i></td>
     </tr>
     <tr>
         <td colspan=4><b>ots-base</b><br><i>contains some generic simulation utilities such as parameter management</i></td>
@@ -44,6 +44,7 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
 <i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them, and possibly all projects to the right (&#8592;).</i>
 
 Other dependencies are:
+
 - <b>ots-web</b> <i>web-based visualization</i>
     - <b>ots-xml</b>
     - <b>ots-animation-data</b>
