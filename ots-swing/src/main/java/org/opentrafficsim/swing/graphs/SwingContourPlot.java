@@ -11,10 +11,10 @@ import javax.swing.JRadioButtonMenuItem;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.animation.graphs.AbstractContourPlot;
+import org.opentrafficsim.animation.graphs.ContourDataSource;
+import org.opentrafficsim.animation.graphs.ContourDataSource.Dimension;
 import org.opentrafficsim.base.OtsRuntimeException;
-import org.opentrafficsim.draw.graphs.AbstractContourPlot;
-import org.opentrafficsim.draw.graphs.ContourDataSource;
-import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
 
 /**
  * Embed a ContourPlot in a Swing JPanel.

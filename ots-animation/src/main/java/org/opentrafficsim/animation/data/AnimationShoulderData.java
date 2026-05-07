@@ -1,6 +1,6 @@
 package org.opentrafficsim.animation.data;
 
-import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
+import org.opentrafficsim.animation.road.CrossSectionElementAnimation.ShoulderData;
 import org.opentrafficsim.road.network.Lane;
 
 /**

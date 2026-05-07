@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.draw.bounds.Bounds2d;
-import org.opentrafficsim.animation.DefaultAnimationFactory;
+import org.opentrafficsim.animation.data.util.DefaultAnimationFactory;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;

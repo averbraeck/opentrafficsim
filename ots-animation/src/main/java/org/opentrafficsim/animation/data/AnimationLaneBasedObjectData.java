@@ -2,9 +2,9 @@ package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
+import org.opentrafficsim.animation.LineLocatable;
+import org.opentrafficsim.animation.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.draw.LineLocatable;
-import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
 
 /**

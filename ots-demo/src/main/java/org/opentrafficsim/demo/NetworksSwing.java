@@ -15,14 +15,14 @@ import javax.swing.JRadioButton;
 
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.animation.GraphLaneUtil;
+import org.opentrafficsim.animation.data.util.GraphLaneUtil;
+import org.opentrafficsim.animation.graphs.GraphPath;
+import org.opentrafficsim.animation.graphs.TrajectoryPlot;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
-import org.opentrafficsim.draw.graphs.GraphPath;
-import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;

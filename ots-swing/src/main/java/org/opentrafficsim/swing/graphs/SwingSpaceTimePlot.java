@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.opentrafficsim.draw.graphs.AbstractSpaceTimePlot;
+import org.opentrafficsim.animation.graphs.AbstractSpaceTimePlot;
 
 /**
  * Embed a SpaceTimePlot in a Swing JPanel.

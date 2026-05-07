@@ -6,13 +6,13 @@ Knowing a few tricks in Eclipse can make life as a programmer a lot easier. The 
 
 #### 1. Abbreviated package names.
 The package explorer in Eclipse can become difficult to navigate as OTS has many projects and packages, many of which have long names. Package names, or parts thereof, can be abbreviated. Go to Window -> Preferences -> Java -> Appearance -> Abbreviate package names. The following abbreviations are suggested:
-<table>
-    <tr><td>a)</td><td>nl.tudelft.simulation = [n.t.s]</td></tr>
-    <tr><td>b)</td><td>org.opentrafficsim.base = [base]</td></tr>
-    <tr><td>c)</td><td>org.opentrafficsim.core = [core]</td></tr>
-    <tr><td>d)</td><td>org.opentrafficsim.demo = [demo]</td></tr>
-    <tr><td>e)</td><td>org.opentrafficsim.road = [road]</td></tr>
-</table>
+
+- `nl.tudelft.simulation` = [n.t.s]
+- `org.opentrafficsim.base` = [base]
+- `org.opentrafficsim.core` = [core]
+- `org.opentrafficsim.demo` = [demo]
+- `org.opentrafficsim.road` = [road]
+- `org.opentrafficsim.animation` = [animation]
 
 #### 2. Open declaration.
 When you see a method or property being used, you can jump to where it’s defined by right clicking and selecting ‘Open Declaration’ or pressing F3. During development this allows comprehension of what a method or property does or means in a quick manner.

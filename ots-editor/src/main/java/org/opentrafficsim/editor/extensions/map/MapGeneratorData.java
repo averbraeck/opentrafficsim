@@ -2,8 +2,8 @@ package org.opentrafficsim.editor.extensions.map;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.DrawLevel;
-import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
+import org.opentrafficsim.animation.DrawLevel;
+import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 

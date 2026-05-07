@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.animation.gis.TransformWgs84DutchRdNew;
+import org.opentrafficsim.animation.data.gis.TransformWgs84DutchRdNew;
 
 /**
  * Test the Dutch RD to and from WGS84 transformations.

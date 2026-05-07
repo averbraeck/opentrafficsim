@@ -1,0 +1,55 @@
+package org.opentrafficsim.animation.colorer.trajectory;
+
+import java.util.Optional;
+import java.util.function.Function;
+
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.opentrafficsim.animation.BoundsPaintScale;
+import org.opentrafficsim.animation.colorer.AccelerationColorer;
+import org.opentrafficsim.animation.graphs.OffsetTrajectory.TrajectorySection;
+
+/**
+ * Color trajectories based on the acceleration.
+ * <p>
+ * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
+public class AccelerationTrajectoryColorer extends AccelerationColorer<TrajectorySection> implements TrajectoryColorer
+{
+
+    /** Value function. */
+    private static final Function<TrajectorySection, Optional<Acceleration>> VALUE =
+            (traj) -> Optional.ofNullable(Acceleration.ofSI(traj.trajectory().getA(traj.section())));
+
+    /**
+     * Constructor.
+     * @param boundPaintScale bound paint scale
+     */
+    public AccelerationTrajectoryColorer(final BoundsPaintScale boundPaintScale)
+    {
+        super(VALUE, boundPaintScale);
+    }
+
+    /**
+     * Constructor.
+     * @param minimumAcceleration minimum acceleration
+     * @param maximumAcceleration maximum acceleration
+     */
+    public AccelerationTrajectoryColorer(final Acceleration minimumAcceleration, final Acceleration maximumAcceleration)
+    {
+        super(VALUE, minimumAcceleration, maximumAcceleration);
+    }
+
+    /**
+     * Constructor constructing a scale from -6.0m/s/s to 2m/s/s.
+     */
+    public AccelerationTrajectoryColorer()
+    {
+        super(VALUE);
+    }
+
+}

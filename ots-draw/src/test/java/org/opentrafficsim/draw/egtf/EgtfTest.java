@@ -6,7 +6,11 @@ import java.util.Locale;
 
 import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.draw.egtf.typed.TypedQuantity;
+import org.opentrafficsim.animation.egtf.DataSource;
+import org.opentrafficsim.animation.egtf.DataStream;
+import org.opentrafficsim.animation.egtf.Egtf;
+import org.opentrafficsim.animation.egtf.Filter;
+import org.opentrafficsim.animation.egtf.typed.TypedQuantity;
 
 /**
  * EGTF test.

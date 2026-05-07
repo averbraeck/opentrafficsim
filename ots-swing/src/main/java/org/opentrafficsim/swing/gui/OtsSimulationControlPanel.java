@@ -50,7 +50,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;

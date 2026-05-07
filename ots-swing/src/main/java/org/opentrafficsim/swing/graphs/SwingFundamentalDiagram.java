@@ -28,10 +28,10 @@ import org.jfree.chart.entity.AxisEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.Range;
-import org.opentrafficsim.draw.graphs.FdDataSource;
-import org.opentrafficsim.draw.graphs.FundamentalDiagram;
-import org.opentrafficsim.draw.graphs.FundamentalDiagram.Quantity;
-import org.opentrafficsim.draw.graphs.GraphUtil;
+import org.opentrafficsim.animation.graphs.FdDataSource;
+import org.opentrafficsim.animation.graphs.FundamentalDiagram;
+import org.opentrafficsim.animation.graphs.GraphUtil;
+import org.opentrafficsim.animation.graphs.FundamentalDiagram.Quantity;
 
 /**
  * Embed a {@link FundamentalDiagram} in a swing {@link JPanel}.

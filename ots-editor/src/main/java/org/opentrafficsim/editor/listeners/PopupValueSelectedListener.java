@@ -8,7 +8,7 @@ import javax.swing.CellEditor;
 import javax.swing.Icon;
 import javax.swing.JTable;
 
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.data.util.IconUtil;
 
 import de.javagl.treetable.JTreeTable;
 

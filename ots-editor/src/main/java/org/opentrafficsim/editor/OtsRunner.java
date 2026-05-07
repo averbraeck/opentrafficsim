@@ -13,7 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;

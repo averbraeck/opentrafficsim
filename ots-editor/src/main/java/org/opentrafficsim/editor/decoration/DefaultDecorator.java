@@ -7,7 +7,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;

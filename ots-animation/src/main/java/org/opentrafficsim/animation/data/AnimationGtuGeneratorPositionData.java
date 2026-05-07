@@ -3,8 +3,8 @@ package org.opentrafficsim.animation.data;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
+import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
-import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
 /**
  * Animation data of a GtuGeneratorPosition.

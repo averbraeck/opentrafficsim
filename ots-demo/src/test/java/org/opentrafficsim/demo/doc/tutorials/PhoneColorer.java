@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentrafficsim.animation.colorer.LegendColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.colorer.LegendColorer;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be

@@ -17,7 +17,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
+import org.opentrafficsim.animation.data.gtu.GtuColorerManager;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.web.animation.HtmlGraphics2d;

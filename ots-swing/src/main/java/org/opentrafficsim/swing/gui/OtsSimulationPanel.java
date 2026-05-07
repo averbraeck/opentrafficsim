@@ -48,14 +48,14 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.ColorInterpolator;
 import org.opentrafficsim.animation.data.AnimationGtuData;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
+import org.opentrafficsim.animation.data.gtu.GtuColorerManager;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;

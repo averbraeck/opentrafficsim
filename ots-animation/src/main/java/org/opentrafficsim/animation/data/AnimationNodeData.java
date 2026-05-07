@@ -1,8 +1,8 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.line.Polygon2d;
+import org.opentrafficsim.animation.network.NodeAnimation.NodeData;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
 /**
  * Animation data of a Node.

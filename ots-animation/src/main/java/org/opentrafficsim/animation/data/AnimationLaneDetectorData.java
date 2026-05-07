@@ -1,6 +1,6 @@
 package org.opentrafficsim.animation.data;
 
-import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
+import org.opentrafficsim.animation.road.LaneDetectorAnimation.LaneDetectorData;
 import org.opentrafficsim.road.network.object.detector.LaneDetector;
 
 /**

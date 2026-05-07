@@ -2,7 +2,7 @@ package org.opentrafficsim.editor.extensions.map;
 
 import java.awt.Color;
 
-import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
+import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 

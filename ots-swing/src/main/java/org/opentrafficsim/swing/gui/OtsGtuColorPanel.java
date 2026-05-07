@@ -27,13 +27,13 @@ import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.Range;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager.PredicatedColorer;
+import org.opentrafficsim.animation.colorer.ColorbarColorer;
+import org.opentrafficsim.animation.colorer.Colorer;
+import org.opentrafficsim.animation.colorer.LegendColorer;
+import org.opentrafficsim.animation.colorer.LegendColorer.LegendEntry;
+import org.opentrafficsim.animation.data.gtu.GtuColorerManager;
+import org.opentrafficsim.animation.data.gtu.GtuColorerManager.PredicatedColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.colorer.ColorbarColorer;
-import org.opentrafficsim.draw.colorer.Colorer;
-import org.opentrafficsim.draw.colorer.LegendColorer;
-import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
 
 /**
  * Let the user select what the GTU color in the animation means.

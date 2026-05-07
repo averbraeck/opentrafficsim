@@ -1,9 +1,9 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.line.PolyLine2d;
+import org.opentrafficsim.animation.network.LinkAnimation.LinkData;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 
 /**
  * Animation data of a Link.

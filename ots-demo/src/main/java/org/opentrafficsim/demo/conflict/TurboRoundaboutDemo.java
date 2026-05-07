@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.animation.colorer.Colorer;
+import org.opentrafficsim.animation.data.gtu.SpeedGtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
-import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.road.network.factory.xml.OtsXmlModel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel;

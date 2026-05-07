@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.geom.RectangularShape;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
+import org.opentrafficsim.animation.data.gtu.GtuColorerManager;
+import org.opentrafficsim.animation.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 
 /**

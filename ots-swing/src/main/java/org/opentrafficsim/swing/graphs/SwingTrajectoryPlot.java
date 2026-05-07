@@ -22,14 +22,14 @@ import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.plot.XYPlot;
-import org.opentrafficsim.draw.Colors;
-import org.opentrafficsim.draw.colorer.trajectory.AccelerationTrajectoryColorer;
-import org.opentrafficsim.draw.colorer.trajectory.FixedTrajectoryColorer;
-import org.opentrafficsim.draw.colorer.trajectory.IdTrajectoryColorer;
-import org.opentrafficsim.draw.colorer.trajectory.SpeedTrajectoryColorer;
-import org.opentrafficsim.draw.colorer.trajectory.TrajectoryColorer;
-import org.opentrafficsim.draw.graphs.GraphUtil;
-import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.animation.Colors;
+import org.opentrafficsim.animation.colorer.trajectory.AccelerationTrajectoryColorer;
+import org.opentrafficsim.animation.colorer.trajectory.FixedTrajectoryColorer;
+import org.opentrafficsim.animation.colorer.trajectory.IdTrajectoryColorer;
+import org.opentrafficsim.animation.colorer.trajectory.SpeedTrajectoryColorer;
+import org.opentrafficsim.animation.colorer.trajectory.TrajectoryColorer;
+import org.opentrafficsim.animation.graphs.GraphUtil;
+import org.opentrafficsim.animation.graphs.TrajectoryPlot;
 
 /**
  * Embed a TrajectoryPlot in a Swing JPanel.

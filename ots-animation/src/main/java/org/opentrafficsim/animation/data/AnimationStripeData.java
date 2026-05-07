@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
+import org.opentrafficsim.animation.road.StripeAnimation.StripeData;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.road.network.Stripe;
 
 /**

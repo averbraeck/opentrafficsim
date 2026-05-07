@@ -1,7 +1,7 @@
 site_name: OpenTrafficSim
 site_url: https://opentrafficsim.org
 site_favicon: images/favicon.png
-copyright: (c) 2014-2024 Delft University of Technology
+copyright: (c) 2014-2026 Delft University of Technology
 
 theme:
   name: material

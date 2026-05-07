@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 
-import org.opentrafficsim.draw.ColorInterpolator;
+import org.opentrafficsim.animation.ColorInterpolator;
 import org.opentrafficsim.swing.gui.AppearanceControl;
 
 /**

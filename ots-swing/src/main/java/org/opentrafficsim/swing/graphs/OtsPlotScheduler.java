@@ -4,9 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.animation.graphs.AbstractPlot;
+import org.opentrafficsim.animation.graphs.PlotScheduler;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.draw.graphs.AbstractPlot;
-import org.opentrafficsim.draw.graphs.PlotScheduler;
 
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 

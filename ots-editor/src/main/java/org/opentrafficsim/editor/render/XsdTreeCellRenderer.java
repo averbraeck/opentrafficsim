@@ -15,7 +15,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 

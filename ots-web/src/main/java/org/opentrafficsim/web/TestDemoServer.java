@@ -28,7 +28,7 @@ import org.eclipse.jetty.session.SessionCache;
 import org.eclipse.jetty.session.SessionDataStore;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Fields;
-import org.opentrafficsim.animation.DefaultAnimationFactory;
+import org.opentrafficsim.animation.data.util.DefaultAnimationFactory;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;

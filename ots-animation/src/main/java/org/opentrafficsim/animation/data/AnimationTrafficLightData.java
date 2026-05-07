@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.data;
 
 import java.awt.Color;
 
-import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
+import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
 
 /**

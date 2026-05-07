@@ -24,7 +24,7 @@
     <module>ots-road</module>
     <module>ots-trafficcontrol</module>
     <module>ots-animation</module>
-    <module>ots-draw</module>
+    <module>ots-animation-data</module>
     <module>ots-swing</module>
     <module>ots-web</module>
     <module>ots-cosim</module>
@@ -297,13 +297,13 @@
 
       <dependency>
         <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-animation</artifactId>
+        <artifactId>ots-animation-data</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-draw</artifactId>
+        <artifactId>ots-animation</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

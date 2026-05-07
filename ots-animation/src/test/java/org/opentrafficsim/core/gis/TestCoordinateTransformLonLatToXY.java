@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gis;
 
-import org.opentrafficsim.animation.gis.CoordinateTransformLonLatToXy;
+import org.opentrafficsim.animation.data.gis.CoordinateTransformLonLatToXy;
 
 import nl.tudelft.simulation.dsol.animation.gis.DoubleXY;
 import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;

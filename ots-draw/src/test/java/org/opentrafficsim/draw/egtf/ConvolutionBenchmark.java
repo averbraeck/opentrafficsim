@@ -1,5 +1,6 @@
 package org.opentrafficsim.draw.egtf;
 
+import org.opentrafficsim.animation.egtf.Convolution;
 import org.opentrafficsim.base.OtsRuntimeException;
 
 /**

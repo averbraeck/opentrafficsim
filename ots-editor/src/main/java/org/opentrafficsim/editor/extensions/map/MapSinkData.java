@@ -1,6 +1,6 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import org.opentrafficsim.draw.road.LaneDetectorAnimation.SinkData;
+import org.opentrafficsim.animation.road.LaneDetectorAnimation.SinkData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 

@@ -7,7 +7,7 @@ import java.util.Optional;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 
 /**

@@ -3,8 +3,8 @@ package org.opentrafficsim.animation.data;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
+import org.opentrafficsim.animation.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.road.network.CrossSectionLink;
 
 /**

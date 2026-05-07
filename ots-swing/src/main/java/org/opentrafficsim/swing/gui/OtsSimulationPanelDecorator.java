@@ -8,18 +8,18 @@ import java.util.Map;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.opentrafficsim.animation.DefaultAnimationFactory;
-import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.animation.Colors;
+import org.opentrafficsim.animation.colorer.Colorer;
+import org.opentrafficsim.animation.colorer.FixedColorer;
+import org.opentrafficsim.animation.data.gtu.AccelerationGtuColorer;
+import org.opentrafficsim.animation.data.gtu.IdGtuColorer;
+import org.opentrafficsim.animation.data.gtu.SpeedGtuColorer;
+import org.opentrafficsim.animation.data.util.DefaultAnimationFactory;
+import org.opentrafficsim.animation.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.draw.Colors;
-import org.opentrafficsim.draw.colorer.Colorer;
-import org.opentrafficsim.draw.colorer.FixedColorer;
-import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 
 /**
  * Decorator for the {@link OtsSimulationPanel}. Default method implementations are provided which sub-classes may implement

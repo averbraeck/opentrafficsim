@@ -92,7 +92,7 @@ import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.animation.IconUtil;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.listeners.AttributesKeyListener;
