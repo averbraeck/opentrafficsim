@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -131,6 +132,9 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
 
     /** Whether the current toggle section is visible. */
     private boolean toggleSectionVisible = true;
+
+    /** Toggle section data (name and default visible). */
+    private Map<AppearanceJToggleButton, ToggleSectionData> toggleSectionData = new LinkedHashMap<>();
 
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
@@ -287,6 +291,17 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
         borderLayoutPanel.add(animationTopBarPanel, BorderLayout.NORTH);
         this.togglePanel = new JPanel();
         this.togglePanel.setLayout(new BoxLayout(this.togglePanel, BoxLayout.Y_AXIS));
+        JPanel resetBox = new JPanel();
+        resetBox.setLayout(new BoxLayout(resetBox, BoxLayout.X_AXIS));
+        resetBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.togglePanel.add(resetBox);
+        Dimension dim = new Dimension(16, 16);
+        resetBox.add(Box.createHorizontalGlue());
+        createToggleSectionResetButton("Expand", EXPANDED_ICON, true, dim, resetBox);
+        createToggleSectionResetButton("Collapse", COLLAPSED_ICON, false, dim, resetBox);
+        createToggleSectionResetButton("Reset", IconUtil.of("Restore24.png").imageSize(12, 12).get(), null, dim, resetBox);
+        resetBox.add(Box.createHorizontalGlue());
+
         borderLayoutPanel.add(this.togglePanel, BorderLayout.WEST);
         this.otsAnimationPanel = new OtsAnimationPanel(extent, this.simulator, network);
         this.otsAnimationPanel.showGrid(PROPERTIES.getOptionalBoolean("grid").orElse(false));
@@ -352,6 +367,54 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
 
         // decorate
         decorator.decorate(this, network);
+    }
+
+    /**
+     * Creates toggle section reset button.
+     * @param action action, is prepended to tooltip text
+     * @param icon icon
+     * @param selected selected state of toggle section toggles when this button is clicked
+     * @param dim dimension
+     * @param resetBox panel to add the button to
+     */
+    private void createToggleSectionResetButton(final String action, final Icon icon, final Boolean selected,
+            final Dimension dim, final JPanel resetBox)
+    {
+        JButton expand = new JButton(new AbstractAction("", icon)
+        {
+            private static final long serialVersionUID = 20260507L;
+
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                setToggleSectionButtonsState(selected);
+            }
+        });
+        expand.setToolTipText(action + " all animation toggle sections");
+        expand.setContentAreaFilled(false);
+        expand.setBorder(null);
+        expand.setMinimumSize(dim);
+        expand.setPreferredSize(dim);
+        expand.setMaximumSize(dim);
+        resetBox.add(expand);
+    }
+
+    /**
+     * Sets all toggle section buttons to the given selected state.
+     * @param selected {@code true} is selected, {@code false} is not selected, {@code null} is as per default
+     */
+    private void setToggleSectionButtonsState(final Boolean selected)
+    {
+        for (Component component : this.togglePanel.getComponents())
+        {
+            if (component instanceof AppearanceJToggleButton button)
+            {
+                ToggleSectionData sectionData = this.toggleSectionData.get(button);
+                boolean state = selected == null ? sectionData.defaultVisible() : selected;
+                button.setSelected(state);
+                toggleSectionToggleChanged(sectionData.name(), button, getToggleSectionKey(sectionData.name()));
+            }
+        }
     }
 
     /**
@@ -448,29 +511,14 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     /**
      * Adds a button that can hide all toggles in a section. The section is defined as laying between two section buttons.
      * @param name name of the section that can be hidden
+     * @param visibleDefault whether the section is visible by default
      */
-    public void startToggleSection(final String name)
+    public void startToggleSection(final String name, final boolean visibleDefault)
     {
-        class AppearanceJToggleButton extends JCheckBox implements AppearanceControl
-        {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean isForeground()
-            {
-                return true;
-            }
-
-            @Override
-            public OptionalInt getFontSize()
-            {
-                return OptionalInt.empty();
-            }
-        }
-        JToggleButton toggle = new AppearanceJToggleButton();
+        AppearanceJToggleButton toggle = new AppearanceJToggleButton();
         toggle.setSelectedIcon(EXPANDED_ICON);
         toggle.setIcon(COLLAPSED_ICON);
-        String key = "toggle.section." + PropertiesStore.key(name);
+        String key = getToggleSectionKey(name);
         boolean toggleOn = PROPERTIES.getOptionalBoolean(key).orElse(true);
         toggle.setSelected(toggleOn);
         PROPERTIES.setBoolean(key, toggleOn);
@@ -487,27 +535,49 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
             @Override
             public void actionPerformed(final ActionEvent e)
             {
-                boolean inSection = false;
-                PROPERTIES.setBoolean(key, toggle.isSelected());
-                toggle.setText(toggle.isSelected() ? null : name);
-                for (Component component : OtsSimulationPanel.this.togglePanel.getComponents())
-                {
-                    if (component.equals(toggle))
-                    {
-                        inSection = true;
-                    }
-                    else if (inSection && component instanceof AppearanceJToggleButton)
-                    {
-                        break;
-                    }
-                    else if (inSection)
-                    {
-                        component.setVisible(toggle.isSelected());
-                    }
-                }
+                toggleSectionToggleChanged(name, toggle, key);
             }
         });
         this.togglePanel.add(toggle);
+        this.toggleSectionData.put(toggle, new ToggleSectionData(name, visibleDefault));
+    }
+
+    /**
+     * Returns a toggle section key for inside {@code PROPERTIES}.
+     * @param name name of the section that can be hidden
+     * @return toggle section key
+     */
+    private String getToggleSectionKey(final String name)
+    {
+        return "toggle.section." + PropertiesStore.key(name);
+    }
+
+    /**
+     * Remembers the state of a toggled toggle section in properties and shows or hides the section animation toggles.
+     * @param name section name
+     * @param sectionToggle section toggle
+     * @param key section key
+     */
+    private void toggleSectionToggleChanged(final String name, final AppearanceJToggleButton sectionToggle, final String key)
+    {
+        PROPERTIES.setBoolean(key, sectionToggle.isSelected());
+        sectionToggle.setText(sectionToggle.isSelected() ? null : name);
+        boolean inSection = false;
+        for (Component component : OtsSimulationPanel.this.togglePanel.getComponents())
+        {
+            if (component.equals(sectionToggle))
+            {
+                inSection = true;
+            }
+            else if (inSection && component instanceof AppearanceJToggleButton)
+            {
+                return;
+            }
+            else if (inSection)
+            {
+                component.setVisible(sectionToggle.isSelected());
+            }
+        }
     }
 
     /**
@@ -939,6 +1009,36 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
             separator = "\u2009"; // thin space
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * Toggle button with appearance control.
+     */
+    private final class AppearanceJToggleButton extends JCheckBox implements AppearanceControl
+    {
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public boolean isForeground()
+        {
+            return true;
+        }
+
+        @Override
+        public OptionalInt getFontSize()
+        {
+            return OptionalInt.empty();
+        }
+    }
+
+    /**
+     * Toggle section data.
+     * @param name section name
+     * @param defaultVisible whether the section is visible by default
+     */
+    private record ToggleSectionData(String name, boolean defaultVisible)
+    {
     }
 
     /**

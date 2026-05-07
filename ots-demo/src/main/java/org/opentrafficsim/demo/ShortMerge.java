@@ -145,15 +145,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     }
 
     /**
-     * Set simulation toggles. The default sets standard icon toggles.
-     * @param simulationPanel simulation panel
-     */
-    private static void setAnimationToggles(final OtsSimulationPanel simulationPanel)
-    {
-        AnimationToggles.setIconAnimationTogglesStandard(simulationPanel);
-    }
-
-    /**
      * Adds tabs. The default does nothing.
      * @param animationPanel animation panel
      * @param network network
@@ -206,7 +197,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 @Override
                 public void setAnimationToggles(final OtsSimulationPanel simulationPanel)
                 {
-                    ShortMerge.setAnimationToggles(simulationPanel);
+                    AnimationToggles.setIconAnimationTogglesStandard(simulationPanel);
                 }
 
                 @Override

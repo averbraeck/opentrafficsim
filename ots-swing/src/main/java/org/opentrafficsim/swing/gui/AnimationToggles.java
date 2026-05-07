@@ -45,6 +45,9 @@ public final class AnimationToggles
     /** Toggles. */
     private static final Map<String, List<Toggle>> TOGGLES = new LinkedHashMap<>();
 
+    /** Default visible. */
+    private static final Map<String, Boolean> DEFAULT_VISIBLE = new LinkedHashMap<>();
+
     static
     {
         List<Toggle> list = new ArrayList<>();
@@ -53,6 +56,7 @@ public final class AnimationToggles
         list.add(new Toggle("Link", LinkData.class, "Link24.png", "Show/hide links", true, false, false));
         list.add(new Toggle("LinkId", LinkAnimation.Text.class, "Id24.png", "Show/hide link ids", false, false, true));
         list.add(new Toggle("Priority", PriorityData.class, "Priority24.png", "Show/hide link priority", true, false, false));
+        DEFAULT_VISIBLE.put("network", true);
         TOGGLES.put("network", list);
 
         list = new ArrayList<>();
@@ -62,6 +66,7 @@ public final class AnimationToggles
         list.add(new Toggle("LaneCenter", CenterLine.class, "CenterLine24.png", "Show/hide lane center lines", false, false,
                 true));
         list.add(new Toggle("Shoulder", ShoulderData.class, "Shoulder24.png", "Show/hide shoulders", true, true, false));
+        DEFAULT_VISIBLE.put("lane", false);
         TOGGLES.put("lane", list);
 
         list = new ArrayList<>();
@@ -69,6 +74,7 @@ public final class AnimationToggles
         list.add(new Toggle("GTUId", DefaultCarAnimation.Text.class, "Id24.png", "Show/hide GTU ids", false, false, true));
         list.add(new Toggle("Perception", PerceptionAnimation.PerceptionData.class, "Perception24.png",
                 "Show/hide perception (circle = attention, color = perception delay)", false, false, false));
+        DEFAULT_VISIBLE.put("GTU", false);
         TOGGLES.put("GTU", list);
 
         list = new ArrayList<>();
@@ -85,6 +91,7 @@ public final class AnimationToggles
                 "Show/hide generator queues", false, false, true));
         list.add(new Toggle("Bus", BusStopData.class, "BusStop24.png", "Show/hide bus stops", true, false, false));
         list.add(new Toggle("BusId", BusStopAnimation.Text.class, "Id24.png", "Show/hide bus stop ids", false, false, true));
+        DEFAULT_VISIBLE.put("objects", true);
         TOGGLES.put("objects", list);
     }
 
@@ -104,7 +111,7 @@ public final class AnimationToggles
     {
         TOGGLES.entrySet().forEach((e) ->
         {
-            panel.startToggleSection(e.getKey());
+            panel.startToggleSection(e.getKey(), DEFAULT_VISIBLE.getOrDefault(e.getKey(), true));
             e.getValue().forEach(
                     (t) -> panel.addToggleAnimationButtonText(t.name(), t.locatableClass(), t.tooltip(), t.visibleFull()));
         });
@@ -118,7 +125,7 @@ public final class AnimationToggles
     {
         TOGGLES.entrySet().forEach((e) ->
         {
-            panel.startToggleSection(e.getKey());
+            panel.startToggleSection(e.getKey(), DEFAULT_VISIBLE.getOrDefault(e.getKey(), true));
             e.getValue().forEach(
                     (t) -> panel.addToggleAnimationButtonText(t.name(), t.locatableClass(), t.tooltip(), t.visibleStandard()));
         });
@@ -132,7 +139,7 @@ public final class AnimationToggles
     {
         TOGGLES.entrySet().forEach((e) ->
         {
-            panel.startToggleSection(e.getKey());
+            panel.startToggleSection(e.getKey(), DEFAULT_VISIBLE.getOrDefault(e.getKey(), true));
             e.getValue().forEach((t) -> panel.addToggleAnimationButtonIcon(t.name(), t.locatableClass(), t.icon(), t.tooltip(),
                     t.visibleFull(), t.nextToPrevious()));
         });
@@ -146,7 +153,7 @@ public final class AnimationToggles
     {
         TOGGLES.entrySet().forEach((e) ->
         {
-            panel.startToggleSection(e.getKey());
+            panel.startToggleSection(e.getKey(), DEFAULT_VISIBLE.getOrDefault(e.getKey(), true));
             e.getValue().forEach((t) -> panel.addToggleAnimationButtonIcon(t.name(), t.locatableClass(), t.icon(), t.tooltip(),
                     t.visibleStandard(), t.nextToPrevious()));
         });

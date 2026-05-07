@@ -99,6 +99,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "ray-start-end", "Link");
         downloadIcon("mdi", "ray-start-vertex-end", "Path");
         downloadIcon("mdi", "ray-vertex", "Node");
+        downloadIcon("mdi", "restore", "Restore");
         downloadIcon("mdi", "routes", "Directions");
         downloadIcon("mdi", "sign-caution", "Blockage");
         downloadIcon("mdi", "sign-yield", "Yield");
