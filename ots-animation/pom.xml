@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -8,22 +7,27 @@
     <version>1.8.0</version>
   </parent>
 
-  <artifactId>ots-animation-data</artifactId>
-  <name>OTS animation data classes</name>
-  <description>OTS animation data classes as drawable data</description>
-  
-  <dependencies>
+  <artifactId>ots-animation</artifactId>
+  <name>OTS animation classes</name>
+  <description>OTS animation classes that can paint themselves using data objects</description>
 
-	<dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-animation</artifactId>
-    </dependency>
+  <dependencies>
 
     <dependency>
       <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId>
+      <artifactId>ots-kpi</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>nl.tudelft.simulation</groupId>
+      <artifactId>dsol-animation-gis</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
     </dependency>
 
   </dependencies>
-  
+
 </project>

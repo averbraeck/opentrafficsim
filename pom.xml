@@ -519,8 +519,8 @@
           </links>
           <offlineLinks>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
-              <location>${basedir}/../ots-animation/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-animation-data/apidocs/</url>
+              <location>${basedir}/../ots-animation-data/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-base/apidocs/</url>
@@ -535,8 +535,8 @@
               <location>${basedir}/../ots-demo/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-draw/apidocs/</url>
-              <location>${basedir}/../ots-draw/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
+              <location>${basedir}/../ots-animation/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-editor/apidocs/</url>
@@ -555,16 +555,12 @@
               <location>${basedir}/../ots-road/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq/apidocs/</url>
-              <location>${basedir}/../ots-sim0mq/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-cosim/apidocs/</url>
+              <location>${basedir}/../ots-cosim/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-kpi/apidocs/</url>
-              <location>${basedir}/../ots-sim0mq-kpi/target/site/apidocs/</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-swing/apidocs/</url>
-              <location>${basedir}/../ots-sim0mq-swing/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-cosim-0mq/apidocs/</url>
+              <location>${basedir}/../ots-cosim-0mq/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-swing/apidocs/</url>
@@ -831,8 +827,8 @@
           </links>
           <offlineLinks>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
-              <location>${basedir}/../ots-animation/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-animation-data/apidocs/</url>
+              <location>${basedir}/../ots-animation-data/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-base/apidocs/</url>
@@ -847,8 +843,8 @@
               <location>${basedir}/../ots-demo/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-draw/apidocs/</url>
-              <location>${basedir}/../ots-draw/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
+              <location>${basedir}/../ots-animation/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-editor/apidocs/</url>
@@ -867,16 +863,12 @@
               <location>${basedir}/../ots-road/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq/apidocs/</url>
-              <location>${basedir}/../ots-sim0mq/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-cosim/apidocs/</url>
+              <location>${basedir}/../ots-cosim/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-kpi/apidocs/</url>
-              <location>${basedir}/../ots-sim0mq-kpi/target/site/apidocs/</location>
-            </offlineLink>
-            <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-swing/apidocs/</url>
-              <location>${basedir}/../ots-sim0mq-swing/target/site/apidocs/</location>
+              <url>https://opentrafficsim.org/docs/latest/ots-cosim-0mq/apidocs/</url>
+              <location>${basedir}/../ots-cosim-0mq/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-swing/apidocs/</url>

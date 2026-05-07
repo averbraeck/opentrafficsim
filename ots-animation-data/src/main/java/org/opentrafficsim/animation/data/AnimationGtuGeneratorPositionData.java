@@ -1,0 +1,78 @@
+package org.opentrafficsim.animation.data;
+
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.DirectedPoint2d;
+import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
+import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
+
+/**
+ * Animation data of a GtuGeneratorPosition.
+ * <p>
+ * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author Wouter Schakel
+ */
+public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionData
+{
+
+    /** Position. */
+    private final GtuGeneratorPosition position;
+
+    /**
+     * Constructor.
+     * @param position position within a generator.
+     */
+    public AnimationGtuGeneratorPositionData(final GtuGeneratorPosition position)
+    {
+        this.position = position;
+    }
+
+    @Override
+    public DirectedPoint2d getLocation()
+    {
+        return this.position.getLocation();
+    }
+
+    @Override
+    public Bounds2d getRelativeBounds()
+    {
+        // this correlates to how generators are drawn as three chevrons
+        return new Bounds2d(0.0, 4.75, -1.0, 1.0);
+    }
+
+    @Override
+    public Polygon2d getAbsoluteContour()
+    {
+        throw new UnsupportedOperationException("GtuGeneratorPosition does not have a contour.");
+    }
+
+    @Override
+    public Polygon2d getRelativeContour()
+    {
+        throw new UnsupportedOperationException("GtuGeneratorPosition does not have a contour.");
+    }
+
+    @Override
+    public int getQueueCount()
+    {
+        return this.position.getQueueSize();
+    }
+
+    /**
+     * Returns the generator position.
+     * @return generator position.
+     */
+    public GtuGeneratorPosition getGeneratorPosition()
+    {
+        return this.position;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Generator position " + this.position.getId();
+    }
+
+}

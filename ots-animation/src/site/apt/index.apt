@@ -1,19 +1,27 @@
                    -----------------------
-                   OTS-ANIMATION
+                   OTS-DRAW
                    -----------------------
                    September, 2022
                    -----------------------
                    
-OTS - Open Traffic Simulation generic animation classes.
+OTS - Open Traffic Simulation Swing-based drawing classes.
 
-	The ots-animation project provides lightweight classes for animation, that are not dependent on any solution. 
-	They can be used with Swing, Web-based solutions, JavaFX, or external graphical packages. The main components are:  
+	The ots-draw project provides classes to draw on a AWT Graphics2D canvas. The classes can be used for ots-swing
+	and ots-web. The latter uses a virtual Graphics2D canvas. The main components are:  
 
-    * generic shape information that can be used in e.g., parsers.
+    * generic classes to draw lines, shapes, polygons and text.
 
-    * colorers for GTUs and network structures, which provide generic color information and the conditions under which color will change.
+    * classes to make traffic-relevant plots.
     
-    * coordinate transform methods for GIS.
+    * classes to draw cars and car generators.
+    
+    * classes to draw lane structures.
+    
+    * classes to draw network components (links, nodes).
+    
+    * classes to draw static objects.
+    
+    * classes to draw road-specific structures such as lanes, shoulders, stripes, speed signs, sensors, and traffic lights.  
       
     []
 
