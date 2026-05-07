@@ -13,22 +13,25 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
 
 <table border=1 id="figure-2.2" style="text-align: center">
     <tr>
-        <td colspan=4><b>ots-demo</b> | <b>ots-editor</b><br><i>demo's and user interface, this should be the starting point for getting to know OTS</i></td>
+        <td width=25%><b>ots-cosim-0mq</b><br><i>sim0mq co-simulation transceiver</i></td>
+        <td colspan=3><b>ots-demo</b> | <b>ots-editor</b><br><i>demo's and user interface, this should be the starting point for getting to know OTS</i></td>
     </tr>
     <tr>
-        <td colspan=2 width=50%><b>ots-xml</b><br><i>native xml import</i></td>
+        <td><b>ots-cosim</b><span style="float:right;">&#8592;</span><br><i>co-simulation transceiver</i></td>
+        <td width=25%><b>ots-xml</b><br><i>native xml import</i></td>
         <td colspan=2><b>ots-swing</b><br><i>java based animation</i></td>
     </tr>
     <tr>
-        <td colspan=2><b>ots-trafficcontrol</b><br><i>event-based traffic control</i></td>
-        <td colspan=2><b>ots-animation</b><br><i>draw data definitions for ots-road objects</i></td>
+        <td><b>ots-opendrive</b><br><i>parser for opendrive standard</i></td>
+        <td><b>ots-trafficcontrol</b><br><i>event-based traffic control</i></td>
+        <td colspan=2><b>ots-animation-data</b><br><i>animation data definitions for ots-road objects</i></td>
     </tr>
     <tr>
         <td colspan=3 width=75%><b>ots-road</b><br><i>microscopic simulation of vehicular traffic</i></td>
-        <td colspan=1><b>ots-draw</b><br><i>swing mimicking functionality</i></td>
+        <td colspan=1><b>ots-animation</b><br><i>general animation objects</i></td>
     </tr>
     <tr>
-        <td colspan=2><b>ots-core</b><br><i>core of traffic simulation including network representation and macroscopic models</i></td>
+        <td colspan=2><b>ots-core</b><br><i>core of traffic simulation including network representation</i></td>
         <td colspan=2><b>ots-kpi</b><br><i>stand-alone key-performance-indicator module, including trajectory sampling</i></td>
     </tr>
     <tr>
@@ -38,33 +41,12 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
         <td colspan=4><b>ots</b><br><i> the main project containing compilation standards, github workflows, documentation source code and general settings files</i></td>
     </tr>
 </table>
-<i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them.</i>
+<i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them, and possibly all projects to the right (&#8592;).</i>
 
 Other dependencies are:
-<ul>
-    <li><b>ots-web</b> <i>web-based visualization</i>
-        <ul>
-            <li><b>ots-xml</b></li>
-            <li><b>ots-animation</b></li>
-        </ul>
-    </li>
-    <li><b>ots-sim0mq-swing</b> <i>databus communication examples</i>
-        <ul>
-            <li><b>ots-sim0mq</b></li>
-            <li><b>ots-swing</b></li>
-        </ul>
-    </li>
-    <li><b>ots-sim0mq-kpi</b> <i>databus communication kpi examples</i>
-        <ul>
-            <li><b>ots-sim0mq</b></li>
-        </ul>
-    </li>
-    <li><b>ots-sim0mq</b> <i>databus communication</i>
-        <ul>
-            <li><b>ots-xml</b></li>
-        </ul>
-    </li>
-</ul>
+- <b>ots-web</b> <i>web-based visualization</i>
+    - <b>ots-xml</b>
+    - <b>ots-animation-data</b>
 
 ## Commit checklist
 
@@ -87,29 +69,23 @@ The following list defines some checks that code has to meet in order to be elig
 When java library exceptions do not cover the exception well, OTS has a set of exceptions that can be thrown. These exceptions are:
 
 OtsException
-<ul>
-  <li>XmlParserException</li>
-  <li>SamplingException</li>
-  <li>ParameterException</li>
-  <li>NetworkException</li>
-  <li>TrafficControlException</li>
-  <li>GtuException</li>
-  <ul>
-    <li>OperationalPlanException</li>
-    <li>MissingComponentException</li>
-  </ul>
-</ul>
+- XmlParserException
+- SamplingException
+- ParameterException
+- NetworkException
+- TrafficControlException
+- GtuException
+    - OperationalPlanException
+    - MissingComponentException
 
 OtsRuntimeException
-<ul>
-  <li>OtsGeometryException</li>
-  <li>CircularDependencyException</li>
-  <li>CollisionException</li>
-</ul>
+- OtsGeometryException
+- CircularDependencyException
+- CollisionException
 
 ## Java generics
 
-Java generics can initially seem hard and unwieldly, especially when classes are defined with multiple type arguments, which itself may also have type arguments. Generics however provides excellent ways in which code can be made as generic and re-usable as possible. Therefore, it is applied often in OTS and can be found in much of the source code. Hence, some understanding of generics is favorable. Note however that in case of good design, java generics are present in highly flexible low-level classes, while higher level classes that users mostly interact with hide much of the generics involved. This section is not meant to introduce the concept of java generics. Information to learn about java generics can easily be found elsewhere. Here a basic understanding of java generics is assumed, to further explain some design patterns with java generics as used in OTS.
+Java generics can initially seem hard and unwieldy, especially when classes are defined with multiple type arguments, which itself may also have type arguments. Generics however provides excellent ways in which code can be made as generic and re-usable as possible. Therefore, it is applied often in OTS and can be found in much of the source code. Hence, some understanding of generics is favorable. Note however that in case of good design, java generics are present in highly flexible low-level classes, while higher level classes that users mostly interact with hide much of the generics involved. This section is not meant to introduce the concept of java generics. Information to learn about java generics can easily be found elsewhere. Here a basic understanding of java generics is assumed, to further explain some design patterns with java generics as used in OTS.
 
 Below is an example of _recursive generics_, where `HierarchicalType` has type parameter `T`, which is defined to be a subclass of `HierarchicalType` itself. This pattern is useful when a subclass implementation needs to accept or return objects of its own type, while we want to define the functionality only once. For instance, we have `GtuType` which is a subclass of `HierarchicalType`. Without re-specifying the `getParent()` method, it is guaranteed that for a `GtuType`, it will return a `GtuType`. This holds for any subclass, and the pattern allows us to define the functionality once.
 

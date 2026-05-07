@@ -18,16 +18,7 @@
     </dependency>
     
     <dependency>
-      <groupId>org.djutils</groupId>
-      <artifactId>djutils-draw</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.djutils</groupId>
-      <artifactId>djutils-math</artifactId>
-    </dependency>
-    
-    <dependency>
+      <!-- Required for Locatable -->
       <groupId>nl.tudelft.simulation</groupId>
       <artifactId>dsol-animation</artifactId>
     </dependency>
@@ -36,6 +27,7 @@
       <groupId>org.djunits</groupId>
       <artifactId>djunits</artifactId>
     </dependency>
+    
   </dependencies>
 
 </project>

@@ -11,7 +11,7 @@
   <description>Editor for Open Traffic Sim</description>
 
   <dependencies>
-
+  
     <dependency>
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-xml</artifactId>
@@ -26,6 +26,7 @@
       <groupId>de.javagl</groupId>
       <artifactId>treetable</artifactId>
     </dependency>
-
+    
   </dependencies>
+  
 </project>

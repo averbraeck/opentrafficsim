@@ -25,9 +25,9 @@
     </dependency>
     
     <dependency>
-	  <groupId>gov.nist.math</groupId>
-	  <artifactId>jama</artifactId>
-	</dependency>
+	    <groupId>gov.nist.math</groupId>
+	    <artifactId>jama</artifactId>
+	  </dependency>
 
   </dependencies>
 
