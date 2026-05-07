@@ -21,33 +21,35 @@ import org.opentrafficsim.animation.data.AnimationLaneData;
 import org.opentrafficsim.animation.data.AnimationLaneDetectorData;
 import org.opentrafficsim.animation.data.AnimationLinkData;
 import org.opentrafficsim.animation.data.AnimationNodeData;
+import org.opentrafficsim.animation.data.AnimationPerceptionData;
 import org.opentrafficsim.animation.data.AnimationPriorityData;
 import org.opentrafficsim.animation.data.AnimationShoulderData;
 import org.opentrafficsim.animation.data.AnimationStripeData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightDetectorData;
 import org.opentrafficsim.animation.data.gtu.GtuColorerManager;
-import org.opentrafficsim.animation.data.util.PerceptionAnimation.ChannelAttention;
 import org.opentrafficsim.animation.gtu.DefaultCarAnimation;
+import org.opentrafficsim.animation.gtu.PerceptionAnimation;
 import org.opentrafficsim.animation.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.animation.gtu.DefaultCarAnimation.GtuData.GtuMarker;
+import org.opentrafficsim.animation.gtu.PerceptionAnimation.PerceptionData;
 import org.opentrafficsim.animation.network.LinkAnimation;
 import org.opentrafficsim.animation.network.NodeAnimation;
 import org.opentrafficsim.animation.road.BusStopAnimation;
+import org.opentrafficsim.animation.road.BusStopAnimation.BusStopData;
 import org.opentrafficsim.animation.road.ConflictAnimation;
+import org.opentrafficsim.animation.road.ConflictAnimation.ConflictData;
 import org.opentrafficsim.animation.road.CrossSectionElementAnimation;
 import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation;
+import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.animation.road.LaneAnimation;
 import org.opentrafficsim.animation.road.LaneDetectorAnimation;
+import org.opentrafficsim.animation.road.LaneDetectorAnimation.LaneDetectorData;
 import org.opentrafficsim.animation.road.PriorityAnimation;
 import org.opentrafficsim.animation.road.StripeAnimation;
 import org.opentrafficsim.animation.road.TrafficLightAnimation;
-import org.opentrafficsim.animation.road.TrafficLightDetectorAnimation;
-import org.opentrafficsim.animation.road.BusStopAnimation.BusStopData;
-import org.opentrafficsim.animation.road.ConflictAnimation.ConflictData;
-import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
-import org.opentrafficsim.animation.road.LaneDetectorAnimation.LaneDetectorData;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
+import org.opentrafficsim.animation.road.TrafficLightDetectorAnimation;
 import org.opentrafficsim.animation.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -103,7 +105,7 @@ public class DefaultAnimationFactory implements EventListener
     private Map<LaneBasedGtu, Renderable2d<GtuData>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Rendered GTUs. */
-    private Map<LaneBasedGtu, Renderable2d<ChannelAttention>> animatedAttention =
+    private Map<LaneBasedGtu, Renderable2d<PerceptionData>> animatedAttention =
             Collections.synchronizedMap(new LinkedHashMap<>());
 
     /** Rendered located objects. */
@@ -181,12 +183,14 @@ public class DefaultAnimationFactory implements EventListener
 
         for (Gtu gtu : network.getGTUs())
         {
-            GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, (LaneBasedGtu) gtu, getGtuMarker(gtu.getType()));
+            LaneBasedGtu lbGtu = (LaneBasedGtu) gtu;
+            GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, lbGtu, getGtuMarker(gtu.getType()));
             Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
-            this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
+            this.animatedGTUs.put(lbGtu, gtuAnimation);
 
-            Renderable2d<ChannelAttention> attentionAnimation = new PerceptionAnimation((LaneBasedGtu) gtu);
-            this.animatedAttention.put((LaneBasedGtu) gtu, attentionAnimation);
+            Renderable2d<PerceptionData> attentionAnimation =
+                    new PerceptionAnimation(new AnimationPerceptionData(lbGtu), gtu.getSimulator());
+            this.animatedAttention.put(lbGtu, attentionAnimation);
         }
 
         for (LocatedObject object : network.getObjectMap().values())
@@ -338,7 +342,8 @@ public class DefaultAnimationFactory implements EventListener
         Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
         this.animatedGTUs.put(gtu, gtuAnimation);
 
-        Renderable2d<ChannelAttention> attentionAnimation = new PerceptionAnimation((LaneBasedGtu) gtu);
+        Renderable2d<PerceptionData> attentionAnimation =
+                new PerceptionAnimation(new AnimationPerceptionData(gtu), gtu.getSimulator());
         this.animatedAttention.put((LaneBasedGtu) gtu, attentionAnimation);
     }
 

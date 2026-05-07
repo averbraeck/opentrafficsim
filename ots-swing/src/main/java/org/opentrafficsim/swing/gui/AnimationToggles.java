@@ -5,26 +5,26 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opentrafficsim.animation.data.util.PerceptionAnimation;
 import org.opentrafficsim.animation.gtu.DefaultCarAnimation;
+import org.opentrafficsim.animation.gtu.PerceptionAnimation;
 import org.opentrafficsim.animation.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.animation.network.LinkAnimation;
-import org.opentrafficsim.animation.network.NodeAnimation;
 import org.opentrafficsim.animation.network.LinkAnimation.LinkData;
+import org.opentrafficsim.animation.network.NodeAnimation;
 import org.opentrafficsim.animation.network.NodeAnimation.NodeData;
 import org.opentrafficsim.animation.road.BusStopAnimation;
-import org.opentrafficsim.animation.road.DetectorData;
-import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation;
-import org.opentrafficsim.animation.road.LaneAnimation;
-import org.opentrafficsim.animation.road.TrafficLightAnimation;
 import org.opentrafficsim.animation.road.BusStopAnimation.BusStopData;
 import org.opentrafficsim.animation.road.ConflictAnimation.ConflictData;
 import org.opentrafficsim.animation.road.CrossSectionElementAnimation.ShoulderData;
+import org.opentrafficsim.animation.road.DetectorData;
+import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
+import org.opentrafficsim.animation.road.LaneAnimation;
 import org.opentrafficsim.animation.road.LaneAnimation.CenterLine;
 import org.opentrafficsim.animation.road.LaneAnimation.LaneData;
 import org.opentrafficsim.animation.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.animation.road.StripeAnimation.StripeData;
+import org.opentrafficsim.animation.road.TrafficLightAnimation;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -67,7 +67,7 @@ public final class AnimationToggles
         list = new ArrayList<>();
         list.add(new Toggle("GTU", GtuData.class, "Gtu24.png", "Show/hide GTUs", true, true, false));
         list.add(new Toggle("GTUId", DefaultCarAnimation.Text.class, "Id24.png", "Show/hide GTU ids", false, false, true));
-        list.add(new Toggle("Perception", PerceptionAnimation.ChannelAttention.class, "Perception24.png",
+        list.add(new Toggle("Perception", PerceptionAnimation.PerceptionData.class, "Perception24.png",
                 "Show/hide perception (circle = attention, color = perception delay)", false, false, false));
         TOGGLES.put("GTU", list);
 
