@@ -10,9 +10,9 @@ import org.djunits.value.vdouble.scalar.Length;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Dec 30, 2014 <br>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @author Alexander Verbraeck
+ * @author Peter Knoppers
+ * @author Wouter Schakel
  * @param dx positive x is in the normal direction of movement.
  * @param dy positive y is left compared to the normal direction of movement (seen from the top).
  * @param dz positive z is up.
@@ -60,8 +60,8 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type)
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$, initial version ec 31, 2014 <br>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
      */
     public static class Type
     {

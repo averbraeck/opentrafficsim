@@ -29,8 +29,8 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author Alexander Verbraeck
+ * @author Peter Knoppers
  */
 public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDetectorData>
 {
@@ -88,9 +88,9 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
+     * @author Wouter Schakel
      */
     public static class Text extends RenderableTextSource<TrafficLightDetectorData, Text> implements DetectorData.Text
     {
@@ -127,7 +127,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Wouter Schakel
      */
     public interface TrafficLightDetectorData extends DetectorData, Identifiable
     {

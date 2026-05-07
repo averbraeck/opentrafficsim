@@ -30,9 +30,9 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @author Alexander Verbraeck
+ * @author Peter Knoppers
+ * @author Wouter Schakel
  */
 public class ParameterFactoryByType implements ParameterFactory
 {
@@ -423,9 +423,9 @@ public class ParameterFactoryByType implements ParameterFactory
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
+     * @author Wouter Schakel
      * @param <T> value type
      */
     private interface ParameterEntry<T>
@@ -450,9 +450,9 @@ public class ParameterFactoryByType implements ParameterFactory
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
+     * @author Wouter Schakel
      * @param <T> value type
      */
     private final class FixedEntry<T> implements ParameterEntry<T>
@@ -500,9 +500,9 @@ public class ParameterFactoryByType implements ParameterFactory
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
+     * @author Wouter Schakel
      * @param <U> unit type
      * @param <T> value type
      */
@@ -550,9 +550,9 @@ public class ParameterFactoryByType implements ParameterFactory
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
+     * @author Wouter Schakel
      */
     private final class DistributedEntryDouble implements ParameterEntry<Double>
     {
@@ -598,9 +598,9 @@ public class ParameterFactoryByType implements ParameterFactory
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
+     * @author Wouter Schakel
      */
     private final class DistributedEntryInteger implements ParameterEntry<Integer>
     {
@@ -646,9 +646,9 @@ public class ParameterFactoryByType implements ParameterFactory
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @author Alexander Verbraeck
+     * @author Peter Knoppers
+     * @author Wouter Schakel
      * @param <C> value type of independent parameter
      * @param <T> value type of dependent parameter
      */

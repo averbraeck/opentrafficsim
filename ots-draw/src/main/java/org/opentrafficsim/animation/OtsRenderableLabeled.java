@@ -15,7 +15,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * </p>
  * @param <L> source type
  * @param <T> text renderable type
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @author Wouter Schakel
  */
 public abstract class OtsRenderableLabeled<L extends OtsShape, T extends RenderableTextSource<L, T>> extends OtsRenderable<L>
 {

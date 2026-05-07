@@ -66,7 +66,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
  * InjectionsTest.
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @author Wouter Schakel
  */
 public final class InjectionsTest
 {

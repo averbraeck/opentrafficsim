@@ -61,9 +61,9 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Aug 19, 2014 <br>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
- * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @author Alexander Verbraeck
+ * @author Peter Knoppers
+ * @author Guus Tamminga
  */
 public abstract class ExpansionNetwork extends Network
 {

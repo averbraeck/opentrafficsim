@@ -17,7 +17,7 @@ import org.opentrafficsim.core.network.Node;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 20 mrt. 2015 <br>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author Peter Knoppers
  */
 public final class RouteGeneratorTest
 {

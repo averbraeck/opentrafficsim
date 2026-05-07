@@ -15,8 +15,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 20 Mar 2015 <br>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author Alexander Verbraeck
+ * @author Peter Knoppers
  */
 public class ProbabilisticRouteGenerator implements Supplier<Route>
 {

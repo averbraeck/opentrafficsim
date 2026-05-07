@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test the alternative offset line classes.<br>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author Peter Knoppers
  */
 public final class BufferingTests
 {

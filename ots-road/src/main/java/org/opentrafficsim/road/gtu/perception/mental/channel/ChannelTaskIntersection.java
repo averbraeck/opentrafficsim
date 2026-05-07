@@ -71,7 +71,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimit;
  * Copyright (c) 2026-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @author Wouter Schakel
  */
 // TODO add @see ref to paper by Yiyun et al.
 public class ChannelTaskIntersection extends AbstractTask implements ChannelTask

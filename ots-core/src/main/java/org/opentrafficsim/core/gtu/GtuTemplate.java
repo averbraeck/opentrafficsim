@@ -15,7 +15,7 @@ import org.opentrafficsim.core.distributions.ConstantSupplier;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Jul 8, 2014 <br>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author Alexander Verbraeck
  */
 public class GtuTemplate implements Supplier<GtuCharacteristics>
 {
