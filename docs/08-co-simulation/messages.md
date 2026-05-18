@@ -192,7 +192,7 @@ _Figure 8.7: Stop message flow._
 
 The reset message (`ResetMessage`) resets any simulation and is sent from the external simulator to OTS. OTS responds with a ready message. Figure 8.8 shows the message flow. Resetting entails stopping any simulation and performing a setup based on the last sent setup messages (routes, OD-matrix and network).
 
-![](https://www.plantuml.com/plantuml/png/SoWkIImgAStDuSfFoafDBb7m3mbMK3OmC3DpDe49kLQKf1Rb9UO4P-OgA1iRM9gvcN21bDdOwAB8MIa4fHQdblYc5XSdfgU2bUZQsM4eIKofX2bnICrB0TaD0000)
+![](https://www.plantuml.com/plantuml/png/SoWkIImgAStDuSfFoafDBb7m3mbMK3OmC3DpDe49kLQKf1Rb9UO4P-OgA1iRM9gvcN21bDdOwAB8MIaeAGIb5gUM-AOM5oUcfoeeWPNfsjcXAGjAJKofX2hYSaZDIm7P3m00)
 
 _Figure 8.8: Reset message flow._
 
