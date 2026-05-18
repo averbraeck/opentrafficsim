@@ -37,6 +37,7 @@ import org.opentrafficsim.animation.colorer.Colorer;
 import org.opentrafficsim.animation.data.gtu.SynchronizationGtuColorer;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -60,7 +61,9 @@ import org.opentrafficsim.cosim.messages.CommandMessage;
 import org.opentrafficsim.cosim.messages.DeleteMessage;
 import org.opentrafficsim.cosim.messages.ExternalMessage;
 import org.opentrafficsim.cosim.messages.ModeMessage;
+import org.opentrafficsim.cosim.messages.ModeMessage.ControlMode;
 import org.opentrafficsim.cosim.messages.NetworkMessage;
+import org.opentrafficsim.cosim.messages.NetworkMessage.NetworkType;
 import org.opentrafficsim.cosim.messages.OdMatrixMessage;
 import org.opentrafficsim.cosim.messages.PlanMessage;
 import org.opentrafficsim.cosim.messages.ProgressMessage;
@@ -71,8 +74,6 @@ import org.opentrafficsim.cosim.messages.StartMessage;
 import org.opentrafficsim.cosim.messages.StopMessage;
 import org.opentrafficsim.cosim.messages.TerminateMessage;
 import org.opentrafficsim.cosim.messages.VehicleMessage;
-import org.opentrafficsim.cosim.messages.ModeMessage.ControlMode;
-import org.opentrafficsim.cosim.messages.NetworkMessage.NetworkType;
 import org.opentrafficsim.cosim.messages.VehicleMessage.VehicleType;
 import org.opentrafficsim.cosim.tactical.CommandsHandler;
 import org.opentrafficsim.cosim.tactical.ScenarioTacticalPlanner;
@@ -138,6 +139,10 @@ public abstract class AbstractOtsTransceiver implements EventListener
     @Option(names = "--useRoadName", description = "Whether to use the road name to identify origins and destinations",
             defaultValue = "false")
     private boolean useRoadName;
+
+    /** Dead reckoning extrapolation horizon. */
+    @Option(names = "--deadReckoningHorizon", description = "Dead reckoning extrapolation horizon", defaultValue = "2s")
+    private Duration deadReckoningHorizon;
 
     /** Mixed in model arguments. */
     @Mixin
@@ -349,18 +354,30 @@ public abstract class AbstractOtsTransceiver implements EventListener
      */
     private void generateVehicle(final VehicleMessage vehicleMessage)
     {
-        DirectedPoint2d position = new DirectedPoint2d(vehicleMessage.xCoordinate().si, vehicleMessage.yCoordinate().si,
-                vehicleMessage.direction().si);
+        double now = this.simulator.getSimulatorTime().si;
+        double then = vehicleMessage.time().si;
+        DirectedPoint2d position;
+        if (then < now)
+        {
+            // dead reckoning over delay
+            double distance = (now - then) * vehicleMessage.speed().si;
+            position = OtsGeometryUtil.translatePoint(new DirectedPoint2d(vehicleMessage.xCoordinate().si,
+                    vehicleMessage.yCoordinate().si, vehicleMessage.direction().si), distance);
+        }
+        else
+        {
+            position = new DirectedPoint2d(vehicleMessage.xCoordinate().si, vehicleMessage.yCoordinate().si,
+                    vehicleMessage.direction().si);
+        }
         GtuType gtuType = GTU_TYPES.get(vehicleMessage.type());
         Route route = this.network.getRoute(vehicleMessage.route()).orElseThrow();
 
         this.externallyGeneratedGtuId = vehicleMessage.vehicleId();
         if (isRunning())
         {
-            this.simulator.scheduleEventNow(this, "spawnGtu",
-                    new Object[] {vehicleMessage.vehicleId(), gtuType, vehicleMessage.length(), vehicleMessage.width(),
-                            vehicleMessage.refToNose(), route, vehicleMessage.speed(), position, vehicleMessage.controlMode(),
-                            vehicleMessage.parameters()});
+            this.simulator.scheduleEventNow(() -> spawnGtu(vehicleMessage.vehicleId(), gtuType, vehicleMessage.length(),
+                    vehicleMessage.width(), vehicleMessage.refToNose(), route, vehicleMessage.speed(), position,
+                    vehicleMessage.controlMode(), vehicleMessage.parameters()));
         }
         else
         {
@@ -692,16 +709,18 @@ public abstract class AbstractOtsTransceiver implements EventListener
     /**
      * Method that runs scheduled in the simulator to apply dead reckoning.
      * @param id GTU id
+     * @param time duration since start of simulation when the location applies
      * @param loc location
      * @param speed speed
      * @param acceleration acceleration
      */
-    private void deadReckoning(final String id, final DirectedPoint2d loc, final Speed speed, final Acceleration acceleration)
+    private void deadReckoning(final String id, final Duration time, final DirectedPoint2d loc, final Speed speed,
+            final Acceleration acceleration)
     {
         ScenarioTacticalPlanner planner = getTacticalPlanner(id);
         if (planner != null)
         {
-            planner.deadReckoning(loc, speed, acceleration);
+            planner.deadReckoning(time, loc, speed, acceleration);
         }
     }
 
@@ -739,7 +758,7 @@ public abstract class AbstractOtsTransceiver implements EventListener
                 this.planGtuIds.add(id);
                 if (this.externalGtuIds.add(id))
                 {
-                    getTacticalPlanner(id).startDeadReckoning(true);
+                    getTacticalPlanner(id).startDeadReckoning(true, this.deadReckoningHorizon);
                 }
                 break;
             }
@@ -748,7 +767,7 @@ public abstract class AbstractOtsTransceiver implements EventListener
                 this.planGtuIds.remove(id);
                 if (this.externalGtuIds.add(id))
                 {
-                    getTacticalPlanner(id).startDeadReckoning(false);
+                    getTacticalPlanner(id).startDeadReckoning(false, this.deadReckoningHorizon);
                 }
                 break;
             }
@@ -771,8 +790,8 @@ public abstract class AbstractOtsTransceiver implements EventListener
         Logger.ots().debug("OTS received {} message for GTU {}", externalMessage.getId(), externalMessage.vehicleId());
         DirectedPoint2d loc = new DirectedPoint2d(externalMessage.xCoordinate().si, externalMessage.yCoordinate().si,
                 externalMessage.direction().si);
-        this.simulator.scheduleEventNow(
-                () -> deadReckoning(externalMessage.vehicleId(), loc, externalMessage.speed(), externalMessage.acceleration()));
+        this.simulator.scheduleEventNow(() -> deadReckoning(externalMessage.vehicleId(), externalMessage.time(), loc,
+                externalMessage.speed(), externalMessage.acceleration()));
     }
 
     /**

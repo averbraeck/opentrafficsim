@@ -10,11 +10,9 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
-import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -24,7 +22,6 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
@@ -71,9 +68,6 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     /** Time between execution of model during dead reckoning. */
     private static final Duration DEAD_RECKONING_MODEL_STEP = Duration.ofSI(0.5);
 
-    /** Duration to extrapolate dead reckoning. */
-    private static final Duration DEAD_RECKONING_HORIZON = Duration.ofSI(2.0);
-
     /** Deviation object in case of no desired deviation. */
     private static final DistancedObject<Length> NO_DEVIATION = new DistancedObject<>(Length.ZERO, Length.ZERO);
 
@@ -96,22 +90,19 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     private OperationalPlan lastIntendedPlan = null;
 
     /** Applies dead-reckoning to follow an external source of vehicle movement. */
-    private boolean deadReckoning;
+    private boolean isDeadReckoning;
 
     /**
      * Whether dead-reckoning is part of a hybrid mode where the external simulation determines movement based on the intention
      * of a model plan.
      */
-    private boolean hybridDeadReckoning;
-
-    /** Speed for dead-reckoning. */
-    private Speed deadReckoningSpeed;
-
-    /** Acceleration for dead-reckoning. */
-    private Acceleration deadReckoningAcceleration;
+    private boolean isHybridDeadReckoning;
 
     /** Time of last model execution to set model parameters for surrounding vehicle while dead reckoning. */
     private Duration lastDeadReckoningModelExecution;
+
+    /** Dead reckoning helper. */
+    private DeadReckoning deadReckoning;
 
     /** Desired speed model for when the model should be reset. */
     private DesiredSpeedModel desiredSpeedModel;
@@ -141,7 +132,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws OperationalPlanException, GtuException, NetworkException, ParameterException
     {
-        if (!this.deadReckoning || this.lastDeadReckoningModelExecution == null
+        if (!this.isDeadReckoning || this.lastDeadReckoningModelExecution == null
                 || startTime.minus(this.lastDeadReckoningModelExecution).si >= DEAD_RECKONING_MODEL_STEP.si)
         {
             this.lastDeadReckoningModelExecution = this.lastDeadReckoningModelExecution == null ? startTime
@@ -192,21 +183,21 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
                     () -> getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.NONE));
 
             // create plan
-            if (!this.deadReckoning || this.hybridDeadReckoning)
+            if (!this.isDeadReckoning || this.isHybridDeadReckoning)
             {
                 OperationalPlan operationalPlan = LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan,
                         getGtu().getParameters().getParameter(ParameterTypes.LCDUR),
                         context.getIntent(Length.class).orElse(NO_DEVIATION));
                 this.lastIntendedPlan = operationalPlan;
                 this.syncState = this.lmrsData.getSynchronizationState();
-                if (this.hybridDeadReckoning)
+                if (this.isHybridDeadReckoning)
                 {
                     /*
                      * In hybrid mode we want to return this plan so it is sent by a listener to LANEBASED_MOVE_EVENT. But we do
                      * not actually want to move based on this. Therefore we schedule another interrupt at this time. As the
                      * value of lastDeadReckoningModelExecution is updated, this second move will only do dead-reckoning.
                      */
-                    getGtu().getSimulator().scheduleEventNow(() -> interruptMove(locationAtStartTime));
+                    getGtu().getSimulator().scheduleEventNow(() -> interruptMove());
                 }
                 return operationalPlan;
             }
@@ -243,16 +234,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
 
         // Create operational plan from current position
         changeLaneOnDeadReckoning(locationAtStartTime);
-        boolean toStandStill = this.deadReckoningAcceleration.lt0()
-                && this.deadReckoningSpeed.si / -this.deadReckoningAcceleration.si < DEAD_RECKONING_HORIZON.si;
-        double t = toStandStill ? this.deadReckoningSpeed.si / -this.deadReckoningAcceleration.si : DEAD_RECKONING_HORIZON.si;
-        double distance = Math.max(1.0, this.deadReckoningSpeed.si * t + .5 * this.deadReckoningAcceleration.si * t * t);
-        double x = locationAtStartTime.x + Math.cos(locationAtStartTime.dirZ) * distance;
-        double y = locationAtStartTime.y - Math.sin(locationAtStartTime.dirZ) * distance;
-        OtsLine2d path = new OtsLine2d(locationAtStartTime, new Point2d(x, y));
-        // Segments.off() takes care of standstill
-        return new OperationalPlan(getGtu(), path, startTime,
-                Segments.off(this.deadReckoningSpeed, DEAD_RECKONING_HORIZON, this.deadReckoningAcceleration));
+        return this.deadReckoning.getPlan(startTime, locationAtStartTime);
     }
 
     /**
@@ -375,7 +357,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     public void setAcceleration(final Acceleration acceleration)
     {
         this.accelerationCommand = acceleration;
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -384,7 +366,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     public void resetAcceleration()
     {
         this.accelerationCommand = null;
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -396,7 +378,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     {
         this.indicatorCommand = indicator;
         getGtu().getSimulator().scheduleEventRel(duration, this, "resetIndicator", new Object[0]);
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -406,7 +388,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     private void resetIndicator()
     {
         this.indicatorCommand = null;
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -415,7 +397,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     public void disableLaneChanges()
     {
         this.laneChangesEnabledCommand = false;
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -424,7 +406,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     public void enableLaneChanges()
     {
         this.laneChangesEnabledCommand = true;
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -444,7 +426,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
                         return speed;
                     }
                 });
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -457,7 +439,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
                 "Attempting to reset desired speed, but no desired speed was ever set.");
         ((AbstractCarFollowingModel) getCarFollowingModel()).setDesiredSpeedModel(this.desiredSpeedModel);
         this.desiredSpeedModel = null;
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
@@ -549,12 +531,12 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     public void changeLane(final LateralDirectionality direction)
     {
         this.laneChangeCommand = direction;
-        interruptMove(getGtu().getLocation());
+        interruptMove();
     }
 
     /**
      * Returns the last intended operational plan, and internally sets it to null. Next calls will return null until the
-     * behavioural model has run again.
+     * behavioral model has run again.
      * @return last intended operational plan
      */
     public OperationalPlan pullLastIntendedPlan()
@@ -567,9 +549,8 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     /**
      * Invokes {@code interruptMove} on the GTU through reflection. This will cancel the scheduled move event, and trigger a new
      * move now.
-     * @param location location
      */
-    private void interruptMove(final DirectedPoint2d location)
+    private void interruptMove()
     {
         try
         {
@@ -582,7 +563,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
 
             Method move = Gtu.class.getDeclaredMethod("move", DirectedPoint2d.class);
             move.setAccessible(true);
-            move.invoke(getGtu(), location);
+            move.invoke(getGtu(), getGtu().getLocation());
         }
         catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | NoSuchFieldException e)
@@ -595,26 +576,30 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
      * Starts dead reckoning.
      * @param hybrid whether dead-reckoning is part of a hybrid mode where the external simulation determines movement based on
      *            the intention of a model plan
+     * @param horizon dead reckoning extrapolation horizon
      */
-    public void startDeadReckoning(final boolean hybrid)
+    public void startDeadReckoning(final boolean hybrid, final Duration horizon)
     {
         this.lastDeadReckoningModelExecution = null;
-        this.hybridDeadReckoning = hybrid;
-        deadReckoning(getGtu().getLocation(), getGtu().getSpeed(), Acceleration.ZERO);
+        this.isHybridDeadReckoning = hybrid;
+        this.deadReckoning = new DeadReckoning(getGtu());
+        this.deadReckoning.setHorizon(horizon);
+        deadReckoning(getGtu().getSimulator().getSimulatorTime(), getGtu().getLocation(), getGtu().getSpeed(),
+                Acceleration.ZERO);
     }
 
     /**
      * Sets location, speed and acceleration for dead reckoning.
+     * @param time duration since start of simulation when the location applies
      * @param location location
      * @param speed speed
      * @param accel acceleration
      */
-    public void deadReckoning(final DirectedPoint2d location, final Speed speed, final Acceleration accel)
+    public void deadReckoning(final Duration time, final DirectedPoint2d location, final Speed speed, final Acceleration accel)
     {
-        this.deadReckoning = true;
-        this.deadReckoningSpeed = speed;
-        this.deadReckoningAcceleration = accel;
-        interruptMove(location);
+        this.isDeadReckoning = true;
+        this.deadReckoning.setInformation(time, location, speed, accel);
+        interruptMove();
     }
 
     /**
@@ -622,10 +607,11 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
      */
     public void stopDeadReckoning()
     {
-        this.deadReckoning = false;
+        this.isDeadReckoning = false;
         this.lastDeadReckoningModelExecution = null;
-        this.hybridDeadReckoning = false;
-        interruptMove(getGtu().getLocation());
+        this.isHybridDeadReckoning = false;
+        this.deadReckoning = null;
+        interruptMove();
     }
 
     @Override

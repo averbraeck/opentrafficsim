@@ -81,6 +81,19 @@ public final class OtsGeometryUtil
     }
 
     /**
+     * Translates a directed point a given distance in its direction.
+     * @param point point
+     * @param distance distance
+     * @return translated point by distance in its direction
+     */
+    // TODO: remove method and replace usage after https://github.com/averbraeck/djutils/issues/126 is solved
+    public static DirectedPoint2d translatePoint(final DirectedPoint2d point, final double distance)
+    {
+        return new DirectedPoint2d(point.x + distance * Math.cos(point.dirZ), point.y + distance * Math.sin(point.dirZ),
+                point.dirZ);
+    }
+
+    /**
      * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at the
      * start of the reference line via a number of intermediate offsets at intermediate positions to its final offset value at
      * the end of the reference line.

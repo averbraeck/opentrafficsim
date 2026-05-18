@@ -109,7 +109,7 @@ public final class LaneOperationalPlanBuilder
                 && simplePlan.getAcceleration().lt(OperationalPlan.DRIFTING_ACCELERATION))
         {
             DirectedPoint2d location = gtu.getLocation();
-            Point2d next = new Point2d(location.x + Math.cos(location.dirZ), location.y + Math.sin(location.dirZ));
+            Point2d next = OtsGeometryUtil.translatePoint(location, 1.0);
             OtsLine2d path = new OtsLine2d(location, next);
             LanePosition nearestPosition = gtu.getPosition();
             boolean deviative = nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
@@ -201,7 +201,7 @@ public final class LaneOperationalPlanBuilder
     {
         DirectedPoint2d target = getTargetPoint(gtu, nearestPosition, deviation, horizonSpace);
         target = extrapolateToHorizon(gtu, target, horizonSpace.horizon());
-        return new PathResults(bezierToTarget(gtu, target), false);
+        return new PathResults(bezierToTarget(gtu.getLocation(), target), false);
     }
 
     /**
@@ -690,31 +690,30 @@ public final class LaneOperationalPlanBuilder
     }
 
     /**
-     * Create Bezier path from current location of the GTU towards the target point. The path is flattened with a default
-     * flattener using a maximum deviation of 0.1m and maximum angle 0.5 degrees.
-     * @param gtu GTU
+     * Create Bezier path from one location to a target point. The path is flattened with a default flattener using a maximum
+     * deviation of 0.1m and maximum angle 0.5 degrees.
+     * @param from from point
      * @param target target point
      * @return Bezier path from current location of the GTU towards the target point
      */
-    private static OtsLine2d bezierToTarget(final LaneBasedGtu gtu, final DirectedPoint2d target)
+    public static OtsLine2d bezierToTarget(final DirectedPoint2d from, final DirectedPoint2d target)
     {
-        double angleShift = Math.abs(AngleUtil.normalizeAroundZero(gtu.getLocation().dirZ - target.dirZ));
-        double dirToTarget = gtu.getLocation().directionTo(target);
+        double angleShift = Math.abs(AngleUtil.normalizeAroundZero(from.dirZ - target.dirZ));
+        double dirToTarget = from.directionTo(target);
         if (angleShift < FLATTEN_ANGLE && Math.abs(AngleUtil.normalizeAroundZero(dirToTarget - target.dirZ)) < FLATTEN_ANGLE
-                && Math.abs(AngleUtil.normalizeAroundZero(dirToTarget - gtu.getLocation().dirZ)) < FLATTEN_ANGLE)
+                && Math.abs(AngleUtil.normalizeAroundZero(dirToTarget - from.dirZ)) < FLATTEN_ANGLE)
         {
             // current position and direction sufficiently in line with target position and direction to simplify as straight
-            return new OtsLine2d(gtu.getLocation(), target);
+            return new OtsLine2d(from, target);
         }
         // Shape points at shapeFactor of inter-point distance:
         // 1/3rd when angle between points < pi/2
         // then increases linearly to 2/3rds for an angle of pi
         double shapeFactor = (1.0 + 2.0 * Math.max(0.0, angleShift - 0.5 * Math.PI) / Math.PI) / 3;
-        double rControl = shapeFactor * Math.hypot(gtu.getLocation().x - target.x, gtu.getLocation().y - target.y);
-        Point2d p2 = new Point2d(gtu.getLocation().x + rControl * Math.cos(gtu.getLocation().dirZ),
-                gtu.getLocation().y + rControl * Math.sin(gtu.getLocation().dirZ));
-        Point2d p3 = new Point2d(target.x - rControl * Math.cos(target.dirZ), target.y - rControl * Math.sin(target.dirZ));
-        BezierCubic2d bezier = new BezierCubic2d(gtu.getLocation(), p2, p3, target);
+        double rControl = shapeFactor * Math.hypot(from.x - target.x, from.y - target.y);
+        Point2d p2 = OtsGeometryUtil.translatePoint(from, rControl);
+        Point2d p3 = OtsGeometryUtil.translatePoint(target, -rControl);
+        BezierCubic2d bezier = new BezierCubic2d(from, p2, p3, target);
         return new OtsLine2d(bezier.toPolyLine(FLATTENER));
     }
 
