@@ -91,16 +91,8 @@ public class DeadReckoning
     public OperationalPlan getPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
     {
         double tHorizon = Math.max(0.0, startTime.si - this.time.si) + this.horizon.si;
-        double tStop = this.acceleration.si >= 0.0 ? tHorizon : this.speed.si / -this.acceleration.si;
-        double sHorizon;
-        if (tStop < tHorizon)
-        {
-            sHorizon = this.speed.si * tStop;
-        }
-        else
-        {
-            sHorizon = this.speed.si * tHorizon + .5 * this.acceleration.si * tHorizon * tHorizon;
-        }
+        double tMove = this.acceleration.si < 0.0 ? Math.min(tHorizon, this.speed.si / -this.acceleration.si) : tHorizon;
+        double sHorizon = this.speed.si * tMove + .5 * this.acceleration.si * tMove * tMove;
         Speed v0 = this.gtu.getSpeed();
         double sMin = 1.0;
         OtsLine2d path;
@@ -115,7 +107,7 @@ public class DeadReckoning
             {
                 pathLength = 0.0;
             }
-            aAdjusted = Acceleration.ofSI(2.0 * (pathLength - v0.si * this.horizon.si) / (this.horizon.si * this.horizon.si));
+            aAdjusted = Acceleration.ofSI(2.0 * (pathLength - v0.si * tMove) / (tMove * tMove));
         }
         else
         {
