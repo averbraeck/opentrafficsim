@@ -12,7 +12,7 @@ The following algorithm is applied on two lanes after a quick bounds check has d
     3. Upstream point is: the most downstream edge intersection of either A-D or B-C (i.e. intersection of a left and a right edge).
     4. Any edge intersections on A-C and B-D further downstream from the conflict start are removed, e.g. the blue point in the figure below. Edge intersections at endpoints are unreliable and of no use to the algorithm.
 
-![](../images/OTS_Figure_A.1.png)
+![](../images/OTS_Figure_A.1.png) { width=25% }
 _Figure A.1: Conflict derivation at lane end (or start)._
 
 6. If any upstream lane is equal, a split conflict is made. This occurs the same as a merge conflicts, but reversed. Any edge intersections upstream of the end of the conflict are removed.
@@ -22,8 +22,8 @@ _Figure A.1: Conflict derivation at lane end (or start)._
         a. The first intersection is the start of a conflict.<br>
         b. Flip the 'crossed' state (1 <=> 0, true <=> false) of the edge combination from which the edge intersection came (this is why each edge intersection stores two lane fractions and an edge combination).<br>
         c. If all 4 'crossed' states are equal, either the lanes have completely crossed (upper left example in the figure below), or those edges that have crossed have also crossed back to the original side (upper right and lower left examples in the figure below). Thus, the edge intersection marks the end of a conflict (red boxes in the figure below).<br>
-        d. The process repeats for remaining edge intersections, the first next edge intersections is the start of the next conflict (see upper left example in the figure below).
+        d. The process repeats for remaining edge intersections, the first next edge intersection is the start of the next conflict (see upper left example in the figure below).
 
-![](../images/OTS_Figure_A.2.png)
+![](../images/OTS_Figure_A.2.png) { width=25% }
 _Figure A.2: Derivation of crossing area._
 
