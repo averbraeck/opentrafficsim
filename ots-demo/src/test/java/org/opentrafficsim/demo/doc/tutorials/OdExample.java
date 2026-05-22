@@ -71,7 +71,7 @@ public class OdExample
         Mockito.when(nodeB.getId()).thenReturn("B");
         Mockito.when(nodeC.getId()).thenReturn("C");
 
-        // @docs/08-tutorials/simulation-setup.md#how-to-create-an-od-matrix-and-add-demand-data
+        // @docs/96-tutorials/simulation-setup.md#how-to-create-an-od-matrix-and-add-demand-data
         List<Node> origins = new ArrayList<>();
         origins.add(nodeA);
         origins.add(nodeB);
@@ -116,7 +116,7 @@ public class OdExample
 
     public void howToSetUpModelFactoriesWhenUsingAnOdMatrix()
     {
-        // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
+        // @docs/96-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
         LaneBasedGtuCharacteristicsGeneratorOd characteristicsGenerator = new LaneBasedGtuCharacteristicsGeneratorOd()
         {
             @Override
@@ -125,7 +125,7 @@ public class OdExample
             {
                 // implementation code
 
-                // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
+                // @docs/96-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
                 GtuType gtuType = category.get(GtuType.class);
                 Route route = category.get(Route.class);
                 GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get().get();
@@ -144,7 +144,7 @@ public class OdExample
     {
         StreamInterface randomStream = null;
 
-        // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
+        // @docs/96-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
         LaneBasedStrategicalRoutePlannerFactory lmrs = DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(randomStream);
         DefaultLaneBasedGtuCharacteristicsGeneratorOd generator =
                 new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(lmrs).create();
@@ -154,7 +154,7 @@ public class OdExample
     {
         StreamInterface randomStream = null;
 
-        // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
+        // @docs/96-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
         GtuType car = DefaultsNl.CAR;
         GtuType truck = DefaultsNl.TRUCK;
 

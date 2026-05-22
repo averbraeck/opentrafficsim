@@ -28,7 +28,7 @@ import org.opentrafficsim.road.network.object.LaneBasedObject;
  */
 @SuppressWarnings("all")
 
-// @docs/08-tutorials/visualization.md#how-to-add-an-animation
+// @docs/96-tutorials/visualization.md#how-to-add-an-animation
 public class SpeedSignAnimation extends OtsRenderable<SpeedSign>
 {
     private static final double RADIUS = 1.6;
@@ -41,7 +41,7 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSign>
         setRotate(false);
     }
 
-    // @docs/08-tutorials/visualization.md#how-to-add-an-animation
+    // @docs/96-tutorials/visualization.md#how-to-add-an-animation
     @Override
     public final void paint(final Graphics2D g, final ImageObserver arg1)
     {

@@ -33,7 +33,7 @@ import picocli.CommandLine.Option;
  * @author Wouter Schakel
  */
 @SuppressWarnings("all")
-// @docs/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
+// @docs/96-tutorials/simulation-setup.md#how-to-set-up-a-simulation
 public class SimpleSimulation extends AbstractSimulationScript
 {
 
@@ -52,7 +52,7 @@ public class SimpleSimulation extends AbstractSimulationScript
         simpleSimulation.start();
     }
 
-    // @docs/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
+    // @docs/96-tutorials/simulation-setup.md#how-to-set-up-a-simulation
     @Override
     protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws NullPointerException, NetworkException
     {

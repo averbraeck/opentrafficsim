@@ -33,7 +33,7 @@ public class Development
 
     static
     {
-        // @docs/08-tutorials/development.md#how-to-profile-code-performance
+        // @docs/96-tutorials/development.md#how-to-profile-code-performance
         Profile.start();
         // profiled code
         Profile.end();
@@ -46,7 +46,7 @@ public class Development
         Profile.print();
     }
 
-    // @docs/08-tutorials/development.md#how-to-create-a-junit-test
+    // @docs/96-tutorials/development.md#how-to-create-a-junit-test
     @Test
     public final void defaultsTest()
     {
@@ -70,14 +70,14 @@ public class Development
 
         private void mock()
         {
-            // @docs/08-tutorials/development.md#how-to-create-a-junit-test
+            // @docs/96-tutorials/development.md#how-to-create-a-junit-test
             OtsSimulatorInterface simulatorMock = Mockito.mock(OtsSimulatorInterface.class);
             Mockito.when(simulatorMock.getSimulatorTime()).then((invocation) -> this.time);
             Mockito.when(simulatorMock.getReplication()).thenReturn(this.replication);
         }
     }
 
-    // @docs/08-tutorials/development.md#how-to-make-a-property-historical
+    // @docs/96-tutorials/development.md#how-to-make-a-property-historical
     public class HistoricalMatrix extends AbstractHistorical<double[][], EventMatrix>
     {
 
@@ -100,14 +100,14 @@ public class Development
             return out;
         }
 
-        // @docs/08-tutorials/development.md#how-to-make-a-property-historical
+        // @docs/96-tutorials/development.md#how-to-make-a-property-historical
         public void setValue(final int i, final int j, final double value)
         {
             addEvent(new EventMatrix(now().si, i, j, this.matrix[i][j]));
             this.matrix[i][j] = value;
         }
 
-        // @docs/08-tutorials/development.md#how-to-make-a-property-historical
+        // @docs/96-tutorials/development.md#how-to-make-a-property-historical
         public double[][] getMatrix(final Duration time)
         {
             double[][] out = getMatrix();
@@ -120,7 +120,7 @@ public class Development
 
     }
 
-    // @docs/08-tutorials/development.md#how-to-make-a-property-historical
+    // @docs/96-tutorials/development.md#how-to-make-a-property-historical
     public class EventMatrix extends EventValue<Double>
     {
 

@@ -77,7 +77,7 @@ The default implementation is `DefaultLaneBasedGtuCharacteristicsGeneratorOd`, w
 * A strategical planner is created with the help of a provided `LaneBasedStrategicalPlannerFactory`.
 * If a vehicle model factory is given, it is used to generate a vehicle model. Otherwise `VehicleModel.MINMAX` is used by default.
 
-By default the `GTU_TYPE` option has a `null`, without templates. In section [How to set up model factories when using an OD matrix](../08-tutorials/simulation-setup.md#how-to-set-up-model-factories-when-using-an-od-matrix) a tutorial is available that gives some examples on how to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd` or how to implement `LaneBasedGtuCharacteristicsGeneratorOd`.
+By default the `GTU_TYPE` option has a `null`, without templates. In section [How to set up model factories when using an OD matrix](../96-tutorials/simulation-setup.md#how-to-set-up-model-factories-when-using-an-od-matrix) a tutorial is available that gives some examples on how to use `DefaultLaneBasedGtuCharacteristicsGeneratorOd` or how to implement `LaneBasedGtuCharacteristicsGeneratorOd`.
 
 ## Markov chain for GTU types
 
