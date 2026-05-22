@@ -96,7 +96,7 @@ Suppose we have states Car (70%), Van (20%) and Truck (10%). A non-correlated tr
     <tr><th>Truck</th><td>0.7</td><td>0.2</td><td>0.1</td></tr>
 </table>
 
-Note that each row sums to 1, as from each previous state, a new state (column) must follow. At this point the Markov chain has no effect, as GTU types are completely independent. For GTU generation, a correlation can be specified for a GTU type. Suppose we state that trucks are correlated by a factor of <i>c<sub>truck</sub></i>&nbsp;=&nbsp;0.4, then, the probability a truck will follow a truck becomes 0.1&nbsp;+&nbsp;<i>c<sub>truck</sub></i>(1&nbsp;–&nbsp;0.1)&nbsp;=&nbsp;0.46, as in the left table below. Now, the 3<sup>rd</sup> row does not sum to 1, which needs to be corrected. At the same time, the steady-state cannot be changed as this is a given. The steady-state remains the same for as long as the transition matrix is reversible. We use that:
+Note that each row sums to 1, as from each previous state, a new state (column) must follow. At this point the Markov chain has no effect, as GTU types are completely independent. For GTU generation, a correlation can be specified for a GTU type. Suppose we state that trucks are correlated by a factor of $c_{truck} = 0.4$, then, the probability a truck will follow a truck becomes $0.1 + c_{truck}(1 - 0.1) = 0.46$, as in the left table below. Now, the 3<sup>rd</sup> row does not sum to 1, which needs to be corrected. At the same time, the steady-state cannot be changed as this is a given. The steady-state remains the same for as long as the transition matrix is reversible. We use that:
 
 * A transition matrix is reversible if all values in a column, except for values on the diagonal, are the same.
 * A transition matrix remains reversible when <i>scaling symmetrical pairs</i>.
@@ -109,15 +109,20 @@ This means that the matrix we start with as given above is reversible. Thus, if 
 <tr><th>Truck</th><td>0.7</td><td>0.2</td><td>0.46</td><td>&nbsp;</td><th>Truck</th><td>0.42</td><td>0.12</td><td>0.46</td><td>&nbsp;</td><th>Truck</th><td>0.42</td><td>0.12</td><td>0.46</td></tr>
     </table>
 
-At this point, rows 1 and 2 no longer sum to 1. This can simply be compensated by changing the values on the diagonal in these rows, as visible in the right matrix above. Changing the diagonal does not affect reversibility. Each value in the resulting matrix is given by the equation below, which applies generally for any steady-state <i>ss</i>, and any set of correlations <i>c</i>. The values in case of <i>i</i> ≠ <i>j</i> consist of three components: 
+At this point, rows 1 and 2 no longer sum to 1. This can simply be compensated by changing the values on the diagonal in these rows, as visible in the right matrix above. Changing the diagonal does not affect reversibility. Each value in the resulting matrix is given by equation (1), which applies generally for any steady-state $ss$, and any set of correlations $c$. The values in case of $i \neq j$ consist of three components: 
 
-* <i>ss<sub>j</sub></i>; the steady state probability we start with
-* (1&nbsp;&#8209;&nbsp;<i>c<sub>i</sub></i>); reduction of values in row <i>i</i> except for on the diagonal, to let the row sum to 1
-* (1&nbsp;&#8209;&nbsp;<i>c<sub>j</sub></i>); reduction according to the principle of scaling symmetrical pairs
+* $ss_j$; the steady state probability we start with
+* $(1 - c_i)$; reduction of values in row $i$ except for on the diagonal, to let the row sum to 1
+* $(1 - c_j)$; reduction according to the principle of scaling symmetrical pairs
 
-Values on the diagonal <i>i</i>&nbsp;=&nbsp;<i>j</i> are simply 1 minus the other values in the row, which reflects both <i>c<sub>i</sub></i> through the other row values adjusted by (1&nbsp;&#8209;&nbsp;<i>c<sub>i</sub></i>), and compensation for other correlations.
+Values on the diagonal $i = j$ are simply 1 minus the other values in the row ($J$ is all lanes but lane $i$), which reflects both $c_i$ through the other row values adjusted by $(1 - c_i)$, and compensation for other correlations.
 
-![](../images/OTS_formula_4.png)
+$$
+p_{ij} = \begin{cases}
+ss_j (1 - c_i) (1 - c_j), & i \neq j \\
+1 - \sum_{k \in J}p_{ik}, & i = j
+\end{cases} \tag{1}
+$$
 
 The resulting steady-state in the example is not changed as is shown by the following equations regarding each column:
 
@@ -127,7 +132,7 @@ The resulting steady-state in the example is not changed as is shown by the foll
 
 This analysis also shows that if correlation is added to one GTU type, other GTU types will automatically also be more likely to be consecutive, as the entire diagonal is increased. This is logical, because when you take out trucks from a string of vehicles to group them together, the remaining vehicles are more likely to be consecutive to each other.
 
-Every time a next GTU type needs to be determined, only 1 row of the transition matrix needs to be determined. Namely, the row pertaining to the previous GTU type. With GTU type correlations predetermined, and a steady-state derived from the current demand pattern, this row can be calculated using the equation above.
+Every time a next GTU type needs to be determined, only 1 row of the transition matrix needs to be determined. Namely, the row pertaining to the previous GTU type. With GTU type correlations predetermined, and a steady-state derived from the current demand pattern, this row can be calculated using equation (1).
 
 
 ## Nested Markov chain for GTU types
@@ -136,7 +141,7 @@ So far Markov chains for GTU generation have been explained where one GTU type c
 
 The group itself is a nested transition matrix, which only contains the states of the group. Should the new state in the chain be a submatrix, the submatrix is requested to specify the state further to a particular GTU type. The group as a new state may result from any previous state, including previous states that are not part of the sub group. In that case, the submatrix uses steady-state probabilities without correlation. This maintains the overall steady-state as is shown in the following example.
 
-Suppose we have 80% cars and 20% truck with <i>c<sub>truck</sub></i>&nbsp;=&nbsp;0.4. This gives the following transition matrix. 
+Suppose we have 80% cars and 20% truck with $c_{truck} = 0.4$. This gives the following transition matrix. 
 
 <table>
     <tr><td>&nbsp;</td><th>Car</th><th>Truck</th></tr>
@@ -144,7 +149,7 @@ Suppose we have 80% cars and 20% truck with <i>c<sub>truck</sub></i>&nbsp;=&nbsp
     <tr><th>Truck</th><td>0.48</td><td>0.52</td></tr>
 </table>
 
-Next, we equip 25% of the trucks (5% of all traffic) with CACC. For the moment we assume no different correlation for these trucks, hence <i>c<sub>cacc</sub></i>&nbsp;=&nbsp;0.4. Giving trucks and CACC trucks their own independent correlation, the following transition matrix follows. There are some undesired outcomes, given that the inclusion of CACC should under the current assumptions not influence the traffic composition:
+Next, we equip 25% of the trucks (5% of all traffic) with CACC. For the moment we assume no different correlation for these trucks, hence $c_{CACC} = 0.4$. Giving trucks and CACC trucks their own independent correlation, the following transition matrix follows. There are some undesired outcomes, given that the inclusion of CACC should under the current assumptions not influence the traffic composition:
 
 * The probability of a car following a car is reduced from 0.88 to 0.731.
 * If the previous GTU was a truck, and the next one is a truck or CACC truck, the probability the next GTU is a CACC truck is 0.124&nbsp;/&nbsp;(0.545&nbsp;+&nbsp;0.124)&nbsp;=&nbsp;18.6%, rather than 25%.
@@ -176,11 +181,13 @@ This transition matrix has all desired properties:
 
 Note that the latter has to be true if 25% of trucks and CACC trucks overall is a CACC truck, given that the same is true within the group (i.e. nothing needs to or should be compensated).
 
-Within the subgroup we can introduce correlation. For example, we might assume that CACC trucks are more likely to platoon than regular trucks. Suppose we assume <i>c<sub>cacc</sub></i> = 0.64. We cannot use this value directly within the group, as the group already inhibits a correlation of 0.4. This means that within the group, a correlation of 0.4 is mapped to 0.0, as in the uncorrelated group example above. The highest possible correlation of 1 is mapped to 1. Hence, we can scale any correlation of a state in the group, to a correlation to be used in the submatrix according to the equation below, where <i>c<sub>i</sub></i> is the correlation of state <i>i</i>, <i>c<sub>s</sub></i> is the correlation of the super state (i.e. of the group as a whole), and <i>c’<sub>i</sub></i> is the correlation to be used inside the submatrix.
+Within the subgroup we can introduce correlation. For example, we might assume that CACC trucks are more likely to platoon than regular trucks. Suppose we assume $c_{CACC} = 0.64$. We cannot use this value directly within the group, as the group already inhibits a correlation of 0.4. This means that within the group, a correlation of 0.4 is mapped to 0.0, as in the uncorrelated group example above. The highest possible correlation of 1 is mapped to 1. Hence, we can scale any correlation of a state in the group, to a correlation to be used in the submatrix according to equation (2), where $c_i$ is the correlation of state $i$, $c_s$ is the correlation of the super state (i.e. of the group as a whole), and $c'_i$ is the correlation to be used inside the submatrix.
 
-![](../images/OTS_formula_5.png)
+$$
+c'_i = \frac{c_i - c_s}{1 - c_s} \tag{2}
+$$
 
-Applying this to our example we get <i>c’<sub>cacc</sub></i>&nbsp;=&nbsp;0.4. Calculating the 2x2 matrix and scaling it by 0.52 we obtain the following matrix.
+Applying this to our example we get $c'_{CACC} = 0.4$. Calculating the 2x2 matrix and scaling it by 0.52 we obtain the following matrix.
 
 <table>
     <tr><td>&nbsp;</td><th>Car</th><th>Truck</th><th>CACC</th></tr>
@@ -191,7 +198,7 @@ Applying this to our example we get <i>c’<sub>cacc</sub></i>&nbsp;=&nbsp;0.4. 
 
 With the 2x2 group maintaining the internal steady-state of 75%-25%, all earlier mentioned desired properties still hold, with the added property that CACC trucks are more likely to follow each other.
 
-Concluding, complex transition matrices including correlations between GTU types can be created solely by defining correlations for individual GTU types, capturing correlations between GTU types only by grouping. The full example is created with the following code. Note that `GTUType.CAR` is not added, as states with 0 correlation are automatically implied when a new state is determined.
+Concluding, complex transition matrices including correlations between GTU types can be created solely by defining correlations for individual GTU types, capturing correlations between GTU types only by grouping. The full example is created with the following code. Note that `DefaultsNl.CAR` is not added, as states with 0 correlation are automatically implied when a new state is determined.
 
 ```java
     MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();

@@ -112,10 +112,10 @@ _Table 8.17: Model settings._
 
 An overview of all supported parameters is given in Table 8.18. When parameter values are given in a vehicle message this should be in the form of a key-value pair, where the Parameter column value is the key as a `String` and the value is any object of the correct type as in the Type column. The Default column gives the default values for the parameters. There are a few parameters for which the OTS transceiver will assign a random value from a distribution. These are:
 
-- vGain: _LogNormal_(_mu_ = 3.379, _sigma_ = 0.4). This value is only randomly drawn in case of social interactions. Otherwise this parameter receives the value as in the table.
-- sigma: _Triangular_(_min_ = 0.0, _mode_ = 0.25, _max_ = 1.0)
-- fSpeed: _Normal_(_mu_ = 123.7/120.0, _sigma_ = 0.1)
-- fSpeedGtu: _Normal_(_mu_=  85.0/80.0, _sigma_ = 2.5/80.0). This reflects typical truck speeds.
+- vGain: _LogNormal_($\mu = 3.379$, $\sigma = 0.4$). This value is only randomly drawn in case of social interactions. Otherwise this parameter receives the value as in the table.
+- sigma: _Triangular_($min = 0.0$, $mode = 0.25$, $max = 1.0$)
+- fSpeed: _Normal_($\mu = 123.7/120.0$, $\sigma = 0.1$)
+- fSpeedGtu: _Normal_($\mu= 85.0/80.0$, $\sigma = 2.5/80.0$). This reflects typical truck speeds.
 
 _Table 8.18: Sim0mq transceiver settings._
 
