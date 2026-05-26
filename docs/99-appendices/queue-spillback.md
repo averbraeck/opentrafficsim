@@ -24,10 +24,9 @@ In this paper we describe a VGM that has been designed to deal with spillback. T
 In MOTUS the VGM uses the current demand value to determine a headway $h$, based on a selected headway distribution (e.g. uniform, Poisson). There is a lot of literature on headway distributions (e.g. [Zhang and Wang, 2014](../98-references/references.md)). Simple distributions are parameterized to for instance deal with small headways in the Poisson distribution in relation to safe car-following headways.
 
 In our VGM distributions are simple and non-parameterized. Instead of complex distributions, vehicles are generated in two distinct manners:
-<ul>
-  <li>A <i>free</i> vehicle $i$ is generated $h$ seconds after the previous vehicle $i-1$ ($t_i = t_{i-1} + h$), with speed set to the minimum of its desired speed and the speed of $i-1$. If the desired headway of $i$ is violated, <i>free</i> generation fails and <i>queued</i> generation is attempted.</li>
-  <li>A <i>queued</i> vehicle $i$ is generated at a similarly determined speed and at the desired following headway behind $i-1$. If this is upstream of the network boundary, the queued generation fails and a queue counter $N$ is increased by 1.</li>
-</ul>
+
+- A _free_ vehicle $i$ is generated $h$ seconds after the previous vehicle $i-1$ ($t_i = t_{i-1} + h$), with speed set to the minimum of its desired speed and the speed of $i-1$. If the desired headway of $i$ is violated, _free_ generation fails and _queued_ generation is attempted.
+- A _queued_ vehicle $i$ is generated at a similarly determined speed and at the desired following headway behind $i-1$. If this is upstream of the network boundary, the queued generation fails and a queue counter $N$ is increased by 1.
 
 With this VGM, very small headways from the Poisson distribution result in the generation of queued vehicles. This may occur at free flow speeds, i.e. generating platoons. It may also occur in congestion and thus allows vehicle generation under queue spillback.
 
