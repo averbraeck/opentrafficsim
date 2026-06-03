@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -573,6 +574,9 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> socioSpeed = listOf(false);
 
+    /** GTU types for which warning for key was given. */
+    private final Map<String, Set<GtuType>> noPressureWarningGiven = new LinkedHashMap<>();
+
     /**
      * Shorthand to create a list of default value(s). This is used instead of {@code List.of()} to return a mutable list.
      * @param <V> value type
@@ -914,18 +918,33 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         }
 
         // Social interactions
-        if (anySocialInteractions())
-        {
-            parameters.setDefaultParameter(Tailgating.RHO);
-        }
+        parameters.setDefaultParameter(Tailgating.RHO);
         // Alternate default values in case of social interactions, including distributions for the speed-leading strategy
         if (get(this.tailgating, gtuType))
         {
+            if (!get(this.socialPressure, gtuType) && giveWarning("tailgating", gtuType))
+            {
+                Logger.ots().warn(
+                        "Tailgating is enabled for {} but likely ineffective as social pressure is currently disabled.",
+                        gtuType);
+            }
             parameters.setDefaultParameter(Tailgating.DEV_RHO);
             parameters.setParameter(ParameterTypes.TMAX, Duration.ofSI(1.6));
         }
-        if (get(this.socioLaneChange, gtuType) || get(this.socioSpeed, gtuType))
+        boolean socioLc = get(this.socioLaneChange, gtuType);
+        boolean socioV = get(this.socioSpeed, gtuType);
+        if (socioLc || socioV)
         {
+            if (socioLc && !this.socialPressure.contains(true) && giveWarning("socioLc", gtuType))
+            {
+                Logger.ots().warn("SocioLaneChange is enabled for {} but likely ineffective as"
+                        + " social pressure is currently disabled for all GTU types.", gtuType);
+            }
+            if (socioV && !this.socialPressure.contains(true) && giveWarning("socioV", gtuType))
+            {
+                Logger.ots().warn("SocioSpeed is enabled for {} but likely ineffective as"
+                        + " social pressure is currently disabled for all GTU types.", gtuType);
+            }
             parameters.setParameter(LmrsParameters.VGAIN, this.vGainDist.get());
             parameters.setParameter(LmrsParameters.SOCIO, this.sigmaDist.draw());
         }
@@ -950,8 +969,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         Synchronization sync = get(this.synchronization, gtuType);
         Cooperation coop = get(this.cooperation, gtuType);
         GapAcceptance gapAccept = get(this.gapAcceptance, gtuType);
-        Tailgating tail = get(this.socialPressure, gtuType) && get(this.tailgating, gtuType) ? Tailgating.PRESSURE
-                : (get(this.socialPressure, gtuType) ? Tailgating.RHO_ONLY : Tailgating.NONE);
+        Tailgating tail = !get(this.socialPressure, gtuType) ? Tailgating.NONE
+                : (get(this.tailgating, gtuType) ? Tailgating.PRESSURE : Tailgating.RHO_ONLY);
         T tacticalPlanner = get(this.lmrsProvider, gtuType).from(cfModel, gtu, perception, sync, coop, gapAccept, tail);
 
         // Mandatory incentives
@@ -1024,13 +1043,14 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     }
 
     /**
-     * Returns whether social interactions are at play for any of the GTU types.
-     * @return whether social interactions are at play for any of the GTU types
+     * Returns {@code true} only the first time for each combination of key and GTU type.
+     * @param key key
+     * @param gtuType GTU type
+     * @return {@code true} only the first time for each combination of key and GTU type
      */
-    private boolean anySocialInteractions()
+    private boolean giveWarning(final String key, final GtuType gtuType)
     {
-        return this.socialPressure.contains(true) || this.tailgating.contains(true) || this.socioLaneChange.contains(true)
-                || this.socioSpeed.contains(true);
+        return this.noPressureWarningGiven.computeIfAbsent(key, (k) -> new LinkedHashSet<>()).add(gtuType);
     }
 
     /**

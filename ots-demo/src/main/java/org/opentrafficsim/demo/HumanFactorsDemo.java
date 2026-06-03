@@ -75,8 +75,8 @@ import nl.tudelft.simulation.language.DsolException;
 
 /**
  * This demo exists to show how the human factor models can be used in code. In particular see the
- * {@code HumanFactorsModel.constructModel()} method. The included human factors are 1) social interactions regarding lane
- * changes, tailgating and changes in speed, and 2) Anticipation Reliance in a mental task load framework of imperfect
+ * {@link HumanFactorsModel#buildHumanFactorsModel()} method. The included human factors are 1) social interactions regarding
+ * lane changes, tailgating and changes in speed, and 2) Anticipation Reliance in a mental task load framework of imperfect
  * perception. The scenario includes a distraction halfway on the network.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -198,6 +198,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
 
             if (social)
             {
+                tacticalFactory.set(Setting.SOCIO_PRESSURE, true);
                 tacticalFactory.set(Setting.SOCIO_TAILGATING, true);
                 tacticalFactory.set(Setting.SOCIO_LANE_CHANGE, true);
                 tacticalFactory.set(Setting.SOCIO_SPEED, true);
