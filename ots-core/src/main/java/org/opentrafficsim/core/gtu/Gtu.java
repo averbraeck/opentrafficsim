@@ -505,7 +505,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
 
             return false;
         }
-        catch (Exception ex)
+        catch (RuntimeException ex)
         {
             try
             {
