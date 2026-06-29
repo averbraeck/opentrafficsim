@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu.plan.strategical;
 import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
@@ -25,10 +24,6 @@ import org.opentrafficsim.core.network.route.Route;
  */
 public interface StrategicalPlanner
 {
-
-    /** Parameter type for strategical planner. */
-    ParameterTypeClass<StrategicalPlanner> STRATEGICAL_PLANNER =
-            new ParameterTypeClass<>("strat.plan.", "Strategcial planner", StrategicalPlanner.class);
 
     /**
      * Returns the GTU.

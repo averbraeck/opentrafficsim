@@ -91,17 +91,9 @@ public final class GenerateParametersXml
             String description = parameter.getDescription();
 
             String valueTypeName = parameter.getValueClass().getSimpleName();
-            if (parameter.hasDefaultValue())
-            {
-                String value = parameter.getDefaultValue().toString();
-                System.out.println(String.format("  <ots:%s Id=\"%s\" Description=\"%s\" Field=\"%s\" Default=\"%s\" />",
-                        valueTypeName, id, description, fld, value));
-            }
-            else
-            {
-                System.out.println(String.format("  <ots:%s Id=\"%s\" Description=\"%s\" Field=\"%s\" />", valueTypeName, id,
-                        description, fld));
-            }
+            String value = parameter.getDefaultValue().toString();
+            System.out.println(String.format("  <ots:%s Id=\"%s\" Description=\"%s\" Field=\"%s\" Default=\"%s\" />",
+                    valueTypeName, id, description, fld, value));
         }
     }
 

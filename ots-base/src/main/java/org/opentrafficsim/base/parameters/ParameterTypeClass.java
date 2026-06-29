@@ -17,17 +17,6 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
 {
 
     /**
-     * Constructor without default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     */
-    public ParameterTypeClass(final String id, final String description, final Class<T> valueClass)
-    {
-        super(id, description, getTypedClass(valueClass));
-    }
-
-    /**
      * Constructor with default value, without check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
@@ -38,19 +27,6 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
             final Class<? extends T> defaultValue)
     {
         super(id, description, getTypedClass(valueClass), defaultValue);
-    }
-
-    /**
-     * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param constraint Constraint for parameter values.
-     */
-    public ParameterTypeClass(final String id, final String description, final Class<T> valueClass,
-            final Constraint<? super Class<? extends T>> constraint)
-    {
-        super(id, description, getTypedClass(valueClass), constraint);
     }
 
     /**
@@ -68,6 +44,7 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
     }
 
     /**
+     * Returns typed instance of class.
      * @param object the object to provide the class for
      * @param <T> the type
      * @return the class of the object

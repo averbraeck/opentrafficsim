@@ -19,32 +19,11 @@ public class ParameterTypeString extends ParameterType<String>
      * Constructor.
      * @param id short name of the new ParameterTypeString
      * @param description description or full name of the new ParameterTypeString
-     */
-    public ParameterTypeString(final String id, final String description)
-    {
-        super(id, description, String.class);
-    }
-
-    /**
-     * Constructor.
-     * @param id short name of the new ParameterTypeString
-     * @param description description or full name of the new ParameterTypeString
      * @param defaultValue default value of the new ParameterTypeString
      */
     public ParameterTypeString(final String id, final String description, final String defaultValue)
     {
         super(id, description, String.class, defaultValue);
-    }
-
-    /**
-     * Constructor.
-     * @param id short name of the new ParameterTypeString
-     * @param description description or full name of the new ParameterTypeString
-     * @param constraint constraint that applies to the value of the new ParameterTypeString
-     */
-    public ParameterTypeString(final String id, final String description, final Constraint<? super String> constraint)
-    {
-        super(id, description, String.class, constraint);
     }
 
     /**

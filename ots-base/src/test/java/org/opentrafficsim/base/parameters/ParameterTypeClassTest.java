@@ -1,7 +1,6 @@
 package org.opentrafficsim.base.parameters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -9,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
@@ -30,22 +30,10 @@ class ParameterTypeClassTest
     @Test
     void testConstructorWithoutDefaultAndConstraint() throws ParameterException
     {
-        ParameterTypeClass<Number> pt1 = new ParameterTypeClass<>("id1", "desc1", Number.class);
-        assertEquals("id1", pt1.getId());
-        assertEquals("desc1", pt1.getDescription());
-        assertNotNull(pt1.getValueClass());
-
         ParameterTypeClass<Number> pt2 = new ParameterTypeClass<>("id2", "desc2", Number.class, Integer.class);
         assertEquals("id2", pt2.getId());
         assertEquals("desc2", pt2.getDescription());
         assertEquals(Integer.class, pt2.getDefaultValue());
-
-        @SuppressWarnings("unchecked")
-        Constraint<Class<? extends Number>> constraint3 = mock(Constraint.class);
-        ParameterTypeClass<Number> pt3 = new ParameterTypeClass<>("id3", "desc3", Number.class, constraint3);
-        assertEquals("id3", pt3.getId());
-        assertEquals("desc3", pt3.getDescription());
-        assertEquals(constraint3, pt3.getConstraint());
 
         @SuppressWarnings("unchecked")
         Constraint<Class<? extends Number>> constraint4 = mock(Constraint.class);
@@ -64,7 +52,7 @@ class ParameterTypeClassTest
     @Test
     void testPrintValueReturnsSimpleName() throws ParameterException
     {
-        ParameterTypeClass<Number> pt5 = new ParameterTypeClass<>("id5", "desc5", Number.class);
+        ParameterTypeClass<Number> pt5 = new ParameterTypeClass<>("id5", "desc5", Number.class, Acceleration.class);
         Parameters parameters = mock(Parameters.class);
         // this way of setting the return value solves difficult generics (Class<Integer> not being a Class<? extends Number)
         doReturn(Integer.class).when(parameters).getParameter(pt5);
@@ -72,7 +60,7 @@ class ParameterTypeClassTest
         assertEquals("Integer", result);
         verify(parameters, times(1)).getParameter(pt5);
 
-        ParameterTypeClass<Number> pt6 = new ParameterTypeClass<>("id6", "desc6", Number.class);
+        ParameterTypeClass<Number> pt6 = new ParameterTypeClass<>("id6", "desc6", Number.class, Acceleration.class);
         when(parameters.getParameter(pt6)).thenThrow(new ParameterException("error"));
         assertThrows(ParameterException.class, () -> pt6.printValue(parameters));
         verify(parameters, times(1)).getParameter(pt6);
@@ -87,7 +75,9 @@ class ParameterTypeClassTest
     {
         Constraint<Class<? extends Number>> constraint = mock(Constraint.class);
         when(constraint.toString()).thenReturn("MyConstraint");
-        ParameterTypeClass<Number> pt = new ParameterTypeClass<>("id7", "desc7", Number.class, constraint);
+        when(constraint.failMessage()).thenReturn("MyFailMessage");
+        when(constraint.accept(Acceleration.class)).thenReturn(true);
+        ParameterTypeClass<Number> pt = new ParameterTypeClass<>("id7", "desc7", Number.class, Acceleration.class, constraint);
         String result = pt.toString();
         assertEquals("ParameterTypeClass [MyConstraint]", result);
     }

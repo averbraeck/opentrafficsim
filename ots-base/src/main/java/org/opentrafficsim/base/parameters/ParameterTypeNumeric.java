@@ -1,7 +1,6 @@
 package org.opentrafficsim.base.parameters;
 
 import org.opentrafficsim.base.parameters.constraint.Constraint;
-//import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Wrapper class for parameters of any quantity in JUnits, or double, integer, etc.
@@ -18,17 +17,6 @@ public abstract class ParameterTypeNumeric<T extends Number> extends ParameterTy
 {
 
     /**
-     * Constructor without default value and check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     */
-    public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass)
-    {
-        super(id, description, valueClass);
-    }
-
-    /**
      * Constructor with default value, without check.
      * @param id Short name of parameter.
      * @param description Parameter description or full name.
@@ -38,19 +26,6 @@ public abstract class ParameterTypeNumeric<T extends Number> extends ParameterTy
     public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass, final T defaultValue)
     {
         super(id, description, valueClass, defaultValue);
-    }
-
-    /**
-     * Constructor without default value, with check.
-     * @param id Short name of parameter.
-     * @param description Parameter description or full name.
-     * @param valueClass Class of the value.
-     * @param constraint Constraint for parameter values.
-     */
-    public ParameterTypeNumeric(final String id, final String description, final Class<T> valueClass,
-            final Constraint<? super T> constraint)
-    {
-        super(id, description, valueClass, constraint);
     }
 
     /**

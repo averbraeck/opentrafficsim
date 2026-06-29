@@ -11,15 +11,6 @@ package org.opentrafficsim.base.parameters;
  */
 public class ParameterTypeBoolean extends ParameterType<Boolean>
 {
-    /**
-     * Construct a new ParameterTypeBoolean without default value.
-     * @param id short name of the new ParameterTypeBoolean
-     * @param description parameter description or full name of the new ParameterTypeBoolean
-     */
-    public ParameterTypeBoolean(final String id, final String description)
-    {
-        super(id, description, Boolean.class);
-    }
 
     /**
      * Construct a new ParameterTypeBoolean with default value.

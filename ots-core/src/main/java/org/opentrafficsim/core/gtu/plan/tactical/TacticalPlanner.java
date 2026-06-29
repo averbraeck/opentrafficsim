@@ -3,7 +3,6 @@ package org.opentrafficsim.core.gtu.plan.tactical;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.Perception;
@@ -36,11 +35,6 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
 {
-
-    /** Parameter type for tactical planner. */
-    @SuppressWarnings("rawtypes")
-    ParameterTypeClass<TacticalPlanner> TACTICAL_PLANNER =
-            new ParameterTypeClass<>("tac.plan.", "Tactical planner", TacticalPlanner.class);
 
     /**
      * Returns the GTU.

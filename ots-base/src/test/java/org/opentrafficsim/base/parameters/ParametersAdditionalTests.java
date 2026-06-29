@@ -35,11 +35,11 @@ class ParametersAdditionalTests
     {
         Parameters parameters = mock(Parameters.class);
 
-        ParameterTypeDouble pt1 = new ParameterTypeDouble("id1", "descr1");
+        ParameterTypeDouble pt1 = new ParameterTypeDouble("id1", "descr1", 0.0);
         when(parameters.getParameter(pt1)).thenReturn(1.0);
         assertTrue(pt1.printValue(parameters).contains("1"));
 
-        ParameterTypeBoolean pt2 = new ParameterTypeBoolean("id2", "descr2");
+        ParameterTypeBoolean pt2 = new ParameterTypeBoolean("id2", "descr2", false);
         when(parameters.getParameter(pt2)).thenReturn(false);
         assertTrue(pt2.printValue(parameters).equals("false"));
 
@@ -51,7 +51,7 @@ class ParametersAdditionalTests
         when(parameters.getParameter(pt3)).thenReturn(5);
         assertTrue(pt3.printValue(parameters).equals("5"));
 
-        ParameterTypeAcceleration pt4 = new ParameterTypeAcceleration("id4", "descr4");
+        ParameterTypeAcceleration pt4 = new ParameterTypeAcceleration("id4", "descr4", Acceleration.ZERO);
         when(parameters.getParameter(pt4)).thenReturn(Acceleration.ZERO);
         assertTrue(pt4.printValue(parameters).contains("0"));
 
@@ -86,19 +86,19 @@ class ParametersAdditionalTests
         ParameterTypeInteger pt1b = new ParameterTypeInteger("id1", "descr1", 10, NumericConstraint.POSITIVE);
         ParameterTypeInteger pt2 = new ParameterTypeInteger("id1", "descr2", 10, NumericConstraint.POSITIVE);
         ParameterTypeInteger pt3 = new ParameterTypeInteger("id1", "descr1", 11, NumericConstraint.POSITIVE);
-        ParameterTypeInteger pt4 = new ParameterTypeInteger("id1", "descr1", NumericConstraint.POSITIVE);
         assertTrue(pt1.equals(pt1));
         assertTrue(pt1.equals(pt1b));
         assertFalse(pt1.equals(null));
         assertFalse(pt1.equals(pt2));
         assertFalse(pt1.equals(pt3));
-        assertFalse(pt4.equals(pt1));
 
         /**
          * Test class for equal class yet different value class.
          */
         class ParameterTypeObject extends ParameterType<Object>
         {
+            private static final Object defaultValue = new Object();
+
             /**
              * Constructor.
              * @param id id
@@ -107,7 +107,7 @@ class ParametersAdditionalTests
              */
             ParameterTypeObject(final String id, final String description, final Class<Object> valueClass)
             {
-                super(id, description, valueClass);
+                super(id, description, valueClass, defaultValue);
             }
         }
 
@@ -140,22 +140,6 @@ class ParametersAdditionalTests
 
         // toString
         assertTrue(setA.toString().contains("Parameters"));
-
-        /**
-         * Test class to hold parameter types.
-         */
-        final class NoDefaultTypeHolder
-        {
-            /** Constructor. */
-            private NoDefaultTypeHolder()
-            {
-            }
-
-            /** Without default giving troubles. */
-            @SuppressWarnings("unused")
-            public static final ParameterTypeInteger type = new ParameterTypeInteger("int", "no-default int");
-        }
-        assertThrows(OtsRuntimeException.class, () -> setA.setDefaultParameters(NoDefaultTypeHolder.class));
     }
 
 }

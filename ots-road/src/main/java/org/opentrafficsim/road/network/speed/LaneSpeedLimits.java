@@ -149,10 +149,10 @@ public class LaneSpeedLimits
     }
 
     /**
-     * Returns the applicable speed limits for the given GTU type, position and time-of-day.
+     * Returns the applicable speed limits for the given GTU type and time-of-day.
      * @param gtuType GTU type
      * @param timeOfDay time-of-day
-     * @return applicable speed limits for the given GTU type, position and time-of-day
+     * @return applicable speed limits for the given GTU type and time-of-day
      */
     public SpeedLimits getSpeedLimits(final GtuType gtuType, final Duration timeOfDay)
     {
@@ -168,9 +168,9 @@ public class LaneSpeedLimits
     }
 
     /**
-     * Returns the local speed limit at the given position and time-of-day.
+     * Returns the local speed limit at the given time-of-day.
      * @param timeOfDay time-of-day
-     * @return local speed limit at the given position and time-of-day
+     * @return local speed limit at the given time-of-day
      */
     private LocalSpeedLimit getLocalSpeedLimit(final Duration timeOfDay)
     {

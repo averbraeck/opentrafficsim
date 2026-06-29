@@ -16,16 +16,6 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration>
 {
 
     /**
-     * Construct a new ParameterTypeDuration without default value and check.
-     * @param id short name of the new ParameterTypeDuration
-     * @param description parameter description or full name of the new ParameterTypeDuration
-     */
-    public ParameterTypeDuration(final String id, final String description)
-    {
-        super(id, description, Duration.class);
-    }
-
-    /**
      * Construct a new ParameterTypeDuration with default value, without check.
      * @param id short name of the new ParameterTypeDuration
      * @param description parameter description or full name of the new ParameterTypeDuration
@@ -34,17 +24,6 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration>
     public ParameterTypeDuration(final String id, final String description, final Duration defaultValue)
     {
         super(id, description, Duration.class, defaultValue);
-    }
-
-    /**
-     * Construct a new ParameterTypeDuration without default value, with check.
-     * @param id short name of the new ParameterTypeDuration
-     * @param description parameter description or full name of the new ParameterTypeDuration
-     * @param constraint Constraint for parameter values
-     */
-    public ParameterTypeDuration(final String id, final String description, final Constraint<? super Duration> constraint)
-    {
-        super(id, description, Duration.class, constraint);
     }
 
     /**

@@ -16,16 +16,6 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double>
 {
 
     /**
-     * Construct a new ParameterTypeDouble without default value and check.
-     * @param id short name of the new ParameterTypeDouble
-     * @param description parameter description or full name of the new ParameterTypeDouble
-     */
-    public ParameterTypeDouble(final String id, final String description)
-    {
-        super(id, description, Double.class);
-    }
-
-    /**
      * Construct a new ParameterTypeDouble with default value, without check.
      * @param id short name of the new ParameterTypeDouble
      * @param description parameter description or full name of the new ParameterTypeDouble
@@ -34,17 +24,6 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double>
     public ParameterTypeDouble(final String id, final String description, final double defaultValue)
     {
         super(id, description, Double.class, defaultValue);
-    }
-
-    /**
-     * Construct a new ParameterTypeDouble without default value, with check.
-     * @param id short name of the new ParameterTypeDouble
-     * @param description parameter description or full name of the new ParameterTypeDouble
-     * @param constraint constraint for parameter values
-     */
-    public ParameterTypeDouble(final String id, final String description, final Constraint<? super Double> constraint)
-    {
-        super(id, description, Double.class, constraint);
     }
 
     /**

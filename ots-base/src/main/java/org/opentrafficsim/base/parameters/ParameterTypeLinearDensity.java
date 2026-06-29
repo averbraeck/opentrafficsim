@@ -16,16 +16,6 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
 {
 
     /**
-     * Construct a new ParameterTypeLinearDensity without default value and check.
-     * @param id short name of the new ParameterTypeLinearDensity
-     * @param description parameter description or full name of the new ParameterTypeLinearDensity
-     */
-    public ParameterTypeLinearDensity(final String id, final String description)
-    {
-        super(id, description, LinearDensity.class);
-    }
-
-    /**
      * Construct a new ParameterTypeLinearDensity with default value, without check.
      * @param id short name of the new ParameterTypeLinearDensity
      * @param description parameter description or full name of the new ParameterTypeLinearDensity
@@ -34,18 +24,6 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
     public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue)
     {
         super(id, description, LinearDensity.class, defaultValue);
-    }
-
-    /**
-     * Construct a new ParameterTypeLinearDensity without default value, with check.
-     * @param id short name of the new ParameterTypeLinearDensity
-     * @param description parameter description or full name of the new ParameterTypeLinearDensity
-     * @param constraint constraint for parameter values
-     */
-    public ParameterTypeLinearDensity(final String id, final String description,
-            final Constraint<? super LinearDensity> constraint)
-    {
-        super(id, description, LinearDensity.class, constraint);
     }
 
     /**

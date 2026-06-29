@@ -16,16 +16,6 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length>
 {
 
     /**
-     * Constructor without default value and check.
-     * @param id short name of the new ParameterTypeLength
-     * @param description parameter description or full name of the new ParameterTypeLength
-     */
-    public ParameterTypeLength(final String id, final String description)
-    {
-        super(id, description, Length.class);
-    }
-
-    /**
      * Construct a new ParameterTypeLength with default value, without check.
      * @param id short name of the new ParameterTypeLength
      * @param description parameter description or full name of the new ParameterTypeLength
@@ -34,17 +24,6 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length>
     public ParameterTypeLength(final String id, final String description, final Length defaultValue)
     {
         super(id, description, Length.class, defaultValue);
-    }
-
-    /**
-     * Construct a new ParameterTypeLength without default value, with check.
-     * @param id short name of the new ParameterTypeLength
-     * @param description parameter description or full name of the new ParameterTypeLength
-     * @param constraint constraint for parameter values
-     */
-    public ParameterTypeLength(final String id, final String description, final Constraint<? super Length> constraint)
-    {
-        super(id, description, Length.class, constraint);
     }
 
     /**

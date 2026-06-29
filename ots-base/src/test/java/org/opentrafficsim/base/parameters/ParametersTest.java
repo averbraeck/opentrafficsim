@@ -78,7 +78,6 @@ class ParametersTest implements ConstraintInterface
         ParameterTypeLength a = new ParameterTypeLength("a", "along", defaultValue);
         assertEquals("a", a.getId(), "Parameter type id not properly set.");
         assertEquals("along", a.getDescription(), "Parameter type description not properly set.");
-        assertTrue(a.hasDefaultValue(), "has a default value");
         try
         {
             assertEquals(defaultValue, a.getDefaultValue(), "Parameter type default value not properly set.");
@@ -87,22 +86,7 @@ class ParametersTest implements ConstraintInterface
         {
             fail("Parameter type default value given in constructor was not set.");
         }
-
-        // Check ParameterType construction (id, description, class)
-        ParameterTypeLength b = new ParameterTypeLength("b", "blong");
-        assertEquals("b", b.getId(), "Parameter type id not properly set.");
-        assertEquals("blong", b.getDescription(), "Parameter type description not properly set.");
-        assertFalse(b.hasDefaultValue(), "does not have a default value");
-        try
-        {
-            b.getDefaultValue();
-            fail("Parameter type returned a default value, while none was provided.");
-        }
-        catch (ParameterException pe)
-        {
-            // ignore expected exception
-        }
-        assertTrue(b.toString().contains("ParameterType"), "toString returns something with ParameterType in it");
+        assertTrue(a.toString().contains("ParameterType"), "toString returns something with ParameterType in it");
     }
 
     /**
@@ -137,29 +121,29 @@ class ParametersTest implements ConstraintInterface
         checkDefaultValue(0.99, ATLEASTONE, true);
 
         // Check set values that should work
-        checkSetValue(1.0, POSITIVE, false);
-        checkSetValue(-1.0, NEGATIVE, false);
-        checkSetValue(1.0, POSITIVEZERO, false);
-        checkSetValue(0.0, POSITIVEZERO, false);
-        checkSetValue(-1.0, NEGATIVEZERO, false);
-        checkSetValue(-0.0, NEGATIVEZERO, false);
-        checkSetValue(-1.0, NONZERO, false);
-        checkSetValue(1.0, NONZERO, false);
-        checkSetValue(0.0, UNITINTERVAL, false);
-        checkSetValue(0.5, UNITINTERVAL, false);
-        checkSetValue(1.0, UNITINTERVAL, false);
-        checkSetValue(1.0, ATLEASTONE, false);
+        checkSetValue(1.0, 1.0, POSITIVE, false);
+        checkSetValue(-1.0, -1.0, NEGATIVE, false);
+        checkSetValue(1.0, 1.0, POSITIVEZERO, false);
+        checkSetValue(0.0, 0.0, POSITIVEZERO, false);
+        checkSetValue(-1.0, -1.0, NEGATIVEZERO, false);
+        checkSetValue(-0.0, -0.0, NEGATIVEZERO, false);
+        checkSetValue(-1.0, -1.0, NONZERO, false);
+        checkSetValue(1.0, 1.0, NONZERO, false);
+        checkSetValue(0.0, 0.0, UNITINTERVAL, false);
+        checkSetValue(0.5, 0.5, UNITINTERVAL, false);
+        checkSetValue(1.0, 1.0, UNITINTERVAL, false);
+        checkSetValue(1.0, 1.0, ATLEASTONE, false);
         // Check set values that should not work
-        checkSetValue(-1.0, POSITIVE, true);
-        checkSetValue(0.0, POSITIVE, true);
-        checkSetValue(1.0, NEGATIVE, true);
-        checkSetValue(0.0, NEGATIVE, true);
-        checkSetValue(-1.0, POSITIVEZERO, true);
-        checkSetValue(1.0, NEGATIVEZERO, true);
-        checkSetValue(0.0, NONZERO, true);
-        checkSetValue(-0.01, UNITINTERVAL, true);
-        checkSetValue(1.01, UNITINTERVAL, true);
-        checkSetValue(0.99, ATLEASTONE, true);
+        checkSetValue(-1.0, 1.0, POSITIVE, true);
+        checkSetValue(0.0, 1.0, POSITIVE, true);
+        checkSetValue(1.0, -1.0, NEGATIVE, true);
+        checkSetValue(0.0, -1.0, NEGATIVE, true);
+        checkSetValue(-1.0, 0.0, POSITIVEZERO, true);
+        checkSetValue(1.0, 0.0, NEGATIVEZERO, true);
+        checkSetValue(0.0, 1.0, NONZERO, true);
+        checkSetValue(-0.01, 1.0, UNITINTERVAL, true);
+        checkSetValue(1.01, 1.0, UNITINTERVAL, true);
+        checkSetValue(0.99, 1.0, ATLEASTONE, true);
     }
 
     /**
@@ -191,15 +175,18 @@ class ParametersTest implements ConstraintInterface
     /**
      * Checks a set value.
      * @param value Value to check.
+     * @param defaultValue default value for parameter type
      * @param constraint Constraint to perform.
      * @param shouldFail Whether the check should fail.
      */
-    private void checkSetValue(final double value, final Constraint<Number> constraint, final boolean shouldFail)
+    private void checkSetValue(final double value, final double defaultValue, final Constraint<Number> constraint,
+            final boolean shouldFail)
     {
         try
         {
             Parameters params = new ParameterSet();
-            ParameterTypeAcceleration a = new ParameterTypeAcceleration("a", "along", constraint);
+            ParameterTypeAcceleration a =
+                    new ParameterTypeAcceleration("a", "along", Acceleration.ofSI(defaultValue), constraint);
             params.setParameter(a, new Acceleration(value, AccelerationUnit.SI));
             if (shouldFail)
             {
@@ -268,7 +255,7 @@ class ParametersTest implements ConstraintInterface
     }
 
     /** Helper parameter type for custom constraint checks. */
-    private static ParameterTypeSpeed v1 = new ParameterTypeSpeed("v1", "v1long")
+    private static ParameterTypeSpeed v1 = new ParameterTypeSpeed("v1", "v1long", Speed.ZERO)
     {
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
@@ -280,7 +267,7 @@ class ParametersTest implements ConstraintInterface
     };
 
     /** Helper parameter type for custom constraint checks. */
-    private static ParameterTypeSpeed v2 = new ParameterTypeSpeed("v2", "v2long")
+    private static ParameterTypeSpeed v2 = new ParameterTypeSpeed("v2", "v2long", Speed.ZERO)
     {
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
@@ -432,8 +419,8 @@ class ParametersTest implements ConstraintInterface
                 "Equal double values from different parameter types should be equal.");
 
         // equal DoubleScalar.Rel values should be equal from different characteristic sets
-        ParameterTypeLinearDensity b1 = new ParameterTypeLinearDensity("b", "blong");
-        ParameterTypeLinearDensity b2 = new ParameterTypeLinearDensity("b", "blong");
+        ParameterTypeLinearDensity b1 = new ParameterTypeLinearDensity("b", "blong", LinearDensity.ZERO);
+        ParameterTypeLinearDensity b2 = new ParameterTypeLinearDensity("b", "blong", LinearDensity.ZERO);
         params1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
         params2.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
         assertEquals(params1.getParameter(b1), params2.getParameter(b2),
@@ -479,7 +466,7 @@ class ParametersTest implements ConstraintInterface
         }
 
         // set null value
-        ParameterTypeSpeed v = new ParameterTypeSpeed("v", "vlong");
+        ParameterTypeSpeed v = new ParameterTypeSpeed("v", "vlong", Speed.ZERO);
         Parameters params = new ParameterSet();
         try
         {
@@ -538,21 +525,26 @@ class ParametersTest implements ConstraintInterface
         ParameterType<?> ld;
         if (clazz.equals(ParameterTypeNumeric.class))
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class).newInstance("v", "vcong",
-                    getClass(defaultValue));
+            ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, defaultValue.getClass()).newInstance("v",
+                    "vcong", getClass(defaultValue), defaultValue);
+        }
+        else if (clazz.equals(ParameterTypeInteger.class))
+        {
+            ld = clazz.getDeclaredConstructor(String.class, String.class, int.class).newInstance("v", "vcong", defaultValue);
+        }
+        else if (clazz.equals(ParameterTypeDouble.class))
+        {
+            ld = clazz.getDeclaredConstructor(String.class, String.class, double.class).newInstance("v", "vcong", defaultValue);
+        }
+        else if (clazz.equals(ParameterTypeBoolean.class))
+        {
+            ld = clazz.getDeclaredConstructor(String.class, String.class, boolean.class).newInstance("v", "vcong",
+                    defaultValue);
         }
         else
         {
-            ld = clazz.getDeclaredConstructor(String.class, String.class).newInstance("v", "vcong");
-        }
-        try
-        {
-            ld.getDefaultValue();
-            fail("Could obtain a default value that was not set.");
-        }
-        catch (ParameterException pe)
-        {
-            // should fail
+            ld = clazz.getDeclaredConstructor(String.class, String.class, defaultValue.getClass()).newInstance("v", "vcong",
+                    defaultValue);
         }
         String toStringResult = ld.toString();
         // System.out.println("tostring yields \"" + toStringResult + "\"");
@@ -564,22 +556,13 @@ class ParametersTest implements ConstraintInterface
         {
             if (clazz.equals(ParameterTypeNumeric.class))
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, Constraint.class).newInstance("v",
-                        "vcong", getClass(defaultValue), POSITIVE);
+                ld = clazz.getDeclaredConstructor(String.class, String.class, Class.class, defaultValue.getClass(),
+                        Constraint.class).newInstance("v", "vcong", getClass(defaultValue), defaultValue, POSITIVE);
             }
             else
             {
-                ld = clazz.getDeclaredConstructor(String.class, String.class, Constraint.class).newInstance("v", "vcong",
-                        POSITIVE);
-            }
-            try
-            {
-                ld.getDefaultValue();
-                fail("Could obtain a default value that was not set.");
-            }
-            catch (ParameterException pe)
-            {
-                // should fail
+                ld = clazz.getDeclaredConstructor(String.class, String.class, defaultValue.getClass(), Constraint.class)
+                        .newInstance("v", "vcong", defaultValue, POSITIVE);
             }
         }
 

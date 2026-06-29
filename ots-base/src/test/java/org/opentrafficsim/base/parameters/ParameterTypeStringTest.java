@@ -26,22 +26,10 @@ class ParameterTypeStringTest
     @Test
     void testConstructors() throws ParameterException
     {
-        ParameterTypeString pts = new ParameterTypeString("id1", "description1");
-        assertEquals("id1", pts.getId());
-        assertEquals("description1", pts.getDescription());
-        assertEquals(String.class, pts.getValueClass());
-
         ParameterTypeString pts2 = new ParameterTypeString("id2", "description2", "default");
         assertEquals("id2", pts2.getId());
         assertEquals("description2", pts2.getDescription());
         assertEquals("default", pts2.getDefaultValue());
-
-        @SuppressWarnings("unchecked")
-        Constraint<String> constraint3 = mock(Constraint.class);
-        ParameterTypeString pts3 = new ParameterTypeString("id3", "description3", constraint3);
-        assertEquals("id3", pts3.getId());
-        assertEquals("description3", pts3.getDescription());
-        assertEquals(constraint3, pts3.getConstraint());
 
         @SuppressWarnings("unchecked")
         Constraint<String> constraint4 = mock(Constraint.class);
@@ -59,7 +47,7 @@ class ParameterTypeStringTest
     @Test
     void testToString()
     {
-        ParameterTypeString pts = new ParameterTypeString("myId", "myDescription");
+        ParameterTypeString pts = new ParameterTypeString("myId", "myDescription", "default");
         String result = pts.toString();
         assertTrue(result.contains("myId"));
         assertTrue(result.contains("myDescription"));
