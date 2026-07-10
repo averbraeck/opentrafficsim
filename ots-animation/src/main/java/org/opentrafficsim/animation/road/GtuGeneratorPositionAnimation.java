@@ -56,6 +56,9 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
         path.lineTo(x, -1.0);
     }
 
+    /** Queue text. */
+    private final Queue queue;
+
     /**
      * Constructor.
      * @param source source.
@@ -64,7 +67,14 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
     public GtuGeneratorPositionAnimation(final GtuGeneratorPositionData source, final Contextualized contextProvider)
     {
         super(source, contextProvider);
-        new Queue(source, contextProvider);
+        this.queue = new Queue(source, contextProvider);
+    }
+
+    @Override
+    public synchronized void destroy(final Contextualized contextProvider)
+    {
+        super.destroy(contextProvider);
+        this.queue.destroy(contextProvider);
     }
 
     @Override
@@ -78,14 +88,6 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
 
     /**
      * Paints a queue counter with a GtuGeneratorPosition.
-     * <p>
-     * Copyright (c) 2022-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Alexander Verbraeck
-     * @author Peter Knoppers
-     * @author Wouter Schakel
      */
     public static class Queue extends RenderableTextSource<GtuGeneratorPositionData, Queue>
     {
@@ -103,12 +105,6 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
 
     /**
      * GtuGeneratorPositionData provides the information required to draw a GTU generator position.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
      */
     public interface GtuGeneratorPositionData extends OtsShape
     {
