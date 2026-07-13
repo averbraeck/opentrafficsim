@@ -191,6 +191,22 @@ public class PropertiesStore
     }
 
     /**
+     * Returns the property value, or the provided default if there is no value mapped to the key. In the latter case, the
+     * default value will be stored as the property value.
+     * @param key key
+     * @param defaultValue default value
+     * @return property value, or the provided default if there is no value mapped to the key
+     */
+    public String getPropertyOrDefault(final String key, final String defaultValue)
+    {
+        if (!this.properties.containsKey(key))
+        {
+            setProperty(key, defaultValue, true);
+        }
+        return getProperty(key);
+    }
+
+    /**
      * Sets a property value.
      * @param key key
      * @param value value
@@ -450,6 +466,22 @@ public class PropertiesStore
     }
 
     /**
+     * Returns the property value, or the provided default if there is no value mapped to the key. In the latter case, the
+     * default value will be stored as the property value.
+     * @param key key
+     * @param defaultValue default value
+     * @return property value, or the provided default if there is no value mapped to the key
+     */
+    public Color getColorOrDefault(final String key, final Color defaultValue)
+    {
+        if (!this.properties.containsKey(key))
+        {
+            setProperty(key, valueToString(defaultValue), true);
+        }
+        return getColor(key);
+    }
+
+    /**
      * Returns color from string.
      * @param colorString color as string
      * @return color
@@ -513,6 +545,22 @@ public class PropertiesStore
     }
 
     /**
+     * Returns the property value, or the provided default if there is no value mapped to the key. In the latter case, the
+     * default value will be stored as the property value.
+     * @param key key
+     * @param defaultValue default value
+     * @return property value, or the provided default if there is no value mapped to the key
+     */
+    public Integer getIntegerOrDefault(final String key, final int defaultValue)
+    {
+        if (!this.properties.containsKey(key))
+        {
+            setProperty(key, valueToString(defaultValue), true);
+        }
+        return getInteger(key);
+    }
+
+    /**
      * Set int value.
      * @param key key
      * @param value value
@@ -559,6 +607,22 @@ public class PropertiesStore
     public Optional<Boolean> getOptionalBoolean(final String key)
     {
         return Optional.ofNullable(getBoolean(key));
+    }
+
+    /**
+     * Returns the property value, or the provided default if there is no value mapped to the key. In the latter case, the
+     * default value will be stored as the property value.
+     * @param key key
+     * @param defaultValue default value
+     * @return property value, or the provided default if there is no value mapped to the key
+     */
+    public Boolean getIntegerOrDefault(final String key, final boolean defaultValue)
+    {
+        if (!this.properties.containsKey(key))
+        {
+            setProperty(key, valueToString(defaultValue), true);
+        }
+        return getBoolean(key);
     }
 
     /**
