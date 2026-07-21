@@ -26,7 +26,6 @@ import de.javagl.treetable.JTreeTable;
  * </p>
  * @author Wouter Schakel
  */
-@SuppressWarnings("serial") // all the defined AbstractAction's want a serialVersionUID, let's ignore to prevent code cluttering
 public class Actions
 {
 

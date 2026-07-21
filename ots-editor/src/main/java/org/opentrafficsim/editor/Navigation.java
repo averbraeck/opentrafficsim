@@ -98,7 +98,6 @@ public class Navigation
     }
 
     /** Go-back action. */
-    @SuppressWarnings("serial")
     private final Action goBackAction = new AbstractAction()
     {
         {
@@ -134,7 +133,6 @@ public class Navigation
     }
 
     /** Go-to-coupled-item action. */
-    @SuppressWarnings("serial")
     private final Action goToCoupledNodeAction = new AbstractAction()
     {
         {

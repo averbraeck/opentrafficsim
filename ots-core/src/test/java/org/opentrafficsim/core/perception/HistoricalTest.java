@@ -258,7 +258,6 @@ public class HistoricalTest
      * @param str1 value 1
      * @return map with 1 value pair
      */
-    @SuppressWarnings("serial")
     private Map<Integer, String> asMap(final int int1, final String str1)
     {
         return new LinkedHashMap<Integer, String>()
@@ -277,7 +276,6 @@ public class HistoricalTest
      * @param str2 value 2
      * @return map with 2 value pairs
      */
-    @SuppressWarnings("serial")
     private Map<Integer, String> asMap(final int int1, final String str1, final int int2, final String str2)
     {
         return new LinkedHashMap<Integer, String>()

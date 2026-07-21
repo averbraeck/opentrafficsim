@@ -41,7 +41,6 @@ public interface OtsSimulationPanelDecorator
             new SpeedGtuColorer(), new AccelerationGtuColorer());
 
     /** Standard drawing colors for GTU types. */
-    @SuppressWarnings("serial")
     ImmutableMap<GtuType, Color> GTU_TYPE_COLORS = new ImmutableLinkedHashMap<>(new LinkedHashMap<>()
     {
         {
@@ -55,7 +54,6 @@ public interface OtsSimulationPanelDecorator
     }, Immutable.WRAP);
 
     /** Standard markers for GTU types. */
-    @SuppressWarnings("serial")
     ImmutableMap<GtuType, GtuMarker> GTU_TYPE_MARKERS = new ImmutableLinkedHashMap<>(new LinkedHashMap<>()
     {
         {
