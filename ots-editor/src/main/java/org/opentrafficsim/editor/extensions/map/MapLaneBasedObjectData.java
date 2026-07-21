@@ -3,6 +3,8 @@ package org.opentrafficsim.editor.extensions.map;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.swing.SwingUtilities;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
@@ -218,24 +220,54 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             if ("Id".equals(attribute))
             {
                 this.id = value == null ? "" : value;
-                return;
             }
             else if ("Link".equals(attribute))
             {
                 XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link").orElse(null);
                 setLinkNode(linkNode);
+                setLocation();
             }
             else if ("Lane".equals(attribute))
             {
                 setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
+                setLocation();
             }
             else if ("Position".equals(attribute))
             {
                 setValue((v) -> this.position = v, Adapters.get(LengthBeginEnd.class), getNode(), "Position");
+                setLocation();
             }
         }
-        // else: MapLinkData.LAYOUT_REBUILT
-        setLocation();
+        else
+        {
+            // MapLinkData.LAYOUT_REBUILT
+            setLocation();
+        }
+        SwingUtilities.invokeLater(() -> getMap().update());
+    }
+
+    /**
+     * Return center line of the coupled lane.
+     * @return center line of the coupled lane
+     */
+    public Optional<PolyLine2d> getLaneCenterLine()
+    {
+        if (this.lane == null || this.lastLinkNode == null)
+        {
+            return Optional.empty();
+        }
+        Optional<MapData> linkDataOptional = getMap().getData(this.lastLinkNode);
+        if (linkDataOptional.isEmpty())
+        {
+            return Optional.empty();
+        }
+        MapLinkData linkData = (MapLinkData) linkDataOptional.get();
+        MapLaneData laneData = linkData.getLaneData(this.lane);
+        if (laneData == null)
+        {
+            return Optional.empty();
+        }
+        return Optional.of(laneData.getCenterLine());
     }
 
     /**
@@ -262,16 +294,9 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             return;
         }
         this.positionFromStart =
-                ParseUtil.parseLengthBeginEnd(this.position, Length.ofSI(linkData.getCenterLine().getLength()));
+                ParseUtil.parseLengthBeginEnd(this.position, Length.ofSI(laneData.getCenterLine().getLength()));
 
-        Length w = laneData.getWidth(this.positionFromStart);
-        if (this.laneWidth != null && !this.laneWidth.equals(w))
-        {
-            // animation (see EditorMap.setValid) stores static data that depends on the lane width
-            getMap().reinitialize(getNode());
-            return;
-        }
-        this.laneWidth = w;
+        this.laneWidth = laneData.getWidth(this.positionFromStart);
         double w45 = 0.45 * getLaneWidth().si;
         DirectedPoint2d point = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);

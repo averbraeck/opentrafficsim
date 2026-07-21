@@ -359,7 +359,7 @@ public class DefaultAnimationFactory implements EventListener
             {
                 SinkDetector detector = (SinkDetector) object;
                 Renderable2d<LaneDetectorData> objectAnimation =
-                        new LaneDetectorAnimation<>(new AnimationLaneDetectorData(detector), this.simulator, Color.ORANGE);
+                        new LaneDetectorAnimation<>(new AnimationLaneDetectorData(detector), this.simulator, Color.YELLOW);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof TrafficLightDetector)

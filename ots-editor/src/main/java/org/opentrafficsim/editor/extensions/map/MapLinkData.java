@@ -11,8 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.swing.SwingUtilities;
@@ -66,6 +66,10 @@ import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseDa
 import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
+import org.opentrafficsim.xml.generated.Link.Arc;
+import org.opentrafficsim.xml.generated.Link.Bezier;
+import org.opentrafficsim.xml.generated.Link.Clothoid;
+import org.opentrafficsim.xml.generated.Link.Polyline;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
@@ -166,6 +170,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /** Regular node of this connector, if it is a connector. */
     private XsdTreeNode connectorNode;
 
+    /** Whether link geometry is dirty. */
+    private boolean dirtyGeometry = true;
+
+    /** Whether layout is dirty. */
+    private boolean dirtyLayout = true;
+
     /**
      * Constructor.
      * @param map map.
@@ -186,18 +196,21 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
                 this.centroid = replaceNode(this.centroid, linkNode.getCoupledNodeAttribute("Centroid").orElse(null));
                 this.connectorNode = replaceNode(this.connectorNode, linkNode.getCoupledNodeAttribute("Node").orElse(null));
-                buildDesignLine();
+                setDirtyEndCheckValidity();
             });
             return;
         }
-        linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-        linkNode.getChild(1).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-        this.shapeListener.shapeNode = linkNode.getChild(0);
+        if (Set.of("Straight", "PolyLine", "Bezier", "Clothoid", "Arc").contains(linkNode.getChild(0).getNodeName()))
+        {
+            linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+            this.shapeListener.shapeNode = linkNode.getChild(0);
+        }
 
         // as RoadLayout is the default, a setOption() never triggers this (for DefinedRoadLayout this is not required)
         SwingUtilities.invokeLater(() ->
         {
             XsdTreeNode layout = linkNode.getChild(1);
+            layout.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
             if (layout.getOption().equals(layout))
             {
                 notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {layout, layout, layout}));
@@ -222,7 +235,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 XsdTreeNode shape = linkNode.getChild(0);
                 this.shapeListener.notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
 
-                buildDesignLine();
+                setDirtyEndCheckValidity();
             });
         }
     }
@@ -253,26 +266,52 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         if (this.priorityAnimation != null)
         {
-            this.priorityAnimation.destroy(getMap().getContextualized());
+            getMap().removeAnimation(this.priorityAnimation);
+        }
+        if (this.nodeStart != null)
+        {
+            this.nodeStart.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        }
+        if (this.nodeEnd != null)
+        {
+            this.nodeEnd.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
         this.roadLayoutNode = null;
+    }
+
+    /**
+     * Check for dirty geometry, and restore it if its dirty.
+     */
+    private void checkDirtyGeometry()
+    {
+        if (this.dirtyGeometry)
+        {
+            buildDesignLine();
+        }
+        else if (this.dirtyLayout)
+        {
+            buildLayout();
+        }
     }
 
     @Override
     public DirectedPoint2d getLocation()
     {
+        checkDirtyGeometry();
         return this.location;
     }
 
     @Override
     public Polygon2d getAbsoluteContour()
     {
+        checkDirtyGeometry();
         return this.absoluteContour;
     }
 
     @Override
     public Polygon2d getRelativeContour()
     {
+        checkDirtyGeometry();
         return this.relativeContour;
     }
 
@@ -291,13 +330,14 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     @Override
     public PolyLine2d getCenterLine()
     {
+        checkDirtyGeometry();
         return this.flattenedDesignLine;
     }
 
     @Override
     public PolyLine2d getLine()
     {
-        return OtsShape.transformLine(this.flattenedDesignLine, this.location);
+        return OtsShape.transformLine(getCenterLine(), getLocation());
     }
 
     @Override
@@ -352,7 +392,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
                 this.flattenerListener = new FlattenerListener(selected, () -> getEval());
             }
-            buildLayout();
+            this.dirtyLayout = true;
             return;
         }
         else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
@@ -368,7 +408,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 getMap().getRoadLayoutListener(this.roadLayoutNode).addListener(this, ChangeListener.CHANGE_EVENT,
                         ReferenceType.WEAK);
             }
-            buildLayout();
+            this.dirtyLayout = true;
             return;
         }
         else if (event.getType().equals(ChangeListener.CHANGE_EVENT))
@@ -383,13 +423,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
                 if (node.equals(this.roadLayoutNode) && node.reportInvalidId().isEmpty())
                 {
-                    buildLayout();
+                    this.dirtyLayout = true;
                 }
             }
             else
             {
                 // change in flattener
-                buildDesignLine();
+                setDirtyEndCheckValidity();
             }
             return;
         }
@@ -429,20 +469,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), getNode(), attribute);
         }
-        else if ("Coordinate".equals(attribute))
+        else if (!"Coordinate".equals(attribute) && !"Direction".equals(attribute))
         {
-            // this pertains to either of the nodes, to which this class also listens
-        }
-        else if ("Direction".equals(attribute))
-        {
-            // this pertains to either of the nodes, to which this class also listens
-        }
-        else
-        {
-            // other attribute, not important
+            // Coordinate and Direction pertain to either of the nodes, to which this class also listens
+            // Otherwise: other attribute, not important, do not build design line
             return;
         }
-        buildDesignLine();
+        setDirtyEndCheckValidity();
     }
 
     /**
@@ -517,7 +550,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         if (this.shapeListener.shapeNode != null && this.shapeListener.shapeNode.equals(node.getParent()))
         {
             this.shapeListener.coordinates.put(node, orNull(node.getValue(), Adapters.get(Point2d.class)));
-            buildDesignLine();
+            setDirtyEndCheckValidity();
             node.addListener(this.shapeListener, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
             node.addListener(this.shapeListener, XsdTreeNode.MOVED, ReferenceType.WEAK);
         }
@@ -538,7 +571,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             if (node.equals(key))
             {
                 it.remove();
-                buildDesignLine();
+                setDirtyEndCheckValidity();
                 node.removeListener(this.shapeListener, XsdTreeNode.VALUE_CHANGED);
                 node.removeListener(this.shapeListener, XsdTreeNode.MOVED);
                 return;
@@ -547,10 +580,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Builds the design line.
+     * Sets the link as dirty. Validity is checked such that the visualization may start to request the center line. This will
+     * then be calculated when dirty.
      */
-    private void buildDesignLine()
+    private void setDirtyEndCheckValidity()
     {
+        this.dirtyGeometry = true;
+
         // Connector
         if (this.isConnector)
         {
@@ -559,17 +595,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 setInvalid();
                 return;
             }
-            setValue((v) -> this.from = v, Adapters.get(Point2d.class), this.centroid, "Coordinate");
-            setValue((v) -> this.to = v, Adapters.get(Point2d.class), this.connectorNode, "Coordinate");
-            DirectedPoint2d fromPoint = new DirectedPoint2d(this.from, this.from.directionTo(this.to));
-            this.designLine = new Straight2d(fromPoint, this.from.distance(this.to));
-            setGeometry();
             setValid();
             return;
         }
 
         // Node
-        if (this.nodeStart == null || this.nodeEnd == null || this.nodeStart.equals(this.nodeEnd))
+        if (this.nodeStart == null || this.nodeEnd == null || this.nodeStart.equals(this.nodeEnd)
+                || this.shapeListener.shapeNode == null)
         {
             setInvalid();
             return;
@@ -581,6 +613,29 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             setInvalid();
             return;
         }
+
+        setValid();
+    }
+
+    /**
+     * Builds the design line.
+     */
+    private void buildDesignLine()
+    {
+        // TODO: move this to a parallel process?
+
+        // Connector
+        if (this.isConnector)
+        {
+            setValue((v) -> this.from = v, Adapters.get(Point2d.class), this.centroid, "Coordinate");
+            setValue((v) -> this.to = v, Adapters.get(Point2d.class), this.connectorNode, "Coordinate");
+            DirectedPoint2d fromPoint = new DirectedPoint2d(this.from, this.from.directionTo(this.to));
+            this.designLine = new Straight2d(fromPoint, this.from.distance(this.to));
+            setGeometry();
+            return;
+        }
+
+        // Node
         setValue((v) -> this.directionStart = v, Adapters.get(Direction.class), this.nodeStart, "Direction");
         double dirStart = this.directionStart == null ? 0.0 : this.directionStart.si;
         DirectedPoint2d fromPoint = new DirectedPoint2d(this.from, dirStart);
@@ -595,10 +650,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             toPoint = OtsGeometryUtil.offsetPoint(toPoint, this.offsetEnd.si);
         }
+
+        // Geometry
         this.designLine = this.shapeListener.getContiuousLine(fromPoint, toPoint);
         if (this.designLine == null)
         {
-            return;
+            this.designLine = new Straight2d(fromPoint, fromPoint.distance(toPoint));
         }
         setGeometry();
         if (this.priorityAnimation != null)
@@ -607,7 +664,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         this.priorityAnimation = new PriorityAnimation(new MapPriorityData(this), getMap().getContextualized());
         buildLayout();
-        setValid();
     }
 
     /**
@@ -622,6 +678,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).iterator());
         this.relativeContour =
                 new Polygon2d(0.0, OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
+        this.dirtyGeometry = false;
     }
 
     /**
@@ -712,10 +769,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                             CrossSectionGeometry.of(this.designLine, getFlattener(), offsetFunc, widthFunc);
                     if (node.getNodeName().equals("Lane"))
                     {
-                        MapLaneData laneData = new MapLaneData(node.getId(), getNode(), geometry);
-                        LaneAnimation lane = new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
+                        MapLaneData mapLaneData = new MapLaneData(node.getId(), getNode(), geometry);
+                        LaneAnimation lane =
+                                new LaneAnimation(mapLaneData, getMap().getContextualized(), Color.GRAY.brighter());
                         this.crossSectionElements.add(lane);
-                        this.laneData.put(node.getId(), laneData);
+                        this.laneData.put(node.getId(), mapLaneData);
                     }
                     else if (node.getNodeName().equals("Shoulder"))
                     {
@@ -738,6 +796,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             }
         }
         StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
+        this.dirtyLayout = false;
+        setValid();
         fireEvent(LAYOUT_REBUILT, this);
     }
 
@@ -907,8 +967,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
             setValue((v) -> this.offsetStart = v, Adapters.get(Length.class), getNode(), "OffsetStart");
             setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), getNode(), "OffsetEnd");
-            this.shapeListener.update();
-            buildDesignLine();
+            this.shapeListener.updateShape();
+            setDirtyEndCheckValidity();
         }
     }
 
@@ -920,7 +980,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
-        buildDesignLine();
+        setDirtyEndCheckValidity();
     }
 
     /**
@@ -1056,7 +1116,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         private ArcDirection direction;
 
         /** Polyline coordinates. */
-        public SortedMap<XsdTreeNode, Point2d> coordinates = new TreeMap<>(new Comparator<>()
+        private NavigableMap<XsdTreeNode, Point2d> coordinates = new TreeMap<>(new Comparator<>()
         {
             @Override
             public int compare(final XsdTreeNode o1, final XsdTreeNode o2)
@@ -1080,7 +1140,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
                     }
                     // later as values may not be loaded yet during loading
-                    SwingUtilities.invokeLater(() -> update());
+                    SwingUtilities.invokeLater(() -> updateShape());
                 }
                 else
                 {
@@ -1095,7 +1155,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     }
                     this.shapeNode = node;
                     this.shapeNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-                    if (this.shapeNode.getNodeName().equals("Polyline"))
+                    if (this.shapeNode.getNodeName().equals(Polyline.class.getSimpleName()))
                     {
                         for (XsdTreeNode option : this.shapeNode.getChildren())
                         {
@@ -1103,28 +1163,34 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                             option.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
                         }
                     }
-                    else if (this.shapeNode.getNodeName().equals("Clothoid"))
+                    else if (this.shapeNode.getNodeName().equals(Clothoid.class.getSimpleName()))
                     {
-                        this.shapeNode.getChild(0).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-                        for (XsdTreeNode option : this.shapeNode.getChild(0).getChildren())
+                        // later as flattener may not be loaded yet during loading
+                        SwingUtilities.invokeLater(() ->
                         {
-                            option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                        }
+                            this.shapeNode.getChild(0).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+                            for (XsdTreeNode option : this.shapeNode.getChild(0).getChildren())
+                            {
+                                option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+                            }
+                        });
                     }
-                    if (this.shapeNode.getNodeName().equals("Clothoid") || this.shapeNode.getNodeName().equals("Arc")
-                            || this.shapeNode.getNodeName().equals("Bezier"))
+                    if (this.shapeNode.getNodeName().equals(Clothoid.class.getSimpleName())
+                            || this.shapeNode.getNodeName().equals(Arc.class.getSimpleName())
+                            || this.shapeNode.getNodeName().equals(Bezier.class.getSimpleName()))
                     {
-                        setFlattenerListener();
+                        // later as flattener may not be loaded yet during loading
+                        SwingUtilities.invokeLater(() -> setFlattenerListener());
                     }
                     // later as values/coordinates may not be loaded yet during loading
-                    SwingUtilities.invokeLater(() -> update());
+                    SwingUtilities.invokeLater(() -> updateShape());
                 }
-                buildDesignLine();
+                setDirtyEndCheckValidity();
             }
             else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
             {
                 setAttribute((String) ((Object[]) event.getContent())[1]);
-                buildDesignLine();
+                setDirtyEndCheckValidity();
             }
             else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
             {
@@ -1150,6 +1216,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         case "A":
                             this.a = orNull(node.getValue(), Adapters.get(Length.class));
                             break;
+                        default:
+                            Logger.ots().warn(node.getNodeName()
+                                    + " is unknown node name of which the value is assumed to affect link center line.");
                     }
                 }
                 catch (Exception ex)
@@ -1157,13 +1226,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     // leave line as is, new value is not a valid value
                     return;
                 }
-                buildDesignLine();
+                setDirtyEndCheckValidity();
             }
             else if (event.getType().equals(XsdTreeNode.MOVED))
             {
                 // order of coordinates changed
-                update();
-                buildDesignLine();
+                updateShape();
+                setDirtyEndCheckValidity();
             }
             else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
             {
@@ -1181,7 +1250,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     }
                     MapLinkData.this.flattenerListener = null;
                 }
-                buildDesignLine();
+                setDirtyEndCheckValidity();
             }
         }
 
@@ -1203,7 +1272,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          * Update the line, clearing all fields, and setting any already available attributes (as the shape node was previously
          * selected and edited).
          */
-        private void update()
+        private void updateShape()
         {
             this.shape = null;
             this.weighted = null;
@@ -1221,7 +1290,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             switch (this.shapeNode.getNodeName())
             {
                 case "Straight":
-                    buildDesignLine();
+                    setDirtyEndCheckValidity();
                     break;
                 case "Polyline":
                     for (XsdTreeNode child : this.shapeNode.getChildren())
@@ -1236,12 +1305,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                                     "Expression adapter could not unmarshal value for polyline coordinate.");
                         }
                     }
-                    buildDesignLine();
+                    setDirtyEndCheckValidity();
                     break;
                 case "Bezier":
                     setAttribute("Shape");
                     setAttribute("Weighted");
-                    buildDesignLine();
+                    setDirtyEndCheckValidity();
                     setFlattenerListener();
                     break;
                 case "Clothoid":
@@ -1279,18 +1348,18 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                             }
                         }
                     }
-                    buildDesignLine();
+                    setDirtyEndCheckValidity();
                     setFlattenerListener();
                     break;
                 case "Arc":
                     setAttribute("Radius");
                     setAttribute("Direction");
-                    buildDesignLine();
+                    setDirtyEndCheckValidity();
                     setFlattenerListener();
                     break;
                 case "xsd:choice":
                     // inactive node, will be invalid
-                    buildDesignLine();
+                    setDirtyEndCheckValidity();
                     break;
                 default:
                     throw new OtsRuntimeException(
@@ -1346,39 +1415,45 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
         /**
          * Returns the continuous line.
-         * @param from possibly offset start point.
-         * @param to possibly offset end point.
+         * @param fromPoint possibly offset start point.
+         * @param toPoint possibly offset end point.
          * @return line from the shape and attributes.
          */
-        public OffsetCurve2d getContiuousLine(final DirectedPoint2d from, final DirectedPoint2d to)
+        public OffsetCurve2d getContiuousLine(final DirectedPoint2d fromPoint, final DirectedPoint2d toPoint)
         {
             switch (this.shapeNode.getNodeName())
             {
                 case "Straight":
-                    double length = from.distance(to);
-                    return new Straight2d(from, length);
+                    return new Straight2d(fromPoint, fromPoint.distance(toPoint));
                 case "Polyline":
                     List<Point2d> list = new ArrayList<>();
-                    list.add(from);
+                    list.add(fromPoint);
                     for (Entry<XsdTreeNode, Point2d> entry : this.coordinates.entrySet())
                     {
                         list.add(entry.getValue());
                     }
-                    list.add(to);
+                    list.add(toPoint);
                     if (list.contains(null))
                     {
-                        return null;
+                        if (list.size() == 3)
+                        {
+                            // one coordinate tree node with empty or invalid coordinate value, allow map to show 1 draggable
+                            list.remove(1);
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
-                    return new PolyLineCurve2d(new PolyLine2d(0.0, list), from.dirZ, to.dirZ);
+                    return new PolyLineCurve2d(new PolyLine2d(0.0, list), fromPoint.dirZ, toPoint.dirZ);
                 case "Bezier":
-                    double shape = this.shape == null ? 1.0 : this.shape;
-                    boolean weighted = this.weighted == null ? false : this.weighted;
-                    return new BezierCubic2d(new Ray2d(from), new Ray2d(to), shape, weighted);
+                    return new BezierCubic2d(new Ray2d(fromPoint), new Ray2d(toPoint), this.shape == null ? 1.0 : this.shape,
+                            this.weighted == null ? false : this.weighted);
                 case "Clothoid":
                     if (this.shapeNode.getChildCount() == 0 || this.shapeNode.getChild(0).getChildCount() == 0
                             || this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Interpolated"))
                     {
-                        return new Clothoid2d(from, to);
+                        return new Clothoid2d(fromPoint, toPoint);
                     }
                     else if (this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Length"))
                     {
@@ -1386,7 +1461,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         {
                             return null;
                         }
-                        return Clothoid2d.withLength(from, this.length.si, this.startCurvature.si, this.endCurvature.si);
+                        return Clothoid2d.withLength(fromPoint, this.length.si, this.startCurvature.si, this.endCurvature.si);
                     }
                     else
                     {
@@ -1394,7 +1469,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         {
                             return null;
                         }
-                        return new Clothoid2d(from, this.a.si, this.startCurvature.si, this.endCurvature.si);
+                        return new Clothoid2d(fromPoint, this.a.si, this.startCurvature.si, this.endCurvature.si);
                     }
                 case "Arc":
                     if (this.direction == null || this.radius == null)
@@ -1402,23 +1477,93 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         return null;
                     }
                     boolean left = this.direction.equals(ArcDirection.LEFT);
-                    double endHeading = to.dirZ;
-                    while (left && endHeading < from.dirZ)
+                    double endHeading = toPoint.dirZ;
+                    while (left && endHeading < fromPoint.dirZ)
                     {
                         endHeading += 2.0 * Math.PI;
                     }
-                    while (!left && endHeading > from.dirZ)
+                    while (!left && endHeading > fromPoint.dirZ)
                     {
                         endHeading -= 2.0 * Math.PI;
                     }
-                    Angle angle =
-                            Angle.ofSI(AngleUtil.normalizeAroundPi(left ? endHeading - from.dirZ : from.dirZ - endHeading));
-                    return new Arc2d(from, this.radius.si, left, angle.si);
+                    Angle angle = Angle.ofSI(
+                            AngleUtil.normalizeAroundPi(left ? endHeading - fromPoint.dirZ : fromPoint.dirZ - endHeading));
+                    return new Arc2d(fromPoint, this.radius.si, left, angle.si);
                 default:
                     throw new OtsRuntimeException(
                             "Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
             }
         }
+    }
+
+    /**
+     * Returns the design line.
+     * @return design line
+     */
+    public OffsetCurve2d getDesignLine()
+    {
+        checkDirtyGeometry();
+        return this.designLine;
+    }
+
+    // Bezier methods
+
+    /**
+     * Returns whether the link has a Bezier shape.
+     * @return whether the link has a Bezier shape
+     */
+    public boolean isBezier()
+    {
+        return isShape(Bezier.class);
+    }
+
+    /**
+     * Returns the shape value of the Bezier.
+     * @return the shape value of the Bezier
+     */
+    public double getBezierShape()
+    {
+        return this.shapeListener.shape == null ? 1.0 : this.shapeListener.shape;
+    }
+
+    /**
+     * Returns whether the Bezier is weighted.
+     * @return whether the Bezier is weighted
+     */
+    public boolean isWeightedBezier()
+    {
+        return this.shapeListener.weighted == null ? false : this.shapeListener.weighted;
+    }
+
+    // Polyline methods
+
+    /**
+     * Returns whether the link has a polyline shape.
+     * @return whether the link has a polyline shape
+     */
+    public boolean isPolyline()
+    {
+        return isShape(Polyline.class);
+    }
+
+    /**
+     * Returns a safe copy of the polyline coordinates, mapped from XSD node to point.
+     * @return a safe copy of the polyline coordinates
+     */
+    public NavigableMap<XsdTreeNode, Point2d> getPolylineCoordinates()
+    {
+        return new TreeMap<>(this.shapeListener.coordinates);
+    }
+
+    // Clothoid methods
+
+    /**
+     * Returns whether the link has a clothoid shape.
+     * @return whether the link has a clothoid shape
+     */
+    public boolean isClothoid()
+    {
+        return isShape(Clothoid.class);
     }
 
     /**
@@ -1485,6 +1630,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             return ((Clothoid2d) this.designLine).getAppliedShape();
         }
         return null;
+    }
+
+    /**
+     * Returns whether the link has the given shape.
+     * @param clazz class of generated class of XML tag
+     * @return whether the link has the given shape
+     */
+    private boolean isShape(final Class<?> clazz)
+    {
+        return this.shapeListener.shapeNode.getNodeName().equals(clazz.getSimpleName());
     }
 
     @Override

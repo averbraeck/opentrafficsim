@@ -305,7 +305,11 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 JPopupMenu popup = new JPopupMenu();
                 for (XsdOption option : treeNode.getOptions())
                 {
+                    // getShortString() may cause tree to be expanded and nodes to be added, this is not a user action as such
+                    boolean prevIgnore = this.editor.getUndo().isIgnoreChanges();
+                    this.editor.getUndo().setIgnoreChanges(true);
                     JMenuItem button = new JMenuItem(option.optionNode().getShortString());
+                    this.editor.getUndo().setIgnoreChanges(prevIgnore);
                     if (!option.selected())
                     {
                         button.addActionListener(

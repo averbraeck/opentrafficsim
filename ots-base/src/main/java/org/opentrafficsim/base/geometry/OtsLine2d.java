@@ -285,17 +285,21 @@ public class OtsLine2d extends PolyLine2d implements Locatable
 
         // Useful constants
         final double totalLength = lengthAtIndex(nPoints - 1);
-        final Point2d first = get(0);
-        final Point2d last = get(nPoints - 1);
+        final double xFirst = getX(0);
+        final double yFirst = getY(0);
+        final double xLast = getX(nPoints - 1);
+        final double yLast = getY(nPoints - 1);
 
         // Loop over segments and compute the closest point (orthogonal if interior, otherwise snap to an end-point)
         for (int i = 0; i < nPoints - 1; i++)
         {
-            final Point2d a = get(i);
-            final Point2d b = get(i + 1);
+            final double xA = getX(0);
+            final double yA = getY(0);
+            final double xB = getX(nPoints - 1);
+            final double yB = getY(nPoints - 1);
 
-            final double abx = b.x - a.x;
-            final double aby = b.y - a.y;
+            final double abx = xB - xA;
+            final double aby = yB - yA;
             final double ab2 = abx * abx + aby * aby;
             if (ab2 == 0.0)
             {
@@ -303,16 +307,16 @@ public class OtsLine2d extends PolyLine2d implements Locatable
                 continue;
             }
 
-            final double apx = x - a.x;
-            final double apy = y - a.y;
+            final double apx = x - xA;
+            final double apy = y - yA;
 
             // Un-clamped parameter along the infinite line through segment [a,b]
             final double t = (apx * abx + apy * aby) / ab2;
 
             // Compute the "nearest point on the segment" by clamping t to [0, 1]
             final double tClamped = Math.max(0.0, Math.min(1.0, t));
-            final double px = a.x + tClamped * abx;
-            final double py = a.y + tClamped * aby;
+            final double px = xA + tClamped * abx;
+            final double py = yA + tClamped * aby;
 
             // Distance squared to the candidate on this segment
             final double dx = x - px;
@@ -347,7 +351,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
                             // Extended: if this is the first vertex, return a negative fraction
                             if (i == 0)
                             {
-                                final double dStart = Math.hypot(x - first.x, y - first.y);
+                                final double dStart = Math.hypot(x - xFirst, y - yFirst);
                                 bestFraction = (0.0 - dStart) / totalLength;
                             }
                             else
@@ -368,7 +372,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
                             // Extended: if this is the last vertex, return a fraction beyond 1
                             if (i + 1 == nPoints - 1)
                             {
-                                final double dEnd = Math.hypot(x - last.x, y - last.y);
+                                final double dEnd = Math.hypot(x - xLast, y - yLast);
                                 bestFraction = (totalLength + dEnd) / totalLength;
                             }
                             else

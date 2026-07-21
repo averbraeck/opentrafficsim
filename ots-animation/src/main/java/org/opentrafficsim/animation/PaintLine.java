@@ -8,6 +8,7 @@ import java.awt.geom.Path2D;
 
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsShape;
@@ -65,6 +66,11 @@ public final class PaintLine
         for (int index = 1; index < line.size(); index++)
         {
             p = transform.transform(line.get(index));
+            path.lineTo(p.x, -p.y);
+        }
+        if (line instanceof Polygon2d)
+        {
+            p = transform.transform(line.getFirst());
             path.lineTo(p.x, -p.y);
         }
         return path;

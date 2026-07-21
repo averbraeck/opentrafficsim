@@ -3,7 +3,12 @@ package org.opentrafficsim.editor.extensions.map;
 import java.util.function.Consumer;
 
 import org.djutils.eval.Eval;
+import org.djutils.event.Event;
+import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
+import org.djutils.metadata.MetaData;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -17,8 +22,12 @@ import org.opentrafficsim.xml.bindings.ExpressionAdapter;
  * </p>
  * @author Wouter Schakel
  */
-public abstract class MapData implements EvalListener
+public abstract class MapData extends LocalEventProducer implements EvalListener, OtsShape
 {
+
+    /** Event for a change in data that entails a change in visualization. */
+    public static final EventType MAP_DATA_CHANGED =
+            new EventType("MAP_DATA_CHANGED", new MetaData("MAP_DATA_CHANGED", "Data was changed that affects visualization."));
 
     /** Map showing all the elements. */
     private final EditorMap map;
@@ -75,6 +84,7 @@ public abstract class MapData implements EvalListener
      */
     void setValid()
     {
+        fireEvent(new Event(MAP_DATA_CHANGED, null));
         this.map.setValid(this);
     }
 
@@ -83,6 +93,7 @@ public abstract class MapData implements EvalListener
      */
     void setInvalid()
     {
+        fireEvent(new Event(MAP_DATA_CHANGED, null));
         this.map.setInvalid(this);
     }
 
@@ -104,15 +115,15 @@ public abstract class MapData implements EvalListener
      * @param <T> type of the value to set.
      * @param setter setter that receives a successfully derived value.
      * @param adapter adapter.
-     * @param node node that has the attribute, will often be {@code getNode()}.
+     * @param treeNode node that has the attribute, will often be {@code getNode()}.
      * @param attribute name of the attribute.
      */
-    protected <T> void setValue(final Consumer<T> setter, final ExpressionAdapter<T, ?> adapter, final XsdTreeNode node,
+    protected <T> void setValue(final Consumer<T> setter, final ExpressionAdapter<T, ?> adapter, final XsdTreeNode treeNode,
             final String attribute)
     {
         try
         {
-            String stringValue = node.getAttributeValue(attribute);
+            String stringValue = treeNode.getAttributeValue(attribute);
             if (stringValue == null)
             {
                 setter.accept(null);

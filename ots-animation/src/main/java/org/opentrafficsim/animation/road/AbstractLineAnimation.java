@@ -31,8 +31,14 @@ public abstract class AbstractLineAnimation<L extends LaneBasedObjectData, T ext
         extends OtsRenderableLabeled<L, T>
 {
 
-    /** Rectangle to color. */
-    private final Rectangle2D rectangle;
+    /** Width for which rectangle was determined. */
+    private final Length width;
+
+    /** Last length for which the rectangle was determined. */
+    private double lastLength = Double.NaN;
+
+    /** Rectangle to draw. */
+    private Rectangle2D rectangle = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
 
     /**
      * Construct the line animation. This constructor uses an empty prefix for the label.
@@ -55,8 +61,7 @@ public abstract class AbstractLineAnimation<L extends LaneBasedObjectData, T ext
     public AbstractLineAnimation(final L source, final Contextualized contextualized, final Length width, final String prefix)
     {
         super(source, contextualized, prefix);
-        double halfLength = .5 * source.getLine().getLength();
-        this.rectangle = new Rectangle2D.Double(-.5 * width.si, -halfLength, width.si, 2 * halfLength);
+        this.width = width;
     }
 
     @Override
@@ -64,6 +69,13 @@ public abstract class AbstractLineAnimation<L extends LaneBasedObjectData, T ext
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         setRendering(graphics);
+        double length = getSource().getLine().getLength();
+        if (length != this.lastLength)
+        {
+            double halfLength = .5 * length;
+            this.lastLength = length;
+            this.rectangle = new Rectangle2D.Double(-.5 * this.width.si, -halfLength, this.width.si, 2 * halfLength);
+        }
         graphics.fill(this.rectangle);
         resetRendering(graphics);
     }

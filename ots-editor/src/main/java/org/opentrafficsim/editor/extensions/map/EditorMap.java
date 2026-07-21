@@ -4,11 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.awt.geom.RectangularShape;
+import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -37,43 +35,43 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.animation.network.LinkAnimation;
-import org.opentrafficsim.animation.network.NodeAnimation;
 import org.opentrafficsim.animation.network.LinkAnimation.LinkData;
+import org.opentrafficsim.animation.network.NodeAnimation;
 import org.opentrafficsim.animation.network.NodeAnimation.NodeData;
 import org.opentrafficsim.animation.road.BusStopAnimation;
-import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation;
-import org.opentrafficsim.animation.road.LaneAnimation;
-import org.opentrafficsim.animation.road.LaneDetectorAnimation;
-import org.opentrafficsim.animation.road.TrafficLightAnimation;
 import org.opentrafficsim.animation.road.BusStopAnimation.BusStopData;
 import org.opentrafficsim.animation.road.CrossSectionElementAnimation.ShoulderData;
+import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.animation.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
+import org.opentrafficsim.animation.road.LaneAnimation;
 import org.opentrafficsim.animation.road.LaneAnimation.CenterLine;
 import org.opentrafficsim.animation.road.LaneAnimation.LaneData;
+import org.opentrafficsim.animation.road.LaneDetectorAnimation;
 import org.opentrafficsim.animation.road.LaneDetectorAnimation.LoopDetectorData;
 import org.opentrafficsim.animation.road.LaneDetectorAnimation.SinkData;
 import org.opentrafficsim.animation.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.animation.road.StripeAnimation.StripeData;
+import org.opentrafficsim.animation.road.TrafficLightAnimation;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.extensions.map.edit.MapInputListener;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
 import org.opentrafficsim.swing.gui.PropertiesStore;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
-import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
+import nl.tudelft.simulation.dsol.swing.animation.d2.InputListener;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
 import nl.tudelft.simulation.naming.context.JvmContext;
@@ -103,7 +101,7 @@ public final class EditorMap extends JPanel implements EventListener
     private final OtsEditor editor;
 
     /** Panel to draw in. */
-    private final VisualizationPanel visualizationPanel;
+    private final MapVisualizationPanel visualizationPanel;
 
     /** Panel with tools. */
     private final JPanel toolPanel;
@@ -162,225 +160,15 @@ public final class EditorMap extends JPanel implements EventListener
         super(new BorderLayout());
         this.contextualized = contextualized;
         this.editor = editor;
-        this.visualizationPanel = new VisualizationPanel(new Bounds2d(500, 500), this.updater, contextualized.getContext())
-        {
-            private static final long serialVersionUID = 20260212L;
 
-            @Override
-            public void setBackground(final Color bg)
-            {
-                int threshold = 64;
-                int alternative = 96;
-                if (bg.getRed() <= threshold && bg.getGreen() <= threshold && bg.getBlue() <= threshold)
-                {
-                    setGridColor(new Color(alternative, alternative, alternative));
-                }
-                else
-                {
-                    setGridColor(Color.BLACK);
-                }
-                super.setBackground(bg);
-            }
-
-            // Overridden because there are rounding and vertical mod errors in the super implementation.
-            // See https://github.com/averbraeck/dsol/issues/116.
-            @Override
-            protected synchronized void drawGrid(final Graphics g)
-            {
-                // we prepare the graphics object for the grid
-                g.setFont(g.getFont().deriveFont(11.0f));
-                g.setColor(this.getGridColor());
-                double scaleX = this.getRenderableScale().getXScale(this.getExtent(), this.getSize());
-                double scaleY = this.getRenderableScale().getYScale(this.getExtent(), this.getSize());
-
-                int count = 0;
-                double gridSizePixelsX = this.gridSizeX / scaleX;
-                while (gridSizePixelsX < 40)
-                {
-                    this.gridSizeX = 10 * this.gridSizeX;
-                    int maximumNumberOfDigits = (int) Math.max(0, 1 + Math.ceil(Math.log(1 / this.gridSizeX) / Math.log(10)));
-                    this.formatter.setMaximumFractionDigits(maximumNumberOfDigits);
-                    gridSizePixelsX = (int) Math.round(this.gridSizeX / scaleX);
-                    if (count++ > 10)
-                    {
-                        break;
-                    }
-                }
-
-                count = 0;
-                while (gridSizePixelsX > 10 * 40)
-                {
-                    int maximumNumberOfDigits = (int) Math.max(0, 2 + Math.ceil(Math.log(1 / this.gridSizeX) / Math.log(10)));
-                    this.formatter.setMaximumFractionDigits(maximumNumberOfDigits);
-                    this.gridSizeX = this.gridSizeX / 10;
-                    gridSizePixelsX = (int) Math.round(this.gridSizeX / scaleX);
-                    if (count++ > 10)
-                    {
-                        break;
-                    }
-                }
-
-                double gridSizePixelsY = this.gridSizeY / scaleY;
-                while (gridSizePixelsY < 40)
-                {
-                    this.gridSizeY = 10 * this.gridSizeY;
-                    int maximumNumberOfDigits = (int) Math.max(0, 1 + Math.ceil(Math.log(1 / this.gridSizeY) / Math.log(10)));
-                    this.formatter.setMaximumFractionDigits(maximumNumberOfDigits);
-                    gridSizePixelsY = (int) Math.round(this.gridSizeY / scaleY);
-                    if (count++ > 10)
-                    {
-                        break;
-                    }
-                }
-
-                count = 0;
-                while (gridSizePixelsY > 10 * 40)
-                {
-                    int maximumNumberOfDigits = (int) Math.max(0, 2 + Math.ceil(Math.log(1 / this.gridSizeY) / Math.log(10)));
-                    this.formatter.setMaximumFractionDigits(maximumNumberOfDigits);
-                    this.gridSizeY = this.gridSizeY / 10;
-                    gridSizePixelsY = (int) Math.round(this.gridSizeY / scaleY);
-                    if (count++ > 10)
-                    {
-                        break;
-                    }
-                }
-
-                // Let's draw the vertical lines
-                double mod = this.getExtent().getMinX() % this.gridSizeX;
-                double x = -mod / scaleX;
-                while (x < this.getWidth())
-                {
-                    Point2d point = this.getRenderableScale().getWorldCoordinates(new Point2D.Double(x, 0), this.getExtent(),
-                            this.getSize());
-                    if (point != null)
-                    {
-                        String label = this.formatter.format(Math.round(point.getX() / this.gridSizeX) * this.gridSizeX);
-                        double labelWidth = this.getFontMetrics(this.getFont()).getStringBounds(label, g).getWidth();
-                        if (x > labelWidth + 4)
-                        {
-                            int xInt = (int) Math.round(x);
-                            g.drawLine(xInt, 15, xInt, this.getHeight());
-                            g.drawString(label, (int) Math.round(x - 0.5 * labelWidth), 11);
-                        }
-                    }
-                    x = x + gridSizePixelsX;
-                }
-
-                // Let's draw the horizontal lines
-                mod = this.getExtent().getMinY() % this.gridSizeY;
-                double y = this.getSize().getHeight() + (mod / scaleY);
-                while (y > 15)
-                {
-                    Point2d point = this.getRenderableScale().getWorldCoordinates(new Point2D.Double(0, y), this.getExtent(),
-                            this.getSize());
-                    if (point != null)
-                    {
-                        String label = this.formatter.format(Math.round(point.getY() / this.gridSizeY) * this.gridSizeY);
-                        RectangularShape labelBounds = this.getFontMetrics(this.getFont()).getStringBounds(label, g);
-                        int yInt = (int) Math.round(y);
-                        g.drawLine((int) Math.round(labelBounds.getWidth() + 4), yInt, this.getWidth(), yInt);
-                        g.drawString(label, 2, (int) Math.round(y + labelBounds.getHeight() * 0.3));
-                    }
-                    y = y - gridSizePixelsY;
-                }
-            }
-        };
+        this.visualizationPanel = new MapVisualizationPanel(new Bounds2d(500, 500), this.updater, contextualized.getContext());
         this.visualizationPanel.setShowGrid(OtsEditor.PROPERTIES_STORE.getOptionalBoolean("map.grid").orElse(true));
         this.updater.addListener(this.visualizationPanel, AnimatorInterface.UPDATE_ANIMATION_EVENT);
-
-        /*-
-        {
-            @Override
-            public void setExtent(final Bounds2d extent)
-            {
-                if (EditorMap.this.lastScreen != null)
-                {
-                    // this prevents zoom being undone when resizing the screen afterwards
-                    EditorMap.this.lastXScale = this.getRenderableScale().getXScale(extent, EditorMap.this.lastScreen);
-                    EditorMap.this.lastYScale = this.getRenderableScale().getYScale(extent, EditorMap.this.lastScreen);
-                }
-                super.setExtent(extent);
-            }
-
-            @Override
-            public synchronized void zoomAll()
-            {
-                EditorMap.this.ignoreKeepScale = true;
-                Bounds2d extent = EditorMap.this.animationPanel.fullExtent();
-                if (Double.isFinite(extent.getMaxX()))
-                {
-                    super.zoomAll();
-                }
-                else if (getSize().height != 0)
-                {
-                    // there are no objects
-                    super.home();
-                }
-                EditorMap.this.ignoreKeepScale = false;
-            }
-
-            @Override
-            public synchronized void home()
-            {
-                EditorMap.this.ignoreKeepScale = true;
-                super.home();
-                EditorMap.this.ignoreKeepScale = false;
-            }
-        };
-        */
-
         this.visualizationPanel.setBackground(Color.GRAY);
         this.visualizationPanel.setShowToolTip(false);
         editor.addListener(this, OtsEditor.NEW_FILE);
-
-        /*-
-        this.animationPanel.setRenderableScale(new RenderableScale()
-        {
-            @Override
-            public Bounds2d computeVisibleExtent(final Bounds2d extent, final Dimension screen)
-            {
-                if (EditorMap.this.ignoreKeepScale)
-                {
-                    return super.computeVisibleExtent(extent, screen);
-                }
-                // overridden to preserve zoom scale, otherwise dragging the split screen may pump up the zoom factor
-                double xScale = getXScale(extent, screen);
-                double yScale = getYScale(extent, screen);
-                Bounds2d result;
-                if (EditorMap.this.lastYScale != null && yScale == EditorMap.this.lastYScale)
-                {
-                    result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * yScale,
-                            extent.midPoint().getX() + 0.5 * screen.getWidth() * yScale, extent.getMinY(), extent.getMaxY());
-                    xScale = yScale;
-                }
-                else if (EditorMap.this.lastXScale != null && xScale == EditorMap.this.lastXScale)
-                {
-                    result = new Bounds2d(extent.getMinX(), extent.getMaxX(),
-                            extent.midPoint().getY() - 0.5 * screen.getHeight() * xScale * getYScaleRatio(),
-                            extent.midPoint().getY() + 0.5 * screen.getHeight() * xScale * getYScaleRatio());
-                    yScale = xScale;
-                }
-                else
-                {
-                    double scale = EditorMap.this.lastXScale == null ? Math.min(xScale, yScale)
-                            : EditorMap.this.lastXScale * EditorMap.this.lastScreen.getWidth() / screen.getWidth();
-                    result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * scale,
-                            extent.midPoint().getX() + 0.5 * screen.getWidth() * scale,
-                            extent.midPoint().getY() - 0.5 * screen.getHeight() * scale * getYScaleRatio(),
-                            extent.midPoint().getY() + 0.5 * screen.getHeight() * scale * getYScaleRatio());
-                    yScale = scale;
-                    xScale = scale;
-                }
-                EditorMap.this.lastXScale = xScale;
-                EditorMap.this.lastYScale = yScale;
-                EditorMap.this.lastScreen = screen;
-                return result;
-            }
-        });
-        */
-
         add(this.visualizationPanel, BorderLayout.CENTER);
+        setupMapListeners();
 
         this.toolPanel = new JPanel();
         setupTools();
@@ -392,6 +180,28 @@ public final class EditorMap extends JPanel implements EventListener
     }
 
     /**
+     * Setup listeners for visual editing in the map.
+     */
+    private void setupMapListeners()
+    {
+        for (MouseListener ml : this.visualizationPanel.getMouseListeners())
+        {
+            if (ml instanceof InputListener il)
+            {
+                this.visualizationPanel.removeMouseListener(il);
+                this.visualizationPanel.removeMouseMotionListener(il);
+                this.visualizationPanel.removeMouseWheelListener(il);
+                this.visualizationPanel.removeKeyListener(il);
+            }
+        }
+        MapInputListener listener = new MapInputListener(this.editor, this);
+        this.visualizationPanel.addMouseListener(listener);
+        this.visualizationPanel.addMouseMotionListener(listener);
+        this.visualizationPanel.addMouseWheelListener(listener);
+        this.visualizationPanel.addKeyListener(listener);
+    }
+
+    /**
      * Sets up all the tool in the tool panel on top.
      */
     private void setupTools()
@@ -399,17 +209,13 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.setMinimumSize(new Dimension(350, 28));
         this.toolPanel.setPreferredSize(new Dimension(350, 28));
         this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
-
         this.toolPanel.add(Box.createHorizontalStrut(5));
         this.toolPanel.add(new JLabel("Add tools:"));
-
         this.toolPanel.add(Box.createHorizontalStrut(5));
+
         // button group that allows no selection when toggling the currently selected
         ButtonGroup group = new ButtonGroup()
         {
-            /** */
-            private static final long serialVersionUID = 20240227L;
-
             @Override
             public void setSelected(final ButtonModel model, final boolean selected)
             {
@@ -471,9 +277,6 @@ public final class EditorMap extends JPanel implements EventListener
                 "polyline", IconUtil.of("PolyLine24.png").imageSize(18, 18).get());
         shape.setRenderer(new DefaultListCellRenderer()
         {
-            /** */
-            private static final long serialVersionUID = 20260206L;
-
             @Override
             public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
                     final boolean isSelected, final boolean cellHasFocus)
@@ -781,7 +584,11 @@ public final class EditorMap extends JPanel implements EventListener
                 this.overrideListeners.put(node, listener);
                 listener.addListener(listener, ChangeListener.CHANGE_EVENT); // register to self, but for change events
             }
-            this.updater.update();
+            // When a node is restored, child nodes may also be restored later.
+            SwingUtilities.invokeLater(() ->
+            {
+                this.updater.update();
+            });
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -877,9 +684,13 @@ public final class EditorMap extends JPanel implements EventListener
         }
         else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
-            for (MapLinkData linkData : this.links.keySet())
+            Object[] content = (Object[]) event.getContent();
+            if ("Id".equals(content[1]))
             {
-                linkData.notifyNodeIdChanged(linkData.getNode());
+                for (MapLinkData linkData : this.links.keySet())
+                {
+                    linkData.notifyNodeIdChanged(linkData.getNode());
+                }
             }
             this.updater.update();
         }
@@ -928,7 +739,7 @@ public final class EditorMap extends JPanel implements EventListener
         }
         else if (node.getPathString().equals(XsdPaths.SINK))
         {
-            animation = new LaneDetectorAnimation<SinkData>((SinkData) data, this.contextualized, Color.ORANGE, "Sink");
+            animation = new LaneDetectorAnimation<SinkData>((SinkData) data, this.contextualized, Color.YELLOW, "Sink");
         }
         else if (node.getPathString().equals(XsdPaths.GENERATOR) || node.getPathString().equals(XsdPaths.LIST_GENERATOR))
         {
@@ -966,7 +777,14 @@ public final class EditorMap extends JPanel implements EventListener
         if (node.getPathString().equals(XsdPaths.NODE) || node.getPathString().equals(XsdPaths.CENTROID))
         {
             data = new MapNodeData(this, node, this.editor);
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+            SwingUtilities.invokeLater(() ->
+            {
+                for (MapLinkData linkData : this.links.keySet())
+                {
+                    linkData.evalChanged();
+                }
+            });
         }
         else if (node.getPathString().equals(XsdPaths.LINK) || node.getPathString().equals(XsdPaths.CONNECTOR))
         {
@@ -977,6 +795,16 @@ public final class EditorMap extends JPanel implements EventListener
                 this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
             }
             this.links.put(linkData, null);
+            SwingUtilities.invokeLater(() ->
+            {
+                for (MapData d : this.datas.values())
+                {
+                    if (d instanceof MapLaneBasedObjectData)
+                    {
+                        d.evalChanged();
+                    }
+                }
+            });
         }
         else if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
         {
@@ -997,6 +825,8 @@ public final class EditorMap extends JPanel implements EventListener
         {
             throw new UnsupportedOperationException("Node cannot be added by the map editor.");
         }
+        data.evalChanged();
+        data.addListener((e) -> this.updater.update(), MapData.MAP_DATA_CHANGED);
         this.datas.put(node, data);
     }
 
@@ -1131,7 +961,7 @@ public final class EditorMap extends JPanel implements EventListener
      * Remove animation.
      * @param animation animation to remove
      */
-    void removeAnimation(final Renderable2d<?> animation)
+    public void removeAnimation(final Renderable2d<?> animation)
     {
         if (animation != null)
         {
@@ -1144,9 +974,26 @@ public final class EditorMap extends JPanel implements EventListener
      * Returns the context.
      * @return context
      */
-    Contextualized getContextualized()
+    public Contextualized getContextualized()
     {
         return this.contextualized;
+    }
+
+    /**
+     * Update via updater.
+     */
+    public void update()
+    {
+        this.updater.update();
+    }
+
+    /**
+     * Returns the visualization panel.
+     * @return visualization panel
+     */
+    public MapVisualizationPanel getPanel()
+    {
+        return this.visualizationPanel;
     }
 
     /**

@@ -66,6 +66,17 @@ public class Dialogs
     }
 
     /**
+     * Shows a dialog in a modal pane to confirm message.
+     * @param message message to be confirmed
+     * @return whether message was confirmed.
+     */
+    public boolean confirmGeneral(final String message)
+    {
+        return JOptionPane.showConfirmDialog(this.editor, message, "Please confirm",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, QUESTION_ICON) == JOptionPane.OK_OPTION;
+    }
+
+    /**
      * Shows a description in a modal pane.
      * @param description description.
      * @param title title of the window, may be {@code null} but typically is the name of the node or attribute
