@@ -2,6 +2,7 @@ package org.opentrafficsim.editor;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import javax.swing.SwingUtilities;
 
@@ -50,11 +51,12 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     /**
      * Constructor.
      * @param document XSD document.
+     * @param ignoreChanges whether to ignore changes
      * @throws RemoteException when unable to listen for created nodes.
      */
-    protected XsdTreeTableModel(final Document document) throws RemoteException
+    protected XsdTreeTableModel(final Document document, final Supplier<Boolean> ignoreChanges) throws RemoteException
     {
-        super(document == null ? null : new XsdTreeNodeRoot(new Schema(document)));
+        super(document == null ? null : new XsdTreeNodeRoot(new Schema(document), ignoreChanges));
     }
 
     /**

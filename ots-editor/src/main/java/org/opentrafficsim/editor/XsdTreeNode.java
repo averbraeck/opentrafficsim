@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -396,9 +397,12 @@ public class XsdTreeNode extends LocalEventProducer
      */
     public List<XsdTreeNode> getPath()
     {
-        List<XsdTreeNode> path = this.parent != null ? this.parent.getPath() : new ArrayList<>();
-        path.add(this);
-        return path;
+        LinkedList<XsdTreeNode> deque = new LinkedList<>();
+        for (XsdTreeNode node = this; node != null; node = node.parent)
+        {
+            deque.addFirst(node);
+        }
+        return deque;
     }
 
     /**
@@ -2114,7 +2118,8 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Invalidates entire tree in a nested manner. Triggered after the path of the current file changes in the root node.
+     * Invalidates entire tree in a nested manner. Triggered after the path of the current file changes in the root node, or
+     * similar events that can create invalid (or valid) nodes anywhere in the tree.
      */
     void invalidateAll()
     {
@@ -2530,27 +2535,27 @@ public class XsdTreeNode extends LocalEventProducer
      * </ol>
      * Next, the information from XML is loaded in to the relevant child node. This can happen in four ways:
      * <ol>
-     * <li>The relevant node is not a choice or sequence, information is loaded in to it with {@code loadXmlNodes}.</li>
+     * <li>The relevant node is not a choice or sequence, information is loaded in to it with {@link #loadXmlNodes}.</li>
      * <li>The relevant node is a sequence. The relevant child in the sequence is found, and all XML child nodes that can be
-     * loaded in to it, are by calling {@code loadChildren}.</li>
+     * loaded in to it, are by calling {@link #loadChildren}.</li>
      * <li>The relevant node is a choice, where the relevant option is not a sequence. The option will be set in the choice.
-     * Information is loaded in to the selected option with {@code loadXmlNodes}.</li>
+     * Information is loaded in to the selected option with {@link #loadXmlNodes}.</li>
      * <li>The relevant node is a choice, where the relevant option is a sequence. The option (sequence node) will be set in the
      * choice. The relevant child in the sequence is found, and all XML child nodes that can be loaded in to it, are by calling
-     * {@code loadChildren}.</li>
+     * {@link #loadChildren}.</li>
      * </ol>
-     * Note that for case 3, the child content of a deeper {@code XsdChildNode} is defined at the same level in XML. Hence, only
+     * Note that for case 3, the child content of a deeper {@link XsdTreeNode} is defined at the same level in XML. Hence, only
      * some of the XML children may be loaded in the deeper level. To keep track of which XML child nodes are loaded where, the
-     * value {@code LoadingIndices.xmlNode} is given as input (previous nodes have already been loaded at a higher level or in
-     * another choice sequence). In this value also the index of the first XML child node that could not be loaded in the choice
-     * sequence is returned.<br>
+     * value {@link LoadingIndices#getXmlNode()} is given as input (previous nodes have already been loaded at a higher level or
+     * in another choice sequence). In this value also the index of the first XML child node that could not be loaded in the
+     * choice sequence is returned.<br>
      * <br>
-     * The parameter {@code LoadingIndices} is also used when an XML node cannot be loaded at all because it does not comply
+     * The parameter {@link LoadingIndices} is also used when an XML node cannot be loaded at all because it does not comply
      * with the XSD schema. This will cause the loading to run through all children to see whether it can be loaded there. The
-     * second value {@code LoadingIndices.xsdTreeNode} is used as input to know where to continue in a second call to this
-     * method after an earlier call came across an XML node that could not be loaded. In {@code LoadingIndices.xsdTreeNode} the
-     * index of the last child node in to which XML data was loaded is given.
-     * @param indices index of the first XML child node to load, and first XsdTreeNode index to use.
+     * second value {@link LoadingIndices#getXsdTreeNode()} is used as input to know where to continue in a second call to this
+     * method after an earlier call came across an XML node that could not be loaded. In {@link LoadingIndices#getXsdTreeNode()}
+     * the index of the last child node in to which XML data was loaded is given.
+     * @param indices index of the first XML child node to load, and first {@link XsdTreeNode} index to use.
      * @param childrenXml list of XML child nodes as specified within one parent XML tag.
      * @param loadingSubSequence whether this call is loading children as a sub-sequence.
      */

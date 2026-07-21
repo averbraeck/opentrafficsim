@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -48,12 +49,13 @@ public class KeyValidator extends XPathValidator implements EventListener
 
     /**
      * Constructor.
-     * @param keyNode node defining the xsd:key or xsd:unique.
-     * @param keyPath path where the key was defined, defining the context.
+     * @param keyNode node defining the xsd:key or xsd:unique
+     * @param keyPath path where the key was defined, defining the context
+     * @param ignore boolean supplier with logic on when to ignore validation
      */
-    public KeyValidator(final Node keyNode, final String keyPath)
+    public KeyValidator(final Node keyNode, final String keyPath, final Supplier<Boolean> ignore)
     {
-        super(keyNode, keyPath);
+        super(keyNode, keyPath, ignore);
         Throw.when(!keyNode.getNodeName().equals("xsd:key") && !keyNode.getNodeName().equals("xsd:unique"),
                 IllegalArgumentException.class, "The given node is not an xsd:key or xsd:unique node.");
     }
@@ -64,7 +66,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         for (int fieldIndex = 0; fieldIndex < getFields().size(); fieldIndex++)
         {
             Field field = getFields().get(fieldIndex);
-            int pathIndex = field.getValidPathIndex(node);
+            int pathIndex = field.attach(node);
             if (pathIndex >= 0)
             {
                 String path = field.getFieldPath(pathIndex);
@@ -94,8 +96,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         if (isSelectedInContext(node))
         {
             node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
-            XsdTreeNode context = getContext(node);
-            this.keyNodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()).add(node);
+            this.keyNodes.computeIfAbsent(getContext(node), (key) -> new LinkedHashSet<>()).add(node);
             invalidateAllDependent(); // new node may contain value set that a keyref wants to couple to
         }
     }
@@ -103,6 +104,7 @@ public class KeyValidator extends XPathValidator implements EventListener
     @Override
     public void removeNode(final XsdTreeNode node)
     {
+        super.removeNode(node);
         removeNodeKeepListening(node);
         node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
         node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -113,6 +115,10 @@ public class KeyValidator extends XPathValidator implements EventListener
     @Override
     public Optional<String> validate(final XsdTreeNode node)
     {
+        if (ignoreChanges())
+        {
+            return Optional.empty();
+        }
         if (node.getParent() == null)
         {
             return Optional.empty(); // Node was deleted, but is still visible in the GUI tree for a moment
@@ -206,14 +212,23 @@ public class KeyValidator extends XPathValidator implements EventListener
     /**
      * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
      * deactivated node no longer have valid key values. Only active nodes are considered.
-     * @param node node to remove or add.
-     * @param activeOrSelected when node was activated or selected, child nodes are added, otherwise removed.
+     * @param node node to remove or add
+     * @param activeOrSelected when node was activated or selected, child nodes are added, otherwise removed
      */
     private void activationOrChoiceStatusChanged(final XsdTreeNode node, final boolean activeOrSelected)
     {
         if (activeOrSelected)
         {
-            addNode(node);
+            if (!this.keyNodeValueFieldIndices.containsKey(node) && !this.keyNodeAttributeFieldIndices.containsKey(node))
+            {
+                addNode(node);
+            }
+            else
+            {
+                // skip overwriting the listeners, but we do need to update validity
+                getFields().forEach((f) -> f.attach(node));
+                invalidateAllDependent();
+            }
         }
         else
         {
@@ -228,7 +243,7 @@ public class KeyValidator extends XPathValidator implements EventListener
     /**
      * Remove node. This method is called internally for children of deactivated or unselected nodes, in which case we do not
      * want to remove this validator as listener on the node, for when it gets activated or selected later.
-     * @param node node to remove.
+     * @param node node to remove
      */
     private void removeNodeKeepListening(final XsdTreeNode node)
     {
@@ -247,14 +262,17 @@ public class KeyValidator extends XPathValidator implements EventListener
             node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
+        super.removeNode(node); // removes this node from attached fields
+        this.keyNodeValueFieldIndices.remove(node);
+        this.keyNodeAttributeFieldIndices.remove(node);
     }
 
     /**
      * Update value in nodes that refer with xsd:keyref to a value that was changed, but only if the key is not duplicate and
      * the value is not empty.
-     * @param node node on which the value was changed.
-     * @param fieldIndex index of field that was changed.
-     * @param newValue new value.
+     * @param node node on which the value was changed
+     * @param fieldIndex index of field that was changed
+     * @param newValue new value
      */
     private void updateReferringKeyrefs(final XsdTreeNode node, final int fieldIndex, final String newValue)
     {
@@ -269,10 +287,10 @@ public class KeyValidator extends XPathValidator implements EventListener
 
     /**
      * Returns whether keyrefs can be updated. This is not true if there are duplicate keys or the new value is empty.
-     * @param keyNode node where key is changed.
-     * @param fieldIndex index of the field.
-     * @param newValue new value.
-     * @return whether keyrefs can be updated.
+     * @param keyNode node where key is changed
+     * @param fieldIndex index of the field
+     * @param newValue new value
+     * @return whether keyrefs can be updated
      */
     private boolean canUpdateKeyRefs(final XsdTreeNode keyNode, final int fieldIndex, final String newValue)
     {
@@ -306,8 +324,8 @@ public class KeyValidator extends XPathValidator implements EventListener
     /**
      * Returns the present values of the fields for each node within the given context. Value sets containing {@code null} are
      * not returned, as these are invalid for xsd:key's, and ignored for xsd:unique's.
-     * @param nodeInContext node that is in the right context.
-     * @return list of all values per key node.
+     * @param nodeInContext node that is in the right context
+     * @return list of all values per key node
      */
     Map<XsdTreeNode, List<String>> gatherFieldValuesInContext(final XsdTreeNode nodeInContext)
     {
@@ -338,7 +356,7 @@ public class KeyValidator extends XPathValidator implements EventListener
 
     /**
      * Adds a keyref validator as listening to this key.
-     * @param keyrefValidator keyref validator.
+     * @param keyrefValidator keyref validator
      */
     void addListeningKeyrefValidator(final KeyrefValidator keyrefValidator)
     {

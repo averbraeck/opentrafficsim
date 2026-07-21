@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -32,6 +33,29 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /** Set to store tags for which an error has been printed, to prevent repeated printing on repeated validation. */
     Set<String> SUPPRESS_ERRORS = new LinkedHashSet<>();
+
+    /** Sub-class implementations should get their ordering ID from here. */
+    AtomicLong NEXT_ID = new AtomicLong();
+
+    /**
+     * Returns a unique ordering ID among all {@link ValueValidator}, including beyond the specific sub class. Each class
+     * implementing {@link ValueValidator} should obtain {@code NEXT_ID.incrementAndGet()} and store it, and return it in this
+     * method. For example:
+     *
+     * <pre>
+     * &#47;** Ordering id. **&#47;
+     * private final long orderingId = NEXT_ID.incrementAndGet();
+     *
+     * &#64;Override
+     * public long getOrderingId()
+     * {
+     *     return this.orderingId;
+     * }
+     * </pre>
+     *
+     * @return ordering ID
+     */
+    long getOrderingId();
 
     /**
      * Returns message why a value is invalid, or {@code null} if the value is valid.
@@ -502,19 +526,17 @@ public interface ValueValidator extends Comparable<ValueValidator>
          * and registered itself to the relevant node, iii) the relevant node value is changed, but the value pointing to it is
          * not updated as the registration of the coupled value was never done.
          */
-        if (this instanceof CoupledValidator)
+        if (this == o)
         {
-            if (o != null && o instanceof CoupledValidator)
-            {
-                return 1; // no matter
-            }
-            return -1;
+            return 0;
         }
-        if (o instanceof CoupledValidator)
+        boolean thisIsCoupledValidator = this instanceof CoupledValidator;
+        if (thisIsCoupledValidator != (o instanceof CoupledValidator))
         {
-            return 1;
+            return thisIsCoupledValidator ? -1 : 1;
         }
-        return 1; // no matter
+        // Same category: provide a stable ordering.
+        return Long.compare(getOrderingId(), o.getOrderingId());
     }
 
 }

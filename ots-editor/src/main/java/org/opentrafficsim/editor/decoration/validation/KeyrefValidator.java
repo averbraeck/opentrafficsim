@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.editor.DocumentReader;
@@ -41,13 +42,15 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /**
      * Constructor.
-     * @param keyrefNode node defining the xsd:keyref.
-     * @param keyrefPath path where the keyref was defined, defining the context.
-     * @param refer key that is referred to by this xsd:keyref.
+     * @param keyrefNode node defining the xsd:keyref
+     * @param keyrefPath path where the keyref was defined, defining the context
+     * @param refer key that is referred to by this xsd:keyref
+     * @param ignore boolean supplier with logic on when to ignore validation
      */
-    public KeyrefValidator(final Node keyrefNode, final String keyrefPath, final KeyValidator refer)
+    public KeyrefValidator(final Node keyrefNode, final String keyrefPath, final KeyValidator refer,
+            final Supplier<Boolean> ignore)
     {
-        super(keyrefNode, keyrefPath);
+        super(keyrefNode, keyrefPath, ignore);
         Throw.when(!keyrefNode.getNodeName().equals("xsd:keyref"), IllegalArgumentException.class,
                 "The given node is not an xsd:keyref node.");
         Throw.whenNull(refer, "Refer validator may not be null.");
@@ -65,7 +68,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         for (int fieldIndex = 0; fieldIndex < getFields().size(); fieldIndex++)
         {
             Field field = getFields().get(fieldIndex);
-            int pathIndex = field.getValidPathIndex(node);
+            int pathIndex = field.attach(node);
             if (pathIndex >= 0)
             {
                 String path = field.getFieldPath(pathIndex);
@@ -88,6 +91,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     @Override
     public void removeNode(final XsdTreeNode node)
     {
+        super.removeNode(node);
         this.valueValidatingKeyrefNodes.remove(node);
         this.attributeValidatingKeyrefNodes.values().forEach((s) -> s.remove(node));
         removeCoupling(node);
@@ -96,6 +100,10 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     @Override
     public Optional<String> validate(final XsdTreeNode node)
     {
+        if (ignoreChanges())
+        {
+            return Optional.empty();
+        }
         if (node.getParent() == null)
         {
             return Optional.empty(); // Node was deleted, but is still visible in the GUI tree for a moment
@@ -146,9 +154,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
      * should <b>not</b> be given in the wrong order. It does not matter whether the keyref refers to a key or unique. In both
      * cases the values from a keyref are a match if all its non-null values match respective values in the key. Non-null
      * requirements of a key pertain to the key itself, not the matching here.
-     * @param keyValues set of values from a key node.
-     * @param keyrefValues set of values from a keyref node.
-     * @return whether the key values match the keyref values.
+     * @param keyValues set of values from a key node
+     * @param keyrefValues set of values from a keyref node
+     * @return whether the key values match the keyref values
      */
     private boolean matchingKeyref(final List<String> keyValues, final List<String> keyrefValues)
     {
@@ -199,9 +207,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /**
      * Gathers xsd:key-level contexts from an xsd:keyref context that is larger than the key's.
-     * @param node current node to browse the children of, or return in the set.
-     * @param remainingPath remaining intermediate levels, starting with the sub-level of the keyref.
-     * @param set set to gather contexts in.
+     * @param node current node to browse the children of, or return in the set
+     * @param remainingPath remaining intermediate levels, starting with the sub-level of the keyref
+     * @param set set to gather contexts in
      */
     private void gatherScopes(final XsdTreeNode node, final List<XsdTreeNode> remainingPath, final Set<XsdTreeNode> set)
     {
@@ -230,9 +238,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /**
      * Update value in keyref nodes as it was changed in the coupled key node. Used by a key validator.
-     * @param keyNode key node on which the value was changed.
-     * @param fieldIndex index of field that was changed.
-     * @param newValue new value.
+     * @param keyNode key node on which the value was changed
+     * @param fieldIndex index of field that was changed
+     * @param newValue new value
      */
     void updateFieldValue(final XsdTreeNode keyNode, final int fieldIndex, final String newValue)
     {

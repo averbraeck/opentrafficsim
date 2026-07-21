@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.swing.SwingUtilities;
 
@@ -60,6 +61,9 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      * to a node is made, including a cascade of nested changes.
      */
 
+    /** Ordering id. **/
+    private final long orderingId = NEXT_ID.incrementAndGet();
+
     /** Path location of nodes to attach to. */
     private final String path;
 
@@ -93,6 +97,9 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     /** Coupled layout element nodes that are successfully validated to. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNodes = new LinkedHashMap<>();
 
+    /** Whether to ignore changes. */
+    private final Supplier<Boolean> ignoreChanges;
+
     /**
      * Constructor.
      * @param editor editor.
@@ -109,6 +116,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         this.path = path;
         this.layoutCoupling = layoutCoupling;
         this.elementAttribute = attribute;
+        this.ignoreChanges = editor::ignoreChanges;
     }
 
     @Override
@@ -425,7 +433,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      */
     private XsdTreeNode getLayoutFromLink(final XsdTreeNode linkNode)
     {
-        if (linkNode == null || !linkNode.isActive() || linkNode.getChildCount() <= 1)
+        if (linkNode == null || linkNode.getParent() == null || !linkNode.isActive() || linkNode.getChildCount() <= 1)
         {
             return null;
         }
@@ -442,6 +450,10 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     @Override
     public Optional<String> validate(final XsdTreeNode node)
     {
+        if (this.ignoreChanges.get())
+        {
+            return Optional.empty();
+        }
         String value = node.getAttributeValue(this.elementAttribute.attributeName);
         if (value == null || value.isEmpty())
         {
@@ -513,6 +525,12 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             return Optional.of(options);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public long getOrderingId()
+    {
+        return this.orderingId;
     }
 
     /**

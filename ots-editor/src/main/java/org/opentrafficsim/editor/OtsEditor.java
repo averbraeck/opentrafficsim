@@ -218,6 +218,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     /** Undo unit, storing all actions. */
     private Undo undo;
 
+    /** Whether to disregard changes during loading. */
+    private boolean ignoreChanges = false;
+
     /** Auto save scheduler. */
     private ScheduledExecutorService autosave;
 
@@ -342,7 +345,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         UIManager.put("Tree.rightChildIndent", 7);
 
         // empty tree table
-        this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null));
+        this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null, () -> this.ignoreChanges));
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
 
@@ -600,6 +603,14 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
+     * Updates the tree. Call this method when a repaint does not work.
+     */
+    public void updateTree()
+    {
+        this.treeTable.updateUI();
+    }
+
+    /**
      * Sets a status label.
      * @param label status label.
      */
@@ -734,6 +745,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      */
     public void setUnsavedChanges(final boolean unsavedChanges)
     {
+        if (this.ignoreChanges)
+        {
+            return;
+        }
         this.unsavedChanges = unsavedChanges;
         StringBuilder title = new StringBuilder("OTS | The Open Traffic Simulator | Editor");
         if (this.lastFile != null)
@@ -846,7 +861,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         setDefaultProperties();
 
         // tree table
-        XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument);
+        XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument, this::ignoreChanges);
         this.treeTable = new AppearanceControlTreeTable(treeModel);
         this.treeTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.actions = new Actions(this, this.attributesTable);
@@ -1433,6 +1448,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
+     * Whether to ignore changes during loading.
+     * @return whether to ignore changes during loading
+     */
+    public boolean ignoreChanges()
+    {
+        return this.ignoreChanges;
+    }
+
+    /**
      * Load file.
      * @param file file to load.
      * @param postLoadStatus status message in status bar to show after loading.
@@ -1445,6 +1469,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         {
             Document document = DocumentReader.open(file.toURI());
             this.undo.setIgnoreChanges(true);
+            this.evalWrapper.setIgnoreEval(true);
+            this.ignoreChanges = true;
             initializeTree();
             // load main tag xml properties that are outside of XML OTS specification, so they can remain in a saved file
             NamedNodeMap attributes = document.getFirstChild().getAttributes();
@@ -1465,12 +1491,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
             root.setDirectory(this.lastDirectory);
             root.loadXmlNodes(document.getFirstChild());
+            this.evalWrapper.setIgnoreEval(false);
+            this.ignoreChanges = false;
             this.undo.clear();
             setUnsavedChanges(false);
             setStatusLabel(postLoadStatus);
             this.undo.updateButtons();
             this.navigation.clear();
-            this.treeTable.updateUI(); // knowing/changing the directory may change validation status through imports
+            // knowing/changing the directory may change validation status through imports
+            SwingUtilities.invokeLater(() -> this.treeTable.updateUI());
             if (updateRecentFiles)
             {
                 PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
@@ -1481,6 +1510,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
+            this.evalWrapper.setIgnoreEval(false);
+            this.ignoreChanges = false;
             return false;
         }
     }

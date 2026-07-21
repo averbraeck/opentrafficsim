@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -58,14 +59,19 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     /** Directory, relevant for relative paths in include nodes. */
     private String directory;
 
+    /** Whether validation should be ignored for the entire tree. */
+    private Supplier<Boolean> ignoreChanges;
+
     /**
      * Constructor for root node, based on a schema.
      * @param schema XSD Schema.
+     * @param ignoreChanges whether to ignore changes
      * @throws RemoteException when unable to listen for created nodes.
      */
-    public XsdTreeNodeRoot(final Schema schema) throws RemoteException
+    public XsdTreeNodeRoot(final Schema schema, final Supplier<Boolean> ignoreChanges) throws RemoteException
     {
         super(schema);
+        this.ignoreChanges = ignoreChanges;
         // pointless to fire NODE_CREATED event, no one can be listening yet
         setupXPathListener(schema);
     }
@@ -129,18 +135,17 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      */
     private void setupXPathListener(final Schema schema) throws RemoteException
     {
-
         Set<KeyValidator> keys = new LinkedHashSet<>();
         for (Entry<String, Node> entry : schema.keys().entrySet())
         {
             String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
-            keys.add(new KeyValidator(entry.getValue(), path));
+            keys.add(new KeyValidator(entry.getValue(), path, this.ignoreChanges));
         }
         Set<KeyValidator> uniques = new LinkedHashSet<>();
         for (Entry<String, Node> entry : schema.uniques().entrySet())
         {
             String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
-            uniques.add(new KeyValidator(entry.getValue(), path));
+            uniques.add(new KeyValidator(entry.getValue(), path, this.ignoreChanges));
         }
         Set<KeyrefValidator> keyrefs = new LinkedHashSet<>();
         for (Entry<String, Node> entry : schema.keyrefs().entrySet())
@@ -151,7 +156,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 if (key.getKeyName().equals(keyName))
                 {
                     String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
-                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, key));
+                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, key, this.ignoreChanges));
                     break;
                 }
             }
@@ -160,7 +165,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 if (unique.getKeyName().equals(keyName))
                 {
                     String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
-                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, unique));
+                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, unique, this.ignoreChanges));
                     break;
                 }
             }

@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.decoration.validation;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -31,6 +32,12 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
      * <xsd:key />
      */
 
+    /** Ordering id. */
+    private final long orderingId = NEXT_ID.incrementAndGet();
+
+    /** Whether to ignore changes. */
+    private final Supplier<Boolean> ignoreChanges;
+
     /**
      * Constructor.
      * @param editor editor.
@@ -42,11 +49,16 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
             final String attribute2)
     {
         super(editor, (n) -> n.isType(path), attribute1, attribute2);
+        this.ignoreChanges = editor::ignoreChanges;
     }
 
     @Override
     public Optional<String> validate(final XsdTreeNode node)
     {
+        if (this.ignoreChanges.get())
+        {
+            return Optional.empty();
+        }
         if (!node.isActive())
         {
             return Optional.empty();
@@ -75,6 +87,12 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
     public void notifyAttributeChanged(final XsdTreeNode node, final String attribute)
     {
         node.invalidate();
+    }
+
+    @Override
+    public long getOrderingId()
+    {
+        return this.orderingId;
     }
 
 }

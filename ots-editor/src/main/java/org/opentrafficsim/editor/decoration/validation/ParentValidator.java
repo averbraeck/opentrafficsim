@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -23,6 +24,9 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 public class ParentValidator extends AbstractNodeDecoratorRemove implements ValueValidator
 {
 
+    /** Ordering id. **/
+    private final long orderingId = NEXT_ID.incrementAndGet();
+
     /** Context level within which the parents may be found. */
     private String contextPath;
 
@@ -35,6 +39,9 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     /** All nodes created under the path. */
     private Map<XsdTreeNode, Set<XsdTreeNode>> nodes = new LinkedHashMap<>();
 
+    /** Whether to ignore changes. */
+    private final Supplier<Boolean> ignoreChanges;
+
     /**
      * Constructor.
      * @param editor editor.
@@ -46,6 +53,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         this.contextPath = "Ots";
         this.idAttribute = "Id";
         this.parentAttribute = "Parent";
+        this.ignoreChanges = editor::ignoreChanges;
     }
 
     /**
@@ -88,6 +96,10 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     @Override
     public Optional<String> validate(final XsdTreeNode node)
     {
+        if (this.ignoreChanges.get())
+        {
+            return Optional.empty();
+        }
         String value = node.getAttributeValue(this.parentAttribute);
         if (value == null || value.isEmpty() || !node.isActive())
         {
@@ -95,7 +107,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         }
         List<XsdTreeNode> list = new ArrayList<>();
         list.add(node);
-        return Optional.of(validateParent(getContext(node), value, list));
+        return Optional.ofNullable(validateParent(getContext(node), value, list));
     }
 
     /**
@@ -166,6 +178,12 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
             parent = parent.getParent();
         }
         return this.nodes.computeIfAbsent(parent, (p) -> new LinkedHashSet<>());
+    }
+
+    @Override
+    public long getOrderingId()
+    {
+        return this.orderingId;
     }
 
 }

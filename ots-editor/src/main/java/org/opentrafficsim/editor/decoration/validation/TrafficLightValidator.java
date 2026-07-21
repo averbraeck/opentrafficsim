@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.djutils.event.Event;
 import org.opentrafficsim.editor.OtsEditor;
@@ -31,11 +32,17 @@ import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidato
 public class TrafficLightValidator extends AbstractNodeDecoratorRemove implements CoupledValidator
 {
 
+    /** Ordering id. **/
+    private final long orderingId = NEXT_ID.incrementAndGet();
+
     /** All nodes bing validated. */
     private final Set<XsdTreeNode> validatingNodes = new LinkedHashSet<>();
 
     /** SignalGroup.TrafficLight to Link.TrafficLight coupling. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNodes = new LinkedHashMap<>();
+
+    /** Whether to ignore changes. */
+    private final Supplier<Boolean> ignoreChanges;
 
     /**
      * Constructor.
@@ -46,6 +53,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     {
         super(editor, (n) -> n.getPathString().endsWith(path) || n.getPathString().equals(XsdPaths.TRAFFIC_LIGHT));
         new RoadLayoutElementValidator(editor, path, LayoutCoupling.LINK_ATTRIBUTE, RoadLayoutElementAttribute.LANE);
+        this.ignoreChanges = editor::ignoreChanges;
     }
 
     @Override
@@ -112,6 +120,10 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     @Override
     public Optional<String> validate(final XsdTreeNode node)
     {
+        if (this.ignoreChanges.get())
+        {
+            return Optional.empty();
+        }
         String trafficLightId = node.getAttributeValue("TrafficLightId");
         if (trafficLightId != null && !trafficLightId.isEmpty())
         {
@@ -172,11 +184,16 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         return Optional.empty();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<XsdTreeNode, XsdTreeNode> getCouplings()
     {
         return this.coupledNodes;
+    }
+
+    @Override
+    public long getOrderingId()
+    {
+        return this.orderingId;
     }
 
 }

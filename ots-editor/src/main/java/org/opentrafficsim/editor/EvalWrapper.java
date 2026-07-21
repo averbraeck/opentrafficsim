@@ -46,6 +46,9 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     /** Last valid evaluator. */
     private Eval eval;
 
+    /** Whether to suppress executing the evaluator. */
+    private boolean ignoreEval = false;
+
     /** List of parameter wrappers for default parameters. */
     private final List<ParameterWrapper> defaultParamaters = new ArrayList<>();
 
@@ -264,10 +267,29 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     }
 
     /**
+     * Sets whether to suppress executing the evaluator.
+     * @param ignoreEval whether to suppress executing the evaluator
+     */
+    public void setIgnoreEval(final boolean ignoreEval)
+    {
+        if (this.ignoreEval && !ignoreEval)
+        {
+            this.ignoreEval = false;
+            setDirty();
+            return;
+        }
+        this.ignoreEval = ignoreEval;
+    }
+
+    /**
      * Sets the evaluator as being dirty, i.e. some input parameter was added, removed or changed. All listeners are notified.
      */
     public void setDirty()
     {
+        if (this.ignoreEval)
+        {
+            return;
+        }
         this.dirty = true;
         this.listeners.forEach((listener) -> listener.evalChanged());
     }
