@@ -92,6 +92,15 @@ public class Undo implements EventListener
     }
 
     /**
+     * Returns whether undo is ignoring changes.
+     * @return whether undo is ignoring changes
+     */
+    public boolean isIgnoreChanges()
+    {
+        return this.ignoreChanges;
+    }
+
+    /**
      * Starts a new action, which groups all sub-actions until a new action is started. This method can be called without being
      * sure concrete changes will be made. Internal listeners listen to all changes and will combine them in to one undo action,
      * up to the point the next action is started with this method. If no actual changes were made in between, the former start
@@ -187,8 +196,20 @@ public class Undo implements EventListener
         {
             iterator.next().undo();
         }
-        action.parent.children.forEach((n) -> n.invalidate());
-        action.parent.invalidate();
+        if (action.type.equals(ActionType.REMOVE))
+        {
+            /*
+             * CoupledValidators expect VALUE_CHANGED or ATTRIBUTE_CHANGED events to validate and couple. A NODE_CREATED event
+             * as caused by an undo of a node removal, will simply place the node back in to the tree. Therefore we need to
+             * invalidate the whole tree.
+             */
+            action.node.getRoot().invalidateAll();
+        }
+        else
+        {
+            action.parent.children.forEach((n) -> n.invalidate());
+            action.parent.invalidate();
+        }
         this.editor.show(action.node, action.attribute);
         this.cursor--;
         updateButtons();
@@ -450,28 +471,22 @@ public class Undo implements EventListener
         // can't be a record due to mutable postActionShowNode
 
         /** Name of the action, as presented with the undo/redo buttons. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        final ActionType type;
+        private final ActionType type;
 
         /** Queue of sub-actions. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        final Deque<SubAction> subActions;
+        private final Deque<SubAction> subActions;
 
         /** Node involved in the action. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        final XsdTreeNode node;
+        private final XsdTreeNode node;
 
         /** Parent node of the node involved in the action. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        final XsdTreeNode parent;
+        private final XsdTreeNode parent;
 
         /** Attribute for an attribute change, {@code null} otherwise. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        final String attribute;
+        private final String attribute;
 
         /** Node to gain focus after the action. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        XsdTreeNode postActionShowNode;
+        private XsdTreeNode postActionShowNode;
 
         /**
          * Constructor.
@@ -545,7 +560,7 @@ public class Undo implements EventListener
     }
 
     /**
-     * Sub-action defined by using two {@code Runnable}'s, definable as an lambda expression.
+     * Sub-action defined by using two {@link Runnable}'s, definable as a lambda expression.
      */
     private static class SubAction
     {
