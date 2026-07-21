@@ -7,6 +7,7 @@ import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Coupled validators can return the node to which a node attribute or value is coupled. This is e.g. a LinkType node for the
@@ -67,7 +68,16 @@ public interface CoupledValidator extends ValueValidator
         XsdTreeNode prevToNode = getCouplings().put(fromNode, toNode);
         if (!Objects.equals(toNode, prevToNode))
         {
-            fromNode.getRoot().fireEvent(COUPLING, new Object[] {this, fromNode, toNode, prevToNode});
+            XsdTreeNodeRoot root = toNode.getParent() != null ? toNode.getRoot() : (fromNode.getParent() != null
+                    ? fromNode.getRoot() : (prevToNode.getParent() != null ? prevToNode.getRoot() : null));
+            /*
+             * If all have no parent, all were deleted. For example as all were children under the same parent. This occurs when
+             * imported definition nodes are invalidated. This occurs by deleting and restoring all children.
+             */
+            if (root != null)
+            {
+                root.fireEvent(COUPLING, new Object[] {this, fromNode, toNode, prevToNode});
+            }
         }
     }
 
@@ -80,7 +90,16 @@ public interface CoupledValidator extends ValueValidator
         XsdTreeNode prevToNode = getCouplings().remove(fromNode);
         if (prevToNode != null)
         {
-            fromNode.getRoot().fireEvent(COUPLING, new Object[] {this, fromNode, null, prevToNode});
+            XsdTreeNodeRoot root = fromNode.getParent() != null ? fromNode.getRoot()
+                    : (prevToNode.getParent() != null ? prevToNode.getRoot() : null);
+            /*
+             * If both have no parent, both were deleted. For example as both were children under the same parent. This occurs
+             * when imported definition nodes are invalidated. This occurs by deleting and restoring all children.
+             */
+            if (root != null)
+            {
+                root.fireEvent(COUPLING, new Object[] {this, fromNode, null, prevToNode});
+            }
         }
     }
 
