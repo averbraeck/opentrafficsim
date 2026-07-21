@@ -76,7 +76,7 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
     @Override
     public void notify(final Event event)
     {
-        if (this.attribute.equals(((Object[]) event.getContent())[1]))
+        if (this.attribute != null && this.attribute.equals(((Object[]) event.getContent())[1]))
         {
             XsdTreeNode coupled =
                     this.listening.getCoupledNodeAttribute(this.listening.getAttributeIndexByName(this.attribute)).orElse(null);

@@ -93,59 +93,59 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Removes this as listener from all nodes under the node recursively.
-     * @param node node to remove as listener from, including from child nodes.
+     * @param xsdNode node to remove as listener from, including from child nodes.
      */
-    private void removeAsListener(final XsdTreeNode node)
+    private void removeAsListener(final XsdTreeNode xsdNode)
     {
-        if (canBeIgnored(node))
+        if (canBeIgnored(xsdNode))
         {
             return;
         }
-        if (node.getChildCount() > 0)
+        if (xsdNode.getChildCount() > 0)
         {
-            for (XsdTreeNode child : node.getChildren())
+            for (XsdTreeNode child : xsdNode.getChildren())
             {
                 removeAsListener(child);
             }
         }
-        node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-        node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        node.removeListener(this, XsdTreeNode.MOVED);
-        node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
-        node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+        xsdNode.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        xsdNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        xsdNode.removeListener(this, XsdTreeNode.MOVED);
+        xsdNode.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+        xsdNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
     }
 
     @Override
     public void notify(final Event event)
     {
         // for all events this listens to, the node is the first object in the content
-        XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+        XsdTreeNode xsdNode = (XsdTreeNode) ((Object[]) event.getContent())[0];
         if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
-            if (!node.getPath().contains(this.node) || canBeIgnored(node))
+            if (!xsdNode.getPath().contains(this.node) || canBeIgnored(xsdNode))
             {
                 // not the node of this listener
                 return;
             }
-            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-            node.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
-            node.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-            node.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+            xsdNode.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
+            xsdNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+            xsdNode.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
+            xsdNode.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+            xsdNode.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
             // remember the nodes, as their paths are empty after being removed, hence .contains(this.node) does not work
-            this.elementNodes.add(node);
+            this.elementNodes.add(xsdNode);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
-            if (!this.elementNodes.remove(node))
+            if (!this.elementNodes.remove(xsdNode))
             {
                 return;
             }
-            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            node.removeListener(this, XsdTreeNode.MOVED);
-            node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
-            node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+            xsdNode.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            xsdNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            xsdNode.removeListener(this, XsdTreeNode.MOVED);
+            xsdNode.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+            xsdNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
         }
         // for all events for which this method did not return, indicate a change
         this.dataIsDirty = true;
@@ -163,10 +163,10 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Returns whether the node may be ignored. This can be overridden by subclasses.
-     * @param node node.
+     * @param xsdNode node.
      * @return whether the node may be ignored.
      */
-    protected boolean canBeIgnored(final XsdTreeNode node)
+    protected boolean canBeIgnored(final XsdTreeNode xsdNode)
     {
         return false;
     }

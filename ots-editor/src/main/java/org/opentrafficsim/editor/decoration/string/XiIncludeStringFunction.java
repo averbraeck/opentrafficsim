@@ -32,7 +32,7 @@ public class XiIncludeStringFunction extends AbstractStringFunction
     {
         return (node) ->
         {
-            if (node.getAttributeValue(0) == null)
+            if (node.getAttributeValue(0) == null || node.getParent() == null)
             {
                 return "";
             }
