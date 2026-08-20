@@ -38,6 +38,9 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
     /** Editor. */
     private final OtsEditor editor;
 
+    /** Whether this data is valid. */
+    private boolean valid;
+
     /**
      * Constructor.
      * @param map map.
@@ -84,8 +87,9 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
      */
     void setValid()
     {
-        fireEvent(new Event(MAP_DATA_CHANGED, null));
+        this.valid = true;
         this.map.setValid(this);
+        fireEvent(new Event(MAP_DATA_CHANGED, null));
     }
 
     /**
@@ -93,8 +97,18 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
      */
     void setInvalid()
     {
-        fireEvent(new Event(MAP_DATA_CHANGED, null));
+        this.valid = false;
         this.map.setInvalid(this);
+        fireEvent(new Event(MAP_DATA_CHANGED, null));
+    }
+
+    /**
+     * Returns whether this data is valid.
+     * @return whether this data is valid
+     */
+    public boolean isValid()
+    {
+        return this.valid;
     }
 
     /**

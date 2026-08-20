@@ -13,7 +13,6 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djutils.base.Identifiable;
 import org.djutils.eval.Eval;
 import org.djutils.eval.RetrieveValue;
-import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
@@ -332,7 +331,7 @@ public final class ScenarioParser
             else
             {
                 this.lookingUp.remove(name);
-                throw new OtsRuntimeException("Parameter " + name + " not available.");
+                throw new IllegalArgumentException("Parameter " + name + " not available.");
             }
             this.lookingUp.remove(name);
             if (value instanceof Double)

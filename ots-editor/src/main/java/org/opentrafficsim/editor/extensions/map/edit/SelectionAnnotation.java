@@ -27,8 +27,10 @@ public class SelectionAnnotation extends MapAnnotation<ZAdjustedMapData>
 {
 
     /** Selection color. */
-    private static final Color SELECTION_COLOR =
-            OtsEditor.PROPERTIES_STORE.getColorOrDefault("map.selectionColor", Color.ORANGE);
+    static final Color SELECTION_COLOR = OtsEditor.PROPERTIES_STORE.getColorOrDefault("map.selectionColor", Color.ORANGE);
+
+    /** Invalid color. */
+    static final Color INVALID_COLOR = OtsEditor.PROPERTIES_STORE.getColorOrDefault("map.invalidColor", Color.RED);
 
     /**
      * Constructor.
@@ -37,7 +39,18 @@ public class SelectionAnnotation extends MapAnnotation<ZAdjustedMapData>
      */
     public SelectionAnnotation(final MapData source, final EditorMap map)
     {
-        super(new ZAdjustedMapData(source, DrawLevel.SELECTION.getZ()), map);
+        this(source, map, DrawLevel.SELECTION.getZ());
+    }
+
+    /**
+     * Constructor.
+     * @param source source
+     * @param map map
+     * @param z z-level
+     */
+    protected SelectionAnnotation(final MapData source, final EditorMap map, final double z)
+    {
+        super(new ZAdjustedMapData(source, z), map);
         setScaleY(true);
         setRotate(!(source instanceof MapNodeData));
     }
@@ -47,9 +60,18 @@ public class SelectionAnnotation extends MapAnnotation<ZAdjustedMapData>
     {
         setRendering(graphics);
         graphics.setStroke(new BasicStroke(px(1.75f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10.0f));
-        graphics.setColor(SELECTION_COLOR);
+        graphics.setColor(getColor());
         graphics.draw(PaintLine.getPath(getSource().getLocation(), getSource().getAbsoluteContour()));
         resetRendering(graphics);
+    }
+
+    /**
+     * Returns the color.
+     * @return color
+     */
+    protected Color getColor()
+    {
+        return getSource().mapData().isValid() ? SELECTION_COLOR : INVALID_COLOR;
     }
 
     /**

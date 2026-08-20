@@ -4,13 +4,10 @@ import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.animation.OtsRenderable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.extensions.map.EditorMap;
-import org.opentrafficsim.editor.extensions.map.MapData;
 
 /**
  * Convenience class where sub-classes can use {@link #px(double)} or {@link #px(float[])} to obtain a paint stroke defined at
- * pixel level for a locatable that is otherwise scale in world coordinates. This class can also listen to
- * {@link MapData#MAP_DATA_CHANGED} on relevant {@link MapData} instances to update derived animation data and coupled
- * annotations.
+ * pixel level for a locatable that is otherwise scaled in world coordinates.
  * <p>
  * Copyright (c) 2026-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.<br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

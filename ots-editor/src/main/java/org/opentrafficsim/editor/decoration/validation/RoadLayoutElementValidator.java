@@ -442,6 +442,10 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         {
             return layout;
         }
+        if (layout.getChildCount() == 0)
+        {
+            return null;
+        }
         layout.getChild(0).invalidate();
         layout.getChild(0).isValid(); // recouple if things have changed
         return layout.getChild(0).getCoupledNodeValue().orElse(null); // sequence of which DefinedLayout is the first node

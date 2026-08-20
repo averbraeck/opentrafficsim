@@ -25,6 +25,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.map.EditorMap;
 import org.opentrafficsim.editor.extensions.map.edit.DraggableAnnotation.Draggable;
 
+import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -41,9 +42,17 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
     private static final Color FILL_COLOR =
             OtsEditorProperties.PROPERTIES_STORE.getColorOrDefault("map.draggableFillColor", Color.WHITE);
 
+    /** Expression color. */
+    private static final Color EXPRESSION_COLOR =
+            OtsEditorProperties.PROPERTIES_STORE.getColorOrDefault("map.draggableExpressionColor", Color.RED);
+
     /** Edge color. */
     private static final Color EDGE_COLOR =
             OtsEditorProperties.PROPERTIES_STORE.getColorOrDefault("map.draggableEdgeColor", Color.BLACK);
+
+    /** Pixel margin within which draggables are selected. */
+    private static final int DRAGGABLE_SELECT_MARGIN_PX =
+            OtsEditorProperties.PROPERTIES_STORE.getIntegerOrDefault("map.draggableSelectMarginPx", 3);
 
     /** Annotations that are static in the life cycle up to a mouse release. */
     private final Set<HelperAnnotation> staticAnnotations = new LinkedHashSet<>();
@@ -51,8 +60,8 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
     /** Annotations that are continuously updated while dragging. */
     private final Set<HelperAnnotation> dynamicAnnotations = new LinkedHashSet<>();
 
-    /** Whether the draggable is selected. */
-    private boolean selected;
+    /** Whether the draggable is highlighted. */
+    private boolean highlight;
 
     /**
      * Constructor.
@@ -67,12 +76,21 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
     }
 
     /**
-     * Sets whether the draggable is selected.
+     * Sets whether the draggable is highlighted based on whether it is selected, and it is deletable.
      * @param selected whether the draggable is selected
      */
-    public void setSelected(final boolean selected)
+    public void setHighlightIfDeletable(final boolean selected)
     {
-        this.selected = selected;
+        this.highlight = selected && isDeletable();
+    }
+
+    /**
+     * Returns whether the draggable is deletable.
+     * @return whether the draggable is deletable
+     */
+    public boolean isDeletable()
+    {
+        return getSource().deleter != null;
     }
 
     /**
@@ -81,7 +99,10 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
      */
     public void showValue(final OtsEditor editor)
     {
-        getSource().show.show(editor);
+        if (getSource().node != null)
+        {
+            editor.show(getSource().node, getSource().attribute);
+        }
     }
 
     /**
@@ -89,7 +110,7 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
      */
     public void delete()
     {
-        if (getSource().deleter != null)
+        if (isDeletable())
         {
             getSource().deleter.run();
         }
@@ -99,11 +120,11 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         setRendering(graphics);
-        graphics.setStroke(new BasicStroke(this.selected && getSource().deleter != null ? 2.0f : 1.0f));
-        graphics.setColor(FILL_COLOR);
+        graphics.setStroke(new BasicStroke(1.0f));
+        graphics.setColor(getSource().isExpression ? EXPRESSION_COLOR : FILL_COLOR);
         Shape shape = PaintLine.getPath(ZERO, getSource().annotation);
         graphics.fill(shape);
-        graphics.setColor(EDGE_COLOR);
+        graphics.setColor(this.highlight ? SelectionAnnotation.SELECTION_COLOR : EDGE_COLOR);
         graphics.draw(shape);
         resetRendering(graphics);
     }
@@ -157,6 +178,14 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
         });
     }
 
+    @Override
+    public boolean contains(final Point2d pointRelativeTo00, final RenderableScale scale, final double worldMargin,
+            final double pixelMargin, final double xScale, final double yScale)
+    {
+        return getSource().signedDistance(pointRelativeTo00.x / xScale,
+                pointRelativeTo00.y / yScale) < DRAGGABLE_SELECT_MARGIN_PX;
+    }
+
     /**
      * Data for draggable renderable.
      * @param <T> value type that the draggable sets
@@ -179,8 +208,11 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
         /** Writes the value typically in an {@link XsdTreeNode}. */
         private final Consumer<T> valueWriter;
 
-        /** Tree node and possible attribute that is affected by this draggable. */
-        private Show show = new Show(null, null);
+        /** Tree node of which this draggable affects the value (or attribute), if any. */
+        private XsdTreeNode node;
+
+        /** Attribute of tree node that this draggable affects, if any. */
+        private String attribute;
 
         /** Deletes something in the data structure. */
         private Runnable deleter = null;
@@ -193,6 +225,9 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
 
         /** Default value. */
         private T defaultValue = null;
+
+        /** Whether this draggable concerns a value that is currently an expression. */
+        private boolean isExpression;
 
         /**
          * Constructor.
@@ -213,7 +248,7 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
         }
 
         /**
-         * Set default value.
+         * Set default value (which is set after the user double clicks the draggable).
          * @param defaultValue default value
          * @return this, for method chaining
          */
@@ -225,13 +260,41 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
         }
 
         /**
-         * Set tree node and possible attribute that is affected by this draggable.
-         * @param show show
+         * Sets node of which this draggable affects the value. This is for display purposes (shift-click draggable to show in
+         * tree).
+         * @param node node of which this draggable affects the value
          * @return this, for method chaining
          */
-        public Draggable<T> setShow(final Show show)
+        public Draggable<T> setNode(final XsdTreeNode node)
         {
-            this.show = show;
+            this.node = node;
+            this.attribute = null;
+            this.isExpression = node.valueIsExpression();
+            return this;
+        }
+
+        /**
+         * Returns the affected node.
+         * @return affected node.
+         */
+        XsdTreeNode getNode()
+        {
+            return this.node;
+        }
+
+        /**
+         * Sets node and attribute of the node of which this draggable affects the value. This is for display purposes
+         * (shift-click draggable to show in tree).
+         * @param node node of which this draggable affects an attribute value
+         * @param attribute attribute name
+         * @return this, for method chaining
+         */
+        @SuppressWarnings("hiddenfield")
+        public Draggable<T> setNodeAttribute(final XsdTreeNode node, final String attribute)
+        {
+            this.node = node;
+            this.attribute = attribute;
+            this.isExpression = node.attributeIsExpression(node.getAttributeIndexByName(attribute));
             return this;
         }
 
@@ -251,7 +314,7 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
          */
         public void writeDefaultValue()
         {
-            if (this.defaultValueSet)
+            if (this.defaultValueSet && !this.isExpression)
             {
                 this.value = this.defaultValue;
                 this.valueWriter.accept(this.value);
@@ -259,11 +322,16 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
         }
 
         /**
-         * Set the point based on mouse world coordinate.
+         * Set the point based on mouse world coordinate. Also updates the internal draggable value, but not the value in the
+         * data tree.
          * @param mousePoint mouse world coordinate
          */
         public void setPointSnapped(final Point2d mousePoint)
         {
+            if (this.isExpression)
+            {
+                return;
+            }
             Point2d point = this.snapper.apply(mousePoint);
             this.location = new DirectedPoint2d(point, 0.0);
             this.value = this.valueFunction.apply(point);
@@ -274,6 +342,10 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
          */
         public void setValue()
         {
+            if (this.isExpression)
+            {
+                return;
+            }
             this.valueWriter.accept(this.value);
         }
 
@@ -314,26 +386,6 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
             return new Polygon2d(this.annotation.getPointList());
         }
 
-    }
-
-    /**
-     * Shows node that is affected by this draggable, possibly including the attribute that is affected.
-     * @param node tree node
-     * @param attribute attribute may be {@code null}
-     */
-    public record Show(XsdTreeNode node, String attribute)
-    {
-        /**
-         * Show affected tree node and possible attribute.
-         * @param editor editor
-         */
-        public void show(final OtsEditor editor)
-        {
-            if (node() != null)
-            {
-                editor.show(node(), attribute());
-            }
-        }
     }
 
     /**

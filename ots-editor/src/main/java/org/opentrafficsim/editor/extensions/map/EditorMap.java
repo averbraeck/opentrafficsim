@@ -538,6 +538,10 @@ public final class EditorMap extends JPanel implements EventListener
                 {
                     add(node);
                 }
+                if (node.getPathString().equals(XsdPaths.NODE))
+                {
+                    this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
+                }
             }
             else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
             {
@@ -597,6 +601,7 @@ public final class EditorMap extends JPanel implements EventListener
             if (this.datas.containsKey(node)) // node.isType does not work as parent is gone, i.e. type is just "Node"
             {
                 remove(node); // updates animation panel
+                this.links.keySet().forEach((linkData) -> linkData.notifyNodeRemoved(node));
             }
             else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
             {
@@ -621,6 +626,11 @@ public final class EditorMap extends JPanel implements EventListener
                     listener.removeListener(listener, ChangeListener.CHANGE_EVENT);
                     listener.destroy();
                 }
+            }
+            else if (node.getPathString().equals(XsdPaths.NODE))
+            {
+                // usually "if (this.datas.containsKey(node))" will catch this, but not always
+                this.links.keySet().forEach((linkData) -> linkData.notifyNodeRemoved(node));
             }
             this.updater.update();
         }
@@ -687,10 +697,7 @@ public final class EditorMap extends JPanel implements EventListener
             Object[] content = (Object[]) event.getContent();
             if ("Id".equals(content[1]))
             {
-                for (MapLinkData linkData : this.links.keySet())
-                {
-                    linkData.notifyNodeIdChanged(linkData.getNode());
-                }
+                this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
             }
             this.updater.update();
         }
@@ -724,6 +731,7 @@ public final class EditorMap extends JPanel implements EventListener
         {
             return;
         }
+        this.animations.put(node, null); // skips adding animations through setValid downstream of animation creation
         Renderable2d<?> animation;
         if (node.getPathString().equals(XsdPaths.NODE) || node.getPathString().equals(XsdPaths.CENTROID))
         {
@@ -756,7 +764,6 @@ public final class EditorMap extends JPanel implements EventListener
      * Set the data as being invalid to draw.
      * @param data data that is invalid to draw
      */
-    // TODO: for some reason, this does not work... because data remains in JVM?
     public void setInvalid(final MapData data)
     {
         //

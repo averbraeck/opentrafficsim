@@ -59,6 +59,8 @@ import org.opentrafficsim.editor.ChildNodeFinder;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
 import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
@@ -185,6 +187,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     public MapLinkData(final EditorMap map, final XsdTreeNode linkNode, final OtsEditor editor)
     {
         super(map, linkNode, editor);
+//        linkNode.getRoot().addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
         linkNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         this.isConnector = "Connector".equals(linkNode.getNodeName());
         if (this.isConnector)
@@ -797,7 +800,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
         this.dirtyLayout = false;
-        setValid();
         fireEvent(LAYOUT_REBUILT, this);
     }
 
@@ -974,13 +976,32 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Notification from the Map that a node (Ots.Network.Node) id was changed.
-     * @param node node.
      */
-    public void notifyNodeIdChanged(final XsdTreeNode node)
+    public void notifyNodeIdChanged()
     {
         this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
         setDirtyEndCheckValidity();
+    }
+
+    /**
+     * Notification from the Map that a node (Ots.Network.Node) is removed.
+     * @param node node of node
+     */
+    public void notifyNodeRemoved(final XsdTreeNode node)
+    {
+        if (node.equals(this.nodeStart))
+        {
+            this.nodeStart = null;
+            this.directionStart = null;
+            setDirtyEndCheckValidity();
+        }
+        else if (node.equals(this.nodeEnd))
+        {
+            this.nodeEnd = null;
+            this.directionEnd = null;
+            setDirtyEndCheckValidity();
+        }
     }
 
     /**
@@ -998,7 +1019,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         catch (IllegalArgumentException ex)
         {
-            // illegal value for adapter
+            // illegal or missing value for adapter
             return null;
         }
     }
@@ -1301,6 +1322,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         }
                         catch (Exception ex)
                         {
+                            orNull(child.getValue(), Adapters.get(Point2d.class));
                             throw new OtsRuntimeException(
                                     "Expression adapter could not unmarshal value for polyline coordinate.");
                         }

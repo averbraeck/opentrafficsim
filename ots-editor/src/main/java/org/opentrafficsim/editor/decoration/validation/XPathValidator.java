@@ -1,7 +1,6 @@
 package org.opentrafficsim.editor.decoration.validation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -154,23 +153,9 @@ public abstract class XPathValidator implements ValueValidator
     protected List<String> gatherFieldValues(final XsdTreeNode keyOrChildNode)
     {
         List<String> values = new ArrayList<>();
-        if (keyOrChildNode.getPathString().endsWith("DefaultInputParameters.String"))
+        for (Field field : this.fields)
         {
-            Throw.when(this.fields.size() != 1, IllegalStateException.class,
-                    "Key %s is defined as possibly being a default input parameter, but the key has multiple fields.",
-                    getKeyName());
-            Throw.when(!Arrays.stream(this.fields.get(0).fieldPaths).anyMatch((s) -> "@Id".equals(s)),
-                    IllegalStateException.class,
-                    "Key %s is defined as possibly being a default input parameter, but the key does not have a field @Id",
-                    getKeyName());
-            values.add(keyOrChildNode.getValue());
-        }
-        else
-        {
-            for (Field field : this.fields)
-            {
-                values.add(field.getValue(keyOrChildNode));
-            }
+            values.add(field.getValue(keyOrChildNode));
         }
         values.replaceAll((v) -> "".equals(v) ? null : v);
         return values;
@@ -472,10 +457,7 @@ public abstract class XPathValidator implements ValueValidator
         private void attach(final int selectorIndex, final int fieldPathIndex, final XsdTreeNode node)
         {
             FieldValue next = new FieldValue(node, fieldPathIndex);
-            FieldValue prev = this.attachedNodes.put(getSelectorNode(node, selectorIndex), next);// new
-                                                                                                 // SelectedNode(getContext(node),
-                                                                                                 // getSelectorNode(node,
-                                                                                                 // selectorIndex)), next);
+            FieldValue prev = this.attachedNodes.put(getSelectorNode(node, selectorIndex), next);
             if (prev != null && !prev.equals(next))
             {
                 Logger.ots().error("Node {} already attached to field {} on key \"{}\". This field expression resolves to"
