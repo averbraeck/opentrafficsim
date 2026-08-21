@@ -16,6 +16,10 @@ public class AccelerationUnitType extends ExpressionType<AccelerationUnit>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, AccelerationUnit> TO_TYPE =
+            SerializableFunction.of(AccelerationUnit.class, AccelerationUnit.BASE::getUnitByAbbreviation);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class AccelerationUnitType extends ExpressionType<AccelerationUnit>
      */
     public AccelerationUnitType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

@@ -30,14 +30,7 @@ public class LengthAdapter extends ScalarAdapter<Length, LengthType>
         {
             return new LengthType(trimBrackets(field));
         }
-        try
-        {
-            return new LengthType(Length.valueOf(field));
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
+        return new LengthType(Length.valueOf(field));
     }
 
 }

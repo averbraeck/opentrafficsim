@@ -47,10 +47,9 @@ public abstract class StaticFieldAdapter<T, E extends ExpressionType<T>> extends
     @Override
     public String marshal(final E value)
     {
-        return marshal(value, (t) -> t instanceof Enum ? ((Enum<?>) t).name() : t.toString());
+        return marshalAsExpressionOrValue(value, (t) -> t instanceof Enum ? ((Enum<?>) t).name() : t.toString());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public E unmarshal(final String value) throws IllegalArgumentException
     {
@@ -62,10 +61,18 @@ public abstract class StaticFieldAdapter<T, E extends ExpressionType<T>> extends
                 return constructor.newInstance(trimBrackets(value));
             }
             Constructor<E> constructor = ClassUtil.resolveConstructor(this.expressionType, new Class[] {this.valueType});
-            return constructor.newInstance((T) ClassUtil.resolveField(this.valueType, value).get(null));
+            try
+            {
+                return constructor.newInstance(ExpressionType.fromStaticField(this.valueType, value));
+            }
+            catch (IllegalArgumentException e)
+            {
+                // catch IllegalArgumentException thrown by fromStaticField so the below catch does not duplicate it
+                throw e;
+            }
         }
         catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException | NoSuchFieldException e)
+                | InvocationTargetException e)
         {
             throw new IllegalArgumentException("Unable to parse value " + value + " for type " + this.expressionType, e);
         }

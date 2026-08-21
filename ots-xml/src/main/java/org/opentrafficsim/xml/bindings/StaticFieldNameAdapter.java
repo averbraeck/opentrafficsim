@@ -2,9 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import java.lang.reflect.Field;
 
-import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.base.OtsRuntimeException;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.FieldType;
 
 /**
@@ -35,24 +32,13 @@ public class StaticFieldNameAdapter extends ExpressionAdapter<Field, FieldType>
         {
             return new FieldType(trimBrackets(field));
         }
-        try
-        {
-            int dot = field.lastIndexOf(".");
-            String className = field.substring(0, dot);
-            String fieldName = field.substring(dot + 1);
-            return new FieldType(ClassUtil.resolveField(Class.forName(className), fieldName));
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing Static Field '" + field + "'");
-            throw new OtsRuntimeException(exception);
-        }
+        return new FieldType(FieldType.valueOf(field));
     }
 
     @Override
     public String marshal(final FieldType value)
     {
-        return marshal(value, (v) -> (v.getDeclaringClass().getName() + "." + v.getName()));
+        return marshalAsExpressionOrValue(value, (v) -> (v.getDeclaringClass().getName() + "." + v.getName()));
     }
 
 }

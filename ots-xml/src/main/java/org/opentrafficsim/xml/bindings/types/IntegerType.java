@@ -15,7 +15,8 @@ public class IntegerType extends ExpressionType<Integer>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Integer> TO_TYPE = (o) -> ((Number) o).intValue();
+    private static final SerializableFunction<Object, Integer> TO_TYPE =
+            SerializableFunction.ofNumeric(Integer.class, Integer::valueOf, (o) -> o.intValue(), Integer::valueOf);
 
     /**
      * Constructor with value.
@@ -23,7 +24,7 @@ public class IntegerType extends ExpressionType<Integer>
      */
     public IntegerType(final Integer value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

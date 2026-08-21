@@ -16,6 +16,10 @@ public class LinearDensityUnitType extends ExpressionType<LinearDensityUnit>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, LinearDensityUnit> TO_TYPE =
+            SerializableFunction.of(LinearDensityUnit.class, LinearDensityUnit.BASE::getUnitByAbbreviation);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class LinearDensityUnitType extends ExpressionType<LinearDensityUnit>
      */
     public LinearDensityUnitType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

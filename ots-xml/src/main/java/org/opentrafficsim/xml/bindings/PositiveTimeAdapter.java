@@ -2,7 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.TimeType;
 
 /**
@@ -32,17 +31,9 @@ public class PositiveTimeAdapter extends ScalarAdapter<Time, TimeType>
         {
             return new TimeType(trimBrackets(field));
         }
-        try
-        {
-            Time value = Time.valueOf(field);
-            Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveTime value %s is not a positive value.", value);
-            return new TimeType(value);
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing Time '" + field + "'");
-            throw exception;
-        }
+        Time value = Time.valueOf(field);
+        Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveTime value %s is not a positive value.", value);
+        return new TimeType(value);
     }
 
     @Override

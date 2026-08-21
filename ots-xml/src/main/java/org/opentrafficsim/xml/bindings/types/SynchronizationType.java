@@ -16,6 +16,10 @@ public class SynchronizationType extends ExpressionType<Synchronization>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Synchronization> TO_TYPE =
+            SerializableFunction.ofStaticField(Synchronization.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class SynchronizationType extends ExpressionType<Synchronization>
      */
     public SynchronizationType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

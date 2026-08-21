@@ -16,6 +16,10 @@ public class StripeLateralSyncType extends ExpressionType<StripeLateralSync>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, StripeLateralSync> TO_TYPE =
+            SerializableFunction.ofStaticField(StripeLateralSync.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class StripeLateralSyncType extends ExpressionType<StripeLateralSync>
      */
     public StripeLateralSyncType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

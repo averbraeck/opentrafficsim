@@ -34,7 +34,7 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
     @Override
     public String marshal(final E value)
     {
-        return marshal(value, (t) -> t == null ? "" : t.toString());
+        return marshalAsExpressionOrValue(value, (t) -> t == null ? "" : t.toString());
     }
 
     /**
@@ -44,7 +44,7 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
      * @param stringFunction function to get a {@code String} representation of a contained value.
      * @return Marshaled {@code String} of an {@code ExpressionType}.
      */
-    protected final String marshal(final E value, final Function<T, String> stringFunction)
+    protected final String marshalAsExpressionOrValue(final E value, final Function<T, String> stringFunction)
     {
         if (value.isExpression())
         {

@@ -17,7 +17,8 @@ public class AngleType extends ExpressionType<Angle>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Angle> TO_TYPE = (o) -> Angle.ofSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Angle> TO_TYPE =
+            SerializableFunction.ofNumeric(Angle.class, Angle::valueOf, Angle::ofSI);
 
     /**
      * Constructor with value.
@@ -25,7 +26,7 @@ public class AngleType extends ExpressionType<Angle>
      */
     public AngleType(final Angle value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

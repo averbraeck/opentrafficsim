@@ -17,7 +17,8 @@ public class DirectionType extends ExpressionType<Direction>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Direction> TO_TYPE = (o) -> Direction.ofSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Direction> TO_TYPE =
+            SerializableFunction.ofNumeric(Direction.class, DirectionType::valueOf, Direction::ofSI);
 
     /**
      * Constructor with value.
@@ -25,7 +26,7 @@ public class DirectionType extends ExpressionType<Direction>
      */
     public DirectionType(final Direction value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**
@@ -35,6 +36,27 @@ public class DirectionType extends ExpressionType<Direction>
     public DirectionType(final String expression)
     {
         super(expression, TO_TYPE);
+    }
+
+    /**
+     * Parses {@code String} to to the right type, allowing {@code "deg"} as the unit assuming the {@code "deg(E)"} unit.
+     * @param str input string
+     * @return parsed output
+     */
+    public static Direction valueOf(final String str)
+    {
+        String direction = str;
+        if (direction.trim().endsWith("deg"))
+        {
+            direction = direction.replace("deg", "deg(E)");
+        }
+        if (direction.trim().endsWith("rad"))
+        {
+            direction = direction.replace("rad", "rad(E)");
+        }
+        direction = direction.replace("East", "E");
+        direction = direction.replace("North", "N");
+        return Direction.valueOf(direction);
     }
 
 }

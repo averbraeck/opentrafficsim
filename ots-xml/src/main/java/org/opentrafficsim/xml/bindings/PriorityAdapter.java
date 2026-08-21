@@ -14,7 +14,7 @@ import org.opentrafficsim.xml.bindings.types.PriorityType;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class PriorityAdapter extends ExpressionAdapter<Priority, PriorityType>
+public class PriorityAdapter extends StaticFieldAdapter<Priority, PriorityType>
 {
 
     /**
@@ -22,17 +22,7 @@ public class PriorityAdapter extends ExpressionAdapter<Priority, PriorityType>
      */
     public PriorityAdapter()
     {
-        //
-    }
-
-    @Override
-    public PriorityType unmarshal(final String value)
-    {
-        if (isExpression(value))
-        {
-            return new PriorityType(trimBrackets(value));
-        }
-        return new PriorityType(Priority.valueOf(value));
+        super(Priority.class, PriorityType.class);
     }
 
 }

@@ -45,7 +45,7 @@ public class ClassAdapter extends ExpressionAdapter<Class, ClassType>
     @Override
     public String marshal(final ClassType clazz) throws IllegalArgumentException
     {
-        return marshal(clazz, (c) -> c.getName());
+        return marshalAsExpressionOrValue(clazz, (c) -> c.getName());
     }
 
 }

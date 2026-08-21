@@ -2,7 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.DurationType;
 
 /**
@@ -32,18 +31,9 @@ public class PositiveDurationAdapter extends ScalarAdapter<Duration, DurationTyp
         {
             return new DurationType(trimBrackets(field));
         }
-        try
-        {
-            Duration value = Duration.valueOf(field);
-            Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveDuration value %s is not a positive value.",
-                    value);
-            return new DurationType(value);
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing Duration '" + field + "'");
-            throw exception;
-        }
+        Duration value = Duration.valueOf(field);
+        Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveDuration value %s is not a positive value.", value);
+        return new DurationType(value);
     }
 
     @Override

@@ -16,6 +16,10 @@ public class FrequencyUnitType extends ExpressionType<FrequencyUnit>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, FrequencyUnit> TO_TYPE =
+            SerializableFunction.of(FrequencyUnit.class, FrequencyUnit.BASE::getUnitByAbbreviation);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class FrequencyUnitType extends ExpressionType<FrequencyUnit>
      */
     public FrequencyUnitType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

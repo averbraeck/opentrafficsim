@@ -16,6 +16,9 @@ public class PriorityType extends ExpressionType<Priority>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Priority> TO_TYPE = SerializableFunction.ofStaticField(Priority.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +34,7 @@ public class PriorityType extends ExpressionType<Priority>
      */
     public PriorityType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

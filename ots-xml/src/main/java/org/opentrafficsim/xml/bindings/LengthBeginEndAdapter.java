@@ -32,57 +32,13 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
         {
             return new LengthBeginEndType(trimBrackets(field));
         }
-
-        String clean = field.replaceAll("\\s", "").trim();
-
-        try
-        {
-            if (clean.equals("BEGIN"))
-            {
-                return new LengthBeginEndType(new LengthBeginEnd(true, Length.ZERO));
-            }
-
-            if (clean.equals("END"))
-            {
-                return new LengthBeginEndType(new LengthBeginEnd(false, Length.ZERO));
-            }
-
-            if (clean.endsWith("%"))
-            {
-                double d = 0.01 * Double.parseDouble(clean.substring(0, clean.length() - 1).trim());
-                Throw.when(d < 0.0 || d > 1.0, IllegalArgumentException.class,
-                        "fraction must be between 0.0 and 1.0 (inclusive)");
-                return new LengthBeginEndType(new LengthBeginEnd(d));
-            }
-
-            if (clean.matches("([0]?\\.?\\d+)|[1](\\.0*)"))
-            {
-                double d = Double.parseDouble(clean);
-                return new LengthBeginEndType(new LengthBeginEnd(d));
-            }
-
-            boolean begin = true;
-            if (clean.startsWith("END-"))
-            {
-                begin = false;
-                clean = clean.substring(4);
-            }
-
-            Throw.when(clean.startsWith("-"), IllegalArgumentException.class, "Field %s contains negative value.", field);
-
-            Length length = Length.valueOf(clean);
-            return new LengthBeginEndType(new LengthBeginEnd(begin, length));
-        }
-        catch (Exception exception)
-        {
-            throw new IllegalArgumentException("Error parsing LengthBeginEnd " + field, exception);
-        }
+        return new LengthBeginEndType(LengthBeginEndType.valueOf(field));
     }
 
     @Override
     public String marshal(final LengthBeginEndType value)
     {
-        return marshal(value, this::marshalValue);
+        return marshalAsExpressionOrValue(value, LengthBeginEndAdapter::marshalValue);
     }
 
     /**
@@ -91,7 +47,7 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
      * @return marshaled value.
      * @throws IllegalArgumentException when the fraction is out of bounds
      */
-    private String marshalValue(final LengthBeginEnd lbe) throws IllegalArgumentException
+    private static String marshalValue(final LengthBeginEnd lbe) throws IllegalArgumentException
     {
         if (!lbe.isAbsolute())
         {

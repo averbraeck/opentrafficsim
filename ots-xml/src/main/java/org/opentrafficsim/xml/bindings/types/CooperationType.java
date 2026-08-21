@@ -16,6 +16,10 @@ public class CooperationType extends ExpressionType<Cooperation>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Cooperation> TO_TYPE =
+            SerializableFunction.ofStaticField(Cooperation.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class CooperationType extends ExpressionType<Cooperation>
      */
     public CooperationType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

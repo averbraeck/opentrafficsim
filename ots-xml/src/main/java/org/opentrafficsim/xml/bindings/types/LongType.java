@@ -15,7 +15,8 @@ public class LongType extends ExpressionType<Long>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Long> TO_TYPE = (o) -> ((Number) o).longValue();
+    private static final SerializableFunction<Object, Long> TO_TYPE =
+            SerializableFunction.ofNumeric(Long.class, Long::valueOf, (o) -> o.longValue(), Long::valueOf);
 
     /**
      * Constructor with value.
@@ -23,7 +24,7 @@ public class LongType extends ExpressionType<Long>
      */
     public LongType(final Long value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

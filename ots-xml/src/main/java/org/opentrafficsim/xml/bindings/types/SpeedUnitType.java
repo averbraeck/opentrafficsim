@@ -16,6 +16,10 @@ public class SpeedUnitType extends ExpressionType<SpeedUnit>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, SpeedUnit> TO_TYPE =
+            SerializableFunction.of(SpeedUnit.class, SpeedUnit.BASE::getUnitByAbbreviation);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class SpeedUnitType extends ExpressionType<SpeedUnit>
      */
     public SpeedUnitType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

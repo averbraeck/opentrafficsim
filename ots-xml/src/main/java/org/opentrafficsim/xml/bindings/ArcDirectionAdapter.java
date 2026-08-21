@@ -1,6 +1,5 @@
 package org.opentrafficsim.xml.bindings;
 
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 
@@ -32,31 +31,7 @@ public class ArcDirectionAdapter extends ExpressionAdapter<ArcDirection, ArcDire
         {
             return new ArcDirectionType(trimBrackets(field));
         }
-        try
-        {
-            String clean = field.replaceAll("\\s", "");
-            if (clean.equals("L") || clean.equals("LEFT") || clean.equals("COUNTERCLOCKWISE"))
-            {
-                return new ArcDirectionType(ArcDirection.LEFT);
-            }
-            if (clean.equals("R") || clean.equals("RIGHT") || clean.equals("CLOCKWISE"))
-            {
-                return new ArcDirectionType(ArcDirection.RIGHT);
-            }
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing ArcDirection (LeftRight) '" + field + "'");
-            throw new IllegalArgumentException("Error parsing ArcDirection (LeftRight) " + field, exception);
-        }
-        Logger.ots().error("Problem parsing ArcDirection (LeftRight) '" + field + "'");
-        throw new IllegalArgumentException("Error parsing ArcDirection (LeftRight) " + field);
-    }
-
-    @Override
-    public String marshal(final ArcDirectionType value) throws IllegalArgumentException
-    {
-        return marshal(value, (v) -> v.name());
+        return new ArcDirectionType(ArcDirectionType.valueOf(field));
     }
 
 }

@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.SpeedType;
 
 /**
@@ -31,15 +30,7 @@ public class SpeedAdapter extends ScalarAdapter<Speed, SpeedType>
         {
             return new SpeedType(trimBrackets(field));
         }
-        try
-        {
-            return new SpeedType(Speed.valueOf(field));
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing Speed '" + field + "'");
-            throw exception;
-        }
+        return new SpeedType(Speed.valueOf(field));
     }
 
 }

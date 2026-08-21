@@ -18,7 +18,7 @@ public class AccelerationType extends ExpressionType<Acceleration>
 
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Acceleration> TO_TYPE =
-            (o) -> Acceleration.ofSI(((Number) o).doubleValue());
+            SerializableFunction.ofNumeric(Acceleration.class, Acceleration::valueOf, Acceleration::ofSI);
 
     /**
      * Constructor with value.
@@ -26,7 +26,7 @@ public class AccelerationType extends ExpressionType<Acceleration>
      */
     public AccelerationType(final Acceleration value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

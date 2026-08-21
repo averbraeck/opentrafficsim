@@ -32,25 +32,7 @@ public class DirectionAdapter extends ScalarAdapter<Direction, DirectionType>
         {
             return new DirectionType(trimBrackets(field));
         }
-        try
-        {
-            String direction = field;
-            if (direction.trim().endsWith("deg"))
-            {
-                direction = direction.replace("deg", "deg(E)");
-            }
-            if (direction.trim().endsWith("rad"))
-            {
-                direction = direction.replace("rad", "rad(E)");
-            }
-            direction = direction.replace("East", "E");
-            direction = direction.replace("North", "N");
-            return new DirectionType(Direction.valueOf(direction));
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
+        return new DirectionType(DirectionType.valueOf(field));
     }
 
 }

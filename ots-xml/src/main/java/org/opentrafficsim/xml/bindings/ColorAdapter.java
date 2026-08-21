@@ -2,8 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import java.awt.Color;
 
-import org.djutils.reflection.ClassUtil;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.ColorType;
 
 /**
@@ -38,38 +36,13 @@ public class ColorAdapter extends ExpressionAdapter<Color, ColorType>
         {
             return new ColorType(trimBrackets(field));
         }
-        try
-        {
-            String colorStr = field.replaceAll("\\s", "");
-
-            if (colorStr.startsWith("#"))
-            {
-                return new ColorType(Color.decode(colorStr));
-            }
-
-            if (colorStr.startsWith("RGB"))
-            {
-                String c = colorStr.substring(3).replace("(", "").replace(")", "");
-                String[] rgb = c.split(",");
-                int r = Integer.parseInt(rgb[0].trim());
-                int g = Integer.parseInt(rgb[1].trim());
-                int b = Integer.parseInt(rgb[2].trim());
-                return new ColorType(new Color(r, g, b));
-            }
-
-            return new ColorType((Color) ClassUtil.resolveField(Color.class, colorStr).get(null));
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing color '" + field + "'");
-            throw new IllegalArgumentException("Error parsing color " + field, exception);
-        }
+        return new ColorType(ColorType.valueOf(field));
     }
 
     @Override
     public String marshal(final ColorType color) throws IllegalArgumentException
     {
-        return marshal(color, (c) -> "RGB(" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ")");
+        return marshalAsExpressionOrValue(color, (c) -> "RGB(" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ")");
     }
 
 }

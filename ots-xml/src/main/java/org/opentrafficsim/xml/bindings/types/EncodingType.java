@@ -16,6 +16,9 @@ public class EncodingType extends ExpressionType<Encoding>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Encoding> TO_TYPE = SerializableFunction.ofStaticField(Encoding.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,17 +34,11 @@ public class EncodingType extends ExpressionType<Encoding>
      */
     public EncodingType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
     /**
      * Encoding.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
      */
     public enum Encoding
     {

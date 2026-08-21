@@ -36,4 +36,12 @@ public class PositiveFactorAdapter extends ExpressionAdapter<Double, DoubleType>
         return new DoubleType(factor);
     }
 
+    @Override
+    public String marshal(final DoubleType value)
+    {
+        Throw.when(!value.isExpression() && value.getValue() < 0.0, IllegalArgumentException.class,
+                "Factor %s is not a positive value.", value.getValue());
+        return super.marshal(value);
+    }
+
 }

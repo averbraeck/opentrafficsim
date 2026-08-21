@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.TimeType;
 
 /**
@@ -31,15 +30,7 @@ public class TimeAdapter extends ScalarAdapter<Time, TimeType>
         {
             return new TimeType(trimBrackets(field));
         }
-        try
-        {
-            return new TimeType(Time.valueOf(field));
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing Time '" + field + "'");
-            throw exception;
-        }
+        return new TimeType(Time.valueOf(field));
     }
 
 }

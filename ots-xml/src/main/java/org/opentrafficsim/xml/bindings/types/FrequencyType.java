@@ -17,7 +17,8 @@ public class FrequencyType extends ExpressionType<Frequency>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Frequency> TO_TYPE = (o) -> Frequency.ofSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Frequency> TO_TYPE =
+            SerializableFunction.ofNumeric(Frequency.class, Frequency::valueOf, Frequency::ofSI);
 
     /**
      * Constructor with value.
@@ -25,7 +26,7 @@ public class FrequencyType extends ExpressionType<Frequency>
      */
     public FrequencyType(final Frequency value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

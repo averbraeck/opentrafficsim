@@ -16,6 +16,10 @@ public class GapAcceptanceType extends ExpressionType<GapAcceptance>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, GapAcceptance> TO_TYPE =
+            SerializableFunction.ofStaticField(GapAcceptance.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class GapAcceptanceType extends ExpressionType<GapAcceptance>
      */
     public GapAcceptanceType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

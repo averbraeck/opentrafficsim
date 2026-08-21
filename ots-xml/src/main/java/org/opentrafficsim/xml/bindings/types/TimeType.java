@@ -17,7 +17,8 @@ public class TimeType extends ExpressionType<Time>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Time> TO_TYPE = (o) -> Time.ofSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Time> TO_TYPE =
+            SerializableFunction.ofNumeric(Time.class, Time::valueOf, Time::ofSI);
 
     /**
      * Constructor with value.
@@ -25,7 +26,7 @@ public class TimeType extends ExpressionType<Time>
      */
     public TimeType(final Time value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

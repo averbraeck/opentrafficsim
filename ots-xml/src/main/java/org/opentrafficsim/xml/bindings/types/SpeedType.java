@@ -17,7 +17,8 @@ public class SpeedType extends ExpressionType<Speed>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Speed> TO_TYPE = (o) -> Speed.ofSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Speed> TO_TYPE =
+            SerializableFunction.ofNumeric(Speed.class, Speed::valueOf, Speed::ofSI);
 
     /**
      * Constructor with value.
@@ -25,7 +26,7 @@ public class SpeedType extends ExpressionType<Speed>
      */
     public SpeedType(final Speed value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

@@ -16,6 +16,10 @@ public class HeadwayDistributionType extends ExpressionType<HeadwayDistribution>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, HeadwayDistribution> TO_TYPE =
+            SerializableFunction.ofStaticField(HeadwayDistribution.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class HeadwayDistributionType extends ExpressionType<HeadwayDistribution>
      */
     public HeadwayDistributionType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

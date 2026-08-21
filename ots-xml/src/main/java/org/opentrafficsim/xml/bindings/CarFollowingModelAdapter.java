@@ -26,7 +26,7 @@ public class CarFollowingModelAdapter
         {
             return new CarFollowingModelType(trimBrackets(field));
         }
-        return new CarFollowingModelType(CarFollowingModelType.TO_TYPE.apply(field));
+        return new CarFollowingModelType(CarFollowingModelType.valueOf(field));
     }
 
 }

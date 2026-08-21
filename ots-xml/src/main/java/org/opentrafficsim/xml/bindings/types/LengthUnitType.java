@@ -16,6 +16,10 @@ public class LengthUnitType extends ExpressionType<LengthUnit>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, LengthUnit> TO_TYPE =
+            SerializableFunction.of(LengthUnit.class, LengthUnit.BASE::getUnitByAbbreviation);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class LengthUnitType extends ExpressionType<LengthUnit>
      */
     public LengthUnitType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

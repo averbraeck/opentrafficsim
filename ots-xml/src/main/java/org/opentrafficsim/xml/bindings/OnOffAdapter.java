@@ -26,7 +26,7 @@ public class OnOffAdapter extends ExpressionAdapter<Boolean, BooleanType>
     {
         if (isExpression(field))
         {
-            return new BooleanType(trimBrackets("on".equals(field.toLowerCase()) ? "true" : " false"));
+            return new BooleanType("on".equals(trimBrackets(field.toLowerCase())) ? "true" : "false");
         }
         return new BooleanType("on".equals(field.toLowerCase()));
     }

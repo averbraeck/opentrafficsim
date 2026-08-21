@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.DurationType;
 
 /**
@@ -31,15 +30,7 @@ public class DurationAdapter extends ScalarAdapter<Duration, DurationType>
         {
             return new DurationType(trimBrackets(field));
         }
-        try
-        {
-            return new DurationType(Duration.valueOf(field));
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing Duration '" + field + "'");
-            throw exception;
-        }
+        return new DurationType(Duration.valueOf(field));
     }
 
 }

@@ -16,6 +16,10 @@ public class EstimationType extends ExpressionType<Estimation>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Estimation> TO_TYPE =
+            SerializableFunction.ofStaticField(Estimation.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class EstimationType extends ExpressionType<Estimation>
      */
     public EstimationType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

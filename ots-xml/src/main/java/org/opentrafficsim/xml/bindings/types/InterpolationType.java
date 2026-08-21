@@ -16,6 +16,10 @@ public class InterpolationType extends ExpressionType<Interpolation>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Interpolation> TO_TYPE =
+            SerializableFunction.ofStaticField(Interpolation.class);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class InterpolationType extends ExpressionType<Interpolation>
      */
     public InterpolationType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

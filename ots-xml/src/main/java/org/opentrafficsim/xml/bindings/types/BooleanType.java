@@ -14,6 +14,10 @@ public class BooleanType extends ExpressionType<Boolean>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Boolean> TO_TYPE =
+            SerializableFunction.of(Boolean.class, Boolean::valueOf);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -29,7 +33,7 @@ public class BooleanType extends ExpressionType<Boolean>
      */
     public BooleanType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

@@ -2,6 +2,8 @@ package org.opentrafficsim.xml.bindings.types;
 
 import java.lang.reflect.Field;
 
+import org.djutils.reflection.ClassUtil;
+
 /**
  * Expression type with Field value.
  * <p>
@@ -15,6 +17,9 @@ public class FieldType extends ExpressionType<Field>
 
     /** */
     private static final long serialVersionUID = 20251111L;
+
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Field> TO_TYPE = SerializableFunction.of(Field.class, FieldType::valueOf);
 
     /**
      * Constructor with value.
@@ -31,7 +36,27 @@ public class FieldType extends ExpressionType<Field>
      */
     public FieldType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
+    }
+
+    /**
+     * Parses {@code String} to to the right type.
+     * @param str input string
+     * @return parsed output
+     */
+    public static Field valueOf(final String str)
+    {
+        int dot = str.lastIndexOf(".");
+        String className = str.substring(0, dot);
+        String fieldName = str.substring(dot + 1);
+        try
+        {
+            return ClassUtil.resolveField(Class.forName(className), fieldName);
+        }
+        catch (NoSuchFieldException | ClassNotFoundException exception)
+        {
+            throw new IllegalArgumentException("Unable to parse Field " + str);
+        }
     }
 
 }

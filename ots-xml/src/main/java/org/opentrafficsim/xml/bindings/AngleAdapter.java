@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Angle;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.AngleType;
 
 /**
@@ -31,15 +30,7 @@ public class AngleAdapter extends ScalarAdapter<Angle, AngleType>
         {
             return new AngleType(trimBrackets(field));
         }
-        try
-        {
-            return new AngleType(Angle.valueOf(field));
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing Angle '" + field + "'");
-            throw exception;
-        }
+        return new AngleType(Angle.valueOf(field));
     }
 
 }

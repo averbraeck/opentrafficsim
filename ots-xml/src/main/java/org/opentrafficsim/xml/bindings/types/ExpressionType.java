@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Function;
 
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
+import org.djutils.reflection.ClassUtil;
 
 /**
  * ExpressionType is the parent class for all types in XML that need to be parsed with the JAXB generated classes, and which may
@@ -29,9 +31,6 @@ public abstract class ExpressionType<T> implements Serializable
     /** */
     private static final long serialVersionUID = 20251111L;
 
-    /** Function to forward expression output as is. */
-    private static final transient SerializableFunction<?, ?> AS_IS = (o) -> o;
-
     /** The value, when given. */
     private final T value;
 
@@ -45,41 +44,12 @@ public abstract class ExpressionType<T> implements Serializable
      * Constructor with value.
      * @param value value.
      */
-    @SuppressWarnings("unchecked")
     public ExpressionType(final T value)
     {
         // value may be null
         this.value = value;
         this.expression = null;
-        this.toType = (SerializableFunction<Object, T>) AS_IS;
-    }
-
-    /**
-     * Constructor with value and type function.
-     * @param value value.
-     * @param toType function to convert output from expression to the right type.
-     */
-    public ExpressionType(final T value, final SerializableFunction<Object, T> toType)
-    {
-        // value may be null
-        this.value = value;
-        this.expression = null;
-        this.toType = toType;
-    }
-
-    /**
-     * Constructor with expression.
-     * @param expression expression, without { }.
-     */
-    @SuppressWarnings("unchecked")
-    public ExpressionType(final String expression)
-    {
-        Throw.whenNull(expression, "Expression may not be null. Consider using constructor with value.");
-        Throw.when(expression.contains("{") || expression.contains("}"), IllegalArgumentException.class,
-                "Expression should not have { }.");
-        this.value = null;
-        this.expression = expression;
-        this.toType = (SerializableFunction<Object, T>) AS_IS;
+        this.toType = null;
     }
 
     /**
@@ -112,13 +82,14 @@ public abstract class ExpressionType<T> implements Serializable
                     "Expression should not have { }.");
             this.value = null;
             this.expression = input;
+            this.toType = (o) -> (T) o.toString();
         }
         else
         {
             this.value = (T) input;
             this.expression = null;
+            this.toType = null;
         }
-        this.toType = (o) -> (T) o.toString();
     }
 
     /**
@@ -128,7 +99,20 @@ public abstract class ExpressionType<T> implements Serializable
      */
     public T get(final Eval eval)
     {
-        return this.expression == null ? this.value : this.toType.apply(eval.evaluate(this.expression));
+        if (this.expression == null)
+        {
+            return this.value;
+        }
+        Object object;
+        try
+        {
+            object = eval.evaluate(this.expression);
+        }
+        catch (RuntimeException ex)
+        {
+            throw new IllegalArgumentException("Illegal argument for Eval", ex);
+        }
+        return this.toType.apply(object);
     }
 
     /**
@@ -197,12 +181,163 @@ public abstract class ExpressionType<T> implements Serializable
     }
 
     /**
+     * Returns the static field value at the given class. This assumes that the class {@code T} has a static public field by
+     * given name of type {@type T}.
+     * @param <T> type of value
+     * @param valueType value type
+     * @param field field name
+     * @return static field value at the given class
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T fromStaticField(final Class<T> valueType, final String field)
+    {
+        try
+        {
+            return (T) ClassUtil.resolveField(valueType, field).get(null);
+        }
+        catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex)
+        {
+            throw new IllegalArgumentException("Unable to parse static field " + field + " from " + valueType);
+        }
+    }
+
+    /**
      * Serializable version of a {@code Function}.
      * @param <O> the type of the input to the function
      * @param <T> the type of the result of the function
      */
+    @FunctionalInterface
     public interface SerializableFunction<O, T> extends Function<O, T>, Serializable
     {
+
+        /**
+         * Returns a serializable function suitable to return a general type that will:
+         * <ol>
+         * <li>Return the input object if it is of type {@code T}</li>
+         * <li>Return the result from the string function if the input is {@code String}</li>
+         * <li>Return the result from the object function</li>
+         * <li>Throw an {@code IllegalArgumentException} otherwise</li>
+         * </ol>
+         * @param <O> limiting input type
+         * @param <T> output type
+         * @param valueType class of type {@code T}
+         * @param fromString function to produce {@code T} from a {@code String}
+         * @return composite function of the input
+         */
+        static <O, T> SerializableFunction<O, T> of(final Class<T> valueType, final SerializableFunction<String, T> fromString)
+        {
+            Throw.whenNull(valueType, "valueType");
+            Throw.whenNull(fromString, "fromString");
+            return (o) ->
+            {
+                if (valueType.isInstance(o))
+                {
+                    return valueType.cast(o);
+                }
+                if (o instanceof String str)
+                {
+                    return fromString.apply(str);
+                }
+                throw new IllegalArgumentException("Object " + o + " is not a " + valueType.getSimpleName() + " or String.");
+            };
+        }
+
+        /**
+         * Returns a serializable function suitable to return a numeric type that will:
+         * <ol>
+         * <li>Return the input object if it is of type {@code T}</li>
+         * <li>Return the result from the string function if the input is {@code String}</li>
+         * <li>Return the result from the number function if the input is {@code Number}</li>
+         * <li>Throw an {@code IllegalArgumentException} otherwise</li>
+         * </ol>
+         * @param <O> limiting input type
+         * @param <T> output type
+         * @param valueType class of type {@code T}
+         * @param fromString function to produce {@code T} from a {@code String}
+         * @param fromNumber function to produce {@code T} from a {@code Number}'s double value
+         * @return composite function of the input
+         */
+        static <O, T> SerializableFunction<O, T> ofNumeric(final Class<T> valueType,
+                final SerializableFunction<String, T> fromString, final SerializableFunction<Double, T> fromNumber)
+        {
+            return ofNumeric(valueType, fromString, (o) -> o.doubleValue(), fromNumber);
+        }
+
+        /**
+         * Returns a serializable function suitable to return a numeric type that will:
+         * <ol>
+         * <li>Return the input object if it is of type {@code T}</li>
+         * <li>Return the result from the string function if the input is {@code String}</li>
+         * <li>Return the result from the number function if the input is {@code Number}</li>
+         * <li>Throw an {@code IllegalArgumentException} otherwise</li>
+         * </ol>
+         * @param <O> limiting input type
+         * @param <T> output type
+         * @param <N> wrapped native type
+         * @param valueType class of type {@code T}
+         * @param fromString function to produce {@code T} from a {@code String}
+         * @param toNative function to translate {@code Number} to the correct native type {@code N}
+         * @param fromNative function to produce {@code T} from a {@code Number}'s native value of type {@code N}
+         * @return composite function of the input
+         */
+        static <O, T, N extends Number> SerializableFunction<O, T> ofNumeric(final Class<T> valueType,
+                final SerializableFunction<String, T> fromString, final SerializableFunction<Number, N> toNative,
+                final SerializableFunction<N, T> fromNative)
+        {
+            Throw.whenNull(valueType, "valueType");
+            Throw.whenNull(fromString, "fromString");
+            Throw.whenNull(fromNative, "fromNumber");
+            return (o) ->
+            {
+                if (valueType.isInstance(o))
+                {
+                    return valueType.cast(o);
+                }
+                if (o instanceof String str)
+                {
+                    return fromString.apply(str);
+                }
+                if (o instanceof Number num)
+                {
+                    Throw.when(DoubleScalar.class.isAssignableFrom(valueType) && DoubleScalar.class.isInstance(o),
+                            IllegalArgumentException.class, "Value %s is not an appropriate expression result for type %s.", o,
+                            valueType.getSimpleName());
+                    return fromNative.apply(toNative.apply(num));
+                }
+                throw new IllegalArgumentException(
+                        "Value " + o + " is not a " + valueType.getSimpleName() + ", String or Number.");
+            };
+        }
+
+        /**
+         * Returns a serializable function suitable to return a static field (including enums) type that will:
+         * <ol>
+         * <li>Return the input object if it is of type {@code T}</li>
+         * <li>Return the static field named by the input if the input is {@code String}</li>
+         * <li>Throw an {@code IllegalArgumentException} otherwise</li>
+         * </ol>
+         * @param <O> limiting input type
+         * @param <T> output type
+         * @param valueType class of type {@code T}
+         * @return composite function of the input
+         */
+        static <O, T> SerializableFunction<O, T> ofStaticField(final Class<T> valueType)
+        {
+            Throw.whenNull(valueType, "valueType");
+            return (o) ->
+            {
+                if (valueType.isInstance(o))
+                {
+                    return valueType.cast(o);
+                }
+                if (o instanceof String str)
+                {
+                    return ExpressionType.fromStaticField(valueType, str);
+                }
+                throw new IllegalArgumentException("Object " + o + " is not a " + valueType.getSimpleName() + " or String.");
+            };
+        }
+
     }
 
 }

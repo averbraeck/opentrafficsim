@@ -16,6 +16,10 @@ public class DurationUnitType extends ExpressionType<DurationUnit>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, DurationUnit> TO_TYPE =
+            SerializableFunction.of(DurationUnit.class, DurationUnit.BASE::getUnitByAbbreviation);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -31,7 +35,7 @@ public class DurationUnitType extends ExpressionType<DurationUnit>
      */
     public DurationUnitType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
 }

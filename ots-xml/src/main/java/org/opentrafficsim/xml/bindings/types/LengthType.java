@@ -17,7 +17,8 @@ public class LengthType extends ExpressionType<Length>
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Length> TO_TYPE = (o) -> Length.ofSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Length> TO_TYPE =
+            SerializableFunction.ofNumeric(Length.class, Length::valueOf, Length::ofSI);
 
     /**
      * Constructor with value.
@@ -25,7 +26,7 @@ public class LengthType extends ExpressionType<Length>
      */
     public LengthType(final Length value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**

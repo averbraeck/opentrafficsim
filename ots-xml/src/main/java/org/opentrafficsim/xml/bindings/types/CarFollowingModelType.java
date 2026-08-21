@@ -23,9 +23,11 @@ public class CarFollowingModelType extends ExpressionType<BiFunction<DesiredHead
     private static final long serialVersionUID = 20260219L;
 
     /** Function to convert output from expression to the right type. */
+    @SuppressWarnings("unchecked")
     public static final SerializableFunction<Object,
-            BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> TO_TYPE =
-                    (o) -> "idm".equals(o.toString().toLowerCase()) ? Idm::new : IdmPlus::new;
+            BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> TO_TYPE = SerializableFunction.of(
+                    (Class<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>>) (Class<?>) BiFunction.class,
+                    CarFollowingModelType::valueOf);
 
     /**
      * Constructor with value.
@@ -33,7 +35,7 @@ public class CarFollowingModelType extends ExpressionType<BiFunction<DesiredHead
      */
     public CarFollowingModelType(final BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> value)
     {
-        super(value, TO_TYPE);
+        super(value);
     }
 
     /**
@@ -43,6 +45,24 @@ public class CarFollowingModelType extends ExpressionType<BiFunction<DesiredHead
     public CarFollowingModelType(final String expression)
     {
         super(expression, TO_TYPE);
+    }
+
+    /**
+     * Parses {@code String} to to the right type.
+     * @param str input string
+     * @return parsed output
+     */
+    public static BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> valueOf(final String str)
+    {
+        if ("idm".equalsIgnoreCase(str))
+        {
+            return Idm::new;
+        }
+        if ("idm_plus".equalsIgnoreCase(str))
+        {
+            return IdmPlus::new;
+        }
+        throw new IllegalArgumentException("Unable to parse car-following model " + str);
     }
 
 }

@@ -29,8 +29,9 @@ public abstract class ScalarAdapter<S extends DoubleScalar<?, S>, E extends Expr
     @Override
     public String marshal(final E value)
     {
-        Throw.whenNull(value, "Marshalling scalar with unit: argument contains null value");
-        return marshal(value, (s) -> s.getInUnit() + " " + s.getDisplayUnit().getDefaultTextualAbbreviation());
+        Throw.whenNull(value, "value");
+        return marshalAsExpressionOrValue(value,
+                (s) -> s.getInUnit() + " " + s.getDisplayUnit().getDefaultTextualAbbreviation());
     }
 
 }

@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djutils.draw.point.Point2d;
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.xml.bindings.types.Point2dType;
 
 /**
@@ -31,32 +30,13 @@ public class Point2dAdapter extends ExpressionAdapter<Point2d, Point2dType>
         {
             return new Point2dType(trimBrackets(field));
         }
-        return new Point2dType(of(field));
+        return new Point2dType(Point2dType.valueOf(field));
     }
 
     @Override
     public String marshal(final Point2dType point) throws IllegalArgumentException
     {
-        return marshal(point, (p) -> "(" + p.x + ", " + p.y + ")");
-    }
-
-    /**
-     * Returns point from string.
-     * @param field field value
-     * @return point from string
-     */
-    public static Point2d of(final String field)
-    {
-        String clean = field.replaceAll("\\s", "");
-        Throw.when(!clean.startsWith("("), IllegalArgumentException.class, "Coordinate must start with '(': " + field);
-        Throw.when(!clean.endsWith(")"), IllegalArgumentException.class, "Coordinate must end with ')': " + field);
-        clean = clean.substring(1, clean.length() - 1);
-        String[] digits = clean.split(",");
-        Throw.when(digits.length < 2, IllegalArgumentException.class, "Coordinate must have at least x and y: " + field);
-        Throw.when(digits.length > 2, IllegalArgumentException.class, "Coordinate must have at most 2 dimensions: " + field);
-        double x = Double.parseDouble(digits[0]);
-        double y = Double.parseDouble(digits[1]);
-        return new Point2d(x, y);
+        return marshalAsExpressionOrValue(point, (p) -> "(" + p.x + ", " + p.y + ")");
     }
 
 }

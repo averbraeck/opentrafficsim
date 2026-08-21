@@ -12,6 +12,9 @@ package org.opentrafficsim.xml.bindings.types;
 public class ClassType extends ExpressionType<Class>
 {
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, Class> TO_TYPE = SerializableFunction.of(Class.class, ClassType::valueOf);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -27,7 +30,24 @@ public class ClassType extends ExpressionType<Class>
      */
     public ClassType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
+    }
+
+    /**
+     * Parses {@code String} to to the right type.
+     * @param str input string
+     * @return parsed output
+     */
+    public static Class valueOf(final String str)
+    {
+        try
+        {
+            return Class.forName(str);
+        }
+        catch (ClassNotFoundException ex)
+        {
+            throw new IllegalArgumentException("Unable to parse Class " + str);
+        }
     }
 
 }

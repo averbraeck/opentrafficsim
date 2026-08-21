@@ -1,7 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.LinearDensityType;
 
 /**
@@ -31,15 +30,7 @@ public class LinearDensityAdapter extends ScalarAdapter<LinearDensity, LinearDen
         {
             return new LinearDensityType(trimBrackets(field));
         }
-        try
-        {
-            return new LinearDensityType(LinearDensity.valueOf(field));
-        }
-        catch (Exception exception)
-        {
-            Logger.ots().error(exception, "Problem parsing LinearDensity '" + field + "'");
-            throw exception;
-        }
+        return new LinearDensityType(LinearDensity.valueOf(field));
     }
 
 }

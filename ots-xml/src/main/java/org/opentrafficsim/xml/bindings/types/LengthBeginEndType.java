@@ -1,6 +1,7 @@
 package org.opentrafficsim.xml.bindings.types;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
@@ -17,6 +18,10 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
     /** */
     private static final long serialVersionUID = 20251111L;
 
+    /** Function to convert output from expression to the right type. */
+    private static final SerializableFunction<Object, LengthBeginEnd> TO_TYPE =
+            SerializableFunction.of(LengthBeginEnd.class, LengthBeginEndType::valueOf);
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
@@ -32,7 +37,7 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
      */
     public LengthBeginEndType(final String expression)
     {
-        super(expression);
+        super(expression, TO_TYPE);
     }
 
     /**
@@ -43,12 +48,6 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
      * - 25 ft<br>
      * - 0.8<br>
      * - 80%
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Alexander Verbraeck
      */
     public static class LengthBeginEnd
     {
@@ -175,4 +174,41 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
 
     }
 
+    /**
+     * Parses {@code String} to to the right type.
+     * @param str input string
+     * @return parsed output
+     */
+    public static LengthBeginEnd valueOf(final String str)
+    {
+        String clean = str.replaceAll("\\s", "").trim();
+        if (clean.equals("BEGIN"))
+        {
+            return new LengthBeginEnd(true, Length.ZERO);
+        }
+        if (clean.equals("END"))
+        {
+            return new LengthBeginEnd(false, Length.ZERO);
+        }
+        if (clean.endsWith("%"))
+        {
+            double d = 0.01 * Double.parseDouble(clean.substring(0, clean.length() - 1).trim());
+            Throw.when(d < 0.0 || d > 1.0, IllegalArgumentException.class, "fraction must be between 0.0 and 1.0 (inclusive)");
+            return new LengthBeginEnd(d);
+        }
+        if (clean.matches("([0]?\\.?\\d+)|[1](\\.0*)"))
+        {
+            double d = Double.parseDouble(clean);
+            return new LengthBeginEnd(d);
+        }
+        boolean begin = true;
+        if (clean.startsWith("END-"))
+        {
+            begin = false;
+            clean = clean.substring(4);
+        }
+        Throw.when(clean.startsWith("-"), IllegalArgumentException.class, "Field %s contains negative value.", str);
+        Length length = Length.valueOf(clean);
+        return new LengthBeginEnd(begin, length);
+    }
 }
