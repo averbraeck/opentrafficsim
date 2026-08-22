@@ -10,6 +10,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
@@ -297,7 +298,7 @@ public class CrossSectionLink extends Link
      * @author Peter Knoppers
      * @author Wouter Schakel
      */
-    public enum Priority
+    public enum Priority implements NamedConstants
     {
         /** Traffic has priority. */
         PRIORITY,

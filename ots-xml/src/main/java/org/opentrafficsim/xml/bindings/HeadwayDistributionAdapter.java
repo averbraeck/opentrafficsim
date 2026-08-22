@@ -26,7 +26,7 @@ public class HeadwayDistributionAdapter extends StaticFieldAdapter<HeadwayDistri
     public String marshal(final HeadwayDistributionType value)
     {
         // need to override as toString on HeadwayDistribution does not return the name by default
-        return marshalAsExpressionOrValue(value, (t) -> t.getName());
+        return marshalAsExpressionOrValue(value, (t) -> t.name());
     }
 
 }

@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 
 /**
@@ -13,8 +14,8 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
  * <li>The XML type has values that match the static field names exactly.</li>
  * <li>The static field names are present under the type class itself, e.g. {@code Synchronization.PASSIVE} is a
  * {@code Synchronization}.</li>
- * <li>The type class is either an {@code enum}, or its {@code toString()} method returns the field name, e.g.
- * {@code Synchronization.PASSIVE.toString()} gives {@code "PASSIVE"}.</li>
+ * <li>The type class is either an {@code enum}, or its {@code name()} method returns the field name, e.g.
+ * {@code Synchronization.PASSIVE.name()} gives {@code "PASSIVE"}.</li>
  * </ul>
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -24,7 +25,7 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
  * @param <T> value type wrapped in ExpressionType
  * @param <E> ExpressionType
  */
-public abstract class StaticFieldAdapter<T, E extends ExpressionType<T>> extends ExpressionAdapter<T, E>
+public abstract class StaticFieldAdapter<T extends NamedConstants, E extends ExpressionType<T>> extends ExpressionAdapter<T, E>
 {
 
     /** Value type. */
@@ -47,7 +48,7 @@ public abstract class StaticFieldAdapter<T, E extends ExpressionType<T>> extends
     @Override
     public String marshal(final E value)
     {
-        return marshalAsExpressionOrValue(value, (t) -> t instanceof Enum ? ((Enum<?>) t).name() : t.toString());
+        return marshalAsExpressionOrValue(value, (t) -> t.name());
     }
 
     @Override

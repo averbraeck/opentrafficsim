@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.tactical.util.lmrs;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -25,7 +26,7 @@ import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface Cooperation extends LmrsParameters
+public interface Cooperation extends LmrsParameters, NamedConstants
 {
 
     /** Simple passive cooperation. */
@@ -63,7 +64,7 @@ public interface Cooperation extends LmrsParameters
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "PASSIVE";
         }
@@ -110,7 +111,7 @@ public interface Cooperation extends LmrsParameters
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "PASSIVE_MOVING";
         }
@@ -151,7 +152,7 @@ public interface Cooperation extends LmrsParameters
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "ACTIVE";
         }

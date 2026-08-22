@@ -1,5 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.xml.bindings.types.GtuPositionType.GtuPosition;
 
 /**
@@ -42,7 +43,7 @@ public class GtuPositionType extends ExpressionType<GtuPosition>
     /**
      * Reference point on a GTU.
      */
-    public enum GtuPosition
+    public enum GtuPosition implements NamedConstants
     {
         /** Front of the GTU. */
         FRONT,

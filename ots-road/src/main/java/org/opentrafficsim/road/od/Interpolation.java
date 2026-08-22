@@ -7,6 +7,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.OtsRuntimeException;
 
 /**
@@ -19,7 +20,7 @@ import org.opentrafficsim.base.OtsRuntimeException;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public enum Interpolation
+public enum Interpolation implements NamedConstants
 {
 
     /** Stepwise interpolation of demand. */

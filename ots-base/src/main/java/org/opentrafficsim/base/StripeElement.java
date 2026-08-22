@@ -104,7 +104,7 @@ public record StripeElement(Length width, Color color, LengthVector dashes)
      * Method to determine how stripes synchronize within a link.
      * @author Wouter Schakel
      */
-    public enum StripeLateralSync
+    public enum StripeLateralSync implements NamedConstants
     {
         /** Dashes applied to stripe line. */
         NONE(false),

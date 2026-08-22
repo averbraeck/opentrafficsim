@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network;
 
+import org.opentrafficsim.base.NamedConstants;
+
 /**
  * Enum to indicate the general lane keeping rules: keep left, keep right, or keep lane. When KEEP_RIGHT or KEEP_LEFT is used,
  * the gap acceptance policy of the GTU indicates when the vehicle will move back to the left or right after overtaking. The GTU
@@ -10,7 +12,7 @@ package org.opentrafficsim.road.network;
  * </p>
  * @author Alexander Verbraeck
  */
-public enum LaneKeepingPolicy
+public enum LaneKeepingPolicy implements NamedConstants
 {
     /** Constant to indicate that the general policy is to keep right. */
     KEEPRIGHT,

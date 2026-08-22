@@ -1,5 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.xml.bindings.types.GraphicsTypeType.GraphicsType;
 
 /**
@@ -13,7 +14,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType.GraphicsType;
 public class GraphicsTypeType extends ExpressionType<GraphicsType>
 {
 
-    /** */
+    /** Serialization id. */
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
@@ -41,7 +42,7 @@ public class GraphicsTypeType extends ExpressionType<GraphicsType>
     /**
      * GraphicsType.
      */
-    public enum GraphicsType
+    public enum GraphicsType implements NamedConstants
     {
         /** Portable network graphics. */
         PNG,

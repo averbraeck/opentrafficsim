@@ -4,6 +4,7 @@ import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -25,7 +26,7 @@ import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface GapAcceptance
+public interface GapAcceptance extends NamedConstants
 {
 
     /** Being informed of the model and parameters of other drivers (default LMRS). */
@@ -84,7 +85,7 @@ public interface GapAcceptance
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "INFORMED";
         }
@@ -138,7 +139,7 @@ public interface GapAcceptance
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "EGO_HEADWAY";
         }

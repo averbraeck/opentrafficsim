@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
@@ -177,7 +178,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
      * @author Peter Knoppers
      * @author Wouter Schakel
      */
-    public interface HeadwayDistribution
+    public interface HeadwayDistribution extends NamedConstants
     {
 
         /** Constant headway. */
@@ -190,7 +191,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             }
 
             @Override
-            public String getName()
+            public String name()
             {
                 return "CONSTANT";
             }
@@ -206,7 +207,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             }
 
             @Override
-            public String getName()
+            public String name()
             {
                 return "EXPONENTIAL";
             }
@@ -222,7 +223,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             }
 
             @Override
-            public String getName()
+            public String name()
             {
                 return "UNIFORM";
             }
@@ -243,7 +244,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             }
 
             @Override
-            public String getName()
+            public String name()
             {
                 return "TRIANGULAR";
             }
@@ -265,7 +266,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             }
 
             @Override
-            public String getName()
+            public String name()
             {
                 return "TRI_EXP";
             }
@@ -287,7 +288,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             }
 
             @Override
-            public String getName()
+            public String name()
             {
                 return "LOGNORMAL";
             }
@@ -300,12 +301,6 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
          * @return randomized headway factor
          */
         double draw(StreamInterface randomStream);
-
-        /**
-         * Returns the distribution name.
-         * @return distribution name
-         */
-        String getName();
 
     }
 

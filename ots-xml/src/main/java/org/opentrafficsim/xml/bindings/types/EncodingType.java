@@ -1,5 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.xml.bindings.types.EncodingType.Encoding;
 
 /**
@@ -40,7 +41,7 @@ public class EncodingType extends ExpressionType<Encoding>
     /**
      * Encoding.
      */
-    public enum Encoding
+    public enum Encoding implements NamedConstants
     {
         /** Base 64. */
         BASE64

@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -32,7 +33,7 @@ import org.opentrafficsim.road.network.LaneChangeInfo;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface Synchronization extends LmrsParameters
+public interface Synchronization extends NamedConstants, LmrsParameters
 {
 
     /** Synchronization where current leaders are taken. */
@@ -89,7 +90,7 @@ public interface Synchronization extends LmrsParameters
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "PASSIVE";
         }
@@ -144,7 +145,7 @@ public interface Synchronization extends LmrsParameters
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "ALIGN_GAP";
         }
@@ -168,7 +169,7 @@ public interface Synchronization extends LmrsParameters
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "PASSIVE_MOVING";
         }
@@ -362,7 +363,7 @@ public interface Synchronization extends LmrsParameters
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "ACTIVE";
         }

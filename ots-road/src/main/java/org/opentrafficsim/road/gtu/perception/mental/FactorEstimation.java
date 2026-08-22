@@ -59,7 +59,7 @@ public final class FactorEstimation implements Estimation, Stateless<FactorEstim
     }
 
     @Override
-    public String toString()
+    public String name()
     {
         return "FactorEstimation";
     }

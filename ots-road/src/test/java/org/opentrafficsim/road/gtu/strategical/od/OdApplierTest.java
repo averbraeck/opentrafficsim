@@ -363,7 +363,7 @@ public class OdApplierTest
                                     "A demand of %.2f resulted in %.0f vehicles (%s%.2f%%) "
                                             + "as mean over %d simulations (%s demand, %s headways).",
                                     nDemand, n, p > 0 ? "+" : "", p, nSims, interpolation.name(),
-                                    headwayRandomization.getName()));
+                                    headwayRandomization.name()));
                         }
                         assertTrue(Math.abs(p) < 5,
                                 String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.perception.categories.neighbors;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
@@ -17,7 +18,7 @@ import org.opentrafficsim.road.network.object.LaneBasedObject;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface Estimation
+public interface Estimation extends NamedConstants
 {
 
     /** No estimation errors. */
@@ -35,7 +36,7 @@ public interface Estimation
         }
 
         @Override
-        public String toString()
+        public String name()
         {
             return "NONE";
         }
