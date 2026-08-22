@@ -160,7 +160,7 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
                 /** ColorBox for AppearanceControl. */
                 class ColorBox extends JLabel implements AppearanceControl
                 {
-                    /** */
+                    /** Serialization version UID. */
                     private static final long serialVersionUID = 20180206L;
 
                     /** Constructor. */
@@ -298,7 +298,7 @@ public class OtsGtuColorPanel extends JPanel implements ActionListener, Appearan
     private static class DivisibleNumberAxis extends NumberAxis
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 1L;
 
         /** Integer interval margin. */

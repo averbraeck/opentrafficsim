@@ -150,7 +150,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
         /** Label with appearance control. */
         class AppearanceControlLabel extends JLabel implements AppearanceControl
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20180207L;
 
             @Override
@@ -737,7 +737,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     private final class ClockLabel extends JLabel implements AppearanceControl
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20141211L;
 
         /** The JLabel that displays the time. */
@@ -893,7 +893,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     private final class TimeEdit extends JFormattedTextField implements AppearanceControl
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20141212L;
 
         /** Last caret position in the time editor. USed to know whether to skip left or right around ':', '.' or ','. */
@@ -1012,7 +1012,7 @@ public class OtsSimulationControlPanel extends JPanel implements ActionListener,
     private static final class RegexFormatter extends DefaultFormatter
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20141212L;
 
         /** The regular expression pattern. */

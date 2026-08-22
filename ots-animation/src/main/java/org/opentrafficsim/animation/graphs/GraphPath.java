@@ -57,7 +57,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     {
         this(new ArrayList<String>()
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20181020L;
             {
                 add(name);

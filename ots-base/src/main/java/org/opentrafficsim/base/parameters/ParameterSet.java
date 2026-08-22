@@ -340,7 +340,7 @@ public class ParameterSet implements Parameters
     private static class Empty extends Dimensionless
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20160414L;
 
         /**

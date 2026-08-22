@@ -289,7 +289,7 @@ public class TrajectoryPlot extends AbstractSpaceTimePlot<TrajectoriesPaintState
     private final class XYLineAndShapeRendererColor extends XYLineAndShapeRenderer
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20181014L;
 
         /**

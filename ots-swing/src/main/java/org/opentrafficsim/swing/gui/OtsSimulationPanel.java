@@ -1016,7 +1016,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
      */
     private final class AppearanceJToggleButton extends JCheckBox implements AppearanceControl
     {
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -1047,7 +1047,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     private class OtsAnimationPanel extends AnimationPanel
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20180430L;
 
         /** Network. */

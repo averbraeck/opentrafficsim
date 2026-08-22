@@ -20,7 +20,7 @@ public interface OtsEditorProperties
     /** Application store for preferences and recent files. */
     PropertiesStore PROPERTIES_STORE = new PropertiesStore(new Properties()
     {
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20260303L;
         {
             setProperty(EXPRESSION_COLOR_KEY, PropertiesStore.valueToString(new Color(252, 250, 239)));

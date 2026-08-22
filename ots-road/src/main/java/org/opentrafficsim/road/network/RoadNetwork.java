@@ -404,7 +404,7 @@ public class RoadNetwork extends Network
     private class RouteWeightedGraph extends SimpleDirectedWeightedGraph<Identifiable, LaneChangeInfoEdge>
     {
 
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20220923L;
 
         /** Route. */

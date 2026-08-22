@@ -360,7 +360,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         }
         this.attributesTable = new JTable(tableModel, columns)
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20260215L;
 
             @Override

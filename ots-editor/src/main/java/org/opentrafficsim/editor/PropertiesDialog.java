@@ -59,7 +59,7 @@ public class PropertiesDialog extends JDialog
         // model
         TableModel model = new AbstractTableModel()
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20240314L;
 
             @Override
@@ -97,7 +97,7 @@ public class PropertiesDialog extends JDialog
         JTable table = new JTable(model, columns);
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20240314L;
 
             @Override

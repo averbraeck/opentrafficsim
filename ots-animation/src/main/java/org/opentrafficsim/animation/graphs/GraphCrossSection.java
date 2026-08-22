@@ -41,14 +41,14 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
     {
         this(new ArrayList<String>()
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20181022L;
             {
                 add(seriesName);
             }
         }, section, new ArrayList<Length>()
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20181022L;
             {
                 add(position);

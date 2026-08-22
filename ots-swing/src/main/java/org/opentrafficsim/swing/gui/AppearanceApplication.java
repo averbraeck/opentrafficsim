@@ -145,7 +145,7 @@ public class AppearanceApplication extends JFrame
         /** Menu class to only accept the font of an Appearance. */
         class AppearanceControlMenu extends JMenu implements AppearanceControl
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20180206L;
 
             /**
@@ -189,7 +189,7 @@ public class AppearanceApplication extends JFrame
         /** PopupMenu class to only accept the font of an Appearance. */
         class AppearanceControlPopupMenu extends JPopupMenu implements AppearanceControl
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20180206L;
 
             @Override
@@ -454,7 +454,7 @@ public class AppearanceApplication extends JFrame
      */
     private static class StayOpenCheckBoxMenuItem extends JCheckBoxMenuItem implements AppearanceControl
     {
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 20180206L;
 
         /** Stored selection path. */

@@ -82,7 +82,7 @@ public class SwingPlot extends JFrame
         // override to gain some control over the auto bounds
         this.chartPanel = new ChartPanel(chart)
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20181006L;
 
             @Override

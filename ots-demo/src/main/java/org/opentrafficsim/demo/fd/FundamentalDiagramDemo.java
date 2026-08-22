@@ -681,7 +681,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         this.trajectoryPlot.updateFixedDomainRange(true);
         SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(this.trajectoryPlot)
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20251121L;
 
             @Override

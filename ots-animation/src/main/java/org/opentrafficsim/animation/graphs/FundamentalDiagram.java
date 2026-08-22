@@ -114,7 +114,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot<FdPaintState> implem
         NumberAxis yAxis = new NumberAxis(this.getRangeQuantity().label());
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer()
         {
-            /** */
+            /** Serialization version UID. */
             private static final long serialVersionUID = 20181022L;
 
             @Override

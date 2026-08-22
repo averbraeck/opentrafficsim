@@ -158,7 +158,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
     /** A parameter dialog with a radio button for the network choice tab. */
     private static class NetworksParameterDialog extends TabbedParameterDialog
     {
-        /** */
+        /** Serialization version UID. */
         private static final long serialVersionUID = 1L;
 
         /**
