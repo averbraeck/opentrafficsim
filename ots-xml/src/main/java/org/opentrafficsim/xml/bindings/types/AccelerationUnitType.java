@@ -13,7 +13,7 @@ import org.djunits.unit.AccelerationUnit;
 public class AccelerationUnitType extends ExpressionType<AccelerationUnit>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */

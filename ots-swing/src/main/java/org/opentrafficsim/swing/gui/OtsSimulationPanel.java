@@ -81,7 +81,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class OtsSimulationPanel extends JPanel implements ActionListener, EventListener
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20150617L;
 
     static

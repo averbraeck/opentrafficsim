@@ -54,7 +54,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class NetworksSwing extends OtsSimulationApplication<NetworksModel> implements UNITS
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 1L;
 
     /**

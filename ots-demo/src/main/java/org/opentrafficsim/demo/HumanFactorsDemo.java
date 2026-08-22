@@ -93,7 +93,7 @@ import nl.tudelft.simulation.language.DsolException;
 public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactorsModel>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20241012L;
 
     /**

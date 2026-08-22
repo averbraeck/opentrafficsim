@@ -135,7 +135,7 @@ import de.javagl.treetable.JTreeTable;
 public class OtsEditor extends AppearanceApplication implements EventProducer, OtsEditorProperties
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20230217L;
 
     /** Event when a new file is started. */

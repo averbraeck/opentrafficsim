@@ -43,7 +43,7 @@ import org.opentrafficsim.animation.graphs.TrajectoryPlot;
  */
 public class SwingTrajectoryPlot extends SwingSpaceTimePlot
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20190823L;
 
     /** Calculate density (vertical line). */

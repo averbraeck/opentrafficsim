@@ -17,7 +17,7 @@ import org.djutils.exceptions.Throw;
 public class NumberFormatUnit extends NumberFormat
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20250902L;
 
     /** Unit. */

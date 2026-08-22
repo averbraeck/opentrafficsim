@@ -45,7 +45,7 @@ import org.opentrafficsim.animation.graphs.FundamentalDiagram.Quantity;
  */
 public class SwingFundamentalDiagram extends SwingPlot implements EventListener
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20190823L;
 
     /** Whether to ignore events as this is itself the plot causing change of aggregationPeriod/updatesPerPeriod. */

@@ -14,7 +14,7 @@ import org.djutils.exceptions.Throw;
 public class Point2dType extends ExpressionType<Point2d>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** Convert string to point. */

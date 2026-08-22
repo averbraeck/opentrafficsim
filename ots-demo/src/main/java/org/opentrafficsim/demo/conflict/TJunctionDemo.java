@@ -31,7 +31,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20161211L;
 
     /**

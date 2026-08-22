@@ -13,7 +13,7 @@ import org.opentrafficsim.road.od.Interpolation;
 public class InterpolationType extends ExpressionType<Interpolation>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */

@@ -14,7 +14,7 @@ import javax.swing.JComboBox;
 public class AppearanceControlComboBox<T> extends JComboBox<T> implements AppearanceControl
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20231016L;
 
     /**

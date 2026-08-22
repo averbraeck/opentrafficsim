@@ -37,7 +37,7 @@ import nl.tudelft.simulation.language.DsolException;
 public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20231012;
 
     /**

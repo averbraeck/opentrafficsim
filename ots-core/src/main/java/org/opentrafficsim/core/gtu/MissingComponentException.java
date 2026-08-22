@@ -15,7 +15,7 @@ package org.opentrafficsim.core.gtu;
 public class MissingComponentException extends GtuException
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20241025L;
 
     /**

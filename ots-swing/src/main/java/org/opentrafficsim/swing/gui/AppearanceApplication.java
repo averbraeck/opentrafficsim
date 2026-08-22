@@ -49,7 +49,7 @@ import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 public class AppearanceApplication extends JFrame
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20231017L;
 
     /** Font. */

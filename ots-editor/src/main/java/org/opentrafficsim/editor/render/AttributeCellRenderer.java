@@ -31,7 +31,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class AttributeCellRenderer extends JLabel implements TableCellRenderer
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20230226L;
 
     /** Empty border for re-use. */

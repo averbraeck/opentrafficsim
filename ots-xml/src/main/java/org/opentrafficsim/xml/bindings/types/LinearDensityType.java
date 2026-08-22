@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 public class LinearDensityType extends ExpressionType<LinearDensity>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */

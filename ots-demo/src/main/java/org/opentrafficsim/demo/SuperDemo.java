@@ -40,7 +40,7 @@ import org.opentrafficsim.swing.gui.OtsSimulationApplication;
  */
 public class SuperDemo extends JFrame
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 1L;
 
     /** demos to show. */

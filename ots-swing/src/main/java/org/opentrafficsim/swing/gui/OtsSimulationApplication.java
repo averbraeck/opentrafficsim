@@ -20,7 +20,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 public class OtsSimulationApplication<T extends OtsModelInterface> extends AppearanceApplication
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20141216L;
 
     /**

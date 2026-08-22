@@ -28,7 +28,7 @@ public abstract class ExpressionType<T> implements Serializable
 
     // This class is Serializable so it can easily be cloned
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** The value, when given. */
@@ -211,7 +211,7 @@ public abstract class ExpressionType<T> implements Serializable
     {
 
         /**
-         * Returns a serializable function suitable to return a general type that will:
+         * Returns a serializable function suitable to return a general type. This will:
          * <ol>
          * <li>Return the input object if it is of type {@code T}</li>
          * <li>Return the result from the string function if the input is {@code String}</li>
@@ -243,7 +243,7 @@ public abstract class ExpressionType<T> implements Serializable
         }
 
         /**
-         * Returns a serializable function suitable to return a numeric type that will:
+         * Returns a serializable function suitable to return a numeric type. This will:
          * <ol>
          * <li>Return the input object if it is of type {@code T}</li>
          * <li>Return the result from the string function if the input is {@code String}</li>
@@ -264,7 +264,7 @@ public abstract class ExpressionType<T> implements Serializable
         }
 
         /**
-         * Returns a serializable function suitable to return a numeric type that will:
+         * Returns a serializable function suitable to return a numeric type. This will:
          * <ol>
          * <li>Return the input object if it is of type {@code T}</li>
          * <li>Return the result from the string function if the input is {@code String}</li>
@@ -310,7 +310,7 @@ public abstract class ExpressionType<T> implements Serializable
         }
 
         /**
-         * Returns a serializable function suitable to return a static field (including enums) type that will:
+         * Returns a serializable function suitable to return a static field (including enums) type. This will:
          * <ol>
          * <li>Return the input object if it is of type {@code T}</li>
          * <li>Return the static field named by the input if the input is {@code String}</li>

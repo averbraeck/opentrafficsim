@@ -13,7 +13,7 @@ import java.util.EventObject;
 public class EgtfEvent extends EventObject
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20181008L;
 
     /** Progress, a value in the range [0 ... 1]. */

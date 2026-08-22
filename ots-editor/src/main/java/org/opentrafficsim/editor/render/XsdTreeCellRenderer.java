@@ -30,7 +30,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20230221L;
 
     /** Number of pixels between icons when they are combined. */

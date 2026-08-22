@@ -11,7 +11,7 @@ package org.opentrafficsim.base;
  */
 public class OtsRuntimeException extends RuntimeException
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20220915L;
 
     /**

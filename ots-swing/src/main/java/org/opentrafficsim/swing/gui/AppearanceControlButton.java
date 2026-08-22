@@ -13,7 +13,7 @@ import javax.swing.JButton;
  */
 public class AppearanceControlButton extends JButton implements AppearanceControl
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20180206L;
 
     /**

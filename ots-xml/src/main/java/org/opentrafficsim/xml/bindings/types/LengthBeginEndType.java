@@ -15,7 +15,7 @@ import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */
@@ -51,10 +51,10 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
      */
     public static class LengthBeginEnd
     {
-        /** Begin or end? */
+        /** Begin or end. */
         private final boolean begin;
 
-        /** Absolute offset or relative fraction? */
+        /** Absolute offset or relative fraction. */
         private final boolean absolute;
 
         /** The offset in case absolute == true. */

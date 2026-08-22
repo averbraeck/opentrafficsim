@@ -20,7 +20,7 @@ import org.opentrafficsim.swing.gui.AppearanceControl;
 public class StatusLabel extends JLabel implements AppearanceControl
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20231017L;
 
     /** Standard background color in appearance. */

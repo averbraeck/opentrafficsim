@@ -14,7 +14,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 public class OperationalPlanException extends GtuException
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20151223L;
 
     /**

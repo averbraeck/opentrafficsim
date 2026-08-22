@@ -16,7 +16,7 @@ import de.javagl.treetable.TreeTableModel;
 public class AppearanceControlTreeTable extends JTreeTable implements AppearanceControl
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20231016L;
 
     /**

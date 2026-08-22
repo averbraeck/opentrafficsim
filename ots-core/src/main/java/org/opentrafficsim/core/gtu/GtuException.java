@@ -14,7 +14,7 @@ import org.opentrafficsim.base.OtsException;
 public class GtuException extends OtsException
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20150217L;
 
     /**

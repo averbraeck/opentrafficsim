@@ -52,7 +52,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20170421L;
 
     /**

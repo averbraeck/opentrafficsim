@@ -28,7 +28,7 @@ import org.opentrafficsim.base.OtsRuntimeException;
  */
 public class SwingContourPlot extends SwingSpaceTimePlot implements EventListener
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20190823L;
 
     /** Map to set time granularity. */

@@ -44,7 +44,7 @@ import org.opentrafficsim.animation.ColorPaintScale;
 public class XyInterpolatedBlockRenderer extends XYBlockRenderer
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20181008L;
 
     /** Whether to use the interpolation. */

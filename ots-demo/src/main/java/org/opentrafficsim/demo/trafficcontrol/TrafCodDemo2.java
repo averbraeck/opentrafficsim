@@ -45,7 +45,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20161118L;
 
     /**

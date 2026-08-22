@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.tactical.following.IdmPlus;
 public class CarFollowingModelType extends ExpressionType<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20260219L;
 
     /** Function to convert output from expression to the right type. */

@@ -32,7 +32,7 @@ import javax.swing.table.TableModel;
 public class PropertiesDialog extends JDialog
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20250918L;
 
     /**

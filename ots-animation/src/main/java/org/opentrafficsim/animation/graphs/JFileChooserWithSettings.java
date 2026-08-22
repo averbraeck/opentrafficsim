@@ -21,7 +21,7 @@ import javax.swing.JPanel;
  */
 public class JFileChooserWithSettings extends JFileChooser
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20181014L;
 
     /**

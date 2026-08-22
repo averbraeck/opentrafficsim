@@ -27,7 +27,7 @@ import de.javagl.treetable.JTreeTable;
 public class StringCellRenderer extends JLabel implements TableCellRenderer
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20230218L;
 
     /** Tree table. */

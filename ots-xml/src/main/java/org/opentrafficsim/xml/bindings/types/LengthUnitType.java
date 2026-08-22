@@ -13,7 +13,7 @@ import org.djunits.unit.LengthUnit;
 public class LengthUnitType extends ExpressionType<LengthUnit>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */

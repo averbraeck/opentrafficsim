@@ -15,7 +15,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 public class AppearanceControlTabbedContentPane extends TabbedContentPane implements AppearanceControl
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20180206L;
 
     /**

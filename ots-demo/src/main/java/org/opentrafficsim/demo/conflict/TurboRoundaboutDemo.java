@@ -31,7 +31,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundaboutModel>
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20161211L;
 
     /**

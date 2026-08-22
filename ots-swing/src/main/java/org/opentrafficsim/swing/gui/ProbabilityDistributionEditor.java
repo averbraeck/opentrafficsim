@@ -35,7 +35,7 @@ import org.djutils.swing.multislider.LinearMultiSlider;
 public class ProbabilityDistributionEditor<T> extends LinearMultiSlider<Double>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20250916L;
 
     /** Number of values the slider allows per percent. */

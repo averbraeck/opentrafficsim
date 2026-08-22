@@ -11,7 +11,7 @@ package org.opentrafficsim.xml.bindings.types;
 public class StringType extends ExpressionType<String>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /**

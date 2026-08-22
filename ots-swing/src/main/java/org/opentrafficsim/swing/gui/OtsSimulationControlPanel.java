@@ -75,7 +75,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 public class OtsSimulationControlPanel extends JPanel implements ActionListener, PropertyChangeListener, EventListener
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20150617L;
 
     /** Pause icon. */

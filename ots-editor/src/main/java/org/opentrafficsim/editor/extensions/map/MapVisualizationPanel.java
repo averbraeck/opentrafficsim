@@ -30,7 +30,7 @@ import nl.tudelft.simulation.naming.context.ContextInterface;
 public class MapVisualizationPanel extends VisualizationPanel
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20260212L;
 
     /** Event when extent changed. */

@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 public class AccelerationType extends ExpressionType<Acceleration>
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
 
     /** Function to convert output from expression to the right type. */

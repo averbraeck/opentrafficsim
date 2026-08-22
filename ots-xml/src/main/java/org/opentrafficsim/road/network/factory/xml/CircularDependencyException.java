@@ -15,7 +15,7 @@ import org.opentrafficsim.base.OtsRuntimeException;
 public class CircularDependencyException extends OtsRuntimeException
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20180525L;
 
     /**

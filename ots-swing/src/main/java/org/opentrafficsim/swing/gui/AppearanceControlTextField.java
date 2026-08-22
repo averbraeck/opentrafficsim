@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 public class AppearanceControlTextField extends JTextField implements AppearanceControl
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20240227L;
 
     /**

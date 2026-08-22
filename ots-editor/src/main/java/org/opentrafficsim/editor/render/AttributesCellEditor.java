@@ -34,7 +34,7 @@ import org.opentrafficsim.swing.gui.AppearanceControlTextField;
  */
 public class AttributesCellEditor extends DefaultCellEditor
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20230203L;
 
     /** Checkbox to use as editor for boolean attributes. */

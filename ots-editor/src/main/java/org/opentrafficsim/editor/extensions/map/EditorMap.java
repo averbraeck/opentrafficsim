@@ -87,7 +87,7 @@ import nl.tudelft.simulation.naming.context.JvmContext;
 public final class EditorMap extends JPanel implements EventListener
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20231010L;
 
     /** All types that are valid to show in the map. */

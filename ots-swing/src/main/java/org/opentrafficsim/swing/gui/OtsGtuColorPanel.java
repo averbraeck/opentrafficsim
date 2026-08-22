@@ -47,7 +47,7 @@ import org.opentrafficsim.core.gtu.Gtu;
 public class OtsGtuColorPanel extends JPanel implements ActionListener, AppearanceControl
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20150527L;
 
     /** Combo box that sets the coloring for the GTUs. */

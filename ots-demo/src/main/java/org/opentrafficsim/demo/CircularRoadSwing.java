@@ -56,7 +56,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadModel>
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 1L;
 
     /**

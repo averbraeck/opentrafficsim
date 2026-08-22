@@ -15,7 +15,7 @@ import org.opentrafficsim.base.OtsException;
 public class NetworkException extends OtsException
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20140822L;
 
     /**

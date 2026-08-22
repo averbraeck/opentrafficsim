@@ -24,7 +24,7 @@ import de.javagl.treetable.JTreeTable;
 public class AttributesTableModel extends AbstractTableModel
 {
 
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20230217L;
 
     /** Column names. */

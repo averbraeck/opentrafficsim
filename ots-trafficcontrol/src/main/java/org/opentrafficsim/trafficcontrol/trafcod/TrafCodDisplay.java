@@ -33,7 +33,7 @@ import org.opentrafficsim.road.network.object.trafficlight.TrafficLightColor;
  */
 public class TrafCodDisplay extends JPanel implements MouseMotionListener, MouseListener
 {
-    /** */
+    /** Serialization version UID. */
     private static final long serialVersionUID = 20161115L;
 
     /** Background image. */
