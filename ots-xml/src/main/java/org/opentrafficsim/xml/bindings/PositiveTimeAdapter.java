@@ -29,7 +29,9 @@ public class PositiveTimeAdapter extends ScalarAdapter<Time, TimeType>
     {
         if (isExpression(field))
         {
-            return new TimeType(trimBrackets(field));
+            TimeType type = new TimeType(trimBrackets(field));
+            type.setExpressionCheck((v) -> v.doubleValue() > 0.0);
+            return type;
         }
         Time value = Time.valueOf(field);
         Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveTime value %s is not a positive value.", value);

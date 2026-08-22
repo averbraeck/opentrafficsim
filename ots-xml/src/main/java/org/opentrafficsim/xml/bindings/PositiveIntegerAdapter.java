@@ -27,7 +27,9 @@ public class PositiveIntegerAdapter extends ExpressionAdapter<Integer, IntegerTy
     {
         if (isExpression(field))
         {
-            return new IntegerType(trimBrackets(field));
+            IntegerType type = new IntegerType(trimBrackets(field));
+            type.setExpressionCheck((v) -> v.intValue() > 0);
+            return type;
         }
         Integer value = Integer.valueOf(field);
         Throw.when(value < 1, IllegalArgumentException.class, "PositiveInteger value %s is not a positive value.", value);

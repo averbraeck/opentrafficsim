@@ -29,7 +29,9 @@ public class PositiveLengthAdapter extends ScalarAdapter<Length, LengthType>
     {
         if (isExpression(field))
         {
-            return new LengthType(trimBrackets(field));
+            LengthType type = new LengthType(trimBrackets(field));
+            type.setExpressionCheck((v) -> v.doubleValue() > 0.0);
+            return type;
         }
         Length value = Length.valueOf(field);
         Throw.when(Double.compare(value.si, 0.0) < 0, IllegalArgumentException.class,

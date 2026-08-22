@@ -29,7 +29,9 @@ public class PositiveDurationAdapter extends ScalarAdapter<Duration, DurationTyp
     {
         if (isExpression(field))
         {
-            return new DurationType(trimBrackets(field));
+            DurationType type = new DurationType(trimBrackets(field));
+            type.setExpressionCheck((v) -> v.doubleValue() > 0.0);
+            return type;
         }
         Duration value = Duration.valueOf(field);
         Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveDuration value %s is not a positive value.", value);

@@ -27,7 +27,9 @@ public class DoubleUnitIntervalAdapter extends ExpressionAdapter<Double, DoubleT
     {
         if (isExpression(field))
         {
-            return new DoubleType(trimBrackets(field));
+            DoubleType type = new DoubleType(trimBrackets(field));
+            type.setExpressionCheck((v) -> v.doubleValue() >= 0.0 && v.doubleValue() <= 1.0);
+            return type;
         }
         double value = Double.valueOf(field);
         Throw.when(value < 0.0 || value > 1.0, IllegalArgumentException.class,

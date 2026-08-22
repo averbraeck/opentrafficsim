@@ -11,6 +11,7 @@ import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.animation.network.NodeAnimation.NodeData;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 
@@ -144,7 +145,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
         setValue((v) -> this.coordinate = v, Adapters.get(Point2d.class), getNode(), "Coordinate");
-        setValue((v) -> this.direction = v, Adapters.get(Direction.class), getNode(), "Direction");
+        XsdTreeNode node = getNode();
+        if (node != null && node.getPathString().equals(XsdPaths.NODE)) // Centroids have no direction
+        {
+            setValue((v) -> this.direction = v, Adapters.get(Direction.class), node, "Direction");
+        }
         setLocation();
     }
 

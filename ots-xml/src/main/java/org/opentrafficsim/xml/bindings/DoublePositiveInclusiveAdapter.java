@@ -27,7 +27,9 @@ public class DoublePositiveInclusiveAdapter extends ExpressionAdapter<Double, Do
     {
         if (isExpression(field))
         {
-            return new DoubleType(trimBrackets(field));
+            DoubleType type = new DoubleType(trimBrackets(field));
+            type.setExpressionCheck((v) -> v.doubleValue() >= 0.0);
+            return type;
         }
         double value = Double.valueOf(field);
         Throw.when(value < 0.0, IllegalArgumentException.class, "DoublePositiveInclusive value %s is negative.", value);

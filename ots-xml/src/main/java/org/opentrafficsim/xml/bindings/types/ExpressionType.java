@@ -40,6 +40,9 @@ public abstract class ExpressionType<T> implements Serializable
     /** Function to convert output from expression to the right type. */
     private final SerializableFunction<Object, T> toType;
 
+    /** Check on result from expression. */
+    private Function<T, Boolean> expressionCheck;
+
     /**
      * Constructor with value.
      * @param value value.
@@ -93,6 +96,15 @@ public abstract class ExpressionType<T> implements Serializable
     }
 
     /**
+     * Sets the check on result from expression.
+     * @param check check on result from expression
+     */
+    public void setExpressionCheck(final Function<T, Boolean> check)
+    {
+        this.expressionCheck = check;
+    }
+
+    /**
      * Returns the value, either directly, or from an internal expression and using the input parameters.
      * @param eval expression evaluator.
      * @return value, either directly, or from an internal expression and using the input parameters
@@ -112,7 +124,10 @@ public abstract class ExpressionType<T> implements Serializable
         {
             throw new IllegalArgumentException("Illegal argument for Eval", ex);
         }
-        return this.toType.apply(object);
+        T val = this.toType.apply(object);
+        Throw.when(this.expressionCheck != null && !this.expressionCheck.apply(val), IllegalArgumentException.class,
+                "Value %s resulting from expression is not valid.", val);
+        return val;
     }
 
     /**

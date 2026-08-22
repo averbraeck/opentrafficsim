@@ -59,8 +59,6 @@ import org.opentrafficsim.editor.ChildNodeFinder;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.editor.XsdTreeNodeRoot;
-import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
 import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
@@ -187,7 +185,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     public MapLinkData(final EditorMap map, final XsdTreeNode linkNode, final OtsEditor editor)
     {
         super(map, linkNode, editor);
-//        linkNode.getRoot().addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
+        // linkNode.getRoot().addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
         linkNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         this.isConnector = "Connector".equals(linkNode.getNodeName());
         if (this.isConnector)
@@ -393,7 +391,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 {
                     this.flattenerListener.destroy();
                 }
-                this.flattenerListener = new FlattenerListener(selected, () -> getEval());
+                this.flattenerListener = new FlattenerListener(selected, this::getEval);
             }
             this.dirtyLayout = true;
             return;
@@ -967,8 +965,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             this.id = getNode().getId() == null ? "" : getNode().getId();
             this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
             this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
-            setValue((v) -> this.offsetStart = v, Adapters.get(Length.class), getNode(), "OffsetStart");
-            setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), getNode(), "OffsetEnd");
+            XsdTreeNode node = getNode();
+            if (node != null && node.getPathString().equals(XsdPaths.LINK)) // Connectors have no offsets
+            {
+                setValue((v) -> this.offsetStart = v, Adapters.get(Length.class), node, "OffsetStart");
+                setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), node, "OffsetEnd");
+            }
             this.shapeListener.updateShape();
             setDirtyEndCheckValidity();
         }
@@ -1403,7 +1405,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             switch (attribute)
             {
                 case "Shape":
-                    this.shape = getOrNull(attribute, Adapters.get(Double.class));
+                    this.shape = getOrNull(attribute, Adapters.DOUBLE_POSITIVE_ADAPTER);
                     break;
                 case "Weighted":
                     this.weighted = getOrNull(attribute, Adapters.get(Boolean.class));

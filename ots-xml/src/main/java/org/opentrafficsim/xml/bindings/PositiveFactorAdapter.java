@@ -24,14 +24,16 @@ public class PositiveFactorAdapter extends ExpressionAdapter<Double, DoubleType>
     }
 
     @Override
-    public DoubleType unmarshal(final String value)
+    public DoubleType unmarshal(final String field)
     {
-        if (isExpression(value))
+        if (isExpression(field))
         {
-            return new DoubleType(trimBrackets(value));
+            DoubleType type = new DoubleType(trimBrackets(field));
+            type.setExpressionCheck((v) -> v.doubleValue() > 0.0);
+            return type;
         }
-        double factor = value.endsWith("%") ? Double.parseDouble(value.substring(0, value.length() - 1)) / 100.0
-                : Double.parseDouble(value);
+        double factor = field.endsWith("%") ? Double.parseDouble(field.substring(0, field.length() - 1)) / 100.0
+                : Double.parseDouble(field);
         Throw.when(factor < 0.0, OtsRuntimeException.class, "Factor %d is not positive.", factor);
         return new DoubleType(factor);
     }

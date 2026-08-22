@@ -2,6 +2,7 @@ package org.opentrafficsim.editor.extensions;
 
 import java.awt.Color;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -17,6 +18,8 @@ import org.opentrafficsim.xml.bindings.BooleanAdapter;
 import org.opentrafficsim.xml.bindings.ColorAdapter;
 import org.opentrafficsim.xml.bindings.DirectionAdapter;
 import org.opentrafficsim.xml.bindings.DoubleAdapter;
+import org.opentrafficsim.xml.bindings.DoublePositiveAdapter;
+import org.opentrafficsim.xml.bindings.DoublePositiveInclusiveAdapter;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.IntegerAdapter;
 import org.opentrafficsim.xml.bindings.LengthAdapter;
@@ -42,7 +45,13 @@ public final class Adapters
 {
 
     /** Map of adapters per output type. */
-    private static final java.util.Map<Class<?>, ExpressionAdapter<?, ?>> ADAPTERS = new LinkedHashMap<>();
+    private static final Map<Class<?>, ExpressionAdapter<?, ?>> ADAPTERS = new LinkedHashMap<>();
+
+    /** Adapter for positive doubles, excluding 0.0. */
+    public static final DoublePositiveAdapter DOUBLE_POSITIVE_ADAPTER = new DoublePositiveAdapter();
+
+    /** Adapter for positive doubles, including 0.0. */
+    public static final DoublePositiveInclusiveAdapter DOUBLE_POSITIVE_INCLUSIVE_ADAPTER = new DoublePositiveInclusiveAdapter();
 
     static
     {
@@ -61,7 +70,7 @@ public final class Adapters
         ADAPTERS.put(StripeLateralSync.class, new StripeLateralSyncAdapter());
     }
 
-    /** */
+    /** Constructor. */
     private Adapters()
     {
 
