@@ -102,8 +102,8 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *             <complexType>
  *               <complexContent>
  *                 <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   <sequence maxOccurs="unbounded">
- *                     <element name="Coordinate" type="{http://www.opentrafficsim.org/ots}CoordinateType"/>
+ *                   <sequence>
+ *                     <element name="Coordinate" type="{http://www.opentrafficsim.org/ots}CoordinateType" maxOccurs="unbounded"/>
  *                   </sequence>
  *                 </restriction>
  *               </complexContent>
@@ -1454,8 +1454,8 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      * <complexType>
      *   <complexContent>
      *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       <sequence maxOccurs="unbounded">
-     *         <element name="Coordinate" type="{http://www.opentrafficsim.org/ots}CoordinateType"/>
+     *       <sequence>
+     *         <element name="Coordinate" type="{http://www.opentrafficsim.org/ots}CoordinateType" maxOccurs="unbounded"/>
      *       </sequence>
      *     </restriction>
      *   </complexContent>

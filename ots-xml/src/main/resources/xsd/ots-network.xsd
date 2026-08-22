@@ -98,8 +98,8 @@
           <xsd:element name="Polyline">
             <xsd:complexType>
               <!-- Not necessary to specify the points on the two nodes. -->
-              <xsd:sequence minOccurs="1" maxOccurs="unbounded">
-                <xsd:element name="Coordinate" type="ots:CoordinateType" />
+              <xsd:sequence>
+                <xsd:element name="Coordinate" type="ots:CoordinateType" minOccurs="1" maxOccurs="unbounded" />
               </xsd:sequence>
             </xsd:complexType>
           </xsd:element>
