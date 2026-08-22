@@ -15,6 +15,7 @@ import org.djutils.eval.Eval;
 import org.djutils.eval.RetrieveValue;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
+import org.opentrafficsim.road.network.factory.xml.OtsEval;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.generated.InputParameters;
 import org.opentrafficsim.xml.generated.ScenarioType;
@@ -44,14 +45,14 @@ public final class ScenarioParser
     /**
      * Parse input parameters for scenario.
      * @param scenarios scenarios tag.
-     * @param scenario name of scenario tp parse.
+     * @param scenario name of scenario to parse.
      * @return expression evaluator for all expression in XML.
      */
     public static Eval parseInputParameters(final Scenarios scenarios, final String scenario)
     {
         if (scenarios == null)
         {
-            return new Eval();
+            return new OtsEval();
         }
         ScenariosWrapper scenariosWrapper = new ScenariosWrapper()
         {
@@ -86,7 +87,7 @@ public final class ScenarioParser
     {
         Map<String, Supplier<?>> defaultsMap = new LinkedHashMap<>();
         ParameterMap defaults = new ParameterMap(defaultsMap);
-        Eval eval = new Eval().setRetrieveValue(defaults);
+        Eval eval = new OtsEval().setRetrieveValue(defaults);
         parseInputParameters(scenariosWrapper.getDefaultInputParameters(), defaultsMap, defaults);
         if (scenariosWrapper.getScenarioInputParameters() != null)
         {
@@ -214,7 +215,7 @@ public final class ScenarioParser
     private static void parseInputParameters(final Iterable<ParameterWrapper> inputParameters,
             final Map<String, Supplier<?>> map, final ParameterMap retrieve)
     {
-        Eval eval = new Eval().setRetrieveValue(retrieve);
+        Eval eval = new OtsEval().setRetrieveValue(retrieve);
         for (ParameterWrapper parameter : inputParameters)
         {
             // need to create a new Eval each time, as input parameters may depend on others

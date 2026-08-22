@@ -16,6 +16,7 @@ import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
+import org.opentrafficsim.road.network.factory.xml.OtsEval;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser.ParameterWrapper;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser.ScenariosWrapper;
@@ -125,7 +126,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     {
         if (this.eval == null)
         {
-            return new Eval();
+            return new OtsEval();
         }
         return this.eval;
     }

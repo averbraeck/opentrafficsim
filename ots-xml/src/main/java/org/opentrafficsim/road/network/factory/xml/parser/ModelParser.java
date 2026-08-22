@@ -34,6 +34,7 @@ import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.FullerImplementation;
 import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.factory.xml.OtsEval;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.xml.bindings.types.BooleanType;
@@ -394,7 +395,7 @@ public final class ModelParser
     @SuppressWarnings("unchecked")
     private static <F, T> T correlateFromExpression(final F first, final T then, final String expression, final Class<?> clazz)
     {
-        Eval eval = new Eval();
+        Eval eval = new OtsEval();
         eval.setRetrieveValue((value) ->
         {
             if (value.equals("first"))
