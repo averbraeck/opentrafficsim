@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.djutils.eval.Eval;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
@@ -60,18 +61,24 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     private String directory;
 
     /** Whether validation should be ignored for the entire tree. */
-    private Supplier<Boolean> ignoreChanges;
+    private final Supplier<Boolean> ignoreChanges;
+
+    /** Eval supplier. */
+    private final Supplier<Eval> evalSupplier;
 
     /**
      * Constructor for root node, based on a schema.
      * @param schema XSD Schema.
      * @param ignoreChanges whether to ignore changes
+     * @param evalSupplier eval supplier
      * @throws RemoteException when unable to listen for created nodes.
      */
-    public XsdTreeNodeRoot(final Schema schema, final Supplier<Boolean> ignoreChanges) throws RemoteException
+    public XsdTreeNodeRoot(final Schema schema, final Supplier<Boolean> ignoreChanges, final Supplier<Eval> evalSupplier)
+            throws RemoteException
     {
         super(schema);
         this.ignoreChanges = ignoreChanges;
+        this.evalSupplier = evalSupplier;
         // pointless to fire NODE_CREATED event, no one can be listening yet
         setupXPathListener(schema);
     }
@@ -104,6 +111,15 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     public XsdTreeNodeRoot getRoot()
     {
         return this;
+    }
+
+    /**
+     * Returns the evaluator.
+     * @return evaluator
+     */
+    public Eval getEval()
+    {
+        return this.evalSupplier.get();
     }
 
     /**

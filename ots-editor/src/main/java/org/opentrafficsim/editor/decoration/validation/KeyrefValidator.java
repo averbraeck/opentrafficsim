@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
 
 /**
  * Validator for xsd:keyref, which allows to define multiple fields. This class will maintain a list of nodes (fed automatically
- * by an external listener) and validate that the field values are, as a set, within the given {@code KeyValidator}.
+ * by an external listener) and validate that the field values are, as a set, within the given {@link KeyValidator}.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -98,12 +98,8 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     }
 
     @Override
-    public Optional<String> validate(final XsdTreeNode node)
+    public Optional<String> validateDelegate(final XsdTreeNode node)
     {
-        if (ignoreChanges())
-        {
-            return Optional.empty();
-        }
         if (node.getParent() == null)
         {
             return Optional.empty(); // Node was deleted, but is still visible in the GUI tree for a moment

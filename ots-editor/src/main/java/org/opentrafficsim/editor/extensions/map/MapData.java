@@ -149,7 +149,6 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
         catch (IllegalArgumentException ex)
         {
             setInvalid();
-            // IllegalArgumentException: expression not valid => we should add expression validators baked in to XsdTreeNode
             // IllegalArgumentException: invalid coordinate value, keep old coordinate
         }
         catch (Exception ex)

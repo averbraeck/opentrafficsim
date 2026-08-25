@@ -1,9 +1,13 @@
 package org.opentrafficsim.xml.bindings.types;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
+import org.djunits.value.vdouble.scalar.SIScalar;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
@@ -30,6 +34,9 @@ public abstract class ExpressionType<T> implements Serializable
 
     /** Serialization version UID. */
     private static final long serialVersionUID = 20251111L;
+
+    /** Pattern to filter exception message bit that Throw.when() prepends the message with. */
+    private static final Pattern THROW_PREFIX_PATTERN = Pattern.compile("^[\\w.$]+\\s*\\(\\d+\\):\\s*");
 
     /** The value, when given. */
     private final T value;
@@ -122,11 +129,27 @@ public abstract class ExpressionType<T> implements Serializable
         }
         catch (RuntimeException ex)
         {
-            throw new IllegalArgumentException("Illegal argument for Eval", ex);
+            throw new IllegalArgumentException("Illegal argument for expression", ex);
         }
-        T val = this.toType.apply(object);
-        Throw.when(this.expressionCheck != null && !this.expressionCheck.apply(val), IllegalArgumentException.class,
-                "Value %s resulting from expression is not valid.", val);
+        T val;
+        try
+        {
+            val = this.toType.apply(object);
+        }
+        catch (RuntimeException ex)
+        {
+            String message = ex.getMessage();
+            if (message != null)
+            {
+                message = THROW_PREFIX_PATTERN.matcher(message).replaceFirst("");
+            }
+            throw new IllegalArgumentException("Illegal argument for expression: " + message, ex);
+        }
+        if (this.expressionCheck != null && !this.expressionCheck.apply(val))
+        {
+            // Throw.when adds line information we do not want to present to a use (exceptions from here may be presented)
+            throw new IllegalArgumentException("Expression value " + val + ": not a valid value.");
+        }
         return val;
     }
 
@@ -307,6 +330,21 @@ public abstract class ExpressionType<T> implements Serializable
                 if (valueType.isInstance(o))
                 {
                     return valueType.cast(o);
+                }
+                if (o instanceof SIScalar siScalar && DoubleScalar.class.isAssignableFrom(valueType))
+                {
+                    try
+                    {
+                        Method method = valueType.getMethod("ofSI", double.class);
+                        @SuppressWarnings("unchecked")
+                        T t = (T) method.invoke(o, siScalar.si);
+                        return t;
+                    }
+                    catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                            | InvocationTargetException exception)
+                    {
+                        // fall through
+                    }
                 }
                 if (o instanceof String str)
                 {

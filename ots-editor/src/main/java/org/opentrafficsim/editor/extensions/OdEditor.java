@@ -1,7 +1,5 @@
 package org.opentrafficsim.editor.extensions;
 
-import java.io.IOException;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -29,9 +27,8 @@ public class OdEditor implements EventListener
     /**
      * Constructor.
      * @param editor editor.
-     * @throws IOException if icon cannot be loaded or listener cannot be added.
      */
-    public OdEditor(final OtsEditor editor) throws IOException
+    public OdEditor(final OtsEditor editor)
     {
         Icon odIcon = IconUtil.of("Table24.png").imageSize(18, 18).get();
         editor.addTab("OD", odIcon, buildOdPane(), null);

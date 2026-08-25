@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import javax.swing.SwingUtilities;
 
+import org.djutils.eval.Eval;
 import org.w3c.dom.Document;
 
 import de.javagl.treetable.AbstractTreeTableModel;
@@ -52,11 +53,13 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
      * Constructor.
      * @param document XSD document.
      * @param ignoreChanges whether to ignore changes
+     * @param evalSupplier eval supplier
      * @throws RemoteException when unable to listen for created nodes.
      */
-    protected XsdTreeTableModel(final Document document, final Supplier<Boolean> ignoreChanges) throws RemoteException
+    protected XsdTreeTableModel(final Document document, final Supplier<Boolean> ignoreChanges,
+            final Supplier<Eval> evalSupplier) throws RemoteException
     {
-        super(document == null ? null : new XsdTreeNodeRoot(new Schema(document), ignoreChanges));
+        super(document == null ? null : new XsdTreeNodeRoot(new Schema(document), ignoreChanges, evalSupplier));
     }
 
     /**

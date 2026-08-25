@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.extensions;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
@@ -33,9 +32,8 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
     /**
      * Constructor.
      * @param editor editor.
-     * @throws IOException if icon cannot be loaded or listener cannot be added.
      */
-    public RoadLayoutEditor(final OtsEditor editor) throws IOException
+    public RoadLayoutEditor(final OtsEditor editor)
     {
         Icon roadIcon = IconUtil.of("RoadLayout24.png").imageSize(18, 18).get();
         editor.addTab("Road layout", roadIcon, buildRoadLayoutPane(), null);

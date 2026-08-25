@@ -241,7 +241,7 @@
         <xsd:element name="ShortestRoute" minOccurs="1" maxOccurs="unbounded">
           <xsd:complexType>
             <xsd:attribute name="Id" type="ots:string" use="required" />
-            <xsd:attribute name="Weight" type="ots:double" use="required" />
+            <xsd:attribute name="Weight" type="ots:DoublePositiveInclusive" use="required" />
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />

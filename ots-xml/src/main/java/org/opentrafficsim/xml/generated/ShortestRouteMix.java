@@ -11,7 +11,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opentrafficsim.xml.bindings.DoubleAdapter;
+import org.opentrafficsim.xml.bindings.DoublePositiveInclusiveAdapter;
 import org.opentrafficsim.xml.bindings.StringAdapter;
 import org.opentrafficsim.xml.bindings.types.DoubleType;
 import org.opentrafficsim.xml.bindings.types.StringType;
@@ -32,7 +32,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
  *             <complexContent>
  *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}string" />
- *                 <attribute name="Weight" use="required" type="{http://www.opentrafficsim.org/ots}double" />
+ *                 <attribute name="Weight" use="required" type="{http://www.opentrafficsim.org/ots}DoublePositiveInclusive" />
  *               </restriction>
  *             </complexContent>
  *           </complexType>
@@ -184,7 +184,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      *   <complexContent>
      *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}string" />
-     *       <attribute name="Weight" use="required" type="{http://www.opentrafficsim.org/ots}double" />
+     *       <attribute name="Weight" use="required" type="{http://www.opentrafficsim.org/ots}DoublePositiveInclusive" />
      *     </restriction>
      *   </complexContent>
      * </complexType>
@@ -203,7 +203,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         @XmlJavaTypeAdapter(StringAdapter.class)
         protected StringType id;
         @XmlAttribute(name = "Weight", required = true)
-        @XmlJavaTypeAdapter(DoubleAdapter.class)
+        @XmlJavaTypeAdapter(DoublePositiveInclusiveAdapter.class)
         protected DoubleType weight;
 
         /**

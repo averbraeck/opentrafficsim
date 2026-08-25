@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.decoration;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 import javax.swing.Icon;
@@ -19,6 +20,8 @@ import org.opentrafficsim.editor.decoration.string.CorrelationStringFunction;
 import org.opentrafficsim.editor.decoration.string.OdOptionsItemStringFunction;
 import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
+import org.opentrafficsim.editor.decoration.validation.KeyValidator;
+import org.opentrafficsim.editor.decoration.validation.KeyrefValidator;
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
 import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator;
 import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator.LayoutCoupling;
@@ -43,11 +46,11 @@ public final class DefaultDecorator
 {
 
     /**
-     * Private constructor.
+     * Constructor.
      */
     private DefaultDecorator()
     {
-
+        //
     }
 
     /**
@@ -57,6 +60,25 @@ public final class DefaultDecorator
      * @throws NamingException when registering objects does not work
      */
     public static void decorate(final OtsEditor editor) throws IOException, NamingException
+    {
+        setCustomIcons(editor);
+        setupTabs(editor);
+        setupAttributeStringFunctions(editor);
+        setupValidators(editor);
+
+        new AutomaticLinkId(editor);
+        new AutomaticConnectorId(editor);
+        new DefinitionsSaver(editor);
+        new LayoutCustomizer(editor);
+
+        // new NodeCreatedRemovedPrinter(editor);
+    }
+
+    /**
+     * Sets custom icons.
+     * @param editor editor
+     */
+    private static void setCustomIcons(final OtsEditor editor)
     {
         int s = 16;
         Icon gtuIcon = IconUtil.of("Gtu24.png").imageSize(s, s).get();
@@ -129,15 +151,59 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Animation.Connector", IconUtil.of("Connector24.png").imageSize(s, s).get());
         // does not exist yet
         editor.setCustomIcon("Ots.Output", IconUtil.of("./Output24.png").imageSize(s, s).get());
+    }
 
+    /**
+     * Setup tabs.
+     * @param editor editor
+     * @throws RemoteException exception
+     * @throws NamingException exception
+     */
+    private static void setupTabs(final OtsEditor editor) throws RemoteException, NamingException
+    {
         editor.addTab("Map", IconUtil.of("Network24.png").imageSize(18, 18).get(), EditorMap.build(editor), "Map editor");
         editor.addTab("Parameters", IconUtil.of("Parameter24.png").imageSize(18, 18).get(), buildParameterPane(), null);
         editor.addTab("Text", IconUtil.of("Text24.png").imageSize(18, 18).get(), buildTextPane(), null);
 
-        // string functions
-        new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
-        new AttributesStringFunction(editor, "Ots.Network.Link.StripeOverride", "Stripe");
-        new AttributesStringFunction(editor, "Ots.Network.Link.TrafficLight", "Lane");
+        new RoadLayoutEditor(editor);
+        new OdEditor(editor);
+        new RouteEditor(editor);
+        new TrafCodEditor(editor);
+    }
+
+    /**
+     * Temporary stub to create parameters pane.
+     * @return component.
+     */
+    private static JComponent buildParameterPane()
+    {
+        JLabel parameters = new JLabel("parameters");
+        parameters.setOpaque(true);
+        parameters.setHorizontalAlignment(JLabel.CENTER);
+        return parameters;
+    }
+
+    /**
+     * Temporary stub to create text pane.
+     * @return component.
+     */
+    private static JComponent buildTextPane()
+    {
+        JLabel text = new JLabel("text");
+        text.setOpaque(true);
+        text.setHorizontalAlignment(JLabel.CENTER);
+        return text;
+    }
+
+    /**
+     * Sets up attribute string functions.
+     * @param editor editor
+     */
+    private static void setupAttributeStringFunctions(final OtsEditor editor)
+    {
+        new AttributesStringFunction(editor, XsdPaths.LINK + ".LaneOverride", "Lane");
+        new AttributesStringFunction(editor, XsdPaths.LINK + ".StripeOverride", "Stripe");
+        new AttributesStringFunction(editor, XsdPaths.LINK + ".TrafficLight", "Lane");
         new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination", "Category");
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
@@ -159,8 +225,14 @@ public final class DefaultDecorator
         new XiIncludeStringFunction(editor);
         new ChoiceNodeStringFunction(editor);
         new CorrelationStringFunction(editor);
+    }
 
-        // validators
+    /**
+     * Sets up validators. Note that {@link KeyValidator} and {@link KeyrefValidator} are automatically setup by the root node.
+     * @param editor editor
+     */
+    private static void setupValidators(final OtsEditor editor)
+    {
         new ParentValidator(editor, "Ots.Definitions.GtuTypes.GtuType");
         new ParentValidator(editor, "Ots.Definitions.LinkTypes.LinkType");
         new ParentValidator(editor, "Ots.Definitions.LaneTypes.LaneType");
@@ -199,51 +271,10 @@ public final class DefaultDecorator
         new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Shoulder", LayoutCoupling.LINK_BY_PARENT_ID,
                 RoadLayoutElementAttribute.ID);
         new TrafficLightValidator(editor, ".SignalGroup.TrafficLight");
-
-        new AutomaticLinkId(editor);
-        new AutomaticConnectorId(editor);
-        new DefinitionsSaver(editor);
-        new LayoutCustomizer(editor);
-
-        // new NodeCreatedRemovedPrinter(editor);
-        new RoadLayoutEditor(editor);
-        new OdEditor(editor);
-        new RouteEditor(editor);
-        new TrafCodEditor(editor);
-    }
-
-    /**
-     * Temporary stub to create parameters pane.
-     * @return component.
-     */
-    private static JComponent buildParameterPane()
-    {
-        JLabel parameters = new JLabel("parameters");
-        parameters.setOpaque(true);
-        parameters.setHorizontalAlignment(JLabel.CENTER);
-        return parameters;
-    }
-
-    /**
-     * Temporary stub to create text pane.
-     * @return component.
-     */
-    private static JComponent buildTextPane()
-    {
-        JLabel text = new JLabel("text");
-        text.setOpaque(true);
-        text.setHorizontalAlignment(JLabel.CENTER);
-        return text;
     }
 
     /**
      * Prints nodes that are created or removed.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
      */
     @SuppressWarnings("unused") // Leave this class for debugging. It can be added by a line above that is commented out.
     private static class NodeCreatedRemovedPrinter extends AbstractNodeDecoratorRemove

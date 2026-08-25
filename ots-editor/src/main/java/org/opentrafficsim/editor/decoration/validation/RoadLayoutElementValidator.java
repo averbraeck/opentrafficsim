@@ -97,8 +97,8 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     /** Coupled layout element nodes that are successfully validated to. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNodes = new LinkedHashMap<>();
 
-    /** Whether to ignore changes. */
-    private final Supplier<Boolean> ignoreChanges;
+    /** Boolean supplier with logic on when to ignore validation. */
+    private final Supplier<Boolean> ignoreValidation;
 
     /**
      * Constructor.
@@ -116,7 +116,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         this.path = path;
         this.layoutCoupling = layoutCoupling;
         this.elementAttribute = attribute;
-        this.ignoreChanges = editor::ignoreChanges;
+        this.ignoreValidation = editor::ignoreChanges;
     }
 
     @Override
@@ -452,12 +452,14 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     }
 
     @Override
-    public Optional<String> validate(final XsdTreeNode node)
+    public boolean ignoreValidation()
     {
-        if (this.ignoreChanges.get())
-        {
-            return Optional.empty();
-        }
+        return this.ignoreValidation.get();
+    }
+
+    @Override
+    public Optional<String> validateDelegate(final XsdTreeNode node)
+    {
         String value = node.getAttributeValue(this.elementAttribute.attributeName);
         if (value == null || value.isEmpty())
         {

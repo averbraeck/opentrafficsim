@@ -19,13 +19,12 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
  * this. If a coupling is made including a null value, e.g. {"A", "B", null} is successfully coupled to {"A", "B", "C"}, then
  * when the value for "C" is changed in the coupled node, the null value should not be updated.
  * <p>
- * Couplings should be returned in implementing classes by returning a contained Map in {@code getCoupling()}. The implementing
- * class should not change this Map, but should invoke the methods in this interface. Both {@code addCoupling()} and
- * {@code removeCoupling()} trigger events for a consistent undo queue, and should therefore be used to add or remove a
- * coupling. This information is required in the undo queue because e.g. changing an id of a key may make it coupled for some
- * keyref that happened to point to that value. If the id change on the key is then undone, the now coupled keyref should
- * <b>not</b> change the id in lock step. Therefore, the coupling should first be undone, before the old id value is reset on
- * the key.
+ * Couplings should be returned in implementing classes by returning a contained Map in {@link #getCouplings}. The implementing
+ * class should not change this Map, but should invoke the methods in this interface. Both {@link #addCoupling} and
+ * {@link #removeCoupling} trigger events for a consistent undo queue, and should therefore be used to add or remove a coupling.
+ * This information is required in the undo queue because e.g. changing an id of a key may make it coupled for some keyref that
+ * happened to point to that value. If the id change on the key is then undone, the now coupled keyref should <b>not</b> change
+ * the id in lock step. Therefore, the coupling should first be undone, before the old id value is reset on the key.
  * <p>
  * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

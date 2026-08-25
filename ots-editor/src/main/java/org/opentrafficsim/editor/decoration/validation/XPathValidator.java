@@ -42,8 +42,8 @@ public abstract class XPathValidator implements ValueValidator
     /** Path where the key was defined, defining the context, with dots escaped. */
     private final String keyPathPattern;
 
-    /** Boolean supplier with logic on when to ignore changes. */
-    private final Supplier<Boolean> ignoreChanges;
+    /** Boolean supplier with logic on when to ignore validation. */
+    private final Supplier<Boolean> ignoreValidation;
 
     /** Selectors, as separated by "|". */
     private final String[] selectors;
@@ -58,17 +58,17 @@ public abstract class XPathValidator implements ValueValidator
      * Constructor.
      * @param keyNode node defining the xsd:key, xsd:unique or xsd:keyref
      * @param keyPath path where the key was defined, defining the context
-     * @param ignoreChanges boolean supplier with logic on when to ignore changes
+     * @param ignoreValidation boolean supplier with logic on when to ignore validation
      */
-    public XPathValidator(final Node keyNode, final String keyPath, final Supplier<Boolean> ignoreChanges)
+    public XPathValidator(final Node keyNode, final String keyPath, final Supplier<Boolean> ignoreValidation)
     {
         Throw.whenNull(keyNode, "keyNode");
         Throw.whenNull(keyPath, "keyPath");
-        Throw.whenNull(ignoreChanges, "ignoreChanges");
+        Throw.whenNull(ignoreValidation, "ignoreValidation");
         this.keyNode = keyNode;
         this.keyPath = keyPath;
         this.keyPathPattern = this.keyPath.replace(".", "\\.");
-        this.ignoreChanges = ignoreChanges;
+        this.ignoreValidation = ignoreValidation;
 
         // selectors
         this.selectors = DocumentReader.getAttribute(DocumentReader.getChild(this.keyNode, "xsd:selector").get(), "xpath").get()
@@ -88,13 +88,10 @@ public abstract class XPathValidator implements ValueValidator
         }
     }
 
-    /**
-     * Whether validation should be ignored.
-     * @return whether validation should be ignored
-     */
-    protected boolean ignoreChanges()
+    @Override
+    public boolean ignoreValidation()
     {
-        return this.ignoreChanges.get();
+        return this.ignoreValidation.get();
     }
 
     /**

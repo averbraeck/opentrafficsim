@@ -10,16 +10,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,7 +45,10 @@ import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyrefValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
+import org.opentrafficsim.editor.decoration.validation.ValueValidator.Whitespace;
+import org.opentrafficsim.road.network.factory.xml.AdapterRegistry;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel;
+import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -118,7 +122,7 @@ public class XsdTreeNode extends LocalEventProducer
     private final ImmutableList<Node> hiddenNodes;
 
     /**
-     * Element defining node that referred to a type. The type is defined by {@code xsdNode}, the referring node is used for
+     * Element defining node that referred to a type. The type is defined by {@link #xsdNode}, the referring node is used for
      * original information on name and occurrence. For simple element nodes this is {@code null}.
      */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -163,6 +167,10 @@ public class XsdTreeNode extends LocalEventProducer
     /** Attribute XSD nodes. */
     private List<Node> attributeNodes;
 
+    /** Whitespace per attribute (i.e. how to handle trailing space, double spaces, etc.). */
+    // mostly there will be no whitespaces, so we use null instead of an empty map
+    private Map<Integer, Whitespace> attributeWhiteSpaces;
+
     /** Attribute values. */
     private List<String> attributeValues;
 
@@ -191,9 +199,12 @@ public class XsdTreeNode extends LocalEventProducer
     /** Stored simple value of the node. */
     private String value;
 
+    /** Value whitespace (i.e. how to handle trailing space, double spaces, etc.). */
+    private Whitespace whiteSpace;
+
     /**
      * Whether this node is loaded from an include file, and hence should not be editable at all. (Not whether this is the
-     * Include node itself.
+     * Include node itself).
      */
     private boolean isIncluded;
 
@@ -212,7 +223,7 @@ public class XsdTreeNode extends LocalEventProducer
     private Set<Function<XsdTreeNode, String>> nodeValidators = new LinkedHashSet<>();
 
     /** Validators for the value, CoupledValidators sorted first to couple, after which other validators may invalidate. */
-    private SortedMap<ValueValidator, Object> valueValidators = new TreeMap<>();
+    private NavigableMap<ValueValidator, Object> valueValidators = new TreeMap<>();
 
     /** Validators for each attribute, CoupledValidators sorted first to couple, after which other validators may invalidate. */
     private Map<String, SortedSet<ValueValidator>> attributeValidators = new LinkedHashMap<>();
@@ -328,8 +339,12 @@ public class XsdTreeNode extends LocalEventProducer
         this.active = this.minOccurs > 0;
         this.pathString = buildPathLocation();
         this.isIncluded = parent.isIncluded;
-        this.value = referringXsdNode == null ? DocumentReader.getAttribute(xsdNode, "default").orElse(null)
-                : DocumentReader.getAttribute(referringXsdNode, "default").orElse(null);
+        this.value = DocumentReader.getAttribute(getRelevantNode(), "default").orElse(null);
+        Node valueDefiningNode = XsdTreeNodeUtil.getValueDefiningNode(getRelevantNode(), this.schema);
+        if (valueDefiningNode != null)
+        {
+            this.whiteSpace = ValueValidator.getWhiteSpace(valueDefiningNode, this.schema);
+        }
     }
 
     /**
@@ -840,12 +855,40 @@ public class XsdTreeNode extends LocalEventProducer
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
             Node child = node.getChildNodes().item(childIndex);
-            if (child.getNodeName().equals("xsd:attribute") && DocumentReader.getAttribute(child, "name").isPresent())
+            if (child.getNodeName().equals("xsd:attribute"))
             {
-                this.attributeNodes.add(child);
-                this.attributeValues.add(null);
-                this.attributeValid.add(null);
-                this.attributeInvalidMessage.add(null);
+                if (DocumentReader.getAttribute(child, "name").isPresent())
+                {
+                    this.attributeNodes.add(child);
+                    this.attributeValues.add(null);
+                    this.attributeValid.add(null);
+                    this.attributeInvalidMessage.add(null);
+
+                    // attribute whitespace
+                    // XiIncludeNode attributes (File, Fallback) are synthetic model attributes and have no whitespace
+                    if (!node.equals(XiIncludeNode.XI_INCLUDE))
+                    {
+                        Whitespace attributeWhiteSpace = ValueValidator.getWhiteSpace(child, this.schema);
+                        if (!attributeWhiteSpace.equals(Whitespace.NONE))
+                        {
+                            if (this.attributeWhiteSpaces == null)
+                            {
+                                this.attributeWhiteSpaces = new LinkedHashMap<>();
+                            }
+                            int attributeIndex = this.attributeNodes.size() - 1;
+                            this.attributeWhiteSpaces.put(attributeIndex, attributeWhiteSpace);
+                        }
+                    }
+                }
+                else
+                {
+                    Optional<String> ref = DocumentReader.getAttribute(child, "ref");
+                    if (ref.isPresent())
+                    {
+                        throw new IllegalStateException(
+                                "An xsd:attribute refers to type " + ref + " but attribute references are not supported.");
+                    }
+                }
             }
             if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
             {
@@ -912,15 +955,18 @@ public class XsdTreeNode extends LocalEventProducer
     {
         Objects.checkIndex(index, attributeCount());
         String previous = this.attributeValues.get(index);
-        if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
+        Whitespace whitespace = this.attributeWhiteSpaces == null ? Whitespace.NONE
+                : this.attributeWhiteSpaces.getOrDefault(index, Whitespace.NONE);
+        String next = whitespace.parse(value);
+        if (!XsdTreeNodeUtil.valuesAreEqual(previous, next))
         {
             boolean isDefaultBoolean = false;
             if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type").orElse(null)))
             {
                 Optional<String> defaultValue = getDefaultAttributeValue(index);
-                isDefaultBoolean = defaultValue.isPresent() && defaultValue.get().equals(value);
+                isDefaultBoolean = defaultValue.isPresent() && defaultValue.get().equals(next);
             }
-            this.attributeValues.set(index, (value == null || value.isEmpty() || isDefaultBoolean) ? null : value);
+            this.attributeValues.set(index, (next == null || next.isEmpty() || isDefaultBoolean) ? null : next);
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
                 removeChildren();
@@ -1102,6 +1148,10 @@ public class XsdTreeNode extends LocalEventProducer
                     }
                 }
             }
+            if (isEditable())
+            {
+                this.whiteSpace = ValueValidator.getWhiteSpace(getRelevantNode(), this.schema);
+            }
             invalidate();
             fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
         }
@@ -1207,9 +1257,10 @@ public class XsdTreeNode extends LocalEventProducer
         Throw.when(!isEditable(), IllegalStateException.class,
                 "Node is not an xsd:simpleType or xsd:complexType with xsd:simpleContent, hence no value is allowed.");
         String previous = this.value;
-        if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
+        String next = this.whiteSpace.parse(value);
+        if (!XsdTreeNodeUtil.valuesAreEqual(previous, next))
         {
-            this.value = (value == null || value.isEmpty()) ? null : value;
+            this.value = (next == null || next.isEmpty()) ? null : next;
             invalidate();
             fireEvent(new Event(VALUE_CHANGED, new Object[] {this, previous}));
         }
@@ -1337,7 +1388,7 @@ public class XsdTreeNode extends LocalEventProducer
 
     /**
      * Returns whether this node can contain the information of the given node. This only checks equivalence of the underlying
-     * XSD nodes, or equivalence of the referencing XSD nodes.
+     * XSD nodes, or equivalence of the referring XSD nodes.
      * @param copied node that was copied, and may be pasted/inserted here.
      * @return whether this node can contain the information of the given node.
      */
@@ -1471,8 +1522,7 @@ public class XsdTreeNode extends LocalEventProducer
         if (this.children != null)
         {
             // copy to prevent ConcurrentModificationException as child removes itself from this node
-            List<XsdTreeNode> childs = new ArrayList<>(this.children);
-            for (XsdTreeNode child : childs)
+            for (XsdTreeNode child : new ArrayList<>(this.children))
             {
                 child.remove();
             }
@@ -1501,7 +1551,7 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns an ordered list of indices within the parents child list, regarding sibling nodes of the same type. What is
+     * Returns an ordered list of indices within the parent's child list, regarding sibling nodes of the same type. What is
      * considered the same type differs between a choice node, and a regular node. In case of a choice, all siblings that have a
      * type equal to <i>any</i> of the choice options, are considered siblings. They are all instances of the same choice,
      * although they are different options. If the siblings are not consecutive within the parent, nor are the returned indices.
@@ -2123,13 +2173,7 @@ public class XsdTreeNode extends LocalEventProducer
      */
     void invalidateAll()
     {
-        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
-        {
-            removeChildren();
-            this.children = null;
-            assureChildren();
-        }
-        else if (this.children != null)
+        if (this.children != null)
         {
             for (XsdTreeNode child : this.children)
             {
@@ -2142,7 +2186,7 @@ public class XsdTreeNode extends LocalEventProducer
     /**
      * Adds a validator for the node.
      * @param validator validator.
-     * @throws IllegalStateException if a CoupledValidator is added while one was already added to the value before
+     * @throws IllegalStateException if a CoupledValidator is added while one was already added to the node before
      */
     public void addNodeValidator(final Function<XsdTreeNode, String> validator)
     {
@@ -2177,7 +2221,7 @@ public class XsdTreeNode extends LocalEventProducer
 
     /**
      * Adds a validator for the value of an attribute. The field object is any object that is returned to the validator in its
-     * {@code getOptions()} method, such that it can know for which field option values should be given.
+     * {@link ValueValidator#getOptions} method, such that it can know for which field option values should be given.
      * @param attribute attribute name.
      * @param validator validator.
      * @param field field.
@@ -2195,10 +2239,10 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Returns {@code true} if the set of validators contains a {@code CoupledValidator}.
+     * Returns {@code true} if the set of validators contains a {@link CoupledValidator} that is not the input validator.
      * @param validators validators
      * @param validator validator that is about to be added
-     * @return {@code true} if the set of validators contains a {@code CoupledValidator}
+     * @return {@code true} if the set of validators contains a {@link CoupledValidator}
      */
     private boolean coupledValidatorExists(final Set<ValueValidator> validators, final ValueValidator validator)
     {
@@ -2257,20 +2301,16 @@ public class XsdTreeNode extends LocalEventProducer
                 this.valueValid = true;
                 return Optional.empty();
             }
-            if (this.value != null && !this.value.isEmpty())
-            {
-                for (ValueValidator validator : this.valueValidators.keySet())
-                {
-                    Optional<String> message = validator.validate(this);
-                    if (message.isPresent())
-                    {
-                        this.valueInvalidMessage = message.get();
-                        this.valueValid = false;
-                        return message;
-                    }
-                }
-            }
-            Optional<String> message = ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+
+            Supplier<String> getter = () -> this.value;
+            Consumer<String> setter = v -> this.value = v;
+            Supplier<Optional<ExpressionAdapter<?, ?>>> adapterSupplier =
+                    () -> AdapterRegistry.getElementAdapter(getNodeName(), getRelevantNode());
+            Supplier<Optional<String>> valeuValidationSupplier =
+                    () -> ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+            Optional<String> message = ValueValidator.reportInvalidWithExpression(this, valueIsExpression(), getter, setter,
+                    adapterSupplier, this.valueValidators.navigableKeySet(), valeuValidationSupplier);
+
             this.valueInvalidMessage = message.orElse(null);
             this.valueValid = message.isEmpty();
         }
@@ -2313,19 +2353,18 @@ public class XsdTreeNode extends LocalEventProducer
                     return Optional.empty();
                 }
             }
-            String attribute = getAttributeNameByIndex(index);
-            for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
-            {
-                Optional<String> message = validator.validate(this);
-                if (message.isPresent())
-                {
-                    this.attributeInvalidMessage.set(index, message.orElse(null));
-                    this.attributeValid.set(index, false);
-                    return message;
-                }
-            }
-            Optional<String> message =
-                    ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
+
+            Supplier<String> getter = () -> this.attributeValues.get(index);
+            Consumer<String> setter = v -> this.attributeValues.set(index, v);
+            Supplier<Optional<ExpressionAdapter<?, ?>>> adapterSupplier =
+                    () -> AdapterRegistry.getAttributeAdapter(getNodeName(), getRelevantNode(), getAttributeNode(index));
+            SortedSet<ValueValidator> validatorSet =
+                    this.attributeValidators.computeIfAbsent(getAttributeNameByIndex(index), key -> new TreeSet<>());
+            Supplier<Optional<String>> valueValidationSupplier = () -> ValueValidator
+                    .reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
+            Optional<String> message = ValueValidator.reportInvalidWithExpression(this, attributeIsExpression(index), getter,
+                    setter, adapterSupplier, validatorSet, valueValidationSupplier);
+
             this.attributeInvalidMessage.set(index, message.orElse(null));
             this.attributeValid.set(index, message.isEmpty());
             return message;

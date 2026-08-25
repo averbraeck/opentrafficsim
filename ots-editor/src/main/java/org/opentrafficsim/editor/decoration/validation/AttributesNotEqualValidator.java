@@ -35,8 +35,8 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
     /** Ordering id. */
     private final long orderingId = NEXT_ID.incrementAndGet();
 
-    /** Whether to ignore changes. */
-    private final Supplier<Boolean> ignoreChanges;
+    /** Boolean supplier with logic on when to ignore validation. */
+    private final Supplier<Boolean> ignoreValidation;
 
     /**
      * Constructor.
@@ -49,16 +49,19 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
             final String attribute2)
     {
         super(editor, (n) -> n.isType(path), attribute1, attribute2);
-        this.ignoreChanges = editor::ignoreChanges;
+
+        this.ignoreValidation = editor::ignoreChanges;
     }
 
     @Override
-    public Optional<String> validate(final XsdTreeNode node)
+    public boolean ignoreValidation()
     {
-        if (this.ignoreChanges.get())
-        {
-            return Optional.empty();
-        }
+        return this.ignoreValidation.get();
+    }
+
+    @Override
+    public Optional<String> validateDelegate(final XsdTreeNode node)
+    {
         if (!node.isActive())
         {
             return Optional.empty();

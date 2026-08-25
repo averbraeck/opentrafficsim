@@ -39,8 +39,8 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     /** All nodes created under the path. */
     private Map<XsdTreeNode, Set<XsdTreeNode>> nodes = new LinkedHashMap<>();
 
-    /** Whether to ignore changes. */
-    private final Supplier<Boolean> ignoreChanges;
+    /** Boolean supplier with logic on when to ignore validation. */
+    private final Supplier<Boolean> ignoreValidation;
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         this.contextPath = "Ots";
         this.idAttribute = "Id";
         this.parentAttribute = "Parent";
-        this.ignoreChanges = editor::ignoreChanges;
+        this.ignoreValidation = editor::ignoreChanges;
     }
 
     /**
@@ -94,12 +94,14 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     }
 
     @Override
-    public Optional<String> validate(final XsdTreeNode node)
+    public boolean ignoreValidation()
     {
-        if (this.ignoreChanges.get())
-        {
-            return Optional.empty();
-        }
+        return this.ignoreValidation.get();
+    }
+
+    @Override
+    public Optional<String> validateDelegate(final XsdTreeNode node)
+    {
         String value = node.getAttributeValue(this.parentAttribute);
         if (value == null || value.isEmpty() || !node.isActive())
         {

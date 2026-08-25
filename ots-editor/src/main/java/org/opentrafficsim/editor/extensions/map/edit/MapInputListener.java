@@ -946,13 +946,13 @@ public class MapInputListener extends InputListener implements EventListener
             else
             {
                 // snap to end ray only
-                point = endRay.closestPointOnRay(p);
+                point = closestPointOnRayAtMinimumDistance(p, endRay);
             }
         }
         else if (endRay == null)
         {
             // snap to start ray only
-            point = startRay.closestPointOnRay(p);
+            point = closestPointOnRayAtMinimumDistance(p, startRay);
         }
         else
         {
@@ -960,6 +960,19 @@ public class MapInputListener extends InputListener implements EventListener
             point = intersectionOrMidPoint(startRay, endRay);
         }
         return point;
+    }
+
+    /**
+     * Snaps input point to the ray, but never closer than POLYLINE_DIST_MIN_M to the end point of the ray.
+     * @param p point
+     * @param ray ray
+     * @return input point snapped to ray at a minimum distance of POLYLINE_DIST_MIN_M to the ray end point
+     */
+    private static Point2d closestPointOnRayAtMinimumDistance(final Point2d p, final Ray2d ray)
+    {
+        Point2d point = ray.closestPointOnRay(p);
+        // we add 1e-9 to make sure "< POLYLINE_DIST_MIN_M" does not invalidate this point
+        return ray.distance(point) < POLYLINE_DIST_MIN_M ? OtsGeometryUtil.offsetPoint(ray, POLYLINE_DIST_MIN_M + 1e-9) : point;
     }
 
     /**
@@ -1019,9 +1032,10 @@ public class MapInputListener extends InputListener implements EventListener
             PolyLine2d line = new PolyLine2d(prior, p, posterior);
             return OtsShape.transformLine(line, p);
         };
+        Supplier<Boolean> predicate = () -> this.dragging && draggable.equals(this.selectedDraggable);
         HelperAnnotation predictionLine =
-                new HelperAnnotation(new Helper(linkData.getLocation(), predictionFunction), MapInputListener.this.editorMap,
-                        Scaling.SCALE).setPredicate(() -> this.dragging && draggable.equals(this.selectedDraggable));
+                new HelperAnnotation(new Helper(draggable.getSource().getLocation(), predictionFunction),
+                        MapInputListener.this.editorMap, Scaling.SCALE).setPredicate(predicate);
         draggable.addHelperAnnotation(predictionLine, UpdateMode.DYNAMIC);
     }
 
@@ -1083,6 +1097,10 @@ public class MapInputListener extends InputListener implements EventListener
         this.selectedDraggable = null;
         for (Renderable2d<?> selectionRenderable : this.selectionIndicators)
         {
+            if (selectionRenderable.getSource() instanceof MapData mapData)
+            {
+                mapData.removeListener(this, MapData.MAP_DATA_CHANGED);
+            }
             this.editorMap.removeAnimation(selectionRenderable);
         }
         this.selectionIndicators.clear();

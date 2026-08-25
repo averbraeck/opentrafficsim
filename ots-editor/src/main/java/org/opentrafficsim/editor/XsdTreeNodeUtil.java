@@ -317,7 +317,7 @@ public final class XsdTreeNodeUtil
      * Returns whether nodes are of the same type. This regards the referring XSD node if it exists, otherwise it regards the
      * regular XSD node.
      * @param node1 node 1.
-     * @param node2 node 1.
+     * @param node2 node 2.
      * @return whether nodes are of the same type.
      */
     static boolean haveSameType(final XsdTreeNode node1, final XsdTreeNode node2)
@@ -340,62 +340,72 @@ public final class XsdTreeNodeUtil
     }
 
     /**
-     * Returns whether an xsdNode defines an editable element.
-     * @param xsdNode xsd node
+     * Returns whether an XSD node defines an editable element, i.e. a simple type.
+     * @param xsdNode XSD node
      * @param schema schema
-     * @return whether an xsdNode defines an editable element
+     * @return whether an XSD node defines an editable element
      */
     static boolean isEditable(final Node xsdNode, final Schema schema)
     {
+        return getValueDefiningNode(xsdNode, schema) != null;
+    }
+
+    /**
+     * Returns the XSD node that defines the node value. Typically a simpleType or complexType containing a simpleContent.
+     * @param xsdNode XSD node that defines the element or attribute type
+     * @param schema schema
+     * @return XSD node that defines the node value
+     */
+    static Node getValueDefiningNode(final Node xsdNode, final Schema schema)
+    {
         if (xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
-            return false;
-        }
-        if (xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(xsdNode, "#text").size()
-                && xsdNode.getChildNodes().getLength() > 0)
-        {
-            // #text children only means a simple type
-            return true;
+            return null;
         }
         Node simpleType = xsdNode.getNodeName().equals("xsd:simpleType") ? xsdNode
                 : DocumentReader.getChild(xsdNode, "xsd:simpleType").orElse(null);
         if (simpleType != null)
         {
-            return true;
+            return simpleType;
         }
         Node complexType = xsdNode.getNodeName().equals("xsd:complexType") ? xsdNode
                 : DocumentReader.getChild(xsdNode, "xsd:complexType").orElse(null);
-        boolean isComplex = complexType != null;
         while (complexType != null)
         {
             Optional<Node> simpleContent = DocumentReader.getChild(complexType, "xsd:simpleContent");
             if (simpleContent.isPresent())
             {
-                return true;
+                return complexType;
             }
             Optional<Node> complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
             complexType = null;
             if (complexContent.isPresent())
             {
-                Optional<Node> extension = DocumentReader.getChild(complexContent.get(), "xsd:extension");
-                if (extension.isPresent())
+                Node derivation = DocumentReader.getChild(complexContent.get(), "xsd:extension")
+                        .orElse(DocumentReader.getChild(complexContent.get(), "xsd:restriction").orElse(null));
+                if (derivation != null)
                 {
-                    String base = DocumentReader.getAttribute(extension.get(), "base").orElse(null);
+                    String base = DocumentReader.getAttribute(derivation, "base").orElse(null);
                     complexType = schema.getType(base).orElse(null);
                 }
             }
         }
-        if (isComplex)
-        {
-            // complex and never found simpleContent through extension
-            return false;
-        }
         Optional<String> type = DocumentReader.getAttribute(xsdNode, "type");
-        if (xsdNode.getNodeName().equals("xsd:element") && (type.isEmpty() || type.get().startsWith("xsd:")))
+        if ((xsdNode.getNodeName().equals("xsd:element") || xsdNode.getNodeName().equals("xsd:attribute")) && type.isPresent()
+                && type.get().startsWith("xsd:"))
         {
-            return true;
+            // standard simple xsd type, such as xsd:string, xsd:double
+            return xsdNode;
         }
-        return false;
+        if (type.isPresent())
+        {
+            Node typeNode = schema.getType(type.get()).orElse(null);
+            if (typeNode != null)
+            {
+                return getValueDefiningNode(typeNode, schema);
+            }
+        }
+        return null;
     }
 
     /**

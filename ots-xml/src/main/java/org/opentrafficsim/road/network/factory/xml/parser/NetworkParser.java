@@ -110,7 +110,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public final class NetworkParser
 {
-    /** */
+    /** Constructor. */
     private NetworkParser()
     {
         // utility class
@@ -283,7 +283,7 @@ public final class NetworkParser
             {
                 flattener = getFlattener(defaultFlattener, xmlLink.getBezier().getFlattener(), eval);
                 double shape = xmlLink.getBezier().getShape().get(eval);
-                boolean weighted = xmlLink.getBezier().isWeighted();
+                boolean weighted = xmlLink.getBezier().getWeighted().get(eval);
                 designLine = new BezierCubic2d(new Ray2d(start), new Ray2d(end), shape, weighted);
             }
             else if (xmlLink.getClothoid() != null)

@@ -304,32 +304,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.scenario.setPreferredSize(new Dimension(200, 22));
         this.scenario
                 .addActionListener(new ScenarioActionListener(this, this.visualizationPane, this.scenario, this.evalWrapper));
-
-        controlsContainer.add(this.scenario);
-        controlsContainer.add(Box.createHorizontalStrut(2));
-        JButton playRun = new AppearanceControlButton(IconUtil.of("Play24.png").imageSize(18, 18).get());
-        playRun.setToolTipText("Run single run");
-        Dimension iconDimension = new Dimension(24, 24);
-        playRun.setMinimumSize(iconDimension);
-        playRun.setMaximumSize(iconDimension);
-        playRun.setPreferredSize(iconDimension);
-        playRun.addActionListener((a) -> runSingle());
-        controlsContainer.add(playRun);
-        JButton playScenario = new AppearanceControlButton(IconUtil.of("Next24.png").imageSize(18, 18).get());
-        playScenario.setToolTipText("Run scenario (batch)");
-        playScenario.setMinimumSize(iconDimension);
-        playScenario.setMaximumSize(iconDimension);
-        playScenario.setPreferredSize(iconDimension);
-        playScenario.addActionListener((a) -> runBatch(false));
-        controlsContainer.add(playScenario);
-        JButton playAll = new AppearanceControlButton(IconUtil.of("Step24.png").imageSize(18, 18).get());
-        playAll.setToolTipText("Run all (batch)");
-        playAll.setMinimumSize(iconDimension);
-        playAll.setMaximumSize(iconDimension);
-        playAll.setPreferredSize(iconDimension);
-        playAll.addActionListener((a) -> runBatch(true));
-        controlsContainer.add(playAll);
-        controlsContainer.add(Box.createHorizontalStrut(4));
+        populateControls(controlsContainer);
 
         rightContainer.add(controlsContainer);
         rightContainer.add(this.rightSplitPane);
@@ -345,7 +320,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         UIManager.put("Tree.rightChildIndent", 7);
 
         // empty tree table
-        this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null, () -> this.ignoreChanges));
+        this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null, this::ignoreChanges, this::getEval));
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
 
@@ -393,7 +368,52 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         add(this.statusLabel, BorderLayout.SOUTH);
         removeStatusLabel();
 
+        this.evalWrapper.addListener(() ->
+        {
+            if (!ignoreChanges())
+            {
+                SwingUtilities.invokeLater(() ->
+                {
+                    // because any node value or attribute may become invalid from an expression returning something invalid
+                    invalidateAndRepaint();
+                });
+            }
+        });
+
         pack();
+    }
+
+    /**
+     * Populates controls container.
+     * @param controlsContainer controls container
+     */
+    private void populateControls(final JPanel controlsContainer)
+    {
+        controlsContainer.add(this.scenario);
+        controlsContainer.add(Box.createHorizontalStrut(2));
+        JButton playRun = new AppearanceControlButton(IconUtil.of("Play24.png").imageSize(18, 18).get());
+        playRun.setToolTipText("Run single run");
+        Dimension iconDimension = new Dimension(24, 24);
+        playRun.setMinimumSize(iconDimension);
+        playRun.setMaximumSize(iconDimension);
+        playRun.setPreferredSize(iconDimension);
+        playRun.addActionListener((a) -> runSingle());
+        controlsContainer.add(playRun);
+        JButton playScenario = new AppearanceControlButton(IconUtil.of("Next24.png").imageSize(18, 18).get());
+        playScenario.setToolTipText("Run scenario (batch)");
+        playScenario.setMinimumSize(iconDimension);
+        playScenario.setMaximumSize(iconDimension);
+        playScenario.setPreferredSize(iconDimension);
+        playScenario.addActionListener((a) -> runBatch(false));
+        controlsContainer.add(playScenario);
+        JButton playAll = new AppearanceControlButton(IconUtil.of("Step24.png").imageSize(18, 18).get());
+        playAll.setToolTipText("Run all (batch)");
+        playAll.setMinimumSize(iconDimension);
+        playAll.setMaximumSize(iconDimension);
+        playAll.setPreferredSize(iconDimension);
+        playAll.addActionListener((a) -> runBatch(true));
+        controlsContainer.add(playAll);
+        controlsContainer.add(Box.createHorizontalStrut(4));
     }
 
     /**
@@ -600,6 +620,21 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         {
             this.attributesTable.getSelectionModel().clearSelection();
         }
+    }
+
+    /**
+     * Invalidate the entire tree and repaint both the tree and attributes table. This method may take a bit of time. Be careful
+     * and conservative in invoking this method on the AWT thread. Consider invoking with {@link SwingUtilities#invokeLater}.
+     */
+    public void invalidateAndRepaint()
+    {
+        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
+        if (root != null)
+        {
+            root.invalidateAll();
+        }
+        this.treeTable.repaint();
+        this.attributesTable.repaint();
     }
 
     /**
@@ -861,7 +896,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         setDefaultProperties();
 
         // tree table
-        XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument, this::ignoreChanges);
+        XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument, this::ignoreChanges, this::getEval);
         this.treeTable = new AppearanceControlTreeTable(treeModel);
         this.treeTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.actions = new Actions(this, this.attributesTable);

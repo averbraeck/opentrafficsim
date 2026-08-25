@@ -53,7 +53,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *                     <element name="Flattener" type="{http://www.opentrafficsim.org/ots}FlattenerType" minOccurs="0"/>
  *                   </sequence>
  *                   <attribute name="Shape" type="{http://www.opentrafficsim.org/ots}DoublePositive" default="1.0" />
- *                   <attribute name="Weighted" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *                   <attribute name="Weighted" type="{http://www.opentrafficsim.org/ots}boolean" default="false" />
  *                 </restriction>
  *               </complexContent>
  *             </complexType>
@@ -897,7 +897,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      *         <element name="Flattener" type="{http://www.opentrafficsim.org/ots}FlattenerType" minOccurs="0"/>
      *       </sequence>
      *       <attribute name="Shape" type="{http://www.opentrafficsim.org/ots}DoublePositive" default="1.0" />
-     *       <attribute name="Weighted" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+     *       <attribute name="Weighted" type="{http://www.opentrafficsim.org/ots}boolean" default="false" />
      *     </restriction>
      *   </complexContent>
      * </complexType>
@@ -920,7 +920,8 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         @XmlJavaTypeAdapter(DoublePositiveAdapter.class)
         protected DoubleType shape;
         @XmlAttribute(name = "Weighted")
-        protected Boolean weighted;
+        @XmlJavaTypeAdapter(BooleanAdapter.class)
+        protected BooleanType weighted;
 
         /**
          * Gets the value of the flattener property.
@@ -979,12 +980,12 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
          * 
          * @return
          *     possible object is
-         *     {@link Boolean }
+         *     {@link String }
          *     
          */
-        public boolean isWeighted() {
+        public BooleanType getWeighted() {
             if (weighted == null) {
-                return false;
+                return new BooleanAdapter().unmarshal("false");
             } else {
                 return weighted;
             }
@@ -995,10 +996,10 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
          * 
          * @param value
          *     allowed object is
-         *     {@link Boolean }
+         *     {@link String }
          *     
          */
-        public void setWeighted(Boolean value) {
+        public void setWeighted(BooleanType value) {
             this.weighted = value;
         }
 

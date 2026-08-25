@@ -524,7 +524,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private XsdTreeNode getInputNode(final XsdTreeNode inputParameter)
     {
         String inputId = inputParameter.getId();
-        String nodeId = (String) getEval().evaluate(inputId.substring(1, inputId.length() - 1));
+        String nodeId;
+        try
+        {
+            nodeId = (String) getEval().evaluate(inputId.substring(1, inputId.length() - 1));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // expression could not be evaluated, possibly a missing parameter
+            return null;
+        }
         XsdTreeNode ots = inputParameter.getRoot();
         for (XsdTreeNode child : ots.getChildren())
         {
@@ -532,7 +541,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 for (XsdTreeNode networkElement : child.getChildren())
                 {
-                    if (networkElement.isType("Node") && networkElement.getId().equals(nodeId))
+                    if (networkElement.isType("Node") && nodeId != null && nodeId.equals(networkElement.getId()))
                     {
                         return networkElement;
                     }

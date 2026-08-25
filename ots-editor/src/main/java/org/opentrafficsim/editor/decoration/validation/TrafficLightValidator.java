@@ -41,8 +41,8 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     /** SignalGroup.TrafficLight to Link.TrafficLight coupling. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNodes = new LinkedHashMap<>();
 
-    /** Whether to ignore changes. */
-    private final Supplier<Boolean> ignoreChanges;
+    /** Boolean supplier with logic on when to ignore validation. */
+    private final Supplier<Boolean> ignoreValidation;
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     {
         super(editor, (n) -> n.getPathString().endsWith(path) || n.getPathString().equals(XsdPaths.TRAFFIC_LIGHT));
         new RoadLayoutElementValidator(editor, path, LayoutCoupling.LINK_ATTRIBUTE, RoadLayoutElementAttribute.LANE);
-        this.ignoreChanges = editor::ignoreChanges;
+        this.ignoreValidation = editor::ignoreChanges;
     }
 
     @Override
@@ -118,12 +118,14 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     }
 
     @Override
-    public Optional<String> validate(final XsdTreeNode node)
+    public boolean ignoreValidation()
     {
-        if (this.ignoreChanges.get())
-        {
-            return Optional.empty();
-        }
+        return this.ignoreValidation.get();
+    }
+
+    @Override
+    public Optional<String> validateDelegate(final XsdTreeNode node)
+    {
         String trafficLightId = node.getAttributeValue("TrafficLightId");
         if (trafficLightId != null && !trafficLightId.isEmpty())
         {

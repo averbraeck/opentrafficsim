@@ -35,7 +35,7 @@
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
-  
+
   <xsd:complexType name="SpeedLimitInfraType">
     <xsd:complexContent>
       <xsd:extension base="ots:GtuCompatibleInfraType">
@@ -328,8 +328,7 @@
   <xsd:simpleType name="LateralSync">
     <xsd:annotation>
       <xsd:documentation xml:lang="en">NONE: no synchronization, dash pattern applied to stripe line. LINK: dash
-        pattern applied to link line. SNAP: a number of gap/dash pairs inserted or removed to stay close to original length
-        while adhering to link phase at end-points.
+        pattern applied to link line.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:union memberTypes="ots:Expression">
@@ -337,7 +336,9 @@
         <xsd:restriction base="xsd:string">
           <xsd:enumeration value="NONE" />
           <xsd:enumeration value="LINK" />
-          <xsd:enumeration value="SNAP" />
+          <!-- xsd:enumeration value="SNAP" / -->
+          <!-- SNAP: a number of gap/dash pairs inserted or removed to stay close to original length
+               while adhering to link phase at end-points. -->
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:union>
