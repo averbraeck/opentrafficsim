@@ -32,21 +32,23 @@ public class XiIncludeStringFunction extends AbstractStringFunction
     {
         return (node) ->
         {
-            if (node.getAttributeValue(0) == null || node.getParent() == null)
+            String fileValue = node.getAttributeValueOrDefault(0);
+            String fallbackValue = node.getAttributeValueOrDefault(1);
+            if (fileValue == null || node.getParent() == null)
             {
                 return "";
             }
-            File file = new File(node.getAttributeValue(0));
+            File file = new File(fileValue);
             if (!file.isAbsolute())
             {
-                file = new File(node.getRoot().getDirectory() + node.getAttributeValue(0));
+                file = new File(node.getRoot().getDirectory() + fileValue);
             }
-            if (!file.exists() && node.getAttributeValue(1) != null)
+            if (!file.exists() && fallbackValue != null)
             {
-                File file2 = new File(node.getAttributeValue(1));
+                File file2 = new File(fallbackValue);
                 if (!file2.isAbsolute())
                 {
-                    file2 = new File(node.getRoot().getDirectory() + node.getAttributeValue(1));
+                    file2 = new File(node.getRoot().getDirectory() + fallbackValue);
                 }
                 if (file2.exists())
                 {

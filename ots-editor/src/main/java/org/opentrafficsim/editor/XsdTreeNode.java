@@ -339,7 +339,6 @@ public class XsdTreeNode extends LocalEventProducer
         this.active = this.minOccurs > 0;
         this.pathString = buildPathLocation();
         this.isIncluded = parent.isIncluded;
-        this.value = DocumentReader.getAttribute(getRelevantNode(), "default").orElse(null);
         Node valueDefiningNode = XsdTreeNodeUtil.getValueDefiningNode(getRelevantNode(), this.schema);
         if (valueDefiningNode != null)
         {
@@ -923,10 +922,6 @@ public class XsdTreeNode extends LocalEventProducer
      */
     public int attributeCount()
     {
-        if (!this.active)
-        {
-            return 0; // show nothing in attribute table for inactive nodes
-        }
         assureAttributesAndDescription();
         return this.attributeNodes.size();
     }
@@ -1032,6 +1027,28 @@ public class XsdTreeNode extends LocalEventProducer
     {
         assureAttributesAndDescription();
         return this.attributeValues.get(getAttributeIndexByName(attribute));
+    }
+
+    /**
+     * Returns the attribute value if there is one, otherwise the default attribute value if there is one, otherwise
+     * {@code null}.
+     * @param index index of the attribute
+     * @return the attribute value if there is one, otherwise the default attribute value if there is one, otherwise
+     *         {@code null}
+     */
+    public String getAttributeValueOrDefault(final int index)
+    {
+        return getAttributeValue(index) != null ? getAttributeValue(index) : getDefaultAttributeValue(index).orElse(null);
+    }
+
+    /**
+     * Returns the attribute value if there is one, otherwise the default attribute value if there is one.
+     * @param attribute name of the attribute
+     * @return the attribute value if there is one, otherwise the default attribute value if there is one
+     */
+    public String getAttributeValueOrDefault(final String attribute)
+    {
+        return getAttributeValueOrDefault(getAttributeIndexByName(attribute));
     }
 
     /**
@@ -1273,6 +1290,29 @@ public class XsdTreeNode extends LocalEventProducer
     public String getValue()
     {
         return this.value;
+    }
+
+    /**
+     * Returns the default value for the element, if any.
+     * @return default value for the element
+     */
+    public Optional<String> getDefaultValue()
+    {
+        Optional<String> appInfoDefault = DocumentReader.NodeAnnotation.APPINFO_DEFAULT_VALUE.get(getRelevantNode());
+        if (appInfoDefault.isPresent())
+        {
+            return appInfoDefault;
+        }
+        return DocumentReader.getAttribute(getRelevantNode(), "default");
+    }
+
+    /**
+     * Returns the value if there is one, otherwise the default value if there is one, otherwise {@code null}.
+     * @return the value if there is one, otherwise the default value if there is one, otherwise {@code null}
+     */
+    public String getValueOrDefault()
+    {
+        return getValue() != null ? getValue() : getDefaultValue().orElse(null);
     }
 
     /**
@@ -2302,12 +2342,12 @@ public class XsdTreeNode extends LocalEventProducer
                 return Optional.empty();
             }
 
-            Supplier<String> getter = () -> this.value;
+            Supplier<String> getter = () -> getValueOrDefault();
             Consumer<String> setter = v -> this.value = v;
-            Supplier<Optional<ExpressionAdapter<?, ?>>> adapterSupplier =
-                    () -> AdapterRegistry.getElementAdapter(getNodeName(), getRelevantNode());
+            Supplier<Optional<ExpressionAdapter<?, ?>>> adapterSupplier = () -> AdapterRegistry.getElementAdapter(getNodeName(),
+                    getRelevantNode(), (n) -> this.schema.getType(n).orElse(null));
             Supplier<Optional<String>> valeuValidationSupplier =
-                    () -> ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+                    () -> ValueValidator.reportInvalidValue(this.xsdNode, getValueOrDefault(), this.schema);
             Optional<String> message = ValueValidator.reportInvalidWithExpression(this, valueIsExpression(), getter, setter,
                     adapterSupplier, this.valueValidators.navigableKeySet(), valeuValidationSupplier);
 
@@ -2354,14 +2394,15 @@ public class XsdTreeNode extends LocalEventProducer
                 }
             }
 
-            Supplier<String> getter = () -> this.attributeValues.get(index);
+            Supplier<String> getter = () -> getAttributeValueOrDefault(index);
             Consumer<String> setter = v -> this.attributeValues.set(index, v);
             Supplier<Optional<ExpressionAdapter<?, ?>>> adapterSupplier =
-                    () -> AdapterRegistry.getAttributeAdapter(getNodeName(), getRelevantNode(), getAttributeNode(index));
+                    () -> AdapterRegistry.getAttributeAdapter(getNodeName(), getRelevantNode(), getAttributeNode(index),
+                            (n) -> this.schema.getType(n).orElse(null));
             SortedSet<ValueValidator> validatorSet =
                     this.attributeValidators.computeIfAbsent(getAttributeNameByIndex(index), key -> new TreeSet<>());
             Supplier<Optional<String>> valueValidationSupplier = () -> ValueValidator
-                    .reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
+                    .reportInvalidAttributeValue(getAttributeNode(index), getAttributeValueOrDefault(index), this.schema);
             Optional<String> message = ValueValidator.reportInvalidWithExpression(this, attributeIsExpression(index), getter,
                     setter, adapterSupplier, validatorSet, valueValidationSupplier);
 

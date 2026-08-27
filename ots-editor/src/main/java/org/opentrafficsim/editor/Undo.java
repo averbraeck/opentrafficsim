@@ -332,6 +332,10 @@ public class Undo implements EventListener
             // for include nodes, setAttributeValue will trigger addition and removal of nodes, we can ignore these events
             if (node.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
+                if (this.currentSet == null)
+                {
+                    return;
+                }
                 this.currentSet.clear();
             }
             add(new SubAction(() ->

@@ -103,13 +103,14 @@ public interface CoupledValidator extends ValueValidator
     }
 
     /**
-     * Sets the given value on the node, if the current value is not {@code null}. The node is invalidated afterwards.
+     * Sets the given value on the node, if the current (default) value is not {@code null}. The node is invalidated afterwards.
      * @param node node. This is used to not change values in keyrefs that match including null values.
      * @param value value.
      */
     static void setValueIfNotNull(final XsdTreeNode node, final String value)
     {
-        String oldValue = node.getValue();
+        // default values also apply as field values through which an xsd:keyref is matched to a xsd:key
+        String oldValue = node.getValueOrDefault();
         if (oldValue != null && !oldValue.isEmpty())
         {
             node.setValue(value);
@@ -118,15 +119,16 @@ public interface CoupledValidator extends ValueValidator
     }
 
     /**
-     * Sets the given value on the attribute of the node, if the current value is not {@code null}. The node is invalidated
-     * afterwards. This is used to not change values in keyrefs that match including null values.
+     * Sets the given value on the attribute of the node, if the current (default) value is not {@code null}. The node is
+     * invalidated afterwards. This is used to not change values in keyrefs that match including null values.
      * @param node node.
      * @param attribute attribute.
      * @param value value.
      */
     static void setAttributeIfNotNull(final XsdTreeNode node, final String attribute, final String value)
     {
-        String oldValue = node.getAttributeValue(attribute);
+        // default values also apply as field values through which an xsd:keyref is matched to a xsd:key
+        String oldValue = node.getAttributeValueOrDefault(attribute);
         if (oldValue != null && !oldValue.isEmpty())
         {
             node.setAttributeValue(attribute, value);

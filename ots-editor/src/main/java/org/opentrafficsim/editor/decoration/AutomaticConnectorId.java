@@ -28,10 +28,10 @@ public class AutomaticConnectorId extends AutomaticLinkId
     @Override
     public void notifyAttributeChanged(final XsdTreeNode node, final String attribute)
     {
-        String nodeId = node.getAttributeValue("Node");
-        String centroid = node.getAttributeValue("Centroid");
-        String outbound = node.getAttributeValue("Outbound");
-        String id = node.getAttributeValue("Id");
+        String nodeId = node.getAttributeValueOrDefault("Node");
+        String centroid = node.getAttributeValueOrDefault("Centroid");
+        String outbound = node.getAttributeValueOrDefault("Outbound");
+        String id = node.getAttributeValueOrDefault("Id");
         if (nodeId != null && centroid != null && ("true".equalsIgnoreCase(outbound) || "false".equalsIgnoreCase(outbound))
                 && id == null)
         {

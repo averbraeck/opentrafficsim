@@ -80,8 +80,8 @@ public class Navigation
         {
             this.goToCoupledNodeAction.setEnabled(true);
             this.goToCoupledNodeAction.putValue(Action.NAME,
-                    "Go to " + (fromAttribute != null ? fromNode.getAttributeValue(fromAttribute)
-                            : (fromNode.isIdentifiable() ? fromNode.getId() : fromNode.getValue())));
+                    "Go to " + (fromAttribute != null ? fromNode.getAttributeValueOrDefault(fromAttribute)
+                            : (fromNode.isIdentifiable() ? fromNode.getId() : fromNode.getValueOrDefault())));
         }
         this.coupledNode = toNode;
         this.candidateBackNode = fromNode;

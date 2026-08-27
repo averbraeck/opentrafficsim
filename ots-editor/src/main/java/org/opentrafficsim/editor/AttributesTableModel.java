@@ -68,7 +68,7 @@ public class AttributesTableModel extends AbstractTableModel
     @Override
     public int getRowCount()
     {
-        return this.node == null ? 0 : this.node.attributeCount();
+        return this.node == null || !this.node.isActive() ? 0 : this.node.attributeCount();
     }
 
     @Override

@@ -42,7 +42,7 @@ public class FlattenerListener extends ChangeListener<CurveFlattener>
             }
             if (getNode().getChild(0).getNodeName().equals("NumSegments"))
             {
-                return new CurveFlattener(Integer.valueOf(getNode().getChild(0).getValue()));
+                return new CurveFlattener(Integer.valueOf(getNode().getChild(0).getValueOrDefault()));
             }
             if (getNode().getChild(0).getChild(0).isActive())
             {
@@ -72,7 +72,7 @@ public class FlattenerListener extends ChangeListener<CurveFlattener>
      */
     private double getDeviation(final XsdTreeNode node)
     {
-        double deviation = Adapters.get(Length.class).unmarshal(node.getValue()).get(getEval()).si;
+        double deviation = Adapters.get(Length.class).unmarshal(node.getValueOrDefault()).get(getEval()).si;
         return deviation < 0.001 ? 0.001 : deviation;
     }
 
@@ -83,7 +83,7 @@ public class FlattenerListener extends ChangeListener<CurveFlattener>
      */
     private double getAngle(final XsdTreeNode node)
     {
-        double deviation = Adapters.get(Angle.class).unmarshal(node.getValue()).get(getEval()).si;
+        double deviation = Adapters.get(Angle.class).unmarshal(node.getValueOrDefault()).get(getEval()).si;
         return deviation < 0.001 ? 0.001 : deviation;
     }
 

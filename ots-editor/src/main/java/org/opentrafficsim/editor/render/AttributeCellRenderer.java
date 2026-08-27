@@ -50,7 +50,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     private final Color tableSelectionBackgroundColor = UIManager.getColor("Table.selectionBackground");
 
     /** Foreground color. */
-    private final Color tableForgroundColor = UIManager.getColor("Table.foreground");
+    private final Color tableForegroundColor = UIManager.getColor("Table.foreground");
 
     /** Background color. */
     private final Color tableBackgroundColor = UIManager.getColor("Table.background");
@@ -156,7 +156,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         }
         setFont(table.getFont());
         setIcon(null);
-        setForeground(showingDefault ? OtsEditor.getInactiveColor() : this.tableForgroundColor);
+        setForeground(showingDefault ? OtsEditor.getInactiveColor() : this.tableForegroundColor);
         if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)
         {
             String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row).orElse(null);

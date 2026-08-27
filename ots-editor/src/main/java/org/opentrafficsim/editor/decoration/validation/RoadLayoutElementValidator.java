@@ -460,14 +460,14 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     @Override
     public Optional<String> validateDelegate(final XsdTreeNode node)
     {
-        String value = node.getAttributeValue(this.elementAttribute.attributeName);
+        String value = node.getAttributeValueOrDefault(this.elementAttribute.attributeName);
         if (value == null || value.isEmpty())
         {
             removeCoupling(node);
             if (this.layoutCoupling.equals(LayoutCoupling.LINK_ATTRIBUTE))
             {
                 // missing Lane value is only ok if the Link value is also missing
-                String link = node.getAttributeValue("Link");
+                String link = node.getAttributeValueOrDefault("Link");
                 if (link == null || link.isEmpty())
                 {
                     return Optional.empty();
@@ -620,11 +620,13 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                             // change value on node that was coupled to element with the changed id
                             if (node.hasAttribute(element))
                             {
-                                CoupledValidator.setAttributeIfNotNull(node, element, changedNode.getAttributeValue(attribute));
+                                CoupledValidator.setAttributeIfNotNull(node, element,
+                                        changedNode.getAttributeValueOrDefault(attribute));
                             }
                             else if (node.getNodeName().equals(element) && node.isIdentifiable())
                             {
-                                CoupledValidator.setAttributeIfNotNull(node, "Id", changedNode.getAttributeValue(attribute));
+                                CoupledValidator.setAttributeIfNotNull(node, "Id",
+                                        changedNode.getAttributeValueOrDefault(attribute));
                             }
                         }
                     }

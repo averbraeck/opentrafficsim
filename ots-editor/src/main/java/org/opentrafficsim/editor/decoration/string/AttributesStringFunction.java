@@ -53,7 +53,7 @@ public class AttributesStringFunction extends AbstractStringFunction
             String out = "";
             for (String attribute : AttributesStringFunction.this.attributes)
             {
-                String value = node.getAttributeValue(attribute);
+                String value = node.getAttributeValueOrDefault(attribute);
                 if (value != null && !value.isEmpty())
                 {
                     out = out + sep + value;

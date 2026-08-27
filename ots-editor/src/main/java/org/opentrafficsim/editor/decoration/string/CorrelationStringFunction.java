@@ -31,19 +31,19 @@ public class CorrelationStringFunction extends AbstractStringFunction
     {
         return (node) ->
         {
-            String out = node.getAttributeValue("Expression");
+            String out = node.getAttributeValueOrDefault("Expression");
             if (out == null)
             {
                 return "";
             }
             out = "then = " + out;
-            if (node.getChild(0).isActive() && node.getChild(0).getChild(0).getValue() != null)
+            if (node.getChild(0).isActive() && node.getChild(0).getChild(0).getValueOrDefault() != null)
             {
-                out = out.replace("first", node.getChild(0).getChild(0).getValue());
+                out = out.replace("first", node.getChild(0).getChild(0).getValueOrDefault());
             }
-            if (node.getChild(1).getChild(0).getValue() != null)
+            if (node.getChild(1).getChild(0).getValueOrDefault() != null)
             {
-                out = out.replace("then", node.getChild(1).getChild(0).getValue());
+                out = out.replace("then", node.getChild(1).getChild(0).getValueOrDefault());
             }
             return out;
         };

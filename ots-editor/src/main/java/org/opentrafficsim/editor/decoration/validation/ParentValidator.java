@@ -102,7 +102,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     @Override
     public Optional<String> validateDelegate(final XsdTreeNode node)
     {
-        String value = node.getAttributeValue(this.parentAttribute);
+        String value = node.getAttributeValueOrDefault(this.parentAttribute);
         if (value == null || value.isEmpty() || !node.isActive())
         {
             return Optional.empty();
@@ -123,7 +123,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     {
         for (XsdTreeNode nodeInContext : context)
         {
-            if (nodeInContext.isActive() && parentId.equals(nodeInContext.getAttributeValue(this.idAttribute)))
+            if (nodeInContext.isActive() && parentId.equals(nodeInContext.getAttributeValueOrDefault(this.idAttribute)))
             {
                 int index = nodeList.indexOf(nodeInContext);
                 if (index == 0)
@@ -132,17 +132,17 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
                     String separator = "";
                     for (XsdTreeNode node : nodeList)
                     {
-                        str.append(separator).append(node.getAttributeValue(this.idAttribute));
+                        str.append(separator).append(node.getAttributeValueOrDefault(this.idAttribute));
                         separator = " > ";
                     }
-                    str.append(separator).append(nodeInContext.getAttributeValue(this.idAttribute));
+                    str.append(separator).append(nodeInContext.getAttributeValueOrDefault(this.idAttribute));
                     return str.toString(); // A > B > C > A ... report at A
                 }
                 else if (index > 0)
                 {
                     return null; // A > B > C > C > C ... report at C, not at A
                 }
-                String value = nodeInContext.getAttributeValue(this.parentAttribute);
+                String value = nodeInContext.getAttributeValueOrDefault(this.parentAttribute);
                 if (value == null || value.isEmpty())
                 {
                     return null;

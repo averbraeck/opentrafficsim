@@ -126,7 +126,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     @Override
     public Optional<String> validateDelegate(final XsdTreeNode node)
     {
-        String trafficLightId = node.getAttributeValue("TrafficLightId");
+        String trafficLightId = node.getAttributeValueOrDefault("TrafficLightId");
         if (trafficLightId != null && !trafficLightId.isEmpty())
         {
             Optional<XsdTreeNode> linkNode = node.getCoupledNodeAttribute("Link");
@@ -135,7 +135,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
                 removeCoupling(node);
                 return Optional.of("Unable to find traffic light due to invalid Link value.");
             }
-            String lane = node.getAttributeValue("Lane");
+            String lane = node.getAttributeValueOrDefault("Lane");
             if (lane == null)
             {
                 removeCoupling(node);
@@ -144,7 +144,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
             for (XsdTreeNode child : linkNode.get().getChildren())
             {
                 if (child.getNodeName().equals("TrafficLight") && child.isActive()
-                        && lane.equals(child.getAttributeValue("Lane")))
+                        && lane.equals(child.getAttributeValueOrDefault("Lane")))
                 {
                     if (trafficLightId.equals(child.getId()))
                     {
@@ -155,7 +155,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
             }
             removeCoupling(node);
             return Optional.of("There is no traffic light with id " + trafficLightId + " on link "
-                    + node.getAttributeValue("Link") + " at lane " + lane + ".");
+                    + node.getAttributeValueOrDefault("Link") + " at lane " + lane + ".");
         }
         // let default missing required value message notify about a missing id
         removeCoupling(node);
@@ -168,14 +168,14 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         Optional<XsdTreeNode> linkNode = node.getCoupledNodeAttribute("Link");
         if (linkNode.isPresent())
         {
-            String lane = node.getAttributeValue("Lane");
+            String lane = node.getAttributeValueOrDefault("Lane");
             if (lane != null)
             {
                 List<String> options = new ArrayList<>();
                 for (XsdTreeNode child : linkNode.get().getChildren())
                 {
                     if (child.getNodeName().equals("TrafficLight") && child.isActive()
-                            && lane.equals(child.getAttributeValue("Lane")))
+                            && lane.equals(child.getAttributeValueOrDefault("Lane")))
                     {
                         options.add(child.getId());
                     }

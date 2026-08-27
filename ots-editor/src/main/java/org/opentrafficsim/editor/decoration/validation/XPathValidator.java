@@ -506,14 +506,14 @@ public abstract class XPathValidator implements ValueValidator
                 {
                     if (keyOrChildNode.isEditable())
                     {
-                        return keyOrChildNode.getValue();
+                        return keyOrChildNode.getValueOrDefault();
                     }
                     throw new OtsRuntimeException("Field path " + fieldPath + " points to a node that cannot give a value.");
                 }
                 String attribute = fieldPath.substring(attr + 1);
                 if (keyOrChildNode.hasAttribute(attribute))
                 {
-                    return keyOrChildNode.getAttributeValue(attribute);
+                    return keyOrChildNode.getAttributeValueOrDefault(attribute);
                 }
                 throw new OtsRuntimeException(
                         "Field path " + fieldPath + " points to a node that does not have attribute " + attribute + " .");
@@ -567,7 +567,7 @@ public abstract class XPathValidator implements ValueValidator
                         {
                             if (child.isEditable())
                             {
-                                return node.getValue();
+                                return node.getValueOrDefault();
                             }
                         }
                         else
@@ -575,7 +575,7 @@ public abstract class XPathValidator implements ValueValidator
                             String attribute = path.substring(attr + 2);
                             if (node.hasAttribute(attribute))
                             {
-                                return node.getAttributeValue(attribute);
+                                return node.getAttributeValueOrDefault(attribute);
                             }
                         }
                         throw new NoSuchElementException("Node " + node + " does not have a field " + path + ".");
@@ -594,7 +594,7 @@ public abstract class XPathValidator implements ValueValidator
                     String attribute = path.substring(1);
                     if (node.hasAttribute(attribute))
                     {
-                        return node.getAttributeValue(attribute);
+                        return node.getAttributeValueOrDefault(attribute);
                     }
                 }
                 else
@@ -602,7 +602,7 @@ public abstract class XPathValidator implements ValueValidator
                     XsdTreeNode child = node.getFirstChild(path);
                     if (child.isEditable())
                     {
-                        return node.getValue();
+                        return node.getValueOrDefault();
                     }
                 }
                 throw new NoSuchElementException("Node " + node + " does not have a field " + path + ".");

@@ -122,7 +122,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
     private static boolean nodesEqual(final XsdTreeNode node1, final XsdTreeNode node2)
     {
         return node1.getPathString().equals(node2.getPathString())
-                && XsdTreeNodeUtil.valuesAreEqual(node1.getValue(), node2.getValue());
+                && XsdTreeNodeUtil.valuesAreEqual(node1.getValueOrDefault(), node2.getValueOrDefault());
     }
 
     @Override

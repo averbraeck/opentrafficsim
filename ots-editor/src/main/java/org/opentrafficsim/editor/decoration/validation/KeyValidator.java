@@ -177,7 +177,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         else if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            updateReferringKeyrefs(node, this.keyNodeValueFieldIndices.get(node), node.getValue());
+            updateReferringKeyrefs(node, this.keyNodeValueFieldIndices.get(node), node.getValueOrDefault());
             invalidateAllDependent();
         }
         else if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
@@ -194,7 +194,7 @@ public class KeyValidator extends XPathValidator implements EventListener
             {
                 return;
             }
-            updateReferringKeyrefs(node, attributeFields.get(attribute), node.getAttributeValue(attribute));
+            updateReferringKeyrefs(node, attributeFields.get(attribute), node.getAttributeValueOrDefault(attribute));
             invalidateAllDependent();
         }
         else if (XsdTreeNode.OPTION_CHANGED.equals(event.getType()))

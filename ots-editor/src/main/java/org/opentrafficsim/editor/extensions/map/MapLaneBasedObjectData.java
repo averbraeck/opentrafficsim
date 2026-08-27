@@ -216,7 +216,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
             String attribute = (String) ((Object[]) event.getContent())[1];
-            String value = getNode().getAttributeValue(attribute);
+            String value = getNode().getAttributeValueOrDefault(attribute);
             if ("Id".equals(attribute))
             {
                 this.id = value == null ? "" : value;

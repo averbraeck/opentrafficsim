@@ -58,9 +58,9 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     @Override
     public void notifyAttributeChanged(final XsdTreeNode node, final String attribute)
     {
-        String nodeStart = node.getAttributeValue("NodeStart");
-        String nodeEnd = node.getAttributeValue("NodeEnd");
-        String id = node.getAttributeValue("Id");
+        String nodeStart = node.getAttributeValueOrDefault("NodeStart");
+        String nodeEnd = node.getAttributeValueOrDefault("NodeEnd");
+        String id = node.getAttributeValueOrDefault("Id");
         if (nodeStart != null && nodeEnd != null && id == null)
         {
             this.lastNode = node;

@@ -31,7 +31,7 @@ public class ClassNameTypeStringFunction extends AbstractStringFunction
     {
         return (node) ->
         {
-            String value = node.getValue();
+            String value = node.getValueOrDefault();
             if (value == null || value.isEmpty())
             {
                 return "";

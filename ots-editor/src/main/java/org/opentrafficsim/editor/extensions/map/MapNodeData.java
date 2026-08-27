@@ -119,7 +119,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     public void notify(final Event event)
     {
         String attribute = (String) ((Object[]) event.getContent())[1];
-        String value = getNode().getAttributeValue(attribute);
+        String value = getNode().getAttributeValueOrDefault(attribute);
         if ("Id".equals(attribute))
         {
             this.id = value == null ? "" : value;

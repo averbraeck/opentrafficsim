@@ -137,7 +137,7 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
     {
         try
         {
-            String stringValue = treeNode.getAttributeValue(attribute);
+            String stringValue = treeNode.getAttributeValueOrDefault(attribute);
             if (stringValue == null)
             {
                 setter.accept(null);

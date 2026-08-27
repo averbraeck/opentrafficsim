@@ -325,7 +325,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             Class<?> clazz = Class.forName(String.format(ADAPTER_MASK, node.getNodeName()));
             Constructor<?> constructor = ClassUtil.resolveConstructor(clazz, new Object[0]);
             ExpressionAdapter<?, ?> adapter = (ExpressionAdapter<?, ?>) constructor.newInstance();
-            return new ParameterWrapper(node.getId(), adapter.unmarshal(node.getValue()));
+            return new ParameterWrapper(node.getId(), adapter.unmarshal(node.getValueOrDefault()));
         }
         catch (Exception e)
         {

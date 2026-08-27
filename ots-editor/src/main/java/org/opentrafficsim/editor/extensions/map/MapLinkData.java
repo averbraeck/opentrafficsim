@@ -439,7 +439,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         Object[] content = (Object[]) event.getContent();
         XsdTreeNode node = (XsdTreeNode) content[0];
         String attribute = (String) content[1];
-        String value = node.getAttributeValue(attribute);
+        String value = node.getAttributeValueOrDefault(attribute);
 
         if ("Id".equals(attribute))
         {
@@ -559,7 +559,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         if (this.shapeListener.shapeNode != null && this.shapeListener.shapeNode.equals(node.getParent()))
         {
-            this.shapeListener.coordinates.put(node, orNull(node.getValue(), Adapters.get(Point2d.class)));
+            this.shapeListener.coordinates.put(node, orNull(node.getValueOrDefault(), Adapters.get(Point2d.class)));
             setDirtyEndCheckValidity();
             node.addListener(this.shapeListener, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
             node.addListener(this.shapeListener, XsdTreeNode.MOVED, ReferenceType.WEAK);
@@ -745,11 +745,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         {
                             if (override.getNodeName().equals("LaneOverride") && override.isActive())
                             {
-                                laneOverrides.put(override.getAttributeValue("Lane"), override);
+                                laneOverrides.put(override.getAttributeValueOrDefault("Lane"), override);
                             }
                             else if (override.getNodeName().equals("StripeOverride") && override.isActive())
                             {
-                                stripeOverrides.put(override.getAttributeValue("Stripe"), override);
+                                stripeOverrides.put(override.getAttributeValueOrDefault("Stripe"), override);
                             }
                         }
                     }
@@ -865,8 +865,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     case "Fixed":
                     {
                         phaseSync = StripePhaseSync.NONE;
-                        dashOffset =
-                                Adapters.get(Length.class).unmarshal(dashOffsetNode.getAttributeValue("Offset")).get(getEval());
+                        dashOffset = Adapters.get(Length.class).unmarshal(dashOffsetNode.getAttributeValueOrDefault("Offset"))
+                                .get(getEval());
                         break;
                     }
                     default:
@@ -884,7 +884,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 || stripeFinder.hasActiveChild("LateralSync"))
         {
             String latSyncName = overrideFinder != null && overrideFinder.hasActiveChild("DashOffset")
-                    ? overrideFinder.get().getValue() : stripeFinder.get().getValue();
+                    ? overrideFinder.get().getValueOrDefault() : stripeFinder.get().getValueOrDefault();
             lateralSync = latSyncName == null ? StripeLateralSync.NONE
                     : Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
         }
@@ -906,15 +906,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             if (elementNode.isValid())
             {
-                Length w = Adapters.get(Length.class).unmarshal(elementNode.getAttributeValue("Width")).get(getEval());
+                Length w = Adapters.get(Length.class).unmarshal(elementNode.getAttributeValueOrDefault("Width")).get(getEval());
                 width = width.plus(w);
                 if (elementNode.getNodeName().equals("Line"))
                 {
-                    String colorName = elementNode.getAttributeValue("Color");
-                    if (colorName == null)
-                    {
-                        colorName = elementNode.getDefaultAttributeValue(elementNode.getAttributeIndexByName("Color")).get();
-                    }
+                    String colorName = elementNode.getAttributeValueOrDefault("Color");
                     Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
                     if (elementNode.getChild(0).getNodeName().equals("Continuous"))
                     {
@@ -925,10 +921,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         List<Double> gapsAndDashes = new ArrayList<>();
                         for (XsdTreeNode gapDash : elementNode.getChild(0).getChildren())
                         {
-                            gapsAndDashes.add(
-                                    Adapters.get(Length.class).unmarshal(gapDash.getChild(0).getValue()).get(getEval()).si);
-                            gapsAndDashes.add(
-                                    Adapters.get(Length.class).unmarshal(gapDash.getChild(1).getValue()).get(getEval()).si);
+                            gapsAndDashes.add(Adapters.get(Length.class).unmarshal(gapDash.getChild(0).getValueOrDefault())
+                                    .get(getEval()).si);
+                            gapsAndDashes.add(Adapters.get(Length.class).unmarshal(gapDash.getChild(1).getValueOrDefault())
+                                    .get(getEval()).si);
                         }
                         elements.add(StripeElement.dashed(w, color,
                                 new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
@@ -1234,19 +1230,19 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     switch (node.getNodeName())
                     {
                         case "Coordinate":
-                            this.coordinates.put(node, orNull(node.getValue(), Adapters.get(Point2d.class)));
+                            this.coordinates.put(node, orNull(node.getValueOrDefault(), Adapters.get(Point2d.class)));
                             break;
                         case "StartCurvature":
-                            this.startCurvature = orNull(node.getValue(), Adapters.get(LinearDensity.class));
+                            this.startCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
                             break;
                         case "EndCurvature":
-                            this.endCurvature = orNull(node.getValue(), Adapters.get(LinearDensity.class));
+                            this.endCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
                             break;
                         case "Length":
-                            this.length = orNull(node.getValue(), Adapters.get(Length.class));
+                            this.length = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
                             break;
                         case "A":
-                            this.a = orNull(node.getValue(), Adapters.get(Length.class));
+                            this.a = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
                             break;
                         default:
                             Logger.ots().warn(node.getNodeName()
@@ -1329,11 +1325,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         try
                         {
-                            this.coordinates.put(child, orNull(child.getValue(), Adapters.get(Point2d.class)));
+                            this.coordinates.put(child, orNull(child.getValueOrDefault(), Adapters.get(Point2d.class)));
                         }
                         catch (Exception ex)
                         {
-                            orNull(child.getValue(), Adapters.get(Point2d.class));
+                            orNull(child.getValueOrDefault(), Adapters.get(Point2d.class));
                             throw new OtsRuntimeException(
                                     "Expression adapter could not unmarshal value for polyline coordinate.");
                         }
@@ -1358,16 +1354,18 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                                 switch (child.getNodeName())
                                 {
                                     case "StartCurvature":
-                                        this.startCurvature = orNull(child.getValue(), Adapters.get(LinearDensity.class));
+                                        this.startCurvature =
+                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
                                         break;
                                     case "EndCurvature":
-                                        this.endCurvature = orNull(child.getValue(), Adapters.get(LinearDensity.class));
+                                        this.endCurvature =
+                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
                                         break;
                                     case "Length":
-                                        this.length = orNull(child.getValue(), Adapters.get(Length.class));
+                                        this.length = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
                                         break;
                                     case "A":
-                                        this.a = orNull(child.getValue(), Adapters.get(Length.class));
+                                        this.a = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
                                         break;
                                     default:
                                         throw new OtsRuntimeException(
@@ -1442,7 +1440,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          */
         private <T> T getOrNull(final String attribute, final ExpressionAdapter<T, ?> adapter)
         {
-            String value = this.shapeNode.getAttributeValue(attribute);
+            String value = this.shapeNode.getAttributeValueOrDefault(attribute);
             return orNull(value, adapter);
         }
 

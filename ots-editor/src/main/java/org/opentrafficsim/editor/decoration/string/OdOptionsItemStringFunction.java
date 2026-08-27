@@ -39,26 +39,26 @@ public class OdOptionsItemStringFunction extends AbstractStringFunction
                 }
                 if ("LinkType".equals(child.getNodeName()) || "Origin".equals(child.getNodeName()))
                 {
-                    return child.getValue() == null || child.getValue().isEmpty() ? child.getNodeName()
-                            : child.getNodeName() + " " + child.getValue();
+                    return child.getValueOrDefault() == null || child.getValueOrDefault().isEmpty() ? child.getNodeName()
+                            : child.getNodeName() + " " + child.getValueOrDefault();
                 }
                 if ("Lane".equals(child.getNodeName()))
                 {
-                    String link = child.getAttributeValue("Link");
-                    String lane = child.getAttributeValue("Lane");
+                    String link = child.getAttributeValueOrDefault("Link");
+                    String lane = child.getAttributeValueOrDefault("Lane");
                     if (link == null || link.isEmpty())
                     {
                         if (lane == null || lane.isEmpty())
                         {
                             return "Lane";
                         }
-                        return "Lane " + child.getAttributeValue("Lane");
+                        return "Lane " + child.getAttributeValueOrDefault("Lane");
                     }
                     else if (lane == null || lane.isEmpty())
                     {
-                        return "Lane " + child.getAttributeValue("Link") + ".";
+                        return "Lane " + child.getAttributeValueOrDefault("Link") + ".";
                     }
-                    return "Lane " + child.getAttributeValue("Link") + "." + child.getAttributeValue("Lane");
+                    return "Lane " + child.getAttributeValueOrDefault("Link") + "." + child.getAttributeValueOrDefault("Lane");
                 }
             }
             return null;

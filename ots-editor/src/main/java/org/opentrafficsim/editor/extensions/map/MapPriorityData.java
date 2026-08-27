@@ -72,37 +72,37 @@ public class MapPriorityData implements PriorityData
     @Override
     public boolean isAllStop()
     {
-        return "ALL_STOP".equals(this.linkData.getNode().getAttributeValue("Priority"));
+        return "ALL_STOP".equals(this.linkData.getNode().getAttributeValueOrDefault("Priority"));
     }
 
     @Override
     public boolean isBusStop()
     {
-        return "BUS_STOP".equals(this.linkData.getNode().getAttributeValue("Priority"));
+        return "BUS_STOP".equals(this.linkData.getNode().getAttributeValueOrDefault("Priority"));
     }
 
     @Override
     public boolean isNone()
     {
-        return "NONE".equals(this.linkData.getNode().getAttributeValue("Priority"));
+        return "NONE".equals(this.linkData.getNode().getAttributeValueOrDefault("Priority"));
     }
 
     @Override
     public boolean isPriority()
     {
-        return "PRIORITY".equals(this.linkData.getNode().getAttributeValue("Priority"));
+        return "PRIORITY".equals(this.linkData.getNode().getAttributeValueOrDefault("Priority"));
     }
 
     @Override
     public boolean isStop()
     {
-        return "STOP".equals(this.linkData.getNode().getAttributeValue("Priority"));
+        return "STOP".equals(this.linkData.getNode().getAttributeValueOrDefault("Priority"));
     }
 
     @Override
     public boolean isYield()
     {
-        return "YIELD".equals(this.linkData.getNode().getAttributeValue("Priority"));
+        return "YIELD".equals(this.linkData.getNode().getAttributeValueOrDefault("Priority"));
     }
 
     @Override

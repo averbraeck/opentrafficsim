@@ -2,10 +2,13 @@ package org.opentrafficsim.road.network.factory.xml;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -134,24 +137,27 @@ public final class AdapterRegistry
      * Returns adapter on element value.
      * @param elementName element name
      * @param elementNode element node representing an {@code <xsd:element>}
+     * @param typeSupplier supplies type from name
      * @return adapter on element value
      */
-    public static Optional<ExpressionAdapter<?, ?>> getElementAdapter(final String elementName, final Node elementNode)
+    public static Optional<ExpressionAdapter<?, ?>> getElementAdapter(final String elementName, final Node elementNode,
+            final Function<String, Node> typeSupplier)
     {
-        return getAdapter(elementName, elementNode, null, elementNode);
+        return getAdapter(elementName, elementNode, null, elementNode, typeSupplier);
     }
 
     /**
      * Returns adapter on attribute value.
      * @param elementName element name
-     * @param elementNode element node representing an {@code <xsd:element>}
+     * @param elementNode element node representing an {@code <xsd:attribute>}
      * @param attributeNode attribute name
+     * @param typeSupplier supplies type from name
      * @return adapter on attribute value
      */
     public static Optional<ExpressionAdapter<?, ?>> getAttributeAdapter(final String elementName, final Node elementNode,
-            final Node attributeNode)
+            final Node attributeNode, final Function<String, Node> typeSupplier)
     {
-        return getAdapter(elementName, elementNode, getAttribute(attributeNode, "name"), attributeNode);
+        return getAdapter(elementName, elementNode, getAttribute(attributeNode, "name"), attributeNode, typeSupplier);
     }
 
     /**
@@ -160,22 +166,70 @@ public final class AdapterRegistry
      * @param elementNode element node
      * @param attributeName attribute name
      * @param typeNode node that defines type, either same as elementNode, or the node of the attribute
+     * @param typeSupplier supplies type from name
      * @return adapter
      */
     private static Optional<ExpressionAdapter<?, ?>> getAdapter(final String elementName, final Node elementNode,
-            final String attributeName, final Node typeNode)
+            final String attributeName, final Node typeNode, final Function<String, Node> typeSupplier)
     {
         ExpressionAdapter<?, ?> specific = getSpecificAdapter(elementName, elementNode, attributeName);
         if (specific != null)
         {
             return Optional.of(specific);
         }
-        String nameSpacedTypeName = getAttribute(typeNode, "type");
-        if (nameSpacedTypeName == null)
+        String typeName = getAttribute(typeNode, "type");
+        if (typeName == null)
         {
             return Optional.empty();
         }
-        return Optional.ofNullable(GLOBAL_ADAPTERS.get(nameSpacedTypeName));
+        Set<String> visited = new LinkedHashSet<>();
+        while (typeName != null && !visited.contains(typeName))
+        {
+            ExpressionAdapter<?, ?> adapter = GLOBAL_ADAPTERS.get(typeName);
+            if (adapter != null)
+            {
+                visited.forEach((v) -> GLOBAL_ADAPTERS.putIfAbsent(v, adapter));
+                return Optional.of(adapter);
+            }
+            // if not found, move up the type hierarchy, and eventually store a found adapter for all visited types
+            visited.add(typeName);
+            Node typeDefinition = typeSupplier.apply(typeName);
+            if (typeDefinition == null)
+            {
+                break;
+            }
+            typeName = findBaseType(typeDefinition);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Finds the base type of the input node that defines a type.
+     * @param typeNode type node
+     * @return the name of the base type, or {@code null} if there is no base type
+     */
+    private static String findBaseType(final Node typeNode)
+    {
+        Node child = typeNode.getFirstChild();
+        while (child != null)
+        {
+            String nodeName = child.getNodeName();
+            if ("xsd:complexContent".equals(nodeName) || "xsd:simpleContent".equals(nodeName))
+            {
+                Node contentChild = child.getFirstChild();
+                while (contentChild != null)
+                {
+                    String contentName = contentChild.getNodeName();
+                    if ("xsd:extension".equals(contentName) || "xsd:restriction".equals(contentName))
+                    {
+                        return getAttribute(contentChild, "base");
+                    }
+                    contentChild = contentChild.getNextSibling();
+                }
+            }
+            child = child.getNextSibling();
+        }
+        return null;
     }
 
     /**
