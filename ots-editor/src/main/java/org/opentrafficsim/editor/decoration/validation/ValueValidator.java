@@ -261,16 +261,17 @@ public interface ValueValidator extends Comparable<ValueValidator>
         {
             case "xsd:complexType":
             {
-                // complexType -> simpleContent -> extension | restriction
-                Node simpleContent = DocumentReader.getChild(node, "xsd:simpleContent")
-                        .orElseThrow(() -> new IllegalStateException("complexType does not contain simpleContent"));
-                Optional<Node> extension = DocumentReader.getChild(simpleContent, "xsd:extension");
+                // complexType -> simpleContent | complexContent -> extension | restriction
+                Node content = DocumentReader.getChild(node, "xsd:simpleContent").orElseGet(
+                        () -> DocumentReader.getChild(node, "xsd:complexContent").orElseThrow(() -> new IllegalStateException(
+                                "complexType does not contain simpleContent or complexContent")));
+                Optional<Node> extension = DocumentReader.getChild(content, "xsd:extension");
                 if (extension.isPresent())
                 {
                     return reportTypeNonCompliance(extension.get(), extension.get(), "base", schema, value, restrictions,
                             baseType);
                 }
-                Node restriction = DocumentReader.getChild(simpleContent, "xsd:restriction").orElseThrow(
+                Node restriction = DocumentReader.getChild(content, "xsd:restriction").orElseThrow(
                         () -> new IllegalStateException("simpleContent contains neither extension nor restriction"));
                 return reportTypeNonCompliance(appInfoNode, restriction, "base", schema, value, restrictions, baseType);
             }
