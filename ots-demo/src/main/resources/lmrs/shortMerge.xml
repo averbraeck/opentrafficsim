@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd">
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd">
   <ots:Definitions>
     <xi:include href="../xsd/defaults/default_gtutypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_linktypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_stripetypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_lanetypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_detectortypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml"/>
       </xi:fallback>
     </xi:include>
     <ots:LinkTypes>
       <ots:LinkType Id="HIGHWAY">
-        <ots:Compatibility GtuType="NL.VEHICLE" />
+        <ots:Compatibility GtuType="NL.VEHICLE"/>
         <ots:SpeedLimit>120km/h</ots:SpeedLimit>
         <ots:GtuTypeSpeedLimit Id="NL.TRUCK">80km/h</ots:GtuTypeSpeedLimit>
       </ots:LinkType>
       <ots:LinkType Id="LOCAL">
-        <ots:Compatibility GtuType="NL.VEHICLE" />
+        <ots:Compatibility GtuType="NL.VEHICLE"/>
         <ots:SpeedLimit>20km/h</ots:SpeedLimit>
       </ots:LinkType>
     </ots:LinkTypes>
@@ -155,41 +153,41 @@
     </ots:RoadLayouts>
   </ots:Definitions>
   <ots:Network>
-    <ots:Node Coordinate="(0, 0)" Direction="0 deg(E)" Id="A" />
-    <ots:Node Coordinate="(1500, 0)" Direction="0 deg(E)" Id="B" />
-    <ots:Node Coordinate="(1565, 0)" Direction="0 deg(E)" Id="C" />
-    <ots:Node Coordinate="(1570, 0)" Direction="0 deg(E)" Id="D" />
-    <ots:Node Coordinate="(3000, 0)" Direction="0 deg(E)" Id="E" />
-    <ots:Node Coordinate="(1260, -40)" Direction="0 deg(E)" Id="F" />
-    <ots:Node Coordinate="(1280, -40)" Direction="0 deg(E)" Id="F2" />
+    <ots:Node Coordinate="(0, 0)" Id="A"/>
+    <ots:Node Coordinate="(1500, 0)" Id="B"/>
+    <ots:Node Coordinate="(1565, 0)" Id="C"/>
+    <ots:Node Coordinate="(1570, 0)" Id="D"/>
+    <ots:Node Coordinate="(3000, 0)" Id="E"/>
+    <ots:Node Coordinate="(1260, -40)" Id="F"/>
+    <ots:Node Coordinate="(1280, -40)" Id="F2"/>
     <ots:Link Id="AB" NodeEnd="B" NodeStart="A" Type="HIGHWAY">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>2LaneHighway</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="BC" NodeEnd="C" NodeStart="B" OffsetEnd="-3.6m" OffsetStart="-3.6m" Type="HIGHWAY">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>3LaneHighway</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="CD" NodeEnd="D" NodeStart="C" Type="HIGHWAY">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>2LaneHighway</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="DE" NodeEnd="E" NodeStart="D" Type="HIGHWAY">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>2LaneHighway</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="FF2" NodeEnd="F2" NodeStart="F" Type="LOCAL">
-      <ots:Straight />
+      <ots:Straight/>
       <ots:DefinedLayout>1LaneLocal</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="F2B" NodeEnd="B" NodeStart="F2" OffsetEnd="-3.6m" Type="HIGHWAY">
-      <ots:Bezier />
+      <ots:Bezier/>
       <ots:DefinedLayout>1LaneHighway</ots:DefinedLayout>
     </ots:Link>
   </ots:Network>
   <ots:Demand>
-    <ots:Sink Lane="FORWARD1" Link="DE" Position="END-50m" Type="NL.ROAD_USERS" />
-    <ots:Sink Lane="FORWARD2" Link="DE" Position="END-50m" Type="NL.ROAD_USERS" />
+    <ots:Sink Lane="FORWARD1" Link="DE" Position="END-50m" Type="NL.ROAD_USERS"/>
+    <ots:Sink Lane="FORWARD2" Link="DE" Position="END-50m" Type="NL.ROAD_USERS"/>
   </ots:Demand>
   <ots:Run>
     <ots:RunLength>1h</ots:RunLength>

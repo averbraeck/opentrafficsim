@@ -25,7 +25,7 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
  *       <attribute name="Coordinate" use="required" type="{http://www.opentrafficsim.org/ots}CoordinateType" />
- *       <attribute name="Direction" type="{http://www.opentrafficsim.org/ots}DirectionType" />
+ *       <attribute name="Direction" type="{http://www.opentrafficsim.org/ots}DirectionType" default="0 deg" />
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -107,7 +107,11 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
      *     
      */
     public DirectionType getDirection() {
-        return direction;
+        if (direction == null) {
+            return new DirectionAdapter().unmarshal("0 deg");
+        } else {
+            return direction;
+        }
     }
 
     /**

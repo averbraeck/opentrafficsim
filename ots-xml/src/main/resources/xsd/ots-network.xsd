@@ -28,7 +28,7 @@
     <xsd:complexType>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="Coordinate" type="ots:CoordinateType" use="required" />
-      <xsd:attribute name="Direction" type="ots:DirectionType" use="optional" />
+      <xsd:attribute name="Direction" type="ots:DirectionType" use="optional" default="0 deg" />
     </xsd:complexType>
   </xsd:element>
 
