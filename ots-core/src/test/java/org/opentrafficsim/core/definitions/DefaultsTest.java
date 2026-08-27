@@ -26,7 +26,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public final class DefaultsTest
 {
 
-    /** */
+    /** Constructor. */
     private DefaultsTest()
     {
         // do not instantiate test class
@@ -79,6 +79,10 @@ public final class DefaultsTest
 
         assertFalse(defs.getAll(GtuType.class).isEmpty());
         assertTrue(defs.getAll(DetectorType.class).isEmpty());
+
+        UnitTest.testFail(() -> defs.add(GtuType.class, DefaultsNl.CAR), IllegalStateException.class);
+        defs.add(LinkType.class, DefaultsNl.HIGHWAY);
+        UnitTest.testFail(() -> defs.add(LinkType.class, DefaultsNl.HIGHWAY), IllegalStateException.class);
     }
 
 }

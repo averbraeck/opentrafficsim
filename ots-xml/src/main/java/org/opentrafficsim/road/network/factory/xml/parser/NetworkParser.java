@@ -9,9 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
@@ -120,12 +118,10 @@ public final class NetworkParser
      * Parse the Nodes.
      * @param otsNetwork the network to insert the parsed objects in
      * @param network the Network tag
-     * @param nodeDirections a map of the node ids and their default directions
      * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseNodes(final RoadNetwork otsNetwork, final Network network,
-            final Map<String, Direction> nodeDirections, final Eval eval) throws NetworkException
+    public static void parseNodes(final RoadNetwork otsNetwork, final Network network, final Eval eval) throws NetworkException
     {
         for (org.opentrafficsim.xml.generated.Centroid xmlCentroid : network.getCentroid())
         {
@@ -133,60 +129,8 @@ public final class NetworkParser
         }
         for (org.opentrafficsim.xml.generated.Node xmlNode : network.getNode())
         {
-            new Node(otsNetwork, xmlNode.getId(), xmlNode.getCoordinate().get(eval), nodeDirections.get(xmlNode.getId()));
+            new Node(otsNetwork, xmlNode.getId(), xmlNode.getCoordinate().get(eval), xmlNode.getDirection().get(eval));
         }
-    }
-
-    /**
-     * Calculate the default angles of the Nodes, in case they have not been set. This is based on the Straight Link elements in
-     * the XML file.
-     * @param otsNetwork the network to insert the parsed objects in
-     * @param network the Network tag
-     * @param eval expression evaluator.
-     * @return a map of nodes and their default direction
-     */
-    public static Map<String, Direction> calculateNodeAngles(final RoadNetwork otsNetwork, final Network network,
-            final Eval eval)
-    {
-        Map<String, Direction> nodeDirections = new LinkedHashMap<>();
-        Map<String, Point2d> points = new LinkedHashMap<>();
-        for (org.opentrafficsim.xml.generated.Node xmlNode : network.getNode())
-        {
-            if (xmlNode.getDirection() != null)
-            {
-                nodeDirections.put(xmlNode.getId(), xmlNode.getDirection().get(eval));
-            }
-            points.put(xmlNode.getId(), xmlNode.getCoordinate().get(eval));
-        }
-
-        for (Link xmlLink : network.getLink())
-        {
-            if (xmlLink.getStraight() != null)
-            {
-                Point2d startPoint = points.get(xmlLink.getNodeStart().get(eval));
-                Point2d endPoint = points.get(xmlLink.getNodeEnd().get(eval));
-                double direction = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
-                if (!nodeDirections.containsKey(xmlLink.getNodeStart().get(eval)))
-                {
-                    nodeDirections.put(xmlLink.getNodeStart().get(eval), new Direction(direction, DirectionUnit.EAST_RADIAN));
-                }
-                if (!nodeDirections.containsKey(xmlLink.getNodeEnd().get(eval)))
-                {
-                    nodeDirections.put(xmlLink.getNodeEnd().get(eval), new Direction(direction, DirectionUnit.EAST_RADIAN));
-                }
-            }
-        }
-
-        for (org.opentrafficsim.xml.generated.Node xmlNode : network.getNode())
-        {
-            if (!nodeDirections.containsKey(xmlNode.getId()))
-            {
-                Logger.ots().warn("Warning: Node {} does not have a (calculated) direction", xmlNode.getId());
-                nodeDirections.put(xmlNode.getId(), Direction.ZERO);
-            }
-        }
-
-        return nodeDirections;
     }
 
     /**
@@ -194,7 +138,6 @@ public final class NetworkParser
      * @param otsNetwork the network to insert the parsed objects in
      * @param definitions parsed definitions.
      * @param network the Network tag
-     * @param nodeDirections a map of the node ids and their default directions
      * @param simulator the simulator
      * @param designLines map to store created design lines.
      * @param flatteners flattener per link id.
@@ -202,9 +145,8 @@ public final class NetworkParser
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     static void parseLinks(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
-            final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator,
-            final Map<String, OffsetCurve2d> designLines, final Map<String, CurveFlattener> flatteners, final Eval eval)
-            throws NetworkException
+            final OtsSimulatorInterface simulator, final Map<String, OffsetCurve2d> designLines,
+            final Map<String, CurveFlattener> flatteners, final Eval eval) throws NetworkException
     {
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : network.getConnector())
         {

@@ -15,7 +15,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
-import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.eval.Eval;
@@ -93,6 +92,9 @@ public final class XmlParser
     /** Eval for scenario. */
     private Eval eval;
 
+    /** Parser has built simulation, throw exception when rebuilding. */
+    private boolean built;
+
     /**
      * Constructor.
      * @param network network.
@@ -139,6 +141,7 @@ public final class XmlParser
     public XmlParser setScenario(final String scenario)
     {
         this.scenario = scenario;
+        this.ots = null;
         this.eval = null; // depends on selected scenario
         return this;
     }
@@ -157,7 +160,7 @@ public final class XmlParser
 
     /**
      * Build the simulation.
-     * @return the experiment based on the information in the Run tag
+     * @return parse result
      * @throws IllegalStateException if no file, URL or stream has been set
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -171,13 +174,15 @@ public final class XmlParser
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public ExperimentRunControl<Duration> build()
+    public ParseResult build()
             throws SimRuntimeException, MalformedURLException, JAXBException, URISyntaxException, NetworkException,
             XmlParserException, SAXException, ParserConfigurationException, GtuException, IOException, TrafficControlException
     {
-        Throw.when(this.stream == null, IllegalStateException.class,
-                "Invoke one of setResource() or setStream() before parsing.");
-        return build(getOts(), this.network, this.scenario, this.parseConflicts);
+        checkStreamPresent();
+        Throw.when(this.built, IllegalStateException.class,
+                "Parser has already built the simulation in to the provided network.");
+        this.built = true;
+        return build(getOts(), this.network, this.scenario, this.parseConflicts, getEval());
     }
 
     /**
@@ -222,8 +227,7 @@ public final class XmlParser
      */
     public Duration getWarmupPeriod() throws JAXBException, SAXException, ParserConfigurationException
     {
-        Throw.when(this.stream == null, IllegalStateException.class,
-                "Invoke one of setResource() or setStream() before parsing.");
+        checkStreamPresent();
         return getOts().getRun().getWarmupPeriod() == null ? Duration.ZERO : getOts().getRun().getWarmupPeriod().get(getEval());
     }
 
@@ -237,8 +241,7 @@ public final class XmlParser
      */
     public Duration getRunLength() throws JAXBException, SAXException, ParserConfigurationException
     {
-        Throw.when(this.stream == null, IllegalStateException.class,
-                "Invoke one of setResource() or setStream() before parsing.");
+        checkStreamPresent();
         return getOts().getRun().getRunLength().get(getEval());
     }
 
@@ -252,8 +255,7 @@ public final class XmlParser
      */
     public Duration getHistory() throws JAXBException, SAXException, ParserConfigurationException
     {
-        Throw.when(this.stream == null, IllegalStateException.class,
-                "Invoke one of setResource() or setStream() before parsing.");
+        checkStreamPresent();
         return getOts().getRun().getHistory() == null ? Duration.ZERO : getOts().getRun().getHistory().get(getEval());
     }
 
@@ -267,9 +269,18 @@ public final class XmlParser
      */
     public List<String> getScenarios() throws JAXBException, SAXException, ParserConfigurationException
     {
+        checkStreamPresent();
+        return getOts().getScenarios().getScenario().stream().map((s) -> s.getId()).collect(Collectors.toList());
+    }
+
+    /**
+     * Throws exception when no resource was set.
+     * @throws IllegalStateException when no resource was set
+     */
+    private void checkStreamPresent() throws IllegalStateException
+    {
         Throw.when(this.stream == null, IllegalStateException.class,
                 "Invoke one of setResource() or setStream() before parsing.");
-        return getOts().getScenarios().getScenario().stream().map((s) -> s.getId()).collect(Collectors.toList());
     }
 
     /**
@@ -304,7 +315,8 @@ public final class XmlParser
      * @param otsNetwork the network to insert the parsed objects in
      * @param scenario scenario name, may bee {@code null} to use default values.
      * @param buildConflicts whether to build conflicts or not
-     * @return the experiment based on the information in the RUN tag
+     * @param eval evaluator as parsed through {@link ScenarioParser#parseInputParameters}
+     * @return parse result
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -317,14 +329,11 @@ public final class XmlParser
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    private static ExperimentRunControl<Duration> build(final Ots ots, final RoadNetwork otsNetwork, final String scenario,
-            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, XmlParserException,
-            SAXException, ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
-            TrafficControlException
+    private static ParseResult build(final Ots ots, final RoadNetwork otsNetwork, final String scenario,
+            final boolean buildConflicts, final Eval eval) throws JAXBException, URISyntaxException, NetworkException,
+            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
+            MalformedURLException, IOException, TrafficControlException
     {
-        // input parameters
-        Eval eval = ScenarioParser.parseInputParameters(ots.getScenarios(), scenario);
-
         // run
         StreamSeedInformation streamInformation = RunParser.parseStreams(ots.getRun(), eval);
         ExperimentRunControl<Duration> runControl =
@@ -341,12 +350,10 @@ public final class XmlParser
 
         // network
         Network network = ots.getNetwork();
-        Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network, eval);
-        NetworkParser.parseNodes(otsNetwork, network, nodeDirections, eval);
+        NetworkParser.parseNodes(otsNetwork, network, eval);
         Map<String, OffsetCurve2d> designLines = new LinkedHashMap<>();
         Map<String, CurveFlattener> flatteners = new LinkedHashMap<>();
-        NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
-                flatteners, eval);
+        NetworkParser.parseLinks(otsNetwork, definitions, network, otsNetwork.getSimulator(), designLines, flatteners, eval);
         NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, infraSpeedLimitMap, designLines,
                 flatteners, stripes, eval);
         if (buildConflicts)
@@ -433,19 +440,20 @@ public final class XmlParser
                     eval);
         }
 
-        return runControl;
+        return new ParseResult(runControl, definitions);
+    }
+
+    /**
+     * Result from parsing.
+     * @param runControl run control information
+     * @param definitions created definitions
+     */
+    public record ParseResult(ExperimentRunControl<Duration> runControl, Definitions definitions)
+    {
     }
 
     /**
      * DefaultsResolver takes care of locating the defaults include files at the right place.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Alexander Verbraeck
-     * @author Peter Knoppers
-     * @author Wouter Schakel
      */
     private static final class DefaultsResolver implements EntityResolver
     {

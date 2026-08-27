@@ -20,6 +20,7 @@ import org.opentrafficsim.base.HierarchicalType;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author Alexander Verbraeck
+ * @author Wouter Schakel
  */
 public class Definitions
 {
@@ -45,7 +46,11 @@ public class Definitions
     {
         Throw.whenNull(typeClass, "Type class may not be null.");
         Throw.whenNull(t, "Type may not be null.");
-        this.typeMap.computeIfAbsent(typeClass, (key) -> Collections.synchronizedMap(new LinkedHashMap<>())).put(t.getId(), t);
+        Map<String, HierarchicalType<?, ?>> map =
+                this.typeMap.computeIfAbsent(typeClass, (key) -> Collections.synchronizedMap(new LinkedHashMap<>()));
+        Throw.when(map.containsKey(t.getId()), IllegalStateException.class, "%s with ID %s already exists.",
+                typeClass.getSimpleName(), t.getId());
+        map.put(t.getId(), t);
     }
 
     /**
