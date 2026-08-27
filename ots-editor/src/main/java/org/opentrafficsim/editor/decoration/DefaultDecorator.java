@@ -150,7 +150,7 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Animation", IconUtil.of("Play24.png").imageSize(s, s).get());
         editor.setCustomIcon("Ots.Animation.Connector", IconUtil.of("Connector24.png").imageSize(s, s).get());
         // does not exist yet
-        editor.setCustomIcon("Ots.Output", IconUtil.of("./Output24.png").imageSize(s, s).get());
+        editor.setCustomIcon("Ots.Output", IconUtil.of("Output24.png").imageSize(s, s).get());
     }
 
     /**
