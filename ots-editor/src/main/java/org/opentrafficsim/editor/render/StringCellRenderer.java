@@ -1,6 +1,8 @@
 package org.opentrafficsim.editor.render;
 
 import java.awt.Component;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -47,50 +49,71 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
             final boolean hasFocus, final int row, final int column)
     {
-        String val = value == null ? "" : value.toString();
-        setText(val);
         setFont(table.getFont());
-
-        if (isSelected)
+        int treeColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may be moved
+        int idColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.ID_COLUMN);
+        int valueColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.VALUE_COLUMN);
+        XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(row, treeColumn);
+        String val = value == null ? null : value.toString();
+        boolean defaultValue = false;
+        if (val == null)
         {
-            setBackground(UIManager.getColor("Table.selectionBackground"));
-        }
-        else
-        {
-            int treeColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may be moved
-            int idColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.ID_COLUMN);
-            int valueColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.VALUE_COLUMN);
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(row, treeColumn);
-            String message = node.isSelfValid() ? null : (column == idColumn ? node.reportInvalidId().orElse(null)
-                    : (column == valueColumn ? node.reportInvalidValue().orElse(null) : null));
-            if (this.treeTable.isCellEditable(row, column))
+            Supplier<Optional<String>> def;
+            if (column == idColumn)
             {
-                if (message != null)
-                {
-                    setToolTipText(OtsEditor.limitTooltip(message));
-                    setBackground(OtsEditor.getInvalidColor());
-                }
-                else
-                {
-                    setToolTipText(OtsEditor
-                            .limitTooltip(!val.isEmpty() && (column == idColumn || column == valueColumn) ? val : null));
-                    boolean expression = column == idColumn ? node.idIsExpression()
-                            : (column == valueColumn ? node.valueIsExpression() : false);
-                    if (expression)
-                    {
-                        setBackground(OtsEditor.getExpressionColor());
-                    }
-                    else
-                    {
-                        setBackground(UIManager.getColor("Table.background"));
-                    }
-                }
+                val = node.getAttributeValueOrDefault("Id");
+                def = () -> node.getDefaultAttributeValue(node.getAttributeIndexByName("Id"));
+            }
+            else if (column == valueColumn)
+            {
+                val = node.getValue();
+                def = () -> node.getDefaultValue();
             }
             else
             {
-                setToolTipText(null);
-                setBackground(UIManager.getColor("Table.background"));
+                val = "";
+                def = () -> Optional.empty();
             }
+            if (val == null)
+            {
+                Optional<String> defaultVal = def.get();
+                val = defaultVal.orElse("");
+                defaultValue = defaultVal.isPresent();
+            }
+        }
+        setText(val);
+        setForeground(defaultValue ? OtsEditor.getInactiveColor() : UIManager.getColor("Table.foreground"));
+        String message = node.isSelfValid() ? null : (column == idColumn ? node.reportInvalidId().orElse(null)
+                : (column == valueColumn ? node.reportInvalidValue().orElse(null) : null));
+        if (this.treeTable.isCellEditable(row, column))
+        {
+            if (message != null)
+            {
+                setToolTipText(OtsEditor.limitTooltip(message));
+                setBackground(OtsEditor.getInvalidColor());
+            }
+            else
+            {
+                setToolTipText(
+                        OtsEditor.limitTooltip(!val.isEmpty() && (column == idColumn || column == valueColumn) ? val : null));
+                boolean expression =
+                        column == idColumn ? node.idIsExpression() : (column == valueColumn ? node.valueIsExpression() : false);
+                if (expression)
+                {
+                    setBackground(OtsEditor.getExpressionColor());
+                }
+                else
+                {
+                    setBackground(isSelected ? UIManager.getColor("Table.selectionBackground")
+                            : UIManager.getColor("Table.background"));
+                }
+            }
+        }
+        else
+        {
+            setToolTipText(null);
+            setBackground(
+                    isSelected ? UIManager.getColor("Table.selectionBackground") : UIManager.getColor("Table.background"));
         }
 
         Border border;
