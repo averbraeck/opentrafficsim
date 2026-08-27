@@ -62,7 +62,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public final class ControlParser
 {
-    /** */
+    /** Constructor. */
     private ControlParser()
     {
         // static class
@@ -258,8 +258,9 @@ public final class ControlParser
      */
     private static boolean isScenarioControl(final ControlType control, final ScenarioType scenario, final Eval eval)
     {
-        if (scenario == null)
+        if (scenario == null || scenario.getControl().isEmpty())
         {
+            // no scenario, or it does not define which control to use (i.e. use all)
             return true;
         }
         for (org.opentrafficsim.xml.generated.ScenarioType.Control scenarioControl : scenario.getControl())
