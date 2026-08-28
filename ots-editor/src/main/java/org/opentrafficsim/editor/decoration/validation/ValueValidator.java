@@ -677,7 +677,6 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * For non-expression values, the stored and effective value are identical. The stored domain validation is then skipped, as
      * it overlaps completely with the effective domain. For expression values the stored value is the expression string, and
      * the effective value is its evaluated result.
-     * <p>
      * @param treeNode node
      * @param isExpression whether the current value is an expression
      * @param valueGetter returns the current value

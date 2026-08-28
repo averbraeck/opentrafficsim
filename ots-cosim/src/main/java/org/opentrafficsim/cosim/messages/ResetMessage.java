@@ -20,6 +20,7 @@ public record ResetMessage(Object responseId) implements Identifiable
 
     /**
      * Constructor.
+     * @param responseId response ID for in the ready message
      */
     public ResetMessage
     {

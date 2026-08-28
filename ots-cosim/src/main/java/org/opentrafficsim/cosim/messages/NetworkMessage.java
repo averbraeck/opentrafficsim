@@ -23,6 +23,9 @@ public record NetworkMessage(NetworkType type, String network, Object responseId
 
     /**
      * Constructor.
+     * @param type network type
+     * @param network network contents
+     * @param responseId response ID for in the ready message
      */
     public NetworkMessage
     {

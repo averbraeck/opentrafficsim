@@ -23,6 +23,8 @@ public record RoutesMessage(RoutesJson routes, Object responseId) implements Ide
 
     /**
      * Constructor.
+     * @param routes routes
+     * @param responseId response ID for in the ready message
      */
     public RoutesMessage
     {

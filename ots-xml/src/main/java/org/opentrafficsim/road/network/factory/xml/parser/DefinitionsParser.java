@@ -48,7 +48,7 @@ import org.opentrafficsim.xml.generated.TemporalSpeedLimit;
 public final class DefinitionsParser
 {
 
-    /** */
+    /** Constructor. */
     private DefinitionsParser()
     {
         // utility class
@@ -133,10 +133,13 @@ public final class DefinitionsParser
 
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.GtuTypes.class,
                 org.opentrafficsim.xml.generated.GtuType.class, GtuType.class, null, eval);
-        parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
-                org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LinkType.class, infraTypeConsumer, eval);
-        parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
-                org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LaneType.class, infraTypeConsumer, eval);
+        // explicit type definitions may be required for javac that maven runs, even if the IDE compiler accepts it without
+        DefinitionsParser.<org.opentrafficsim.xml.generated.LinkTypes, org.opentrafficsim.xml.generated.SpeedLimitInfraType,
+                LinkType>parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
+                        org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LinkType.class, infraTypeConsumer, eval);
+        DefinitionsParser.<org.opentrafficsim.xml.generated.LaneTypes, org.opentrafficsim.xml.generated.SpeedLimitInfraType,
+                LaneType>parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
+                        org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LaneType.class, infraTypeConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.DetectorTypes.class,
                 org.opentrafficsim.xml.generated.DetectorType.class, DetectorType.class, null, eval);
 

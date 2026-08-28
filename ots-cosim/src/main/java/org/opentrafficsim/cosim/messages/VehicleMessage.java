@@ -44,7 +44,7 @@ public record VehicleMessage(Duration time, String vehicleId, ControlMode contro
 
     /**
      * Constructor.
-     * @param time time stamp
+     * @param time duration since start of simulation
      * @param vehicleId vehicle ID
      * @param controlMode vehicle control mode
      * @param xCoordinate x-coordinate

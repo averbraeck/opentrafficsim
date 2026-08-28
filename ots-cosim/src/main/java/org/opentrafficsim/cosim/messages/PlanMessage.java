@@ -35,6 +35,14 @@ public record PlanMessage(Duration time, String vehicleId, Speed speed, FloatLen
 
     /**
      * Constructor.
+     * @param time duration since start of simulation
+     * @param vehicleId vehicle ID
+     * @param speed initial speed
+     * @param xCoordinates x-coordinates
+     * @param yCoordinates y-coordinates
+     * @param steps acceleration duration steps
+     * @param acceleration acceleration values
+     * @param turnIndicator turn indicator status
      */
     public PlanMessage
     {

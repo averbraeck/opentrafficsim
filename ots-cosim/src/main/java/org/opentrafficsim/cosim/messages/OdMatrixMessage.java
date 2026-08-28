@@ -23,6 +23,8 @@ public record OdMatrixMessage(OdMatrixJson odMatrix, Object responseId) implemen
 
     /**
      * Constructor.
+     * @param odMatrix OD matrix
+     * @param responseId response ID for in the ready message
      */
     public OdMatrixMessage
     {

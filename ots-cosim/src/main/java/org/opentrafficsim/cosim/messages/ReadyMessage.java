@@ -23,6 +23,7 @@ public record ReadyMessage(Object responseId) implements Identifiable
 
     /**
      * Constructor.
+     * @param responseId response ID in the received message of which the processing is ready
      */
     public ReadyMessage
     {

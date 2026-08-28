@@ -220,7 +220,7 @@ public abstract class ExpressionType<T> implements Serializable
 
     /**
      * Returns the static field value at the given class. This assumes that the class {@code T} has a static public field by
-     * given name of type {@type T}.
+     * given name of type {@code T}.
      * @param <T> type of value
      * @param valueType value type
      * @param field field name

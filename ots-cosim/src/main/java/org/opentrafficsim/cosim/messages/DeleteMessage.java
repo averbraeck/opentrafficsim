@@ -22,6 +22,8 @@ public record DeleteMessage(Duration time, String vehicleId) implements Identifi
 
     /**
      * Constructor.
+     * @param time duration since start of simulation
+     * @param vehicleId vehicle ID
      */
     public DeleteMessage
     {

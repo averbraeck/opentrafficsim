@@ -19,6 +19,8 @@ public record DistancedObject<T>(T object, Length distance) implements Comparabl
 
     /**
      * Constructor.
+     * @param object underlying object
+     * @param distance distance to object@param object underlying object
      */
     public DistancedObject
     {

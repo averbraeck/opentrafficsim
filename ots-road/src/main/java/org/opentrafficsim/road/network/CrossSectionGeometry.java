@@ -33,6 +33,10 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d absoluteConto
 
     /**
      * Constructor.
+     * @param centerLine center line
+     * @param absoluteContour contour
+     * @param offset offset
+     * @param width width@param centerLine center line
      * @throws NullPointerException when centerLine, contour or slices is {@code null}
      */
     public CrossSectionGeometry

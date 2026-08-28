@@ -24,6 +24,8 @@ public record CommandMessage(String vehicleId, Command command) implements Ident
 
     /**
      * Constructor.
+     * @param vehicleId vehicle ID
+     * @param command command
      */
     public CommandMessage
     {

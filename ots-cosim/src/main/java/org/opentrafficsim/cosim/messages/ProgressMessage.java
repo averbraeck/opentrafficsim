@@ -22,6 +22,8 @@ public record ProgressMessage(Duration untilTime, Object responseId) implements 
 
     /**
      * Constructor.
+     * @param untilTime time until which to simulate
+     * @param responseId response ID for in the ready message
      */
     public ProgressMessage
     {

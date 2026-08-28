@@ -33,6 +33,13 @@ public record ExternalMessage(Duration time, String vehicleId, Length xCoordinat
 
     /**
      * Constructor.
+     * @param time duration since start of simulation
+     * @param vehicleId vehicle ID
+     * @param xCoordinate x-coordinate
+     * @param yCoordinate y-coordinate
+     * @param direction vehicle direction
+     * @param speed vehicle speed
+     * @param acceleration vehicle acceleration
      */
     public ExternalMessage
     {

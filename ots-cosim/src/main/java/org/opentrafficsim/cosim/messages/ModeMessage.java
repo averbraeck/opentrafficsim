@@ -23,6 +23,9 @@ public record ModeMessage(Duration time, String vehicleId, ControlMode controlMo
 
     /**
      * Constructor.
+     * @param time duration since start of simulation
+     * @param vehicleId vehicle ID
+     * @param controlMode vehicle control mode
      */
     public ModeMessage
     {
