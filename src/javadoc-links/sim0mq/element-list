@@ -1,0 +1,9 @@
+org.sim0mq
+org.sim0mq.federatestarter
+org.sim0mq.federationmanager
+org.sim0mq.message
+org.sim0mq.message.federatestarter
+org.sim0mq.message.federationmanager
+org.sim0mq.message.heartbeat
+org.sim0mq.message.modelcontroller
+org.sim0mq.message.types

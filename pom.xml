@@ -48,10 +48,10 @@
     <sonar.scm.disabled>true</sonar.scm.disabled>
 
     <ots.version>${project.version}</ots.version>
-    <djunits.version>5.4.1</djunits.version>
-    <djutils.version>2.4.2</djutils.version>
+    <djunits.version>5.4.1</djunits.version> <!-- Run DownloadElementList in org.opentrafficsim.base (test) when updated -->
+    <djutils.version>2.4.2</djutils.version> <!-- Run DownloadElementList in org.opentrafficsim.base (test) when updated -->
     <dsol.version>4.3.2</dsol.version>
-    <sim0mq.version>2.2.0</sim0mq.version>
+    <sim0mq.version>2.2.0</sim0mq.version> <!-- Run DownloadElementList in org.opentrafficsim.base (test) when updated -->
     <jfreechart.version>1.5.6</jfreechart.version>
     <jgrapht.version>1.5.2</jgrapht.version>
     <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
@@ -503,7 +503,7 @@
         <version>${maven.javadoc.version}</version>
         <configuration>
           <links>
-            <link>https://djunits.org/docs/latest/apidocs/</link>
+            <!--link>https://djunits.org/docs/latest/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-base/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-data/apidocs/</link>
@@ -512,12 +512,53 @@
             <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-stats/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-swing/apidocs/</link>
-            <link>https://sim0mq.org/docs/latest/apidocs/</link>
+            <link>https://sim0mq.org/docs/latest/apidocs/</link-->
             <link>https://docs.junit.org/${junit.version}/api/</link>
             <!--link>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/${jakarta.annotation.version}/</link>
             <link>https://javadoc.io/doc/jakarta.xml.bind/jakarta.xml.bind-api/${jakarta.xml.bind-api.version}/</link-->
           </links>
           <offlineLinks>
+            <!-- The following non-opentrafficsim.org sites are on servers that Github cannot reliably access. -->
+            <offlineLink>
+              <url>https://djunits.org/docs/latest/apidocs/</url>
+              <location>/src/javadoc-links/djunits/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-base/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-base/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-cli/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-cli/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-data/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-data/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-draw/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-eval/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-eval/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-serialization/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-serialization/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-stats/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-stats/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-swing/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-swing/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://sim0mq.org/docs/latest/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/sim0mq/</location>
+            </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-animation-data/apidocs/</url>
               <location>${basedir}/../ots-animation-data/target/site/apidocs/</location>
@@ -811,7 +852,7 @@
 
         <configuration>
           <links>
-            <link>https://djunits.org/docs/latest/apidocs/</link>
+            <!--link>https://djunits.org/docs/latest/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-base/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-data/apidocs/</link>
@@ -820,12 +861,53 @@
             <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-stats/apidocs/</link>
             <link>https://djutils.org/docs/latest/djutils-swing/apidocs/</link>
-            <link>https://sim0mq.org/docs/latest/apidocs/</link>
+            <link>https://sim0mq.org/docs/latest/apidocs/</link-->
             <link>https://docs.junit.org/${junit.version}/api/</link>
             <!--link>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/${jakarta.annotation.version}/</link>
             <link>https://javadoc.io/doc/jakarta.xml.bind/jakarta.xml.bind-api/${jakarta.xml.bind-api.version}/</link-->
           </links>
           <offlineLinks>
+            <!-- The following non-opentrafficsim.org sites are on servers that Github cannot reliably access. -->
+            <offlineLink>
+              <url>https://djunits.org/docs/latest/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djunits/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-base/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-base/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-cli/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-cli/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-data/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-data/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-draw/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-eval/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-eval/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-serialization/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-serialization/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-stats/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-stats/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://djutils.org/docs/latest/djutils-swing/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djutils-swing/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://sim0mq.org/docs/latest/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/sim0mq/</location>
+            </offlineLink>
             <offlineLink>
               <url>https://opentrafficsim.org/docs/latest/ots-animation-data/apidocs/</url>
               <location>${basedir}/../ots-animation-data/target/site/apidocs/</location>
