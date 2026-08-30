@@ -15,7 +15,7 @@
 
   <xsd:complexType name="Type">
     <xsd:attribute name="Id" type="ots:IdType" use="required" />
-    <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+    <xsd:attribute name="Builtin" type="xsd:boolean" use="optional" default="false" />
   </xsd:complexType>
 
   <xsd:complexType name="HierarchicalType">
@@ -77,7 +77,7 @@
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
-      <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+      <xsd:attribute name="Builtin" type="xsd:boolean" use="optional" default="false" />
     </xsd:complexType>
   </xsd:element>
 
@@ -354,7 +354,7 @@
       <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
       <xsd:attribute name="LateralSync" type="ots:LateralSync" />
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
-      <xsd:attribute name="Default" type="xsd:boolean" default="false" />
+      <xsd:attribute name="Builtin" type="xsd:boolean" default="false" />
     </xsd:complexType>
   </xsd:element>
 
@@ -443,6 +443,7 @@
         <xsd:extension base="ots:BasicRoadLayout">
           <xsd:attribute name="Id" type="ots:IdType" use="required" />
           <xsd:attribute name="LinkType" type="ots:string" use="required" />
+          <xsd:attribute name="Builtin" type="xsd:boolean" use="optional" default="false" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>

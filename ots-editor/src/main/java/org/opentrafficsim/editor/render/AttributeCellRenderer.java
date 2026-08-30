@@ -17,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
@@ -117,8 +118,9 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                     this.checkBox.setSelected(value.toString().equalsIgnoreCase("true"));
                     this.checkBox.setText("");
                 }
-                // All xsd:boolean attributes under Ots.Definitions are 'Default' that should be disabled and false by default.
-                if (node.getPathString().startsWith("Ots.Definitions"))
+                // All xsd:boolean attributes under Ots.Definitions are 'Builtin' that should be disabled and false by default.
+                if (node.getPathString().startsWith(XsdPaths.DEFINITIONS)
+                        && "Builtin".equals(node.getAttributeNameByIndex(row)))
                 {
                     this.checkBox.setEnabled(false);
                 }
@@ -152,7 +154,6 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         else
         {
             setText(value == null ? "" : value.toString());
-
         }
         setFont(table.getFont());
         setIcon(null);

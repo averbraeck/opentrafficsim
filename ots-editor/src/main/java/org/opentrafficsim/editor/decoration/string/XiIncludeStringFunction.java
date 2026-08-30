@@ -1,10 +1,10 @@
 package org.opentrafficsim.editor.decoration.string;
 
-import java.io.File;
 import java.util.function.Function;
 
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.decoration.validation.ValueValidator;
 
 /**
  * Adds the included file name to the include node.
@@ -36,26 +36,20 @@ public class XiIncludeStringFunction extends AbstractStringFunction
             String fallbackValue = node.getAttributeValueOrDefault(1);
             if (fileValue == null || node.getParent() == null)
             {
-                return "";
+                return null;
             }
-            File file = new File(fileValue);
-            if (!file.isAbsolute())
+            String message = ValueValidator.checkImport(node.getRoot().getBaseUri(), fileValue);
+            if (message == null)
             {
-                file = new File(node.getRoot().getDirectory() + fileValue);
+                return fileValue;
             }
-            if (!file.exists() && fallbackValue != null)
+            message = ValueValidator.checkImport(node.getRoot().getBaseUri(), fallbackValue);
+            if (message == null)
             {
-                File file2 = new File(fallbackValue);
-                if (!file2.isAbsolute())
-                {
-                    file2 = new File(node.getRoot().getDirectory() + fallbackValue);
-                }
-                if (file2.exists())
-                {
-                    return file2.getName() + " [fallback]";
-                }
+                return fallbackValue + " [fallback]";
             }
-            return file.getName();
+            return null;
         };
     }
+
 }

@@ -5,42 +5,42 @@
 
   <ots:Definitions>
 
-    <xi:include href="../xsd/defaults/default_gtutypes.xml">
+    <xi:include href="builtin:gtutypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_linktypes.xml">
+    <xi:include href="builtin:linktypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_stripetypes.xml">
+    <xi:include href="builtin:stripetypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_lanetypes.xml">
+    <xi:include href="builtin:lanetypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_detectortypes.xml">
+    <xi:include href="builtin:detectortypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_gtutemplates.xml">
+    <xi:include href="builtin:gtutemplates">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutemplates.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_lanebiases.xml">
+    <xi:include href="builtin:lanebiases">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanebiases.xml" />
       </xi:fallback>
     </xi:include>
-
+    
     <ots:LaneTypes>
       <ots:LaneType Id="STREET">
         <ots:Compatibility GtuType="NL.ROAD_USER" />

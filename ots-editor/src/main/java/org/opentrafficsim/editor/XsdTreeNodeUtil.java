@@ -1,10 +1,19 @@
 package org.opentrafficsim.editor;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.djutils.event.Event;
@@ -12,9 +21,13 @@ import org.djutils.event.EventListener;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.djutils.io.ResourceResolver;
+import org.djutils.io.ResourceResolver.ResourceHandle;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.editor.DocumentReader.DocumentResource;
 import org.opentrafficsim.editor.decoration.validation.XsdAllValidator;
+import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.w3c.dom.Node;
 
 /**
@@ -30,6 +43,32 @@ public final class XsdTreeNodeUtil
 
     /** Validators for xsd:all option nodes. This is maintained per root object (i.e. per tree) and xsd:all node. */
     private static final Map<XsdTreeNodeRoot, Map<String, XsdAllValidator>> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
+
+    /** Defaults description. */
+    public static final String DEFAULTS_DESCRIPTION =
+            "Provide a relative path to your file. Built-in defaults can be loaded by using \"default:default_{x}.xml\""
+                    + ", where \"{x}\" is any of definition node names in lowercase, e.g. \"default:default_gtutypes.xml\"";
+
+    /** Options for all built-in include files. */
+    private static List<String> includeOptions;
+
+    static
+    {
+        InputStream stream;
+        try
+        {
+            stream = ResourceResolver.resolveAsResource("/xsd/defaults/index.txt").openStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            includeOptions =
+                    reader.lines().filter(line -> !line.isEmpty()).filter((s) -> s.startsWith("default_") && s.endsWith(".xml"))
+                            .map((s) -> XmlParser.BUILTIN + s.substring(8, s.length() - 4)).toList();
+        }
+        catch (IOException exception)
+        {
+            Logger.ots().info("Unable to load index for default options. No options will be provided.");
+            includeOptions = List.of();
+        }
+    }
 
     /**
      * Private constructor.
@@ -509,6 +548,74 @@ public final class XsdTreeNodeUtil
             }
             return Integer.valueOf(occursValue.get());
         }
+    }
+
+    /**
+     * Returns the include document source.
+     * @param baseURI base URI
+     * @param include include reference
+     * @return include document source
+     */
+    public static DocumentResource getDocumentInclude(final URI baseURI, final String include)
+    {
+        if (include == null)
+        {
+            return null;
+        }
+        ResourceHandle resource;
+        if (include.startsWith(XmlParser.BUILTIN) && include.length() > XmlParser.BUILTIN.length())
+        {
+            try
+            {
+                resource = ResourceResolver
+                        .resolveAsResource("/xsd/defaults/default_" + include.substring(XmlParser.BUILTIN.length()) + ".xml");
+            }
+            catch (NoSuchElementException ex)
+            {
+                return null;
+            }
+        }
+        else
+        {
+            try
+            {
+                URI resourceURI;
+                if (Path.of(include).isAbsolute())
+                {
+                    resourceURI = Path.of(include).toUri();
+                }
+                else
+                {
+                    if (baseURI == null)
+                    {
+                        return null;
+                    }
+                    resourceURI = baseURI.resolve(include);
+                }
+                resource = ResourceResolver.resolve(resourceURI.toString());
+            }
+            catch (NoSuchElementException | InvalidPathException ex)
+            {
+                return null;
+            }
+        }
+        try
+        {
+            return new DocumentResource(resource.openStream(), resource.asUri().toString());
+        }
+        catch (IOException ex)
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Returns options for all built-in include files.
+     * @return options for all built-in include files
+     */
+    public static List<String> getIncludeOptions()
+    {
+        return includeOptions;
     }
 
 }

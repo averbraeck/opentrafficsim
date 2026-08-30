@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -73,6 +74,9 @@ public final class XmlParser
 {
 
     // TODO: need to expose the Animation contents such that OtsSimulationPanel can be setup
+
+    /** Built-in recognition tag. */
+    public static final String BUILTIN = "builtin:";
 
     /** Road network. */
     private final RoadNetwork network;
@@ -462,10 +466,10 @@ public final class XmlParser
         {
             try
             {
-                if (systemId.contains("defaults/"))
+                if (systemId.startsWith(BUILTIN) && systemId.length() > BUILTIN.length())
                 {
-                    String location = "/resources/xsd/defaults" + systemId.substring(systemId.lastIndexOf('/'));
-                    InputStream stream = ResourceResolver.resolve(location).openStream();
+                    String location = "/xsd/defaults/default_" + systemId.substring(BUILTIN.length()) + ".xml";
+                    InputStream stream = ResourceResolver.resolveAsResource(location).openStream();
                     return new InputSource(stream);
                 }
                 else
@@ -473,9 +477,9 @@ public final class XmlParser
                     return new InputSource(ResourceResolver.resolve(systemId).openStream());
                 }
             }
-            catch (IOException exception)
+            catch (IOException | NoSuchElementException exception)
             {
-                throw new OtsRuntimeException(exception);
+                throw new OtsRuntimeException("Unable to load " + systemId, exception);
             }
         }
     }

@@ -1,11 +1,13 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
+import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.DocumentReader;
@@ -29,6 +32,7 @@ import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.Schema;
 import org.opentrafficsim.editor.XiIncludeNode;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeUtil;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.StringAdapter;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
@@ -111,12 +115,12 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Validates an includes file by checking whether it can be found.
-     * @param directory base directory for relative paths.
+     * @param basePath base path for relative paths.
      * @param fileName file name and path, possibly relative.
      * @param fallback fallback file name and path, possibly relative.
      * @return first encountered problem in validating the value of the include, empty if there is no problem.
      */
-    static Optional<String> reportInvalidInclude(final String directory, final String fileName, final String fallback)
+    static Optional<String> reportInvalidInclude(final URI basePath, final String fileName, final String fallback)
     {
         if (fileName == null && fallback == null)
         {
@@ -126,24 +130,60 @@ public interface ValueValidator extends Comparable<ValueValidator>
         {
             return Optional.of("Fallback may only be provided if a file is also provided.");
         }
-        File file = new File(fileName);
-        if (!file.isAbsolute())
+
+        String message = checkImport(basePath, fileName);
+        if (message != null && fallback != null)
         {
-            if (directory == null)
-            {
-                return Optional.of("Relative path defined but directory unknown. Try saving your work.");
-            }
-            file = new File(directory + fileName);
+            message = checkImport(basePath, fallback);
         }
-        if (!file.exists())
+        return Optional.ofNullable(message);
+    }
+
+    /**
+     * Checks that a referenced location exists. This is either as an absolute reference, or relative to the document base.
+     * @param basePath base of document
+     * @param fileName referenced file
+     * @return failure message, {@code null} if there is no failure
+     */
+    static String checkImport(final URI basePath, final String fileName)
+    {
+        if (fileName.contains(":"))
         {
-            if (fallback == null)
+            if (XsdTreeNodeUtil.getDocumentInclude(basePath, fileName) == null)
             {
-                return Optional.of("The file cannot be found.");
+                return "The file cannot be found.";
             }
-            return reportInvalidInclude(directory, fallback, null); // check fallback instead
+            return null;
         }
-        return Optional.empty();
+        URI resourceURI;
+        try
+        {
+            if (Path.of(fileName).isAbsolute())
+            {
+                resourceURI = Path.of(fileName).toUri();
+            }
+            else
+            {
+                if (basePath == null)
+                {
+                    return "Relative path defined but base path unknown. Try saving your work.";
+                }
+                resourceURI = basePath.resolve(fileName);
+            }
+        }
+        catch (InvalidPathException exception)
+        {
+            resourceURI = URI.create(fileName);
+        }
+        try
+        {
+            ResourceResolver.resolve(resourceURI.toString()).openStream();
+        }
+        catch (NoSuchElementException | IOException ex)
+        {
+            return "The file cannot be found.";
+        }
+        return null;
     }
 
     /**

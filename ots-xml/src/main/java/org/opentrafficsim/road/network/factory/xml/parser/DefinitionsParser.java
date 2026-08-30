@@ -201,9 +201,9 @@ public final class DefinitionsParser
                 {
                     // HierarchicalType: GtuType, LinkType, LaneType, DetectorType
                     org.opentrafficsim.xml.generated.HierarchicalType h = (org.opentrafficsim.xml.generated.HierarchicalType) g;
-                    if (h.isDefault())
+                    if (h.isBuiltin())
                     {
-                        t = getDefault(typeClass, h.getId(), typeClass.getName().startsWith("org.opentrafficsim.road"));
+                        t = getBuiltin(typeClass, h.getId(), typeClass.getName().startsWith("org.opentrafficsim.road"));
                     }
                     else if (h.getParent() != null)
                     {
@@ -229,7 +229,7 @@ public final class DefinitionsParser
                     }
                     parsedDefinitions.add(typeClass, t);
 
-                    if (!h.isDefault() && g instanceof org.opentrafficsim.xml.generated.GtuCompatibleInfraType)
+                    if (!h.isBuiltin() && g instanceof org.opentrafficsim.xml.generated.GtuCompatibleInfraType)
                     {
                         // GtuCompatibleInfraType: LinkType, LaneType, DetectorType
                         org.opentrafficsim.xml.generated.GtuCompatibleInfraType c =
@@ -348,7 +348,7 @@ public final class DefinitionsParser
      * @return parsed element.
      * @throws XmlParserException when the desired element is not in the parsed definitions.
      */
-    private static <T extends HierarchicalType<T, ?>> T getDefault(final Class<T> clazz, final String definitionId,
+    private static <T extends HierarchicalType<T, ?>> T getBuiltin(final Class<T> clazz, final String definitionId,
             final boolean road) throws XmlParserException
     {
         Throw.when(definitionId == null, XmlParserException.class, "%s default has no id.", clazz.getSimpleName());

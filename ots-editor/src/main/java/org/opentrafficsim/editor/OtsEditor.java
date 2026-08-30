@@ -16,8 +16,10 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,9 +92,11 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
+import org.djutils.io.ResourceResolver.ResourceHandle;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.animation.data.util.IconUtil;
+import org.opentrafficsim.editor.DocumentReader.DocumentResource;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.listeners.AttributesKeyListener;
@@ -207,7 +211,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     private Document xsdDocument;
 
     /** Last directory from which a file was loaded or in to which a file was saved. */
-    private String lastDirectory;
+    private URI lastDirectory;
 
     /** Last file that was loaded or saved. */
     private String lastFile;
@@ -733,9 +737,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
                     if (!this.unsavedChanges || dialogs().confirmDiscardChanges())
                     {
                         File f = new File(file);
-                        this.lastDirectory = f.getParent() + File.separator;
+                        this.lastDirectory = Path.of(f.getParent()).toUri();
                         this.lastFile = f.getName();
-                        if (!loadFile(f, "File loaded", true))
+                        if (!loadFile(f, "File loaded"))
                         {
                             if (dialogs().confirmRemoveRecentFile())
                             {
@@ -788,7 +792,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         StringBuilder title = new StringBuilder("OTS | The Open Traffic Simulator | Editor");
         if (this.lastFile != null)
         {
-            title.append(" (").append(this.lastDirectory).append(this.lastFile).append(")");
+            title.append(" (").append(Path.of(this.lastDirectory)).append(this.lastFile).append(")");
         }
         if (this.unsavedChanges)
         {
@@ -844,7 +848,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             Optional<Boolean> userInput = dialogs().confirmLoadAutosaveFile(file);
             if (userInput.isPresent() && userInput.get())
             {
-                boolean loaded = loadFile(file, "Autosave file loaded", false);
+                boolean loaded;
+                try
+                {
+                    loaded = loadFile(DocumentResource.of(file), "Autosave file loaded", file.toURI());
+                }
+                catch (FileNotFoundException ex)
+                {
+                    loaded = false;
+                }
                 if (!loaded)
                 {
                     if (dialogs().confirmRemoveAutosaveFile())
@@ -1472,10 +1484,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         {
             return;
         }
-        this.lastDirectory = fileDialog.getDirectory();
+        this.lastDirectory = Path.of(fileDialog.getDirectory()).toUri();
         this.lastFile = fileName;
         File file = new File(this.lastDirectory + this.lastFile);
-        boolean loaded = loadFile(file, "File loaded", true);
+        boolean loaded = loadFile(file, "File loaded");
         if (!loaded)
         {
             dialogs().notification("Unable to read file.");
@@ -1492,17 +1504,57 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
-     * Load file.
-     * @param file file to load.
-     * @param postLoadStatus status message in status bar to show after loading.
-     * @param updateRecentFiles whether to include the opened file in recent files.
-     * @return whether the file was successfully loaded.
+     * Load file. It is stored in recent files. This method assumes {@link #lastDirectory} is already set.
+     * @param file file to load
+     * @param postLoadStatus status message in status bar to show after loading
+     * @return whether the file was successfully loaded
      */
-    private boolean loadFile(final File file, final String postLoadStatus, final boolean updateRecentFiles)
+    private boolean loadFile(final File file, final String postLoadStatus)
     {
         try
         {
-            Document document = DocumentReader.open(file.toURI());
+            boolean out = loadFile(DocumentResource.of(file), postLoadStatus, this.lastDirectory);
+            PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
+                    PROPERTIES_STORE.getInteger(MAX_RECENT_FILES_KEY));
+            updateRecentFileMenu();
+            return out;
+        }
+        catch (FileNotFoundException exception)
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Load file. This file may come from a place in to which the file cannot be saved. Although includes are imported, no
+     * directory is remembered from which the file came. The user will have to save any changes elsewhere, at which point
+     * imports may no longer work. If includes use {@code default:}, such as {@code default:default_gtutypes.xml} the editor
+     * will recognize a default resource which can be imported if a file is not saved, or wherever it is saved.
+     * <p>
+     * This method should be called using {@link SwingUtilities#invokeLater} to prevent concurrent modification of Swing.
+     * @param resource resource
+     * @throws IOException if the resource cannot be loaded
+     */
+    public void preLoadFile(final ResourceHandle resource) throws IOException
+    {
+        loadFile(new DocumentResource(resource.openStream(), resource.asUri().toString()), "", resource.asUri());
+        this.lastDirectory = null;
+        this.lastFile = null;
+        this.setUnsavedChanges(true);
+    }
+
+    /**
+     * Load file.
+     * @param documentResource document resource
+     * @param postLoadStatus status message in status bar to show after loading
+     * @param basePath base path, this is lastDirectory for regular file loading
+     * @return whether the file was successfully loaded
+     */
+    private boolean loadFile(final DocumentResource documentResource, final String postLoadStatus, final URI basePath)
+    {
+        try
+        {
+            Document document = DocumentReader.open(documentResource);
             this.undo.setIgnoreChanges(true);
             this.evalWrapper.setIgnoreEval(true);
             this.ignoreChanges = true;
@@ -1524,7 +1576,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
                 }
             }
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
-            root.setDirectory(this.lastDirectory);
+            root.setBaseUri(basePath);
             root.loadXmlNodes(document.getFirstChild());
             this.evalWrapper.setIgnoreEval(false);
             this.ignoreChanges = false;
@@ -1535,12 +1587,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             this.navigation.clear();
             // knowing/changing the directory may change validation status through imports
             SwingUtilities.invokeLater(() -> this.treeTable.updateUI());
-            if (updateRecentFiles)
-            {
-                PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
-                        PROPERTIES_STORE.getInteger(MAX_RECENT_FILES_KEY));
-                updateRecentFileMenu();
-            }
             return true;
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
@@ -1557,7 +1603,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     private void saveFile()
     {
         XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
-        if (this.lastFile == null)
+        if (this.lastDirectory == null || this.lastFile == null)
         {
             saveFileAs(root);
             return;
@@ -1569,9 +1615,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
 
     /**
      * Shows a dialog to define a file and saves in to it.
-     * @param root root node of tree to save, can be a sub-tree of the full tree.
+     * @param node root node of tree to save, can be a sub-tree of the full tree.
      */
-    public void saveFileAs(final XsdTreeNode root)
+    public void saveFileAs(final XsdTreeNode node)
     {
         FileDialog fileDialog = new FileDialog(this, "Save XML", FileDialog.SAVE);
         fileDialog.setFile("*.xml");
@@ -1585,16 +1631,16 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         {
             fileName = fileName + ".xml";
         }
-        if (root instanceof XsdTreeNodeRoot)
+        if (node instanceof XsdTreeNodeRoot)
         {
-            this.lastDirectory = fileDialog.getDirectory();
+            this.lastDirectory = Path.of(fileDialog.getDirectory()).toUri();
             this.lastFile = fileName;
         }
-        save(new File(fileDialog.getDirectory() + fileName), root, true);
-        if (root instanceof XsdTreeNodeRoot)
+        save(new File(fileDialog.getDirectory() + fileName), node, true);
+        if (node instanceof XsdTreeNodeRoot root)
         {
             this.undo.setIgnoreChanges(true);
-            ((XsdTreeNodeRoot) root).setDirectory(this.lastDirectory);
+            root.setBaseUri(this.lastDirectory);
             this.treeTable.updateUI();
             this.attributesTable.updateUI();
             setUnsavedChanges(false);

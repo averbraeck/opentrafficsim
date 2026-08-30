@@ -7,7 +7,9 @@ import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djutils.io.ResourceResolver;
+import org.djutils.io.ResourceResolver.ResourceHandle;
 import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.editor.DocumentReader.DocumentResource;
 import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.xml.sax.SAXException;
 
@@ -48,7 +50,8 @@ public final class RunEditor
         Logger.setLogLevel(Level.INFO);
         OtsEditor editor = new OtsEditor();
         DefaultDecorator.decorate(editor);
-        editor.setSchema(DocumentReader.open(ResourceResolver.resolve("/xsd/ots.xsd").asUri()));
+        ResourceHandle resource = ResourceResolver.resolve("/xsd/ots.xsd");
+        editor.setSchema(DocumentReader.open(new DocumentResource(resource.openStream(), resource.asUri().toString())));
     }
 
 }

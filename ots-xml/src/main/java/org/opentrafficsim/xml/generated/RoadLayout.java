@@ -23,6 +23,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
  *     <extension base="{http://www.opentrafficsim.org/ots}BasicRoadLayout">
  *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
  *       <attribute name="LinkType" use="required" type="{http://www.opentrafficsim.org/ots}string" />
+ *       <attribute name="Builtin" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     </extension>
  *   </complexContent>
  * </complexType>
@@ -44,6 +45,8 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     @XmlAttribute(name = "LinkType", required = true)
     @XmlJavaTypeAdapter(StringAdapter.class)
     protected StringType linkType;
+    @XmlAttribute(name = "Builtin")
+    protected Boolean builtin;
 
     /**
      * Gets the value of the id property.
@@ -91,6 +94,34 @@ import org.opentrafficsim.xml.bindings.types.StringType;
      */
     public void setLinkType(StringType value) {
         this.linkType = value;
+    }
+
+    /**
+     * Gets the value of the builtin property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isBuiltin() {
+        if (builtin == null) {
+            return false;
+        } else {
+            return builtin;
+        }
+    }
+
+    /**
+     * Sets the value of the builtin property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setBuiltin(Boolean value) {
+        this.builtin = value;
     }
 
 }

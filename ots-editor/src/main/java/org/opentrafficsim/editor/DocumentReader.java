@@ -1,8 +1,10 @@
 package org.opentrafficsim.editor;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,21 +38,50 @@ public final class DocumentReader
 
     /**
      * Opens an XSD or XML file.
-     * @param file file.
-     * @return document, i.e. the root of the XSD file.
+     * @param documentResource document resource
+     * @return document, e.g. the root of the XSD file
      * @throws SAXException exception
      * @throws IOException exception
      * @throws ParserConfigurationException exception
      */
-    public static Document open(final URI file) throws SAXException, IOException, ParserConfigurationException
+    public static Document open(final DocumentResource documentResource)
+            throws SAXException, IOException, ParserConfigurationException
     {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         // dbf.setXIncludeAware(true);
         dbf.setIgnoringComments(true);
         dbf.setIgnoringElementContentWhitespace(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new File(file));
+        // db.setEntityResolver((publicId, sysId) ->
+        // {
+        // ResourceHandle resource = ResourceResolver.resolve(sysId);
+        // InputSource source = new InputSource(resource.openStream());
+        // source.setPublicId(publicId);
+        // source.setSystemId(resource.asUri().toString());
+        // return source;
+        // });
+        Document doc = db.parse(documentResource.stream(), documentResource.systemId());
         return doc;
+    }
+
+    /**
+     * Document resource.
+     * @author Wouter Schakel
+     * @param stream stream
+     * @param systemId base location for relative URIs
+     */
+    public record DocumentResource(InputStream stream, String systemId)
+    {
+        /**
+         * Returns document resource from file.
+         * @param file file
+         * @return document resource from file
+         * @throws FileNotFoundException if the file does not exist
+         */
+        static DocumentResource of(final File file) throws FileNotFoundException
+        {
+            return new DocumentResource(new FileInputStream(file), file.toURI().toString());
+        }
     }
 
     /**
@@ -138,7 +169,7 @@ public final class DocumentReader
          *     &lt;/xsd:appinfo&gt;
          *   &lt;/xsd:annotation&gt;
          * &lt;/xsd:sequence&gt;
-         * </pre>
+     * </pre>
      */
     public enum NodeAnnotation
     {

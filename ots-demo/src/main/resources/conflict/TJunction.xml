@@ -3,33 +3,33 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd">
   <ots:Definitions>
-    <xi:include href="../xsd/defaults/default_gtutypes.xml">
+    <xi:include href="builtin:gtutypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_linktypes.xml">
+    <xi:include href="builtin:linktypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_stripetypes.xml">
+    <xi:include href="builtin:stripetypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_lanetypes.xml">
+    <xi:include href="builtin:lanetypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
       </xi:fallback>
     </xi:include>
-    <xi:include href="../xsd/defaults/default_detectortypes.xml">
+    <xi:include href="builtin:detectortypes">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
       </xi:fallback>
     </xi:include>
     <ots:GtuTemplates>
-      <ots:GtuTemplate Default="true" GtuType="NL.CAR" Id="CAR">
+      <ots:GtuTemplate Builtin="true" GtuType="NL.CAR" Id="CAR">
         <ots:LengthDist LengthUnit="m">
           <ots:Uniform Max="4.0" Min="3.0" />
         </ots:LengthDist>

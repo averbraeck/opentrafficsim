@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +37,7 @@ import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.editor.DocumentReader.DocumentResource;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.XsdTreeNodeUtil.LoadingIndices;
 import org.opentrafficsim.editor.XsdTreeNodeUtil.Occurs;
@@ -717,25 +717,18 @@ public class XsdTreeNode extends LocalEventProducer
             {
                 return;
             }
-            File file = new File(this.attributeValues.get(0));
-            if (!file.isAbsolute())
+            DocumentResource documentResource =
+                    XsdTreeNodeUtil.getDocumentInclude(getRoot().getBaseUri(), this.attributeValues.get(0));
+            if (documentResource == null)
             {
-                file = new File(getRoot().getDirectory() + this.attributeValues.get(0));
+                documentResource = XsdTreeNodeUtil.getDocumentInclude(getRoot().getBaseUri(), this.attributeValues.get(1));
             }
-            if (!file.exists() && this.attributeValues.get(1) != null)
-            {
-                file = new File(this.attributeValues.get(1));
-                if (!file.isAbsolute())
-                {
-                    file = new File(getRoot().getDirectory() + this.attributeValues.get(1));
-                }
-            }
-            if (file.exists())
+            if (documentResource != null)
             {
                 Document document;
                 try
                 {
-                    document = DocumentReader.open(file.toURI());
+                    document = DocumentReader.open(documentResource);
                 }
                 catch (SAXException | IOException | ParserConfigurationException exception)
                 {
@@ -1847,6 +1840,11 @@ public class XsdTreeNode extends LocalEventProducer
      */
     public Optional<String> getDescription()
     {
+        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) && this.parent != null
+                && "Definitions".equals(this.parent.getNodeName()))
+        {
+            return Optional.of(XsdTreeNodeUtil.DEFAULTS_DESCRIPTION);
+        }
         assureAttributesAndDescription();
         if (this.description == null && isChoice())
         {
@@ -1975,7 +1973,11 @@ public class XsdTreeNode extends LocalEventProducer
         */
         if (this.stringFunction != null)
         {
-            string.append("\u2009(").append(this.stringFunction.apply(this)).append(")"); // u2009 = thin space
+            String v = this.stringFunction.apply(this);
+            if (v != null)
+            {
+                string.append("\u2009(").append(v).append(")"); // u2009 = thin space
+            }
         }
         return string.toString();
     }
@@ -2022,6 +2024,10 @@ public class XsdTreeNode extends LocalEventProducer
         if ("ots:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type").orElse(null)))
         {
             return List.of("true", "false");
+        }
+        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) && (index == 0 || index == 1))
+        {
+            return XsdTreeNodeUtil.getIncludeOptions();
         }
         String field = getAttributeNameByIndex(index);
         // Gather all validators on the attribute, and then their respective field objects
@@ -2379,7 +2385,7 @@ public class XsdTreeNode extends LocalEventProducer
                 XsdTreeNode root = getPath().get(0);
                 if (root instanceof XsdTreeNodeRoot)
                 {
-                    Optional<String> message = ValueValidator.reportInvalidInclude(((XsdTreeNodeRoot) root).getDirectory(),
+                    Optional<String> message = ValueValidator.reportInvalidInclude(((XsdTreeNodeRoot) root).getBaseUri(),
                             this.attributeValues.get(0), this.attributeValues.get(1));
                     this.attributeInvalidMessage.set(index, message.orElse(null));
                     this.attributeValid.set(index, message.isEmpty());

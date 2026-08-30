@@ -32,7 +32,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *       <attribute name="RightChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
  *       <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
  *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
- *       <attribute name="Default" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *       <attribute name="Builtin" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     </restriction>
  *   </complexContent>
  * </complexType>
@@ -66,8 +66,8 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     protected StripeLateralSyncType lateralSync;
     @XmlAttribute(name = "Id", required = true)
     protected String id;
-    @XmlAttribute(name = "Default")
-    protected Boolean _default;
+    @XmlAttribute(name = "Builtin")
+    protected Boolean builtin;
 
     /**
      * Gets the value of the elements property.
@@ -214,31 +214,31 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the default property.
+     * Gets the value of the builtin property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public boolean isDefault() {
-        if (_default == null) {
+    public boolean isBuiltin() {
+        if (builtin == null) {
             return false;
         } else {
-            return _default;
+            return builtin;
         }
     }
 
     /**
-     * Sets the value of the default property.
+     * Sets the value of the builtin property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setDefault(Boolean value) {
-        this._default = value;
+    public void setBuiltin(Boolean value) {
+        this.builtin = value;
     }
 
 }

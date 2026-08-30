@@ -1,8 +1,6 @@
 package org.opentrafficsim.editor;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -18,8 +16,10 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.io.ResourceResolver;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.editor.DocumentReader.DocumentResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -375,19 +375,42 @@ public class Schema
     private void include(final String path, final Node node)
     {
         String schemaLocation = DocumentReader.getAttribute(node, "schemaLocation").get();
-        String schemaPath = folder(node) + schemaLocation;
+        String systemId = folder(node);
+        String schemaPath = systemId + schemaLocation;
+        if (schemaPath.startsWith("jar:") && indexOfBang(schemaPath) >= 0)
+        {
+            schemaPath = schemaPath.substring(4);
+        }
         if (!this.readFiles.add(schemaPath))
         {
             return;
         }
         try
         {
-            read(path, DocumentReader.open(new URI(schemaPath)), true);
+            read(path, DocumentReader.open(new DocumentResource(ResourceResolver.resolve(schemaPath).openStream(), systemId)),
+                    true);
         }
-        catch (SAXException | IOException | ParserConfigurationException | URISyntaxException e)
+        catch (SAXException | IOException | ParserConfigurationException e)
         {
             throw new OtsRuntimeException("Unable to find resource " + folder(node) + schemaLocation);
         }
+    }
+
+    /**
+     * Returns the index of a bang, as {@link ResourceResolver} does, in which case no double "jar:" should be added by it.
+     * @param s string
+     * @return index of bang
+     */
+    private static int indexOfBang(final String s)
+    {
+        // Normalize Windows "!\" to "!/"
+        int i = s.indexOf("!/");
+        if (i >= 0)
+        {
+            return i;
+        }
+        i = s.indexOf("!\\");
+        return i;
     }
 
     /**

@@ -1,0 +1,8 @@
+default_gtutypes.xml
+default_gtutemplates.xml
+default_linktypes.xml
+default_stripetypes.xml
+default_lanetypes.xml
+default_lanebiases.xml
+default_detectortypes.xml
+default_parametertypes.xml

@@ -32,7 +32,7 @@
     </xi:include>
 
     <ots:GtuTemplates>
-      <ots:GtuTemplate Default="true" GtuType="NL.CAR" Id="CAR">
+      <ots:GtuTemplate Builtin="true" GtuType="NL.CAR" Id="CAR">
         <ots:LengthDist LengthUnit="m">
           <ots:Uniform Min="3.0" Max="4.0" />
         </ots:LengthDist>

@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor;
 
+import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
@@ -58,7 +59,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                     new ObjectDescriptor("Index", "Index where it was in the parent", Integer.class)));
 
     /** Directory, relevant for relative paths in include nodes. */
-    private String directory;
+    private URI baseUri;
 
     /** Whether validation should be ignored for the entire tree. */
     private final Supplier<Boolean> ignoreChanges;
@@ -85,24 +86,24 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /**
      * Returns the directory.
-     * @return directory.
+     * @return directory
      */
-    public String getDirectory()
+    public URI getBaseUri()
     {
-        return this.directory;
+        return this.baseUri;
     }
 
     /**
-     * Set the directory.
-     * @param directory directory.
+     * Set the base URI.
+     * @param baseUri bas URI
      */
-    public void setDirectory(final String directory)
+    public void setBaseUri(final URI baseUri)
     {
-        if (Objects.equals(this.directory, directory))
+        if (Objects.equals(this.baseUri, baseUri))
         {
             return;
         }
-        this.directory = directory;
+        this.baseUri = baseUri;
         // invalidate entire tree, as saving may trigger relative paths to includes to become ok, causing types to be found
         invalidateAll();
     }

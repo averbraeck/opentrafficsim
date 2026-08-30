@@ -93,10 +93,10 @@ public class AttributesTableModel extends AbstractTableModel
     public boolean isCellEditable(final int rowIndex, final int columnIndex)
     {
         if (this.node.getPathString().startsWith(XsdPaths.DEFINITIONS)
-                && "Default".equals(this.node.getAttributeNameByIndex(rowIndex))
+                && "Builtin".equals(this.node.getAttributeNameByIndex(rowIndex))
                 && "xsd:boolean".equals(this.node.getAttributeBaseType(rowIndex)))
         {
-            // disable check boxes regarding the 'Default' status of definitions as definitions edited in the editor never are
+            // disable check boxes regarding the 'Builtin' status of definitions as definitions edited in the editor never are
             return false;
         }
         return columnIndex == VALUE_COLUMN && !this.node.isIncluded();
