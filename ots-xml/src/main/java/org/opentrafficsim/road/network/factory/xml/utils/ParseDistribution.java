@@ -143,7 +143,7 @@ public final class ParseDistribution
         {
             return new DistNormal(stream, distType.getNormal().getMu().get(eval), distType.getNormal().getSigma().get(eval));
         }
-        else if (distType.getNormal() != null)
+        else if (distType.getNormalTrunc() != null)
         {
             return new DistNormalTrunc(stream, distType.getNormalTrunc().getMu().get(eval),
                     distType.getNormalTrunc().getSigma().get(eval), distType.getNormalTrunc().getMin().get(eval),
