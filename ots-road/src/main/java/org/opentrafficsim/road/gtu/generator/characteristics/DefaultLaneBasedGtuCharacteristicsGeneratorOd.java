@@ -109,12 +109,23 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         {
             gtuType = DefaultsNl.CAR;
         }
-        GtuCharacteristics gtuCharacteristics;
-        if (this.templates.containsKey(gtuType))
+        GtuCharacteristics gtuCharacteristics = null;
+        GtuType parent = gtuType;
+        if (!this.templates.isEmpty())
         {
-            gtuCharacteristics = this.templates.get(gtuType).get();
+            while (parent != null)
+            {
+                if (this.templates.containsKey(parent))
+                {
+                    gtuCharacteristics = this.templates.get(parent).get();
+                }
+                else
+                {
+                    parent = parent.getParent().orElse(null);
+                }
+            }
         }
-        else
+        if (gtuCharacteristics == null)
         {
             gtuCharacteristics = this.templateFunction.apply(gtuType, randomStream).get().get();
         }
