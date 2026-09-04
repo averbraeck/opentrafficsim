@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.perception.FilteredIterable;
@@ -36,10 +36,10 @@ public interface AccelerationIncentive
      * @param mergeDistance distance over which a lane change is impossible
      * @return acceleration
      * @throws ParameterException on missing parameter
-     * @throws GtuException when there is a problem with the state of the GTU when planning a path
+     * @throws OperationalPlanException when there is a problem with the state of the GTU when planning a path
      */
     Acceleration accelerate(TacticalContextEgo context, RelativeLane lane, Length mergeDistance)
-            throws ParameterException, GtuException;
+            throws ParameterException, OperationalPlanException;
 
     /**
      * Returns an iterable with only those lane-based objects that are on the same road, i.e. only downstream of a possible

@@ -9,7 +9,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.FilteredIterable;
@@ -56,7 +56,7 @@ public final class AccelerationNoSlowLaneOvertake implements AccelerationIncenti
 
     @Override
     public Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
-            throws ParameterException, GtuException
+            throws ParameterException, OperationalPlanException
     {
         // Ignore incentive if we need to change lane for the route
         // TODO: depends on left/right traffic

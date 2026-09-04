@@ -33,8 +33,8 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
@@ -147,13 +147,14 @@ public final class ConflictUtil
      * @param mergeDistance distance along which no lane changes can be performed towards the lane
      * @param onRoute filter conflicts to only include conflict on the route
      * @return acceleration appropriate for approaching the conflicts
-     * @throws GtuException in case of an unsupported conflict rule
+     * @throws OperationalPlanException in case of an unsupported conflict rule
      * @throws ParameterException if a parameter is not defined or out of bounds
      */
     @SuppressWarnings("checkstyle:methodlength")
     // @docs/06-behavior/tactical-planner/#modular-utilities (..., final ConflictPlans conflictPlans, ...)
     public static Acceleration approachConflicts(final TacticalContextEgo context, final ConflictPlans conflictPlans,
-            final RelativeLane lane, final Length mergeDistance, final boolean onRoute) throws GtuException, ParameterException
+            final RelativeLane lane, final Length mergeDistance, final boolean onRoute)
+            throws OperationalPlanException, ParameterException
     {
         Iterable<PerceivedConflict> conflicts =
                 context.getPerception().getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
@@ -340,7 +341,8 @@ public final class ConflictUtil
                     }
                     default:
                     {
-                        throw new GtuException("Unsupported conflict rule encountered while approaching conflicts.");
+                        throw new OperationalPlanException(
+                                "Unsupported conflict rule encountered while approaching conflicts.");
                     }
                 }
             }

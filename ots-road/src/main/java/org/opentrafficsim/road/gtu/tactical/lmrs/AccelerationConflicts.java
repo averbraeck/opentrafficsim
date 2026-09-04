@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.tactical.lmrs;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.tactical.Blockable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
@@ -38,7 +38,7 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
 
     @Override
     public final Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
-            throws ParameterException, GtuException
+            throws ParameterException, OperationalPlanException
     {
         return ConflictUtil.approachConflicts(context, this.conflictPlans, lane, mergeDistance, true);
     }

@@ -12,7 +12,6 @@ import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
@@ -239,10 +238,10 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
      * @param mergeDistance distance over which a lane change is impossible towards the lane, zero if current lane
      * @return acceleration
      * @throws ParameterException on missing parameter
-     * @throws GtuException when there is a problem with the state of the GTU when planning a path
+     * @throws OperationalPlanException when there is a problem with the state of the GTU when planning a path
      */
     public Acceleration getAcceleration(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
-            throws ParameterException, GtuException
+            throws ParameterException, OperationalPlanException
     {
         Acceleration a = Acceleration.POS_MAXVALUE;
         for (AccelerationIncentive incentive : this.accelerationIncentives)

@@ -3,8 +3,8 @@ package org.opentrafficsim.road.gtu.tactical.lmrs;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.Stateless;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
@@ -37,7 +37,7 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
 
     @Override
     public Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
-            throws ParameterException, GtuException
+            throws ParameterException, OperationalPlanException
     {
         Acceleration a = NO_REASON;
         for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)

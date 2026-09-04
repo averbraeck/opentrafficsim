@@ -7,8 +7,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.Stateless;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
@@ -56,7 +56,7 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
     @Override
     @SuppressWarnings("checkstyle:parameternumber")
     public Acceleration accelerate(final TacticalContextEgo context, final RelativeLane lane, final Length mergeDistance)
-            throws ParameterException, GtuException
+            throws ParameterException, OperationalPlanException
     {
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
                 context.getPerception().getPerceptionCategory(BusStopPerception.class).getBusStops();
@@ -64,8 +64,8 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
         {
             return NO_REASON;
         }
-        BusSchedule busSchedule = (BusSchedule) context.getRoute().orElseThrow(
-                () -> new GtuException("Unable to determine acceleration for bus stops for bus without bus schedule."));
+        BusSchedule busSchedule = (BusSchedule) context.getRoute().orElseThrow(() -> new OperationalPlanException(
+                "Unable to determine acceleration for bus stops for bus without bus schedule."));
         Duration now = context.getTime();
         Iterable<PerceivedBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
         {

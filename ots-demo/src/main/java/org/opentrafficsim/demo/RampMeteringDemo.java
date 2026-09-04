@@ -599,7 +599,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         @Override
         public OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
-                throws GtuException, NetworkException, ParameterException
+                throws OperationalPlanException, NetworkException, ParameterException
         {
             // Create tactical context
             TacticalContextEgo context = new TacticalContextEgo(getGtu());

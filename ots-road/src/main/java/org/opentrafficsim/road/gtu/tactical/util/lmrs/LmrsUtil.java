@@ -101,14 +101,14 @@ public final class LmrsUtil implements LmrsParameters
      * @param lmrsData LMRS data
      * @param incentives planner with set of incentives
      * @return simple operational plan
-     * @throws GtuException gtu exception
      * @throws NetworkException network exception
      * @throws ParameterException parameter exception
      * @throws OperationalPlanException operational plan exception
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static SimpleOperationalPlan determinePlan(final TacticalContextEgo context, final LmrsData lmrsData,
-            final AbstractIncentivesTacticalPlanner incentives) throws GtuException, NetworkException, ParameterException
+            final AbstractIncentivesTacticalPlanner incentives)
+            throws NetworkException, ParameterException, OperationalPlanException
     {
         lmrsData.initStep();
 
@@ -324,10 +324,10 @@ public final class LmrsUtil implements LmrsParameters
      * @param incentives planner with set of incentives
      * @return lane change desire for gtu
      * @throws ParameterException if a parameter is not defined
-     * @throws GtuException if there is no mandatory incentive, the model requires at least one
+     * @throws OperationalPlanException if there is no mandatory incentive, the model requires at least one
      */
     public static Desire getLaneChangeDesire(final TacticalContextEgo context,
-            final AbstractIncentivesTacticalPlanner incentives) throws ParameterException, GtuException
+            final AbstractIncentivesTacticalPlanner incentives) throws ParameterException, OperationalPlanException
     {
         double dSync = context.getParameters().getParameter(DSYNC);
         double dCoop = context.getParameters().getParameter(DCOOP);

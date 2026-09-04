@@ -18,7 +18,6 @@ import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -130,7 +129,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
 
     @Override
     public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
-            throws OperationalPlanException, GtuException, NetworkException, ParameterException
+            throws OperationalPlanException, NetworkException, ParameterException
     {
         if (!this.isDeadReckoning || this.lastDeadReckoningModelExecution == null
                 || startTime.minus(this.lastDeadReckoningModelExecution).si >= DEAD_RECKONING_MODEL_STEP.si)
@@ -282,9 +281,8 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     /**
      * Change lane when needed as the new location is closer to an adjacent lane.
      * @param location location
-     * @throws GtuException exception
      */
-    private void changeLaneOnDeadReckoning(final DirectedPoint2d location) throws GtuException
+    private void changeLaneOnDeadReckoning(final DirectedPoint2d location)
     {
         Lane refLane = getGtu().getPositionOrRoaming().lane();
         double minDistance = distance(refLane, location);

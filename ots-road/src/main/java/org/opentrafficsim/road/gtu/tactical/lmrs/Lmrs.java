@@ -7,9 +7,9 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.TurnIndicatorStatus;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.operational.LaneOperationalPlanBuilder;
@@ -54,7 +54,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
     private final LmrsData lmrsData;
 
     /**
-     * Constructor setting the car-following model.
+     * Constructor.
      * @param carFollowingModel car-following model
      * @param gtu GTU
      * @param lanePerception perception
@@ -73,7 +73,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
 
     @Override
     public OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
-            throws GtuException, NetworkException, ParameterException
+            throws OperationalPlanException, NetworkException, ParameterException
     {
         // create tactical context
         TacticalContextEgo context = new TacticalContextEgo(getGtu());
