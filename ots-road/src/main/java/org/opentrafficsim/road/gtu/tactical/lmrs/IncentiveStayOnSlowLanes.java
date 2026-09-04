@@ -50,10 +50,6 @@ public final class IncentiveStayOnSlowLanes implements VoluntaryIncentive, State
             final ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-        if (context.getSpeed().lt(context.getParameters().getParameter(ParameterTypes.VCONG)))
-        {
-            return new Desire(0.0, 0.0);
-        }
         InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         // start at fastest lane
         SortedSet<RelativeLane> rootCrossSection = context.getPerception().getLaneStructure().getRootCrossSection();
@@ -70,7 +66,8 @@ public final class IncentiveStayOnSlowLanes implements VoluntaryIncentive, State
             slow = slow.getRight();
         }
         boolean legalLeft = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).ge0();
-        if (lane.getLateralDirectionality().isRight() && lane.getNumLanes() > 1)
+        if (lane.getLateralDirectionality().isRight() && lane.getNumLanes() > 1
+                && context.getSpeed().gt(context.getParameters().getParameter(ParameterTypes.VCONG)))
         {
             // must change right
             return new Desire(legalLeft ? -1.0 : 0.0, context.getParameters().getParameter(LmrsParameters.DSYNC));
