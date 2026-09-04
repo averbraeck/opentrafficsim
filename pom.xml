@@ -520,103 +520,103 @@
           <offlineLinks>
             <!-- The following non-opentrafficsim.org sites are on servers that Github cannot reliably access. -->
             <offlineLink>
-              <url>https://djunits.org/docs/latest/apidocs/</url>
-              <location>/src/javadoc-links/djunits/</location>
+              <url>https://djunits.org/docs/${djunits.version}/apidocs/</url>
+              <location>${basedir}/../src/javadoc-links/djunits/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-base/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-base/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-base/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-cli/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-cli/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-cli/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-data/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-data/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-data/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-draw/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-draw/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-eval/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-eval/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-eval/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-serialization/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-serialization/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-serialization/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-stats/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-stats/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-stats/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-swing/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-swing/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-swing/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://sim0mq.org/docs/latest/apidocs/</url>
+              <url>https://sim0mq.org/docs/${sim0mq.version}/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/sim0mq/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-animation-data/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-animation-data/apidocs/</url>
               <location>${basedir}/../ots-animation-data/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-base/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-base/apidocs/</url>
               <location>${basedir}/../ots-base/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-core/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-core/apidocs/</url>
               <location>${basedir}/../ots-core/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-demo/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-demo/apidocs/</url>
               <location>${basedir}/../ots-demo/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-animation/apidocs/</url>
               <location>${basedir}/../ots-animation/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-editor/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-editor/apidocs/</url>
               <location>${basedir}/../ots-editor/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-kpi/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-kpi/apidocs/</url>
               <location>${basedir}/../ots-kpi/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-opendrive/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-opendrive/apidocs/</url>
               <location>${basedir}/../ots-opendrive/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-road/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-road/apidocs/</url>
               <location>${basedir}/../ots-road/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-cosim/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-cosim/apidocs/</url>
               <location>${basedir}/../ots-cosim/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-cosim-0mq/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-cosim-0mq/apidocs/</url>
               <location>${basedir}/../ots-cosim-0mq/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-swing/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-swing/apidocs/</url>
               <location>${basedir}/../ots-swing/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-trafficcontrol/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-trafficcontrol/apidocs/</url>
               <location>${basedir}/../ots-trafficcontrol/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-web/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-web/apidocs/</url>
               <location>${basedir}/../ots-web/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-xml/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-xml/apidocs/</url>
               <location>${basedir}/../ots-xml/target/site/apidocs/</location>
             </offlineLink>
           </offlineLinks>
@@ -869,103 +869,103 @@
           <offlineLinks>
             <!-- The following non-opentrafficsim.org sites are on servers that Github cannot reliably access. -->
             <offlineLink>
-              <url>https://djunits.org/docs/latest/apidocs/</url>
+              <url>https://djunits.org/docs/${djunits.version}/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djunits/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-base/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-base/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-base/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-cli/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-cli/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-cli/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-data/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-data/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-data/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-draw/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-draw/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-eval/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-eval/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-eval/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-serialization/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-serialization/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-serialization/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-stats/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-stats/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-stats/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://djutils.org/docs/latest/djutils-swing/apidocs/</url>
+              <url>https://djutils.org/docs/${djutils.version}/djutils-swing/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/djutils-swing/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://sim0mq.org/docs/latest/apidocs/</url>
+              <url>https://sim0mq.org/docs/${sim0mq.version}/apidocs/</url>
               <location>${basedir}/../src/javadoc-links/sim0mq/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-animation-data/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-animation-data/apidocs/</url>
               <location>${basedir}/../ots-animation-data/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-base/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-base/apidocs/</url>
               <location>${basedir}/../ots-base/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-core/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-core/apidocs/</url>
               <location>${basedir}/../ots-core/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-demo/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-demo/apidocs/</url>
               <location>${basedir}/../ots-demo/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-animation/apidocs/</url>
               <location>${basedir}/../ots-animation/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-editor/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-editor/apidocs/</url>
               <location>${basedir}/../ots-editor/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-kpi/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-kpi/apidocs/</url>
               <location>${basedir}/../ots-kpi/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-opendrive/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-opendrive/apidocs/</url>
               <location>${basedir}/../ots-opendrive/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-road/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-road/apidocs/</url>
               <location>${basedir}/../ots-road/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-cosim/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-cosim/apidocs/</url>
               <location>${basedir}/../ots-cosim/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-cosim-0mq/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-cosim-0mq/apidocs/</url>
               <location>${basedir}/../ots-cosim-0mq/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-swing/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-swing/apidocs/</url>
               <location>${basedir}/../ots-swing/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-trafficcontrol/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-trafficcontrol/apidocs/</url>
               <location>${basedir}/../ots-trafficcontrol/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-web/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-web/apidocs/</url>
               <location>${basedir}/../ots-web/target/site/apidocs/</location>
             </offlineLink>
             <offlineLink>
-              <url>https://opentrafficsim.org/docs/latest/ots-xml/apidocs/</url>
+              <url>https://opentrafficsim.org/docs/${project.version}/ots-xml/apidocs/</url>
               <location>${basedir}/../ots-xml/target/site/apidocs/</location>
             </offlineLink>
           </offlineLinks>
