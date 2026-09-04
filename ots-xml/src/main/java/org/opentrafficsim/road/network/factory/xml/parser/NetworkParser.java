@@ -665,55 +665,56 @@ public final class NetworkParser
     static void buildConflicts(final RoadNetwork otsNetwork, final Network network, final Eval eval)
             throws XmlParserException, NetworkException
     {
-        if (network.getConflicts() != null && network.getConflicts().getNone() == null)
+
+        WidthGenerator widthGenerator;
+        if (network.getConflicts() == null || network.getConflicts().getDefaultWidth() != null)
         {
-            WidthGenerator widthGenerator;
-            if (network.getConflicts().getFixedWidth() != null)
-            {
-                widthGenerator = new FixedWidthGenerator(network.getConflicts().getFixedWidth().get(eval));
-            }
-            else if (network.getConflicts().getRelativeWidth() != null)
-            {
-                widthGenerator = new RelativeWidthGenerator(network.getConflicts().getRelativeWidth().get(eval));
-            }
-            else if (network.getConflicts().getDefaultWidth() != null)
-            {
-                widthGenerator = new FixedWidthGenerator(Length.ofSI(2.0));
-            }
-            else
-            {
-                throw new XmlParserException("Conflicts tag contains no valid element.");
-            }
-
-            Logger.ots().info("Generating conflicts");
-            Map<String, Set<org.opentrafficsim.core.network.Link>> conflictCandidateMap = new LinkedHashMap<>();
-            for (Link link : network.getLink())
-            {
-                if (link.getConflictId() != null)
-                {
-                    if (!conflictCandidateMap.containsKey(link.getConflictId().get(eval)))
-                    {
-                        conflictCandidateMap.put(link.getConflictId().get(eval), new LinkedHashSet<>());
-                    }
-                    conflictCandidateMap.get(link.getConflictId().get(eval)).add(getLink(otsNetwork, link.getId()));
-                }
-            }
-            Logger.ots().info("Map size of conflict candidate regions = {}", conflictCandidateMap.size());
-
-            // TODO: if there is any conflict ID specified, conflictCandidateMap is filled, and no other conflict anywhere will
-            // be generated. How can we combine generation and specifying conflict IDs?
-            // TODO: specify where conflicts are directly?
-            if (conflictCandidateMap.size() == 0)
-            {
-                ConflictBuilder.buildConflictsParallel(otsNetwork, otsNetwork.getSimulator(), widthGenerator);
-            }
-            else
-            {
-                ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap, otsNetwork.getSimulator(),
-                        widthGenerator);
-            }
-            Logger.ots().info("Object map size = {}", otsNetwork.getObjectMap().size());
+            widthGenerator = new FixedWidthGenerator(Length.ofSI(2.0));
         }
+        else if (network.getConflicts().getNone() != null)
+        {
+            return;
+        }
+        else if (network.getConflicts().getFixedWidth() != null)
+        {
+            widthGenerator = new FixedWidthGenerator(network.getConflicts().getFixedWidth().get(eval));
+        }
+        else if (network.getConflicts().getRelativeWidth() != null)
+        {
+            widthGenerator = new RelativeWidthGenerator(network.getConflicts().getRelativeWidth().get(eval));
+        }
+        else
+        {
+            throw new XmlParserException("Conflicts tag contains no valid element.");
+        }
+
+        Logger.ots().info("Generating conflicts");
+        Map<String, Set<org.opentrafficsim.core.network.Link>> conflictCandidateMap = new LinkedHashMap<>();
+        for (Link link : network.getLink())
+        {
+            if (link.getConflictId() != null)
+            {
+                if (!conflictCandidateMap.containsKey(link.getConflictId().get(eval)))
+                {
+                    conflictCandidateMap.put(link.getConflictId().get(eval), new LinkedHashSet<>());
+                }
+                conflictCandidateMap.get(link.getConflictId().get(eval)).add(getLink(otsNetwork, link.getId()));
+            }
+        }
+        Logger.ots().info("Map size of conflict candidate regions = {}", conflictCandidateMap.size());
+
+        // TODO: if there is any conflict ID specified, conflictCandidateMap is filled, and no other conflict anywhere will
+        // be generated. How can we combine generation and specifying conflict IDs?
+        // TODO: specify where conflicts are directly?
+        if (conflictCandidateMap.isEmpty())
+        {
+            ConflictBuilder.buildConflictsParallel(otsNetwork, otsNetwork.getSimulator(), widthGenerator);
+        }
+        else
+        {
+            ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap, otsNetwork.getSimulator(), widthGenerator);
+        }
+        Logger.ots().info("Object map size = {}", otsNetwork.getObjectMap().size());
     }
 
     /**

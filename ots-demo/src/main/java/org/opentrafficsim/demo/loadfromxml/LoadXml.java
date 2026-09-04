@@ -176,7 +176,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             this.network = new RoadNetwork(getShortName(), getSimulator());
             try
             {
-                XmlParser xmlParser = new XmlParser(this.network).setParseConflict(true)
+                XmlParser xmlParser = new XmlParser(this.network)
                         .setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
                 xmlParser.build();
             }

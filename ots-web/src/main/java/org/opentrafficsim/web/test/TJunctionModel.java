@@ -35,8 +35,7 @@ public class TJunctionModel extends AbstractOtsModel
         try
         {
             this.network = new RoadNetwork("TJunction", getSimulator());
-            new XmlParser(this.network).setResource("/resources/conflict/TJunction.xml").setParseConflict(true).setScenario("1")
-                    .build();
+            new XmlParser(this.network).setResource("/resources/conflict/TJunction.xml").setScenario("1").build();
         }
         catch (Exception exception)
         {

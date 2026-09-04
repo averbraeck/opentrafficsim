@@ -154,11 +154,11 @@
             </xsd:element>
           </xsd:sequence>
         </xsd:choice>
-        
+
         <xsd:element name="TrafficLight" type="ots:TrafficLightType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="TrafficLightSensor" type="ots:TrafficLightDetectorType" minOccurs="0"
           maxOccurs="unbounded" />
-          
+
       </xsd:sequence>
 
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
@@ -213,8 +213,8 @@
         </xsd:element>
         <xsd:element name="Conflicts" minOccurs="0">
           <xsd:annotation>
-            <xsd:documentation xml:lang="en">Default width is 2m. None creates no conflicts. Relative width is
-              relative to lane width. Otherwise specify width.
+            <xsd:documentation xml:lang="en">None creates no conflicts. Default width is 2m. Fixed width uses
+              specified value. Relative width is relative to lane width. If nothing is specified the default width is applied.
             </xsd:documentation>
           </xsd:annotation>
           <xsd:complexType>
@@ -229,7 +229,7 @@
         <xsd:element name="Flattener" type="ots:FlattenerType" minOccurs="0" />
       </xsd:sequence>
     </xsd:complexType>
-    
+
   </xsd:element>
 
   <!-- ================================================================================================== -->

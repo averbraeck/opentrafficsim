@@ -8,15 +8,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
@@ -45,7 +42,6 @@ import org.opentrafficsim.road.network.CrossSectionLink;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
-import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
@@ -92,7 +88,7 @@ public final class OdParser
      * @param otsNetwork network
      * @param definitions parsed definitions.
      * @param demand demand
-     * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU templates
+     * @param gtuTemplates GTU templates
      * @param definedLaneBiases defined lane biases
      * @param factory factory from model parser
      * @param streamMap stream map
@@ -103,10 +99,9 @@ public final class OdParser
      * @throws NetworkException if a node cannot be found
      */
     public static List<LaneBasedGtuGenerator> parseOd(final RoadNetwork otsNetwork, final Definitions definitions,
-            final Demand demand, final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates,
-            final Map<String, LaneBias> definedLaneBiases, final LaneBasedStrategicalPlannerFactory<?> factory,
-            final StreamInformation streamMap, final ScenarioType scenario, final Eval eval)
-            throws XmlParserException, NetworkException
+            final Demand demand, final Set<GtuTemplate> gtuTemplates, final Map<String, LaneBias> definedLaneBiases,
+            final LaneBasedStrategicalPlannerFactory<?> factory, final StreamInformation streamMap, final ScenarioType scenario,
+            final Eval eval) throws XmlParserException, NetworkException
     {
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
 
@@ -179,8 +174,7 @@ public final class OdParser
             addDemand(categories, globalFactor, odMatrix, demandPerOD, eval);
 
             // OD options
-            Set<GtuTemplate> templates = parseGtuTemplates(definitions, gtuTemplates, streamMap, eval);
-            OdOptions odOptions = parseOdOptions(otsNetwork, definitions, templates, definedLaneBiases, factory, streamMap,
+            OdOptions odOptions = parseOdOptions(otsNetwork, definitions, gtuTemplates, definedLaneBiases, factory, streamMap,
                     odOptionsMap, od, categorization, eval);
 
             // Invoke OdApplier
@@ -546,47 +540,6 @@ public final class OdParser
             }
         }
         return odOptions;
-    }
-
-    /**
-     * @param definitions definitions to get GTU types in categories.
-     * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU template tags.
-     * @param streamMap random streams.
-     * @param eval expression evaluator.
-     * @return GTU templates.
-     * @throws XmlParserException when a distribution cannot be parsed.
-     */
-    private static Set<GtuTemplate> parseGtuTemplates(final Definitions definitions,
-            final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates, final StreamInformation streamMap,
-            final Eval eval) throws XmlParserException
-    {
-        Set<GtuTemplate> templates = new LinkedHashSet<>();
-        for (org.opentrafficsim.xml.generated.GtuTemplate template : gtuTemplates.values())
-        {
-            GtuType gtuType = definitions.getOrThrow(GtuType.class, template.getGtuType().get(eval));
-            Supplier<Length> lengthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getLengthDist(),
-                    template.getLengthDist().getLengthUnit().get(eval), eval);
-            Supplier<Length> widthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getWidthDist(),
-                    template.getWidthDist().getLengthUnit().get(eval), eval);
-            Supplier<Speed> maximumSpeedGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getMaxSpeedDist(),
-                    template.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
-            if (template.getMaxAccelerationDist() == null || template.getMaxDecelerationDist() == null)
-            {
-                templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
-            }
-            else
-            {
-                Supplier<Acceleration> maxAccelerationGenerator =
-                        ParseDistribution.parseContinuousDist(streamMap, template.getMaxAccelerationDist(),
-                                template.getMaxAccelerationDist().getAccelerationUnit().get(eval), eval);
-                Supplier<Acceleration> maxDecelerationGenerator =
-                        ParseDistribution.parseContinuousDist(streamMap, template.getMaxDecelerationDist(),
-                                template.getMaxDecelerationDist().getAccelerationUnit().get(eval), eval);
-                templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
-                        maxAccelerationGenerator, maxDecelerationGenerator));
-            }
-        }
-        return templates;
     }
 
     /**

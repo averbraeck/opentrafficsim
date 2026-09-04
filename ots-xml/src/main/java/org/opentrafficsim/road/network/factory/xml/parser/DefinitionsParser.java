@@ -5,7 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
@@ -17,6 +20,7 @@ import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.Definitions;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.object.DetectorType;
@@ -25,15 +29,17 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.RoadPosition;
 import org.opentrafficsim.road.network.LaneType;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
+import org.opentrafficsim.road.network.factory.xml.utils.ParseDistribution;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.Compatibility;
-import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.GtuTypeSpeedLimit;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.SpeedLimit;
 import org.opentrafficsim.xml.generated.StripeType;
 import org.opentrafficsim.xml.generated.TemporalSpeedLimit;
+
+import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 
 /**
  * DefinitionParser parses the XML nodes of the Definitions tag: org.opentrafficsim.xml.generated.GtuType, GtuTemplate,
@@ -57,19 +63,20 @@ public final class DefinitionsParser
     /**
      * Parse the Definitions tag in the OTS XML file.
      * @param definitions the Definitions tag
-     * @param roadLayoutMap temporary storage for the road layouts
-     * @param gtuTemplates map of GTU templates for the OD and/or Generators
+     * @param roadLayoutTags temporary storage for the road layouts
+     * @param gtuTemplateTags map of GTU templates for the OD and/or Generators
      * @param laneBiases map of lane biases for the OD parser
      * @param infraSpeedLimitMap map with speed limit information per link type
-     * @param stripes stripes
+     * @param stripeTags stripes
      * @param eval expression evaluator.
      * @return the parsed definitions
      * @throws XmlParserException on parsing error
      */
     public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
-            final Map<String, RoadLayout> roadLayoutMap, final Map<String, GtuTemplate> gtuTemplates,
+            final Map<String, RoadLayout> roadLayoutTags,
+            final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplateTags,
             final Map<String, LaneBias> laneBiases, final Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap,
-            final Map<String, StripeType> stripes, final Eval eval) throws XmlParserException
+            final Map<String, StripeType> stripeTags, final Eval eval) throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
 
@@ -100,7 +107,7 @@ public final class DefinitionsParser
             {
                 getDefinition(GtuType.class, parsedDefinitions, templateTag.getGtuType(), "GtuTemplate", templateTag.getId(),
                         "GtuType", eval);
-                gtuTemplates.put(templateTag.getId(), templateTag);
+                gtuTemplateTags.put(templateTag.getId(), templateTag);
             }
         };
         BiConsumerThrows<StripeType, Object> stripeConsumer = new BiConsumerThrows<>()
@@ -108,7 +115,7 @@ public final class DefinitionsParser
             @Override
             public void accept(final StripeType stripeTag, final Object dummy)
             {
-                stripes.put(stripeTag.getId(), stripeTag);
+                stripeTags.put(stripeTag.getId(), stripeTag);
             }
         };
         BiConsumerThrows<org.opentrafficsim.xml.generated.RoadLayout, Object> roadLayoutConsumer = new BiConsumerThrows<>()
@@ -116,7 +123,7 @@ public final class DefinitionsParser
             @Override
             public void accept(final org.opentrafficsim.xml.generated.RoadLayout layoutTag, final Object dummy)
             {
-                roadLayoutMap.put(layoutTag.getId(), layoutTag);
+                roadLayoutTags.put(layoutTag.getId(), layoutTag);
             }
         };
         BiConsumerThrows<org.opentrafficsim.xml.generated.LaneBias, Object> biasConsumer = new BiConsumerThrows<>()
@@ -135,10 +142,10 @@ public final class DefinitionsParser
                 org.opentrafficsim.xml.generated.GtuType.class, GtuType.class, null, eval);
         // explicit type definitions may be required for javac that maven runs, even if the IDE compiler accepts it without
         DefinitionsParser.<org.opentrafficsim.xml.generated.LinkTypes, org.opentrafficsim.xml.generated.SpeedLimitInfraType,
-                LinkType>parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
+                LinkType> parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
                         org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LinkType.class, infraTypeConsumer, eval);
         DefinitionsParser.<org.opentrafficsim.xml.generated.LaneTypes, org.opentrafficsim.xml.generated.SpeedLimitInfraType,
-                LaneType>parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
+                LaneType> parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
                         org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LaneType.class, infraTypeConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.DetectorTypes.class,
                 org.opentrafficsim.xml.generated.DetectorType.class, DetectorType.class, null, eval);
@@ -388,6 +395,48 @@ public final class DefinitionsParser
                 }
             }
         }
+    }
+
+    /**
+     * @param definitions definitions to get GTU types in categories.
+     * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU template tags.
+     * @param streamMap random streams.
+     * @param eval expression evaluator.
+     * @return GTU templates.
+     * @throws XmlParserException when a distribution cannot be parsed.
+     */
+    public static Map<String, GtuTemplate> parseGtuTemplates(final Definitions definitions,
+            final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplates, final StreamInformation streamMap,
+            final Eval eval) throws XmlParserException
+    {
+        Map<String, GtuTemplate> templates = new LinkedHashMap<>();
+        for (org.opentrafficsim.xml.generated.GtuTemplate template : gtuTemplates.values())
+        {
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, template.getGtuType().get(eval));
+            Supplier<Length> lengthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getLengthDist(),
+                    template.getLengthDist().getLengthUnit().get(eval), eval);
+            Supplier<Length> widthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getWidthDist(),
+                    template.getWidthDist().getLengthUnit().get(eval), eval);
+            Supplier<Speed> maximumSpeedGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getMaxSpeedDist(),
+                    template.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
+            if (template.getMaxAccelerationDist() == null || template.getMaxDecelerationDist() == null)
+            {
+                templates.put(template.getId(),
+                        new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
+            }
+            else
+            {
+                Supplier<Acceleration> maxAccelerationGenerator =
+                        ParseDistribution.parseContinuousDist(streamMap, template.getMaxAccelerationDist(),
+                                template.getMaxAccelerationDist().getAccelerationUnit().get(eval), eval);
+                Supplier<Acceleration> maxDecelerationGenerator =
+                        ParseDistribution.parseContinuousDist(streamMap, template.getMaxDecelerationDist(),
+                                template.getMaxDecelerationDist().getAccelerationUnit().get(eval), eval);
+                templates.put(template.getId(), new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
+                        maxAccelerationGenerator, maxDecelerationGenerator));
+            }
+        }
+        return templates;
     }
 
     /**

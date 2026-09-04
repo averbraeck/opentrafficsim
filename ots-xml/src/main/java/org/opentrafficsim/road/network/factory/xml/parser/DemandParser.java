@@ -15,14 +15,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djutils.data.Column;
 import org.djutils.data.ListTable;
 import org.djutils.data.Table;
@@ -46,7 +44,6 @@ import org.opentrafficsim.core.network.route.FixedRouteGenerator;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.object.DetectorType;
-import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.Injections;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
@@ -70,7 +67,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimits;
 import org.opentrafficsim.road.od.OdOptions;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.bindings.types.StringType;
-import org.opentrafficsim.xml.generated.ConstantDistType;
 import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.GtuTemplateMix;
@@ -834,56 +830,15 @@ public final class DemandParser
     {
         String gtuTypeId = templateTag.getGtuType().get(eval);
         GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeId);
-        Supplier<Length> lengthGenerator = makeGenerator(streamInformation, templateTag.getLengthDist(),
+        Supplier<Length> lengthGenerator = ParseDistribution.parseContinuousDist(streamInformation, templateTag.getLengthDist(),
                 templateTag.getLengthDist().getLengthUnit().get(eval), eval);
-        Supplier<Length> widthGenerator = makeGenerator(streamInformation, templateTag.getWidthDist(),
+        Supplier<Length> widthGenerator = ParseDistribution.parseContinuousDist(streamInformation, templateTag.getWidthDist(),
                 templateTag.getWidthDist().getLengthUnit().get(eval), eval);
-        Supplier<Speed> maximumSpeedGenerator = makeGenerator(streamInformation, templateTag.getMaxSpeedDist(),
-                templateTag.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
+        Supplier<Speed> maximumSpeedGenerator = ParseDistribution.parseContinuousDist(streamInformation,
+                templateTag.getMaxSpeedDist(), templateTag.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
         LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(gtuType, lengthGenerator, widthGenerator,
                 maximumSpeedGenerator, strategicalFactory, routeGenerator);
         return templateGtuType;
-    }
-
-    /**
-     * Parse a unit-based distribution into a Generator.
-     * @param <T> djunits type
-     * @param <U> unit type
-     * @param streamMap the map with predefined streams
-     * @param distribution the tag to parse (sub class of ConstantDistType)
-     * @param unit unit as taken from the tag
-     * @param eval expression evaluator.
-     * @return the generator
-     * @throws XmlParserException on parse error
-     */
-    private static <T extends DoubleScalarRel<U, T>, U extends Unit<U>> Supplier<T> makeGenerator(
-            final StreamInformation streamMap, final ConstantDistType distribution, final U unit, final Eval eval)
-            throws XmlParserException
-    {
-        try
-        {
-            final ContinuousDistDoubleScalar.Rel<T, U> dist =
-                    ParseDistribution.parseContinuousDist(streamMap, distribution, unit, eval);
-            Supplier<T> generator = new Supplier<T>()
-            {
-                @Override
-                public T get()
-                {
-                    return dist.get();
-                }
-
-                @Override
-                public String toString()
-                {
-                    return "Generator<>(" + dist.getDistribution().toString() + " " + dist.getDisplayUnit() + ")";
-                }
-            };
-            return generator;
-        }
-        catch (Exception exception)
-        {
-            throw new XmlParserException(exception);
-        }
     }
 
     /**

@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
@@ -42,7 +44,6 @@ import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.DefinitionsParser.SpeedLimits;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.xml.generated.Demand;
-import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.ModelType;
 import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.Ots;
@@ -86,9 +87,6 @@ public final class XmlParser
 
     /** Scenario to parse. */
     private String scenario;
-
-    /** Whether to parse conflicts. */
-    private boolean parseConflicts;
 
     /** Main OTS tag. */
     private Ots ots;
@@ -151,18 +149,6 @@ public final class XmlParser
     }
 
     /**
-     * Set whether to parse conflicts.
-     * @param parseConflicts whether to parse conflicts.
-     * @return this parser for method chaining.
-     */
-    @SuppressWarnings("hiddenfield")
-    public XmlParser setParseConflict(final boolean parseConflicts)
-    {
-        this.parseConflicts = parseConflicts;
-        return this;
-    }
-
-    /**
      * Build the simulation.
      * @return parse result
      * @throws IllegalStateException if no file, URL or stream has been set
@@ -186,7 +172,7 @@ public final class XmlParser
         Throw.when(this.built, IllegalStateException.class,
                 "Parser has already built the simulation in to the provided network.");
         this.built = true;
-        return build(getOts(), this.network, this.scenario, this.parseConflicts, getEval());
+        return build(getOts(), this.network, this.scenario, getEval());
     }
 
     /**
@@ -318,7 +304,6 @@ public final class XmlParser
      * @param ots the OTS object
      * @param otsNetwork the network to insert the parsed objects in
      * @param scenario scenario name, may bee {@code null} to use default values.
-     * @param buildConflicts whether to build conflicts or not
      * @param eval evaluator as parsed through {@link ScenarioParser#parseInputParameters}
      * @return parse result
      * @throws JAXBException when the parsing fails
@@ -333,10 +318,10 @@ public final class XmlParser
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    private static ParseResult build(final Ots ots, final RoadNetwork otsNetwork, final String scenario,
-            final boolean buildConflicts, final Eval eval) throws JAXBException, URISyntaxException, NetworkException,
-            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
-            MalformedURLException, IOException, TrafficControlException
+    private static ParseResult build(final Ots ots, final RoadNetwork otsNetwork, final String scenario, final Eval eval)
+            throws JAXBException, URISyntaxException, NetworkException, XmlParserException, SAXException,
+            ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
+            TrafficControlException
     {
         // run
         StreamSeedInformation streamInformation = RunParser.parseStreams(ots.getRun(), eval);
@@ -344,13 +329,13 @@ public final class XmlParser
                 RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator(), eval);
 
         // definitions
-        Map<String, StripeType> stripes = new LinkedHashMap<>();
-        Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
-        Map<String, GtuTemplate> gtuTemplates = new LinkedHashMap<>();
+        Map<String, StripeType> stripeTags = new LinkedHashMap<>();
+        Map<String, RoadLayout> roadLayoutTags = new LinkedHashMap<>();
+        Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplateTags = new LinkedHashMap<>();
         Map<String, LaneBias> laneBiases = new LinkedHashMap<>();
         Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap = new LinkedHashMap<>();
-        Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutMap, gtuTemplates,
-                laneBiases, infraSpeedLimitMap, stripes, eval);
+        Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutTags, gtuTemplateTags,
+                laneBiases, infraSpeedLimitMap, stripeTags, eval);
 
         // network
         Network network = ots.getNetwork();
@@ -358,12 +343,9 @@ public final class XmlParser
         Map<String, OffsetCurve2d> designLines = new LinkedHashMap<>();
         Map<String, CurveFlattener> flatteners = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, otsNetwork.getSimulator(), designLines, flatteners, eval);
-        NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, infraSpeedLimitMap, designLines,
-                flatteners, stripes, eval);
-        if (buildConflicts)
-        {
-            NetworkParser.buildConflicts(otsNetwork, network, eval);
-        }
+        NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutTags, infraSpeedLimitMap, designLines,
+                flatteners, stripeTags, eval);
+        NetworkParser.buildConflicts(otsNetwork, network, eval);
 
         // routes, generators and sinks
         Demand demand = ots.getDemand();
@@ -376,10 +358,10 @@ public final class XmlParser
                     DemandParser.parseShortestRouteMix(otsNetwork, demand, eval);
 
             IdSupplier idGenerator = new IdSupplier("");
-            List<LaneBasedGtuGenerator> generators = DemandParser.parseGenerators(otsNetwork, definitions, demand, gtuTemplates,
-                    routeMixMap, shortestRouteMixMap, streamInformation, idGenerator, eval);
+            List<LaneBasedGtuGenerator> generators = DemandParser.parseGenerators(otsNetwork, definitions, demand,
+                    gtuTemplateTags, routeMixMap, shortestRouteMixMap, streamInformation, idGenerator, eval);
             Logger.ots().trace("Created {} generators based on explicit generator definitions", generators.size());
-            generators = DemandParser.parseInjectionGenerators(otsNetwork, definitions, demand, gtuTemplates, routeMixMap,
+            generators = DemandParser.parseInjectionGenerators(otsNetwork, definitions, demand, gtuTemplateTags, routeMixMap,
                     shortestRouteMixMap, streamInformation, idGenerator, eval);
             // System.out
             // .println("Created " + generators.size() + " generators based on explicit injection generator definitions");
@@ -406,6 +388,8 @@ public final class XmlParser
             }
         }
 
+        Map<String, GtuTemplate> gtuTemplates =
+                DefinitionsParser.parseGtuTemplates(definitions, gtuTemplateTags, streamInformation, eval);
         if (demand != null)
         {
             // OD generators
@@ -432,8 +416,8 @@ public final class XmlParser
                 throw new XmlParserException(
                         "Mutliple models defined, but no scenario, or no model within scenario, specifies which to use.");
             }
-            List<LaneBasedGtuGenerator> generators = OdParser.parseOd(otsNetwork, definitions, demand, gtuTemplates, laneBiases,
-                    factory, streamInformation, selectedScenario, eval);
+            List<LaneBasedGtuGenerator> generators = OdParser.parseOd(otsNetwork, definitions, demand,
+                    new LinkedHashSet<>(gtuTemplates.values()), laneBiases, factory, streamInformation, selectedScenario, eval);
             Logger.ots().trace("Created {} generators based on origin destination matrices", generators.size());
         }
 
@@ -444,15 +428,18 @@ public final class XmlParser
                     eval);
         }
 
-        return new ParseResult(runControl, definitions);
+        return new ParseResult(runControl, definitions, gtuTemplates, laneBiases);
     }
 
     /**
      * Result from parsing.
      * @param runControl run control information
+     * @param gtuTemplates GTU templates
      * @param definitions created definitions
+     * @param laneBiases lane biases
      */
-    public record ParseResult(ExperimentRunControl<Duration> runControl, Definitions definitions)
+    public record ParseResult(ExperimentRunControl<Duration> runControl, Definitions definitions,
+            Map<String, GtuTemplate> gtuTemplates, Map<String, LaneBias> laneBiases)
     {
     }
 

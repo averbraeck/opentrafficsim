@@ -97,8 +97,8 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     @XmlElement(name = "GtuTypeSpeedLimits")
     protected Network.GtuTypeSpeedLimits gtuTypeSpeedLimits;
     /**
-     * Default width is 2m. None creates no conflicts. Relative width is
-     *               relative to lane width. Otherwise specify width.
+     * None creates no conflicts. Default width is 2m. Fixed width uses
+     *               specified value. Relative width is relative to lane width. If nothing is specified the default width is applied.
      * 
      */
     @XmlElement(name = "Conflicts")
@@ -291,8 +291,8 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     }
 
     /**
-     * Default width is 2m. None creates no conflicts. Relative width is
-     *               relative to lane width. Otherwise specify width.
+     * None creates no conflicts. Default width is 2m. Fixed width uses
+     *               specified value. Relative width is relative to lane width. If nothing is specified the default width is applied.
      * 
      * @return
      *     possible object is
