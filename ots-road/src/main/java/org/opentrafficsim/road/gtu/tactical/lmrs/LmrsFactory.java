@@ -31,6 +31,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
+import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.parameters.ParameterFactoryOneShot;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
@@ -355,8 +356,9 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     /** Car-following model: IDM, IDM_PLUS (default) or IDM_PLUS_MULTI. */
     @Option(names = {"--carFollowingModel"}, description = "Car-following model: IDM, IDM_PLUS or IDM_PLUS_MULTI",
             defaultValue = "IDM_PLUS", split = "\\|", splitSynopsisLabel = "|", converter = CarFollowingModelConverter.class)
-    private List<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> carFollowingModel =
-            listOf(IdmPlus::new);
+    private List<
+            BiFunction<? super DesiredHeadwayModel, ? super DesiredSpeedModel, ? extends CarFollowingModel>> carFollowingModel =
+                    listOf(IdmPlus::new);
 
     /** Lane change synchronization: PASSIVE (default), PASSIVE_MOVING, ALIGN_GAP or ACTIVE. */
     @Option(names = {"--synchronization"},
@@ -388,7 +390,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private List<Boolean> incentiveGetInLane = listOf(false);
 
     /** Custom mandatory incentives. */
-    private List<Set<Supplier<MandatoryIncentive>>> customMandatoryIncentives = listOf(new LinkedHashSet<>());
+    private List<Set<Supplier<? extends MandatoryIncentive>>> customMandatoryIncentives = listOf(new LinkedHashSet<>());
 
     // LMRS -> Voluntary incentives
 
@@ -419,7 +421,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private List<Boolean> incentiveKeep = listOf(true);
 
     /** Custom voluntary incentives. */
-    private List<Set<Supplier<VoluntaryIncentive>>> customVoluntaryIncentives = listOf(new LinkedHashSet<>());
+    private List<Set<Supplier<? extends VoluntaryIncentive>>> customVoluntaryIncentives = listOf(new LinkedHashSet<>());
 
     // LMRS -> Acceleration incentives
 
@@ -446,9 +448,15 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private List<Boolean> accelerationNoSlowLaneOvertake = listOf(false);
 
     /** Custom acceleration incentives. */
-    private List<Set<Supplier<AccelerationIncentive>>> customAccelerationIncentives = listOf(new LinkedHashSet<>());
+    private List<Set<Supplier<? extends AccelerationIncentive>>> customAccelerationIncentives = listOf(new LinkedHashSet<>());
 
-    // Fuller
+    // Perception
+
+    /** Custom perception categories. */
+    private List<Set<BiFunction<? super LanePerception, ? super Projection,
+            ? extends PerceptionCategory<?, ?>>>> customPerceptionCategories = listOf(new LinkedHashSet<>());
+
+    // Perception -> Fuller
 
     /** Implementation of Fuller: NONE (default), SUMMATIVE, ANTICIPATION_RELIANCE or ATTENTION_MATRIX. */
     @Option(names = {"--fullerImplementation"},
@@ -476,7 +484,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             defaultValue = "0.0", split = "\\|", splitSynopsisLabel = "|")
     private List<Double> fractionOverEstimation = listOf(1.0);
 
-    // Fuller -> Tasks
+    // Perception -> Fuller -> Tasks
 
     /** Enables car-following task (default: true). */
     @Option(names = {"--carFollowingTask"}, description = "Enables car-following task", defaultValue = "true", split = "\\|",
@@ -529,7 +537,14 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> roadSideDistractionTask = listOf(false);
 
-    // Fuller -> Adaptations
+    /** Custom summative or anticipation reliance tasks. */
+    private List<Set<? extends ArTask>> customArTasks = listOf(new LinkedHashSet<>());
+
+    /** Custom channel tasks. */
+    private List<Set<Function<? super LanePerception, ? extends Set<? extends ChannelTask>>>> customChannelTasks =
+            listOf(new LinkedHashSet<>());
+
+    // Perception -> Fuller -> Adaptations
 
     /** Enables behavioral speed adaptation. */
     @Option(names = {"--speedAdaptation"}, description = "Enables behavioral speed adaptation", defaultValue = "true",
@@ -550,6 +565,9 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     @Option(names = {"--updateTimeAdaptation"}, description = "Enables behavioral update time adaptation",
             defaultValue = "false", split = "\\|", splitSynopsisLabel = "|", negatable = true)
     private List<Boolean> updateTimeAdaptation = listOf(false);
+
+    /** Custom behavioral adaptation. */
+    private List<Set<? extends BehavioralAdaptation>> customBehavioralAdaptations = listOf(new LinkedHashSet<>());
 
     // Social interactions
 
@@ -1065,43 +1083,9 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         Mental mental;
         Estimation estimation;
         Anticipation anticipation;
-
         if (FullerImplementation.ATTENTION_MATRIX.equals(get(this.fullerImplementation, gtuType)))
         {
-            // tasks
-            LinkedHashSet<Function<LanePerception, Set<ChannelTask>>> taskSuppliers = new LinkedHashSet<>();
-            addChannelTask(taskSuppliers, get(this.carFollowingTask, gtuType), ChannelTaskCarFollowing.SUPPLIER);
-            addChannelTask(taskSuppliers, get(this.freeAccelerationTask, gtuType), ChannelTaskAcceleration.SUPPLIER);
-            addChannelTask(taskSuppliers, get(this.trafficLightsTask, gtuType), ChannelTaskTrafficLight.SUPPLIER);
-            addChannelTask(taskSuppliers, get(this.signalTask, gtuType), ChannelTaskSignal.SUPPLIER);
-            addChannelTask(taskSuppliers, get(this.laneChangingTask, gtuType), ChannelTaskLaneChange.SUPPLIER);
-            addChannelTask(taskSuppliers, get(this.cooperationTask, gtuType), ChannelTaskCooperation.SUPPLIER);
-            addChannelTask(taskSuppliers, get(this.intersectionTask, gtuType), ChannelTaskIntersection.SUPPLIER);
-            addChannelTask(taskSuppliers, get(this.roadSideDistractionTask, gtuType),
-                    new ChannelTaskRoadSideDistraction.Supplier(gtu));
-            addChannelTask(taskSuppliers, true, ChannelTaskScan.SUPPLIER);
-
-            // behavioral adaptation
-            Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
-            if (get(this.speedAdaptation, gtuType))
-            {
-                behavioralAdapatations.add(new AdaptationSpeedChannel());
-            }
-            if (get(this.headwayAdaptation, gtuType))
-            {
-                behavioralAdapatations.add(new AdaptationHeadway());
-            }
-            if (get(this.laneChangeAdaptation, gtuType))
-            {
-                behavioralAdapatations.add(AdaptationLaneChangeDesire.SINGLETON);
-            }
-            if (get(this.updateTimeAdaptation, gtuType))
-            {
-                behavioralAdapatations.add(AdaptationUpdateTime.SINGLETON);
-            }
-
-            mental = new ChannelFuller(taskSuppliers, behavioralAdapatations);
-
+            mental = getChannelFuller(gtu, gtuType);
             estimation = get(this.neighborEstimation, gtuType) ? FactorEstimation.SINGLETON : Estimation.NONE;
             anticipation = get(this.temporalAnticipation, gtuType) ? Anticipation.CONSTANT_SPEED : Anticipation.NONE;
         }
@@ -1113,66 +1097,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         }
         else
         {
-            // SUMMATIVE or ANTICIPATION_RELIANCE
-            Set<ArTask> tasks = new LinkedHashSet<>();
-            FullerImplementation fullerImpl = get(this.fullerImplementation, gtuType);
-
-            // tasks
-            if (get(this.carFollowingTask, gtuType))
-            {
-                Throw.when(get(this.alternateCarFollowingTask, gtuType), IllegalStateException.class,
-                        "Both carFollowingTask and alternateCarFollowingTask are true");
-                tasks.add(ArTaskCarFollowing.SINGLETON);
-            }
-            else if (get(this.alternateCarFollowingTask, gtuType))
-            {
-                tasks.add(ArTaskCarFollowingExp.SINGLETON);
-            }
-            if (get(this.laneChangingTask, gtuType))
-            {
-                Throw.when(get(this.alternateLaneChangingTask, gtuType), IllegalStateException.class,
-                        "Both laneChangingTask and alternateLaneChangingTask are true");
-                tasks.add(ArTaskLaneChanging.SINGLETON);
-            }
-            else if (get(this.alternateLaneChangingTask, gtuType))
-            {
-                tasks.add(ArTaskLaneChangingD.SINGLETON);
-            }
-            if (get(this.roadSideDistractionTask, gtuType))
-            {
-                tasks.add(new ArTaskRoadSideDistraction(gtu));
-            }
-
-            // behavioral adaptation
-            Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
-            if (get(this.speedAdaptation, gtuType))
-            {
-                behavioralAdapatations.add(new AdaptationSpeed());
-            }
-            if (get(this.headwayAdaptation, gtuType))
-            {
-                behavioralAdapatations.add(new AdaptationHeadway());
-            }
-            if (get(this.laneChangeAdaptation, gtuType))
-            {
-                behavioralAdapatations.add(AdaptationLaneChangeDesire.SINGLETON);
-            }
-            behavioralAdapatations.add(new AdaptationSituationalAwareness());
-
-            // summative or anticipation reliance
-            if (FullerImplementation.SUMMATIVE.equals(fullerImpl))
-            {
-                mental = new SumFuller<>(tasks, behavioralAdapatations);
-            }
-            else if (FullerImplementation.ANTICIPATION_RELIANCE.equals(fullerImpl))
-            {
-                mental = new ArFuller(tasks, behavioralAdapatations, get(this.primaryTask, gtuType));
-            }
-            else
-            {
-                throw new IllegalArgumentException("Unable to load Fuller model from setting " + fullerImpl);
-            }
-
+            mental = getArOrSummativeFuller(gtu, gtuType);
             estimation = get(this.neighborEstimation, gtuType) ? FactorEstimation.SINGLETON : Estimation.NONE;
             anticipation = get(this.temporalAnticipation, gtuType) ? Anticipation.CONSTANT_SPEED : Anticipation.NONE;
         }
@@ -1202,7 +1127,56 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
             perception.addPerceptionCategory(new DirectNeighborsPerception(perception, headwayGtuType));
             perception.addPerceptionCategory(new DirectIntersectionPerception(perception, headwayGtuType));
         }
+        Projection projection = new Projection(estimation, anticipation);
+        get(this.customPerceptionCategories, gtuType)
+                .forEach((customFunction) -> perception.addPerceptionCategory(customFunction.apply(perception, projection)));
+
         return perception;
+    }
+
+    /**
+     * Returns channel fuller.
+     * @param gtu GTU
+     * @param gtuType GTU type
+     * @return channel fuller
+     */
+    private Mental getChannelFuller(final LaneBasedGtu gtu, final GtuType gtuType)
+    {
+        // tasks
+        Set<Function<? super LanePerception, ? extends Set<? extends ChannelTask>>> taskSuppliers = new LinkedHashSet<>();
+        addChannelTask(taskSuppliers, get(this.carFollowingTask, gtuType), ChannelTaskCarFollowing.SUPPLIER);
+        addChannelTask(taskSuppliers, get(this.freeAccelerationTask, gtuType), ChannelTaskAcceleration.SUPPLIER);
+        addChannelTask(taskSuppliers, get(this.trafficLightsTask, gtuType), ChannelTaskTrafficLight.SUPPLIER);
+        addChannelTask(taskSuppliers, get(this.signalTask, gtuType), ChannelTaskSignal.SUPPLIER);
+        addChannelTask(taskSuppliers, get(this.laneChangingTask, gtuType), ChannelTaskLaneChange.SUPPLIER);
+        addChannelTask(taskSuppliers, get(this.cooperationTask, gtuType), ChannelTaskCooperation.SUPPLIER);
+        addChannelTask(taskSuppliers, get(this.intersectionTask, gtuType), ChannelTaskIntersection.SUPPLIER);
+        addChannelTask(taskSuppliers, get(this.roadSideDistractionTask, gtuType),
+                new ChannelTaskRoadSideDistraction.Supplier(gtu));
+        addChannelTask(taskSuppliers, true, ChannelTaskScan.SUPPLIER);
+        taskSuppliers.addAll(get(this.customChannelTasks, gtuType));
+
+        // behavioral adaptation
+        Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
+        if (get(this.speedAdaptation, gtuType))
+        {
+            behavioralAdapatations.add(new AdaptationSpeedChannel());
+        }
+        if (get(this.headwayAdaptation, gtuType))
+        {
+            behavioralAdapatations.add(new AdaptationHeadway());
+        }
+        if (get(this.laneChangeAdaptation, gtuType))
+        {
+            behavioralAdapatations.add(AdaptationLaneChangeDesire.SINGLETON);
+        }
+        if (get(this.updateTimeAdaptation, gtuType))
+        {
+            behavioralAdapatations.add(AdaptationUpdateTime.SINGLETON);
+        }
+        behavioralAdapatations.addAll(get(this.customBehavioralAdaptations, gtuType));
+
+        return new ChannelFuller(taskSuppliers, behavioralAdapatations);
     }
 
     /**
@@ -1211,12 +1185,81 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      * @param task whether to add task
      * @param supplier supplier for the task
      */
-    private void addChannelTask(final LinkedHashSet<Function<LanePerception, Set<ChannelTask>>> taskSuppliers,
-            final boolean task, final Function<LanePerception, Set<ChannelTask>> supplier)
+    private void addChannelTask(final Set<Function<? super LanePerception, ? extends Set<? extends ChannelTask>>> taskSuppliers,
+            final boolean task, final Function<? super LanePerception, ? extends Set<? extends ChannelTask>> supplier)
     {
         if (task)
         {
             taskSuppliers.add(supplier);
+        }
+    }
+
+    /**
+     * Returns AR or summative fuller.
+     * @param gtu GTU
+     * @param gtuType GTU type
+     * @return AR or summative fuller
+     */
+    private Mental getArOrSummativeFuller(final LaneBasedGtu gtu, final GtuType gtuType)
+    {
+        // tasks
+        Set<ArTask> tasks = new LinkedHashSet<>();
+        if (get(this.carFollowingTask, gtuType))
+        {
+            Throw.when(get(this.alternateCarFollowingTask, gtuType), IllegalStateException.class,
+                    "Both carFollowingTask and alternateCarFollowingTask are true");
+            tasks.add(ArTaskCarFollowing.SINGLETON);
+        }
+        else if (get(this.alternateCarFollowingTask, gtuType))
+        {
+            tasks.add(ArTaskCarFollowingExp.SINGLETON);
+        }
+        if (get(this.laneChangingTask, gtuType))
+        {
+            Throw.when(get(this.alternateLaneChangingTask, gtuType), IllegalStateException.class,
+                    "Both laneChangingTask and alternateLaneChangingTask are true");
+            tasks.add(ArTaskLaneChanging.SINGLETON);
+        }
+        else if (get(this.alternateLaneChangingTask, gtuType))
+        {
+            tasks.add(ArTaskLaneChangingD.SINGLETON);
+        }
+        if (get(this.roadSideDistractionTask, gtuType))
+        {
+            tasks.add(new ArTaskRoadSideDistraction(gtu));
+        }
+        tasks.addAll(get(this.customArTasks, gtuType));
+
+        // behavioral adaptation
+        Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
+        if (get(this.speedAdaptation, gtuType))
+        {
+            behavioralAdapatations.add(new AdaptationSpeed());
+        }
+        if (get(this.headwayAdaptation, gtuType))
+        {
+            behavioralAdapatations.add(new AdaptationHeadway());
+        }
+        if (get(this.laneChangeAdaptation, gtuType))
+        {
+            behavioralAdapatations.add(AdaptationLaneChangeDesire.SINGLETON);
+        }
+        behavioralAdapatations.add(new AdaptationSituationalAwareness());
+        behavioralAdapatations.addAll(get(this.customBehavioralAdaptations, gtuType));
+
+        // summative or anticipation reliance
+        FullerImplementation fullerImpl = get(this.fullerImplementation, gtuType);
+        if (FullerImplementation.SUMMATIVE.equals(fullerImpl))
+        {
+            return new SumFuller<>(tasks, behavioralAdapatations);
+        }
+        else if (FullerImplementation.ANTICIPATION_RELIANCE.equals(fullerImpl))
+        {
+            return new ArFuller(tasks, behavioralAdapatations, get(this.primaryTask, gtuType));
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unable to load Fuller model from setting " + fullerImpl);
         }
     }
 
@@ -1254,8 +1297,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         // LMRS
 
         /** Car-following model: IDM, IDM_PLUS (default) or IDM_PLUS_MULTI. */
-        public static final Setting<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> CAR_FOLLOWING_MODEL =
-                new Setting<>((factory) -> factory.carFollowingModel);
+        public static final Setting<BiFunction<? super DesiredHeadwayModel, ? super DesiredSpeedModel,
+                ? extends CarFollowingModel>> CAR_FOLLOWING_MODEL = new Setting<>((factory) -> factory.carFollowingModel);
 
         /** Lane change synchronization: PASSIVE (default), PASSIVE_MOVING, ALIGN_GAP or ACTIVE. */
         public static final Setting<Synchronization> SYNCHRONIZATION = new Setting<>((factory) -> factory.synchronization);
@@ -1275,7 +1318,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public static final Setting<Boolean> INCENTIVE_GET_IN_LANE = new Setting<>((factory) -> factory.incentiveGetInLane);
 
         /** Custom mandatory lane change incentives. */
-        public static final Setting<Set<Supplier<MandatoryIncentive>>> CUSTOM_MANDATORY_INCENTIVES =
+        public static final Setting<Set<Supplier<? extends MandatoryIncentive>>> CUSTOM_MANDATORY_INCENTIVES =
                 new Setting<>((factory) -> factory.customMandatoryIncentives);
 
         // LMRS -> Voluntary incentives
@@ -1298,7 +1341,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public static final Setting<Boolean> INCENTIVE_KEEP = new Setting<>((factory) -> factory.incentiveKeep);
 
         /** Custom voluntary lane change incentives. */
-        public static final Setting<Set<Supplier<VoluntaryIncentive>>> CUSTOM_VOLUNTARY_INCENTIVES =
+        public static final Setting<Set<Supplier<? extends VoluntaryIncentive>>> CUSTOM_VOLUNTARY_INCENTIVES =
                 new Setting<>((factory) -> factory.customVoluntaryIncentives);
 
         // LMRS -> Acceleration incentives
@@ -1319,10 +1362,17 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
                 new Setting<>((factory) -> factory.accelerationNoSlowLaneOvertake);
 
         /** Custom acceleration incentives. */
-        public static final Setting<Set<Supplier<AccelerationIncentive>>> CUSTOM_ACCELERATION_INCENTIVES =
+        public static final Setting<Set<Supplier<? extends AccelerationIncentive>>> CUSTOM_ACCELERATION_INCENTIVES =
                 new Setting<>((factory) -> factory.customAccelerationIncentives);
 
-        // Fuller
+        // Perception
+
+        /** Implementation of Fuller: NONE (default), SUMMATIVE, ANTICIPATION_RELIANCE or ATTENTION_MATRIX. */
+        public static final Setting<Set<BiFunction<? super LanePerception, ? super Projection,
+                ? extends PerceptionCategory<?, ?>>>> CUSTOM_PERCEPTION_CATEGORIES =
+                        new Setting<>((factory) -> factory.customPerceptionCategories);
+
+        // Perception -> Fuller
 
         /** Implementation of Fuller: NONE (default), SUMMATIVE, ANTICIPATION_RELIANCE or ATTENTION_MATRIX. */
         public static final Setting<FullerImplementation> FULLER_IMPLEMENTATION =
@@ -1341,7 +1391,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public static final Setting<Double> FRACTION_OVERESTIMATION =
                 new Setting<>((factory) -> factory.fractionOverEstimation);
 
-        // Fuller -> Tasks
+        // Perception -> Fuller -> Tasks
 
         /** Enables car-following task (default: true). */
         public static final Setting<Boolean> TASK_CAR_FOLLOWING = new Setting<>((factory) -> factory.carFollowingTask);
@@ -1376,7 +1426,15 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         public static final Setting<Boolean> TASK_ROADSIDE_DISTRACTION =
                 new Setting<>((factory) -> factory.roadSideDistractionTask);
 
-        // Fuller -> Adaptations
+        /** Custom summative or anticipation reliance tasks. */
+        public static final Setting<Set<? extends ArTask>> CUSTOM_AR_TASKS = new Setting<>((factory) -> factory.customArTasks);
+
+        /** Custom attention matrix tasks. */
+        public static final Setting<
+                Set<Function<? super LanePerception, ? extends Set<? extends ChannelTask>>>> CUSTOM_CHANNEL_TASKS =
+                        new Setting<>((factory) -> factory.customChannelTasks);
+
+        // Perception -> Fuller -> Adaptations
 
         /** Enables behavioral speed adaptation (default: true). */
         public static final Setting<Boolean> ADAPTATION_SPEED = new Setting<>((factory) -> factory.speedAdaptation);
@@ -1389,6 +1447,10 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
         /** Enables behavioral update time adaptation under ATTENTION_MATRIX (default: false). */
         public static final Setting<Boolean> ADAPTATION_UPDATE_TIME = new Setting<>((factory) -> factory.updateTimeAdaptation);
+
+        /** Custom behavioral adaptations. */
+        public static final Setting<Set<? extends BehavioralAdaptation>> CUSTOM_BEHAVIORAL_ADAPTATION =
+                new Setting<>((factory) -> factory.customBehavioralAdaptations);
 
         // Social interactions
 
@@ -1424,6 +1486,15 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         {
             return this.listFunction;
         }
+    }
+
+    /**
+     * Combination of {@link Estimation} and {@link Anticipation} as optionally used to construct custom perception categories.
+     * @param estimation estimation
+     * @param anticipation anticipation
+     */
+    public record Projection(Estimation estimation, Anticipation anticipation)
+    {
     }
 
     /**

@@ -86,7 +86,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
     };
 
     /** Task suppliers. */
-    private Set<Function<LanePerception, Set<ChannelTask>>> taskSuppliers = new LinkedHashSet<>();
+    private Set<Function<? super LanePerception, ? extends Set<? extends ChannelTask>>> taskSuppliers = new LinkedHashSet<>();
 
     /** Set of tasks as derived from suppliers. */
     private Set<ChannelTask> tasks;
@@ -108,7 +108,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
      * @param taskSuppliers task suppliers.
      * @param behavioralAdapatations behavioral adaptations.
      */
-    public ChannelFuller(final Collection<Function<LanePerception, Set<ChannelTask>>> taskSuppliers,
+    public ChannelFuller(final Collection<Function<? super LanePerception, ? extends Set<? extends ChannelTask>>> taskSuppliers,
             final Set<BehavioralAdaptation> behavioralAdapatations)
     {
         super(behavioralAdapatations);
@@ -125,7 +125,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
         Map<Object, Double> channelTaskDemand = new LinkedHashMap<>();
         Set<ChannelTask> gatheredTasks = new LinkedHashSet<>();
         Map<String, ChannelTask> gatheredTaskMap = new LinkedHashMap<>();
-        for (Function<LanePerception, Set<ChannelTask>> taskFunction : this.taskSuppliers)
+        for (Function<? super LanePerception, ? extends Set<? extends ChannelTask>> taskFunction : this.taskSuppliers)
         {
             for (ChannelTask task : taskFunction.apply(perception)) // if applicable will (re)map objects to channel keys
             {
@@ -202,7 +202,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
      * Add task supplier.
      * @param taskSupplier task supplier to add
      */
-    public void addTaskSupplier(final Function<LanePerception, Set<ChannelTask>> taskSupplier)
+    public void addTaskSupplier(final Function<? super LanePerception, ? extends Set<? extends ChannelTask>> taskSupplier)
     {
         this.taskSuppliers.add(taskSupplier);
     }
@@ -211,7 +211,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
      * Remove task supplier.
      * @param taskSupplier task supplier to remove
      */
-    public void removeTaskSupplier(final Function<LanePerception, Set<ChannelTask>> taskSupplier)
+    public void removeTaskSupplier(final Function<? super LanePerception, ? extends Set<? extends ChannelTask>> taskSupplier)
     {
         this.taskSuppliers.remove(taskSupplier);
     }

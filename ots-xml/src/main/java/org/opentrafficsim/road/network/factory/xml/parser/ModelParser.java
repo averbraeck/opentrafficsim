@@ -690,7 +690,7 @@ public final class ModelParser
      * @param gtuType GTU type, may be {@code null}
      * @param eval evaluator for expressions
      */
-    private static <V> void setForModel(final LmrsFactory<Lmrs> lmrsFactory, final ExpressionType<V> expression,
+    private static <V> void setForModel(final LmrsFactory<Lmrs> lmrsFactory, final ExpressionType<? extends V> expression,
             final Setting<V> setting, final GtuType gtuType, final Eval eval)
     {
         if (expression != null)
