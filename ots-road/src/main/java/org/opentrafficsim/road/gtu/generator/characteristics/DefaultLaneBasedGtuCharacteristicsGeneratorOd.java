@@ -118,6 +118,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
                 if (this.templates.containsKey(parent))
                 {
                     gtuCharacteristics = this.templates.get(parent).get();
+                    break;
                 }
                 else
                 {
