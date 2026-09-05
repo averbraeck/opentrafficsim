@@ -123,14 +123,11 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         Lane l = record.getLane();
         if (laneLaw.equals(LaneAccessLaw.LEGAL) && l instanceof Shoulder)
         {
-            if (lane.isCurrent())
+            for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
             {
-                for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
+                if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
                 {
-                    if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
-                    {
-                        out.add(new LaneChangeInfo(1, Length.ZERO, true, lat));
-                    }
+                    out.add(new LaneChangeInfo(1, Length.ZERO, true, lat));
                 }
             }
         }

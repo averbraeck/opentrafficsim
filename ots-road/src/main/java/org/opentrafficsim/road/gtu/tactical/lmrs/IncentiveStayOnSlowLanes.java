@@ -66,14 +66,15 @@ public final class IncentiveStayOnSlowLanes implements VoluntaryIncentive, State
             slow = slow.getRight();
         }
         boolean legalLeft = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).ge0();
-        if (lane.getLateralDirectionality().isRight() && lane.getNumLanes() > 1
-                && context.getSpeed().gt(context.getParameters().getParameter(ParameterTypes.VCONG)))
+        if (lane.getLateralDirectionality().isRight())
         {
-            // must change right
-            return new Desire(legalLeft ? -1.0 : 0.0, context.getParameters().getParameter(LmrsParameters.DSYNC));
-        }
-        if (lane.isRight())
-        {
+            if (lane.getNumLanes() > 1)
+            {
+                // must change right
+                boolean inCongestion = context.getSpeed().lt(context.getParameters().getParameter(ParameterTypes.VCONG));
+                return new Desire(legalLeft ? -1.0 : 0.0,
+                        context.getParameters().getParameter(inCongestion ? LmrsParameters.DFREE : LmrsParameters.DSYNC));
+            }
             // must not change left
             return new Desire(legalLeft ? -1.0 : 0.0, 0.0);
         }
