@@ -873,11 +873,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         // Fuller
         if (!FullerImplementation.NONE.equals(get(this.fullerImplementation, gtuType)))
         {
-            parameters.setParameter(ParameterTypes.TR, Duration.ZERO);
             parameters.setDefaultParameter(AdaptationSituationalAwareness.TR_MAX);
-            parameters.setParameter(ChannelFuller.EST_FACTOR, 1.0);
-            parameters.setParameter(Fuller.OVER_EST,
-                    this.stream.nextDouble() <= get(this.fractionOverEstimation, gtuType) ? 1.0 : -1.0);
             parameters.setDefaultParameter(ChannelTaskScan.TDSCAN);
             if (get(this.headwayAdaptation, gtuType))
             {
@@ -932,7 +928,10 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
                     parameters.setDefaultParameter(ArTaskCarFollowingExp.HEXP);
                 }
             }
-
+            parameters.setParameter(ParameterTypes.TR, Duration.ZERO);
+            parameters.setParameter(ChannelFuller.EST_FACTOR, 1.0);
+            parameters.setParameter(Fuller.OVER_EST,
+                    this.stream.nextDouble() <= get(this.fractionOverEstimation, gtuType) ? 1.0 : -1.0);
         }
 
         // Social interactions
