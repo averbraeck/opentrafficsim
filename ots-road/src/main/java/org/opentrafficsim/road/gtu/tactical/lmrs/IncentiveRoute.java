@@ -96,7 +96,9 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
     }
 
     /**
-     * Calculates desire to leave a lane.
+     * Calculates desire to leave a lane. This method returns lane change information regarding regular lanes only. Shoulders
+     * are ignored. There is one exception to this, and that is when a GTU is itself on a shoulder. For that current lane a
+     * relevance of "full desire" is returned.
      * @param context tactical information such as parameters and car-following model
      * @param lane relative lane to evaluate
      * @return desire to leave a lane
@@ -130,10 +132,8 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
      * @param n number of required lane changes
      * @param v current speed
      * @return desire to leave a lane for a single infrastructure info
-     * @throws ParameterException in case of a parameter exception
      */
     public static double getDesireToLeave(final Length x0, final Duration t0, final Length x, final int n, final Speed v)
-            throws ParameterException
     {
         double d1 = 1 - x.si / (n * x0.si);
         double d2 = 1 - (x.si / v.si) / (n * t0.si);

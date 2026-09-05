@@ -10,10 +10,12 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.perception.structure.LaneRecord;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.VoluntaryIncentive;
+import org.opentrafficsim.road.network.Shoulder;
 
 /**
  * Incentive for trucks to remain on the two slowest lanes, unless the route requires otherwise.
@@ -55,11 +57,10 @@ public final class IncentiveStayOnSlowLanes implements VoluntaryIncentive, State
         SortedSet<RelativeLane> rootCrossSection = context.getPerception().getLaneStructure().getRootCrossSection();
         RelativeLane lane = rootCrossSection.first();
         // move to slow lane until we find 'the slowest lane', defined by the last lane where the urgency does not increase
-        double curUrgency = IncentiveRoute.getDesireToLeave(context, lane);
+        double curUrgency = getDesireToLeave(context, lane);
         double slowLaneUrgency;
         RelativeLane slow = lane.getRight();
-        while (rootCrossSection.contains(slow)
-                && (slowLaneUrgency = IncentiveRoute.getDesireToLeave(context, slow)) <= curUrgency)
+        while (rootCrossSection.contains(slow) && (slowLaneUrgency = getDesireToLeave(context, slow)) <= curUrgency)
         {
             curUrgency = slowLaneUrgency;
             lane = slow;
@@ -79,6 +80,25 @@ public final class IncentiveStayOnSlowLanes implements VoluntaryIncentive, State
             return new Desire(legalLeft ? -1.0 : 0.0, 0.0);
         }
         return new Desire(0.0, 0.0);
+    }
+
+    /**
+     * Returns 1.0 on shoulder or result of {@link IncentiveRoute#getDesireToLeave}.
+     * @param context tactical context
+     * @param lane lane
+     * @return 1.0 on shoulder or result of {@link IncentiveRoute#getDesireToLeave}
+     * @throws ParameterException when parameter is not available
+     * @throws OperationalPlanException when infra perception is not available
+     */
+    private static double getDesireToLeave(final TacticalContextEgo context, final RelativeLane lane)
+            throws ParameterException, OperationalPlanException
+    {
+        LaneRecord laneRecord = context.getPerception().getLaneStructure().getRootRecord(lane);
+        if (laneRecord.getLane() instanceof Shoulder)
+        {
+            return 1.0;
+        }
+        return IncentiveRoute.getDesireToLeave(context, lane);
     }
 
     @Override

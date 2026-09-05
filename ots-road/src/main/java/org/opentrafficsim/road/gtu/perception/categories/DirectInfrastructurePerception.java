@@ -123,13 +123,21 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         Lane l = record.getLane();
         if (laneLaw.equals(LaneAccessLaw.LEGAL) && l instanceof Shoulder)
         {
-            for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
+            if (lane.isCurrent())
             {
-                if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
+                for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
                 {
-                    out.add(new LaneChangeInfo(1, Length.ZERO, true, lat));
+                    if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
+                    {
+                        out.add(new LaneChangeInfo(1, Length.ZERO, true, lat));
+                    }
                 }
             }
+            /*
+             * Note that we cannot return urgency on adjacent shoulders. This would negate any incentive for synchronization or
+             * cooperation before an actual merge, if there is a shoulder. We have to regard the shoulder as logically not
+             * existing, and therefore add nothing to the lane change information.
+             */
         }
         else
         {

@@ -45,6 +45,9 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      *
+     * This method returns lane change information regarding regular lanes only. Shoulders are ignored. There is one exception
+     * to this, and that is when a GTU is itself on a shoulder. For that current lane a relevance of "1 lane change in 0m" is
+     * returned.
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
