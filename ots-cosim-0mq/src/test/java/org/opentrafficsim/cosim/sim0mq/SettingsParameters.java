@@ -20,6 +20,8 @@ import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
 
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.OptionSpec;
+import picocli.CommandLine.Model.OptionSpec.Builder;
+import picocli.CommandLine.Option;
 
 /**
  * Prints markdown tables for settings and parameters supported in co-simulation.
@@ -31,6 +33,12 @@ import picocli.CommandLine.Model.OptionSpec;
  */
 public final class SettingsParameters
 {
+
+    /** Wrapper classes and their primitive classes. */
+    private static final Map<Class<?>,
+            Class<?>> WRAPPER_TO_PRIMITIVE = Map.of(Boolean.class, boolean.class, Byte.class, byte.class, Character.class,
+                    char.class, Short.class, short.class, Integer.class, int.class, Long.class, long.class, Float.class,
+                    float.class, Double.class, double.class, Void.class, void.class);
 
     /** Map of parameter types by their id. */
     private static final Map<String, ParameterType<?>> PARAMETER_MAP = Parameters.PARAMETER_MAP;
@@ -109,23 +117,26 @@ public final class SettingsParameters
         };
 
         // Loop options in different specs and store name and description in maps
-        CommandSpec sim0mqSpec = CommandSpec.forAnnotatedObject(new OtsTransceiverSim0mq());
         CommandSpec transceiverSpec = CommandSpec.forAnnotatedObject(transceiver);
+        CommandSpec sim0mqSpec = CommandSpec.forAnnotatedObject(new OtsTransceiverSim0mq());
         CommandSpec modelSpec = CommandSpec.forAnnotatedObject(new LmrsFactory<>(ScenarioTacticalPlanner::new));
-        Map<String, String> sim0mqMap = new LinkedHashMap<>();
-        Map<String, String> transceiverMap = new LinkedHashMap<>();
-        Map<String, String> modelMap = new LinkedHashMap<>();
-        for (OptionSpec option : sim0mqSpec.options())
-        {
-            sim0mqMap.put(option.longestName(), option.description()[0]);
-        }
+        Map<String, SettingInfo> transceiverMap = new LinkedHashMap<>();
+        Map<String, SettingInfo> sim0mqMap = new LinkedHashMap<>();
+        Map<String, SettingInfo> modelMap = new LinkedHashMap<>();
         for (OptionSpec option : transceiverSpec.options())
         {
-            transceiverMap.put(option.longestName(), option.description()[0]);
+            transceiverMap.put(option.longestName(),
+                    new SettingInfo(getType(option.toBuilder()), option.defaultValueString(), option.description()[0]));
+        }
+        for (OptionSpec option : sim0mqSpec.options())
+        {
+            sim0mqMap.put(option.longestName(),
+                    new SettingInfo(getType(option.toBuilder()), option.defaultValueString(), option.description()[0]));
         }
         for (OptionSpec option : modelSpec.options())
         {
-            modelMap.put(option.longestName(), option.description()[0]);
+            modelMap.put(option.longestName(),
+                    new SettingInfo(getType(option.toBuilder()), option.defaultValueString(), option.description()[0]));
         }
 
         // Remove fields from deeper components so we can create tables at each level
@@ -136,16 +147,16 @@ public final class SettingsParameters
         // Remove fields from picocli we do not want to use and other settings not supported by the transceiver
         for (String option : Set.of("--help", "--version", "--gtuTypes"))
         {
-            sim0mqMap.remove(option);
             transceiverMap.remove(option);
+            sim0mqMap.remove(option);
             modelMap.remove(option);
         }
 
-        System.out.println("== Sim0mq settings ==");
-        printSettingsMap(sim0mqMap);
-        System.out.println();
         System.out.println("== Transceiver settings ==");
         printSettingsMap(transceiverMap);
+        System.out.println();
+        System.out.println("== Sim0mq settings ==");
+        printSettingsMap(sim0mqMap);
         System.out.println();
         System.out.println("== Model settings ==");
         printSettingsMap(modelMap);
@@ -153,29 +164,78 @@ public final class SettingsParameters
     }
 
     /**
+     * Returns tabular name of the type in the builder surrounded by backwards quotes. If the type is a primitive wrapper, the
+     * primitive name is returned. If the description of the builder contains {@code :}, the type is regarded as an enumeration
+     * with an internal converter. This means that to the user this is a {@code String}, which will be returned by this method.
+     * @param builder builder of a command line {@link Option}.
+     * @return tabular name of the type in the builder surrounded by backwards quotes
+     */
+    private static String getType(final Builder builder)
+    {
+        if (builder.description()[0].contains(":"))
+        {
+            return "`String`";
+        }
+        Class<?> typeClass = builder.type().getSimpleName().equals("List") ? builder.auxiliaryTypes()[0] : builder.type();
+        return "`" + getClassName(typeClass) + "`";
+    }
+
+    /**
+     * Returns tabular name of the type. If the type is a primitive wrapper, the primitive name is returned.
+     * @param typeClass type class
+     * @return tabular name of the type
+     */
+    private static String getClassName(final Class<?> typeClass)
+    {
+        Class<?> primitive = WRAPPER_TO_PRIMITIVE.get(typeClass);
+        return primitive == null ? typeClass.getSimpleName() : primitive.getSimpleName();
+    }
+
+    /**
      * Prints map with settings as markdown table.
      * @param map map with settings
      */
-    private static void printSettingsMap(final Map<String, String> map)
+    private static void printSettingsMap(final Map<String, SettingInfo> map)
     {
         String settingCol = "Setting";
+        String typeCol = "Type";
+        String defaultCol = "Default";
         String descriptionCol = "Description";
         int settingLength = settingCol.length();
+        int typeLength = typeCol.length();
+        int defaultLength = defaultCol.length();
         int descriptionLength = descriptionCol.length();
-        for (Entry<String, String> entry : map.entrySet())
+        for (Entry<String, SettingInfo> entry : map.entrySet())
         {
             settingLength = Math.max(settingLength, entry.getKey().length());
-            descriptionLength = Math.max(descriptionLength, entry.getValue().length());
+            typeLength = Math.max(typeLength, entry.getValue().type().length());
+            if (entry.getValue().defaultValue() != null)
+            {
+                defaultLength = Math.max(defaultLength, entry.getValue().defaultValue().length());
+            }
+            descriptionLength = Math.max(descriptionLength, entry.getValue().description().length());
         }
 
-        int[] size = new int[] {settingLength, descriptionLength};
-        printRow(" ", new String[] {settingCol, descriptionCol}, size);
-        printRow("-", new String[] {"", ""}, size);
+        int[] size = new int[] {settingLength, typeLength, defaultLength, descriptionLength};
+        printRow(" ", new String[] {settingCol, typeCol, defaultCol, descriptionCol}, size);
+        printRow("-", new String[] {"", "", "", ""}, size);
 
-        for (Entry<String, String> entry : map.entrySet())
+        for (Entry<String, SettingInfo> entry : map.entrySet())
         {
-            printRow(" ", new String[] {entry.getKey(), entry.getValue()}, size);
+            SettingInfo info = entry.getValue();
+            printRow(" ", new String[] {entry.getKey(), info.type(), info.defaultValue() == null ? "" : info.defaultValue(),
+                    info.description()}, size);
         }
+    }
+
+    /**
+     * Info on setting.
+     * @param type type
+     * @param defaultValue default value
+     * @param description description
+     */
+    private record SettingInfo(String type, String defaultValue, String description)
+    {
     }
 
     // ===== Parameters =====
@@ -208,7 +268,7 @@ public final class SettingsParameters
 
         for (ParameterType<?> parameter : PARAMETER_MAP.values())
         {
-            printRow(" ", new String[] {parameter.getId(), "`" + parameter.getValueClass().getSimpleName() + "`",
+            printRow(" ", new String[] {parameter.getId(), "`" + getClassName(parameter.getValueClass()) + "`",
                     defaultValue(parameter.getDefaultValue()), parameter.getDescription()}, size);
         }
     }

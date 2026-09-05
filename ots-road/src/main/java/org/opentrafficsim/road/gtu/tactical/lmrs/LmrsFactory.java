@@ -481,7 +481,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
     /** Fraction of drivers over-estimating speed and distance [0..1] (default: 1). */
     @Option(names = {"--fractionOverEstimation"}, description = "Fraction of drivers over-estimating speed and distance [0..1]",
-            defaultValue = "0.0", split = "\\|", splitSynopsisLabel = "|")
+            defaultValue = "1.0", split = "\\|", splitSynopsisLabel = "|")
     private List<Double> fractionOverEstimation = listOf(1.0);
 
     // Perception -> Fuller -> Tasks
@@ -1387,7 +1387,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         /** Enables estimation of neighboring vehicles. */
         public static final Setting<Boolean> ESTIMATION = new Setting<>((factory) -> factory.neighborEstimation);
 
-        /** Fraction of drivers over-estimating speed and distance [0..1] (default: 0). */
+        /** Fraction of drivers over-estimating speed and distance [0..1] (default: 1.0). */
         public static final Setting<Double> FRACTION_OVERESTIMATION =
                 new Setting<>((factory) -> factory.fractionOverEstimation);
 

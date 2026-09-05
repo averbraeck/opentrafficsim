@@ -11,8 +11,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.cli.CliUtil;
-import org.djutils.event.Event;
-import org.djutils.event.EventListener;
 import org.djutils.serialization.Endianness;
 import org.djutils.serialization.SerializationException;
 import org.djutils.serialization.TypedMessage;
@@ -58,6 +56,7 @@ import com.google.gson.GsonBuilder;
 import ch.qos.logback.classic.Level;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.ITypeConverter;
 import picocli.CommandLine.Option;
 
 /**
@@ -90,15 +89,15 @@ public class OtsTransceiverSim0mq extends AbstractOtsTransceiver
     }
 
     /** Federation id to receive/sent messages. */
-    @Option(names = "--federationId", description = "Federation id to receive/sent messages", defaultValue = "Ots_ExternalSim")
+    @Option(names = "--federationId", description = "Federation ID to receive/sent messages", defaultValue = "Ots_ExternalSim")
     private String federation;
 
     /** OTS id to receive/sent messages. */
-    @Option(names = "--otsId", description = "Ots id to receive/sent messages", defaultValue = "Ots")
+    @Option(names = "--otsId", description = "OTS ID to receive/sent messages", defaultValue = "Ots")
     private String ots;
 
     /** Client id to receive/sent messages. */
-    @Option(names = "--clientId", description = "Client id to receive/sent messages", defaultValue = "ExternalSim")
+    @Option(names = "--clientId", description = "Client ID to receive/sent messages", defaultValue = "ExternalSim")
     private String client;
 
     /** Endianness. */
@@ -110,10 +109,11 @@ public class OtsTransceiverSim0mq extends AbstractOtsTransceiver
     private int port;
 
     /** Logging level. */
-    @Option(names = "--logLevel", description = "Logging level: OFF, ERROR, WARN, INFO, DEBUG or TRACE")
-    private Level logLevel = Level.INFO;
+    @Option(names = "--logLevel", description = "Logging level: OFF, ERROR, WARN, INFO, DEBUG or TRACE", defaultValue = "INFO",
+            converter = LogLevelConverter.class)
+    private Level logLevel;
 
-    /** */
+    /** ZContext. */
     private ZContext context;
 
     /** the socket. */
@@ -153,11 +153,11 @@ public class OtsTransceiverSim0mq extends AbstractOtsTransceiver
     /**
      * Worker thread to listen to messages and respond.
      */
-    protected class Worker extends Thread implements EventListener
+    protected class Worker extends Thread
     {
 
         @Override
-        public void notify(final Event event)
+        public void run()
         {
             OtsTransceiverSim0mq.this.context = new ZContext(1);
             OtsTransceiverSim0mq.this.responder = OtsTransceiverSim0mq.this.context.createSocket(SocketType.PAIR);
@@ -375,6 +375,28 @@ public class OtsTransceiverSim0mq extends AbstractOtsTransceiver
         {
             exception.printStackTrace();
         }
+    }
+
+    /**
+     * Converter for logging level.
+     */
+    private static class LogLevelConverter implements ITypeConverter<Level>
+    {
+        /**
+         * Constructor.
+         */
+        @SuppressWarnings("unused") // referred to in logLevel @Option
+        LogLevelConverter()
+        {
+            //
+        }
+
+        @Override
+        public Level convert(final String value) throws Exception
+        {
+            return Level.valueOf(value);
+        }
+
     }
 
 }
