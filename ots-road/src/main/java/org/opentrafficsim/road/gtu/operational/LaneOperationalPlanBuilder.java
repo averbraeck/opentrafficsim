@@ -327,9 +327,13 @@ public final class LaneOperationalPlanBuilder
         }
         Length distanceToNearest = Length.ofSI(Math.abs(deviation.si - leftOfLane * dCenterLine));
 
-        // Lateral deviation: 0 to 1 within first {LANE_WIDTH}m with sine shape (also applies to lane gap)
-        double fLatDeviation =
-                Math.sin(.5 * Math.PI * Math.min(1.0, Math.max(distanceToNearest.si, laneGap.si) / LANE_WIDTH.si));
+        // Lateral deviation: 0 to 1 per {LANE_WIDTH}m
+        double fLatDeviation = Math.max(distanceToNearest.si, laneGap.si) / LANE_WIDTH.si;
+        /*
+         * This used to be Math.sin(.5 * Math.PI * Math.min(1.0, Math.max(distanceToNearest.si, laneGap.si) / LANE_WIDTH.si)),
+         * but normalizing to a [0-1] range creates wild and exception giving paths when multiple lane changes are performed
+         * quickly within a single move.
+         */
 
         // Difference direction at target point and vehicle direction: 0 to 1 within pi/4
         double dDirection = Math.abs(AngleUtil.normalizeAroundZero(nearestPoint.dirZ - gtu.getLocation().dirZ));

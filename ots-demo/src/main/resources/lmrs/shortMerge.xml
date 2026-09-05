@@ -184,6 +184,7 @@
       <ots:Bezier/>
       <ots:DefinedLayout>1LaneHighway</ots:DefinedLayout>
     </ots:Link>
+    <ots:Conflicts><ots:None/></ots:Conflicts>
   </ots:Network>
   <ots:Demand>
     <ots:Sink Lane="FORWARD1" Link="DE" Position="END-50m" Type="NL.ROAD_USERS"/>
