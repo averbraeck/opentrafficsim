@@ -341,7 +341,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private DistNormalTrunc fSpeedGtuDist;
 
     /** LMRS provider. */
-    private final List<TacticalPlannerProvider<T>> lmrsProvider;
+    private final List<TacticalPlannerProvider<? extends T>> lmrsProvider;
 
     /** GTU type IDs in order of multi-valued arguments. */
     @Option(names = {"--gtuTypes"}, description = "GTU type IDs in order of multi-valued arguments",
@@ -639,7 +639,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      * @throws NullPointerException when gtuTypes or lmrsProviders is null
      * @throws IllegalArgumentException when gtuTypes and lmrsProviders are not of equal size
      */
-    public LmrsFactory(final List<GtuType> gtuTypes, final List<TacticalPlannerProvider<T>> lmrsProviders)
+    public LmrsFactory(final List<GtuType> gtuTypes, final List<TacticalPlannerProvider<? extends T>> lmrsProviders)
     {
         Throw.whenNull(gtuTypes, "gtuTypes");
         Throw.whenNull(lmrsProviders, "lmrsProviders");
