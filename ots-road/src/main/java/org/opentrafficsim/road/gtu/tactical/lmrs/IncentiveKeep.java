@@ -6,6 +6,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
@@ -51,13 +52,25 @@ public final class IncentiveKeep implements VoluntaryIncentive, Stateless<Incent
     {
         Desire voluntarySpeed = voluntaryDesire.get(IncentiveSpeedWithCourtesy.class);
         if ((voluntarySpeed != null && voluntarySpeed.right() < 0) || mandatoryDesire.right() < 0
-                || !context.getPerception().getLaneStructure().exists(RelativeLane.RIGHT))
+                || !regularSlowerLane(context))
         {
             // no desire to go right if more dominant incentives provide a negative desire to go right
             return new Desire(0, 0);
         }
         // keep right with dFree
         return new Desire(0, context.getParameters().getParameter(DFREE));
+    }
+
+    /**
+     * Returns whether there is currently a regular slower lane.
+     * @param context tactical context
+     * @return whether there is currently a regular slower lane
+     * @throws OperationalPlanException when there is no infrastructure perception category
+     */
+    private boolean regularSlowerLane(final TacticalContextEgo context) throws OperationalPlanException
+    {
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        return infra.getCrossSection().contains(RelativeLane.RIGHT) && !infra.isShoulder(RelativeLane.RIGHT);
     }
 
     @Override

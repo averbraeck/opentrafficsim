@@ -56,6 +56,7 @@ import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneGeometryUtil;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.Shoulder;
 import org.opentrafficsim.road.network.Stripe;
 import org.opentrafficsim.road.network.object.RoadSideDistraction;
 import org.opentrafficsim.road.network.object.RoadSideDistraction.TrapezoidProfile;
@@ -237,6 +238,13 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             CrossSectionLink link = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.HIGHWAY, centerLine,
                     ContinuousPiecewiseLinearFunction.of(0.0, 0.0), LaneKeepingPolicy.KEEPRIGHT);
 
+            double offset0 = 5.25;
+            double width0 = 3.5;
+            OtsLine2d offsetLine0 = centerLine.offsetLine(offset0);
+            new Shoulder(link, "LEFT_SHOULDER", new CrossSectionGeometry(offsetLine0, getContour(offsetLine0, width0),
+                    ContinuousPiecewiseLinearFunction.of(0.0, offset0), ContinuousPiecewiseLinearFunction.of(0.0, width0)),
+                    DefaultsRoadNl.HIGHWAY);
+
             double offset1 = 3.5;
             double width1 = 0.2;
             OtsLine2d offsetLine1 = centerLine.offsetLine(offset1);
@@ -268,6 +276,13 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             OtsLine2d offsetLine5 = centerLine.offsetLine(offset5);
             new Stripe("3", DefaultsRoadNl.SOLID, link, new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5),
                     ContinuousPiecewiseLinearFunction.of(0.0, offset5), ContinuousPiecewiseLinearFunction.of(0.0, width5)));
+
+            double offset6 = -5.25;
+            double width6 = 3.5;
+            OtsLine2d offsetLine6 = centerLine.offsetLine(offset6);
+            new Shoulder(link, "RIGHT_SHOULDER", new CrossSectionGeometry(offsetLine6, getContour(offsetLine6, width6),
+                    ContinuousPiecewiseLinearFunction.of(0.0, offset6), ContinuousPiecewiseLinearFunction.of(0.0, width6)),
+                    DefaultsRoadNl.HIGHWAY);
 
             // Add distraction halfway on the network, 0.7 on left lane, 0.5 on right lane, with distance profile
             new RoadSideDistraction("distractionLeft", left, Length.ofSI(1500.0),

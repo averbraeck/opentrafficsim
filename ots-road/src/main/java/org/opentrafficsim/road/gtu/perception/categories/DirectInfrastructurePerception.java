@@ -105,6 +105,16 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         return computeIfAbsent("crossSection", () -> getLaneStructure().getRootCrossSection());
     }
 
+    @Override
+    public boolean isShoulder(final RelativeLane lane)
+    {
+        return computeIfAbsent("isShoulder", () ->
+        {
+            LaneRecord laneRecord = getLaneStructure().getRootRecord(lane);
+            return laneRecord != null && laneRecord.getLane() instanceof Shoulder;
+        }, lane);
+    }
+
     /**
      * Compute lane change info.
      * @param lane lane

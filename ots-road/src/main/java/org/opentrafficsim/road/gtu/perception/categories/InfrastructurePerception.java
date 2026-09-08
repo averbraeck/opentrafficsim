@@ -123,4 +123,11 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      */
     SortedSet<RelativeLane> getCrossSection();
 
+    /**
+     * Returns whether the given lane is a shoulder.
+     * @param lane lane
+     * @return whether the given lane is a shoulder
+     */
+    boolean isShoulder(RelativeLane lane);
+
 }
