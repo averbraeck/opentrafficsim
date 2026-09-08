@@ -165,10 +165,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
                 // over which a lane change is not yet possible, i.e. the merge distance.
                 Length mergeDistance = lane.isCurrent() ? Length.ZERO
                         : Synchronization.getMergeDistance(getPerception(), lane.getLateralDirectionality());
-                for (AccelerationIncentive incentive : getAccelerationIncentives())
-                {
-                    incentive.accelerate(context, lane, mergeDistance);
-                }
+                simplePlan.minimizeAcceleration(getAcceleration(context, lane, mergeDistance));
             }
 
             // apply overruling commands
