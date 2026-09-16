@@ -37,6 +37,9 @@ public class StripeData
     /** Right permeability. */
     private final boolean right;
 
+    /** Whether this is a block stripe. */
+    private final boolean block;
+
     /** Lateral permeability per GTU type and direction. */
     private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
@@ -54,12 +57,14 @@ public class StripeData
      * @param elements list of stripe elements
      * @param left left overall permeability
      * @param right right overall permeability
+     * @param block whether this is a block stripe
      */
-    public StripeData(final List<StripeElement> elements, final boolean left, final boolean right)
+    public StripeData(final List<StripeElement> elements, final boolean left, final boolean right, final boolean block)
     {
         this.elements = elements;
         this.left = left;
         this.right = right;
+        this.block = block;
     }
 
     /**
@@ -70,7 +75,7 @@ public class StripeData
     // TODO this is a bad way to define types and mutable data
     public StripeData copy()
     {
-        StripeData out = new StripeData(new ArrayList<>(), this.left, this.right);
+        StripeData out = new StripeData(new ArrayList<>(), this.left, this.right, this.block);
         out.elements.addAll(this.elements);
         out.permeabilityMap.putAll(this.permeabilityMap);
         out.lateralSync = this.lateralSync;
@@ -133,6 +138,15 @@ public class StripeData
             }
         }
         return lateralDirection.isLeft() ? this.left : this.right;
+    }
+
+    /**
+     * Returns whether this is a block stripe.
+     * @return whether this is a block stripe
+     */
+    public boolean isBlockStripe()
+    {
+        return this.block;
     }
 
     /**

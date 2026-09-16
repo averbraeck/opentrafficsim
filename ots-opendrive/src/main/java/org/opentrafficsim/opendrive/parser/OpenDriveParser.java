@@ -1062,7 +1062,8 @@ public final class OpenDriveParser
             prevOffset = line.getTOffset();
             prevWidth = line.getWidth().si;
         }
-        stripeData = new StripeData(elements, passing, passing);
+        boolean block = false; // no way to derive this properly from OpenDRIVE
+        stripeData = new StripeData(elements, passing, passing, block);
         return stripeData;
     }
 

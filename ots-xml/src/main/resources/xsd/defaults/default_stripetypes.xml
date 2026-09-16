@@ -97,7 +97,7 @@
       <ots:SyncUpstream />
     </ots:DashOffset>
   </ots:StripeType>
-  <ots:StripeType Id="NL.BLOCK" RightChangeLane="true" LeftChangeLane="true" Builtin="true">
+  <ots:StripeType Id="NL.BLOCK" RightChangeLane="true" LeftChangeLane="true" Block="true" Builtin="true">
     <ots:Elements>
       <ots:Line Width="40cm">
         <ots:Dashed>

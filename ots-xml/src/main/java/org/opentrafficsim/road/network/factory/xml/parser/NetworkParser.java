@@ -382,6 +382,10 @@ public final class NetworkParser
                             {
                                 stripe.getCustom().setRightChangeLane(stripeOverride.getRightChangeLane());
                             }
+                            if (stripeOverride.getBlock() != null)
+                            {
+                                stripe.getCustom().setBlock(stripeOverride.getBlock());
+                            }
                             stripe.getCustom().getCompatibility().addAll(stripeOverride.getCompatibility());
                         }
                     }
@@ -522,6 +526,7 @@ public final class NetworkParser
                 custom.setLateralSync(stripeType.getLateralSync());
                 custom.setLeftChangeLane(stripeType.getLeftChangeLane());
                 custom.setRightChangeLane(stripeType.getRightChangeLane());
+                custom.setBlock(stripeType.getBlock());
             }
         }
     }
@@ -580,6 +585,7 @@ public final class NetworkParser
 
         boolean leftLaneChange = false;
         boolean rightLaneChange = false;
+        boolean block = false;
         if (stripeTag.getCustom().getLeftChangeLane() != null)
         {
             leftLaneChange = stripeTag.getCustom().getLeftChangeLane().get(eval);
@@ -588,7 +594,11 @@ public final class NetworkParser
         {
             rightLaneChange = stripeTag.getCustom().getRightChangeLane().get(eval);
         }
-        StripeData stripeData = new StripeData(elements, leftLaneChange, rightLaneChange);
+        if (stripeTag.getCustom().getBlock() != null)
+        {
+            block = stripeTag.getCustom().getBlock().get(eval);
+        }
+        StripeData stripeData = new StripeData(elements, leftLaneChange, rightLaneChange, block);
         Stripe stripe = new Stripe(stripeTag.getId(), stripeData, csl,
                 CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc));
 

@@ -50,6 +50,15 @@ public class Stripe extends CrossSectionElement
     }
 
     /**
+     * Returns whether this is a block stripe.
+     * @return whether this is a block stripe
+     */
+    public boolean isBlockStripe()
+    {
+        return this.data.isBlockStripe();
+    }
+
+    /**
      * Add lateral permeability for a GTU type. This overrules overall stripe permeability. Add NONE to prevent lane changes.
      * Add both LEFT and RIGHT in two calls, to enable lane changes. Add LEFT or RIGHT to enable one direction while prohibiting
      * the other.

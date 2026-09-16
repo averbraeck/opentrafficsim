@@ -255,86 +255,77 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             // not accessible for the given GTU type
             return false;
         }
-        if (direction.equals(LateralDirectionality.LEFT))
-        {
-            // TODO take the cross section slices into account...
-            if (lane.getOffsetAtBegin().si + ADJACENT_MARGIN.si > getOffsetAtBegin().si
-                    && lane.getOffsetAtEnd().si + ADJACENT_MARGIN.si > getOffsetAtEnd().si
-                    && (lane.getOffsetAtBegin().si - lane.getBeginWidth().si / 2.0)
-                            - (getOffsetAtBegin().si + getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
-                    && (lane.getOffsetAtEnd().si - lane.getEndWidth().si / 2.0)
-                            - (getOffsetAtEnd().si + getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
-            {
-                // look at stripes between the two lanes
-                if (!(this instanceof Shoulder) && legal) // may always leave shoulder
-                {
-                    for (CrossSectionElement cse : this.link.getCrossSectionElementList())
-                    {
-                        if (cse instanceof Stripe)
-                        {
-                            Stripe stripe = (Stripe) cse;
-                            // TODO take the cross section slices into account...
-                            if ((getOffsetAtBegin().si < stripe.getOffsetAtBegin().si
-                                    && stripe.getOffsetAtBegin().si < lane.getOffsetAtBegin().si)
-                                    || (getOffsetAtEnd().si < stripe.getOffsetAtEnd().si
-                                            && stripe.getOffsetAtEnd().si < lane.getOffsetAtEnd().si))
-                            {
-                                if (!stripe.isPermeable(gtuType, LateralDirectionality.LEFT))
-                                {
-                                    // there is a stripe forbidding to cross to the adjacent lane
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                }
-                // the lanes are adjacent, and there is no stripe forbidding us to enter that lane
-                // or there is no stripe at all
-                return true;
-            }
-        }
 
-        else
-        // direction.equals(LateralDirectionality.RIGHT)
+        double sign = direction == LateralDirectionality.LEFT ? 1.0 : -1.0;
+        double thisBegin = sign * getOffsetAtBegin().si;
+        double thisEnd = sign * getOffsetAtEnd().si;
+        double laneBegin = sign * lane.getOffsetAtBegin().si;
+        double laneEnd = sign * lane.getOffsetAtEnd().si;
+        double thisAdjacentEdgeBegin = getOffsetAtBegin().si + sign * getBeginWidth().si / 2.0;
+        double laneAdjacentEdgeBegin = lane.getOffsetAtBegin().si - sign * lane.getBeginWidth().si / 2.0;
+        double gapBegin = sign * (laneAdjacentEdgeBegin - thisAdjacentEdgeBegin);
+        double thisAdjacentEdgeEnd = getOffsetAtEnd().si + sign * getEndWidth().si / 2.0;
+        double laneAdjacentEdgeEnd = lane.getOffsetAtEnd().si - sign * lane.getEndWidth().si / 2.0;
+        double gapEnd = sign * (laneAdjacentEdgeEnd - thisAdjacentEdgeEnd);
+        boolean correctSide = laneBegin + ADJACENT_MARGIN.si > thisBegin && laneEnd + ADJACENT_MARGIN.si > thisEnd;
+        boolean adjacent = gapBegin < ADJACENT_MARGIN.si && gapEnd < ADJACENT_MARGIN.si;
+
+        if (correctSide && adjacent)
         {
-            // TODO take the cross section slices into account...
-            if (lane.getOffsetAtBegin().si < getOffsetAtBegin().si + ADJACENT_MARGIN.si
-                    && lane.getOffsetAtEnd().si < getOffsetAtEnd().si + ADJACENT_MARGIN.si
-                    && (getOffsetAtBegin().si - getBeginWidth().si / 2.0)
-                            - (lane.getOffsetAtBegin().si + lane.getBeginWidth().si / 2.0) < ADJACENT_MARGIN.si
-                    && (getOffsetAtEnd().si - getEndWidth().si / 2.0)
-                            - (lane.getOffsetAtEnd().si + lane.getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
+            // look at stripes between the two lanes
+            if (!(this instanceof Shoulder) && legal) // may always leave shoulder
             {
-                // look at stripes between the two lanes
-                if (!(this instanceof Shoulder) && legal) // may always leave shoulder
+                for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                 {
-                    for (CrossSectionElement cse : this.link.getCrossSectionElementList())
+                    if (cse instanceof Stripe stripe)
                     {
-                        if (cse instanceof Stripe)
+                        double stripeBegin = sign * stripe.getOffsetAtBegin().si;
+                        double stripeEnd = sign * stripe.getOffsetAtEnd().si;
+                        boolean stripeBetween = (thisBegin < stripeBegin && stripeBegin < laneBegin)
+                                || (thisEnd < stripeEnd && stripeEnd < laneEnd);
+                        if (stripeBetween && !stripe.isPermeable(gtuType, direction))
                         {
-                            Stripe stripe = (Stripe) cse;
-                            // TODO take the cross section slices into account...
-                            if ((getOffsetAtBegin().si > stripe.getOffsetAtBegin().si
-                                    && stripe.getOffsetAtBegin().si > lane.getOffsetAtBegin().si)
-                                    || (getOffsetAtEnd().si > stripe.getOffsetAtEnd().si
-                                            && stripe.getOffsetAtEnd().si > lane.getOffsetAtEnd().si))
-                            {
-                                if (!stripe.isPermeable(gtuType, LateralDirectionality.RIGHT))
-                                {
-                                    // there is a stripe forbidding to cross to the adjacent lane
-                                    return false;
-                                }
-                            }
+                            // there is a stripe forbidding to cross to the adjacent lane
+                            return false;
                         }
                     }
                 }
-                // the lanes are adjacent, and there is no stripe forbidding us to enter that lane
-                // or there is no stripe at all
-                return true;
             }
+            // the lanes are adjacent, and there is no stripe forbidding us to enter that lane
+            // or there is no stripe at all
+            return true;
         }
 
         // no lanes were found that are close enough laterally.
+        return false;
+    }
+
+    /**
+     * Returns whether the stripe in the given direction is a block stripe.
+     * @param direction direction
+     * @return whether the strip in the given direction is a block stripe.
+     */
+    public boolean isBlockStripe(final LateralDirectionality direction)
+    {
+        double sign = direction == LateralDirectionality.LEFT ? 1.0 : -1.0;
+        Optional<Lane> lateral = direction == LateralDirectionality.LEFT ? getLeft(null) : getRight(null);
+        if (lateral.isEmpty())
+        {
+            return false;
+        }
+        double adjacentDistance = sign * (lateral.get().getOffsetAtBegin().si - getOffsetAtBegin().si);
+        // assumes exactly one stripe between adjacent lanes
+        for (CrossSectionElement cse : this.link.getCrossSectionElementList())
+        {
+            if (cse instanceof Stripe stripe)
+            {
+                double distance = sign * (stripe.getOffsetAtBegin().si - getOffsetAtBegin().si);
+                if (distance > 0.0 && distance < adjacentDistance)
+                {
+                    return stripe.isBlockStripe();
+                }
+            }
+        }
         return false;
     }
 

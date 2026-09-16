@@ -30,6 +30,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *       </sequence>
  *       <attribute name="LeftChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
  *       <attribute name="RightChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
+ *       <attribute name="Block" type="{http://www.opentrafficsim.org/ots}boolean" default="false" />
  *       <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
  *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
  *       <attribute name="Builtin" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
@@ -61,6 +62,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     @XmlAttribute(name = "RightChangeLane", required = true)
     @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected BooleanType rightChangeLane;
+    @XmlAttribute(name = "Block")
+    @XmlJavaTypeAdapter(BooleanAdapter.class)
+    protected BooleanType block;
     @XmlAttribute(name = "LateralSync")
     @XmlJavaTypeAdapter(StripeLateralSyncAdapter.class)
     protected StripeLateralSyncType lateralSync;
@@ -163,6 +167,34 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      */
     public void setRightChangeLane(BooleanType value) {
         this.rightChangeLane = value;
+    }
+
+    /**
+     * Gets the value of the block property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public BooleanType getBlock() {
+        if (block == null) {
+            return new BooleanAdapter().unmarshal("false");
+        } else {
+            return block;
+        }
+    }
+
+    /**
+     * Sets the value of the block property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBlock(BooleanType value) {
+        this.block = value;
     }
 
     /**

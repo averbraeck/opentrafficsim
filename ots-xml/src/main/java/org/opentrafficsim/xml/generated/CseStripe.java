@@ -50,6 +50,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *                   </sequence>
  *                   <attribute name="LeftChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
  *                   <attribute name="RightChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
+ *                   <attribute name="Block" type="{http://www.opentrafficsim.org/ots}boolean" />
  *                   <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
  *                 </restriction>
  *               </complexContent>
@@ -255,6 +256,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      *       </sequence>
      *       <attribute name="LeftChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
      *       <attribute name="RightChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
+     *       <attribute name="Block" type="{http://www.opentrafficsim.org/ots}boolean" />
      *       <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
      *     </restriction>
      *   </complexContent>
@@ -286,6 +288,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         @XmlAttribute(name = "RightChangeLane", required = true)
         @XmlJavaTypeAdapter(BooleanAdapter.class)
         protected BooleanType rightChangeLane;
+        @XmlAttribute(name = "Block")
+        @XmlJavaTypeAdapter(BooleanAdapter.class)
+        protected BooleanType block;
         @XmlAttribute(name = "LateralSync")
         @XmlJavaTypeAdapter(StripeLateralSyncAdapter.class)
         protected StripeLateralSyncType lateralSync;
@@ -416,6 +421,30 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
          */
         public void setRightChangeLane(BooleanType value) {
             this.rightChangeLane = value;
+        }
+
+        /**
+         * Gets the value of the block property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public BooleanType getBlock() {
+            return block;
+        }
+
+        /**
+         * Sets the value of the block property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setBlock(BooleanType value) {
+            this.block = value;
         }
 
         /**

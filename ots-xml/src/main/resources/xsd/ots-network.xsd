@@ -148,6 +148,7 @@
                 </xsd:sequence>
                 <xsd:attribute name="LeftChangeLane" type="ots:boolean" />
                 <xsd:attribute name="RightChangeLane" type="ots:boolean" />
+                <xsd:attribute name="Block" type="ots:boolean" />
                 <xsd:attribute name="LateralSync" type="ots:LateralSync" />
                 <xsd:attribute name="Stripe" type="ots:string" use="required" />
               </xsd:complexType>

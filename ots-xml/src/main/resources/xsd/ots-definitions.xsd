@@ -352,6 +352,7 @@
       </xsd:sequence>
       <xsd:attribute name="LeftChangeLane" type="ots:boolean" use="required" />
       <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
+      <xsd:attribute name="Block" type="ots:boolean" use="optional" default="false" />
       <xsd:attribute name="LateralSync" type="ots:LateralSync" />
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="Builtin" type="xsd:boolean" default="false" />
@@ -404,6 +405,7 @@
             </xsd:sequence>
             <xsd:attribute name="LeftChangeLane" type="ots:boolean" use="required" />
             <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
+            <xsd:attribute name="Block" type="ots:boolean" />
             <xsd:attribute name="LateralSync" type="ots:LateralSync" />
           </xsd:complexType>
         </xsd:element>
