@@ -23,15 +23,22 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.animation.colorer.Colorer;
 import org.opentrafficsim.animation.colorer.trajectory.SynchronizationTrajectoryColorer;
 import org.opentrafficsim.animation.data.gtu.IncentiveGtuColorer;
 import org.opentrafficsim.animation.data.gtu.SynchronizationGtuColorer;
 import org.opentrafficsim.animation.data.util.GraphLaneUtil;
+import org.opentrafficsim.animation.graphs.BarPlot;
 import org.opentrafficsim.animation.graphs.GraphPath;
 import org.opentrafficsim.animation.graphs.PlotScheduler;
 import org.opentrafficsim.animation.graphs.TrajectoryPlot;
+import org.opentrafficsim.animation.graphs.BarPlot.BarDataSource;
+import org.opentrafficsim.animation.graphs.BarPlot.BarPlotData;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -42,7 +49,9 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.ProbabilisticRouteGenerator;
@@ -52,6 +61,7 @@ import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.ShortMerge.ShortMergeModel;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
+import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
@@ -59,6 +69,8 @@ import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
+import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.tactical.Synchronizable;
@@ -79,6 +91,7 @@ import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
+import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
@@ -86,6 +99,7 @@ import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationPanelDecorator;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.swing.gui.TablePanel;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistUniform;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -93,6 +107,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import nl.tudelft.simulation.language.DsolException;
 
 /**
+ * Demo of a short on-ramp where merging vehicles only have ~225m to accelerate from ~20km/h to merge with an acceleration lane
+ * of 65m. This showcases the LMRS synchronization model.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -151,6 +167,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
      */
     private static void addTabs(final OtsSimulationPanel animationPanel, final Network network)
     {
+        // trajectories
         GraphPath<LaneDataRoad> path;
         try
         {
@@ -171,6 +188,24 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         plot.addColorer(new SynchronizationTrajectoryColorer(syncData), false);
         animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "trajectories",
                 plot.getContentPane());
+
+        // lane change statistics
+        LcGapDataSource source = new LcGapDataSource(network);
+        BarPlot lcGapPlot = new BarPlot(scheduler, "Gap distribution", updateInterval, Duration.ZERO,
+                new BarPlotData("Gap [s]", LcGapDataSource.GAP, source));
+        BarPlot lcTtcPlot = new BarPlot(scheduler, "TTC distribution", updateInterval, Duration.ZERO,
+                new BarPlotData("TTC [s]", LcGapDataSource.TTC, source));
+        BarPlot lcAccPlot = new BarPlot(scheduler, "Acceleration distribution", updateInterval, Duration.ZERO,
+                new BarPlotData("dv/dt [m/s\u00B2]", LcGapDataSource.ACCELERATION,
+                        source));
+        SwingPlot lcGapSwingPlot = new SwingPlot(lcGapPlot);
+        SwingPlot lcTtcsSwingPlot = new SwingPlot(lcTtcPlot);
+        SwingPlot lcAccsSwingPlot = new SwingPlot(lcAccPlot);
+        TablePanel charts = new TablePanel(1, 3);
+        charts.setCell(lcGapSwingPlot.getContentPane(), 0, 0);
+        charts.setCell(lcTtcsSwingPlot.getContentPane(), 0, 1);
+        charts.setCell(lcAccsSwingPlot.getContentPane(), 0, 2);
+        animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "lane change stats", charts);
     }
 
     /**
@@ -438,6 +473,200 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 return Optional.ofNullable(sync.getSynchronizationState().toString());
             }
             return Optional.of("N/A");
+        }
+
+    }
+
+    /**
+     * Bar data source that collects lane change information.
+     */
+    private static class LcGapDataSource implements BarDataSource, EventListener
+    {
+
+        /** Gap data key. */
+        public static final String GAP = "Gap";
+
+        /** Time to collision data key. */
+        public static final String TTC = "TTC";
+
+        /** Acceleration data key. */
+        public static final String ACCELERATION = "ACCELERATION";
+
+        /** Maximum gap. */
+        private static final double GAP_MAX = 3.0;
+
+        /** Gap step size. */
+        private static final double GAP_DX = 0.1;
+
+        /** Maximum TTC. */
+        private static final double TTC_MAX = 10.0;
+
+        /** TTC step size. */
+        private static final double TTC_DX = 0.5;
+
+        /** Minimum acceleration. */
+        private static final double ACC_MIN = -5.0;
+
+        /** Maximum acceleration. */
+        private static final double ACC_MAX = 1.0;
+
+        /** Acceleration step size. */
+        private static final double ACC_DX = 0.2;
+
+        /** Network. */
+        private final Network network;
+
+        /** Data map. */
+        private final Map<String, float[][]> data = new LinkedHashMap<>();
+
+        /**
+         * Constructor.
+         * @param network network
+         */
+        LcGapDataSource(final Network network)
+        {
+            this.data.put(GAP, new float[2][(int) (GAP_MAX / GAP_DX)]);
+            this.data.put(TTC, new float[2][(int) (TTC_MAX / TTC_DX)]);
+            this.data.put(ACCELERATION, new float[2][(int) ((ACC_MAX - ACC_MIN) / ACC_DX)]);
+            this.network = network;
+            this.network.addListener(this, Network.GTU_ADD_EVENT, ReferenceType.WEAK);
+            this.network.addListener(this, Network.GTU_REMOVE_EVENT, ReferenceType.WEAK);
+        }
+
+        @Override
+        public double getMinX(final Object key)
+        {
+            return ACCELERATION.equals(key) ? ACC_MIN : 0.0;
+        }
+
+        @Override
+        public double getDx(final Object key)
+        {
+            return GAP.equals(key) ? GAP_DX : (TTC.equals(key) ? TTC_DX : ACC_DX);
+        }
+
+        @Override
+        public float[][] getData(final Object dataKey)
+        {
+            return this.data.get(dataKey);
+        }
+
+        @Override
+        public String[] seriesLabels()
+        {
+            return new String[] {"lag gap", "lead gap"};
+        }
+
+        @Override
+        public void notify(final Event event)
+        {
+            if (event.getType().equals(LaneBasedGtu.LANE_CHANGE_EVENT))
+            {
+                Object[] content = (Object[]) event.getContent();
+                Optional<Gtu> gtu = this.network.getGTU((String) content[0]);
+                if (gtu.isPresent() && gtu.get() instanceof LaneBasedGtu lGtu)
+                {
+                    RelativeLane lane = new RelativeLane(LateralDirectionality.valueOf((String) content[1]), 1);
+
+                    try
+                    {
+                        Iterable<Entry<LaneBasedGtu>> leaders = lGtu.getTacticalPlanner().getPerception().getLaneStructure()
+                                .getFirstDownstreamGtus(lane, RelativePosition.FRONT, RelativePosition.REAR,
+                                        RelativePosition.FRONT, RelativePosition.REAR);
+                        double minLeadGap = Double.MAX_VALUE;
+                        double minLeadTtc = Double.MAX_VALUE;
+                        for (Entry<LaneBasedGtu> entry : leaders)
+                        {
+                            double v = gtu.get().getSpeed().si;
+                            double dv = v - entry.object().getSpeed().si;
+                            double gap = entry.distance().si / v;
+                            double ttc = entry.distance().si / dv;
+                            minLeadGap = gap < minLeadGap ? gap : minLeadGap;
+                            minLeadTtc = 0.0 < ttc && ttc < minLeadTtc ? ttc : minLeadTtc;
+                        }
+                        addValue(minLeadGap, LcGapDataSource.GAP, 1);
+                        addValue(minLeadTtc, LcGapDataSource.TTC, 1);
+
+                        LaneBasedGtu nearestFollower = null;
+                        Iterable<Entry<LaneBasedGtu>> followers = lGtu.getTacticalPlanner().getPerception()
+                                .getLaneStructure().getFirstUpstreamGtus(lane, RelativePosition.REAR,
+                                        RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT);
+                        double minLagGap = Double.MAX_VALUE;
+                        double minLagTtc = Double.MAX_VALUE;
+                        for (Entry<LaneBasedGtu> entry : followers)
+                        {
+                            double v = entry.object().getSpeed().si;
+                            double dv = v - gtu.get().getSpeed().si;
+                            double gap = entry.distance().si / v;
+                            double ttc = entry.distance().si / dv;
+                            if (gap < minLagGap)
+                            {
+                                nearestFollower = entry.object();
+                                minLagGap = gap;
+                            }
+                            minLagTtc = 0.0 < ttc && ttc < minLagTtc ? ttc : minLagTtc;
+                        }
+                        addValue(minLagGap, LcGapDataSource.GAP, 0);
+                        addValue(minLagTtc, LcGapDataSource.TTC, 0);
+
+                        addValue(gtu.get().getAcceleration().si, LcGapDataSource.ACCELERATION, 1);
+                        // get follower acceleration from its first move after the lane change
+                        if (nearestFollower != null)
+                        {
+                            nearestFollower.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
+                        }
+                    }
+                    catch (ParameterException ex)
+                    {
+                        Logger.ots().error("Unable to obtain lane change gap for plot.");
+                    }
+                }
+            }
+            else if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))
+            {
+                Optional<Gtu> gtu = this.network.getGTU((String) ((Object[]) event.getContent())[0]);
+                if (gtu.isPresent() && gtu.get() instanceof LaneBasedGtu lGtu)
+                {
+                    addValue(gtu.get().getAcceleration().si, LcGapDataSource.ACCELERATION, 0);
+                    lGtu.removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
+                }
+            }
+            else if (event.getType().equals(Network.GTU_ADD_EVENT))
+            {
+                Optional<Gtu> gtu = this.network.getGTU((String) event.getContent());
+                if (gtu.isPresent() && gtu.get() instanceof LaneBasedGtu lGtu)
+                {
+                    lGtu.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
+                }
+            }
+            else if (event.getType().equals(Network.GTU_REMOVE_EVENT))
+            {
+                Optional<Gtu> gtu = this.network.getGTU((String) event.getContent());
+                if (gtu.isPresent())
+                {
+                    gtu.get().removeListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
+                }
+            }
+        }
+
+        /**
+         * Add value to data.
+         * @param value value
+         * @param key data key
+         * @param series series within data
+         */
+        private void addValue(final double value, final String key, final int series)
+        {
+            double dx = getDx(key);
+            int item = (int) Math.floor(value / dx);
+            if (ACCELERATION.equals(key))
+            {
+                item -= (int) Math.floor(ACC_MIN / dx);
+            }
+            if (item >= 0 && item < this.data.get(key)[series].length)
+            {
+                this.data.get(key)[series][item]++;
+            }
         }
 
     }
