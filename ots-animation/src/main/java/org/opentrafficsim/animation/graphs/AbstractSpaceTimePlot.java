@@ -1,5 +1,7 @@
 package org.opentrafficsim.animation.graphs;
 
+import java.util.function.Supplier;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.jfree.chart.JFreeChart;
@@ -41,12 +43,13 @@ public abstract class AbstractSpaceTimePlot<S extends PaintState> extends Abstra
      * @param updateInterval regular update interval (simulation time)
      * @param scheduler scheduler
      * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
+     * @param emptyPaintState supplier of initial paint state
      * @param initialEnd initial end time of plots, will be expanded if simulation time exceeds it
      */
     public AbstractSpaceTimePlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
-            final Duration delay, final Duration initialEnd)
+            final Duration delay, final Supplier<S> emptyPaintState, final Duration initialEnd)
     {
-        super(scheduler, caption, updateInterval, delay);
+        super(scheduler, caption, updateInterval, delay, emptyPaintState);
         this.initialEnd = initialEnd;
     }
 

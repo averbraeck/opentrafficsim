@@ -67,7 +67,8 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
     public DistributionPlotExtendedData(final SamplerData<G> samplerData, final GraphPath<? extends LaneData<?>> path,
             final ExtendedDataType<Z, ?, ?, G> dataType, final PlotScheduler plotScheduler, final LabelData<Z> labelData)
     {
-        super(plotScheduler, labelData.caption(), Duration.ofSI(10.0), Duration.ZERO);
+        super(plotScheduler, labelData.caption(), Duration.ofSI(10.0), Duration.ZERO,
+                () -> new DistributionPaintState(Duration.ZERO));
         int n = 1 + (int) Math.round(
                 (labelData.maximum().doubleValue() - labelData.minimum().doubleValue()) / labelData.step().doubleValue());
         this.x = new double[n];
@@ -92,6 +93,8 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
     {
         NumberAxis xAxis = new NumberAxis(xLabel);
         xAxis.setRange(this.x[0], this.x[this.x.length - 1]);
+        xAxis.setLowerMargin(0.0);
+        xAxis.setUpperMargin(0.0);
         NumberAxis yAxis = new NumberAxis("Count [-]");
         yAxis.setAutoRangeIncludesZero(true);
         XYBarRenderer renderer = new XYBarRenderer();
@@ -216,12 +219,6 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
     }
 
     @Override
-    protected DistributionPaintState emptyPaintState()
-    {
-        return new DistributionPaintState(Duration.ZERO);
-    }
-
-    @Override
     protected void calculatePaintState(final Duration time)
     {
         for (Section<? extends LaneData<?>> section : this.path.getSections())
@@ -285,7 +282,7 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
      */
     public record LabelData<Z extends Number>(String caption, String xLabel, Z minimum, Z step, Z maximum)
     {
-    	
+
         /**
          * Constructor.
          * @param caption caption
@@ -300,7 +297,7 @@ public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> e
                     "maximum must be greater than minimum");
             Throw.when(step.doubleValue() <= 0.0, IllegalArgumentException.class, "step must be greater than 0");
         }
-        
+
     }
 
     /**

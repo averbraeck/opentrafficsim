@@ -125,7 +125,9 @@ public class TrajectoryPlot extends AbstractSpaceTimePlot<TrajectoriesPaintState
     public TrajectoryPlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
             final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
-        super(caption, updateInterval, scheduler, Duration.ZERO, DEFAULT_INITIAL_UPPER_TIME_BOUND);
+        super(caption, updateInterval, scheduler, Duration.ZERO,
+                () -> new TrajectoriesPaintState(new OffsetTrajectory[0], new int[0], new Stroke[0], 0, Duration.ZERO),
+                DEFAULT_INITIAL_UPPER_TIME_BOUND);
         Throw.when(path.getNumberOfSeries() > 6, IllegalArgumentException.class, "The trajectory plot supports up to 6 lanes");
         this.samplerData = samplerData;
         this.path = path;
@@ -409,12 +411,6 @@ public class TrajectoryPlot extends AbstractSpaceTimePlot<TrajectoriesPaintState
     protected final Length getEndLocation()
     {
         return this.path.getTotalLength();
-    }
-
-    @Override
-    protected TrajectoriesPaintState emptyPaintState()
-    {
-        return new TrajectoriesPaintState(new OffsetTrajectory[0], new int[0], new Stroke[0], 0, Duration.ZERO);
     }
 
     @Override

@@ -73,7 +73,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot<FdPaintState> implem
     public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
             final FdDataSource source, final FdLine fdLine)
     {
-        super(source.getPlotScheduler(), caption, source.getAggregationPeriod(), source.getDelay());
+        super(source.getPlotScheduler(), caption, source.getAggregationPeriod(), source.getDelay(),
+                () -> new FdPaintState(new FdSeries[0], Duration.ZERO));
         Throw.when(domainQuantity.equals(rangeQuantity), IllegalArgumentException.class,
                 "Domain and range quantity should not be equal.");
         this.fdLine = fdLine;
@@ -244,12 +245,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot<FdPaintState> implem
     {
         this.source.setAggregationPeriod(period);
         invalidate();
-    }
-
-    @Override
-    protected FdPaintState emptyPaintState()
-    {
-        return new FdPaintState(new FdSeries[0], Duration.ZERO);
     }
 
     @Override

@@ -64,7 +64,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSpac
             final BoundsPaintScale paintScale, final LabelData<Z> labelData)
     {
         super(caption, source.getInitialUpdateInterval(), source.getPlotScheduler(), source.getDelay(),
-                DEFAULT_INITIAL_UPPER_TIME_BOUND);
+                () -> new ContourPaintState(new float[0], 1.0, 1.0, 0, false, Duration.ZERO), DEFAULT_INITIAL_UPPER_TIME_BOUND);
         this.source = Throw.whenNull(source, "dataPool");
         this.contourDataType = Throw.whenNull(contourDataType, "contourDataType");
         this.paintScale = Throw.whenNull(paintScale, "paintScale");
@@ -130,12 +130,6 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSpac
         plot.setFixedLegendItems(legend);
         final JFreeChart chart = new JFreeChart(getCaption(), plot);
         return chart;
-    }
-
-    @Override
-    protected ContourPaintState emptyPaintState()
-    {
-        return new ContourPaintState(new float[0], 1.0, 1.0, 0, false, Duration.ZERO);
     }
 
     /**

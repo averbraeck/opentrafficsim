@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import javax.swing.SwingUtilities;
 
@@ -110,15 +111,16 @@ public abstract class AbstractPlot<S extends PaintState> implements Identifiable
      * @param caption caption
      * @param updateInterval regular update interval (simulation time)
      * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
+     * @param emptyPaintState supplier of initial paint state
      */
     public AbstractPlot(final PlotScheduler scheduler, final String caption, final Duration updateInterval,
-            final Duration delay)
+            final Duration delay, final Supplier<S> emptyPaintState)
     {
         this.scheduler = scheduler;
         this.caption = caption;
         this.updateInterval = updateInterval;
         this.delay = delay;
-        this.paintState = emptyPaintState();
+        this.paintState = emptyPaintState.get();
         scheduleUpdateEvent(); // start redraw chain
 
         // worker thread
@@ -149,12 +151,6 @@ public abstract class AbstractPlot<S extends PaintState> implements Identifiable
         thread.setDaemon(true);
         thread.start();
     }
-
-    /**
-     * Returns an empty paint state. This is used at plot initialization.
-     * @return empty paint state.
-     */
-    protected abstract S emptyPaintState();
 
     /**
      * Sets the chart and adds menus and listeners.
@@ -487,7 +483,7 @@ public abstract class AbstractPlot<S extends PaintState> implements Identifiable
     /**
      * Interface for paint state objects.
      */
-    interface PaintState
+    public interface PaintState
     {
 
         /**

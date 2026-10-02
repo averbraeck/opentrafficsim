@@ -1,5 +1,7 @@
 package org.opentrafficsim.animation.graphs;
 
+import java.util.function.Supplier;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.jfree.chart.JFreeChart;
@@ -42,11 +44,12 @@ public abstract class AbstractBoundedPlot<S extends PaintState> extends Abstract
      * @param caption caption
      * @param updateInterval regular update interval (simulation time)
      * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
+     * @param emptyPaintState supplier of initial paint state
      */
     public AbstractBoundedPlot(final PlotScheduler scheduler, final String caption, final Duration updateInterval,
-            final Duration delay)
+            final Duration delay, final Supplier<S> emptyPaintState)
     {
-        super(scheduler, caption, updateInterval, delay);
+        super(scheduler, caption, updateInterval, delay, emptyPaintState);
     }
 
     @Override
