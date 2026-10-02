@@ -623,12 +623,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         enterLane(adjLane, position.si / adjLane.getLength().si);
         this.cachedPositionTime = null;
         this.cachedPosition = null;
-
-        // fire event
-        this.fireTimedEvent(
-                LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
-                        from.lane().getLink().getId(), from.lane().getId(), from.position()},
-                getSimulator().getSimulatorTime());
     }
 
     @Override
