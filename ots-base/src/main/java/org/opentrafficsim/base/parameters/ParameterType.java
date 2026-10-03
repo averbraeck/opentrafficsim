@@ -36,6 +36,9 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected final T defaultValue;
 
+    /** Cached hash code. */
+    private final int hashCode;
+
     /**
      * Construct a new AbstractParameterType with default value, without constraint.
      * @param id short name of the new AbstractParameterType
@@ -88,6 +91,7 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
             throw new OtsRuntimeException(
                     "Default value of parameter '" + getId() + "' does not comply with custom constraints.", pe);
         }
+        this.hashCode = hashCode0();
     }
 
     /**
@@ -175,8 +179,11 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
         return new Column<T>(this.id, this.description, this.valueClass, unit);
     }
 
-    @Override
-    public final int hashCode()
+    /**
+     * computes the hash code.
+     * @return hash code
+     */
+    private int hashCode0()
     {
         final int prime = 31;
         int result = 1;
@@ -188,7 +195,13 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
     }
 
     @Override
-    public final boolean equals(final Object obj)
+    public int hashCode()
+    {
+        return this.hashCode;
+    }
+
+    @Override
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {

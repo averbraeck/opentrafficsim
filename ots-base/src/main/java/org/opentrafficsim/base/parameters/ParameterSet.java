@@ -143,7 +143,7 @@ public class ParameterSet implements Parameters
         Object prevValue = this.previous.remove(parameterType);
         Throw.when(prevValue == null, ParameterException.class,
                 "Reset on parameter of type '%s' could not be performed, it was not set resettable.", parameterType.getId());
-        if (prevValue instanceof Empty)
+        if (prevValue == EMPTY)
         {
             // no value was set before last set, so make parameter type not set
             this.parameters.remove(parameterType);
