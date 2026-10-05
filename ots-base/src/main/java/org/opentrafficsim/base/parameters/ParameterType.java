@@ -125,9 +125,8 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
     /**
      * Retrieve the the default value of this AbstractParameterType.
      * @return the default value of this AbstractParameterType
-     * @throws ParameterException if this AbstractParameterType does not have a default value
      */
-    public final T getDefaultValue() throws ParameterException
+    public final T getDefaultValue()
     {
         return this.defaultValue;
     }

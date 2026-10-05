@@ -82,7 +82,7 @@ class ParametersTest implements ConstraintInterface
         {
             assertEquals(defaultValue, a.getDefaultValue(), "Parameter type default value not properly set.");
         }
-        catch (ParameterException exception)
+        catch (Exception exception)
         {
             fail("Parameter type default value given in constructor was not set.");
         }
@@ -581,7 +581,7 @@ class ParametersTest implements ConstraintInterface
         {
             ld.getDefaultValue();
         }
-        catch (ParameterException pe)
+        catch (Exception ex)
         {
             fail("Could not obtain a default value that was set.");
         }
@@ -602,7 +602,7 @@ class ParametersTest implements ConstraintInterface
             {
                 ld.getDefaultValue();
             }
-            catch (ParameterException pe)
+            catch (Exception ex)
             {
                 fail("Could not obtain a default value that was set.");
             }
