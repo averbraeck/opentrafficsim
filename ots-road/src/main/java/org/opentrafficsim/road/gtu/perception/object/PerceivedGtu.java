@@ -656,6 +656,12 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
             {
                 return PerceivedGtu.this.getBehavior();
             }
+
+            @Override
+            public Length getLaneWidth()
+            {
+                return PerceivedGtu.this.getLaneWidth();
+            }
         };
     }
 
@@ -670,7 +676,7 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
     {
         Throw.whenNull(gtu, "gtu");
         return new PerceivedGtuBase(gtu.getId(), gtu.getType(), gtu.getLength(), gtu.getWidth(), kinematics, Signals.of(gtu),
-                Maneuver.of(gtu), Behavior.of(gtu));
+                Maneuver.of(gtu), Behavior.of(gtu), gtu.getPosition().getLaneWidth());
     }
 
     /**
@@ -685,7 +691,7 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
     {
         Throw.whenNull(gtu, "gtu");
         return new PerceivedGtuBase(gtu.getId(), gtu.getType(), gtu.getLength(), gtu.getWidth(), kinematics,
-                Signals.of(gtu, time), Maneuver.of(gtu, time), Behavior.of(gtu, time));
+                Signals.of(gtu, time), Maneuver.of(gtu, time), Behavior.of(gtu, time), gtu.getPosition(time).getLaneWidth());
     }
 
 }

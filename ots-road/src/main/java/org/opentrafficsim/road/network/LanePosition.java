@@ -36,4 +36,13 @@ public record LanePosition(Lane lane, Length position)
         return position().si / lane().getLength().si;
     }
 
+    /**
+     * Returns the lane width of the lane at this location.
+     * @return the lane width of the lane at this location
+     */
+    public Length getLaneWidth()
+    {
+        return lane().getWidth(getFraction());
+    }
+
 }

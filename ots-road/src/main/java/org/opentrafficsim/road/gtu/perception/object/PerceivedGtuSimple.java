@@ -32,6 +32,9 @@ public class PerceivedGtuSimple extends PerceivedObjectBase implements Perceived
     /** Maneuver. */
     private final Maneuver maneuver;
 
+    /** Lane width. */
+    private final Length laneWidth;
+
     /**
      * Constructor.
      * @param id GTU id
@@ -41,16 +44,19 @@ public class PerceivedGtuSimple extends PerceivedObjectBase implements Perceived
      * @param kinematics kinematics
      * @param signals signals
      * @param maneuver maneuver
+     * @param laneWidth lane width
      * @throws NullPointerException when any input argument is {@code null}
      */
+    @SuppressWarnings("parameternumber")
     public PerceivedGtuSimple(final String id, final GtuType gtuType, final Length length, final Length width,
-            final Kinematics kinematics, final Signals signals, final Maneuver maneuver)
+            final Kinematics kinematics, final Signals signals, final Maneuver maneuver, final Length laneWidth)
     {
         super(id, ObjectType.GTU, length, kinematics);
         this.gtuType = Throw.whenNull(gtuType, "gtuType");
         this.width = Throw.whenNull(width, "width");
         this.signals = Throw.whenNull(signals, "signals");
         this.maneuver = Throw.whenNull(maneuver, "maneuver");
+        this.laneWidth = Throw.whenNull(laneWidth, "laneWidth");
     }
 
     @Override
@@ -83,6 +89,12 @@ public class PerceivedGtuSimple extends PerceivedObjectBase implements Perceived
         throw new UnsupportedOperationException("HeadwayGtuSimple does not support behavior in HeadwyaGtu.");
     }
 
+    @Override
+    public Length getLaneWidth()
+    {
+        return this.laneWidth;
+    }
+
     /**
      * Returns perceived GTU with given kinematics, but without {@code Behavior}.
      * @param gtu GTU that is perceived
@@ -92,7 +104,7 @@ public class PerceivedGtuSimple extends PerceivedObjectBase implements Perceived
     public static PerceivedGtuSimple of(final LaneBasedGtu gtu, final Kinematics kinematics)
     {
         return new PerceivedGtuSimple(gtu.getId(), gtu.getType(), gtu.getLength(), gtu.getWidth(), kinematics, Signals.of(gtu),
-                Maneuver.of(gtu));
+                Maneuver.of(gtu), gtu.getPosition().getLaneWidth());
     }
 
     @Override

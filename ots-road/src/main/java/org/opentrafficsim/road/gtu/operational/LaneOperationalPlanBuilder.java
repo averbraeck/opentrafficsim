@@ -150,8 +150,10 @@ public final class LaneOperationalPlanBuilder
             nearestPosition = gtu.getPosition();
             deviative = deviative || nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
         }
-        Length deviationHorizon = Length.max(tManeuver.times(gtu.getSpeed()), gtu.getVehicleModel().getTurnRadius(gtu));
-        Length targetDeviation = deviation.distance().gt(deviationHorizon) ? Length.ZERO : deviation.object();
+        Length turn = gtu.getVehicleModel().getTurnRadius(gtu);
+        Length deviationHorizon = Length.max(tManeuver.times(gtu.getSpeed()), turn);
+        double f = Math.max(0.0, Math.min(1.0 - (deviation.distance().si - turn.si) /  deviationHorizon.si, 1.0));
+        Length targetDeviation = deviation.object().times(f);
         deviative = deviative || targetDeviation.abs().gt(SNAP);
         PathResults pathResults = getPath(gtu, nearestPosition, simplePlan.getAcceleration(), simplePlan.getDuration(),
                 tManeuver, targetDeviation, deviative);

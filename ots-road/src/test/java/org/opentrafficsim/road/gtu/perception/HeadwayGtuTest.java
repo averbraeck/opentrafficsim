@@ -60,10 +60,10 @@ public final class HeadwayGtuTest
         Length distance2 = new Length(234, LengthUnit.METER);
         PerceivedGtu hg1 = new PerceivedGtuSimple(id1, gtuType1, Length.ZERO, Length.ZERO,
                 new Kinematics.Record(distance1, Speed.ZERO, Acceleration.ZERO, true, Overlap.AHEAD), Signals.NONE,
-                Maneuver.NONE);
+                Maneuver.NONE, Length.ONE);
         PerceivedGtu hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO,
                 new Kinematics.Record(distance2, Speed.ZERO, Acceleration.ZERO, true, Overlap.AHEAD), Signals.NONE,
-                Maneuver.NONE);
+                Maneuver.NONE, Length.ONE);
         verifyFields(hg1, Acceleration.ZERO, distance1, gtuType1, id1, PerceivedObject.ObjectType.GTU, null, null, null,
                 Speed.ZERO, true, false, false, false, false, false, false, false);
         verifyFields(hg2, Acceleration.ZERO, distance2, gtuType2, id2, PerceivedObject.ObjectType.GTU, null, null, null,
@@ -71,16 +71,18 @@ public final class HeadwayGtuTest
         Length overlapFront = new Length(2, LengthUnit.METER);
         Length overlap = new Length(3, LengthUnit.METER);
         Length overlapRear = new Length(4, LengthUnit.METER);
-        hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO, new Kinematics.Record(Length.ZERO, Speed.ZERO,
-                Acceleration.ZERO, true, new Overlap.Record(overlap, overlapFront, overlapRear, false, false)), Signals.NONE,
-                Maneuver.NONE);
+        hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO,
+                new Kinematics.Record(Length.ZERO, Speed.ZERO, Acceleration.ZERO, true,
+                        new Overlap.Record(overlap, overlapFront, overlapRear, false, false)),
+                Signals.NONE, Maneuver.NONE, Length.ONE);
         verifyFields(hg2, Acceleration.ZERO, Length.ZERO, gtuType2, id2, PerceivedObject.ObjectType.GTU, overlap, overlapFront,
                 overlapRear, Speed.ZERO, false, false, false, false, false, false, false, true);
         Speed speed2 = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration acceleration2 = new Acceleration(1.234, AccelerationUnit.METER_PER_SECOND_2);
-        hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO, new Kinematics.Record(Length.ZERO, speed2,
-                acceleration2, true, new Overlap.Record(overlap, overlapFront, overlapRear, false, false)), Signals.NONE,
-                Maneuver.NONE);
+        hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO,
+                new Kinematics.Record(Length.ZERO, speed2, acceleration2, true,
+                        new Overlap.Record(overlap, overlapFront, overlapRear, false, false)),
+                Signals.NONE, Maneuver.NONE, Length.ONE);
         verifyFields(hg2, acceleration2, Length.ZERO, gtuType2, id2, PerceivedObject.ObjectType.GTU, overlap, overlapFront,
                 overlapRear, speed2, false, false, false, false, false, false, false, true);
         // Verify that toString returns something
@@ -89,7 +91,8 @@ public final class HeadwayGtuTest
         try
         {
             new PerceivedGtuSimple(null, gtuType1, Length.ZERO, Length.ZERO,
-                    new Kinematics.Record(distance1, speed2, acceleration2, true, Overlap.AHEAD), Signals.NONE, Maneuver.NONE);
+                    new Kinematics.Record(distance1, speed2, acceleration2, true, Overlap.AHEAD), Signals.NONE, Maneuver.NONE,
+                    Length.ONE);
             fail("null for id should have thrown a GTUException");
         }
         catch (NullPointerException e)
@@ -99,7 +102,8 @@ public final class HeadwayGtuTest
         try
         {
             new PerceivedGtuSimple(id1, gtuType1, Length.ZERO, Length.ZERO,
-                    new Kinematics.Record(null, speed2, acceleration2, true, Overlap.AHEAD), Signals.NONE, Maneuver.NONE);
+                    new Kinematics.Record(null, speed2, acceleration2, true, Overlap.AHEAD), Signals.NONE, Maneuver.NONE,
+                    Length.ONE);
             fail("null for distance should have thrown a NullPointerException");
         }
         catch (NullPointerException e)

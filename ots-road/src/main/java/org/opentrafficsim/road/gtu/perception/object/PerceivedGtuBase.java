@@ -32,13 +32,15 @@ public class PerceivedGtuBase extends PerceivedGtuSimple
      * @param signals signals
      * @param maneuver maneuver
      * @param behavior behavior
+     * @param laneWidth lane width
      * @throws NullPointerException when any input argument is {@code null}
      */
     @SuppressWarnings("parameternumber")
     public PerceivedGtuBase(final String id, final GtuType gtuType, final Length length, final Length width,
-            final Kinematics kinematics, final Signals signals, final Maneuver maneuver, final Behavior behavior)
+            final Kinematics kinematics, final Signals signals, final Maneuver maneuver, final Behavior behavior,
+            final Length laneWidth)
     {
-        super(id, gtuType, length, width, kinematics, signals, maneuver);
+        super(id, gtuType, length, width, kinematics, signals, maneuver, laneWidth);
         this.behavior = Throw.whenNull(behavior, "behavior");
     }
 
@@ -48,7 +50,6 @@ public class PerceivedGtuBase extends PerceivedGtuSimple
         return this.behavior;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -58,7 +59,6 @@ public class PerceivedGtuBase extends PerceivedGtuSimple
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -78,7 +78,6 @@ public class PerceivedGtuBase extends PerceivedGtuSimple
         return Objects.equals(this.behavior, other.behavior);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

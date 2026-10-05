@@ -64,6 +64,12 @@ public interface TacticalContext extends Identifiable
     Optional<Route> getRoute();
 
     /**
+     * Returns the lane width at the current position of the vehicle.
+     * @return lane width at the current position of the vehicle
+     */
+    Length getLaneWidth();
+
+    /**
      * Returns the lane change direction.
      * @return lane change direction
      */

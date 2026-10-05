@@ -10,9 +10,9 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.control.ControlTacticalPlanner;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuSimple;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Maneuver;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu.Signals;
+import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuSimple;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
 
@@ -65,9 +65,10 @@ public class DefaultCaccSensors implements PerceivedGtuType
         Length width = perceivedGtu.getWidth();
         Speed v = perceivedGtu.getSpeed(t);
         Acceleration a = perceivedGtu.getAcceleration(t);
+        Length laneWidth = perceivedGtu.getPosition().getLaneWidth();
         return new PerceivedGtuSimple(id, gtuType, length, width,
                 Kinematics.dynamicAhead(distance, v, a, true, length, perceivingGtu.getLength()), Signals.of(perceivedGtu),
-                Maneuver.of(perceivedGtu));
+                Maneuver.of(perceivedGtu), laneWidth);
     }
 
 }

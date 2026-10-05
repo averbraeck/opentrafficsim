@@ -269,6 +269,12 @@ public class TacticalContextEgo implements TacticalContext
     }
 
     @Override
+    public Length getLaneWidth()
+    {
+        return getPosition().getLaneWidth();
+    }
+
+    @Override
     public LateralDirectionality getLaneChangeDirection()
     {
         return getUnsafeGtu().getLaneChangeDirection();

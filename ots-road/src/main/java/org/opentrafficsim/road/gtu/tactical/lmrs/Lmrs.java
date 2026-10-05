@@ -22,6 +22,8 @@ import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.WithDesiredSpeed;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.tactical.util.DeadEndUtil;
+import org.opentrafficsim.road.gtu.tactical.util.DeviationUtil;
+import org.opentrafficsim.road.gtu.tactical.util.DeviationUtil.DeviationData;
 import org.opentrafficsim.road.gtu.tactical.util.LaneChangeNotAllowedUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.GapAcceptance;
@@ -52,6 +54,9 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
 
     /** LMRS data. */
     private final LmrsData lmrsData;
+
+    /** Deviation data. */
+    private DeviationData deviationData;
 
     /**
      * Constructor.
@@ -118,9 +123,18 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements Synchroni
         context.getIntent(TurnIndicatorStatus.class).ifPresentOrElse((d) -> getGtu().setTurnIndicatorStatus(d.object()),
                 () -> getGtu().setTurnIndicatorStatus(TurnIndicatorStatus.NONE));
 
+        // deviation
+        Duration tManeuver = getGtu().getParameters().getParameter(ParameterTypes.LCDUR);
+        if (this.deviationData == null)
+        {
+            // cannot do this in the constructor as the parameters are still null then
+            this.deviationData = new DeviationData(getGtu().getSimulator(), getGtu().getParameters()
+                    .getOptionalParameter(DeviationUtil.DEV_RANDOM_TAU).orElse(DeviationUtil.DEV_RANDOM_TAU.getDefaultValue()));
+        }
+        DeviationUtil.deviate(context, tManeuver, this.deviationData);
+
         // create plan
-        return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan,
-                getGtu().getParameters().getParameter(ParameterTypes.LCDUR),
+        return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan, tManeuver,
                 context.getIntent(Length.class).orElse(NO_DEVIATION));
 
     }

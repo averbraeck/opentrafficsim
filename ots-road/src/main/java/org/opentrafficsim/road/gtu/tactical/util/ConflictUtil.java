@@ -515,7 +515,7 @@ public final class ConflictUtil
         // 4) Upstream of conflict-pair on same link it would arbitrarily result in deviating left or right, so skip then
         // (this is due to both conflicts being perceived as they are both on the current lane and on the route)
         if (conflict.isSplit() && !conflict.getTurn().isNone()
-                && context.getParameters().getOptionalParameter(DEV_SPLIT).orElse(false)
+                && context.getParameters().getOptionalParameter(DEV_SPLIT).orElse(DEV_SPLIT.getDefaultValue())
                 && (!conflict.getLane().getLink().equals(conflict.getConflictingLink()) || conflict.getDistance().lt0()))
         {
 
@@ -747,12 +747,13 @@ public final class ConflictUtil
             {
                 // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
                 Length length = Length.ofSI(4.0);
+                Length laneWidth = Length.ofSI(3.5);
                 PerceivedGtuSimple conflictGtu = new PerceivedGtuSimple("virtual " + UUID.randomUUID().toString(),
                         DefaultsNl.CAR, length, Length.ofSI(2.0),
                         Kinematics.dynamicBehind(conflict.getConflictingVisibility(),
                                 conflict.getConflictingSpeedLimit().speed(), Acceleration.ZERO, true, length,
                                 conflict.getLength()),
-                        Signals.NONE, Maneuver.NONE);
+                        Signals.NONE, Maneuver.NONE, laneWidth);
                 conflictingVehicles = Set.of(conflictGtu);
             }
             else
