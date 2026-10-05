@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.tactical.following;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -65,7 +64,7 @@ public class IdmPlus extends AbstractIdm
         double sRatio =
                 dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
         double aInt = a.si * (1 - sRatio * sRatio);
-        return new Acceleration(aInt < aFree.si ? aInt : aFree.si, AccelerationUnit.SI);
+        return aInt < aFree.si ? Acceleration.ofSI(aInt) : aFree;
     }
 
 }

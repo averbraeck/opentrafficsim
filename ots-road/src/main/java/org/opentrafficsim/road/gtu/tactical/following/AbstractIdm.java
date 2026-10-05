@@ -139,7 +139,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     protected final Length dynamicDesiredHeadway(final Parameters parameters, final Speed speed, final Length desiredHeadway,
             final Speed leaderSpeed) throws ParameterException
     {
-        double sStar = desiredHeadway.si + dynamicHeadwayTerm(parameters, speed, leaderSpeed).si;
+        Length sStar = desiredHeadway.plus(dynamicHeadwayTerm(parameters, speed, leaderSpeed));
         /*
          * Due to a power of 2 in the IDM, negative values of sStar are not allowed. A negative sStar means that the leader is
          * faster to such an extent, that the equilibrium headway (s0+vT) is completely compensated by the dynamic part in
@@ -152,7 +152,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
          * Limit used to be 0, but the IDM is very sensitive there. With a decelerating leader, an ok acceleration in one time
          * step, may results in acceleration < -10 in the next.
          */
-        return Length.ofSI(sStar >= s0.si ? sStar : s0.si);
+        return sStar.si > s0.si ? sStar : s0;
     }
 
     /**
@@ -174,7 +174,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     /**
      * IDM desired headway model.
      */
-    public static class IdmDesiredHeadwayModel implements DesiredHeadwayModel, Stateless<IdmDesiredHeadwayModel>
+    public static final class IdmDesiredHeadwayModel implements DesiredHeadwayModel, Stateless<IdmDesiredHeadwayModel>
     {
         /** Singleton instance. */
         public static final IdmDesiredHeadwayModel SINGLETON = new IdmDesiredHeadwayModel();
@@ -182,7 +182,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         /**
          * Constructor.
          */
-        public IdmDesiredHeadwayModel()
+        private IdmDesiredHeadwayModel()
         {
             //
         }
@@ -205,7 +205,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
      * both exist, or one of them if one exists. If both do not exist this model returns fSpeed*130km/h. For both fSpeed' and
      * fSpeedGtu', if the speed limit is enforced the value is the minimum of fSpeed/fSpeedGtu (respectively) and 1.0.
      */
-    public static class IdmDesiredSpeedModel implements DesiredSpeedModel, Stateless<IdmDesiredSpeedModel>
+    public static final class IdmDesiredSpeedModel implements DesiredSpeedModel, Stateless<IdmDesiredSpeedModel>
     {
         /** Singleton instance. */
         public static final IdmDesiredSpeedModel SINGLETON = new IdmDesiredSpeedModel();
@@ -213,7 +213,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         /**
          * Constructor.
          */
-        public IdmDesiredSpeedModel()
+        private IdmDesiredSpeedModel()
         {
             //
         }

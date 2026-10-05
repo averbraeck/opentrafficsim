@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.tactical.following;
 
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.ATLEASTONE;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -13,6 +12,9 @@ import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 
 /**
+ * Multiple leader implementation of the IDM+. This uses the minimum interaction term of N leaders, where each is considered
+ * with a desired headway scaled by N, and an effective distance of the net distance to the leader minus the lengths of the
+ * intermediate vehicles.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -65,7 +67,7 @@ public class IdmPlusMulti extends AbstractIdm
         Acceleration a = parameters.getParameter(A);
         double aIntMulti = Double.POSITIVE_INFINITY;
         int i = 1;
-        double cumulVehicleLengths = 0;
+        double cumulVehicleLengths = 0.0;
         int n = parameters.getParameter(NLEADERS);
         for (PerceivedObject leader : leaders)
         {
@@ -85,7 +87,7 @@ public class IdmPlusMulti extends AbstractIdm
                 cumulVehicleLengths += leader.getLength().si;
             }
         }
-        return new Acceleration(aIntMulti < aFree.si ? aIntMulti : aFree.si, AccelerationUnit.SI);
+        return aIntMulti < aFree.si ? Acceleration.ofSI(aIntMulti) : aFree;
     }
 
 }
