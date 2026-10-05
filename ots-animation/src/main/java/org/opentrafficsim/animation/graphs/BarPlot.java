@@ -35,8 +35,8 @@ public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDa
     public BarPlot(final PlotScheduler scheduler, final String caption, final Duration updateInterval, final Duration delay,
             final BarPlotData barPlotData)
     {
-        super(scheduler, caption, updateInterval, delay,
-                () -> new BarPaintState(0.0, 1.0, new float[barPlotData.source().seriesLabels().length][0], Duration.ZERO));
+        super(scheduler, caption, updateInterval, delay, () -> new BarPaintState(0.0, 1.0,
+                new float[barPlotData.source().seriesLabels(barPlotData.dataKey()).length][0], Duration.ZERO));
         this.data = barPlotData;
         setChart(createChart());
     }
@@ -57,9 +57,10 @@ public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDa
         NumberAxis yAxis = new NumberAxis("Count [-]");
         yAxis.setAutoRangeIncludesZero(true);
         XYBarRenderer renderer = new XYBarRenderer();
-        renderer.setLegendItemLabelGenerator((dataset, series) -> source.seriesLabels()[series]);
+        renderer.setLegendItemLabelGenerator((dataset, series) -> source.seriesLabels(this.data.dataKey())[series]);
         XYPlot plot = new XYPlot(this, xAxis, yAxis, renderer);
-        return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot, source.seriesLabels().length > 1);
+        return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot,
+                source.seriesLabels(this.data.dataKey()).length > 1);
     }
 
     @Override
@@ -201,8 +202,8 @@ public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDa
         {
             return " ";
         }
-        String label = String.format("%s [%.1f %.1f] is %.3f", this.data.source().seriesLabels()[series], xMin + dx * item,
-                xMin + dx * (item + 1), value);
+        String label = String.format("%s [%.1f %.1f] is %.3f", this.data.source().seriesLabels(this.data.dataKey())[series],
+                xMin + dx * item, xMin + dx * (item + 1), value);
         return label.endsWith(".000") ? label.substring(0, label.length() - 4) : label;
     }
 
@@ -255,9 +256,10 @@ public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDa
 
         /**
          * Returns an array with series labels for the legend.
+         * @param dataKey data key
          * @return an array with series labels for the legend
          */
-        String[] seriesLabels();
+        String[] seriesLabels(Object dataKey);
 
     }
 
@@ -301,7 +303,7 @@ public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDa
                 }
 
                 @Override
-                public String[] seriesLabels()
+                public String[] seriesLabels(final Object dataKey)
                 {
                     return new String[] {""};
                 }

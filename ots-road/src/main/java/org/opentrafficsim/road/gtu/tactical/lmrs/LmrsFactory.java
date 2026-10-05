@@ -855,6 +855,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         parameters.setDefaultParameters(LmrsParameters.class);
         parameters.setDefaultParameters(AbstractIdm.class);
         parameters.setDefaultParameters(ConflictUtil.class);
+        parameters.setDefaultParameter(Synchronization.CREEP_SPEED);
         parameters.setDefaultParameter(ParameterTypes.T0);
         parameters.setDefaultParameter(ParameterTypes.LC_INFO);
         parameters.setDefaultParameter(ParameterTypes.LOOKBACK);
@@ -1592,8 +1593,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
                     return Synchronization.PASSIVE_MOVING;
                 case "align_gap":
                     return Synchronization.ALIGN_GAP;
-                case "active":
-                    return Synchronization.ACTIVE;
+                case "align_gap_moving":
+                    return Synchronization.ALIGN_GAP_MOVING;
                 default:
                     throw new IllegalArgumentException("Unable to parse synchronization " + value
                             + ". Use any of PASSIVE, PASSIVE_MOVING, ALIGN_GAP or ACTIVE.");
@@ -1619,12 +1620,12 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         {
             switch (value.toLowerCase())
             {
+                case "none":
+                    return Cooperation.NONE;
                 case "passive":
                     return Cooperation.PASSIVE;
                 case "passive_moving":
                     return Cooperation.PASSIVE_MOVING;
-                case "active":
-                    return Cooperation.ACTIVE;
                 default:
                     throw new IllegalArgumentException(
                             "Unable to parse cooperation " + value + ". Use any of PASSIVE, PASSIVE_MOVING or ACTIVE.");

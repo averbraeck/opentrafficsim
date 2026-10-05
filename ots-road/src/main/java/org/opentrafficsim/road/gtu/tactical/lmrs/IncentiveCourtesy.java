@@ -113,7 +113,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                     double desire = dir.isLeft() ? follower.getBehavior().rightLaneChangeDesire()
                             : follower.getBehavior().leftLaneChangeDesire();
                     Acceleration a = follower.getDistance().lt0() ? b.neg()
-                            : LmrsUtil.singleAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
+                            : LmrsUtil.relaxedAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
                     if (a.lt0())
                     {
                         if (desire > 0)
@@ -147,7 +147,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                             : leader.getBehavior().leftLaneChangeDesire();
                     if (desire > 0)
                     {
-                        Acceleration a = LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
+                        Acceleration a = LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                         if (a.lt0())
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0); // (1 - leader.getDistance().si / x0.si) * desire;

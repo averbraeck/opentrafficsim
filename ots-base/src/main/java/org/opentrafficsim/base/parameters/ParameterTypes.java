@@ -141,7 +141,7 @@ public class ParameterTypes implements ConstraintInterface
             }
         };
 
-        T = new ParameterTypeDuration("T", "Current car-following headway", Duration.ofSI(1.2), POSITIVE);
+        T = new ParameterTypeDuration("T", "Current car-following headway", Duration.ofSI(1.2), POSITIVEZERO);
 
         TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway", Duration.ofSI(0.56), POSITIVE)
         {

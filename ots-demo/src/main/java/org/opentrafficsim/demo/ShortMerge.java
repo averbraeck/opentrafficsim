@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,20 +25,24 @@ import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
+import org.jfree.chart.plot.ValueMarker;
+import org.jfree.chart.ui.RectangleAnchor;
+import org.jfree.chart.ui.TextAnchor;
 import org.opentrafficsim.animation.colorer.Colorer;
 import org.opentrafficsim.animation.colorer.trajectory.SynchronizationTrajectoryColorer;
 import org.opentrafficsim.animation.data.gtu.IncentiveGtuColorer;
 import org.opentrafficsim.animation.data.gtu.SynchronizationGtuColorer;
 import org.opentrafficsim.animation.data.util.GraphLaneUtil;
 import org.opentrafficsim.animation.graphs.BarPlot;
+import org.opentrafficsim.animation.graphs.BarPlot.BarDataSource;
+import org.opentrafficsim.animation.graphs.BarPlot.BarPlotData;
 import org.opentrafficsim.animation.graphs.GraphPath;
 import org.opentrafficsim.animation.graphs.PlotScheduler;
 import org.opentrafficsim.animation.graphs.TrajectoryPlot;
-import org.opentrafficsim.animation.graphs.BarPlot.BarDataSource;
-import org.opentrafficsim.animation.graphs.BarPlot.BarPlotData;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -132,13 +138,13 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     static final double LEFT_FRACTION = 0.3;
 
     /** Main demand per lane. */
-    static final Frequency MAIN_DEMAND = new Frequency(1000, FrequencyUnit.PER_HOUR);
+    static final Frequency MAIN_DEMAND = new Frequency(1500, FrequencyUnit.PER_HOUR);
 
     /** Ramp demand. */
     static final Frequency RAMP_DEMAND = new Frequency(500, FrequencyUnit.PER_HOUR);
 
     /** Synchronization. */
-    static final Synchronization SYNCHRONIZATION = Synchronization.ALIGN_GAP;
+    static final Synchronization SYNCHRONIZATION = Synchronization.ALIGN_GAP_MOVING;
 
     /** Cooperation. */
     static final Cooperation COOPERATION = Cooperation.PASSIVE_MOVING;
@@ -196,15 +202,27 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         BarPlot lcTtcPlot = new BarPlot(scheduler, "TTC distribution", updateInterval, Duration.ZERO,
                 new BarPlotData("TTC [s]", LcGapDataSource.TTC, source));
         BarPlot lcAccPlot = new BarPlot(scheduler, "Acceleration distribution", updateInterval, Duration.ZERO,
-                new BarPlotData("dv/dt [m/s\u00B2]", LcGapDataSource.ACCELERATION,
-                        source));
+                new BarPlotData("dv/dt [m/s\u00B2]", LcGapDataSource.ACCELERATION, source));
+        BarPlot lcLocPlot = new BarPlot(scheduler, "Merge location", updateInterval, Duration.ZERO,
+                new BarPlotData("location [m]", LcGapDataSource.MERGE_LOCATION, source));
+
+        ValueMarker marker = new ValueMarker(network.getLink("BC").get().getLength().si);
+        marker.setPaint(Color.BLACK);
+        marker.setStroke(new BasicStroke(1.5f));
+        marker.setLabel(" End of ramp ");
+        marker.setLabelAnchor(RectangleAnchor.TOP_RIGHT);
+        marker.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+        lcLocPlot.getChart().getXYPlot().addDomainMarker(marker);
+
         SwingPlot lcGapSwingPlot = new SwingPlot(lcGapPlot);
-        SwingPlot lcTtcsSwingPlot = new SwingPlot(lcTtcPlot);
-        SwingPlot lcAccsSwingPlot = new SwingPlot(lcAccPlot);
-        TablePanel charts = new TablePanel(1, 3);
+        SwingPlot lcTtcSwingPlot = new SwingPlot(lcTtcPlot);
+        SwingPlot lcAccSwingPlot = new SwingPlot(lcAccPlot);
+        SwingPlot lcLocSwingPlot = new SwingPlot(lcLocPlot);
+        TablePanel charts = new TablePanel(2, 2);
         charts.setCell(lcGapSwingPlot.getContentPane(), 0, 0);
-        charts.setCell(lcTtcsSwingPlot.getContentPane(), 0, 1);
-        charts.setCell(lcAccsSwingPlot.getContentPane(), 0, 2);
+        charts.setCell(lcTtcSwingPlot.getContentPane(), 0, 1);
+        charts.setCell(lcAccSwingPlot.getContentPane(), 1, 0);
+        charts.setCell(lcLocSwingPlot.getContentPane(), 1, 1);
         animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "lane change stats", charts);
     }
 
@@ -492,6 +510,9 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         /** Acceleration data key. */
         public static final String ACCELERATION = "ACCELERATION";
 
+        /** Merge location data key. */
+        public static final String MERGE_LOCATION = "MERGE_LOCATION";
+
         /** Maximum gap. */
         private static final double GAP_MAX = 3.0;
 
@@ -513,6 +534,12 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         /** Acceleration step size. */
         private static final double ACC_DX = 0.2;
 
+        /** Merge location. */
+        private static final double LOC_MAX_EXTRA = 100.0;
+
+        /** Merge location step size. */
+        private static final double LOC_DX = 5.0;
+
         /** Network. */
         private final Network network;
 
@@ -528,21 +555,35 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             this.data.put(GAP, new float[2][(int) (GAP_MAX / GAP_DX)]);
             this.data.put(TTC, new float[2][(int) (TTC_MAX / TTC_DX)]);
             this.data.put(ACCELERATION, new float[2][(int) ((ACC_MAX - ACC_MIN) / ACC_DX)]);
+            this.data.put(MERGE_LOCATION,
+                    new float[1][(int) ((network.getLink("BC").get().getLength().si + LOC_MAX_EXTRA) / LOC_DX)]);
             this.network = network;
             this.network.addListener(this, Network.GTU_ADD_EVENT, ReferenceType.WEAK);
             this.network.addListener(this, Network.GTU_REMOVE_EVENT, ReferenceType.WEAK);
         }
 
         @Override
-        public double getMinX(final Object key)
+        public double getMinX(final Object dataKey)
         {
-            return ACCELERATION.equals(key) ? ACC_MIN : 0.0;
+            return switch ((String) dataKey)
+            {
+                case GAP, TTC, MERGE_LOCATION -> 0.0;
+                case ACCELERATION -> ACC_MIN;
+                default -> throw new RuntimeException();
+            };
         }
 
         @Override
-        public double getDx(final Object key)
+        public double getDx(final Object dataKey)
         {
-            return GAP.equals(key) ? GAP_DX : (TTC.equals(key) ? TTC_DX : ACC_DX);
+            return switch ((String) dataKey)
+            {
+                case GAP -> GAP_DX;
+                case TTC -> TTC_DX;
+                case ACCELERATION -> ACC_DX;
+                case MERGE_LOCATION -> LOC_DX;
+                default -> throw new RuntimeException();
+            };
         }
 
         @Override
@@ -552,9 +593,14 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
 
         @Override
-        public String[] seriesLabels()
+        public String[] seriesLabels(final Object dataKey)
         {
-            return new String[] {"lag gap", "lead gap"};
+            return switch ((String) dataKey)
+            {
+                case GAP, TTC, ACCELERATION -> new String[] {"lag gap", "lead gap"};
+                case MERGE_LOCATION -> new String[] {""};
+                default -> throw new RuntimeException();
+            };
         }
 
         @Override
@@ -588,9 +634,9 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                         addValue(minLeadTtc, LcGapDataSource.TTC, 1);
 
                         LaneBasedGtu nearestFollower = null;
-                        Iterable<Entry<LaneBasedGtu>> followers = lGtu.getTacticalPlanner().getPerception()
-                                .getLaneStructure().getFirstUpstreamGtus(lane, RelativePosition.REAR,
-                                        RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT);
+                        Iterable<Entry<LaneBasedGtu>> followers = lGtu.getTacticalPlanner().getPerception().getLaneStructure()
+                                .getFirstUpstreamGtus(lane, RelativePosition.REAR, RelativePosition.FRONT,
+                                        RelativePosition.REAR, RelativePosition.FRONT);
                         double minLagGap = Double.MAX_VALUE;
                         double minLagTtc = Double.MAX_VALUE;
                         for (Entry<LaneBasedGtu> entry : followers)
@@ -614,6 +660,13 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                         if (nearestFollower != null)
                         {
                             nearestFollower.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
+                        }
+
+                        Point2d point = lGtu.getLocation();
+                        if (point.y < 0.0)
+                        {
+                            addValue(point.x - this.network.getNode("B").get().getLocation().x, LcGapDataSource.MERGE_LOCATION,
+                                    0);
                         }
                     }
                     catch (ParameterException ex)

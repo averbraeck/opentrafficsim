@@ -123,7 +123,7 @@ public final class LmrsUtil implements LmrsParameters
             lmrsData.getTailgating().tailgate(context);
             if (!leaders.isEmpty() && lmrsData.isNewLeader(leaders.first()))
             {
-                initHeadwayRelaxation(context.getParameters(), leaders.first());
+                initHeadwayRelaxation(context.getParameters(), leaders.first(), context.getSpeed());
             }
             a = context.getCarFollowingAcceleration();
         }
@@ -149,12 +149,11 @@ public final class LmrsUtil implements LmrsParameters
                 initiatedOrContinuedLaneChange = LateralDirectionality.LEFT;
                 turnIndicatorStatus = TurnIndicatorStatus.LEFT;
                 context.getParameters().setClaimedParameter(DLC, desire.left(), PARAMETER_KEY);
-                setDesiredHeadway(context.getParameters(), desire.left(), false);
                 leaders = neighbors.getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
-                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next
-                    // step
+                    initHeadwayRelaxation(context.getParameters(), leaders.first(), context.getSpeed());
+                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
                     lmrsData.isNewLeader(leaders.first());
                 }
                 a = Acceleration.min(a,
@@ -170,10 +169,10 @@ public final class LmrsUtil implements LmrsParameters
                 initiatedOrContinuedLaneChange = LateralDirectionality.RIGHT;
                 turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
                 context.getParameters().setClaimedParameter(DLC, desire.right(), PARAMETER_KEY);
-                setDesiredHeadway(context.getParameters(), desire.right(), false);
                 leaders = neighbors.getLeaders(RelativeLane.RIGHT);
                 if (!leaders.isEmpty())
                 {
+                    initHeadwayRelaxation(context.getParameters(), leaders.first(), context.getSpeed());
                     // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
                     lmrsData.isNewLeader(leaders.first());
                 }
@@ -290,20 +289,19 @@ public final class LmrsUtil implements LmrsParameters
      * Sets the headway as a response to a new leader.
      * @param params parameters
      * @param leader leader
+     * @param speed current speed
      * @throws ParameterException if DLC is not present
      */
-    private static void initHeadwayRelaxation(final Parameters params, final PerceivedGtu leader) throws ParameterException
+    private static void initHeadwayRelaxation(final Parameters params, final PerceivedGtu leader, final Speed speed)
+            throws ParameterException
     {
-        Optional<Double> dlc = leader.getBehavior().getParameters().getOptionalParameter(DLC);
-        if (dlc.isPresent())
-        {
-            setDesiredHeadway(params, dlc.get(), false);
-        }
-        // else could not be perceived
+        double t = (leader.getDistance().si - params.getParameter(ParameterTypes.S0).si) / speed.si;
+        Duration tMax = params.getParameter(TMAX);
+        params.setClaimedParameter(ParameterTypes.T, t < tMax.si ? Duration.ofSI(t < 0.0 ? 0.0 : t) : tMax, T_KEY);
     }
 
     /**
-     * Updates the desired headway following an exponential shape approximated with fixed time step <code>DT</code>.
+     * Updates the desired headway following an exponential shape approximated with fixed time step {@code DT}.
      * @param params parameters
      * @throws ParameterException in case of a parameter exception
      */
@@ -535,27 +533,28 @@ public final class LmrsUtil implements LmrsParameters
     */
 
     /**
-     * Sets value for T depending on level of lane change desire.
+     * Sets value for {@code T} depending on the level of lane change desire. This incorporates the behavior that under
+     * increasing lane change urgency (desire in the range [0 1]), the driver gradually shifts behavior from regular
+     * car-following around {@code Tmax} towards ignoring the spatial stimulus.
+     * <p>
+     * This behavior is an explicit deviation from classical gap-acceptance models. Behavior does not shift towards some
+     * arbitrary fixed threshold, but instead adheres to the actual situation. This introduces the possibility to cut-in, i.e.
+     * for the driver to assert themselves in to the gap whatever the size (always respecting {@code >s0}).
+     * <p>
+     * This behavior create a plausible and perhaps surprisingly safe lane change process. Risk is only taken with the space
+     * gap, and not with speed difference. Synchronization removes speed difference and when speed difference has become low, a
+     * lane change is performed even in small gaps.
      * @param params parameters
      * @param desire lane change desire
-     * @param resettable whether the T value will be reset later (ignoring key), or regular claimed setting (with key)
      * @throws ParameterException if T, TMIN or TMAX is not in the parameters
      */
-    static void setDesiredHeadway(final Parameters params, final double desire, final boolean resettable)
-            throws ParameterException
+    private static void setDesiredHeadway(final Parameters params, final double desire) throws ParameterException
     {
-        double limitedDesire = desire < 0 ? 0 : desire > 1 ? 1 : desire;
-        double tDes = limitedDesire * params.getParameter(TMIN).si + (1 - limitedDesire) * params.getParameter(TMAX).si;
-        double tSi = params.getParameter(T).si;
-        Duration t = Duration.ofSI(tDes < tSi ? tDes : tSi);
-        if (resettable)
-        {
-            params.setParameterResettable(T, t);
-        }
-        else
-        {
-            params.setClaimedParameter(T, t, T_KEY);
-        }
+        double urgency = desire < 0.0 ? 0.0 : desire > 1 ? 1 : desire;
+        double tRelaxed = (1.0 - urgency) * params.getParameter(TMAX).si;
+        Duration tCur = params.getParameter(T);
+        Duration t = tRelaxed < tCur.si ? Duration.ofSI(tRelaxed) : tCur;
+        params.setParameterResettable(T, t);
     }
 
     /**
@@ -563,7 +562,7 @@ public final class LmrsUtil implements LmrsParameters
      * @param params parameters
      * @throws ParameterException if T is not in the parameters
      */
-    static void resetDesiredHeadway(final Parameters params) throws ParameterException
+    private static void resetDesiredHeadway(final Parameters params) throws ParameterException
     {
         params.resetParameter(T);
     }
@@ -577,12 +576,11 @@ public final class LmrsUtil implements LmrsParameters
      * @return acceleration from car-following
      * @throws ParameterException if a parameter is not defined
      */
-    public static Acceleration singleAcceleration(final TacticalContext context, final Length distance, final Speed leaderSpeed,
-            final double desire) throws ParameterException
+    public static Acceleration relaxedAcceleration(final TacticalContext context, final Length distance,
+            final Speed leaderSpeed, final double desire) throws ParameterException
     {
         // set T
-        setDesiredHeadway(context.getParameters(), desire, true);
-        // calculate acceleration
+        setDesiredHeadway(context.getParameters(), desire);
         Acceleration a = CarFollowingUtil.followSingleLeader(context, distance, leaderSpeed);
         // reset T
         resetDesiredHeadway(context.getParameters());

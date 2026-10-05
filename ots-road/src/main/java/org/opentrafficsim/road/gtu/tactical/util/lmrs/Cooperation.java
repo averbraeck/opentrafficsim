@@ -1,15 +1,11 @@
 package org.opentrafficsim.road.gtu.tactical.util.lmrs;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
@@ -26,10 +22,31 @@ import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface Cooperation extends LmrsParameters, NamedConstants
+public interface Cooperation extends NamedConstants
 {
 
-    /** Simple passive cooperation. */
+    /**
+     * No synchronization.
+     */
+    Cooperation NONE = new Cooperation()
+    {
+        @Override
+        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
+                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
+        {
+            return Acceleration.POS_MAXVALUE;
+        }
+
+        @Override
+        public String name()
+        {
+            return "NONE";
+        }
+    };
+
+    /**
+     * Cooperation to any leader with d &ge; dCoop.
+     */
     Cooperation PASSIVE = new Cooperation()
     {
         @Override
@@ -38,29 +55,29 @@ public interface Cooperation extends LmrsParameters, NamedConstants
         {
             if (!context.getPerception().getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
-                return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
+                return Acceleration.POS_MAXVALUE;
             }
-            Acceleration b = context.getParameters().getParameter(ParameterTypes.B);
-            Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            double dCoop = context.getParameters().getParameter(DCOOP);
+            double b = -context.getParameters().getParameter(ParameterTypes.B).si;
+            double a = Double.MAX_VALUE;
+            double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
                     .getLeaders(relativeLane))
             {
                 double desire = lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
                         : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
-                if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
+                if (desire >= dCoop)
                 {
                     if (lmrsData != null)
                     {
                         lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
                     }
                     Acceleration aSingle =
-                            LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
-                    a = Acceleration.min(a, aSingle);
+                            LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
+                    a = a < aSingle.si ? a : aSingle.si;
                 }
             }
-            return Acceleration.max(a, b.neg());
+            return Acceleration.ofSI(a > b ? a : b);
         }
 
         @Override
@@ -70,91 +87,28 @@ public interface Cooperation extends LmrsParameters, NamedConstants
         }
     };
 
-    /** Same as passive cooperation, except that cooperation is sometimes ignored at low speed of other vehicles. */
+    /**
+     * Cooperation to any leader with d &ge; dCoop.
+     * <p>
+     * Cooperation is disabled for v &lt; {@link Synchronization#CREEP_SPEED}.
+     */
     Cooperation PASSIVE_MOVING = new Cooperation()
     {
         @Override
         public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
                 final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
         {
-            if (!context.getPerception().getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
+            if (context.getSpeed().si < context.getParameters().getParameter(Synchronization.CREEP_SPEED).si)
             {
-                return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
+                return Acceleration.POS_MAXVALUE;
             }
-            Acceleration bCrit = context.getParameters().getParameter(ParameterTypes.BCRIT);
-            Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            double dCoop = context.getParameters().getParameter(DCOOP);
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
-            NeighborsPerception neighbours = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
-            Speed thresholdSpeed = Speed.ofSI(6.86); // 295m / 43s
-            boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
-            for (PerceivedGtu leader : neighbours.getLeaders(relativeLane))
-            {
-                double desire = lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
-                        : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
-                // TODO: only cooperate if merger still quite fast or there's congestion downstream anyway (which we can better
-                // estimate than only considering the direct leader
-                if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
-                        && (leader.getSpeed().ge(thresholdSpeed) || leaderInCongestion))
-                {
-                    if (lmrsData != null)
-                    {
-                        lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
-                    }
-                    Acceleration aSingle =
-                            LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
-                    a = Acceleration.min(a, aSingle);
-                }
-            }
-            return Acceleration.max(a, bCrit.neg());
+            return PASSIVE.cooperate(context, lat, lmrsData, ownDesire);
         }
 
         @Override
         public String name()
         {
             return "PASSIVE_MOVING";
-        }
-    };
-
-    /** Cooperation similar to the default, except at large adjacent leader deceleration. */
-    Cooperation ACTIVE = new Cooperation()
-    {
-        @Override
-        public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
-                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
-        {
-            if (!context.getPerception().getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
-            {
-                return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            }
-            Acceleration a = new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
-            double dCoop = context.getParameters().getParameter(DCOOP);
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
-                    .getLeaders(relativeLane))
-            {
-                double desire = lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
-                        : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
-                if (desire >= dCoop && leader.getDistance().gt0()
-                        && leader.getAcceleration().gt(context.getParameters().getParameter(ParameterTypes.BCRIT).neg()))
-                {
-                    if (lmrsData != null)
-                    {
-                        lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
-                    }
-                    Acceleration aSingle =
-                            LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
-                    a = Acceleration.min(a, Synchronization.gentleUrgency(aSingle, desire, context.getParameters()));
-                }
-            }
-            return a;
-        }
-
-        @Override
-        public String name()
-        {
-            return "ACTIVE";
         }
     };
 

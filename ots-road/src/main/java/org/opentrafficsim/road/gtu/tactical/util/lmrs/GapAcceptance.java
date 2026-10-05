@@ -65,14 +65,11 @@ public interface GapAcceptance extends NamedConstants
              */
             for (PerceivedGtu follower : neighbors.getFirstFollowers(lat))
             {
-                if (follower.getSpeed().gt0() || follower.getAcceleration().gt0() || follower.getDistance().si < 1.0)
+                Acceleration aFollow =
+                        LmrsUtil.relaxedAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
+                if (threshold.gt(aFollow))
                 {
-                    Acceleration aFollow =
-                            LmrsUtil.singleAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
-                    if (threshold.gt(aFollow))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
@@ -113,20 +110,16 @@ public interface GapAcceptance extends NamedConstants
 
             for (PerceivedGtu follower : neigbors.getFirstFollowers(lat))
             {
-                if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
+                // Change headway parameter
+                Parameters folParams = follower.getBehavior().getParameters();
+                folParams.setParameterResettable(ParameterTypes.TMAX,
+                        context.getParameters().getParameter(ParameterTypes.TMAX));
+                Acceleration aFollow =
+                        LmrsUtil.relaxedAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
+                folParams.resetParameter(ParameterTypes.TMAX);
+                if (threshold.gt(aFollow))
                 {
-                    // Change headway parameter
-                    Parameters folParams = follower.getBehavior().getParameters();
-                    folParams.setParameter(ParameterTypes.TMIN, context.getParameters().getParameter(ParameterTypes.TMIN));
-                    folParams.setParameter(ParameterTypes.TMAX, context.getParameters().getParameter(ParameterTypes.TMAX));
-                    Acceleration aFollow =
-                            LmrsUtil.singleAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
-                    folParams.resetParameter(ParameterTypes.TMIN);
-                    folParams.resetParameter(ParameterTypes.TMAX);
-                    if (threshold.gt(aFollow))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
@@ -163,7 +156,7 @@ public interface GapAcceptance extends NamedConstants
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
                     .getFirstLeaders(lat))
             {
-                Acceleration a = LmrsUtil.singleAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
+                Acceleration a = LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                 if (threshold.gt(a))
                 {
                     return false;
