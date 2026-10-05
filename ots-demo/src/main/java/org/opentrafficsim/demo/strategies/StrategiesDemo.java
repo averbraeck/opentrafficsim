@@ -34,6 +34,7 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.animation.Colors;
 import org.opentrafficsim.animation.colorer.Colorer;
 import org.opentrafficsim.animation.colorer.FixedColorer;
 import org.opentrafficsim.animation.data.gtu.AccelerationGtuColorer;
@@ -163,7 +164,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             @Override
             public List<Colorer<? super Gtu>> getGtuColorers()
             {
-                return List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
+                return List.of(new FixedColorer<>(Colors.OTS_BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
                         new SocialPressureGtuColorer(), new DesiredHeadwayGtuColorer(Duration.ofSI(0.5), Duration.ofSI(1.6)),
                         new IncentiveGtuColorer(IncentiveSocioSpeed.class));
             }
@@ -539,8 +540,8 @@ public class StrategiesDemo extends AbstractSimulationScript
                 .leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimits).addLanes(DefaultsRoadNl.DASHED)
                 .getLanes();
 
-        LmrsFactory<Lmrs> lmrsFactory = new LmrsFactory<>(Lmrs::new).set(Setting.SOCIO_TAILGATING, true)
-                .set(Setting.SOCIO_LANE_CHANGE, true).set(Setting.SOCIO_SPEED, true)
+        LmrsFactory<Lmrs> lmrsFactory = new LmrsFactory<>(Lmrs::new).set(Setting.SOCIO_PRESSURE, true)
+                .set(Setting.SOCIO_TAILGATING, true).set(Setting.SOCIO_LANE_CHANGE, true).set(Setting.SOCIO_SPEED, true)
                 .set(Setting.INCENTIVE_STAY_ON_SLOW_LANES, true, DefaultsNl.TRUCK).setStream(this.stream);
         lmrsFactory.addParameter(DefaultsNl.CAR, LmrsParameters.SOCIO, 0.5);
         lmrsFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.SOCIO, 1.0);
