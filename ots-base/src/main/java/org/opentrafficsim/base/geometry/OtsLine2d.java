@@ -293,10 +293,10 @@ public class OtsLine2d extends PolyLine2d implements Locatable
         // Loop over segments and compute the closest point (orthogonal if interior, otherwise snap to an end-point)
         for (int i = 0; i < nPoints - 1; i++)
         {
-            final double xA = getX(0);
-            final double yA = getY(0);
-            final double xB = getX(nPoints - 1);
-            final double yB = getY(nPoints - 1);
+            final double xA = getX(i);
+            final double yA = getY(i);
+            final double xB = getX(i + 1);
+            final double yB = getY(i + 1);
 
             final double abx = xB - xA;
             final double aby = yB - yA;
