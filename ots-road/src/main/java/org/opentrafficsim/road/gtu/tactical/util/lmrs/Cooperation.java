@@ -64,8 +64,7 @@ public interface Cooperation extends NamedConstants
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
                     .getLeaders(relativeLane))
             {
-                double desire = lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
-                        : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0;
+                double desire = getLaneChangeDesire(leader, lat.flip(), dCoop);
                 if (desire >= dCoop)
                 {
                     if (lmrsData != null)
@@ -78,6 +77,33 @@ public interface Cooperation extends NamedConstants
                 }
             }
             return Acceleration.ofSI(a > b ? a : b);
+        }
+
+        /**
+         * Returns the level of lane change desire as perceived for the given vehicle. There are a few rules that describe this:
+         * <ul>
+         * <li>If {@code lat} equals {@code NONE}, 0 is returned.</li>
+         * <li>If the behavioral value {@code d} has {@code d < dCoop} but the indicator is on, 1 is returned. This assumes an
+         * automated system that wants to perform a lane change.</li>
+         * <li>Otherwise {@code d} is returned, assuming a human is in control with whatever level of lane change desire.</li>
+         * </ul>
+         * @param leader leader
+         * @param lat lateral direction
+         * @return the level of lane change desire as perceived for the given vehicle
+         */
+        private static double getLaneChangeDesire(final PerceivedGtu leader, final LateralDirectionality lat,
+                final double dCoop)
+        {
+            if (LateralDirectionality.NONE.equals(lat))
+            {
+                return 0.0;
+            }
+            double d = leader.getBehavior().getLaneChangeDesire(lat);
+            if (d < dCoop && leader.getSignals().isIndicatorOn(lat))
+            {
+                return 1.0;
+            }
+            return d;
         }
 
         @Override

@@ -393,6 +393,16 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
         double rightLaneChangeDesire();
 
         /**
+         * Returns the perceived lane change desire, a value between -1 and 1, for the given direction.
+         * @param lat lateral direction
+         * @return the perceived lane change desire, a value between -1 and 1, for the given direction
+         */
+        default double getLaneChangeDesire(final LateralDirectionality lat)
+        {
+            return lat.isLeft() ? leftLaneChangeDesire() : rightLaneChangeDesire();
+        }
+
+        /**
          * Returns the perceived social pressure, a value between 0 and 1.
          * @return the perceived social pressure, a value between 0 and 1
          */
