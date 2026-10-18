@@ -21,8 +21,18 @@ import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface LongitudinalControllerPerception extends PerceptionCategory<LaneBasedGtu, LanePerception>
+public interface LongitudinalControllerPerception
+        extends PerceptionCategory<LaneBasedGtu, LanePerception, LongitudinalControllerPerception>
 {
+
+    /** Type. */
+    Type<LongitudinalControllerPerception> TYPE = new Type<>("LongitudinalControllerPerception");
+
+    @Override
+    default Type<LongitudinalControllerPerception> getType()
+    {
+        return TYPE;
+    }
 
     /** Sensor range parameter. */
     ParameterTypeLength RANGE = new ParameterTypeLength("range", "Sensor range", Length.ofSI(200), NumericConstraint.POSITIVE);

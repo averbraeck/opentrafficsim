@@ -286,12 +286,13 @@ public final class OdApplier
             final Map<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> originNodePerLane,
             final Map<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> initialPositions)
     {
-        for (Lane lane : originNodePerLane.keySet())
+        for (Entry<Lane, DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>> entry : originNodePerLane.entrySet())
         {
-            DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = originNodePerLane.get(lane);
+            DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> demandNode = entry.getValue();
             Set<LanePosition> initialPosition = new LinkedHashSet<>();
-            initialPosition.add(lane.getLink().getStartNode().equals(demandNode.getObject())
-                    ? new LanePosition(lane, Length.ZERO) : new LanePosition(lane, lane.getLength()));
+            initialPosition.add(entry.getKey().getLink().getStartNode().equals(demandNode.getObject())
+                    ? new LanePosition(entry.getKey(), Length.ZERO)
+                    : new LanePosition(entry.getKey(), entry.getKey().getLength()));
             initialPositions.put(demandNode, initialPosition);
         }
     }
@@ -382,11 +383,12 @@ public final class OdApplier
             throws ParameterException
     {
         Map<Node, Integer> laneGeneratorCounterForUniqueId = new LinkedHashMap<>();
-        for (DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> root : initialPositions.keySet())
+        for (Entry<DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>>, Set<LanePosition>> entry : initialPositions
+                .entrySet())
         {
-            Set<LanePosition> initialPosition = initialPositions.get(root);
+            Set<LanePosition> initialPosition = entry.getValue();
             // id
-            Node o = root.getObject();
+            Node o = entry.getKey().getObject();
             String id = o.getId();
             if (laneBased)
             {
@@ -413,7 +415,8 @@ public final class OdApplier
                 linkType = getLinkTypeFromNode(o);
             }
             HeadwayDistribution randomization = odOptions.get(OdOptions.HEADWAY_DIST, lane, o, linkType);
-            ArrivalsHeadwayGenerator headwayGenerator = new ArrivalsHeadwayGenerator(root, simulator, stream, randomization);
+            ArrivalsHeadwayGenerator headwayGenerator =
+                    new ArrivalsHeadwayGenerator(entry.getKey(), simulator, stream, randomization);
             LaneBasedGtuCharacteristicsGeneratorOd characteristicsGeneratorOd =
                     odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType);
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
@@ -422,8 +425,8 @@ public final class OdApplier
                 public LaneBasedGtuCharacteristics draw() throws ParameterException, GtuException
                 {
                     Duration time = simulator.getSimulatorTime();
-                    Node origin = root.getObject();
-                    DemandNode<Node, DemandNode<Category, ?>> destinationNode = root.draw(time);
+                    Node origin = entry.getKey().getObject();
+                    DemandNode<Node, DemandNode<Category, ?>> destinationNode = entry.getKey().draw(time);
                     Node destination = destinationNode.getObject();
                     Category category = destinationNode.draw(time).getObject();
                     return characteristicsGeneratorOd.draw(origin, destination, category, stream);

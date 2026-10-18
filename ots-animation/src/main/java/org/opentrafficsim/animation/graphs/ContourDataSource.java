@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -612,9 +613,9 @@ public class ContourDataSource extends PlotDelegate<ContourPaintState, AbstractC
             // write cell data
             this.distance[i][j] = (float) totals.distance();
             this.time[i][j] = (float) totals.time();
-            for (ContourAdditionalDataType<?, ?> type : this.additionalData.keySet())
+            for (Entry<ContourAdditionalDataType<?, ?>, float[][]> entry : this.additionalData.entrySet())
             {
-                this.additionalData.get(type)[i][j] = finalizeAdditional(totals.additional(), type);
+                entry.getValue()[i][j] = finalizeAdditional(totals.additional(), entry.getKey());
             }
 
             feedFilterIfNeeded(window, totals, uc);
@@ -645,9 +646,9 @@ public class ContourDataSource extends PlotDelegate<ContourPaintState, AbstractC
         {
             this.distance[i][j] = Float.NaN;
             this.time[i][j] = Float.NaN;
-            for (ContourAdditionalDataType<?, ?> type : this.additionalData.keySet())
+            for (float[][] data : this.additionalData.values())
             {
-                this.additionalData.get(type)[i][j] = Float.NaN;
+                data[i][j] = Float.NaN;
             }
             return true;
         }
@@ -869,10 +870,9 @@ public class ContourDataSource extends PlotDelegate<ContourPaintState, AbstractC
         this.egtf.addPointDataSI(this.speedStream, xDat, tDat, totalDistance / totalTime);
         this.egtf.addPointDataSI(this.travelDistanceStream, xDat, tDat, totalDistance);
         this.egtf.addPointDataSI(this.travelTimeStream, xDat, tDat, totalTime);
-        for (ContourAdditionalDataType<?, ?> contourDataType : this.additionalStreams.keySet())
+        for (Entry<ContourAdditionalDataType<?, ?>, DataStream<?>> entry : this.additionalStreams.entrySet())
         {
-            this.egtf.addPointDataSI(this.additionalStreams.get(contourDataType), xDat, tDat,
-                    this.additionalData.get(contourDataType)[i][j]);
+            this.egtf.addPointDataSI(entry.getValue(), xDat, tDat, this.additionalData.get(entry.getKey())[i][j]);
         }
     }
 
@@ -914,10 +914,10 @@ public class ContourDataSource extends PlotDelegate<ContourPaintState, AbstractC
         overwriteSmoothed(this.distance, uc.nFromEgtf(), filter.get().getSI(this.travelDistanceQuantity), uc.skipTime(),
                 skipSpace);
         overwriteSmoothed(this.time, uc.nFromEgtf(), filter.get().getSI(this.travelTimeQuantity), uc.skipTime(), skipSpace);
-        for (ContourAdditionalDataType<?, ?> type : this.additionalData.keySet())
+        for (Entry<ContourAdditionalDataType<?, ?>, float[][]> entry : this.additionalData.entrySet())
         {
-            overwriteSmoothed(this.additionalData.get(type), uc.nFromEgtf(), filter.get().getSI(type.getQuantity()),
-                    uc.skipTime(), skipSpace);
+            overwriteSmoothed(entry.getValue(), uc.nFromEgtf(), filter.get().getSI(entry.getKey().getQuantity()), uc.skipTime(),
+                    skipSpace);
         }
 
         // notify filter result

@@ -273,19 +273,21 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
             trajectoryGroupList.add(trajectoryGroup);
         }
         // Step 2) accept per GTU
-        Iterator<String> iterator = trajectoryAcceptLists.keySet().iterator();
+        Iterator<TrajectoryAcceptList> iterator = trajectoryAcceptLists.values().iterator();
         while (iterator.hasNext())
         {
-            String gtuId = iterator.next();
-            TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
+            TrajectoryAcceptList next = iterator.next();
+            TrajectoryAcceptList trajectoryAcceptListCombined = next;
             trajectoryAcceptListCombined.acceptAll(); // refuse only if any filter data type refuses
-            for (FilterDataType<?, ?> filterDataType : this.filterDataSet.getFilterDataTypes())
+            Iterator<Entry<FilterDataType<?, ?>, Set<?>>> it = this.filterDataSet.getFilterDataSetIterator();
+            while (it.hasNext())
             {
+                Entry<FilterDataType<?, ?>, Set<?>> entry = it.next();
+                FilterDataType<T, ?> filterDataType = (FilterDataType<T, ?>) entry.getKey();
                 // create safe copy per filter data type, with defaults accepts = false
-                TrajectoryAcceptList trajectoryAcceptListCopy = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));
+                TrajectoryAcceptList trajectoryAcceptListCopy = copyTrajectoryAcceptList(next);
                 // request filter data type to accept or reject
-                ((FilterDataType<T, ?>) filterDataType).accept(trajectoryAcceptListCopy,
-                        (Set<T>) new LinkedHashSet<>(this.filterDataSet.get(filterDataType)));
+                filterDataType.accept(trajectoryAcceptListCopy, (Set<T>) new LinkedHashSet<>(entry.getValue()));
                 // combine acceptance/rejection of filter data types so far
                 for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)
                 {

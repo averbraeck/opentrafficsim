@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
-import java.util.Arrays;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -9,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.logger.Logger;
@@ -38,6 +35,9 @@ public class OperationalPlan
     /** The absolute start time when we start executing the path. */
     private final Duration startTime;
 
+    /** The absolute end time when we stop executing the path. */
+    private final Duration endTime;
+
     /** The segments that make up the path with an acceleration, constant speed or deceleration profile. */
     private final Segments segments;
 
@@ -47,21 +47,6 @@ public class OperationalPlan
     /** The length of the entire operational plan. */
     private final Length totalLength;
 
-    /** GTU for debugging purposes. */
-    private final Gtu gtu;
-
-    /**
-     * An array of relative start times of each segment, expressed in the SI unit, where the last time is the overall ending
-     * time of the operational plan.
-     */
-    private final double[] segmentStartDurations;
-
-    /**
-     * An array of relative start distances of each segment, expressed in the SI unit, where the last distance is the overall
-     * ending distance of the operational plan.
-     */
-    private final double[] segmentStartDistances;
-
     /** The drifting speed. Speeds under this value will be cropped to zero. */
     public static final Speed DRIFTING_SPEED = Speed.ofSI(0.001);
 
@@ -70,6 +55,14 @@ public class OperationalPlan
 
     /** Minimum distance of an operational plan path; anything shorter will be truncated to 0. */
     public static final Length MINIMUM_CREDIBLE_PATH_LENGTH = Length.ofSI(0.001);
+
+    // In about 25% if the cases the requested time is equal to the previous call to getTraveledDistance(Duration), so we cache.
+
+    /** Time of latest returned travel distance. */
+    private double lastTimeSI = Double.NaN;
+
+    /** Latest returned travel distance. */
+    private Length lastTraveledDistance;
 
     /**
      * Creates a stand-still plan at a point. A 1m path in the direction of the point is created.
@@ -84,7 +77,7 @@ public class OperationalPlan
     {
         Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
         OtsLine2d path = new OtsLine2d(point, p2);
-        return new OperationalPlan(gtu, path, startTime, Segments.standStill(duration));
+        return new OperationalPlan(gtu, path, startTime, new SegmentsSingle(Speed.ZERO, duration, Acceleration.ZERO));
     }
 
     /**
@@ -97,69 +90,41 @@ public class OperationalPlan
      */
     public OperationalPlan(final Gtu gtu, final OtsLine2d path, final Duration startTime, final Segments segments)
     {
-        this.gtu = gtu;
         this.startTime = startTime;
-
-        Length pathLength = path.getTypedLength();
-        Duration segmentsDuration = Duration.ZERO;
-        Length segmentsLength = Length.ZERO;
-        double[] segStartDurations = new double[segments.size() + 1];
-        double[] segStartDistances = new double[segments.size() + 1];
-        for (int i = 0; i < segments.size(); i++)
-        {
-            segStartDurations[i] = segmentsDuration.si;
-            segStartDistances[i] = segmentsLength.si;
-            Segment segment = segments.get(i);
-            segmentsDuration = segmentsDuration.plus(segment.duration());
-            segmentsLength = segmentsLength.plus(segment.totalDistance());
-        }
-        // Catch situation of very small speeds
-        if (segmentsLength.lt(MINIMUM_CREDIBLE_PATH_LENGTH) && segments.get(0).startSpeed().lt(DRIFTING_SPEED)
-                && segments.get(0).acceleration().lt(DRIFTING_ACCELERATION))
-        {
-            this.segments = Segments.standStill(segmentsDuration);
-            this.segmentStartDurations = new double[] {0.0, segmentsDuration.si};
-            this.segmentStartDistances = new double[] {0.0, 0.0};
-            this.totalDuration = segmentsDuration;
-            this.totalLength = Length.ZERO;
-            DirectedPoint2d point = path.getLocation(0.0);
-            Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
-            this.path = new OtsLine2d(point, p2);
-            return;
-        }
         this.segments = segments;
-        this.segmentStartDurations = segStartDurations;
-        this.segmentStartDistances = segStartDistances;
-        this.segmentStartDurations[this.segments.size()] = segmentsDuration.si;
-        this.segmentStartDistances[this.segments.size()] = segmentsLength.si;
 
         // If segmentsLength == 0, we have a stand-still plan with non-zero length path. This path is required as a degenerate
         // OtsLine2d (with <2 points) is not allowed. In that case (in else) do not truncate path.
-        if (segmentsLength.gt0() && pathLength.ge(segmentsLength))
+        Length pathLength = path.getTypedLength();
+        double segmentsLength = segments.getTotalLength().si;
+        if (segmentsLength > 0.0 && pathLength.si >= segmentsLength)
         {
-            this.totalDuration = segmentsDuration;
-            this.totalLength = segmentsLength;
+            // path longer than segments, truncate path
+            this.totalDuration = segments.getTotalDuration();
+            this.totalLength = segments.getTotalLength();
             this.path = path.extract(0.0, this.totalLength.si);
         }
-        else if (segmentsLength.gt(pathLength))
+        else if (segmentsLength > pathLength.si)
         {
+            // segments longer than path, truncate total duration
             this.totalLength = pathLength;
             int i = this.segments.size();
-            while (i > 1 && this.segmentStartDistances[i - 1] > pathLength.si)
+            while (i > 1 && this.segments.getStartDistanceSI(i - 1) > pathLength.si)
             {
                 i--;
             }
-            double distanceInLast = this.totalLength.si - this.segmentStartDistances[i - 1];
-            Duration timeInLast = this.segments.get(i - 1).durationAtDistance(Length.ofSI(distanceInLast));
-            this.totalDuration = Duration.ofSI(timeInLast.si + this.segmentStartDurations[i - 1]);
+            double distanceInLast = this.totalLength.si - this.segments.getStartDistanceSI(i - 1);
+            double timeInLast = this.segments.durationInSegment(i - 1, distanceInLast);
+            this.totalDuration = Duration.ofSI(timeInLast + this.segments.getStartDistanceSI(i - 1));
             this.path = path;
         }
         else
         {
-            this.totalDuration = segmentsDuration;
+            this.totalDuration = segments.getTotalDuration();
             this.totalLength = Length.ZERO;
             this.path = path.extract(0.0, Math.min(pathLength.si, 1.0));
         }
+        this.endTime = Duration.ofSI(this.startTime.si + this.totalDuration.si);
     }
 
     /**
@@ -187,16 +152,7 @@ public class OperationalPlan
      */
     public Speed getStartSpeed()
     {
-        return this.segments.get(0).startSpeed();
-    }
-
-    /**
-     * Return the segments (parts with constant speed, acceleration or deceleration) of the operational plan.
-     * @return ImmutableList&lt;OperationalPlan.Segment&gt;; segmentList
-     */
-    public ImmutableList<Segment> getOperationalPlanSegmentList()
-    {
-        return this.segments.getSegments();
+        return this.segments.getStartSpeed();
     }
 
     /**
@@ -223,7 +179,7 @@ public class OperationalPlan
      */
     public Duration getEndTime()
     {
-        return this.startTime.plus(this.totalDuration);
+        return this.endTime;
     }
 
     /**
@@ -236,47 +192,31 @@ public class OperationalPlan
     }
 
     /**
+     * Returns the segments.
+     * @return segments
+     */
+    public Segments getSegments()
+    {
+        return this.segments;
+    }
+
+    /**
      * Returns the index of the segment covering the given time.
      * @param time simulation time
      * @return index of the segment covering the given time.
      */
     private int getSegment(final Duration time)
     {
-        double duration = time.si - this.startTime.si;
-        int segment = 0;
-        while (segment < this.segments.size() - 1 && this.segmentStartDurations[segment + 1] < duration)
-        {
-            segment++;
-        }
-        return segment;
-    }
-
-    /**
-     * Return the time when the GTU will reach the given distance.
-     * @param distance the distance to calculate the time for
-     * @return the simulation time at which the distance will be traveled within the current plan
-     */
-    public final Duration timeAtDistance(final Length distance)
-    {
-        Throw.when(getTotalLength().lt(distance), IllegalArgumentException.class, "Requesting %s from a plan with length %s",
-                distance, getTotalLength());
-        int segment = 0;
-        while (segment < this.segments.size() && this.segmentStartDistances[segment + 1] < distance.si)
-        {
-            segment++;
-        }
-        Duration durationInSegment =
-                this.segments.get(segment).durationAtDistance(Length.ofSI(distance.si - this.segmentStartDistances[segment]));
-        return Duration.ofSI(this.startTime.si + this.segmentStartDurations[segment] + durationInSegment.si);
+        return this.segments.getSegment(time.si - this.startTime.si);
     }
 
     /**
      * Calculate the location after the given duration since the start of the plan.
      * @param duration duration relative to start of the plan
      * @return the location after the given duration since the start of the plan.
-     * @throws OperationalPlanException when the duration is after the validity of the operational plan
+     * @throws IllegalArgumentException when the duration is after the validity of the operational plan
      */
-    public final DirectedPoint2d getLocationFromStart(final Duration duration) throws OperationalPlanException
+    public DirectedPoint2d getLocationFromStart(final Duration duration)
     {
         return getLocation(this.startTime.plus(duration));
     }
@@ -285,12 +225,12 @@ public class OperationalPlan
      * Calculate the location at the given time.
      * @param time simulation time
      * @return the location at the given time.
-     * @throws OperationalPlanException when the time is after the validity of the operational plan
+     * @throws IllegalArgumentException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint2d getLocation(final Duration time) throws OperationalPlanException
+    public DirectedPoint2d getLocation(final Duration time)
     {
-        Throw.when(time.lt(this.startTime), OperationalPlanException.class, "Requested time is before start time.");
-        Throw.when(time.gt(this.getEndTime()), OperationalPlanException.class, "Requested time is beyond end time.");
+        Throw.when(time.lt(this.startTime), IllegalArgumentException.class, "Requested time is before start time.");
+        Throw.when(time.gt(this.getEndTime()), IllegalArgumentException.class, "Requested time is beyond end time.");
         double fraction = this.totalLength.eq0() ? 0.0 : getTraveledDistance(time).si / this.totalLength.si;
         return this.path.getLocationFraction(fraction, 0.01);
     }
@@ -300,9 +240,9 @@ public class OperationalPlan
      * @param time simulation time
      * @param pos relative position
      * @return the location after the given duration since the start of the plan.
-     * @throws OperationalPlanException when the time is after the validity of the operational plan
+     * @throws IllegalArgumentException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint2d getLocation(final Duration time, final RelativePosition pos) throws OperationalPlanException
+    public DirectedPoint2d getLocation(final Duration time, final RelativePosition pos)
     {
         double distanceSI = getTraveledDistance(time).si + pos.dx().si;
         return this.path.getLocationExtended(distanceSI);
@@ -312,9 +252,9 @@ public class OperationalPlan
      * Calculate the speed of the GTU after the given duration since the start of the plan.
      * @param duration duration relative to start of the plan
      * @return the location after the given duration since the start of the plan.
-     * @throws OperationalPlanException when the duration is after the validity of the operational plan
+     * @throws IllegalArgumentException when the duration is after the validity of the operational plan
      */
-    public final Speed getSpeedFromStart(final Duration duration) throws OperationalPlanException
+    public Speed getSpeedFromStart(final Duration duration)
     {
         return getSpeed(duration.plus(this.startTime));
     }
@@ -323,28 +263,36 @@ public class OperationalPlan
      * Calculate the speed of the GTU at the given time.
      * @param time simulation time
      * @return the location at the given time.
-     * @throws OperationalPlanException when the time is after the validity of the operational plan
+     * @throws IllegalArgumentException when the time is after the validity of the operational plan
      */
-    public final Speed getSpeed(final Duration time) throws OperationalPlanException
+    public Speed getSpeed(final Duration time)
     {
+        if (time.si == this.startTime.si)
+        {
+            return this.segments.getStartSpeed();
+        }
+        if (time.si == this.endTime.si)
+        {
+            return this.segments.getEndSpeed();
+        }
         int segment = getSegment(time);
-        Duration durationInSegment = Duration.ofSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
-        durationInSegment = fixDoublePrecision(durationInSegment, segment);
-        return this.segments.get(segment).speed(durationInSegment);
+        double durationInSegment = time.si - this.startTime.si - this.segments.getStartDurationSI(segment);
+        durationInSegment = fixDoublePrecision(segment, durationInSegment);
+        return Speed.ofSI(this.segments.getSpeedSI(segment, durationInSegment));
     }
 
     /**
      * Maximize to segment duration in case of double precision issue.
-     * @param durationInSegment duration in segment.
      * @param segment segment number.
+     * @param durationInSegment duration in segment.
      * @return duration in segment, maximized to segment duration if beyond within 1e-6.
      */
-    private Duration fixDoublePrecision(final Duration durationInSegment, final int segment)
+    private double fixDoublePrecision(final int segment, final double durationInSegment)
     {
-        if (this.segments.get(segment).duration().lt(durationInSegment)
-                && durationInSegment.si - this.segments.get(segment).duration().si < 1e-6)
+        double segmentDuration = this.segments.getDurationSI(segment);
+        if (segmentDuration < durationInSegment && durationInSegment - segmentDuration < 1e-6)
         {
-            return this.segments.get(segment).duration();
+            return segmentDuration;
         }
         return durationInSegment;
     }
@@ -353,9 +301,9 @@ public class OperationalPlan
      * Calculate the acceleration of the GTU after the given duration since the start of the plan.
      * @param duration duration relative to start of the plan
      * @return the location after the given duration since the start of the plan.
-     * @throws OperationalPlanException when the time is after the validity of the operational plan
+     * @throws IllegalArgumentException when the time is after the validity of the operational plan
      */
-    public final Acceleration getAccelerationFromStart(final Duration duration) throws OperationalPlanException
+    public Acceleration getAccelerationFromStart(final Duration duration)
     {
         return getAcceleration(duration.plus(this.startTime));
     }
@@ -364,20 +312,20 @@ public class OperationalPlan
      * Calculate the acceleration of the GTU at the given time.
      * @param time simulation time
      * @return the location at the given time.
-     * @throws OperationalPlanException when the time is after the validity of the operational plan
+     * @throws IllegalArgumentException when the time is after the validity of the operational plan
      */
-    public final Acceleration getAcceleration(final Duration time) throws OperationalPlanException
+    public Acceleration getAcceleration(final Duration time)
     {
-        return this.segments.get(getSegment(time)).acceleration();
+        return Acceleration.ofSI(this.segments.getAccelerationSI(getSegment(time)));
     }
 
     /**
      * Calculate the distance traveled as part of this plan after the given duration since the start of the plan.
      * @param duration duration relative to start of the plan
      * @return the distance traveled as part of this plan after the given duration since the start of the plan.
-     * @throws OperationalPlanException when the duration is after the validity of the operational plan
+     * @throws IllegalArgumentException when the duration is after the validity of the operational plan
      */
-    public final Length getTraveledDistanceFromStart(final Duration duration) throws OperationalPlanException
+    public Length getTraveledDistanceFromStart(final Duration duration)
     {
         return getTraveledDistance(this.startTime.plus(duration));
     }
@@ -386,48 +334,61 @@ public class OperationalPlan
      * Calculate the distance traveled as part of this plan at the given absolute time.
      * @param time simulation time
      * @return the distance traveled as part of this plan at the given time
-     * @throws OperationalPlanException when the time is after the validity of the operational plan
+     * @throws IllegalArgumentException when the time is after the validity of the operational plan
      */
-    public Length getTraveledDistance(final Duration time) throws OperationalPlanException
+    public Length getTraveledDistance(final Duration time)
     {
-        Throw.when(time.lt(this.getStartTime()), OperationalPlanException.class,
+        Throw.when(time.si < this.startTime.si, IllegalArgumentException.class,
                 "getTravelDistance exception: requested traveled distance before start of plan");
-        Throw.when(time.si > this.getEndTime().si + 1e-6, OperationalPlanException.class,
+        Throw.when(time.si > this.endTime.si + 1e-6, IllegalArgumentException.class,
                 "getTravelDistance exception: requested traveled distance beyond end of plan");
+        if (time.si == this.startTime.si)
+        {
+            return Length.ZERO;
+        }
+        if (time.si == this.endTime.si)
+        {
+            return this.totalLength;
+        }
+        if (time.si == this.lastTimeSI)
+        {
+            return this.lastTraveledDistance;
+        }
         int segment = getSegment(time);
-        Duration durationInSegment = Duration.ofSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
-        durationInSegment = fixDoublePrecision(durationInSegment, segment);
-        double distanceInSegment = this.segments.get(segment).distance(durationInSegment).si;
-        return Length.ofSI(this.segmentStartDistances[segment] + distanceInSegment);
+        double durationInSegment = time.si - this.startTime.si - this.segments.getStartDurationSI(segment);
+        durationInSegment = fixDoublePrecision(segment, durationInSegment);
+        double distanceInSegment = this.segments.getDistanceSI(segment, durationInSegment);
+        this.lastTraveledDistance = Length.ofSI(this.segments.getStartDistanceSI(segment) + distanceInSegment);
+        this.lastTimeSI = time.si;
+        return this.lastTraveledDistance;
     }
 
     /**
      * Calculates the duration at which the given distance is traveled.
      * @param traveledDistance traveled distance
      * @return duration since start of the plan at which the given distance is traveled
-     * @throws OperationalPlanException if the traveled distance is beyond the plan length
+     * @throws IllegalArgumentException if the traveled distance is beyond the plan length
      */
-    public Duration getDurationAtDistance(final Length traveledDistance) throws OperationalPlanException
+    public Duration getDurationAtDistance(final Length traveledDistance)
     {
-        Throw.when(traveledDistance.gt(getTotalLength()), OperationalPlanException.class,
+        Throw.when(traveledDistance.si > this.totalLength.si, IllegalArgumentException.class,
                 "Traveled distance for requested time is beyond plan length.");
         int segment = 0;
-        while (this.segments.size() > segment + 1 && this.segmentStartDistances[segment] > traveledDistance.si)
+        while (segment < this.segments.size() - 1 && this.segments.getStartDistanceSI(segment + 1) < traveledDistance.si)
         {
             segment++;
         }
-        Duration dt = this.segments.get(segment)
-                .durationAtDistance(traveledDistance.minus(Length.ofSI(this.segmentStartDistances[segment])));
-        return Duration.ofSI(this.segmentStartDurations[segment] + dt.si);
+        double dt = this.segments.durationInSegment(segment, traveledDistance.si - this.segments.getStartDistanceSI(segment));
+        return Duration.ofSI(this.segments.getStartDurationSI(segment) + dt);
     }
 
     /**
      * Calculates the time at which the given distance is traveled.
      * @param traveledDistance traveled distance
      * @return simulation time at which the given distance is traveled
-     * @throws OperationalPlanException if the traveled distance is beyond the plan length
+     * @throws IllegalArgumentException if the traveled distance is beyond the plan length
      */
-    public Duration getTimeAtDistance(final Length traveledDistance) throws OperationalPlanException
+    public Duration getTimeAtDistance(final Length traveledDistance)
     {
         return this.startTime.plus(getDurationAtDistance(traveledDistance));
     }
@@ -440,7 +401,7 @@ public class OperationalPlan
      * @param upstream true if the point is upstream of the path
      * @return simulation time at point
      */
-    public final Duration timeAtPoint(final DirectedPoint2d point, final boolean upstream)
+    public Duration timeAtPoint(final DirectedPoint2d point, final boolean upstream)
     {
         Point2d p1 = point;
         // point at 90 degrees
@@ -453,7 +414,7 @@ public class OperationalPlan
                 Point2d p = Point2d.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
                 double dist = traveledDistanceAlongPath - this.path.get(0).distance(p);
                 dist = dist >= 0.0 ? dist : 0.0; // negative in case of a gap
-                return timeAtDistance(Length.ofSI(dist));
+                return getTimeAtDistance(Length.ofSI(dist));
             }
             for (int i = 0; i < this.path.size() - 1; i++)
             {
@@ -476,7 +437,7 @@ public class OperationalPlan
                     {
                         return Duration.NaN;
                     }
-                    return timeAtDistance(Length.ofSI(traveledDistanceAlongPath));
+                    return getTimeAtDistance(Length.ofSI(traveledDistanceAlongPath));
                 }
                 else
                 {
@@ -544,8 +505,7 @@ public class OperationalPlan
     public String toString()
     {
         return "OperationalPlan [path=" + this.path + ", startTime=" + this.startTime + ", segments=" + this.segments
-                + ", totalDuration=" + this.totalDuration + ", segmentStartTimesSI="
-                + Arrays.toString(this.segmentStartDurations) + "]";
+                + ", totalDuration=" + this.totalDuration + "]";
     }
 
 }

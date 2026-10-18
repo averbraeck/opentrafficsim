@@ -33,6 +33,9 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
     /** the children of the hierarchical type. */
     private final Set<T> children = new LinkedHashSet<>();
 
+    /** Cached hash code. */
+    private final int hashCode;
+
     /**
      * Constructor for creating the top level types in subclasses.
      * @param id The id of the type to make it identifiable.
@@ -59,6 +62,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
         {
             parent.getChildren().add((T) this);
         }
+        this.hashCode = Objects.hash(this.id, this.parent);
     }
 
     @Override
@@ -121,7 +125,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.id, this.parent);
+        return this.hashCode;
     }
 
     @Override

@@ -59,7 +59,7 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
             throws ParameterException, OperationalPlanException
     {
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
-                context.getPerception().getPerceptionCategory(BusStopPerception.class).getBusStops();
+                context.getPerception().getPerceptionCategory(BusStopPerception.TYPE).getBusStops();
         if (stops.isEmpty())
         {
             return NO_REASON;

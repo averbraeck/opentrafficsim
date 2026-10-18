@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.perception.structure;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.Lane;
 
@@ -27,7 +26,7 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
     private final Lane lane;
 
     /** Distance to start. */
-    private final Length startDistance;
+    private final double startDistance;
 
     /** GTU type. */
     private final GtuType gtuType;
@@ -44,7 +43,7 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
      * @param startDistance distance to start
      * @param gtuType GTU type, use {@code null} to find all lanes, including shoulders
      */
-    public SimpleLaneRecord(final Lane lane, final Length startDistance, final GtuType gtuType)
+    public SimpleLaneRecord(final Lane lane, final double startDistance, final GtuType gtuType)
     {
         this.lane = lane;
         this.startDistance = startDistance;
@@ -58,7 +57,7 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
         {
             Set<Lane> set = this.lane.nextLanes(this.gtuType);
             this.next = new LinkedHashSet<>();
-            Length distance = this.startDistance.plus(getLength());
+            double distance = this.startDistance + getLength().si;
             for (Lane down : set)
             {
                 this.next.add(new SimpleLaneRecord(down, distance, this.gtuType));
@@ -76,14 +75,14 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
             this.prev = new LinkedHashSet<>();
             for (Lane up : set)
             {
-                this.prev.add(new SimpleLaneRecord(up, this.startDistance.minus(up.getLength()), this.gtuType));
+                this.prev.add(new SimpleLaneRecord(up, this.startDistance - up.getLength().si, this.gtuType));
             }
         }
         return this.prev;
     }
 
     @Override
-    public Length getStartDistance()
+    public double getStartDistance()
     {
         return this.startDistance;
     }

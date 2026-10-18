@@ -40,11 +40,11 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
             throws ParameterException, OperationalPlanException
     {
         Acceleration a = NO_REASON;
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
         for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
         {
             LateralDirectionality flip = lat.flip();
-            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
-                    .getLeaders(new RelativeLane(lat, 1)))
+            for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 1)))
             {
                 if (leader.getManeuver().isChangingLane(flip))
                 {

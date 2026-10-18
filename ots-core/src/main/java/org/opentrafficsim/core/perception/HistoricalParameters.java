@@ -79,17 +79,17 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
     }
 
     @Override
-    public <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
+    public <T> void setParameterOverride(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
         addEvent(new ParameterEvent(now().si, parameterType, this.params));
-        this.params.setParameterResettable(parameterType, value);
+        this.params.setParameterOverride(parameterType, value);
     }
 
     @Override
-    public void resetParameter(final ParameterType<?> parameterType) throws ParameterException
+    public void removeParameterOverride(final ParameterType<?> parameterType) throws ParameterException
     {
         addEvent(new ParameterEvent(now().si, parameterType, this.params));
-        this.params.resetParameter(parameterType);
+        this.params.removeParameterOverride(parameterType);
     }
 
     @Override

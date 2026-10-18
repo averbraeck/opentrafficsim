@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.perception;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.collections.Indexed;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
 /**
@@ -11,23 +12,41 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * </p>
  * @author Wouter Schakel
  */
-public class RelativeLane implements Comparable<RelativeLane>
+public final class RelativeLane implements Comparable<RelativeLane>, Indexed
 {
 
+    /** Cache minimum rank. */
+    private static final int MIN_CACHE = -5;
+
+    /** Cache maximum rank. */
+    private static final int MAX_CACHE = 5;
+
+    /** Cache. */
+    private static final RelativeLane[] CACHE;
+
+    static
+    {
+        CACHE = new RelativeLane[MAX_CACHE - MIN_CACHE + 1];
+        for (int rank = MIN_CACHE; rank <= MAX_CACHE; rank++)
+        {
+            CACHE[rank - MIN_CACHE] = new RelativeLane(rank);
+        }
+    }
+
     /** Second left lane. */
-    public static final RelativeLane SECOND_LEFT = new RelativeLane(LateralDirectionality.LEFT, 2);
+    public static final RelativeLane SECOND_LEFT = RelativeLane.of(LateralDirectionality.LEFT, 2);
 
     /** Left lane. */
-    public static final RelativeLane LEFT = new RelativeLane(LateralDirectionality.LEFT, 1);
+    public static final RelativeLane LEFT = RelativeLane.of(LateralDirectionality.LEFT, 1);
 
     /** Current lane. */
-    public static final RelativeLane CURRENT = new RelativeLane(LateralDirectionality.NONE, 0);
+    public static final RelativeLane CURRENT = RelativeLane.of(LateralDirectionality.NONE, 0);
 
     /** right lane. */
-    public static final RelativeLane RIGHT = new RelativeLane(LateralDirectionality.RIGHT, 1);
+    public static final RelativeLane RIGHT = RelativeLane.of(LateralDirectionality.RIGHT, 1);
 
     /** Second right lane. */
-    public static final RelativeLane SECOND_RIGHT = new RelativeLane(LateralDirectionality.RIGHT, 2);
+    public static final RelativeLane SECOND_RIGHT = RelativeLane.of(LateralDirectionality.RIGHT, 2);
 
     /**
      * Rank, summarizes both the lateral directionality and the number of lanes. Is zero for CURRENT, otherwise equal to number
@@ -45,29 +64,40 @@ public class RelativeLane implements Comparable<RelativeLane>
     }
 
     /**
-     * Constructor.
+     * Returns instance by either creating it, or taking it from a store.
      * @param lat lateral direction (use {@code null} for the current lane)
      * @param numLanes number of lanes in the lateral direction (not important for the current lane)
+     * @return relative lane instance
      * @throws IllegalArgumentException if numLanes is not at least 1, except if {@code lat == null} (current lane)
      * @throws IllegalArgumentException if numLanes is not 0 if {@code lat == null} (current lane)
      */
-    public RelativeLane(final LateralDirectionality lat, final int numLanes)
+    public static RelativeLane of(final LateralDirectionality lat, final int numLanes)
     {
         Throw.whenNull(lat, "Lateral directionality may not be null.");
         Throw.when(lat.isNone() && numLanes != 0, IllegalArgumentException.class,
                 "Number of lanes must be zero if the lateral directionality is NONE.");
         Throw.when((!lat.isNone()) && numLanes <= 0, IllegalArgumentException.class,
                 "Relative lane with %d lanes in %s direction is not allowed, use values > 0.", numLanes, lat);
-        this.rank = lat.isLeft() ? -numLanes : numLanes;
+        return of(lat.isLeft() ? -numLanes : numLanes);
+
+    }
+
+    /**
+     * Returns relative lane for the given rank.
+     * @param rank rank
+     * @return relative lane for the given rank
+     */
+    private static RelativeLane of(final int rank)
+    {
+        return rank >= MIN_CACHE && rank <= MAX_CACHE ? CACHE[rank - MIN_CACHE] : new RelativeLane(rank);
     }
 
     /**
      * Returns the lateral direction.
      * @return the lateral direction
      */
-    public final LateralDirectionality getLateralDirectionality()
+    public LateralDirectionality getLateralDirectionality()
     {
-        // return this.lat;
         return this.rank == 0 ? LateralDirectionality.NONE
                 : this.rank < 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
     }
@@ -76,7 +106,7 @@ public class RelativeLane implements Comparable<RelativeLane>
      * Returns the number of lanes in the lateral direction.
      * @return number of lanes in the lateral direction
      */
-    public final int getNumLanes()
+    public int getNumLanes()
     {
         return Math.abs(this.rank);
     }
@@ -85,63 +115,63 @@ public class RelativeLane implements Comparable<RelativeLane>
      * Returns whether the second left lane is referred to.
      * @return whether the second left lane is referred to
      */
-    public final boolean isSecondLeft()
+    public boolean isSecondLeft()
     {
-        return this.equals(SECOND_LEFT);
+        return this.rank == -2;
     }
 
     /**
      * Returns whether the left lane is referred to.
      * @return whether the left lane is referred to
      */
-    public final boolean isLeft()
+    public boolean isLeft()
     {
-        return this.equals(LEFT);
+        return this.rank == -1;
     }
 
     /**
      * Returns whether the current lane is referred to.
      * @return whether the current lane is referred to
      */
-    public final boolean isCurrent()
+    public boolean isCurrent()
     {
-        return this.equals(CURRENT);
+        return this.rank == 0;
     }
 
     /**
      * Returns whether the right lane is referred to.
      * @return whether the right lane is referred to
      */
-    public final boolean isRight()
+    public boolean isRight()
     {
-        return this.equals(RIGHT);
+        return this.rank == 1;
     }
 
     /**
      * Returns whether the second right lane is referred to.
      * @return whether the second right lane is referred to
      */
-    public final boolean isSecondRight()
+    public boolean isSecondRight()
     {
-        return this.equals(SECOND_RIGHT);
+        return this.rank == 2;
     }
 
     /**
      * Returns the left hand relative lane of this relative lane.
      * @return left hand relative lane of this relative lane.
      */
-    public final RelativeLane getLeft()
+    public RelativeLane getLeft()
     {
-        return this.add(LEFT);
+        return of(this.rank - 1);
     }
 
     /**
      * Returns the right hand relative lane of this relative lane.
      * @return right hand relative lane of this relative lane.
      */
-    public final RelativeLane getRight()
+    public RelativeLane getRight()
     {
-        return this.add(RIGHT);
+        return of(this.rank + 1);
     }
 
     /**
@@ -150,18 +180,15 @@ public class RelativeLane implements Comparable<RelativeLane>
      * @param relativeLane relative lane to get of this lane
      * @return relative lane relative to this lane
      */
-    public final RelativeLane add(final RelativeLane relativeLane)
+    public RelativeLane add(final RelativeLane relativeLane)
     {
-        return new RelativeLane(this.rank + relativeLane.rank);
+        return of(this.rank + relativeLane.rank);
     }
 
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + this.rank;
-        return result;
+        return this.rank;
     }
 
     @Override
@@ -180,15 +207,11 @@ public class RelativeLane implements Comparable<RelativeLane>
             return false;
         }
         RelativeLane other = (RelativeLane) obj;
-        if (this.rank != other.rank) // relative lane is uniquely defined by the rank
-        {
-            return false;
-        }
-        return true;
+        return this.rank == other.rank; // relative lane is uniquely defined by the rank
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         if (this.equals(CURRENT))
         {
@@ -199,9 +222,15 @@ public class RelativeLane implements Comparable<RelativeLane>
     }
 
     @Override
-    public final int compareTo(final RelativeLane rel)
+    public int compareTo(final RelativeLane rel)
     {
         return this.rank - rel.rank;
+    }
+
+    @Override
+    public int index()
+    {
+        return this.rank;
     }
 
 }

@@ -311,64 +311,64 @@ class ParametersTest implements ConstraintInterface
 
         // exception reset without set: no value -> reset
         Parameters params1 = new ParameterSet();
-        UnitTest.testFail(() -> params1.resetParameter(a), "Reset of parameter that was never set does not fail.",
+        UnitTest.testFail(() -> params1.removeParameterOverride(a), "Reset of parameter that was never set does not fail.",
                 ParameterException.class);
 
         // exception for get after reset to no value: no value -> set -> reset -> get
         Parameters params2 = new ParameterSet();
-        params2.setParameterResettable(a, 1);
-        params2.resetParameter(a);
+        params2.setParameterOverride(a, 1);
+        params2.removeParameterOverride(a);
         UnitTest.testFail(() -> params2.getParameter(a),
                 "Get of parameter that was not given before set and reset, does not fail.", ParameterException.class);
 
         // exception for multiple resets: no value -> set -> reset -> reset
         Parameters params3 = new ParameterSet();
-        params3.setParameterResettable(a, 1);
-        params3.resetParameter(a);
-        UnitTest.testFail(() -> params3.resetParameter(a),
+        params3.setParameterOverride(a, 1);
+        params3.removeParameterOverride(a);
+        UnitTest.testFail(() -> params3.removeParameterOverride(a),
                 "Second reset without intermediate set does not fail when first reset was to no value.",
                 ParameterException.class);
 
         // exception for multiple resets: set -> set -> reset -> reset
         Parameters params4 = new ParameterSet();
-        params4.setParameterResettable(a, 1);
-        params4.setParameterResettable(a, 2);
-        params4.resetParameter(a);
-        UnitTest.testFail(() -> params4.resetParameter(a),
+        params4.setParameterOverride(a, 1);
+        params4.setParameterOverride(a, 2);
+        params4.removeParameterOverride(a);
+        UnitTest.testFail(() -> params4.removeParameterOverride(a),
                 "Second reset without intermediate set does not fail when first reset was to a value.",
                 ParameterException.class);
 
         // no exception: set -> reset -> set -> reset
         Parameters params5 = new ParameterSet();
-        params5.setParameterResettable(a, 1);
-        params5.resetParameter(a);
-        params5.setParameterResettable(a, 2);
-        params5.resetParameter(a);
+        params5.setParameterOverride(a, 1);
+        params5.removeParameterOverride(a);
+        params5.setParameterOverride(a, 2);
+        params5.removeParameterOverride(a);
 
         // same value: set(1) -> set(2) -> reset -> get(1?)
         Parameters params6 = new ParameterSet();
-        params6.setParameterResettable(a, 1);
-        params6.setParameterResettable(a, 2);
-        params6.resetParameter(a);
+        params6.setParameterOverride(a, 1);
+        params6.setParameterOverride(a, 2);
+        params6.removeParameterOverride(a);
         assertEquals(1.0, (double) params6.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
 
         // no reset after (none resettable) set
         Parameters params7 = new ParameterSet();
         params7.setParameter(a, 1);
-        UnitTest.testFail(() -> params7.resetParameter(a), "Reset should fail after regular set.", ParameterException.class);
+        UnitTest.testFail(() -> params7.removeParameterOverride(a), "Reset should fail after regular set.", ParameterException.class);
 
         // no reset after (none resettable) set, even with resettable set before
         Parameters params8 = new ParameterSet();
-        params8.setParameterResettable(a, 1);
+        params8.setParameterOverride(a, 1);
         params8.setParameter(a, 2);
-        UnitTest.testFail(() -> params8.resetParameter(a),
+        UnitTest.testFail(() -> params8.removeParameterOverride(a),
                 "Reset should fail after regular set, dispite resettable set before.", ParameterException.class);
 
         // same value: regular set(1) -> set(2) -> reset -> get(1?)
         Parameters params9 = new ParameterSet();
         params9.setParameter(a, 1);
-        params9.setParameterResettable(a, 2);
-        params9.resetParameter(a);
+        params9.setParameterOverride(a, 2);
+        params9.removeParameterOverride(a);
         assertEquals(1.0, (double) params9.getParameter(a), 0.0, "Value after reset should be the same as before last set.");
 
         // If null value is ever going to be allowed, use these tests to check proper set/reset.

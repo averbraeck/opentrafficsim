@@ -64,8 +64,8 @@ public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<I
     {
         Speed vCong = context.getParameters().getParameter(VCONG);
         double socio = context.getParameters().getParameter(SOCIO);
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
-        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
         SortedSet<LaneChangeInfo> info = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         double dCur = info.isEmpty() ? Double.POSITIVE_INFINITY
                 : info.first().remainingDistance().si / info.first().numberOfLaneChanges();

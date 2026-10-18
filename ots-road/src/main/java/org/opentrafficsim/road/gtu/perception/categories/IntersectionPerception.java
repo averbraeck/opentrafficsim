@@ -17,8 +17,17 @@ import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface IntersectionPerception extends LaneBasedPerceptionCategory
+public interface IntersectionPerception extends LaneBasedPerceptionCategory<IntersectionPerception>
 {
+
+    /** Type. */
+    Type<IntersectionPerception> TYPE = new Type<>("IntersectionPerception");
+
+    @Override
+    default Type<IntersectionPerception> getType()
+    {
+        return TYPE;
+    }
 
     /**
      * Returns a set of traffic lights along the route. Traffic lights are sorted by headway value.
@@ -45,5 +54,20 @@ public interface IntersectionPerception extends LaneBasedPerceptionCategory
      * @return whether there is a conflict alongside to the right
      */
     boolean isAlongsideConflictRight();
+
+    /**
+     * Keys for caching.
+     */
+    enum Keys
+    {
+        /** Traffic lights. */
+        TRAFFIC_LIGHTS,
+
+        /** Conflicts. */
+        CONFLICTS,
+
+        /** Conflicts along side. */
+        CONFLICTS_ALONGSIDE;
+    }
 
 }

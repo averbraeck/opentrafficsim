@@ -581,9 +581,10 @@ public class Schema
      */
     private void checkKeyOrUniques(final String label, final Map<String, Node> map)
     {
-        for (String fullPath : map.keySet())
+        for (Entry<String, Node> nodeEntry : map.entrySet())
         {
-            Node node = map.get(fullPath);
+            String fullPath = nodeEntry.getKey();
+            Node node = nodeEntry.getValue();
             String context = fullPath.substring(0, fullPath.lastIndexOf("."));
             String element = DocumentReader.getAttribute(node, "name").get();
             for (String selector : getXpath(node).split("\\|"))
@@ -651,9 +652,10 @@ public class Schema
      */
     private void checkKeyrefs()
     {
-        for (String fullPath : this.keyrefs.keySet())
+        for (Entry<String, Node> nodeEntry : this.keyrefs.entrySet())
         {
-            Node node = this.keyrefs.get(fullPath);
+            String fullPath = nodeEntry.getKey();
+            Node node = nodeEntry.getValue();
             String keyref = DocumentReader.getAttribute(node, "name").get();
             String keyName = DocumentReader.getAttribute(node, "refer").get().replace("ots:", "");
             Node key = null;

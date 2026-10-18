@@ -2,6 +2,7 @@ package org.opentrafficsim.road.od;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
@@ -29,13 +30,18 @@ public class Category
     /** List of objects defining the category. */
     private final List<Object> objects = new ArrayList<>();
 
+    /** Cached hash code. */
+    private final int hashCode;
+
     /**
+     * Constructor.
      * @param categorization categorization
      */
     private Category(final Categorization categorization)
     {
         Throw.whenNull(categorization, "Categorization may not be null.");
         this.categorization = categorization;
+        this.hashCode = Objects.hash(categorization, this.objects);
     }
 
     /**
@@ -48,13 +54,14 @@ public class Category
      */
     public Category(final Categorization categorization, final Object object1, final Object... objects)
     {
-        this(categorization);
+        Throw.whenNull(categorization, "Categorization may not be null.");
         Throw.when(categorization.size() != objects.length + 1, IllegalArgumentException.class,
                 "Objects do not comply with the categorization; bad number of objects.");
         Throw.whenNull(object1, "Objects may not be null.");
         Throw.when(!categorization.get(0).isAssignableFrom(object1.getClass()), IllegalArgumentException.class,
                 "Objects do not comply with the categorization; object 1 is of type %s, should be %s.", object1.getClass(),
                 categorization.get(0));
+        this.categorization = categorization;
         for (int i = 1; i < categorization.size(); i++)
         {
             Throw.whenNull(objects[i - 1], "Objects may not be null.");
@@ -67,6 +74,7 @@ public class Category
         {
             this.objects.add(object);
         }
+        this.hashCode = Objects.hash(categorization, this.objects);
     }
 
     /**
@@ -109,18 +117,14 @@ public class Category
                 return (T) obj; // assignable so safe
             }
         }
-        throw new OtsRuntimeException(
-                "Categorization contains no object assignable to given class, even though the categorization entails the class.");
+        throw new OtsRuntimeException("Categorization contains no object assignable to given class, "
+                + "even though the categorization entails the class.");
     }
 
     @Override
     public final int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.categorization == null) ? 0 : this.categorization.hashCode());
-        result = prime * result + ((this.objects == null) ? 0 : this.objects.hashCode());
-        return result;
+        return this.hashCode;
     }
 
     @Override

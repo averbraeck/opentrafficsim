@@ -17,6 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * </p>
  * @author Alexander Verbraeck
  * @author Peter Knoppers
+ * @author Wouter Schakel
  * @param <G> GTU type
  */
 public interface Perception<G extends Gtu>
@@ -40,39 +41,40 @@ public interface Perception<G extends Gtu>
     /**
      * Adds given perception category to the perception.
      * @param perceptionCategory perception category
-     * @param <T> perception category type
+     * @param <P> perception type
      */
-    <T extends PerceptionCategory<?, ?>> void addPerceptionCategory(T perceptionCategory);
+    <P extends Perception<? extends G>> void addPerceptionCategory(
+            PerceptionCategory<? extends G, ? extends P, ?> perceptionCategory);
 
     /**
      * Returns whether the given perception category is present.
      * @param category perception category class
-     * @param <T> perception category
      * @return whether the given perception category is present
      */
-    <T extends PerceptionCategory<?, ?>> boolean contains(Class<T> category);
+    boolean contains(PerceptionCategory.Type<?> category);
 
     /**
      * Returns the given perception category.
      * @param category perception category class
-     * @param <T> perception category
+     * @param <C> perception category
      * @return given perception category
      * @throws OperationalPlanException if the perception category is not present
      */
-    <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(Class<T> category) throws OperationalPlanException;
+    <C extends PerceptionCategory<?, ?, ?>> C getPerceptionCategory(PerceptionCategory.Type<C> category)
+            throws OperationalPlanException;
 
     /**
      * Returns the given perception category.
      * @param category perception category class
-     * @param <T> perception category
+     * @param <C> perception category
      * @return given perception category, empty if not present
      */
-    <T extends PerceptionCategory<?, ?>> Optional<T> getPerceptionCategoryOptional(Class<T> category);
+    <C extends PerceptionCategory<?, ?, ?>> Optional<C> getPerceptionCategoryOptional(PerceptionCategory.Type<C> category);
 
     /**
      * Remove give perception category.
-     * @param perceptionCategory perception category to remove
+     * @param category perception category to remove
      */
-    void removePerceptionCategory(PerceptionCategory<?, ?> perceptionCategory);
+    void removePerceptionCategory(PerceptionCategory<?, ?, ?> category);
 
 }

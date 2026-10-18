@@ -45,7 +45,7 @@ public interface Parameters
      * @param <T> class of value
      * @throws ParameterException if the value does not comply with value type constraints
      */
-    <T> void setParameterResettable(ParameterType<T> parameterType, T value) throws ParameterException;
+    <T> void setParameterOverride(ParameterType<T> parameterType, T value) throws ParameterException;
 
     /**
      * Resets the parameter value to the value from before the last resettable set. This goes only a single value back.
@@ -53,7 +53,7 @@ public interface Parameters
      * @throws ParameterException if the parameter was never set
      * @throws NullPointerException when any input is null
      */
-    void resetParameter(ParameterType<?> parameterType) throws ParameterException;
+    void removeParameterOverride(ParameterType<?> parameterType) throws ParameterException;
 
     /**
      * Get parameter of given type.

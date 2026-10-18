@@ -1,10 +1,16 @@
 package org.opentrafficsim.base.parameters;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.djutils.base.Identifiable;
 import org.djutils.data.Column;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.Type;
+import org.opentrafficsim.base.collections.Indexed;
+import org.opentrafficsim.base.collections.IndexedMap;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
@@ -17,8 +23,14 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author Wouter Schakel
  * @param <T> Type of the value.
  */
-public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
+public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>, Indexed
 {
+
+    /** Indices store. */
+    private static final Map<String, Integer> INDICES = new HashMap<>();
+
+    /** Index supplier. */
+    private static final AtomicInteger NEXT_INDEX = new AtomicInteger();
 
     /** Short name of parameter. */
     private final String id;
@@ -38,6 +50,19 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
 
     /** Cached hash code. */
     private final int hashCode;
+
+    /** Index. */
+    private final int index;
+
+    /**
+     * Returns the highest index given to a parameter type so far. This is useful for pre-caching {@link IndexedMap} instances
+     * containing parameter type keys.
+     * @return the highest index given to a parameter type so far
+     */
+    public static int maxIndex()
+    {
+        return Math.max(0, NEXT_INDEX.get() - 1);
+    }
 
     /**
      * Construct a new AbstractParameterType with default value, without constraint.
@@ -66,7 +91,7 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
         Throw.whenNull(description, "Description may not be null.");
         Throw.whenNull(valueClass, "Value class may not be null.");
         Throw.whenNull(defaultValue, "Default values of parameter types may not be null.");
-        this.id = id;
+        this.id = id.intern();
         this.description = description;
         this.valueClass = valueClass;
         this.defaultValue = defaultValue;
@@ -91,7 +116,8 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
             throw new OtsRuntimeException(
                     "Default value of parameter '" + getId() + "' does not comply with custom constraints.", pe);
         }
-        this.hashCode = hashCode0();
+        this.hashCode = this.id.hashCode();
+        this.index = INDICES.computeIfAbsent(this.id, (i) -> NEXT_INDEX.getAndIncrement());
     }
 
     /**
@@ -178,19 +204,10 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
         return new Column<T>(this.id, this.description, this.valueClass, unit);
     }
 
-    /**
-     * computes the hash code.
-     * @return hash code
-     */
-    private int hashCode0()
+    @Override
+    public int index()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.defaultValue == null) ? 0 : this.defaultValue.hashCode());
-        result = prime * result + this.description.hashCode();
-        result = prime * result + this.id.hashCode();
-        result = prime * result + this.valueClass.hashCode();
-        return result;
+        return this.index;
     }
 
     @Override
@@ -215,30 +232,7 @@ public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
             return false;
         }
         ParameterType<?> other = (ParameterType<?>) obj;
-        if (!this.id.equals(other.id))
-        {
-            return false;
-        }
-        if (!this.description.equals(other.description))
-        {
-            return false;
-        }
-        if (!this.valueClass.equals(other.valueClass))
-        {
-            return false;
-        }
-        if (this.defaultValue == null)
-        {
-            if (other.defaultValue != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.defaultValue.equals(other.defaultValue))
-        {
-            return false;
-        }
-        return true;
+        return this.id.equals(other.id);
     }
 
     /**

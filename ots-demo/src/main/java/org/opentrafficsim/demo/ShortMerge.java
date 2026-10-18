@@ -612,7 +612,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 Optional<Gtu> gtu = this.network.getGTU((String) content[0]);
                 if (gtu.isPresent() && gtu.get() instanceof LaneBasedGtu lGtu)
                 {
-                    RelativeLane lane = new RelativeLane(LateralDirectionality.valueOf((String) content[1]), 1);
+                    RelativeLane lane = RelativeLane.of(LateralDirectionality.valueOf((String) content[1]), 1);
 
                     try
                     {

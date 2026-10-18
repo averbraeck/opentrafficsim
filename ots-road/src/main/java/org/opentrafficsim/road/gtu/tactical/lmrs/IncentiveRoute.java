@@ -64,7 +64,7 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
             throws ParameterException, OperationalPlanException
     {
         // desire to leave current lane
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         SortedSet<LaneChangeInfo> currentInfo = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         Length currentFirst = currentInfo.isEmpty() || currentInfo.first().numberOfLaneChanges() == 0 ? Length.POSITIVE_INFINITY
                 : currentInfo.first().remainingDistance();
@@ -108,7 +108,7 @@ public final class IncentiveRoute implements MandatoryIncentive, Stateless<Incen
     public static double getDesireToLeave(final TacticalContextEgo context, final RelativeLane lane)
             throws ParameterException, OperationalPlanException
     {
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         Length x0 = context.getParameters().getParameter(LOOKAHEAD);
         Duration t0 = context.getParameters().getParameter(T0);
         double dOut = 0.0;

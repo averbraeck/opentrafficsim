@@ -34,7 +34,7 @@ public final class ArTaskCarFollowing extends ArTaskHeadwayBased implements Stat
     @Override
     protected Duration getHeadway(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
     {
-        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not available."));
         return neighbors.getLeaders(RelativeLane.CURRENT).collect(new TaskHeadwayCollector(getSpeed()));
     }

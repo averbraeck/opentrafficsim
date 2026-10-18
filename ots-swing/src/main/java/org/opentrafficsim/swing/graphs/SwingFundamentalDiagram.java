@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.swing.ButtonGroup;
@@ -30,8 +31,8 @@ import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.Range;
 import org.opentrafficsim.animation.graphs.FdDataSource;
 import org.opentrafficsim.animation.graphs.FundamentalDiagram;
-import org.opentrafficsim.animation.graphs.GraphUtil;
 import org.opentrafficsim.animation.graphs.FundamentalDiagram.Quantity;
+import org.opentrafficsim.animation.graphs.GraphUtil;
 
 /**
  * Embed a {@link FundamentalDiagram} in a swing {@link JPanel}.
@@ -298,18 +299,18 @@ public class SwingFundamentalDiagram extends SwingPlot implements EventListener
         {
             Object[] payload = (Object[]) event.getContent();
             Duration aggregation = (Duration) payload[0];
-            for (JRadioButtonMenuItem button : this.aggregationPeriodButtons.keySet())
+            for (Entry<JRadioButtonMenuItem, Double> entry : this.aggregationPeriodButtons.entrySet())
             {
-                button.setSelected(Math.abs(this.aggregationPeriodButtons.get(button) - aggregation.si) < 0.001);
+                entry.getKey().setSelected(Math.abs(entry.getValue() - aggregation.si) < 0.001);
             }
         }
         else if (event.getType().equals(FdDataSource.UPDATES_PER_PERIOD))
         {
             Object[] payload = (Object[]) event.getContent();
             int n = (int) payload[0];
-            for (JRadioButtonMenuItem button : this.updatesPerPeriodButtons.keySet())
+            for (Entry<JRadioButtonMenuItem, Integer> entry : this.updatesPerPeriodButtons.entrySet())
             {
-                button.setSelected(this.updatesPerPeriodButtons.get(button) == n);
+                entry.getKey().setSelected(entry.getValue() == n);
             }
         }
     }

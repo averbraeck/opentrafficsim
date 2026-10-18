@@ -53,7 +53,7 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
     {
         PerceivedBusStop firstStop = null;
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
-                context.getPerception().getPerceptionCategory(BusStopPerception.class).getBusStops();
+                context.getPerception().getPerceptionCategory(BusStopPerception.TYPE).getBusStops();
         Duration now = context.getPerception().getGtu().getSimulator().getSimulatorTime();
         BusSchedule busSchedule = (BusSchedule) context.getPerception().getGtu().getStrategicalPlanner().getRoute()
                 .orElseThrow(() -> new OperationalPlanException(

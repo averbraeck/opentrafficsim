@@ -46,7 +46,7 @@ public final class DeadEndUtil
     {
         SimpleOperationalPlan simplePlan = plan;
         // deal with dead-end situations
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         SortedSet<LaneChangeInfo> lcInfo = infra.getPhysicalLaneChangeInfo(RelativeLane.CURRENT);
         if (!lcInfo.isEmpty())
         {

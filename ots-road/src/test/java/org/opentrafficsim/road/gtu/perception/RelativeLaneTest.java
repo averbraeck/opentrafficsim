@@ -36,7 +36,7 @@ public final class RelativeLaneTest
     {
         try
         {
-            new RelativeLane(null, 1);
+            RelativeLane.of(null, 1);
             fail("Should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -46,7 +46,7 @@ public final class RelativeLaneTest
 
         try
         {
-            new RelativeLane(LateralDirectionality.LEFT, -1);
+            RelativeLane.of(LateralDirectionality.LEFT, -1);
             fail("negative number of lanes should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException iae)
@@ -56,7 +56,7 @@ public final class RelativeLaneTest
 
         try
         {
-            new RelativeLane(LateralDirectionality.NONE, 1);
+            RelativeLane.of(LateralDirectionality.NONE, 1);
             fail("lateral directionality NONE with non-zero number of lanes should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException iae)
@@ -66,7 +66,7 @@ public final class RelativeLaneTest
 
         try
         {
-            new RelativeLane(LateralDirectionality.RIGHT, -1);
+            RelativeLane.of(LateralDirectionality.RIGHT, -1);
             fail("negative number of lanes should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException iae)
@@ -81,7 +81,7 @@ public final class RelativeLaneTest
             for (int numLanes = startAt; numLanes < endAt; numLanes++)
             {
                 // System.out.println("Testing " + ld + ", with numLanes " + numLanes);
-                RelativeLane rl = new RelativeLane(ld, numLanes);
+                RelativeLane rl = RelativeLane.of(ld, numLanes);
                 assertTrue(rl.toString().startsWith("RelativeLane"), "toString returns something descriptive");
                 assertEquals(ld, rl.getLateralDirectionality(), "lateral directionality is returned");
                 assertEquals(numLanes, rl.getNumLanes(), "numLanes is returned");
@@ -161,7 +161,7 @@ public final class RelativeLaneTest
                 }
                 if (numLanes > 1 && ld == LateralDirectionality.RIGHT)
                 {
-                    assertEquals(new RelativeLane(LateralDirectionality.RIGHT, numLanes - 1), leftNeighbor,
+                    assertEquals(RelativeLane.of(LateralDirectionality.RIGHT, numLanes - 1), leftNeighbor,
                             "left of right > 1 is right minus 1");
                 }
                 assertNotEquals(leftNeighbor.hashCode(), rl.hashCode(),
@@ -177,14 +177,14 @@ public final class RelativeLaneTest
                 }
                 if (numLanes > 1 && ld == LateralDirectionality.LEFT)
                 {
-                    assertEquals(new RelativeLane(LateralDirectionality.LEFT, numLanes - 1), rightNeighbor,
+                    assertEquals(RelativeLane.of(LateralDirectionality.LEFT, numLanes - 1), rightNeighbor,
                             "right of LEFT > 1 is left minus 1");
                 }
                 assertNotEquals(rightNeighbor.hashCode(), rl.hashCode(),
                         "hashCodes should be different for adjacent relative lanes");
                 for (int delta = -5; delta <= +5; delta++)
                 {
-                    RelativeLane other = new RelativeLane(delta < 0 ? LateralDirectionality.LEFT
+                    RelativeLane other = RelativeLane.of(delta < 0 ? LateralDirectionality.LEFT
                             : delta > 0 ? LateralDirectionality.RIGHT : LateralDirectionality.NONE, Math.abs(delta));
                     int rank = ld == LateralDirectionality.LEFT ? -numLanes : numLanes;
                     int diff = rank - delta;

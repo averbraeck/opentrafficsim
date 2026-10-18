@@ -379,12 +379,12 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     public <T extends LocatedObject> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
     {
         Map<String, T> result = new LinkedHashMap<>();
-        for (String key : this.objectMap.keySet())
+        for (Entry<String, LocatedObject> entry : this.objectMap.entrySet())
         {
-            LocatedObject o = this.objectMap.get(key);
+            LocatedObject o = entry.getValue();
             if (objectType.isInstance(o))
             {
-                result.put(key, (T) o);
+                result.put(entry.getKey(), (T) o);
             }
         }
         return new ImmutableHashMap<>(result, Immutable.WRAP);
@@ -499,12 +499,12 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     public ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(final Class<NonLocatedObject> objectType)
     {
         Map<String, NonLocatedObject> result = new LinkedHashMap<>();
-        for (String key : this.objectMap.keySet())
+        for (Entry<String, NonLocatedObject> entry : this.nonLocatedObjectMap.entrySet())
         {
-            NonLocatedObject o = this.nonLocatedObjectMap.get(key);
+            NonLocatedObject o = entry.getValue();
             if (objectType.isInstance(o))
             {
-                result.put(key, o);
+                result.put(entry.getKey(), o);
             }
         }
         return new ImmutableHashMap<>(result, Immutable.WRAP);
@@ -666,7 +666,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
     {
         if (this.routeMap.containsKey(gtuType))
         {
-            return this.routeMap.get(gtuType).keySet().contains(routeId);
+            return this.routeMap.get(gtuType).containsKey(routeId);
         }
         return false;
     }
@@ -678,9 +678,9 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      */
     public Optional<Route> getRoute(final String routeId)
     {
-        for (GtuType gtuType : this.routeMap.keySet())
+        for (Map<String, Route> value : this.routeMap.values())
         {
-            Route route = this.routeMap.get(gtuType).get(routeId);
+            Route route = value.get(routeId);
             if (route != null)
             {
                 return Optional.of(route);

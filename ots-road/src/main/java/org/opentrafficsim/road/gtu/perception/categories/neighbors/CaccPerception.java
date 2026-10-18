@@ -7,7 +7,6 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.control.Cacc;
 import org.opentrafficsim.road.gtu.perception.FilteredIterable;
@@ -15,6 +14,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.categories.AbstractLanePerceptionCategory;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 
@@ -28,7 +28,7 @@ import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+public class CaccPerception extends AbstractLanePerceptionCategory<LongitudinalControllerPerception>
         implements LongitudinalControllerPerception
 {
 

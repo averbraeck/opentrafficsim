@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.tactical.lmrs;
 
+import java.util.Optional;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -57,18 +59,19 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
             final ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-        if (!context.getPerception().contains(IntersectionPerception.class))
-        {
-            return Desire.ZERO;
-        }
         double aCur = context.getCarFollowingAcceleration().si;
         if (aCur <= 0.0 && context.getSpeed().eq0())
         {
             return Desire.ZERO;
         }
-        IntersectionPerception inter = context.getPerception().getPerceptionCategory(IntersectionPerception.class);
-        PerceptionCollectable<PerceivedConflict, Conflict> conflicts = inter.getConflicts(RelativeLane.CURRENT);
-        PerceptionCollectable<PerceivedTrafficLight, TrafficLight> lights = inter.getTrafficLights(RelativeLane.CURRENT);
+        Optional<IntersectionPerception> inter =
+                context.getPerception().getPerceptionCategoryOptional(IntersectionPerception.TYPE);
+        if (inter.isEmpty())
+        {
+            return Desire.ZERO;
+        }
+        PerceptionCollectable<PerceivedConflict, Conflict> conflicts = inter.get().getConflicts(RelativeLane.CURRENT);
+        PerceptionCollectable<PerceivedTrafficLight, TrafficLight> lights = inter.get().getTrafficLights(RelativeLane.CURRENT);
         // TODO: a ramp-metering traffic light triggers this incentive with possible cooperation from the main line
         // possible solution: make this a state-full class using Lane/LinkTypes to recognize intersections
         if (conflicts.isEmpty() && lights.isEmpty())
@@ -76,8 +79,8 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
             return Desire.ZERO;
         }
         Acceleration a = context.getParameters().getParameter(ParameterTypes.A);
-        NeighborsPerception neigbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        NeighborsPerception neigbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
 
         double dLeft = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.LEFT))

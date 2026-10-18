@@ -260,7 +260,7 @@ public class LoopDetector extends LaneDetector
         Throw.when(firstAggregation.si < 0.0, IllegalArgumentException.class, "firstAggregation time should be positive.");
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "aggregation time should be positive and non-0.");
         this.length = length;
-        this.currentAggregation = Duration.ofSI(firstAggregation.si);
+        this.currentAggregation = firstAggregation;
         this.aggregation = aggregation;
         this.firstAggregation = firstAggregation;
         Try.execute(() -> getSimulator().scheduleEventAbs(this.currentAggregation, () -> aggregate()),
@@ -396,9 +396,8 @@ public class LoopDetector extends LaneDetector
                 Object[] dataArray = new Object[dat.periodicDataMap.size() + 1];
                 dataArray[0] = frequency;
                 int i = 1;
-                for (LoopDetectorMeasurement<?, ?> measurement : dat.periodicDataMap.keySet())
+                for (List<?> list : dat.periodicDataMap.values())
                 {
-                    List<?> list = dat.periodicDataMap.get(measurement);
                     dataArray[i] = list.get(list.size() - 1);
                     i++;
                 }

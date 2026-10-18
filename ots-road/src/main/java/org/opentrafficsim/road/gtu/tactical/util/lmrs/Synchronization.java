@@ -54,7 +54,7 @@ public interface Synchronization extends NamedConstants
                 throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
+            RelativeLane relativeLane = RelativeLane.of(lat, 1);
             PerceivedGtu leader = Synchronization.getProspectiveLeader(context, relativeLane, desire);
             if (leader != null)
             {
@@ -70,7 +70,8 @@ public interface Synchronization extends NamedConstants
                 }
 
                 // limit deceleration based on desire
-                a = Acceleration.max(a, context.getParameters().getParameter(ParameterTypes.B).neg());
+                Acceleration b = context.getParameters().getParameter(ParameterTypes.B);
+                a = a.si > -b.si ? a : b.neg();
             }
             return a;
         }
@@ -123,7 +124,7 @@ public interface Synchronization extends NamedConstants
                 throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
+            RelativeLane relativeLane = RelativeLane.of(lat, 1);
             PerceivedGtu leader = Synchronization.getProspectiveLeader(context, relativeLane, desire);
             if (leader != null)
             {
@@ -151,7 +152,8 @@ public interface Synchronization extends NamedConstants
                 }
 
                 // limit deceleration based on desire
-                a = Acceleration.max(a, context.getParameters().getParameter(ParameterTypes.B).neg());
+                Acceleration b = context.getParameters().getParameter(ParameterTypes.B);
+                a = a.si > -b.si ? a : b.neg();
             }
             return a;
         }
@@ -222,7 +224,7 @@ public interface Synchronization extends NamedConstants
     {
         double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane);
+                context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(relativeLane);
 
         if (leaders != null)
         {
@@ -258,7 +260,7 @@ public interface Synchronization extends NamedConstants
     static PerceivedGtu getProspectiveFollower(final TacticalContextEgo context, final RelativeLane relativeLane,
             final PerceivedGtu leader) throws OperationalPlanException
     {
-        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
         if (leader != null)
         {
             PerceivedGtu prevLeader = null;
@@ -292,7 +294,7 @@ public interface Synchronization extends NamedConstants
     static Length getMergeDistance(final LanePerception perception, final LateralDirectionality lat)
             throws OperationalPlanException
     {
-        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.TYPE);
         Length dx = perception.getGtu().getFront().dx();
         Length xMergeRef = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat);
         if (xMergeRef.gt0() && xMergeRef.lt(dx))
@@ -315,7 +317,7 @@ public interface Synchronization extends NamedConstants
     static boolean leaderIsCreeping(final TacticalContextEgo context, final double desire, final LateralDirectionality lat)
             throws OperationalPlanException, ParameterException
     {
-        PerceivedGtu leader = getProspectiveLeader(context, new RelativeLane(lat, 1), desire);
+        PerceivedGtu leader = getProspectiveLeader(context, RelativeLane.of(lat, 1), desire);
         return leader != null && leader.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si;
     }
 

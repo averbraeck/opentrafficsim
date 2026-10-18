@@ -40,6 +40,9 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Iden
     /** Point. */
     private final DirectedPoint2d point;
 
+    /** Heading. */
+    private final Direction heading;
+
     /** Absolute contour. */
     private final Polygon2d absoluteContour;
 
@@ -101,6 +104,7 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Iden
         this.network = network;
         this.id = id;
         this.point = point;
+        this.heading = Direction.ofSI(this.point.dirZ);
 
         double x = this.point.x;
         double y = this.point.y;
@@ -154,7 +158,7 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Iden
      */
     public Direction getHeading()
     {
-        return Direction.ofSI(this.point.dirZ);
+        return this.heading;
     }
 
     /**
@@ -417,10 +421,7 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Iden
     @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
+        return this.id.hashCode();
     }
 
     @Override

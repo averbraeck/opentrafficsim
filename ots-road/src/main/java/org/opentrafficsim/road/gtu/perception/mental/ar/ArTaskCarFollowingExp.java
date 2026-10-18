@@ -47,7 +47,7 @@ public final class ArTaskCarFollowingExp extends AbstractArTask implements State
     {
         LaneBasedGtu gtu = perception.getGtu();
         Parameters parameters = gtu.getParameters();
-        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("No NeighborsPerception in perception"));
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
         Duration headway = leaders.collect(new TaskHeadwayCollector(gtu.getSpeed()));

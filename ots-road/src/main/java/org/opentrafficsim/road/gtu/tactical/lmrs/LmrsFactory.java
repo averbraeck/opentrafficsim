@@ -454,7 +454,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
     /** Custom perception categories. */
     private List<Set<BiFunction<? super LanePerception, ? super Projection,
-            ? extends PerceptionCategory<?, ?>>>> customPerceptionCategories = listOf(new LinkedHashSet<>());
+            ? extends PerceptionCategory<? extends LaneBasedGtu, ? extends LanePerception, ?>>>> customPerceptionCategories =
+                    listOf(new LinkedHashSet<>());
 
     // Perception -> Fuller
 
@@ -1368,9 +1369,11 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         // Perception
 
         /** Implementation of Fuller: NONE (default), SUMMATIVE, ANTICIPATION_RELIANCE or ATTENTION_MATRIX. */
-        public static final Setting<Set<BiFunction<? super LanePerception, ? super Projection,
-                ? extends PerceptionCategory<?, ?>>>> CUSTOM_PERCEPTION_CATEGORIES =
-                        new Setting<>((factory) -> factory.customPerceptionCategories);
+        public static final Setting<
+                Set<BiFunction<? super LanePerception, ? super Projection,
+                        ? extends PerceptionCategory<? extends LaneBasedGtu, ? extends LanePerception,
+                                ?>>>> CUSTOM_PERCEPTION_CATEGORIES =
+                                        new Setting<>((factory) -> factory.customPerceptionCategories);
 
         // Perception -> Fuller
 

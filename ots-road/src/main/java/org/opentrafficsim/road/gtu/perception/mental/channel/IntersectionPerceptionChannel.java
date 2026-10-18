@@ -10,14 +10,13 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.categories.AbstractLanePerceptionCategory;
 import org.opentrafficsim.road.gtu.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.Anticipation;
@@ -40,7 +39,7 @@ import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
  * </p>
  * @author Wouter Schakel
  */
-public class IntersectionPerceptionChannel extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+public class IntersectionPerceptionChannel extends AbstractLanePerceptionCategory<IntersectionPerception>
         implements IntersectionPerception
 {
 
@@ -76,26 +75,26 @@ public class IntersectionPerceptionChannel extends AbstractPerceptionCategory<La
     @Override
     public final PerceptionCollectable<PerceivedTrafficLight, TrafficLight> getTrafficLights(final RelativeLane lane)
     {
-        return computeIfAbsent("trafficLights", () -> computeTrafficLights(lane), lane);
+        return computeIfAbsent(Keys.TRAFFIC_LIGHTS, () -> computeTrafficLights(lane), lane);
     }
 
     @Override
     public final PerceptionCollectable<PerceivedConflict, Conflict> getConflicts(final RelativeLane lane)
     {
-        return computeIfAbsent("conflicts", () -> computeConflicts(lane), lane);
+        return computeIfAbsent(Keys.CONFLICTS, () -> computeConflicts(lane), lane);
     }
 
     @Override
     public final boolean isAlongsideConflictLeft()
     {
-        return computeIfAbsent("alongside", () -> computeConflictAlongside(LateralDirectionality.LEFT),
+        return computeIfAbsent(Keys.CONFLICTS_ALONGSIDE, () -> computeConflictAlongside(LateralDirectionality.LEFT),
                 LateralDirectionality.LEFT);
     }
 
     @Override
     public final boolean isAlongsideConflictRight()
     {
-        return computeIfAbsent("alongside", () -> computeConflictAlongside(LateralDirectionality.RIGHT),
+        return computeIfAbsent(Keys.CONFLICTS_ALONGSIDE, () -> computeConflictAlongside(LateralDirectionality.RIGHT),
                 LateralDirectionality.RIGHT);
     }
 
@@ -154,7 +153,7 @@ public class IntersectionPerceptionChannel extends AbstractPerceptionCategory<La
     {
         try
         {
-            RelativeLane lane = new RelativeLane(lat, 1);
+            RelativeLane lane = RelativeLane.of(lat, 1);
             if (getPerception().getLaneStructure().exists(lane))
             {
                 Iterator<Entry<Conflict>> conflicts = getPerception().getLaneStructure()

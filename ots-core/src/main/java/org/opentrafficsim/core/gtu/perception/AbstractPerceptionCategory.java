@@ -1,15 +1,16 @@
 package org.opentrafficsim.core.gtu.perception;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.opentrafficsim.base.OtsRuntimeException;
-import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.base.Type;
+import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.core.network.LateralDirectionality;
 
 /**
  * Implements {@code PerceptionCategory} and allows sub-classes to easily implement lazy evaluation through the
@@ -23,19 +24,28 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author Wouter Schakel
  * @param <G> GTU type
  * @param <P> perception type
+ * @param <C> perception category type
  */
-public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Perception<G>>
-        implements PerceptionCategory<G, P>, Type<AbstractPerceptionCategory<G, P>>
+public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Perception<G>, C extends PerceptionCategory<?, ?, C>>
+        implements PerceptionCategory<G, P, C>
 {
 
     /** Connected perception. */
     private final P perception;
 
-    /** Nested maps to contain context specific keys for given information keys. */
-    private final Map<Object, Map<Object, Object>> contextualKeyMap = new LinkedHashMap<>();
+    /** Simulator. */
+    private final OtsSimulatorInterface simulator;
+
+    /** Time of cache. */
+    private double time;
 
     /** Map from key, either non-contextual or contextual, and time-stamped object. */
-    private Map<Object, TimeStampedObject<?>> cache = new LinkedHashMap<>();
+    private final Map<Object, Object> cache = new LinkedHashMap<>();
+
+    /** Cache dedicated to {@link LateralDirectionality} context. */
+    @SuppressWarnings("unchecked")
+    private final Map<Enum<?>, Object>[] lateralDirectionCache =
+            (Map<Enum<?>, Object>[]) new Map<?, ?>[LateralDirectionality.values().length];
 
     /**
      * Constructor setting the perception.
@@ -44,6 +54,11 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
     public AbstractPerceptionCategory(final P perception)
     {
         this.perception = perception;
+        this.simulator = this.perception.getGtu().getSimulator();
+        for (int i = 0; i < this.lateralDirectionCache.length; i++)
+        {
+            this.lateralDirectionCache[i] = new LinkedHashMap<>();
+        }
     }
 
     /**
@@ -70,9 +85,9 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * Returns the current time.
      * @return current time
      */
-    public final Duration getTimestamp()
+    public Duration getTimestamp()
     {
-        return getGtu().getSimulator().getSimulatorTime();
+        return this.simulator.getSimulatorTime();
     }
 
     /**
@@ -85,7 +100,7 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * internal use, then we could use the following line inside {@code getEgoSpeed()}:
      *
      * <pre>
-     * return computeIfAbsent("speedLimit", () -&gt; computeEgoSpeed());
+     * return computeIfAbsent(MyEnum.KEY, () -&gt; computeEgoSpeed());
      * </pre>
      *
      * @param key key defining which information is requested
@@ -93,22 +108,47 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * @param <T> value type
      * @return cached or computed value
      */
+    @SuppressWarnings("unchecked")
     protected <T> T computeIfAbsent(final Object key, final Supplier<T> supplier)
     {
-        @SuppressWarnings("unchecked")
-        TimeStampedObject<T> stampedObject = (TimeStampedObject<T>) this.cache.get(key);
-        if (stampedObject == null || stampedObject.timestamp().lt(getGtu().getSimulator().getSimulatorTime()))
+        checkCache();
+        T t = (T) this.cache.get(key);
+        if (t == null)
         {
-            stampedObject = new TimeStampedObject<>(supplier.get(), getGtu().getSimulator().getSimulatorTime());
-            this.cache.put(key, stampedObject);
+            t = supplier.get();
+            this.cache.put(key, t);
         }
-        return stampedObject.object();
+        return t;
+    }
+
+    /**
+     * Checks whether the cache needs to be clear and calls {@link #clearCache} if so.
+     */
+    protected void checkCache()
+    {
+        double t = this.simulator.getSimulatorTime().si;
+        if (this.time < t)
+        {
+            clearCache();
+            this.time = t;
+        }
+    }
+
+    /**
+     * Clears the cache when data is requested at a different time.
+     */
+    protected void clearCache()
+    {
+        this.cache.clear();
+        for (Map<Enum<?>, Object> map : this.lateralDirectionCache)
+        {
+            map.clear();
+        }
     }
 
     /**
      * Returns the cached value for the given key, or computes it if it's absent or not from the current simulation time. The
-     * key represents a type of information, e.g. 'leading GTUs'. This information is context specific, namely the lane for
-     * which 'leading GTUs' are requested.
+     * key represents a type of information. This information is context specific.
      * <p>
      * This method will compute the information if required. A simple manner to define a {@code Supplier<T>} is to create a
      * method and invoke it using a lambda expression. For example, suppose we have the method
@@ -117,7 +157,7 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * {@code getLeaders(Lane)}:
      *
      * <pre>
-     * return computeIfAbsent("leaders", () -&gt; computeLeaders(lane))
+     * return computeIfAbsent(MyEnum.LEADERS, () -&gt; computeLeaders(lane), lane)
      * </pre>
      *
      * @param key key defining which information is requested, it may be contextual if it's context dependent
@@ -126,27 +166,74 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * @param <T> value type
      * @return cached or computed value
      */
-    protected <T> T computeIfAbsent(final Object key, final Supplier<T> supplier, final Object context)
+    protected <T> T computeIfAbsent(final Enum<?> key, final Supplier<T> supplier, final Object context)
     {
-        return computeIfAbsent(contextualKey(key, context), supplier);
-    }
-
-    /**
-     * Returns a key that is unique for the given information key and singled-object context.
-     * @param key information key
-     * @param context context, for example the lane to which the information applies
-     * @return key that is unique for the given information key and singled-object context
-     */
-    private Object contextualKey(final Object key, final Object context)
-    {
-        Map<Object, Object> map = this.contextualKeyMap.computeIfAbsent(key, (k) -> new LinkedHashMap<>());
-        return map.computeIfAbsent(context, (k) -> new Object());
+        return computeIfAbsent(new SingleContextKey(key, context), supplier);
     }
 
     /**
      * Returns the cached value for the given key, or computes it if it's absent or not from the current simulation time. The
-     * key represents a type of information, e.g. 'neighboring GTUs'. This information is context specific, namely the lane for
-     * which 'neighboring GTUs' are requested, as well as the longitudinal direction.
+     * key represents a type of information. This information is context specific.
+     * <p>
+     * This method will compute the information if required. A simple manner to define a {@code Supplier<T>} is to create a
+     * method and invoke it using a lambda expression. For example, suppose we have the method
+     * {@code public List<HeadwayGtu> getLeadersWithIndicator(LateralDirectionality)} for the tactical planner to use, and
+     * {@code private List<HeadwayGtu> computeLeadersWithIndicator(LateralDirectionality)} for internal use, then we could use
+     * the following line inside {@code getLeadersWithIndicator(LateralDirectionality)}:
+     *
+     * <pre>
+     * return computeIfAbsent(MyEnum.LEADERS, () -&gt; computeLeadersWithIndicator(latDir), latDir)
+     * </pre>
+     *
+     * @param key key defining which information is requested, it may be contextual if it's context dependent
+     * @param supplier supplier
+     * @param context object defining the context, e.g. the lane for which the information is requested
+     * @param <T> value type
+     * @return cached or computed value
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> T computeIfAbsent(final Enum<?> key, final Supplier<T> supplier, final LateralDirectionality context)
+    {
+        checkCache();
+        Map<Enum<?>, Object> c = this.lateralDirectionCache[context.ordinal()];
+        T t = (T) c.get(key);
+        if (t == null)
+        {
+            t = supplier.get();
+            c.put(key, t);
+        }
+        return t;
+    }
+
+    /**
+     * Returns the cached value for the given key, or computes it if it's absent or not from the current simulation time. The
+     * key represents a type of information. This information is context specific.
+     * <p>
+     * This method will compute the information if required. A simple manner to define a {@code Supplier<T>} is to create a
+     * method and invoke it using a lambda expression. For example, suppose we have the method
+     * {@code public List<HeadwayGtu> getLeadersWithIndicator(Lane, LateralDirectionality)} for the tactical planner to use, and
+     * {@code private List<HeadwayGtu> computeLeadersWithIndicator(Lane, LateralDirectionality)} for internal use, then we could
+     * use the following line inside {@code getLeadersWithIndicator(Lane, LateralDirectionality)}:
+     *
+     * <pre>
+     * return computeIfAbsent(MyEnum.LEADERS, () -&gt; computeLeadersWithIndicator(lane, latDir), lane, latDir)
+     * </pre>
+     *
+     * @param key key defining which information is requested, it may be contextual if it's context dependent
+     * @param supplier supplier
+     * @param context1 first object defining the context, e.g. the lane for which the information is requested
+     * @param context2 second object defining the context, e.g. the direction for which the information is requested
+     * @param <T> value type
+     * @return cached or computed value
+     */
+    protected <T> T computeIfAbsent(final Enum<?> key, final Supplier<T> supplier, final Object context1, final Object context2)
+    {
+        return computeIfAbsent(new DualContextKey(key, context1, context2), supplier);
+    }
+
+    /**
+     * Returns the cached value for the given key, or computes it if it's absent or not from the current simulation time. The
+     * key represents a type of information. This information is context specific.
      * <p>
      * It is not advised to use this method at high frequency as it contains slight overhead. Instead, consider defining keys
      * directly for various contexts. For example:
@@ -163,47 +250,28 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      *
      * This method will compute the information if required. A simple manner to define a {@code Supplier<T>} is to create a
      * method and invoke it using a lambda expression. For example, suppose we have the method
-     * {@code public List<HeadwayGtu> getNeighbors(Lane, LongiudinalDirection)} for the tactical planner to use, and
-     * {@code private List<HeadwayGtu> computeNeighbors(Lane, LongiudinalDirection)} for internal use, then we could use the
-     * following line inside {@code getNeighbors(Lane, LongiudinalDirection)}:
+     * {@code public List<HeadwayGtu> getNeighborsWithIndiator(Lane, LongitudinalDirection, LateralDirectionality)} for the
+     * tactical planner to use, and
+     * {@code private List<HeadwayGtu> computeNeighborsWithIndiator(Lane, LongitudinalDirection, LateralDirectionality)} for
+     * internal use, then we could use the following line inside
+     * {@code getNeighborsWithIndiator(Lane, LongitudinalDirection, LateralDirectionality)}:
      *
      * <pre>
-     * return computeIfAbsent("neighbors", () -&gt; computeNeighbors(lane, longDir))
+     * return computeIfAbsent(MyEnum.NEIGHBORS, () -&gt; computeNeighborsWithIndiator(lane, longDir, latDir))
      * </pre>
      *
      * @param key key defining which information is requested, it may be contextual if it's context dependent
      * @param supplier supplier
-     * @param context objects defining the context, e.g. the lane and direction for which the information is requested
+     * @param context1 first object defining the context, e.g. the lane for which the information is requested
+     * @param context2 second object defining the context, e.g. the direction for which the information is requested
+     * @param context3 further objects defining the context
      * @param <T> value type
      * @return cached or computed value
      */
-    protected <T> T computeIfAbsent(final Object key, final Supplier<T> supplier, final Object... context)
+    protected <T> T computeIfAbsent(final Enum<?> key, final Supplier<T> supplier, final Object context1, final Object context2,
+            final Object... context3)
     {
-        return computeIfAbsent(contextualKey(key, context), supplier);
-    }
-
-    /**
-     * Returns a key that is unique for the given information key and multi-object context.
-     * @param key information key
-     * @param context context, for example the lane and longitudinal direction to which the information applies
-     * @return key that is unique for the given information key and multi-object context
-     */
-    @SuppressWarnings("unchecked")
-    private Object contextualKey(final Object key, final Object... context)
-    {
-        // get layer of highest level, the key level
-        Map<Object, Object> map = this.contextualKeyMap.computeIfAbsent(key, (k) -> new LinkedHashMap<>());
-        for (int i = 0; i < context.length; i++)
-        {
-            if (i == context.length - 1)
-            {
-                // deepest layer, i.e. a leaf, we need to return an Object as key
-                return map.computeIfAbsent(context[i], (k) -> new Object());
-            }
-            // intermediate layer, we need to obtain the next layer's map
-            map = (Map<Object, Object>) map.computeIfAbsent(context[i], (k) -> new LinkedHashMap<>());
-        }
-        throw new OtsRuntimeException("Unexpected exception while obtaining contextual key for specific perceived info.");
+        return computeIfAbsent(new MultiContextKey(key, context1, context2, context3), supplier);
     }
 
     /**
@@ -215,13 +283,124 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
     {
         StringBuilder str = new StringBuilder("[");
         String sep = "";
-        for (Entry<Object, TimeStampedObject<?>> entry : this.cache.entrySet())
+        for (Entry<Object, Object> entry : this.cache.entrySet())
         {
             str.append(sep).append(entry.getKey()).append("=").append(entry.getValue());
             sep = ", ";
         }
         str.append("]");
         return str.toString();
+    }
+
+    /**
+     * Key with single context.
+     * @param dataKey data key
+     * @param context context
+     */
+    private record SingleContextKey(Enum<?> dataKey, Object context)
+    {
+        @Override
+        public int hashCode()
+        {
+            return 31 * this.dataKey.hashCode() + this.context.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            SingleContextKey other = (SingleContextKey) obj;
+            return Objects.equals(this.context, other.context) && Objects.equals(this.dataKey, other.dataKey);
+        }
+    }
+
+    /**
+     * Key with dual context.
+     * @param dataKey data key
+     * @param context1 context 1
+     * @param context2 context 2
+     */
+    private record DualContextKey(Enum<?> dataKey, Object context1, Object context2)
+    {
+        @Override
+        public int hashCode()
+        {
+            int result = this.dataKey.hashCode();
+            result = 31 * result + this.context1.hashCode();
+            result = 31 * result + this.context2.hashCode();
+            return result;
+        }
+
+        @Override
+        public boolean equals(final Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            DualContextKey other = (DualContextKey) obj;
+            return Objects.equals(this.dataKey, other.dataKey) && Objects.equals(this.context1, other.context1)
+                    && Objects.equals(this.context2, other.context2);
+        }
+    }
+
+    /**
+     * Key with variable context.
+     * @param dataKey data key
+     * @param context1 context 1
+     * @param context2 context 2
+     * @param context3 further context
+     */
+    private record MultiContextKey(Enum<?> dataKey, Object context1, Object context2, Object[] context3)
+    {
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.deepHashCode(this.context3);
+            result = prime * result + Objects.hash(this.dataKey, this.context1, this.context2);
+            return result;
+        }
+
+        @Override
+        public boolean equals(final Object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            MultiContextKey other = (MultiContextKey) obj;
+            return Objects.equals(this.dataKey, other.dataKey) && Objects.equals(this.context1, other.context1)
+                    && Objects.equals(this.context2, other.context2) && Arrays.deepEquals(this.context3, other.context3);
+        }
     }
 
 }

@@ -60,8 +60,8 @@ public interface Cooperation extends NamedConstants
             double b = -context.getParameters().getParameter(ParameterTypes.B).si;
             double a = Double.MAX_VALUE;
             double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
-            RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
+            RelativeLane relativeLane = RelativeLane.of(lat, 1);
+            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
                     .getLeaders(relativeLane))
             {
                 double desire = getLaneChangeDesire(leader, lat.flip(), dCoop);

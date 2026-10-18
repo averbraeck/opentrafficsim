@@ -63,7 +63,7 @@ public final class TrafficLightUtil
     {
         Throw.whenNull(context, "context");
         Iterable<PerceivedTrafficLight> headwayTrafficLights = context.getPerception()
-                .getPerceptionCategory(IntersectionPerception.class).getTrafficLights(RelativeLane.CURRENT);
+                .getPerceptionCategory(IntersectionPerception.TYPE).getTrafficLights(RelativeLane.CURRENT);
         headwayTrafficLights = AccelerationIncentive.onRoad(headwayTrafficLights, lane, mergeDistance);
         if (onRoute)
         {

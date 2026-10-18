@@ -59,7 +59,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
         try
         {
             NeighborsPerception neighbors =
-                    gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class);
+                    gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
             Iterator<DistancedObject<LaneBasedGtu>> gtus = leaders.underlyingWithDistance();
             if (!gtus.hasNext())

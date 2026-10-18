@@ -48,16 +48,15 @@ public final class OperationalPlanTest
         assertEquals(0, op.getStartSpeed().si, 0, "Start speed is 0");
         assertEquals(startTime.si, op.getStartTime().si, 0, "Start time is " + startTime);
         assertEquals(startTime.plus(duration).si, op.getEndTime().si, 0.0001, "End time is " + startTime.plus(duration));
-        assertEquals(1, op.getOperationalPlanSegmentList().size(), "Segment list contains 1 segment");
-        Segment segment = op.getOperationalPlanSegmentList().get(0);
-        assertEquals(duration.si, segment.duration().si, 0.00001, "Duration is " + duration);
+        assertEquals(1, op.getSegments().size(), "Segment list contains 1 segment");
+        assertEquals(duration.si, op.getSegments().getDurationSI(0), 0.00001, "Duration is " + duration);
         assertEquals(0, waitPoint.distance(op.getEndLocation()), 0.0001, "End location is " + waitPoint);
         try
         {
             op.getLocationFromStart(new Duration(-0.1, DurationUnit.SI));
             fail("getLocation for negative relative time should have thrown an OperationalPlanException");
         }
-        catch (OperationalPlanException ope)
+        catch (IllegalArgumentException ope)
         {
             // Ignore expected exception
         }
@@ -66,7 +65,7 @@ public final class OperationalPlanTest
             op.getLocation(Duration.ofSI(99.5));
             fail("getLocation for absolute time before start time should have thrown an OperationalPlanException");
         }
-        catch (OperationalPlanException ope)
+        catch (IllegalArgumentException ope)
         {
             // Ignore expected exception
         }
@@ -77,7 +76,7 @@ public final class OperationalPlanTest
             op.getLocation(Duration.ofSI(160.1));
             fail("getLocation for absolute time after end time should have thrown an OperationalPlanException");
         }
-        catch (OperationalPlanException ope)
+        catch (IllegalArgumentException ope)
         {
             // Ignore expected exception
         }
@@ -110,7 +109,7 @@ public final class OperationalPlanTest
         double t = pathLength / (startSpeed.si + 0.5 * speedDifference);
 
         op = new OperationalPlan(null, path, startTime,
-                Segments.off(startSpeed, Duration.ofSI(t), Acceleration.ofSI(speedDifference / t)));
+                Segments.of(startSpeed, Duration.ofSI(t), Acceleration.ofSI(speedDifference / t)));
 
         assertEquals(startSpeed.si, op.getStartSpeed().si, 0.00001, "Start speed is " + startSpeed);
         assertEquals(startTime.si, op.getStartTime().si, 0.00001, "Start time is " + startTime);
@@ -169,7 +168,7 @@ public final class OperationalPlanTest
             assertEquals(expectedSpeed, actualSpeed.si, 0.0001, "Speed at abs time " + deltaT);
             actualSpeed = op.getSpeedFromStart(relTime);
             assertEquals(expectedSpeed, actualSpeed.si, 0.0001, "Speed at rel time " + deltaT);
-            Duration actualTimeAtPosition = op.timeAtDistance(new Length(fraction * path.getLength(), LengthUnit.SI));
+            Duration actualTimeAtPosition = op.getTimeAtDistance(new Length(fraction * path.getLength(), LengthUnit.SI));
             assertEquals(startTime.si + deltaT, actualTimeAtPosition.si, 0.0001, "TimeAtDistance matches time");
             double actualAcceleration = op.getAcceleration(absTime).si;
             assertEquals(a.si, actualAcceleration, 0.00001, "acceleration at abs time");
@@ -192,7 +191,7 @@ public final class OperationalPlanTest
         Duration startTime = Duration.valueOf("100 s");
         Speed speed = Speed.valueOf("20 m/s");
         OperationalPlan csp = new OperationalPlan(null, path, startTime,
-                Segments.off(speed, path.getTypedLength().divide(speed), Acceleration.ZERO));
+                Segments.of(speed, path.getTypedLength().divide(speed), Acceleration.ZERO));
 
         assertEquals(path, csp.getPath(), "path is returned");
         assertEquals(startTime, csp.getStartTime(), "start time is returned");
@@ -236,7 +235,7 @@ public final class OperationalPlanTest
                 double speedDifference = endSpeed.minus(startSpeed).si;
                 double t = pathLength / (startSpeed.si + 0.5 * speedDifference);
                 OperationalPlan cap = new OperationalPlan(null, path, startTime,
-                        Segments.off(startSpeed, Duration.ofSI(t), Acceleration.ofSI(speedDifference / t)));
+                        Segments.of(startSpeed, Duration.ofSI(t), Acceleration.ofSI(speedDifference / t)));
                 assertEquals(startTime, cap.getStartTime(), "start time is returned");
                 assertEquals(startSpeed, cap.getStartSpeed(), "startSpeed is start speed");
                 Duration endTime = cap.getEndTime();

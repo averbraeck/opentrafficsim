@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -840,14 +841,14 @@ public class OdMatrix implements Identifiable
                 }
                 else
                 {
-                    for (Category category : categoryMap.keySet())
+                    for (Entry<Category, DemandPattern> entry : categoryMap.entrySet())
                     {
                         StringBuilder catStr = new StringBuilder("[");
                         String sep = "";
-                        for (int i = 0; i < category.getCategorization().size(); i++)
+                        for (int i = 0; i < entry.getKey().getCategorization().size(); i++)
                         {
                             catStr.append(sep);
-                            Object obj = category.get(i);
+                            Object obj = entry.getKey().get(i);
                             if (obj instanceof Route)
                             {
                                 catStr.append("Route: " + ((Route) obj).getId());
@@ -860,7 +861,7 @@ public class OdMatrix implements Identifiable
                         }
                         catStr.append("]");
                         System.out.println(String.format(format, origin.getId(), destination.getId()) + catStr + " | "
-                                + categoryMap.get(category).demandVector());
+                                + entry.getValue().demandVector());
                     }
                 }
             }

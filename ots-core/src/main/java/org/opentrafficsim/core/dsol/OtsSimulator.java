@@ -6,11 +6,14 @@ import java.util.function.Supplier;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Replication;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+import nl.tudelft.simulation.dsol.logger.Cat;
 import nl.tudelft.simulation.dsol.simulators.DevsSimulator;
 import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 
@@ -71,6 +74,24 @@ public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulato
     public String toString()
     {
         return "OtsSimulator [lastReplication=" + this.lastReplication + "]";
+    }
+
+    @Override
+    // removes event.toString() in logging compared to parent implementation
+    // pending: https://github.com/averbraeck/dsol/issues/122
+    public SimEventInterface<Duration> scheduleEvent(final SimEventInterface<Duration> event) throws SimRuntimeException
+    {
+        synchronized (super.semaphore)
+        {
+            if (event.getAbsoluteExecutionTime().compareTo(super.simulatorTime) < 0)
+            {
+                throw new SimRuntimeException("cannot schedule event " + event.toString() + " in past " + this.simulatorTime
+                        + ">" + event.getAbsoluteExecutionTime());
+            }
+            CategoryLogger.with(Cat.DSOL).trace("new event: {}", event);
+            this.eventList.add(event);
+            return event;
+        }
     }
 
 }

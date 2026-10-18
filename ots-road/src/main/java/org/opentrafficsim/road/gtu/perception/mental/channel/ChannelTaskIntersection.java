@@ -284,7 +284,7 @@ public class ChannelTaskIntersection extends AbstractTask implements ChannelTask
     private static Set<SortedSet<DistancedObject<Conflict>>> findConflictGroups(final LanePerception perception)
     {
         IntersectionPerception intersection =
-                Try.assign(() -> perception.getPerceptionCategory(IntersectionPerception.class), "No intersection perception.");
+                Try.assign(() -> perception.getPerceptionCategory(IntersectionPerception.TYPE), "No intersection perception.");
         Iterator<DistancedObject<Conflict>> conflicts =
                 intersection.getConflicts(RelativeLane.CURRENT).underlyingWithDistance();
 

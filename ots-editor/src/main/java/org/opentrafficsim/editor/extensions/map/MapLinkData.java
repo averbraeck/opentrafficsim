@@ -721,9 +721,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             getMap().removeAnimation(renderable);
         }
-        for (Entry<String, MapStripeData> entry : this.stripeData.entrySet())
+        for (MapStripeData value : this.stripeData.values())
         {
-            getMap().getSynchronizableStripes().remove(entry.getValue());
+            getMap().getSynchronizableStripes().remove(value);
         }
         this.crossSectionElements.clear();
         this.laneData.clear();
@@ -1459,9 +1459,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 case "Polyline":
                     List<Point2d> list = new ArrayList<>();
                     list.add(fromPoint);
-                    for (Entry<XsdTreeNode, Point2d> entry : this.coordinates.entrySet())
+                    for (Point2d value : this.coordinates.values())
                     {
-                        list.add(entry.getValue());
+                        list.add(value);
                     }
                     list.add(toPoint);
                     if (list.contains(null))

@@ -71,7 +71,7 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
         try
         {
             PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = gtu.getTacticalPlanner().getPerception()
-                    .getPerceptionCategory(LongitudinalControllerPerception.class).getLeaders();
+                    .getPerceptionCategory(LongitudinalControllerPerception.TYPE).getLeaders();
             return Optional.ofNullable(delayActuation(getDesiredAcceleration(gtu, leaders, settings), gtu));
         }
         catch (OperationalPlanException exception)

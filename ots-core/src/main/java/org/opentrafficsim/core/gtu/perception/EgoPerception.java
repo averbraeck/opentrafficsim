@@ -17,8 +17,17 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @param <G> GTU type
  * @param <P> perception type
  */
-public interface EgoPerception<G extends Gtu, P extends Perception<G>> extends PerceptionCategory<G, P>
+public interface EgoPerception<G extends Gtu, P extends Perception<G>> extends PerceptionCategory<G, P, EgoPerception<?, ?>>
 {
+
+    /** Type. */
+    Type<EgoPerception<?, ?>> TYPE = new Type<>("EgoPerception");
+
+    @Override
+    default Type<EgoPerception<?, ?>> getType()
+    {
+        return TYPE;
+    }
 
     /**
      * Returns the acceleration.

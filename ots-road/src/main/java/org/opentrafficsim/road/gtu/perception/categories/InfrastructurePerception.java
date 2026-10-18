@@ -22,8 +22,17 @@ import org.opentrafficsim.road.network.speed.SpeedLimits;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface InfrastructurePerception extends LaneBasedPerceptionCategory
+public interface InfrastructurePerception extends LaneBasedPerceptionCategory<InfrastructurePerception>
 {
+
+    /** Type. */
+    Type<InfrastructurePerception> TYPE = new Type<>("InfrastructurePerception");
+
+    @Override
+    default Type<InfrastructurePerception> getType()
+    {
+        return TYPE;
+    }
 
     /**
      * Returns infrastructure lane change info of a lane. A set is returned as multiple points may force lane changes. Which
@@ -129,5 +138,32 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      * @return whether the given lane is a shoulder
      */
     boolean isShoulder(RelativeLane lane);
+
+    /**
+     * Keys for caching.
+     */
+    enum Keys
+    {
+        /** Legal lane change info. */
+        LEGAL_LANE_CHANGE_INFO,
+
+        /** Physical lane change info. */
+        PHYSICAL_LANE_CHANGE_INFO,
+
+        /** Speed limits. */
+        SPEED_LIMITS,
+
+        /** Legal lane change possibility. */
+        LEGAL_LANE_CHANGE_POSSIBILITY,
+
+        /** Physical lane change possibility. */
+        PHYSICAL_LANE_CHANGE_POSSIBILITY,
+
+        /** Cross-section. */
+        CROSS_SECTION,
+
+        /** Is shoulder. */
+        IS_SHOULDER;
+    }
 
 }

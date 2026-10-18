@@ -18,6 +18,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.base.DistancedObject;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -31,6 +32,7 @@ import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.perception.structure.LaneRecordInterface;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.gtu.perception.structure.SimpleLaneRecord;
@@ -168,7 +170,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         // Lane record for GTU provision
         this.rootPosition = longitudinalPosition;
-        this.root = new SimpleLaneRecord(lane, this.rootPosition.neg(), null);
+        this.root = new SimpleLaneRecord(lane, -this.rootPosition.si, null);
     }
 
     @Override
@@ -257,46 +259,37 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             // setup a base iterable to provide the GTUs
             this.upstreamLanes.clear();
             this.upstreamGtus = new NavigatingIterable<LaneBasedGtu, SimpleLaneRecord>(LaneBasedGtu.class,
-                    this.maxUpstreamVisibility, Set.of(this.root), (l) -> l.getPrev(), (l) ->
+                    this.maxUpstreamVisibility, false, Set.of(this.root), (l) -> l.getPrev(), (l) ->
                     {
                         // this lister finds the relevant sublist of GTUs and reverses it
-                        List<LaneBasedGtu> gtus = l.getLane().getGtuList().toList();
+                        ImmutableList<LaneBasedGtu> gtus = l.getLane().getGtuList();
                         if (gtus.isEmpty())
                         {
                             return gtus;
                         }
-                        int from = 0;
-                        while (from < gtus.size() && position(gtus.get(from), l, RelativePosition.REFERENCE).lt0())
-                        {
-                            from++;
-                        }
-                        int to = gtus.size() - 1;
-                        Length pos = Length.min(l.getStartDistance().neg(), l.getLength());
-                        while (to >= 0 && position(gtus.get(to), l, RelativePosition.FRONT).gt(pos))
-                        {
-                            to--;
-                        }
+                        int from = LaneStructure.findFirstAfterOrAt((i) -> position(gtus.get(i), l, RelativePosition.REFERENCE),
+                                gtus.size(), 0.0);
+                        double pos = Math.min(-l.getStartDistance(), l.getLength().si);
+                        int to = LaneStructure.findLastBeforeOrAt((i) -> position(gtus.get(i), l, RelativePosition.FRONT),
+                                gtus.size(), pos);
                         if (from > to)
                         {
                             return Collections.emptyList();
                         }
-                        if (from > 0 || to < gtus.size() - 1)
-                        {
-                            gtus = gtus.subList(from, to + 1);
-                        }
-                        Collections.reverse(gtus);
-                        gtus.forEach((g) ->
+                        ImmutableList<LaneBasedGtu> subList =
+                                from > 0 || to < gtus.size() - 1 ? gtus.subList(from, to + 1) : gtus;
+                        subList.forEach((g) ->
                         {
                             this.upstreamLanes.put(g, l.getLane());
                             g.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
                             this.upstreamListening.add(g);
                         });
-                        return gtus;
-                    }, (t, r) -> r.getStartDistance().neg().minus(position(t, r, RelativePosition.FRONT)));
+                        return LaneStructure.reversed((i) -> subList.get(i), subList.size());
+                    }, (t, r) -> -r.getStartDistance() - position(t, r, RelativePosition.FRONT));
             this.upstreamTime = time;
         }
         // return iterable that uses the base iterable
-        return new ConflictGtuIterable(perceivingGtu, perceivedGtuType, visibility, false, new Reiterable(this.upstreamGtus));
+        return new ConflictGtuIterable(perceivingGtu, perceivedGtuType, visibility, false, this.upstreamGtus);
         // PK does not think this detects GTUs changing lane INTO a lane of concern. Is that bad?
     }
 
@@ -317,42 +310,34 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             clearDownstreamListening();
             // setup a base iterable to provide the GTUs
             this.downstreamLanes.clear();
-            this.downstreamGtus = new Reiterable(new NavigatingIterable<LaneBasedGtu, SimpleLaneRecord>(LaneBasedGtu.class,
-                    this.maxDownstreamVisibility, Set.of(this.root), (l) -> l.getNext(), (l) ->
+            this.downstreamGtus = new NavigatingIterable<LaneBasedGtu, SimpleLaneRecord>(LaneBasedGtu.class,
+                    this.maxDownstreamVisibility, true, Set.of(this.root), (l) -> l.getNext(), (l) ->
                     {
                         // this lister finds the relevant sublist of GTUs
-                        List<LaneBasedGtu> gtus = l.getLane().getGtuList().toList();
+                        ImmutableList<LaneBasedGtu> gtus = l.getLane().getGtuList();
                         if (gtus.isEmpty())
                         {
                             return gtus;
                         }
-                        int from = 0;
-                        Length pos = Length.max(l.getStartDistance().neg(), Length.ZERO);
-                        while (from < gtus.size() && position(gtus.get(from), l, RelativePosition.FRONT).lt(pos))
-                        {
-                            from++;
-                        }
-                        int to = gtus.size() - 1;
-                        while (to >= 0 && position(gtus.get(to), l, RelativePosition.REFERENCE).gt(l.getLength()))
-                        {
-                            to--;
-                        }
+                        double pos = Math.max(-l.getStartDistance(), 0.0);
+                        int from = LaneStructure.findFirstAfterOrAt((i) -> position(gtus.get(i), l, RelativePosition.FRONT),
+                                gtus.size(), pos);
+                        int to = LaneStructure.findLastBeforeOrAt((i) -> position(gtus.get(i), l, RelativePosition.REFERENCE),
+                                gtus.size(), l.getLength().si);
                         if (from > to)
                         {
                             return Collections.emptyList();
                         }
-                        if (from > 0 || to < gtus.size() - 1)
-                        {
-                            gtus = gtus.subList(from, to + 1);
-                        }
-                        gtus.forEach((g) ->
+                        ImmutableList<LaneBasedGtu> subList =
+                                from > 0 || to < gtus.size() - 1 ? gtus.subList(from, to + 1) : gtus;
+                        subList.forEach((g) ->
                         {
                             this.downstreamLanes.put(g, l.getLane());
                             g.addListener(this, LaneBasedGtu.LANE_CHANGE_EVENT);
                             this.downstreamListening.add(g);
                         });
-                        return gtus;
-                    }, (t, r) -> r.getStartDistance().plus(position(t, r, RelativePosition.REAR))));
+                        return subList;
+                    }, (t, r) -> r.getStartDistance() + position(t, r, RelativePosition.REAR));
             this.downstreamTime = time;
         }
         // return iterable that uses the base iterable
@@ -367,10 +352,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param positionType RelativePosition.Type; relative position type.
      * @return position of the GTU on the lane of the given record.
      */
-    private Length position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
+    private double position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
             final RelativePosition.Type positionType)
     {
-        return gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType));
+        return gtu.getPosition(record.getLane(), gtu.getRelativePosition(positionType)).si;
     }
 
     @Override
@@ -455,11 +440,11 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             {
                 this.maxMaxTrafficLightDistance = maxDistance;
                 NavigatingIterable<TrafficLight, SimpleLaneRecord> iterable =
-                        new NavigatingIterable<>(TrafficLight.class, maxDistance, Set.of(this.root), (l) ->
+                        new NavigatingIterable<>(TrafficLight.class, maxDistance, false, Set.of(this.root), (l) ->
                         {
                             // this navigator only returns records when there are no TrafficLights on the lane
                             List<LaneBasedObject> list =
-                                    l.getLane().getLaneBasedObjects(Length.ZERO, l.getStartDistance().neg());
+                                    l.getLane().getLaneBasedObjects(Length.ZERO, Length.ofSI(-l.getStartDistance()));
                             if (list.stream().anyMatch((o) -> o instanceof TrafficLight))
                             {
                                 return Collections.emptySet();
@@ -469,7 +454,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                         {
                             // this lister finds the first TrafficLight and returns it as the only TrafficLight in the list
                             List<LaneBasedObject> list =
-                                    l.getLane().getLaneBasedObjects(Length.ZERO, l.getStartDistance().neg());
+                                    l.getLane().getLaneBasedObjects(Length.ZERO, Length.ofSI(-l.getStartDistance()));
                             for (int index = list.size() - 1; index >= 0; index--)
                             {
                                 if (list.get(index) instanceof TrafficLight)
@@ -478,7 +463,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                                 }
                             }
                             return Collections.emptyList();
-                        }, (t, l) -> l.getStartDistance().neg().minus(t.getLongitudinalPosition()));
+                        }, (t, l) -> -l.getStartDistance() - t.getLongitudinalPosition().si);
                 Iterator<Entry<TrafficLight>> iterator = iterable.iterator();
                 if (iterator.hasNext())
                 {

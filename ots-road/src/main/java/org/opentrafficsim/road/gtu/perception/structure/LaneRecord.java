@@ -1,10 +1,9 @@
 package org.opentrafficsim.road.gtu.perception.structure;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.base.collections.SmallArraySet;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.network.Lane;
@@ -27,19 +26,19 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
     private final RelativeLane relativeLane;
 
     /** Start distance. */
-    private final Length startDistance;
+    private final double startDistance;
 
     /** Merge distance, i.e. the distance after which this road merges with the road the GTU is at. */
     private final Length mergeDistance;
 
     /** Set of downstream records. */
-    private final Set<LaneRecord> next = new LinkedHashSet<>();
+    private final Set<LaneRecord> next = new SmallArraySet<>();
 
     /** Set of upstream records. */
-    private final Set<LaneRecord> prev = new LinkedHashSet<>();
+    private final Set<LaneRecord> prev = new SmallArraySet<>();
 
     /** Set of lateral records. */
-    private final Set<LaneRecord> lat = new LinkedHashSet<>();
+    private final Set<LaneRecord> lat = new SmallArraySet<>();
 
     /**
      * Constructor.
@@ -48,7 +47,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      * @param startDistance start distance.
      * @param mergeDistance merge distance, i.e. the distance after which this road merges with the road the GTU is at.
      */
-    public LaneRecord(final Lane lane, final RelativeLane relativeLane, final Length startDistance, final Length mergeDistance)
+    public LaneRecord(final Lane lane, final RelativeLane relativeLane, final double startDistance, final Length mergeDistance)
     {
         this.lane = lane;
         this.relativeLane = relativeLane;
@@ -80,7 +79,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      * @return start distance.
      */
     @Override
-    public Length getStartDistance()
+    public double getStartDistance()
     {
         return this.startDistance;
     }
@@ -89,9 +88,9 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      * Returns the end distance. This value is negative for anything upstream of the reference point of the GTU.
      * @return end distance.
      */
-    public Length getEndDistance()
+    public double getEndDistance()
     {
-        return this.startDistance.plus(this.lane.getLength());
+        return this.startDistance + this.lane.getLength().si;
     }
 
     @Override
@@ -152,22 +151,13 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      */
     public boolean isOnRoute(final Route route)
     {
-        if (route == null)
-        {
-            return true;
-        }
-        Link link = getLane().getLink();
-        int from;
-        int to;
-        from = route.indexOf(link.getStartNode());
-        to = route.indexOf(link.getEndNode());
-        return from != -1 && to != -1 && to - from == 1;
+        return route == null ? true : route.containsLink(getLane().getLink());
     }
 
     @Override
     public boolean isDownstreamBranch()
     {
-        return this.mergeDistance.eq0() || this.getEndDistance().gt0();
+        return this.mergeDistance.si == 0.0 || this.getEndDistance() > 0.0;
     }
 
     @Override

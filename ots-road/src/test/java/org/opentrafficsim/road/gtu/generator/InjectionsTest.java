@@ -314,7 +314,9 @@ public final class InjectionsTest
     {
         // A small test network with two completely separated lanes on different links
         OtsSimulatorInterface simulator = new OtsSimulator("simulator");
-        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), Mockito.mock(OtsModelInterface.class),
+        OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
+        Mockito.when(model.getDefaultStream()).then((i) -> new MersenneTwister());
+        simulator.initialize(Duration.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
                 HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("network", simulator);
         Point2d pointA = new Point2d(0.0, 0.0);

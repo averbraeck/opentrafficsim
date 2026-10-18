@@ -61,7 +61,7 @@ public interface Tailgating
         public void tailgate(final TacticalContextEgo context)
         {
             PerceptionCollectable<PerceivedGtu,
-                    LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                    LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
                             .getLeaders(RelativeLane.CURRENT);
             try
@@ -100,7 +100,7 @@ public interface Tailgating
         public void tailgate(final TacticalContextEgo context)
         {
             PerceptionCollectable<PerceivedGtu,
-                    LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                    LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
                             .getLeaders(RelativeLane.CURRENT);
             try

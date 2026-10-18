@@ -3,12 +3,14 @@ package org.opentrafficsim.road.gtu.perception;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.DistancedObject;
+import org.opentrafficsim.base.collections.IndexedMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
@@ -31,13 +33,13 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
 {
 
     /** Set of iterators per lane. */
-    private final Map<RelativeLane, Iterator<DistancedObject<U>>> iterators = new LinkedHashMap<>();
+    private final Map<RelativeLane, Iterator<DistancedObject<U>>> iterators = new IndexedMap<>();
 
     /** Map of lane per object. */
     private final Map<U, RelativeLane> laneMap = new LinkedHashMap<>();
 
     /** Map of iterable per lane. */
-    private final Map<RelativeLane, AbstractPerceptionReiterable<O, P, U>> iterables = new LinkedHashMap<>();
+    private final Map<RelativeLane, AbstractPerceptionReiterable<O, P, U>> iterables = new IndexedMap<>();
 
     /**
      * Constructor.
@@ -138,12 +140,13 @@ public class MultiLanePerceptionIterable<O extends LaneBasedObject, P extends Pe
             if (this.elements == null)
             {
                 this.elements = new TreeMap<>();
-                for (RelativeLane lane : MultiLanePerceptionIterable.this.iterators.keySet())
+                for (Entry<RelativeLane, Iterator<DistancedObject<U>>> entry : MultiLanePerceptionIterable.this.iterators
+                        .entrySet())
                 {
-                    Iterator<DistancedObject<U>> laneIterator = MultiLanePerceptionIterable.this.iterators.get(lane);
+                    Iterator<DistancedObject<U>> laneIterator = entry.getValue();
                     if (laneIterator.hasNext())
                     {
-                        this.elements.put(laneIterator.next(), lane);
+                        this.elements.put(laneIterator.next(), entry.getKey());
                     }
                 }
             }

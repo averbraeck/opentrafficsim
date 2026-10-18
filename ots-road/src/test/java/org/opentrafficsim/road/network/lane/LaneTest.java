@@ -7,10 +7,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -27,6 +28,9 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.immutablecollections.ImmutableHashSet;
+import org.djutils.immutablecollections.ImmutableLinkedHashSet;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -243,15 +247,6 @@ public final class LaneTest implements UNITS
         assertEquals(2, sensors.size(), "sensor list contains two sensors");
         assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
         assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
-        SortedMap<Double, List<LaneDetector>> sensorMap = lane.getDetectorMap(DefaultsNl.VEHICLE);
-        assertEquals(2, sensorMap.size(), "sensor map contains two entries");
-        for (Double d : sensorMap.keySet())
-        {
-            List<LaneDetector> sensorsAtD = sensorMap.get(d);
-            assertEquals(1, sensorsAtD.size(), "There is one sensor at position d");
-            assertEquals(d < length / 3 ? sensor1 : sensor2, sensorsAtD.get(0),
-                    "Sensor map contains the correct sensor at the correct distance");
-        }
 
         lane.removeDetector(sensor1);
         assertEquals(3, listener.events.size(), "event list now contains three events");
@@ -319,14 +314,6 @@ public final class LaneTest implements UNITS
         lboList = lane.getLaneBasedObjects(Length.ofSI(length / 2), Length.ofSI(length));
         assertEquals(1, lboList.size(), "second half of lane contains one object");
         assertEquals(lbo2, lboList.get(0), "object in second haf of lane is lbo2");
-        SortedMap<Double, List<LaneBasedObject>> sortedMap = lane.getLaneBasedObjectMap();
-        assertEquals(2, sortedMap.size(), "sorted map contains two objects");
-        for (Double d : sortedMap.keySet())
-        {
-            List<LaneBasedObject> objectsAtD = sortedMap.get(d);
-            assertEquals(1, objectsAtD.size(), "There is one object at position d");
-            assertEquals(d < length / 2 ? lbo1 : lbo2, objectsAtD.get(0), "Object at position d is the expected one");
-        }
 
         for (double fraction : new double[] {-0.5, 0, 0.2, 0.5, 0.9, 1.0, 2})
         {
@@ -336,21 +323,24 @@ public final class LaneTest implements UNITS
 
             LaneBasedObject nextObject = positionSI < lbo1.getLongitudinalPosition().si ? lbo1
                     : positionSI < lbo2.getLongitudinalPosition().si ? lbo2 : null;
-            List<LaneBasedObject> expected = new ArrayList<>();
-            if (null != nextObject)
-            {
-                expected.add(nextObject);
-            }
-            List<LaneBasedObject> got = lane.getObjectAhead(Length.ofSI(positionSI));
+            ImmutableSet<LaneBasedObject> expected =
+                    new ImmutableLinkedHashSet<>(nextObject == null ? Collections.emptySet() : Set.of(nextObject));
+            // List<LaneBasedObject> expected = new ArrayList<>();
+            // if (null != nextObject)
+            // {
+            // expected.add(nextObject);
+            // }
+            ImmutableSet<LaneBasedObject> got = lane.getObjectAhead(Length.ofSI(positionSI));
             assertEquals(expected, got, "First bunch of objects ahead of d");
 
             nextObject = positionSI > lbo2.getLongitudinalPosition().si ? lbo2
                     : positionSI > lbo1.getLongitudinalPosition().si ? lbo1 : null;
-            expected = new ArrayList<>();
-            if (null != nextObject)
-            {
-                expected.add(nextObject);
-            }
+            expected = new ImmutableLinkedHashSet<>(nextObject == null ? Collections.emptySet() : Set.of(nextObject));
+            // expected = new ArrayList<>();
+            // if (null != nextObject)
+            // {
+            // expected.add(nextObject);
+            // }
             got = lane.getObjectBehind(Length.ofSI(positionSI));
             assertEquals(expected, got, "First bunch of objects behind d");
         }

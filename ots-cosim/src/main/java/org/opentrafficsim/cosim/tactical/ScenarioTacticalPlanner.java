@@ -131,6 +131,10 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
     public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws OperationalPlanException, NetworkException, ParameterException
     {
+        Parameters params = getGtu().getParameters();
+        double dLeft = params.getParameter(LmrsParameters.DLEFT);
+        double dRight = params.getParameter(LmrsParameters.DRIGHT);
+
         if (!this.isDeadReckoning || this.lastDeadReckoningModelExecution == null
                 || startTime.minus(this.lastDeadReckoningModelExecution).si >= DEAD_RECKONING_MODEL_STEP.si)
         {
@@ -143,9 +147,6 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
 
             // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
             RelativeLane[] lanes;
-            Parameters params = getGtu().getParameters();
-            double dLeft = params.getParameter(LmrsParameters.DLEFT);
-            double dRight = params.getParameter(LmrsParameters.DRIGHT);
             double dSync = params.getParameter(LmrsParameters.DSYNC);
             if (dLeft >= dSync && dLeft >= dRight)
             {
@@ -200,9 +201,6 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
         }
 
         // Dead reckoning, limit lane change desire
-        Parameters params = getGtu().getParameters();
-        double dLeft = params.getParameter(LmrsParameters.DLEFT);
-        double dRight = params.getParameter(LmrsParameters.DRIGHT);
         double dCoop = params.getParameter(LmrsParameters.DCOOP);
         if (this.indicatorCommand != null && !this.indicatorCommand.isNone())
         {
@@ -321,8 +319,7 @@ public class ScenarioTacticalPlanner extends AbstractIncentivesTacticalPlanner i
      */
     private double distance(final Lane lane, final DirectedPoint2d location)
     {
-        double frac = lane.getCenterLine().projectFractionalAt(lane.getLink().getStartNode().getHeading(),
-                lane.getLink().getEndNode().getHeading(), location.x, location.y, FractionalFallback.ENDPOINT);
+        double frac = lane.projectFractionalAt(location.x, location.y, FractionalFallback.ENDPOINT);
         return lane.getCenterLine().getLocationFractionExtended(frac).distance(location);
     }
 

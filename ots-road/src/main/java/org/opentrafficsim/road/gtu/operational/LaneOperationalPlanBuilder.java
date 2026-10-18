@@ -1,8 +1,11 @@
 package org.opentrafficsim.road.gtu.operational;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -11,6 +14,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.Flattener2d;
 import org.djutils.draw.curve.Flattener2d.MaxDeviationAndAngle;
@@ -25,6 +29,7 @@ import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
+import org.opentrafficsim.core.gtu.plan.operational.SegmentsSingle;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.LaneBookkeeping;
@@ -82,8 +87,8 @@ public final class LaneOperationalPlanBuilder
         boolean deviative = true;
         OtsLine2d path = getPath(gtu, nearestPosition, acceleration, duration, tManeuver, deviation, deviative).path();
         Duration now = gtu.getSimulator().getSimulatorTime();
-        Segments segments = Segments.off(gtu.getSpeed(), duration, acceleration);
-        return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, deviative),
+        Segments segments = Segments.of(gtu.getSpeed(), duration, acceleration);
+        return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, deviative, Collections.emptyMap()),
                 "Building roaming plan produced inconsistent LaneBasedOperationalPlan.");
     }
 
@@ -104,17 +109,17 @@ public final class LaneOperationalPlanBuilder
                 "Requested to build plan from simple plan for roaming GTU.");
 
         Duration now = gtu.getSimulator().getSimulatorTime();
+        DirectedPoint2d location = gtu.getLocation();
 
         if (gtu.getSpeed().lt(OperationalPlan.DRIFTING_SPEED)
                 && simplePlan.getAcceleration().lt(OperationalPlan.DRIFTING_ACCELERATION))
         {
-            DirectedPoint2d location = gtu.getLocation();
             Point2d next = OtsGeometryUtil.translatePoint(location, 1.0);
             OtsLine2d path = new OtsLine2d(location, next);
             LanePosition nearestPosition = gtu.getPosition();
-            boolean deviative = nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
-            Segments segments = Segments.standStill(simplePlan.getDuration());
-            return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, deviative),
+            boolean deviative = nearestPosition.getLocation().distance(location) > SNAP.si;
+            Segments segments = new SegmentsSingle(Speed.ZERO, simplePlan.getDuration(), Acceleration.ZERO);
+            return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, deviative, Collections.emptyMap()),
                     "Building operational plan produced inconsistent LaneBasedOperationalPlan.");
         }
 
@@ -138,9 +143,7 @@ public final class LaneOperationalPlanBuilder
                 deviative = true;
                 Lane lane = gtu.getPosition().lane().getAdjacentLane(simplePlan.getLaneChangeDirection(), gtu.getType())
                         .orElseThrow(() -> new IllegalStateException("Starting lane change without adjacent lane."));
-                double fraction = lane.getCenterLine().projectFractionalAt(lane.getLink().getStartNode().getHeading(),
-                        lane.getLink().getEndNode().getHeading(), gtu.getLocation().x, gtu.getLocation().y,
-                        FractionalFallback.ENDPOINT);
+                double fraction = lane.projectFractionalAt(location.x, location.y, FractionalFallback.ENDPOINT);
                 nearestPosition = new LanePosition(lane, lane.getLength().times(fraction));
             }
         }
@@ -148,18 +151,19 @@ public final class LaneOperationalPlanBuilder
         {
             gtu.setLaneChangeDirection(LateralDirectionality.NONE);
             nearestPosition = gtu.getPosition();
-            deviative = deviative || nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
+            deviative = deviative || nearestPosition.getLocation().distance(location) > SNAP.si;
         }
         Length turn = gtu.getVehicleModel().getTurnRadius(gtu);
         Length deviationHorizon = Length.max(tManeuver.times(gtu.getSpeed()), turn);
-        double f = Math.max(0.0, Math.min(1.0 - (deviation.distance().si - turn.si) /  deviationHorizon.si, 1.0));
+        double f = Math.max(0.0, Math.min(1.0 - (deviation.distance().si - turn.si) / deviationHorizon.si, 1.0));
         Length targetDeviation = deviation.object().times(f);
         deviative = deviative || targetDeviation.abs().gt(SNAP);
         PathResults pathResults = getPath(gtu, nearestPosition, simplePlan.getAcceleration(), simplePlan.getDuration(),
                 tManeuver, targetDeviation, deviative);
-        Segments segments = Segments.off(gtu.getSpeed(), simplePlan.getDuration(), simplePlan.getAcceleration());
+        Segments segments = Segments.of(gtu.getSpeed(), simplePlan.getDuration(), simplePlan.getAcceleration());
         boolean finalDeviative = deviative || pathResults.neededDeviation();
-        return Try.assign(() -> new LaneBasedOperationalPlan(gtu, pathResults.path(), now, segments, finalDeviative),
+        return Try.assign(
+                () -> new LaneBasedOperationalPlan(gtu, pathResults.path(), now, segments, finalDeviative, pathResults.lanes()),
                 "Building operational plan produced inconsistent LaneBasedOperationalPlan.");
     }
 
@@ -203,7 +207,7 @@ public final class LaneOperationalPlanBuilder
     {
         DirectedPoint2d target = getTargetPoint(gtu, nearestPosition, deviation, horizonSpace);
         target = extrapolateToHorizon(gtu, target, horizonSpace.horizon());
-        return new PathResults(bezierToTarget(gtu.getLocation(), target), false);
+        return new PathResults(bezierToTarget(gtu.getLocation(), target), false, Collections.emptyMap());
     }
 
     /**
@@ -224,6 +228,7 @@ public final class LaneOperationalPlanBuilder
             final Length deviation)
     {
         Length startDistance = nearestPosition.position();
+        Map<Lane, Double> lanes = new IdentityHashMap<>();
         Lane lane = nearestPosition.lane();
         List<Point2d> points = new ArrayList<>();
         Point2d lastPoint = null;
@@ -232,6 +237,7 @@ public final class LaneOperationalPlanBuilder
         {
             if (startDistance.lt(lane.getLength()))
             {
+                lanes.put(lane, startDistance.si == 0.0 ? cumulDist : -startDistance.si);
                 OtsLine2d centerLine = startDistance.gt0() ? lane.getCenterLine().extract(startDistance, lane.getLength())
                         : lane.getCenterLine();
                 if (lastPoint != null && lastPoint.distance(centerLine.getFirst()) > SNAP.si)
@@ -240,7 +246,8 @@ public final class LaneOperationalPlanBuilder
                     Length laneGap = Length.ofSI(lastPoint.distance(centerLine.getFirst()));
                     HorizonSpace horizonSpace =
                             getHorizonSpace(gtu, nearestPosition, acceleration, timeStep, tManeuver, deviation, laneGap);
-                    return new PathResults(bezierToHorizon(gtu, nearestPosition, deviation, horizonSpace).path(), true);
+                    return new PathResults(bezierToHorizon(gtu, nearestPosition, deviation, horizonSpace).path(), true,
+                            Collections.emptyMap());
                 }
                 for (Point2d point : centerLine)
                 {
@@ -256,7 +263,7 @@ public final class LaneOperationalPlanBuilder
                     points.add(point);
                     if (cumulDist >= length.si)
                     {
-                        return new PathResults(new OtsLine2d(points), false);
+                        return new PathResults(new OtsLine2d(points), false, lanes);
                     }
                     lastPoint = point;
                 }
@@ -269,7 +276,7 @@ public final class LaneOperationalPlanBuilder
         double direction = lastLastPoint.directionTo(lastPoint);
         double r = length.si - cumulDist + SNAP.si;
         points.add(lastPoint.translate(r * Math.cos(direction), r * Math.sin(direction)));
-        return new PathResults(new OtsLine2d(points), false);
+        return new PathResults(new OtsLine2d(points), false, lanes);
     }
 
     /**
@@ -727,8 +734,9 @@ public final class LaneOperationalPlanBuilder
      * Record to return results of path building.
      * @param path path
      * @param neededDeviation needed to revert back to a deviative path due to gaps between lanes
+     * @param lanes lanes from which a non-deviative center line path was made
      */
-    private record PathResults(OtsLine2d path, boolean neededDeviation)
+    private record PathResults(OtsLine2d path, boolean neededDeviation, Map<Lane, Double> lanes)
     {
     };
 

@@ -101,8 +101,8 @@ public final class DeviationUtil
     private static void deviateLeaders(final TacticalContextEgo context, final Duration tManeuver)
             throws ParameterException, OperationalPlanException
     {
-        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         considerLeaders(context, tManeuver, neighbors.getLeaders(RelativeLane.LEFT), -1.0,
                 infra.isShoulder(RelativeLane.RIGHT));
         considerLeaders(context, tManeuver, neighbors.getLeaders(RelativeLane.RIGHT), 1.0, infra.isShoulder(RelativeLane.LEFT));

@@ -140,7 +140,7 @@ public class SegmentedCurve implements Curve2d
     {
         List<Point2d> list = new ArrayList<>();
         list.add(getStartPoint());
-        this.segments.entrySet().stream().map((e) -> e.getValue()).forEach((c) ->
+        this.segments.values().stream().forEach((c) ->
         {
             List<Point2d> flatSegment = c.toPolyLine(flattener).getPointList();
             flatSegment.remove(0);

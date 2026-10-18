@@ -59,7 +59,7 @@ public class ChannelTaskSocio extends AbstractTask implements ChannelTask, State
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
         Iterator<LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT).underlying();
         if (!followers.hasNext())

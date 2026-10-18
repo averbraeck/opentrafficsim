@@ -17,8 +17,8 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @param <G> GTU type
  * @param <P> perception type
  */
-public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends AbstractPerceptionCategory<G, P>
-        implements EgoPerception<G, P>
+public class DirectEgoPerception<G extends Gtu, P extends Perception<G>>
+        extends AbstractPerceptionCategory<G, P, EgoPerception<?, ?>> implements EgoPerception<G, P>
 {
 
     /**

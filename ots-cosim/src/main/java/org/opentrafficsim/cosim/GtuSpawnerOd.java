@@ -117,8 +117,7 @@ public class GtuSpawnerOd
             {
                 for (Lane lane : roadLink.getLanesAndShoulders())
                 {
-                    double fraction = lane.getCenterLine().projectFractionalAt(link.getStartNode().getHeading(),
-                            link.getEndNode().getHeading(), position.x, position.y, FractionalFallback.ENDPOINT);
+                    double fraction = lane.projectFractionalAt(position.x, position.y, FractionalFallback.ENDPOINT);
                     fraction = fraction < 0.0 ? 0.0 : (fraction > 1.0 ? 1.0 : fraction);
                     Point2d pointOnLane = lane.getCenterLine().getLocationFractionExtended(fraction);
                     double distance = pointOnLane.distance(position);

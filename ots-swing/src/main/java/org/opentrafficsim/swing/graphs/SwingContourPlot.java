@@ -2,6 +2,7 @@ package org.opentrafficsim.swing.graphs;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -163,9 +164,9 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
             double granularity = (double) payload[1];
             Map<JRadioButtonMenuItem, Double> buttonMap =
                     Dimension.DISTANCE.equals(dimension) ? this.spaceGranularityButtons : this.timeGranularityButtons;
-            for (JRadioButtonMenuItem button : buttonMap.keySet())
+            for (Entry<JRadioButtonMenuItem, Double> entry : buttonMap.entrySet())
             {
-                button.setSelected(Math.abs(buttonMap.get(button) - granularity) < 0.001);
+                entry.getKey().setSelected(Math.abs(entry.getValue() - granularity) < 0.001);
             }
         }
         else if (event.getType().equals(ContourDataSource.INTERPOLATE))

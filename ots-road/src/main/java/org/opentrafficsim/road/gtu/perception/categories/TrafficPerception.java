@@ -15,8 +15,17 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface TrafficPerception extends LaneBasedPerceptionCategory
+public interface TrafficPerception extends LaneBasedPerceptionCategory<TrafficPerception>
 {
+
+    /** Type. */
+    Type<TrafficPerception> TYPE = new Type<>("TrafficPerception");
+
+    @Override
+    default Type<TrafficPerception> getType()
+    {
+        return TYPE;
+    }
 
     /**
      * Returns the perceived speed on the given lane.

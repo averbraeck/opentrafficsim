@@ -117,7 +117,7 @@ public class DeadReckoning
             aAdjusted = this.acceleration; // not adjusted as path is longer than kinematic distance would suggest
         }
         // Segments.off() takes care of standstill
-        return new OperationalPlan(this.gtu, path, startTime, Segments.off(v0, this.horizon, aAdjusted));
+        return new OperationalPlan(this.gtu, path, startTime, Segments.of(v0, this.horizon, aAdjusted));
     }
 
 }

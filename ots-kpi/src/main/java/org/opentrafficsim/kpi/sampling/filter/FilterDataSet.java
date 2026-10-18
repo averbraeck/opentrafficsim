@@ -43,9 +43,9 @@ public class FilterDataSet
     public FilterDataSet(final FilterDataSet filterDataSet)
     {
         Throw.whenNull(filterDataSet, "Filter data set may not be null.");
-        for (FilterDataType<?, ?> filterDataType : filterDataSet.filterDataMap.keySet())
+        for (Entry<FilterDataType<?, ?>, Set<?>> entry : filterDataSet.filterDataMap.entrySet())
         {
-            this.filterDataMap.put(filterDataType, filterDataSet.filterDataMap.get(filterDataType));
+            this.filterDataMap.put(entry.getKey(), entry.getValue());
         }
     }
 

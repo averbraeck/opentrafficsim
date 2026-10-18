@@ -75,7 +75,7 @@ public final class SpeedLimitUtil
     {
         Acceleration out = Acceleration.POSITIVE_INFINITY;
 
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         Optional<DistancedObject<Speed>> speedBump = infra.getSpeedBump();
         if (speedBump.isPresent())
         {

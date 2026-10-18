@@ -737,10 +737,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
             // check gap
             InfrastructurePerception infra =
-                    this.gtu.getTacticalPlanner().getPerception().getPerceptionCategory(InfrastructurePerception.class);
+                    this.gtu.getTacticalPlanner().getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
             SpeedLimits speedLimits = infra.getSpeedLimits(RelativeLane.CURRENT);
             NeighborsPerception neighbors =
-                    this.gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.class);
+                    this.gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
             if (infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, this.direction).gt0()
                     && !neighbors.isGtuAlongside(this.direction)
                     && acceptGap(neighbors.getFirstFollowers(this.direction), speedLimits, false)
@@ -760,7 +760,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                     || this.gtu.getSpeed().lt(this.settings.getParameter(ParameterTypes.VCONG)))
             {
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                        neighbors.getLeaders(new RelativeLane(this.direction, 1));
+                        neighbors.getLeaders(RelativeLane.of(this.direction, 1));
                 if (!leaders.isEmpty())
                 {
                     PerceivedGtu leader = leaders.first();
@@ -807,7 +807,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 Speed leaderSpeed = leaders ? neighbor.getSpeed() : this.gtu.getSpeed();
                 Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings, followerSpeed,
                         speedLimits, maxSpeed, neighbor.getDistance(), leaderSpeed);
-                if (a.lt(this.settings.getParameter(ParameterTypes.B).neg()))
+                if (a.si < -this.settings.getParameter(ParameterTypes.B).si)
                 {
                     return false;
                 }

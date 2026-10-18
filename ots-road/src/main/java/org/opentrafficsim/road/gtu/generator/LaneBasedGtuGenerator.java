@@ -234,16 +234,15 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             GtuType gtuType = characteristics.getGtuType();
             // gather information on number of unplaced templates per lane, and per link, for the drawing of a new position
             Map<CrossSectionLink, Map<Integer, Integer>> unplaced = new LinkedHashMap<>();
-            for (CrossSectionLink link : this.unplacedTemplates.keySet())
+            for (var entry : this.unplacedTemplates.entrySet())
             {
                 Map<Integer, Integer> linkMap = new LinkedHashMap<>();
-                Map<GeneratorLanePosition, Queue<TimeStampedObject<LaneBasedGtuCharacteristics>>> linkTemplates =
-                        this.unplacedTemplates.get(link);
-                for (GeneratorLanePosition lanePosition : linkTemplates.keySet())
+                var linkTemplates = entry.getValue();
+                for (var templateEntry : linkTemplates.entrySet())
                 {
-                    linkMap.put(lanePosition.getLaneNumber(), linkTemplates.get(lanePosition).size());
+                    linkMap.put(templateEntry.getKey().getLaneNumber(), templateEntry.getValue().size());
                 }
-                unplaced.put(link, linkMap);
+                unplaced.put(entry.getKey(), linkMap);
             }
             // position draw
             GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, characteristics, unplaced);
@@ -501,7 +500,6 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /**
      * Enables the generator.
      */
-    @SuppressWarnings("unused")
     private void enable()
     {
         this.disabled = new LinkedHashSet<>();
@@ -561,13 +559,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      */
     private int getQueueSize(final GeneratorLanePosition position)
     {
-        for (CrossSectionLink link : this.unplacedTemplates.keySet())
+        for (var value : this.unplacedTemplates.values())
         {
-            for (GeneratorLanePosition lanePosition : this.unplacedTemplates.get(link).keySet())
+            for (var entry2 : value.entrySet())
             {
-                if (lanePosition.equals(position))
+                if (entry2.getKey().equals(position))
                 {
-                    return this.unplacedTemplates.get(link).get(lanePosition).size();
+                    return entry2.getValue().size();
                 }
             }
         }

@@ -1,15 +1,14 @@
 package org.opentrafficsim.road.gtu.perception;
 
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.SortedSet;
 
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 
 /**
- * Simple implementation of {@code PerceptionIterable} which wraps a set. Constructors are available for an empty set, a
- * single-valued set, or a sorted set.
+ * Simple implementation of {@code PerceptionIterable} which wraps a set or a single value. Constructors are available for no
+ * element, a single element, or a sorted set.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,15 +21,19 @@ import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 public class PerceptionIterableSet<P extends PerceivedObject> implements PerceptionIterable<P>
 {
 
+    /** Single element. */
+    private final P single;
+
     /** Internal set. */
-    private Set<P> set;
+    private final SortedSet<P> set;
 
     /**
      * Creates an empty iterable.
      */
     public PerceptionIterableSet()
     {
-        this.set = new LinkedHashSet<>();
+        this.single = null;
+        this.set = null;
     }
 
     /**
@@ -39,8 +42,8 @@ public class PerceptionIterableSet<P extends PerceivedObject> implements Percept
      */
     public PerceptionIterableSet(final P headway)
     {
-        this.set = new LinkedHashSet<>();
-        this.set.add(headway);
+        this.single = headway;
+        this.set = null;
     }
 
     /**
@@ -49,25 +52,26 @@ public class PerceptionIterableSet<P extends PerceivedObject> implements Percept
      */
     public PerceptionIterableSet(final SortedSet<P> headways)
     {
+        this.single = null;
         this.set = headways;
     }
 
     @Override
     public Iterator<P> iterator()
     {
-        return this.set.iterator();
+        return this.single == null ? this.set.iterator() : Collections.singleton(this.single).iterator();
     }
 
     @Override
     public P first()
     {
-        return this.set.iterator().next();
+        return this.single == null ? this.set.first() : this.single;
     }
 
     @Override
     public boolean isEmpty()
     {
-        return this.set.isEmpty();
+        return this.single == null && (this.set == null || this.set.isEmpty());
     }
 
 }

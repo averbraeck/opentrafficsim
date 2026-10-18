@@ -14,11 +14,11 @@ In actual usage the java generics disappear.
     Acceleration a = parameters.getParameter(ParameterTypes.A);
 ```
 
-Here we see `ParameterTypes.A` being used, which is the maximum car-following acceleration. It is possible to set a parameter value tentatively, for example as one applies a temporary different context on the own GTU (e.g. applying the car-following model on a traffic light, where larger decelerations are accepted), or when assessing behavior of surrounding GTUs (e.g. setting the desired headway of a surrounding GTU to a short value for evaluation of a gap when urgently changing lane). After such cases, the parameter value may be set back to the previous value, whatever it was. This can be achieved with the following two method calls. (The reason that `setParameter()` does not remember the previous value is efficiency.) If the reset is not called, the tentative value becomes permanent (until it is set again).
+Here we see `ParameterTypes.A` being used, which is the maximum car-following acceleration. It is possible to set a parameter value tentatively, for example as one applies a temporary different context on the own GTU (e.g. applying the car-following model on a traffic light, where larger decelerations are accepted), or when assessing behavior of surrounding GTUs (e.g. setting the desired headway of a surrounding GTU to a short value for evaluation of a gap when urgently changing lane). After such cases, the parameter value may be set back to the previous value, whatever it was. This can be achieved with the following two method calls. If the reset is not called, the tentative value becomes permanent (until it is set again).
 
 ```java
-    parameters.setParameterResettable(ParameterTypes.B, Acceleration.ofSI(3.5));
-    parameters.resetParameter(ParameterTypes.B);
+    parameters.setParameterOverride(ParameterTypes.B, Acceleration.ofSI(3.5));
+    parameters.removeParameterOverride(ParameterTypes.B);
 ```
 
 There are two methods to obtain a parameter value, `getParameter(…)` and `getParameterOrNull(…)`. The first throws an exception when a parameter is not defined, while the latter returns `null` in that case and never throws an exception. The latter method is only advised in performance-heavy code. For instance it is used in the constraint checks discussed in the following sections, which are done every time a parameter value is set (which is often).

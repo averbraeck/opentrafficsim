@@ -157,23 +157,23 @@ public final class ConflictUtil
             throws OperationalPlanException, ParameterException
     {
         Iterable<PerceivedConflict> conflicts =
-                context.getPerception().getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
+                context.getPerception().getPerceptionCategory(IntersectionPerception.TYPE).getConflicts(lane);
         conflicts = AccelerationIncentive.onRoad(conflicts, lane, mergeDistance);
         if (onRoute)
         {
             conflicts = AccelerationIncentive.onRoute(conflicts, context.getRoute().orElse(null));
         }
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
+                context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(lane);
 
         boolean blocking = false;
 
         // Ignore conflicts if we are beyond a stopping distance
         Acceleration a = Acceleration.POS_MAXVALUE;
-        Length stoppingDistance = Length.ofSI(context.getParameters().getParameter(S0).si + context.getLength().si
-                + .5 * context.getSpeed().si * context.getSpeed().si / context.getParameters().getParameter(B).si);
+        double stoppingDistance = context.getParameters().getParameter(S0).si + context.getLength().si
+                + .5 * context.getSpeed().si * context.getSpeed().si / context.getParameters().getParameter(B).si;
         Iterator<PerceivedConflict> it = conflicts.iterator();
-        if (it.hasNext() && it.next().getDistance().gt(stoppingDistance))
+        if (it.hasNext() && it.next().getDistance().si > stoppingDistance)
         {
             conflictPlans.setBlocking(blocking);
             return a;
@@ -215,6 +215,10 @@ public final class ConflictUtil
             }
         }
 
+        double ti = context.getParameters().getParameter(TI).si;
+        double stopArea = context.getParameters().getParameter(STOP_AREA).si;
+        Length s0conf = context.getParameters().getParameter(S0_CONF);
+        Acceleration bCrit = context.getParameters().getParameter(ParameterTypes.BCRIT).neg();
         for (PerceivedConflict conflict : conflicts)
         {
             // adjust acceleration for situations where stopping might not be required
@@ -249,8 +253,7 @@ public final class ConflictUtil
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     Optional<Duration> actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
-                    if (actualDeparture.isPresent()
-                            && actualDeparture.get().si < context.getTime().si + context.getParameters().getParameter(TI).si)
+                    if (actualDeparture.isPresent() && actualDeparture.get().si < context.getTime().si + ti)
                     {
                         // TODO depending on left/right-hand traffic
                         context.addIntent(TurnIndicatorStatus.LEFT, conflict.getDistance());
@@ -302,8 +305,8 @@ public final class ConflictUtil
                  * priority behavior results. This may cause the non-priority direction to never flow.
                  */
                 if (stop && conflict.isMerge() && conflict.getConflictPriority().isPriority() && conflict.getDistance().gt0()
-                        && !conflict.getUpstreamConflictingGtus().isEmpty() && conflict.getUpstreamConflictingGtus().first()
-                                .getDistance().lt(context.getParameters().getParameter(STOP_AREA)))
+                        && !conflict.getUpstreamConflictingGtus().isEmpty()
+                        && conflict.getUpstreamConflictingGtus().first().getDistance().si < stopArea)
                 {
                     conflictPlans.setZipGtu(conflict.getUpstreamConflictingGtus().first().getId());
                 }
@@ -372,12 +375,11 @@ public final class ConflictUtil
                 }
 
                 // stop for j'th conflict, if deceleration is too strong, for next one
-                context.getParameters().setParameterResettable(S0, context.getParameters().getParameter(S0_CONF));
-                Acceleration bCrit = context.getParameters().getParameter(ParameterTypes.BCRIT).neg();
+                context.getParameters().setParameterOverride(S0, s0conf);
                 Acceleration aConflict = Acceleration.ofSI(-Double.MAX_VALUE);
                 while (aConflict.si < bCrit.si && j < prevStarts.size())
                 {
-                    if (prevStarts.get(j).lt(context.getParameters().getParameter(S0_CONF)))
+                    if (prevStarts.get(j).si < s0conf.si)
                     {
                         // critical deceleration once GTU is within s0_conf
                         // otherwise car-following model may generate unreasonably large decelerations
@@ -395,7 +397,7 @@ public final class ConflictUtil
                     }
                     j++;
                 }
-                context.getParameters().resetParameter(S0);
+                context.getParameters().removeParameterOverride(S0);
                 a = Acceleration.min(a, aConflict);
                 break;
             }
@@ -491,9 +493,9 @@ public final class ConflictUtil
              *                              / /__/  /
              *                             /       /
              */
-            context.getParameters().setParameterResettable(S0, context.getParameters().getParameter(S0_CONF));
+            context.getParameters().setParameterOverride(S0, context.getParameters().getParameter(S0_CONF));
             Acceleration aStop = CarFollowingUtil.stop(context, conflict.getDistance());
-            context.getParameters().resetParameter(S0);
+            context.getParameters().removeParameterOverride(S0);
             a = Acceleration.max(a, aStop); // max, which ever allows the largest acceleration
         }
         return a;
@@ -791,6 +793,8 @@ public final class ConflictUtil
         AnticipationInfo ttcOa = AnticipationInfo.anticipateMovementFreeAcceleration(context, distance, TIME_STEP);
 
         // Loop over conflicting vehicles
+        Duration tMax = context.getParameters().getParameter(ParameterTypes.TMAX);
+        Length s0 = context.getParameters().getParameter(S0);
         boolean first = true;
         for (PerceivedGtu conflictingVehicle : conflictingVehicles)
         {
@@ -851,8 +855,6 @@ public final class ConflictUtil
                 double followerFront = conflictingVehicle.getSpeed().si * (ttcOa.duration().si + additionalTime.si)
                         - conflictingVehicle.getDistance().si + 0.5 * b.si * additionalTime.si * additionalTime.si;
                 double ownRear = vSelf * additionalTime.si;
-                Duration tMax = context.getParameters().getParameter(ParameterTypes.TMAX);
-                Length s0 = context.getParameters().getParameter(S0);
                 // 1) will clear the conflict after the conflict vehicle enters
                 // 2) conflict vehicle will be too near after adjusting speed
                 if (ttcOa.duration().times(f).plus(gap).gt(tteCa.duration()) || (!Double.isInfinite(tteCa.duration().si)

@@ -52,7 +52,7 @@ public final class IncentiveStayOnSlowLanes implements VoluntaryIncentive, State
             final ImmutableLinkedHashMap<Class<? extends VoluntaryIncentive>, Desire> voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         // start at fastest lane
         SortedSet<RelativeLane> rootCrossSection = context.getPerception().getLaneStructure().getRootCrossSection();
         RelativeLane lane = rootCrossSection.first();

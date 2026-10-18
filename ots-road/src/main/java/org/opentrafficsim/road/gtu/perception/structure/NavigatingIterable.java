@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.perception.structure;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,6 +43,9 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
     /** Range within which objects are included. */
     private final Length range;
 
+    /** Downstream or upstream search. */
+    private final boolean downstream;
+
     /** Start collection of lane records. */
     private final Collection<L> start;
 
@@ -49,26 +53,28 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
     private final Function<L, Collection<L>> navigator;
 
     /** Obtains ordered list of objects from lane. */
-    private final Function<L, List<?>> lister;
+    private final Function<L, Iterable<?>> lister;
 
     /** Returns distance of object. */
-    private final BiFunction<T, L, Length> distancer;
+    private final BiFunction<T, L, Double> distancer;
 
     /**
      * Constructor.
-     * @param clazz class of lane-based object type.
-     * @param range range within which objects are included.
-     * @param start start collection of lane records.
-     * @param navigator navigator.
-     * @param lister obtains ordered list of objects from lane.
-     * @param distancer returns distance of object.
+     * @param clazz class of lane-based object type
+     * @param range range within which objects are included
+     * @param downstream downstream or upstream
+     * @param start start collection of lane records
+     * @param navigator navigator
+     * @param lister obtains ordered list of objects from lane
+     * @param distancer returns distance of object
      */
-    public NavigatingIterable(final Class<T> clazz, final Length range, final Collection<L> start,
-            final Function<L, Collection<L>> navigator, final Function<L, List<?>> lister,
-            final BiFunction<T, L, Length> distancer)
+    public NavigatingIterable(final Class<T> clazz, final Length range, final boolean downstream, final Collection<L> start,
+            final Function<L, Collection<L>> navigator, final Function<L, Iterable<?>> lister,
+            final BiFunction<T, L, Double> distancer)
     {
         this.clazz = clazz;
         this.range = range;
+        this.downstream = downstream;
         this.start = start;
         this.navigator = navigator;
         this.lister = lister;
@@ -87,8 +93,10 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
         }
         return new Iterator<Entry<T>>()
         {
-            /** Next entry as found by {@code hasNext()}. */
+            /** Next entry as found by {@link #hasNext}. */
             private Entry<T> next;
+
+            private final List<Map.Entry<L, ObjectIterator>> keysBuffer = new ArrayList<>();
 
             @Override
             public boolean hasNext()
@@ -98,8 +106,9 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
                     return true;
                 }
                 // update the map with records that have something to produce
-                Map<L, ObjectIterator> mapCopy = new LinkedHashMap<>(map);
-                for (Map.Entry<L, ObjectIterator> mapEntry : mapCopy.entrySet())
+                this.keysBuffer.clear();
+                this.keysBuffer.addAll(map.entrySet());
+                for (Map.Entry<L, ObjectIterator> mapEntry : this.keysBuffer)
                 {
                     if (!mapEntry.getValue().hasNext())
                     {
@@ -117,20 +126,20 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
                 else
                 {
                     // loop map and find closest object
-                    Length minDistance = Length.POSITIVE_INFINITY;
+                    double minDistance = Double.POSITIVE_INFINITY;
                     ObjectIterator closestObjectIterator = null;
                     for (ObjectIterator objectIterator : map.values())
                     {
-                        Entry<T> entry = objectIterator.poll();
-                        if (entry.distance().lt(minDistance))
+                        Entry<T> objectEntry = objectIterator.poll();
+                        if (objectEntry.distance().si < minDistance)
                         {
-                            minDistance = entry.distance();
+                            minDistance = objectEntry.distance().si;
                             closestObjectIterator = objectIterator;
                         }
                     }
                     this.next = closestObjectIterator.next(); // advance the object iterator; it was only polled above
                 }
-                if (this.next != null && this.next.distance().gt(NavigatingIterable.this.range))
+                if (this.next != null && this.next.distance().si > NavigatingIterable.this.range.si)
                 {
                     this.next = null; // next object out of range
                 }
@@ -154,11 +163,18 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
              */
             private void updateMapRecursive(final L record)
             {
-                if (!map.containsKey(record) || map.get(record).hasNext())
+                ObjectIterator it = map.get(record);
+                if (it == null || it.hasNext())
                 {
                     return;
                 }
                 map.remove(record);
+                // stop if end point of record is beyond range
+                if ((NavigatingIterable.this.downstream ? record.getStartDistance() + record.getLength().si
+                        : -record.getStartDistance()) > NavigatingIterable.this.range.si)
+                {
+                    return;
+                }
                 for (L next : NavigatingIterable.this.navigator.apply(record))
                 {
                     map.put(next, new ObjectIterator(next, NavigatingIterable.this.clazz, NavigatingIterable.this.lister,
@@ -170,13 +186,7 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
     }
 
     /**
-     * Iterator over objects on a {@code LaneRecordInterface}. This is used by {@code NavigatingIterable} to find object.
-     * <p>
-     * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
+     * Iterator over objects on a {@link LaneRecordInterface}. This is used by {@link NavigatingIterable} to find object.
      */
     private class ObjectIterator implements Iterator<Entry<T>>
     {
@@ -187,17 +197,14 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
         /** Class of lane-based object type. */
         private final Class<T> clazz;
 
-        /** List of objects from lane, within correct range for downstream. */
-        private final List<?> list;
+        /** Iterator over objects. */
+        private final Iterator<?> iterator;
 
-        /** Index of current entry. */
-        private int index;
+        /** Next object. */
+        private Entry<T> next;
 
         /** Returns distance of object. */
-        private final BiFunction<T, L, Length> distancer;
-
-        /** Poll entry, that next will return. */
-        private Entry<T> poll;
+        private final BiFunction<T, L, Double> distancer;
 
         /**
          * Constructor. The lister may return objects of any type. This class will check whether objects are of type T.
@@ -206,32 +213,38 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
          * @param lister obtains ordered list of objects from lane.
          * @param distancer returns distance of object.
          */
-        ObjectIterator(final L record, final Class<T> clazz, final Function<L, List<?>> lister,
-                final BiFunction<T, L, Length> distancer)
+        ObjectIterator(final L record, final Class<T> clazz, final Function<L, ? extends Iterable<?>> lister,
+                final BiFunction<T, L, Double> distancer)
         {
             this.record = record;
             this.clazz = clazz;
-            this.list = lister.apply(record);
+            this.iterator = lister.apply(record).iterator();
             this.distancer = distancer;
         }
 
         @Override
         public boolean hasNext()
         {
-            while (this.index < this.list.size() && !this.list.get(this.index).getClass().isAssignableFrom(this.clazz))
+            while (this.next == null && this.iterator.hasNext())
             {
-                this.index++;
+                Object object = this.iterator.next();
+                if (this.clazz.isAssignableFrom(object.getClass()))
+                {
+                    @SuppressWarnings("unchecked")
+                    T t = (T) object;
+                    this.next =
+                            new Entry<>(Length.ofSI(this.distancer.apply(t, this.record)), this.record.getMergeDistance(), t);
+                }
             }
-            return this.index < this.list.size();
+            return this.next != null;
         }
 
         @Override
         public Entry<T> next()
         {
-            Entry<T> entry = poll();
-            this.index++;
-            this.poll = null;
-            return entry;
+            Entry<T> out = poll();
+            this.next = null;
+            return out;
         }
 
         /**
@@ -241,13 +254,7 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
         public Entry<T> poll()
         {
             Throw.when(!hasNext(), NoSuchElementException.class, "No more object of type %s.", this.clazz);
-            if (this.poll == null)
-            {
-                @SuppressWarnings("unchecked") // isAssignableFrom in hasNext() checks this
-                T t = (T) this.list.get(this.index);
-                this.poll = new Entry<>(this.distancer.apply(t, this.record), this.record.getMergeDistance(), t);
-            }
-            return this.poll;
+            return this.next;
         }
 
     }
@@ -255,12 +262,6 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
     /**
      * Container for a perceived object with the distance towards it and the distance until the road of the object and the road
      * of the perceiving GTU merge.
-     * <p>
-     * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
      * @param <T> type of object
      * @param distance distance to object
      * @param merge ego-distance until the road of the object and the road of the perceiving GTU merge

@@ -41,9 +41,8 @@ public final class Draw
         Throw.whenNull(stream, "Stream may not be null.");
         Throw.when(map.isEmpty(), IllegalArgumentException.class, "Map may not be empty.");
         double sumProb = 0.0;
-        for (Entry<E, ? extends Double> e : map.entrySet())
+        for (double w : map.values())
         {
-            double w = e.getValue();
             Throw.when(w < 0.0, IllegalArgumentException.class, "Probabilities should be at least 0.0.");
             sumProb += w;
         }

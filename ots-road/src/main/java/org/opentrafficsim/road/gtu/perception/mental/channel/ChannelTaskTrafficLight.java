@@ -59,13 +59,13 @@ public class ChannelTaskTrafficLight extends AbstractTask implements ChannelTask
     @Override
     public Object getChannel()
     {
-        return SINGLETON;
+        return ChannelTask.FRONT;
     }
 
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        IntersectionPerception intersection = perception.getPerceptionCategoryOptional(IntersectionPerception.class)
+        IntersectionPerception intersection = perception.getPerceptionCategoryOptional(IntersectionPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("IntersectionPerception not present."));
         Iterator<DistancedObject<TrafficLight>> trafficLights =
                 intersection.getTrafficLights(RelativeLane.CURRENT).underlyingWithDistance();
@@ -73,7 +73,7 @@ public class ChannelTaskTrafficLight extends AbstractTask implements ChannelTask
         {
             return 0.0;
         }
-        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Duration headway = trafficLights.next().distance().divide(ego.getSpeed());
         Duration h = perception.getGtu().getParameters().getOptionalParameter(HEXP)

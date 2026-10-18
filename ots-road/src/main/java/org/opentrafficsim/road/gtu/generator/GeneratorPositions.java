@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -130,9 +131,9 @@ public interface GeneratorPositions
         // create list of GeneratorLinkPositions
         List<GeneratorLinkPosition> linkPositions = new ArrayList<>();
         Set<GeneratorLanePosition> allLanePositions = new LinkedHashSet<>();
-        for (Link splitLink : linkSplit.keySet())
+        for (Entry<Link, Set<LanePosition>> entry : linkSplit.entrySet())
         {
-            List<Lane> lanes = ((CrossSectionLink) splitLink).getLanes();
+            List<Lane> lanes = ((CrossSectionLink) entry.getKey()).getLanes();
             // let's sort the lanes by lateral position
             Collections.sort(lanes, new Comparator<Lane>()
             {
@@ -146,24 +147,24 @@ public interface GeneratorPositions
             });
             // create list of GeneratorLanePositions
             List<GeneratorLanePosition> lanePositions = new ArrayList<>();
-            for (LanePosition lanePosition : linkSplit.get(splitLink))
+            for (LanePosition lanePosition : entry.getValue())
             {
                 lanePositions.add(new GeneratorLanePosition(lanes.indexOf(lanePosition.lane()) + 1, lanePosition,
-                        (CrossSectionLink) splitLink));
+                        (CrossSectionLink) entry.getKey()));
             }
             allLanePositions.addAll(lanePositions);
             // create the GeneratorLinkPosition
             if (linkWeights == null)
             {
-                linkPositions.add(new GeneratorLinkPosition(lanePositions, splitLink, stream, laneBiases));
+                linkPositions.add(new GeneratorLinkPosition(lanePositions, entry.getKey(), stream, laneBiases));
             }
             else
             {
-                Double weight = linkWeights.get(splitLink);
+                Double weight = linkWeights.get(entry.getKey());
                 Throw.whenNull(weight, "Using link weights for GTU generation, but no weight for link %s is defined.",
-                        splitLink);
-                linkPositions.add(new GeneratorLinkPosition(lanePositions, splitLink, stream, laneBiases, weight,
-                        viaNodes.get(splitLink)));
+                        entry.getKey());
+                linkPositions.add(new GeneratorLinkPosition(lanePositions, entry.getKey(), stream, laneBiases, weight,
+                        viaNodes.get(entry.getKey())));
             }
         }
 
@@ -195,7 +196,7 @@ public interface GeneratorPositions
     /**
      * Class representing a vehicle generation lane, providing elementary information for randomly drawing links and lanes.
      */
-    final class GeneratorLanePosition
+    class GeneratorLanePosition
     {
 
         /** Lane number, where 1 is the right-most lane. */
@@ -206,6 +207,9 @@ public interface GeneratorPositions
 
         /** Link. */
         private final CrossSectionLink link;
+
+        /** Cached hash code. */
+        private final int hashCode;
 
         /**
          * Constructor.
@@ -218,6 +222,7 @@ public interface GeneratorPositions
             this.laneNumber = laneNumber;
             this.position = position;
             this.link = link;
+            this.hashCode = Objects.hash(this.laneNumber, this.link, this.position);
         }
 
         /**
@@ -260,7 +265,7 @@ public interface GeneratorPositions
         @Override
         public int hashCode()
         {
-            return Objects.hash(this.laneNumber, this.link, this.position);
+            return this.hashCode;
         }
 
         @Override
@@ -295,7 +300,7 @@ public interface GeneratorPositions
     /**
      * Class representing a vehicle generation link to provide individual generation positions.
      */
-    final class GeneratorLinkPosition
+    class GeneratorLinkPosition
     {
 
         /** Contained lanes. */
@@ -506,7 +511,7 @@ public interface GeneratorPositions
     /**
      * Class representing a vehicle generation zone to provide individual generation positions.
      */
-    final class GeneratorZonePosition
+    class GeneratorZonePosition
     {
 
         /** Contained links. */
@@ -587,7 +592,7 @@ public interface GeneratorPositions
     /**
      * Set of lane biases per GTU type.
      */
-    final class LaneBiases
+    class LaneBiases
     {
 
         /** Biases per GTU type. */
@@ -646,7 +651,7 @@ public interface GeneratorPositions
     /**
      * Vehicle generation lateral bias. Includes a lane maximum, e.g. trucks only on 2 right-hand lanes.
      */
-    final class LaneBias
+    class LaneBias
     {
 
         /** No bias. */

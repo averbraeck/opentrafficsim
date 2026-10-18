@@ -35,7 +35,7 @@ public class LeaderId extends ExtendedDataString<GtuDataRoad>
     public Optional<String> getValue(final GtuDataRoad gtu)
     {
         Optional<NeighborsPerception> neigbors =
-                gtu.getGtu().getTacticalPlanner().getPerception().getPerceptionCategoryOptional(NeighborsPerception.class);
+                gtu.getGtu().getTacticalPlanner().getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE);
         if (neigbors.isEmpty())
         {
             throw new NoSuchElementException(

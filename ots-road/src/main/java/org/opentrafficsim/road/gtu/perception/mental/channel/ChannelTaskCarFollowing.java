@@ -51,7 +51,7 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
     {
         this((perception) ->
         {
-            NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+            NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                     .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
             Iterator<DistancedObject<LaneBasedGtu>> leader =
                     neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
@@ -93,7 +93,7 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
         {
             return 0.0;
         }
-        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Duration headway = leader.distance().divide(ego.getSpeed());
         Duration h = perception.getGtu().getParameters().getOptionalParameter(HEXP)

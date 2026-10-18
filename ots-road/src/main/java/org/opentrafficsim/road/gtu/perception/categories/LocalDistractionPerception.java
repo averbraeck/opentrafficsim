@@ -8,9 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
@@ -27,8 +25,11 @@ import org.opentrafficsim.road.network.object.LocalDistraction;
  * </p>
  * @author Wouter Schakel
  */
-public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+public class LocalDistractionPerception extends AbstractLanePerceptionCategory<LocalDistractionPerception>
 {
+
+    /** Type. */
+    public static final Type<LocalDistractionPerception> TYPE = new Type<>("LocalDistractionPerception");
 
     /** Look-ahead distance. */
     public static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
@@ -40,6 +41,12 @@ public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneB
     public LocalDistractionPerception(final LanePerception perception)
     {
         super(perception);
+    }
+
+    @Override
+    public Type<LocalDistractionPerception> getType()
+    {
+        return TYPE;
     }
 
     /**

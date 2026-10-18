@@ -80,18 +80,16 @@ public class CycleTimeLightController implements RampMeteringLightController
     @Override
     public void disable()
     {
-        Iterator<TrafficLight> it = this.redEvents.keySet().iterator();
+        Iterator<SimEventInterface<Duration>> it = this.redEvents.values().iterator();
         while (it.hasNext())
         {
-            TrafficLight trafficLight = it.next();
-            this.simulator.cancelEvent(this.redEvents.get(trafficLight));
+            this.simulator.cancelEvent(it.next());
             it.remove();
         }
-        it = this.greenEvents.keySet().iterator();
+        it = this.greenEvents.values().iterator();
         while (it.hasNext())
         {
-            TrafficLight trafficLight = it.next();
-            this.simulator.cancelEvent(this.greenEvents.get(trafficLight));
+            this.simulator.cancelEvent(it.next());
             it.remove();
         }
         this.enabled = false;
@@ -189,9 +187,8 @@ public class CycleTimeLightController implements RampMeteringLightController
                                 .scheduleEventRel(MIN_RED_TIME, () -> CycleTimeLightController.this.setRed(this.trafficLight)));
                         green = cycleRedTime;
                     }
-                    CycleTimeLightController.this.greenEvents.put(this.trafficLight,
-                            CycleTimeLightController.this.simulator.scheduleEventAbs(Duration.ofSI(green.si),
-                                    () -> CycleTimeLightController.this.setGreen(this.trafficLight)));
+                    CycleTimeLightController.this.greenEvents.put(this.trafficLight, CycleTimeLightController.this.simulator
+                            .scheduleEventAbs(green, () -> CycleTimeLightController.this.setGreen(this.trafficLight)));
                 }
                 catch (SimRuntimeException exception)
                 {

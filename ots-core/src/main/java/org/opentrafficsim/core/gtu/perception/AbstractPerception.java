@@ -1,10 +1,10 @@
 package org.opentrafficsim.core.gtu.perception;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.collections.IndexedMap;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 
@@ -23,12 +23,7 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
 {
 
     /** Set of available perception categories. */
-    private final Map<Class<? extends PerceptionCategory<?, ?>>, PerceptionCategory<?, ?>> perceptionCategories =
-            new LinkedHashMap<>();
-
-    /** Cache, avoiding loop and isAssignableFrom. */
-    private final Map<Class<? extends PerceptionCategory<?, ?>>, PerceptionCategory<?, ?>> cachedCategories =
-            new LinkedHashMap<>();
+    private final Map<PerceptionCategory.Type<?>, PerceptionCategory<?, ?, ?>> perceptionCategories = new IndexedMap<>();
 
     /** GTU. */
     private G gtu;
@@ -49,36 +44,22 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         return this.gtu;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public final <T extends PerceptionCategory<?, ?>> void addPerceptionCategory(final T perceptionCategory)
+    public <P extends Perception<? extends G>> void addPerceptionCategory(
+            final PerceptionCategory<? extends G, ? extends P, ?> perceptionCategory)
     {
         // guarantees correct combination of class and perception category
-        this.perceptionCategories.put((Class<T>) perceptionCategory.getClass(), perceptionCategory);
-        this.cachedCategories.clear();
+        this.perceptionCategories.put(perceptionCategory.getType(), perceptionCategory);
     }
 
     @Override
-    public final <T extends PerceptionCategory<?, ?>> boolean contains(final Class<T> category)
+    public boolean contains(final PerceptionCategory.Type<?> category)
     {
-        if (this.cachedCategories.containsKey(category))
-        {
-            return true;
-        }
-        for (Class<?> clazz : this.perceptionCategories.keySet())
-        {
-            if (category.isAssignableFrom(clazz))
-            {
-                // isAssignableFrom takes care of implementation of the category
-                this.cachedCategories.put(category, this.perceptionCategories.get(clazz));
-                return true;
-            }
-        }
-        return false;
+        return this.perceptionCategories.containsKey(category);
     }
 
     @Override
-    public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(final Class<T> category)
+    public <T extends PerceptionCategory<?, ?, ?>> T getPerceptionCategory(final PerceptionCategory.Type<T> category)
             throws OperationalPlanException
     {
         Optional<T> cat = getPerceptionCategoryOptional(category);
@@ -88,41 +69,16 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <T extends PerceptionCategory<?, ?>> Optional<T> getPerceptionCategoryOptional(final Class<T> category)
+    public <T extends PerceptionCategory<?, ?, ?>> Optional<T> getPerceptionCategoryOptional(
+            final PerceptionCategory.Type<T> category)
     {
-        T implementation = (T) this.cachedCategories.get(category);
-        if (implementation != null)
-        {
-            return Optional.of(implementation);
-        }
-        for (Class<?> clazz : this.perceptionCategories.keySet())
-        {
-            if (category.isAssignableFrom(clazz))
-            {
-                // addPerceptionCategory guarantees correct combination of class and perception category
-                // isAssignableFrom takes care of implementation of the category
-                implementation = (T) this.perceptionCategories.get(clazz);
-                this.cachedCategories.put(category, implementation);
-                return Optional.of(implementation);
-            }
-        }
-        return Optional.empty();
+        return Optional.ofNullable((T) this.perceptionCategories.get(category));
     }
 
     @Override
-    public final void removePerceptionCategory(final PerceptionCategory<?, ?> perceptionCategory)
+    public void removePerceptionCategory(final PerceptionCategory<?, ?, ?> category)
     {
-        for (Class<?> category : this.perceptionCategories.keySet())
-        {
-            if (perceptionCategory.getClass().isAssignableFrom(category))
-            {
-                // addPerceptionCategory guarantees correct combination of class and perception category
-                // isAssignableFrom takes care of implementation of the category
-                this.perceptionCategories.remove(perceptionCategory.getClass());
-                this.cachedCategories.clear();
-                return;
-            }
-        }
+        this.perceptionCategories.remove(category.getType());
     }
 
     @Override
@@ -131,7 +87,7 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
     {
         StringBuilder s = new StringBuilder("Perception [");
         String sep = "";
-        for (PerceptionCategory<?, ?> cat : this.perceptionCategories.values())
+        for (PerceptionCategory<?, ?, ?> cat : this.perceptionCategories.values())
         {
             s.append(sep);
             s.append(cat);

@@ -81,8 +81,8 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
         if (context.getSpeed().gt(context.getParameters().getParameter(VCONG)))
         {
             double sigma = context.getParameters().getParameter(SOCIO);
-            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
-            InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
+            InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
             boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
             boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
             // change right to get out of the way

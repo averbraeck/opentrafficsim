@@ -113,7 +113,7 @@ public final class LmrsUtil implements LmrsParameters
         lmrsData.initStep();
 
         // obtain objects to get info
-        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
 
         // regular car-following
@@ -380,7 +380,7 @@ public final class LmrsUtil implements LmrsParameters
             final GapAcceptance gapAcceptance) throws ParameterException, OperationalPlanException
     {
         // legal?
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         if (infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat).si <= 0.0)
         {
             return false;
@@ -395,10 +395,10 @@ public final class LmrsUtil implements LmrsParameters
 
         // intersection causes for deceleration
         Optional<IntersectionPerception> intersection =
-                context.getPerception().getPerceptionCategoryOptional(IntersectionPerception.class);
+                context.getPerception().getPerceptionCategoryOptional(IntersectionPerception.TYPE);
         if (intersection.isPresent())
         {
-            RelativeLane lane = new RelativeLane(lat, 1);
+            RelativeLane lane = RelativeLane.of(lat, 1);
 
             // // conflicts alongside?
             // if ((lat.isLeft() && intersection.isAlongsideConflictLeft())
@@ -413,10 +413,11 @@ public final class LmrsUtil implements LmrsParameters
 
             // conflicts
             PerceptionCollectable<PerceivedConflict, Conflict> conflicts = intersection.get().getConflicts(lane);
+            double bCrit = -context.getParameters().getParameter(ParameterTypes.BCRIT).si;
             try
             {
                 Acceleration a = ConflictUtil.approachConflicts(context, new ConflictPlans(), lane, Length.ZERO, false);
-                if (a.lt(context.getParameters().getParameter(ParameterTypes.BCRIT).neg()))
+                if (a.si < bCrit)
                 {
                     return false;
                 }
@@ -468,7 +469,7 @@ public final class LmrsUtil implements LmrsParameters
                 if (trafficLight.getTrafficLightColor().isRedOrYellow())
                 {
                     Acceleration a = TrafficLightUtil.respondToTrafficLight(context, trafficLight);
-                    if (a.lt(context.getParameters().getParameter(ParameterTypes.BCRIT).neg()))
+                    if (a.si < bCrit)
                     {
                         return false;
                     }
@@ -477,11 +478,11 @@ public final class LmrsUtil implements LmrsParameters
         }
 
         // cut-in vehicles from 2nd lane
-        RelativeLane lane = new RelativeLane(lat, 2);
-        Acceleration b = context.getParameters().getParameter(ParameterTypes.B).neg();
-        for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(lane))
+        RelativeLane lane = RelativeLane.of(lat, 2);
+        double b = -context.getParameters().getParameter(ParameterTypes.B).si;
+        for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(lane))
         {
-            if (leader.getManeuver().isChangingLane(lat.flip()) && CarFollowingUtil.followSingleLeader(context, leader).lt(b))
+            if (leader.getManeuver().isChangingLane(lat.flip()) && CarFollowingUtil.followSingleLeader(context, leader).si < b)
             {
                 return false;
             }
@@ -554,7 +555,7 @@ public final class LmrsUtil implements LmrsParameters
         double tRelaxed = (1.0 - urgency) * params.getParameter(TMAX).si;
         Duration tCur = params.getParameter(T);
         Duration t = tRelaxed < tCur.si ? Duration.ofSI(tRelaxed) : tCur;
-        params.setParameterResettable(T, t);
+        params.setParameterOverride(T, t);
     }
 
     /**
@@ -564,7 +565,7 @@ public final class LmrsUtil implements LmrsParameters
      */
     private static void resetDesiredHeadway(final Parameters params) throws ParameterException
     {
-        params.resetParameter(T);
+        params.removeParameterOverride(T);
     }
 
     /**

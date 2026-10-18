@@ -3,27 +3,32 @@ package org.opentrafficsim.road.network;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
+import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableList;
+import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
+import org.opentrafficsim.base.collections.SmallArraySet;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -72,13 +77,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Detectors on the lane to trigger behavior of the GTU, sorted by longitudinal position. The triggering of detectors is
      * done per GTU type, so different GTUs can trigger different detectors.
      */
-    private final SortedMap<Double, List<LaneDetector>> detectors = new TreeMap<>();
+    private final NavigableMap<Double, Set<LaneDetector>> detectors = new TreeMap<>();
 
     /**
      * Objects on the lane can be observed by the GTU. Examples are signs, speed signs, blocks, and traffic lights. They are
      * sorted by longitudinal position.
      */
-    private final SortedMap<Double, List<LaneBasedObject>> laneBasedObjects = new TreeMap<>();
+    private final NavigableMap<Double, Set<LaneBasedObject>> laneBasedObjects = new TreeMap<>();
 
     /** GTUs ordered by increasing longitudinal position; increasing in the direction of the center line. */
     private final HistoricalList<LaneBasedGtu> gtuList;
@@ -94,14 +99,28 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * the link (and the direction of the center line of the lane). In terms of offsets, 'left' lanes always have a more
      * positive offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
      */
-    private final MultiKeyMap<Set<Lane>> leftNeighbours = new MultiKeyMap<>(GtuType.class, Boolean.class);
+    private final Map<GtuType, Set<Lane>> leftNeighboursLegal = new LinkedHashMap<>(1);
+
+    /**
+     * Adjacent left lanes that some GTU types can change onto. Left is defined relative to the direction of the design line of
+     * the link (and the direction of the center line of the lane). In terms of offsets, 'left' lanes always have a more
+     * positive offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
+     */
+    private final Map<GtuType, Set<Lane>> leftNeighboursPhysical = new LinkedHashMap<>(1);
 
     /**
      * Adjacent right lanes that some GTU types can change onto. Right is defined relative to the direction of the design line
      * of the link (and the direction of the center line of the lane). In terms of offsets, 'right' lanes always have a more
      * negative offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
      */
-    private final MultiKeyMap<Set<Lane>> rightNeighbours = new MultiKeyMap<>(GtuType.class, Boolean.class);
+    private final Map<GtuType, Set<Lane>> rightNeighboursLegal = new LinkedHashMap<>(1);
+
+    /**
+     * Adjacent right lanes that some GTU types can change onto. Right is defined relative to the direction of the design line
+     * of the link (and the direction of the center line of the lane). In terms of offsets, 'right' lanes always have a more
+     * negative offset than the current lane. Initially empty so we can calculate and cache the first time the method is called.
+     */
+    private final Map<GtuType, Set<Lane>> rightNeighboursPhysical = new LinkedHashMap<>(1);
 
     /**
      * Next lane(s) following this lane that some GTU types can drive onto. Next is defined in the direction of the design line.
@@ -114,6 +133,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * the design line. Initially empty so we can calculate and cache the first time the method is called.
      */
     private final Map<GtuType, Set<Lane>> prevLanes = new LinkedHashMap<>(1);
+
+    /** Cached previous links. */
+    private final Map<GtuType, ImmutableSet<Link>> prevLinks = new LinkedHashMap<>(1);
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the addition of a GTU to the lane. <br>
@@ -213,23 +235,21 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     private Set<Lane> neighbors(final LateralDirectionality direction, final GtuType gtuType, final boolean legal)
     {
-        MultiKeyMap<Set<Lane>> cache = direction.isLeft() ? this.leftNeighbours : this.rightNeighbours;
-        return cache.get(() ->
+        Map<GtuType, Set<Lane>> cache = direction.isLeft() ? (legal ? this.leftNeighboursLegal : this.leftNeighboursPhysical)
+                : (legal ? this.rightNeighboursLegal : this.rightNeighboursPhysical);
+        return cache.computeIfAbsent(gtuType, (g) ->
         {
-            Set<Lane> lanes = new LinkedHashSet<>(1);
+            Set<Lane> lanes = new SmallArraySet<>();
             for (CrossSectionElement cse : this.link.getCrossSectionElementList())
             {
-                if (cse instanceof Lane && !cse.equals(this))
+                if (cse instanceof Lane lane && !cse.equals(this)
+                        && laterallyAdjacentAndAccessible(lane, direction, gtuType, legal))
                 {
-                    Lane lane = (Lane) cse;
-                    if (laterallyAdjacentAndAccessible(lane, direction, gtuType, legal))
-                    {
-                        lanes.add(lane);
-                    }
+                    lanes.add(lane);
                 }
             }
             return lanes;
-        }, gtuType, legal);
+        });
     }
 
     /** Lateral alignment margin for longitudinally connected Lanes. */
@@ -346,10 +366,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             throw new NetworkException("Network already contains an object with the name " + detector.getFullId());
         }
-        List<LaneDetector> detectorList = this.detectors.get(position);
+        Set<LaneDetector> detectorList = this.detectors.get(position);
         if (null == detectorList)
         {
-            detectorList = new ArrayList<>(1);
+            detectorList = new SmallArraySet<>();
             this.detectors.put(position, detectorList);
         }
         detectorList.add(detector);
@@ -367,7 +387,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     {
         fireTimedEvent(Lane.DETECTOR_REMOVE_EVENT, new Object[] {detector.getId(), detector},
                 detector.getSimulator().getSimulatorTime());
-        List<LaneDetector> detectorList = this.detectors.get(detector.getLongitudinalPosition().si);
+        Set<LaneDetector> detectorList = this.detectors.get(detector.getLongitudinalPosition().si);
         if (null == detectorList)
         {
             throw new NetworkException("No detector at " + detector.getLongitudinalPosition().si);
@@ -381,8 +401,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     }
 
     /**
-     * Retrieve the list of Detectors of this Lane in the specified distance range for the given GtuType. The resulting list is
-     * a defensive copy.
+     * Retrieve the list of Detectors of this Lane in the specified distance range for the given GtuType. The resulting set is a
+     * defensive copy.
      * @param minimumPosition the minimum distance on the Lane (inclusive)
      * @param maximumPosition the maximum distance on the Lane (inclusive)
      * @param gtuType the GTU type to provide the detectors for
@@ -390,91 +410,62 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public List<LaneDetector> getDetectors(final Length minimumPosition, final Length maximumPosition, final GtuType gtuType)
     {
-        List<LaneDetector> detectorList = new ArrayList<>(1);
-        for (List<LaneDetector> dets : this.detectors.values())
+        List<LaneDetector> result = new ArrayList<>();
+        if (maximumPosition.si < minimumPosition.si)
         {
-            for (LaneDetector detector : dets)
-            {
-                if (detector.isCompatible(gtuType) && detector.getLongitudinalPosition().ge(minimumPosition)
-                        && detector.getLongitudinalPosition().le(maximumPosition))
-                {
-                    detectorList.add(detector);
-                }
-            }
+            return result;
         }
-        return detectorList;
-    }
-
-    /**
-     * Retrieve the list of Detectors of this Lane that are triggered by the given GtuType. The resulting list is a defensive
-     * copy.
-     * @param gtuType the GTU type to provide the detectors for
-     * @return list of the detectors, in ascending order for the location on the Lane
-     */
-    public List<LaneDetector> getDetectors(final GtuType gtuType)
-    {
-        List<LaneDetector> detectorList = new ArrayList<>(1);
-        for (List<LaneDetector> dets : this.detectors.values())
+        for (Set<LaneDetector> dets : this.detectors.subMap(minimumPosition.si, true, maximumPosition.si, true).values())
         {
             for (LaneDetector detector : dets)
             {
                 if (detector.isCompatible(gtuType))
                 {
-                    detectorList.add(detector);
+                    result.add(detector);
                 }
             }
         }
-        return detectorList;
+        return result;
     }
 
     /**
-     * Retrieve the list of all Detectors of this Lane. The resulting list is a defensive copy.
+     * Retrieve the set of Detectors of this Lane that are triggered by the given GtuType. The resulting set is a defensive
+     * copy.
+     * @param gtuType the GTU type to provide the detectors for
+     * @return set of the detectors, in ascending order for the location on the Lane
+     */
+    public List<LaneDetector> getDetectors(final GtuType gtuType)
+    {
+        List<LaneDetector> result = new ArrayList<>();
+        for (Set<LaneDetector> dets : this.detectors.values())
+        {
+            for (LaneDetector detector : dets)
+            {
+                if (detector.isCompatible(gtuType))
+                {
+                    result.add(detector);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Retrieve the set of all Detectors of this Lane. The resulting set is a defensive copy.
      * @return list of the detectors, in ascending order for the location on the Lane
      */
     public List<LaneDetector> getDetectors()
     {
         if (this.detectors == null)
         {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
-        List<LaneDetector> detectorList = new ArrayList<>(1);
-        for (List<LaneDetector> dets : this.detectors.values())
+        List<LaneDetector> result = new ArrayList<>();
+        for (Set<LaneDetector> dets : this.detectors.values())
         {
-            for (LaneDetector detector : dets)
-            {
-                detectorList.add(detector);
-            }
+            result.addAll(dets);
         }
-        return detectorList;
-    }
-
-    /**
-     * Retrieve the list of Detectors of this Lane for the given GtuType. The resulting Map is a defensive copy.
-     * @param gtuType the GTU type to provide the detectors for
-     * @return all detectors on this lane for the given GtuType as a map per distance
-     */
-    public SortedMap<Double, List<LaneDetector>> getDetectorMap(final GtuType gtuType)
-    {
-        SortedMap<Double, List<LaneDetector>> detectorMap = new TreeMap<>();
-        for (double d : this.detectors.keySet())
-        {
-            List<LaneDetector> detectorList = new ArrayList<>(1);
-            for (List<LaneDetector> dets : this.detectors.values())
-            {
-                for (LaneDetector detector : dets)
-                {
-                    if (detector.getLongitudinalPosition().si == d && detector.isCompatible(gtuType))
-                    {
-                        detectorList.add(detector);
-                    }
-                }
-            }
-            if (detectorList.size() > 0)
-            {
-                detectorMap.put(d, detectorList);
-            }
-        }
-        return detectorMap;
+        return result;
     }
 
     /**
@@ -495,10 +486,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         {
             throw new NetworkException("Network already contains an object with the name " + laneBasedObject.getFullId());
         }
-        List<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
+        Set<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(position);
         if (null == laneBasedObjectList)
         {
-            laneBasedObjectList = new ArrayList<>(1);
+            laneBasedObjectList = new SmallArraySet<>();
             this.laneBasedObjects.put(position, laneBasedObjectList);
         }
         laneBasedObjectList.add(laneBasedObject);
@@ -514,8 +505,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     public synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
     {
         fireTimedEvent(Lane.OBJECT_REMOVE_EVENT, new Object[] {laneBasedObject}, getLink().getSimulator().getSimulatorTime());
-        List<LaneBasedObject> laneBasedObjectList =
-                this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
+        Set<LaneBasedObject> laneBasedObjectList = this.laneBasedObjects.get(laneBasedObject.getLongitudinalPosition().getSI());
         if (null == laneBasedObjectList)
         {
             throw new NetworkException("No laneBasedObject at " + laneBasedObject.getLongitudinalPosition().si);
@@ -537,8 +527,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      */
     public List<LaneBasedObject> getLaneBasedObjects(final Length minimumPosition, final Length maximumPosition)
     {
-        List<LaneBasedObject> laneBasedObjectList = new ArrayList<>(1);
-        for (List<LaneBasedObject> lbol : this.laneBasedObjects.values())
+        List<LaneBasedObject> laneBasedObjectList = new ArrayList<>();
+        for (Set<LaneBasedObject> lbol : this.laneBasedObjects.values())
         {
             for (LaneBasedObject lbo : lbol)
             {
@@ -559,10 +549,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     {
         if (this.laneBasedObjects == null)
         {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         List<LaneBasedObject> laneBasedObjectList = new ArrayList<>(1);
-        for (List<LaneBasedObject> lbol : this.laneBasedObjects.values())
+        for (Set<LaneBasedObject> lbol : this.laneBasedObjects.values())
         {
             for (LaneBasedObject lbo : lbol)
             {
@@ -570,25 +560,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             }
         }
         return laneBasedObjectList;
-    }
-
-    /**
-     * Retrieve the list of LaneBasedObjects of this Lane. The resulting Map is a defensive copy.
-     * @return all laneBasedObjects on this lane
-     */
-    public SortedMap<Double, List<LaneBasedObject>> getLaneBasedObjectMap()
-    {
-        SortedMap<Double, List<LaneBasedObject>> laneBasedObjectMap = new TreeMap<>();
-        for (double d : this.laneBasedObjects.keySet())
-        {
-            List<LaneBasedObject> laneBasedObjectList = new ArrayList<>(1);
-            for (LaneBasedObject lbo : this.laneBasedObjects.get(d))
-            {
-                laneBasedObjectList.add(lbo);
-            }
-            laneBasedObjectMap.put(d, laneBasedObjectList);
-        }
-        return laneBasedObjectMap;
     }
 
     /**
@@ -760,7 +731,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         int[] search = lineSearch((final int index) ->
         {
             LaneBasedGtu gtu = list.get(index);
-            return gtu.getPosition(gtu.getRelativePositions().get(relativePosition), when).position().si;
+            return gtu.getPosition(gtu.getRelativePosition(relativePosition), when).position().si;
         }, list.size(), position.si);
         if (search[1] < list.size())
         {
@@ -788,7 +759,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         int[] search = lineSearch((final int index) ->
         {
             LaneBasedGtu gtu = list.get(index);
-            return gtu.getPosition(gtu.getRelativePositions().get(relativePosition), when).position().si;
+            return gtu.getPosition(gtu.getRelativePosition(relativePosition), when).position().si;
         }, list.size(), position.si);
         if (search[0] >= 0)
         {
@@ -870,16 +841,14 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position the position after which the relative position of an object will be searched.
      * @return the first object(s) before a position on this lane in the given direction, empty if no object could be found.
      */
-    public List<LaneBasedObject> getObjectAhead(final Length position)
+    public ImmutableSet<LaneBasedObject> getObjectAhead(final Length position)
     {
-        for (double distance : this.laneBasedObjects.keySet())
+        Entry<Double, Set<LaneBasedObject>> entry = this.laneBasedObjects.higherEntry(position.si);
+        if (entry == null)
         {
-            if (distance > position.si)
-            {
-                return new ArrayList<>(this.laneBasedObjects.get(distance));
-            }
+            return new ImmutableLinkedHashSet<>(Collections.emptySet(), Immutable.WRAP);
         }
-        return Collections.emptyList();
+        return new ImmutableLinkedHashSet<>(entry.getValue());
     }
 
     /**
@@ -889,18 +858,14 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param position the position after which the relative position of an object will be searched.
      * @return the first object(s) after a position on this lane in the given direction, empty if no object could be found.
      */
-    public List<LaneBasedObject> getObjectBehind(final Length position)
+    public ImmutableSet<LaneBasedObject> getObjectBehind(final Length position)
     {
-        NavigableMap<Double, List<LaneBasedObject>> reverseLBO =
-                (NavigableMap<Double, List<LaneBasedObject>>) this.laneBasedObjects;
-        for (double distance : reverseLBO.descendingKeySet())
+        Entry<Double, Set<LaneBasedObject>> entry = this.laneBasedObjects.lowerEntry(position.si);
+        if (entry == null)
         {
-            if (distance < position.si)
-            {
-                return new ArrayList<>(this.laneBasedObjects.get(distance));
-            }
+            return new ImmutableLinkedHashSet<>(Collections.emptySet(), Immutable.WRAP);
         }
-        return Collections.emptyList();
+        return new ImmutableLinkedHashSet<>(entry.getValue());
     }
 
     /*
@@ -928,10 +893,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     // TODO this should return something immutable
     public Set<Lane> nextLanes(final GtuType gtuType)
     {
-        if (!this.nextLanes.containsKey(gtuType))
+        Set<Lane> laneSet = this.nextLanes.get(gtuType);
+        if (laneSet == null)
         {
-            // TODO determine if this should synchronize on this.nextLanes
-            Set<Lane> laneSet = new LinkedHashSet<>(1);
+            laneSet = new SmallArraySet<>();
             this.nextLanes.put(gtuType, laneSet);
             if (gtuType == null)
             {
@@ -950,7 +915,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                                 if (jumpToStart < MARGIN.si && jumpToStart < jumpToEnd
                                         && link.getStartNode().equals(getLink().getEndNode()))
                                 {
-                                    // TODO And is it aligned with its next lane?
                                     laneSet.add(lane);
                                 }
                                 // else: not a "connected" lane
@@ -961,11 +925,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             }
             else
             {
-                nextLanes(null).stream().filter((lane) -> lane.getType().isCompatible(gtuType))
-                        .forEach((lane) -> laneSet.add(lane));
+                laneSet.addAll(nextLanes(null).stream().filter((lane) -> lane.getType().isCompatible(gtuType))
+                        .collect(Collectors.toSet()));
             }
         }
-        return this.nextLanes.get(gtuType);
+        return laneSet;
     }
 
     /**
@@ -997,9 +961,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     // TODO this should return something immutable
     public Set<Lane> prevLanes(final GtuType gtuType)
     {
-        if (!this.prevLanes.containsKey(gtuType))
+        Set<Lane> laneSet = this.prevLanes.get(gtuType);
+        if (laneSet == null)
         {
-            Set<Lane> laneSet = new LinkedHashSet<>(1);
+            laneSet = new SmallArraySet<>();
             this.prevLanes.put(gtuType, laneSet);
             // Construct (and cache) the result.
             if (gtuType == null)
@@ -1029,11 +994,23 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             }
             else
             {
-                prevLanes(null).stream().filter((lane) -> lane.getType().isCompatible(gtuType))
-                        .forEach((lane) -> laneSet.add(lane));
+                laneSet.addAll(prevLanes(null).stream().filter((lane) -> lane.getType().isCompatible(gtuType))
+                        .collect(Collectors.toSet()));
             }
         }
-        return this.prevLanes.get(gtuType);
+        return laneSet;
+    }
+
+    /**
+     * Returns the set of links of all the upstream lanes.
+     * @param gtuType GTU type
+     * @return the set of links of all the upstream lanes
+     */
+    public ImmutableSet<Link> prevLinks(final GtuType gtuType)
+    {
+        return this.prevLinks.computeIfAbsent(gtuType,
+                (g) -> new ImmutableLinkedHashSet<>(prevLanes(gtuType).stream().map((lane) -> lane.getLink())
+                        .collect(SmallArraySet::new, (s, l) -> s.add(l), (s1, s2) -> s1.addAll(s2)), Immutable.WRAP));
     }
 
     /**
@@ -1044,6 +1021,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     {
         Throw.whenNull(lanes, "Lanes should not be null. Use an empty set instead.");
         this.prevLanes.clear();
+        this.prevLinks.clear();
         this.prevLanes.put(null, lanes);
     }
 
@@ -1179,7 +1157,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     {
         // TODO let HistoricalArrayList return an Immutable (WRAP) of itself
         return this.gtuList == null ? new ImmutableArrayList<>(new ArrayList<>())
-                : new ImmutableArrayList<>(this.gtuList, Immutable.COPY);
+                : new ImmutableArrayList<>(this.gtuList, Immutable.WRAP);
     }
 
     /**
@@ -1289,54 +1267,51 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return String.format("Lane %s of %s", getId(), link.getId());
     }
 
-    /** Cache of the hashCode. */
-    private Integer cachedHashCode = null;
-
-    @SuppressWarnings("checkstyle:designforextension")
-    @Override
-    public int hashCode()
+    /**
+     * Projects the given point (x, y) to the centerline of this lane. This method is a convenience method pointing towards
+     * {@link OtsLine2d#projectFractionalAt} of the underlying centerline, applying start and end direction in line with the
+     * nodes of the link of this lane. Furthermore, this method skips that calculation altogether if the link is straight. In
+     * that case {@link OtsLine2d#projectOrthogonalSnapAt} is used.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param fallback fallback method for when fractional projection fails
+     * @return fractional position along this lane of the fractional projection on the centerline of a point
+     */
+    public double projectFractionalAt(final double x, final double y, final FractionalFallback fallback)
     {
-        if (this.cachedHashCode == null)
+        if (getLink().getDesignLine().size() == 2)
         {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((this.laneType == null) ? 0 : this.laneType.hashCode());
-            this.cachedHashCode = result;
+            return getCenterLine().projectOrthogonalSnapAt(x, y);
         }
-        return this.cachedHashCode;
+        return getCenterLine().projectFractionalAt(getLink().getStartNode().getHeading(), getLink().getEndNode().getHeading(),
+                x, y, fallback);
     }
 
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
-    @Override
-    public boolean equals(final Object obj)
+    /**
+     * Projects a position on the provided lane to the centerline of this lane. This method is a convenience method pointing
+     * towards {@link OtsLine2d#projectFractionalAt} of the underlying centerline, applying start and end direction in line with
+     * the nodes of the link of this lane. Furthermore, this method skips that calculation altogether if the link is straight.
+     * In that case the fraction of the input position on the input lane is given, which is the same fraction for each lane on a
+     * straight link.
+     * @param lane lane
+     * @param position position on input lane
+     * @return fractional position along this lane of the fractional projection on the centerline of a location on a lane
+     */
+    public double projectFractionalAt(final Lane lane, final Length position)
     {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Lane other = (Lane) obj;
-        if (this.laneType == null)
+        Throw.when(!getLink().equals(lane.getLink()), IllegalArgumentException.class,
+                "Input lane %s is not on the same link as %s.", lane, this);
+        if (getLink().getDesignLine().size() == 2)
         {
-            if (other.laneType != null)
-                return false;
+            return position.si / lane.getLength().si;
         }
-        else if (!this.laneType.equals(other.laneType))
-            return false;
-        return true;
+        Point2d p = lane.getCenterLine().getLocation(position.si);
+        return getCenterLine().projectFractionalAt(getLink().getStartNode().getHeading(), getLink().getEndNode().getHeading(),
+                p.x, p.y, FractionalFallback.ENDPOINT);
     }
 
     /**
      * Functional interface that can be used for line searches of objects on the lane.
-     * <p>
-     * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Alexander Verbraeck
-     * @author Peter Knoppers
-     * @author Wouter Schakel
      */
     private interface Positions
     {

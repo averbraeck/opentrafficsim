@@ -68,7 +68,7 @@ public final class ChannelTaskCooperation extends AbstractTask implements Channe
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
         Iterator<DistancedObject<LaneBasedGtu>> leaders =
                 neighbors.getLeaders(this.left ? RelativeLane.LEFT : RelativeLane.RIGHT).underlyingWithDistance();

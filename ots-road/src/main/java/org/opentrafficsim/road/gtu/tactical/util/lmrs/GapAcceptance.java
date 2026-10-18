@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.tactical.util.lmrs;
 import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.NamedConstants;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -36,7 +37,7 @@ public interface GapAcceptance extends NamedConstants
         public boolean acceptGap(final TacticalContextEgo context, final double desire, final LateralDirectionality lat)
                 throws ParameterException, OperationalPlanException
         {
-            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
             if (neighbors.isGtuAlongside(lat))
             {
                 // gtu alongside
@@ -44,7 +45,7 @@ public interface GapAcceptance extends NamedConstants
             }
 
             Acceleration threshold = context.getParameters().getParameter(ParameterTypes.B).times(-desire);
-            if (!acceptEgoAcceleration(context, desire, lat, threshold))
+            if (!GapAcceptance.acceptEgoAcceleration(context, desire, lat, threshold))
             {
                 return false;
             }
@@ -73,7 +74,7 @@ public interface GapAcceptance extends NamedConstants
                 }
             }
 
-            if (!acceptLaneChangers(context, lat, threshold))
+            if (!GapAcceptance.acceptLaneChangers(context, lat, threshold))
             {
                 return false;
             }
@@ -95,7 +96,7 @@ public interface GapAcceptance extends NamedConstants
         public boolean acceptGap(final TacticalContextEgo context, final double desire, final LateralDirectionality lat)
                 throws ParameterException, OperationalPlanException
         {
-            NeighborsPerception neigbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+            NeighborsPerception neigbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
             if (neigbors.isGtuAlongside(lat))
             {
                 // gtu alongside
@@ -103,27 +104,27 @@ public interface GapAcceptance extends NamedConstants
             }
 
             Acceleration threshold = context.getParameters().getParameter(ParameterTypes.B).times(-desire);
-            if (!acceptEgoAcceleration(context, desire, lat, threshold))
+            if (!GapAcceptance.acceptEgoAcceleration(context, desire, lat, threshold))
             {
                 return false;
             }
 
+            Duration tMaxEgo = context.getParameters().getParameter(ParameterTypes.TMAX);
             for (PerceivedGtu follower : neigbors.getFirstFollowers(lat))
             {
                 // Change headway parameter
                 Parameters folParams = follower.getBehavior().getParameters();
-                folParams.setParameterResettable(ParameterTypes.TMAX,
-                        context.getParameters().getParameter(ParameterTypes.TMAX));
+                folParams.setParameterOverride(ParameterTypes.TMAX, tMaxEgo);
                 Acceleration aFollow =
                         LmrsUtil.relaxedAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
-                folParams.resetParameter(ParameterTypes.TMAX);
+                folParams.removeParameterOverride(ParameterTypes.TMAX);
                 if (threshold.gt(aFollow))
                 {
                     return false;
                 }
             }
 
-            if (!acceptLaneChangers(context, lat, threshold))
+            if (!GapAcceptance.acceptLaneChangers(context, lat, threshold))
             {
                 return false;
             }
@@ -153,7 +154,7 @@ public interface GapAcceptance extends NamedConstants
     {
         if (context.getSpeed().gt0())
         {
-            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.class)
+            for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
                     .getFirstLeaders(lat))
             {
                 Acceleration a = LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
@@ -180,7 +181,7 @@ public interface GapAcceptance extends NamedConstants
     {
         if (context.getSpeed().gt0())
         {
-            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
+            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
             // Only potential lane changers in the gap to the leader in the target lane are relevant
             SortedSet<PerceivedGtu> firstLeaders = neighbors.getFirstLeaders(lat);
             Length range = Length.POS_MAXVALUE;
@@ -192,7 +193,7 @@ public interface GapAcceptance extends NamedConstants
                     range = Length.max(range, leader.getDistance());
                 }
             }
-            for (PerceivedGtu leader : neighbors.getLeaders(new RelativeLane(lat, 2)))
+            for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 2)))
             {
                 if (leader.getDistance().gt(range))
                 {

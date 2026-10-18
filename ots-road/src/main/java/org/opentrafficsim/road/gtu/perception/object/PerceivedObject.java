@@ -243,17 +243,17 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
             else
             {
                 Length overlapRear = distance.plus(referenceLength);
-                Length overlapVal = distance.neg();
+                double overlapVal = -distance.si;
                 Length overlapFront = distance.plus(objectLength);
                 if (overlapRear.lt0())
                 {
-                    overlapVal = overlapVal.plus(overlapRear);
+                    overlapVal = overlapVal + overlapRear.si;
                 }
                 if (overlapFront.lt0())
                 {
-                    overlapVal = overlapVal.plus(overlapFront);
+                    overlapVal = overlapVal + overlapFront.si;
                 }
-                overlap = new Overlap.Record(overlapVal, overlapFront, overlapRear, false, false);
+                overlap = new Overlap.Record(Length.ofSI(overlapVal), overlapFront, overlapRear, false, false);
             }
             return new Record(distance, objectSpeed, objectAcceleration, facingSameDirection, overlap);
         }
@@ -286,17 +286,17 @@ public interface PerceivedObject extends Identifiable, Comparable<PerceivedObjec
             else
             {
                 Length overlapRear = distance.plus(objectLength).neg();
-                Length overlapVal = distance.neg();
+                double overlapVal = -distance.si;
                 Length overlapFront = distance.plus(referenceLength).neg();
                 if (overlapRear.gt0())
                 {
-                    overlapVal = overlapVal.minus(overlapRear);
+                    overlapVal = overlapVal - overlapRear.si;
                 }
                 if (overlapFront.gt0())
                 {
-                    overlapVal = overlapVal.minus(overlapFront);
+                    overlapVal = overlapVal - overlapFront.si;
                 }
-                overlap = new Overlap.Record(overlapVal, overlapFront, overlapRear, false, false);
+                overlap = new Overlap.Record(Length.ofSI(overlapVal), overlapFront, overlapRear, false, false);
             }
             return new Record(distance, objectSpeed, objectAcceleration, facingSameDirection, overlap);
         }

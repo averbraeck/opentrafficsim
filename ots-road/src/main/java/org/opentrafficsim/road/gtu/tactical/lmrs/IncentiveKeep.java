@@ -69,7 +69,7 @@ public final class IncentiveKeep implements VoluntaryIncentive, Stateless<Incent
      */
     private boolean regularSlowerLane(final TacticalContextEgo context) throws OperationalPlanException
     {
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         return infra.getCrossSection().contains(RelativeLane.RIGHT) && !infra.isShoulder(RelativeLane.RIGHT);
     }
 

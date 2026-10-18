@@ -73,9 +73,9 @@ public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask
     @Override
     public double calculateTaskDemand(final LanePerception perception)
     {
-        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
-        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.class)
+        EgoPerception<?, ?> ego = perception.getPerceptionCategoryOptional(EgoPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("EgoPerception not present."));
         Speed v = ego.getSpeed();
         Speed vCong = perception.getGtu().getParameters().getOptionalParameter(VCONG)
@@ -90,7 +90,7 @@ public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask
         Length limit = Length.POSITIVE_INFINITY;
         try
         {
-            var conflicts = perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(RelativeLane.CURRENT);
+            var conflicts = perception.getPerceptionCategory(IntersectionPerception.TYPE).getConflicts(RelativeLane.CURRENT);
             if (!conflicts.isEmpty())
             {
                 limit = conflicts.first().getDistance();

@@ -1,6 +1,12 @@
 package org.opentrafficsim.core.gtu;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.collections.Indexed;
 
 /**
  * A RelativePosition is a position on a GTU; e.g. the front, rear, position of the driver, etc. <br>
@@ -54,22 +60,24 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type)
 
     /**
      * The type of relative position, e.g., Front, Back, etc.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. <br>
-     * All rights reserved. <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * <p>
-     * $LastChangedDate$, @version $Revision$, by $Author$, initial version ec 31, 2014 <br>
      * @author Alexander Verbraeck
      * @author Peter Knoppers
+     * @author Wouter Schakel
      */
-    public static class Type
+    public static class Type implements Indexed
     {
+
+        /** Indices store. */
+        private static final Map<String, Integer> INDICES = new HashMap<>();
+
+        /** Index supplier. */
+        private static final AtomicInteger NEXT_INDEX = new AtomicInteger();
+
         /** The type name. */
         private final String name;
 
-        /** the cached hashcode. */
-        private final int hash;
+        /** Index. */
+        private final int index;
 
         /**
          * Constructor.
@@ -77,8 +85,9 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type)
          */
         public Type(final String name)
         {
-            this.name = name;
-            this.hash = 31 + ((this.name == null) ? 0 : this.name.hashCode());
+            Throw.whenNull(name, "name");
+            this.name = name.intern();
+            this.index = INDICES.computeIfAbsent(this.name, (i) -> NEXT_INDEX.getAndIncrement());
         }
 
         /**
@@ -91,6 +100,12 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type)
         }
 
         @Override
+        public int index()
+        {
+            return this.index;
+        }
+
+        @Override
         public final String toString()
         {
             return this.name;
@@ -100,7 +115,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type)
         @SuppressWarnings("checkstyle:designforextension")
         public int hashCode()
         {
-            return this.hash;
+            return this.name.hashCode();
         }
 
         @Override
@@ -114,14 +129,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type)
             if (getClass() != obj.getClass())
                 return false;
             Type other = (Type) obj;
-            if (this.name == null)
-            {
-                if (other.name != null)
-                    return false;
-            }
-            else if (!this.name.equals(other.name))
-                return false;
-            return true;
+            return this.name.equals(other.name);
         }
 
     }

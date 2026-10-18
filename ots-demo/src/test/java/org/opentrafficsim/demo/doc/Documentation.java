@@ -52,7 +52,7 @@ public class Documentation
     private void neigbors(final LanePerception perception) throws OperationalPlanException
     {
         // @docs/05-perception/categorial.md
-        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+        NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.TYPE);
     }
 
     public abstract static class Hist<T, E extends EventValue<T>> extends AbstractHistorical<T, E>
@@ -92,7 +92,7 @@ public class Documentation
         Acceleration a = parameters.getParameter(ParameterTypes.A);
 
         // @docs/06-behavior/parameters.md
-        parameters.setParameterResettable(ParameterTypes.B, Acceleration.ofSI(3.5));
-        parameters.resetParameter(ParameterTypes.B);
+        parameters.setParameterOverride(ParameterTypes.B, Acceleration.ofSI(3.5));
+        parameters.removeParameterOverride(ParameterTypes.B);
     }
 }

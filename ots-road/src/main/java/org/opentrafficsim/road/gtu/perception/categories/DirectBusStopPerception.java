@@ -3,13 +3,11 @@ package org.opentrafficsim.road.gtu.perception.categories;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.MultiLanePerceptionIterable;
@@ -17,7 +15,6 @@ import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedBusStop;
-import org.opentrafficsim.road.gtu.perception.structure.LaneRecord;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.conflict.Conflict;
 import org.opentrafficsim.road.network.object.BusStop;
@@ -32,8 +29,7 @@ import org.opentrafficsim.road.network.object.BusStop;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
-        implements BusStopPerception
+public class DirectBusStopPerception extends AbstractLanePerceptionCategory<BusStopPerception> implements BusStopPerception
 {
 
     /** Look ahead parameter type. */
@@ -68,11 +64,6 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
             {
                 Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
                         RelativePosition.FRONT, true);
-
-                LaneRecord record = getPerception().getLaneStructure().getRootRecord(lane);
-                Length pos = record.getStartDistance().neg();
-                pos = pos.plus(getGtu().getFront().dx());
-
                 PerceptionReiterable<LaneBasedGtu, PerceivedBusStop, BusStop> it =
                         new PerceptionReiterable<>(getGtu(), busStops, (object, distance) ->
                         {

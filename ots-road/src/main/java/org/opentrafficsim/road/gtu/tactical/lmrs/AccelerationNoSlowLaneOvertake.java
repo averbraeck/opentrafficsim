@@ -66,19 +66,19 @@ public final class AccelerationNoSlowLaneOvertake implements AccelerationIncenti
             return NO_REASON;
         }
 
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         Length legal = infra.getLegalLaneChangePossibility(RelativeLane.LEFT, LateralDirectionality.RIGHT);
         Length ignore = legal.lt0() ? legal.neg() : Length.ZERO;
 
         if (lane.isCurrent() && context.getPerception().getLaneStructure().exists(RelativeLane.LEFT))
         {
             Speed vCong = context.getParameters().getParameter(VCONG);
-            if (context.getPerception().getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT,
+            if (context.getPerception().getPerceptionCategory(TrafficPerception.TYPE).getSpeed(RelativeLane.CURRENT,
                     context.getDesiredSpeed()).si > vCong.si)
             {
                 // TODO depends on left/right traffic
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                        context.getPerception().getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT);
+                        context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
                     for (PerceivedGtu leader : ignore.le0() ? leaders

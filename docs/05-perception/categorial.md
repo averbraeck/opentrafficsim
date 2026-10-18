@@ -9,7 +9,7 @@ Perception is at its most generic level `Perception` defined to exist out of `Pe
 More categories are available or could be created. Perception to a large extent determines the simulation speed in OTS, so only perception categories that are required for the model should be included. With perception working in categories, any mixture of implementations for the categories may be used. A model can be made tolerant to any implementation of a perception category by requesting the category at the most generic level. For instance, `NeighborsPerception` is an interface which may have various implementations, e.g. with or without perception errors and reaction time. Regardless of the implementation, the category can be obtained as:
 
 ```java
-    NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+    NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.TYPE);
 ```
 
 If a model relies on a more specific implementation, the class of said implementation can be used instead. An exception is thrown whenever the implementation is not available.

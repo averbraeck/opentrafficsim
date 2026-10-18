@@ -40,7 +40,7 @@ public final class ArTaskLaneChanging extends ArTaskHeadwayBased implements Stat
     protected Duration getHeadway(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException
     {
-        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class)
+        NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not available."));
         double lat = getConsideration(perception, gtu, parameters);
         RelativeLane lane;

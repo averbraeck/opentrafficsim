@@ -137,7 +137,7 @@ public class TacticalContextEgo implements TacticalContext
     {
         if (this.carFollowingAcceleration == null)
         {
-            var leaders = getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+            var leaders = getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                     .orElseThrow(() -> new NoSuchElementException(
                             "To obtain car-following acceleration a neighbors perception category is required."))
                     .getLeaders(RelativeLane.CURRENT);
@@ -241,7 +241,7 @@ public class TacticalContextEgo implements TacticalContext
     {
         if (this.speedLimits == null)
         {
-            this.speedLimits = getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class)
+            this.speedLimits = getPerception().getPerceptionCategoryOptional(InfrastructurePerception.TYPE)
                     .orElseThrow(() -> new NoSuchElementException("No infrastructure perception category."))
                     .getSpeedLimits(RelativeLane.CURRENT);
         }
@@ -322,7 +322,7 @@ public class TacticalContextEgo implements TacticalContext
     {
         if (this.length == null)
         {
-            EgoPerception<?, ?> ego = getPerception().getPerceptionCategoryOptional(EgoPerception.class)
+            EgoPerception<?, ?> ego = getPerception().getPerceptionCategoryOptional(EgoPerception.TYPE)
                     .orElseThrow(() -> new NoSuchElementException("No ego perception category."));
             this.length = ego.getLength();
             this.width = ego.getWidth();

@@ -14,8 +14,17 @@ import org.opentrafficsim.road.network.object.BusStop;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface BusStopPerception extends LaneBasedPerceptionCategory
+public interface BusStopPerception extends LaneBasedPerceptionCategory<BusStopPerception>
 {
+
+    /** Type. */
+    Type<BusStopPerception> TYPE = new Type<>("BusStopPerception");
+
+    @Override
+    default Type<BusStopPerception> getType()
+    {
+        return TYPE;
+    }
 
     /**
      * Returns the bus stops.

@@ -20,15 +20,24 @@ import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public interface NeighborsPerception extends LaneBasedPerceptionCategory
+public interface NeighborsPerception extends LaneBasedPerceptionCategory<NeighborsPerception>
 {
+
+    /** Type. */
+    Type<NeighborsPerception> TYPE = new Type<>("NeighborsPerception");
+
+    @Override
+    default Type<NeighborsPerception> getType()
+    {
+        return TYPE;
+    }
 
     /**
      * Set of leaders on a lane, which is usually 0 or 1, but possibly more in case of a downstream split with no intermediate
      * GTU. This is shown below. Suppose A needs to go straight. If A considers a lane change to the left, both GTUs B (who's
      * tail ~ is still on the straight lane) and C need to be considered for whether it's safe to do so. In case of multiple
      * splits close to one another, the returned set may contain even more than 2 leaders. Leaders are sorted by headway value.
-     * 
+     *
      * <pre>
      *          | |
      * _________/B/_____
@@ -36,7 +45,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * _ _A_ _ _ _ _ _ _
      * _________________
      * </pre>
-     * 
+     *
      * <b>Only vehicles who's rear is beyond the own front are considered, no alongside vehicles.</b><br>
      * <br>
      * @param lat LEFT or RIGHT
@@ -53,16 +62,16 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * GTU. This is shown below. If A considers a lane change to the left, both GTUs B and C need to be considered for whether
      * it's safe to do so. In case of multiple merges close to one another, the returned set may contain even more than 2
      * followers. Followers are sorted by tailway value.
-     * 
+     *
      * <pre>
      *        | |
-     *        |C| 
+     *        |C|
      * ________\ \______
      * _ _B_|_ _ _ _ _?_
-     * _ _ _|_ _ _ _ _A_ 
+     * _ _ _|_ _ _ _ _A_
      * _____|___________
      * </pre>
-     * 
+     *
      * <b>Only vehicles who's front is before the own rear are considered, no alongside vehicles.</b><br>
      * <br>
      * @param lat LEFT or RIGHT
@@ -99,5 +108,26 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * @return set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT
      */
     PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getFollowers(RelativeLane lane);
+
+    /**
+     * Keys for caching.
+     */
+    enum Keys
+    {
+        /** Leaders. */
+        LEADERS,
+
+        /** Followers. */
+        FOLLOWERS,
+
+        /** First leaders. */
+        FIRST_LEADERS,
+
+        /** First followers. */
+        FIRST_FOLLOWERS,
+
+        /** GTU along side. */
+        GTU_ALONGSIDE;
+    }
 
 }

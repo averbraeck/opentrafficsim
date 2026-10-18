@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -186,14 +187,11 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
             boolean show = true;
             if (!this.shownClasses.contains(locatableClass))
             {
-                for (Class<? extends Locatable> lc : this.visibilityMap.keySet())
+                for (Entry<Class<? extends Locatable>, Boolean> entry : this.visibilityMap.entrySet())
                 {
-                    if (lc.isAssignableFrom(locatableClass))
+                    if (entry.getKey().isAssignableFrom(locatableClass) && !entry.getValue())
                     {
-                        if (!this.visibilityMap.get(lc))
-                        {
-                            show = false;
-                        }
+                        show = false;
                     }
                 }
                 // add to the right cache

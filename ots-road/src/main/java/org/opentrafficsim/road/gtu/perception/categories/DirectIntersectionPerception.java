@@ -9,7 +9,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
@@ -35,7 +34,7 @@ import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class DirectIntersectionPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+public class DirectIntersectionPerception extends AbstractLanePerceptionCategory<IntersectionPerception>
         implements IntersectionPerception
 {
 
@@ -59,26 +58,26 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
     @Override
     public final PerceptionCollectable<PerceivedTrafficLight, TrafficLight> getTrafficLights(final RelativeLane lane)
     {
-        return computeIfAbsent("trafficLights", () -> computeTrafficLights(lane), lane);
+        return computeIfAbsent(Keys.TRAFFIC_LIGHTS, () -> computeTrafficLights(lane), lane);
     }
 
     @Override
     public final PerceptionCollectable<PerceivedConflict, Conflict> getConflicts(final RelativeLane lane)
     {
-        return computeIfAbsent("conflicts", () -> computeConflicts(lane), lane);
+        return computeIfAbsent(Keys.CONFLICTS, () -> computeConflicts(lane), lane);
     }
 
     @Override
     public final boolean isAlongsideConflictLeft()
     {
-        return computeIfAbsent("alongside", () -> computeConflictAlongside(LateralDirectionality.LEFT),
+        return computeIfAbsent(Keys.CONFLICTS_ALONGSIDE, () -> computeConflictAlongside(LateralDirectionality.LEFT),
                 LateralDirectionality.LEFT);
     }
 
     @Override
     public final boolean isAlongsideConflictRight()
     {
-        return computeIfAbsent("alongside", () -> computeConflictAlongside(LateralDirectionality.RIGHT),
+        return computeIfAbsent(Keys.CONFLICTS_ALONGSIDE, () -> computeConflictAlongside(LateralDirectionality.RIGHT),
                 LateralDirectionality.RIGHT);
     }
 
@@ -130,7 +129,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
     {
         try
         {
-            RelativeLane lane = new RelativeLane(lat, 1);
+            RelativeLane lane = RelativeLane.of(lat, 1);
             if (getPerception().getLaneStructure().exists(lane))
             {
                 Iterator<Entry<Conflict>> conflicts = getPerception().getLaneStructure()

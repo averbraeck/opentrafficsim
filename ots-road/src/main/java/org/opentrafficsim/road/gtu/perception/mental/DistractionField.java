@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.base.collections.IndexedMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -49,7 +50,7 @@ public class DistractionField implements EventListener
     private final Map<RoadSideDistraction, Double> taskDemands = new LinkedHashMap<>();
 
     /** Lanes and the applicable distractions. */
-    private Map<RelativeLane, Set<RoadSideDistraction>> lanes = new LinkedHashMap<>();
+    private Map<RelativeLane, Set<RoadSideDistraction>> lanes = new IndexedMap<>();
 
     /**
      * Constructor.
@@ -65,8 +66,8 @@ public class DistractionField implements EventListener
     public void notify(final Event event)
     {
         LateralDirectionality dir = LateralDirectionality.valueOf((String) ((Object[]) event.getContent())[1]);
-        RelativeLane shift = new RelativeLane(dir, 1);
-        Map<RelativeLane, Set<RoadSideDistraction>> newMap = new LinkedHashMap<>();
+        RelativeLane shift = RelativeLane.of(dir, 1);
+        Map<RelativeLane, Set<RoadSideDistraction>> newMap = new IndexedMap<>();
         this.lanes.entrySet().stream().forEach((e) -> newMap.put(e.getKey().add(shift), e.getValue()));
         this.lanes = newMap;
     }
@@ -81,11 +82,11 @@ public class DistractionField implements EventListener
     {
         perceiveDistractions();
         double taskDemand = 0.0;
-        for (RelativeLane lane : this.lanes.keySet())
+        for (java.util.Map.Entry<RelativeLane, Set<RoadSideDistraction>> entry : this.lanes.entrySet())
         {
-            for (RoadSideDistraction distraction : this.lanes.get(lane))
+            for (RoadSideDistraction distraction : entry.getValue())
             {
-                if (filter.apply(lane, distraction))
+                if (filter.apply(entry.getKey(), distraction))
                 {
                     taskDemand += this.taskDemands.get(distraction);
                 }
@@ -121,11 +122,12 @@ public class DistractionField implements EventListener
         }
 
         // calculate distraction task demand and remove those without a value (indicating it is to far behind)
-        Iterator<RoadSideDistraction> distractionIterator = this.odos.keySet().iterator();
+        Iterator<Map.Entry<RoadSideDistraction, Double>> distractionIterator = this.odos.entrySet().iterator();
         while (distractionIterator.hasNext())
         {
-            RoadSideDistraction distraction = distractionIterator.next();
-            OptionalDouble td = distraction.getDistraction(Length.ofSI(odo - this.odos.get(distraction)));
+            Map.Entry<RoadSideDistraction, Double> entry = distractionIterator.next();
+            RoadSideDistraction distraction = entry.getKey();
+            OptionalDouble td = distraction.getDistraction(Length.ofSI(odo - entry.getValue()));
             if (td.isEmpty())
             {
                 distractionIterator.remove();

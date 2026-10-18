@@ -45,7 +45,7 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
      * Returns the distance from a reference to the start of this lane, negative for upstream distance.
      * @return the distance from a reference to the start of this lane, negative for upstream distance
      */
-    Length getStartDistance();
+    double getStartDistance();
 
     /**
      * Returns the length of the lane.
@@ -69,7 +69,7 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
      */
     default Length getDistanceToPosition(final Length position)
     {
-        return Length.ofSI(getStartDistance().si + position.si);
+        return Length.ofSI(getStartDistance() + position.si);
     }
 
     /**

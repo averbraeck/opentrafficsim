@@ -326,42 +326,4 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
                 getOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
     }
 
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.link == null) ? 0 : this.link.hashCode());
-        return result;
-    }
-
-    @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
-    public boolean equals(final Object obj)
-    {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CrossSectionElement other = (CrossSectionElement) obj;
-        if (this.id == null)
-        {
-            if (other.id != null)
-                return false;
-        }
-        else if (!this.id.equals(other.id))
-            return false;
-        if (this.link == null)
-        {
-            if (other.link != null)
-                return false;
-        }
-        else if (!this.link.equals(other.link))
-            return false;
-        return true;
-    }
 }

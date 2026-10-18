@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -29,8 +30,6 @@ import org.opentrafficsim.road.network.CrossSectionLink;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.Shoulder;
-
-import ch.qos.logback.classic.Level;
 
 /**
  * Conflict builder allows automatic generation of conflicts. This happens based on the geometry of lanes. Parallel execution
@@ -107,14 +106,13 @@ public final class ConflictBuilder
     {
         ImmutableMap<String, Link> links = network.getLinkMap();
         List<Lane> lanes = new ArrayList<>();
-        for (String linkId : links.keySet())
+        for (Link link : links.values())
         {
-            Link link = links.get(linkId);
             if (link instanceof CrossSectionLink)
             {
                 for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
                 {
-                    if (element instanceof Lane lane && !(element instanceof Shoulder))
+                    if (element instanceof Lane && !(element instanceof Shoulder))
                     {
                         lanes.add((Lane) element);
                     }
@@ -1223,16 +1221,16 @@ public final class ConflictBuilder
     public static void buildConflictsParallel(final RoadNetwork network, final Map<String, Set<Link>> conflictCandidateMap,
             final OtsSimulatorInterface simulator, final WidthGenerator widthGenerator)
     {
-        for (String conflictId : conflictCandidateMap.keySet())
+        for (Entry<String, Set<Link>> entry : conflictCandidateMap.entrySet())
         {
             List<Lane> lanes = new ArrayList<>();
-            for (Link link : conflictCandidateMap.get(conflictId))
+            for (Link link : entry.getValue())
             {
                 if (link instanceof CrossSectionLink)
                 {
                     for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
                     {
-                        if (element instanceof Lane lane && !(element instanceof Shoulder))
+                        if (element instanceof Lane && !(element instanceof Shoulder))
                         {
                             lanes.add((Lane) element);
                         }
@@ -1240,7 +1238,8 @@ public final class ConflictBuilder
                 }
             }
             // TODO: make parallel
-            buildConflicts(lanes, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList(), conflictId);
+            buildConflicts(lanes, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList(),
+                    entry.getKey());
         }
     }
 

@@ -5,6 +5,7 @@ import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 
 /**
+ * Lane based perception category.
  * <p>
  * Copyright (c) 2013-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -12,8 +13,10 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
  * @author Alexander Verbraeck
  * @author Peter Knoppers
  * @author Wouter Schakel
+ * @param <C> category type
  */
-public interface LaneBasedPerceptionCategory extends PerceptionCategory<LaneBasedGtu, LanePerception>
+public interface LaneBasedPerceptionCategory<C extends LaneBasedPerceptionCategory<C>>
+        extends PerceptionCategory<LaneBasedGtu, LanePerception, C>
 {
     // implements type arguments
 }

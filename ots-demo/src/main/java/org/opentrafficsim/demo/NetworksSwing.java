@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
@@ -246,10 +247,10 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             box.add(new JLabel("  "));
             box.add(new JLabel(parameter.getShortName()));
             ButtonGroup group = new ButtonGroup();
-            for (K option : parameter.getOptions().keySet())
+            for (Entry<K, T> entry : parameter.getOptions().entrySet())
             {
-                String item = option.toString();
-                T value = parameter.getOptions().get(option);
+                String item = entry.getKey().toString();
+                T value = entry.getValue();
                 JRadioButton button = new JRadioButton(item);
                 button.setActionCommand(item);
                 if (value.equals(parameter.getDefaultValue()))

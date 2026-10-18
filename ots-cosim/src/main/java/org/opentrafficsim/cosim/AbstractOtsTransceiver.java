@@ -31,7 +31,6 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
-import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.opentrafficsim.animation.colorer.Colorer;
 import org.opentrafficsim.animation.data.gtu.SynchronizationGtuColorer;
@@ -50,7 +49,7 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.Segment;
+import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -678,13 +677,15 @@ public abstract class AbstractOtsTransceiver implements EventListener
         {
             throw new OtsRuntimeException("Unable to obtain coordinate from path.", ex);
         }
-        ImmutableList<Segment> segments = plan.getOperationalPlanSegmentList();
-        float[] t = new float[segments.size()];
-        float[] a = new float[segments.size()];
-        for (int i = 0; i < segments.size(); i++)
+
+        Segments segments = plan.getSegments();
+        int n = segments.size();
+        float[] t = new float[n];
+        float[] a = new float[n];
+        for (int i = 0; i < n; i++)
         {
-            t[i] = (float) segments.get(i).duration().si;
-            a[i] = (float) segments.get(i).acceleration().si;
+            t[i] = (float) segments.getDurationSI(i);
+            a[i] = (float) segments.getAccelerationSI(i);
         }
 
         this.sendQueue.add(() ->

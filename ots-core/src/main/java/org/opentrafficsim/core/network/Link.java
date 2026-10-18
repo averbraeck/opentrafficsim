@@ -21,6 +21,8 @@ import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 
+import com.google.common.base.Objects;
+
 /**
  * A standard implementation of a link between two Nodes.
  * <p>
@@ -321,27 +323,19 @@ public class Link extends LocalEventProducer implements HierarchicallyTyped<Link
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return this.id.toString();
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.endNode == null) ? 0 : this.endNode.hashCode());
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.linkType == null) ? 0 : this.linkType.hashCode());
-        result = prime * result + ((this.startNode == null) ? 0 : this.startNode.hashCode());
-        return result;
+        return this.id.hashCode();
     }
 
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
+    @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -351,35 +345,7 @@ public class Link extends LocalEventProducer implements HierarchicallyTyped<Link
         if (getClass() != obj.getClass())
             return false;
         Link other = (Link) obj;
-        if (this.endNode == null)
-        {
-            if (other.endNode != null)
-                return false;
-        }
-        else if (!this.endNode.equals(other.endNode))
-            return false;
-        if (this.id == null)
-        {
-            if (other.id != null)
-                return false;
-        }
-        else if (!this.id.equals(other.id))
-            return false;
-        if (this.linkType == null)
-        {
-            if (other.linkType != null)
-                return false;
-        }
-        else if (!this.linkType.equals(other.linkType))
-            return false;
-        if (this.startNode == null)
-        {
-            if (other.startNode != null)
-                return false;
-        }
-        else if (!this.startNode.equals(other.startNode))
-            return false;
-        return true;
+        return Objects.equal(this.id, other.id);
     }
 
 }

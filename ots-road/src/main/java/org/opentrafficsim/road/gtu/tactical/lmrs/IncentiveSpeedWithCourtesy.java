@@ -74,8 +74,8 @@ public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Sta
             throws ParameterException, OperationalPlanException
     {
         // zero if no lane change is possible
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
-        TrafficPerception traffic = context.getPerception().getPerceptionCategory(TrafficPerception.class);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
+        TrafficPerception traffic = context.getPerception().getPerceptionCategory(TrafficPerception.TYPE);
         double leftDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si;
         double rightDist = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si;
 

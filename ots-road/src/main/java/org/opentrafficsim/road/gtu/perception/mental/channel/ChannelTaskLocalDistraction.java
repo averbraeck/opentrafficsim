@@ -70,7 +70,7 @@ public class ChannelTaskLocalDistraction extends AbstractTask implements Channel
         try
         {
             Iterator<DistancedObject<LocalDistraction>> distractions = perception
-                    .getPerceptionCategory(LocalDistractionPerception.class).getDistractions().underlyingWithDistance();
+                    .getPerceptionCategory(LocalDistractionPerception.TYPE).getDistractions().underlyingWithDistance();
             while (distractions.hasNext())
             {
                 DistancedObject<LocalDistraction> distraction = distractions.next();

@@ -1,25 +1,31 @@
 package org.opentrafficsim.road.gtu.perception.structure;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.function.IntToDoubleFunction;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.Point2d;
+import org.djutils.immutablecollections.ImmutableArrayList;
+import org.djutils.immutablecollections.ImmutableList;
+import org.opentrafficsim.base.collections.IndexedMap;
+import org.opentrafficsim.base.collections.SmallArraySet;
+import org.opentrafficsim.base.collections.SortedKeySetMap;
+import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
@@ -51,11 +57,17 @@ public class LaneStructure
     /** Time at which the structure was updated. */
     private Duration updated = null;
 
+    /** Route in last update. */
+    private Route route;
+
     /** Cross section of lane records at different relative lanes. */
-    private final Map<RelativeLane, Set<LaneRecord>> crossSection = new LinkedHashMap<>();
+    private final Map<RelativeLane, Set<LaneRecord>> crossSection = new IndexedMap<>();
 
     /** Cross section of lane records directly found laterally from the root. */
-    private final Map<RelativeLane, LaneRecord> rootCrossSection = new LinkedHashMap<>();
+    private final SortedKeySetMap<RelativeLane, LaneRecord> rootCrossSection = new IndexedMap<>();
+
+    /** This set allows O(1) lookup rather than O(n) in rootCrossSection.values().contains(). */
+    private final Set<LaneRecord> rootCrossSectionRecords = new HashSet<>();
 
     /**
      * Constructor.
@@ -87,15 +99,12 @@ public class LaneStructure
             final Class<T> clazz, final RelativePosition.Type position, final boolean onRoute)
     {
         update();
-        Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(position).dx();
-        return new NavigatingIterable<>(clazz, this.downstream,
+        Length dx = LaneStructure.this.egoGtu.getRelativePosition(position).dx();
+        return new NavigatingIterable<>(clazz, this.downstream, true,
                 start((record) -> startDownstream(record, position), relativeLane), (record) ->
                 {
                     // this navigator only includes records of lanes on the route
-                    Set<LaneRecord> set = record.getNext();
-                    set.removeIf((r) -> onRoute
-                            && !r.isOnRoute(LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute().orElse(null)));
-                    return set;
+                    return onRoute ? onRoute(record.getNext()) : record.getNext();
                 }, (record) ->
                 {
                     // this navigator selects all objects fully or partially downstream
@@ -104,19 +113,38 @@ public class LaneStructure
                     {
                         return list;
                     }
-                    Length pos = record.getStartDistance().neg().plus(dx);
-                    int from = 0;
-                    while (from < list.size()
-                            && list.get(from).getLongitudinalPosition().plus(list.get(from).getLength()).lt(pos))
-                    {
-                        from++;
-                    }
+                    double pos = -record.getStartDistance() + dx.si;
+                    int from = findFirstAfterOrAt((i) -> list.get(i).getLongitudinalPosition().si + list.get(i).getLength().si,
+                            list.size(), pos);
                     if (from > list.size() - 1)
                     {
-                        return Collections.emptyList();
+                        return new ImmutableArrayList<>(Collections.emptyList());
                     }
                     return list.subList(from, list.size());
-                }, (t, r) -> r.getStartDistance().plus(t.getLongitudinalPosition()).minus(dx));
+                }, (t, r) -> r.getStartDistance() + t.getLongitudinalPosition().si - dx.si);
+    }
+
+    /**
+     * Returns a set that only contains the element in the input set that are on the route.
+     * @param set input set
+     * @return a set that only contains the element in the input set that are on the route
+     */
+    private Set<LaneRecord> onRoute(final Set<LaneRecord> set)
+    {
+        Set<LaneRecord> filtered = null;
+        for (LaneRecord r : set)
+        {
+            if (!r.isOnRoute(this.route))
+            {
+                if (filtered == null)
+                {
+                    filtered = new SmallArraySet<>();
+                    filtered.addAll(set); // copy only when needed
+                }
+                filtered.remove(r);
+            }
+        }
+        return filtered == null ? set : filtered;
     }
 
     /**
@@ -133,12 +161,13 @@ public class LaneStructure
             final Class<T> clazz, final RelativePosition.Type position)
     {
         update();
-        Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(position).dx();
-        return new NavigatingIterable<>(clazz, this.upstream, start((record) -> startUpstream(record, position), relativeLane),
-                (record) ->
+        Length dx = LaneStructure.this.egoGtu.getRelativePosition(position).dx();
+        return new NavigatingIterable<>(clazz, this.upstream, false,
+                start((record) -> startUpstream(record, position), relativeLane), (record) ->
                 {
                     // this navigator combines the upstream and lateral records
-                    Set<LaneRecord> set = new LinkedHashSet<>(record.getPrev());
+                    Set<LaneRecord> set = new SmallArraySet<>();
+                    set.addAll(record.getPrev());
                     set.addAll(record.lateral());
                     return set;
                 }, (record) ->
@@ -149,20 +178,15 @@ public class LaneStructure
                     {
                         return list;
                     }
-                    Length pos = record.getStartDistance().neg().plus(dx);
-                    int to = list.size();
-                    while (to >= 0 && list.get(to).getLongitudinalPosition().gt(pos))
-                    {
-                        to--;
-                    }
+                    double pos = -record.getStartDistance() + dx.si;
+                    int to = findLastBeforeOrAt((i) -> list.get(i).getLongitudinalPosition().si, list.size(), pos);
                     if (to < 0)
                     {
-                        return Collections.emptyList();
+                        return new ImmutableArrayList<>(Collections.emptyList());
                     }
-                    list = list.subList(0, to);
-                    Collections.reverse(list);
-                    return list;
-                }, (t, r) -> r.getStartDistance().plus(t.getLongitudinalPosition()).plus(dx).neg());
+                    List<LaneBasedObject> subList = list.subList(0, to + 1);
+                    return reversed((i) -> subList.get(i), subList.size());
+                }, (t, r) -> -r.getStartDistance() - t.getLongitudinalPosition().si - dx.si);
     }
 
     /**
@@ -182,40 +206,35 @@ public class LaneStructure
             final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
     {
         update();
-        Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(egoPosition).dx();
-        Length dxDistance = LaneStructure.this.egoGtu.getRelativePositions().get(egoDistancePosition).dx();
-        Optional<Route> route = LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute();
-        return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream,
+        Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
+        Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
+        return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream, true,
                 start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
                 {
                     // this navigator ignores downstream lanes that are not on the route, if the current record is on the route
-                    Set<LaneRecord> next = new LinkedHashSet<>(record.getNext());
-                    if (route.isPresent() && record.getLane().getLink().getEndNode().getLinks().size() > 2
-                            && route.get().containsLink(record.getLane().getLink()))
+                    Set<LaneRecord> next = new SmallArraySet<>();
+                    boolean ignoreNotOnRoute =
+                            this.route != null && record.getLane().getLink().getEndNode().getLinks().size() > 2
+                                    && this.route.containsLink(record.getLane().getLink());
+                    for (LaneRecord nextLane : record.getNext())
                     {
-                        Iterator<LaneRecord> it = next.iterator();
-                        while (it.hasNext())
+                        if (!ignoreNotOnRoute || this.route.containsLink(nextLane.getLane().getLink()))
                         {
-                            LaneRecord down = it.next();
-                            if (!route.get().containsLink(down.getLane().getLink()))
-                            {
-                                it.remove();
-                            }
+                            next.add(nextLane);
                         }
                     }
                     return next;
                 }, (record) ->
                 {
                     // this lister finds the relevant sublist of GTUs
-                    List<LaneBasedGtu> gtus = record.getLane().getGtuList().toList();
+                    ImmutableList<LaneBasedGtu> gtus = record.getLane().getGtuList();
                     if (gtus.isEmpty())
                     {
                         return gtus;
                     }
-                    int from = 0;
-                    Length pos = Length.max(record.getStartDistance().neg().plus(dx), Length.ZERO);
-                    while (from < gtus.size() && (position(gtus.get(from), record, otherPosition).lt(pos)
-                            || gtus.get(from).getId().equals(this.egoGtu.getId())))
+                    double pos = Math.max(-record.getStartDistance() + dx.si, 0.0);
+                    int from = findFirstAfterOrAt((i) -> position(gtus.get(i), record, otherPosition), gtus.size(), pos);
+                    while (from < gtus.size() && gtus.get(from).getId().equals(this.egoGtu.getId()))
                     {
                         from++;
                     }
@@ -230,10 +249,10 @@ public class LaneStructure
                     }
                     if (from > 0 || to < gtus.size() - 1)
                     {
-                        gtus = gtus.subList(from, to + 1);
+                        return gtus.subList(from, to + 1);
                     }
                     return gtus;
-                }, (t, r) -> r.getStartDistance().plus(position(t, r, otherDistancePosition)).minus(dxDistance));
+                }, (t, r) -> r.getStartDistance() + position(t, r, otherDistancePosition) - dxDistance.si);
     }
 
     /**
@@ -252,19 +271,20 @@ public class LaneStructure
             final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
     {
         update();
-        Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(egoPosition).dx();
-        Length dxDistance = LaneStructure.this.egoGtu.getRelativePositions().get(egoDistancePosition).dx();
-        return new NavigatingIterable<>(LaneBasedGtu.class, this.upstream,
+        Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
+        Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
+        return new NavigatingIterable<>(LaneBasedGtu.class, this.upstream, false,
                 start((record) -> startUpstream(record, egoPosition), relativeLane), (record) ->
                 {
                     // this navigator combines the upstream and lateral records
-                    Set<LaneRecord> set = new LinkedHashSet<>(record.getPrev());
+                    Set<LaneRecord> set = new SmallArraySet<>();
+                    set.addAll(record.getPrev());
                     set.addAll(record.lateral());
                     return set;
                 }, (record) ->
                 {
                     // this lister finds the relevant sublist of GTUs and reverses it
-                    List<LaneBasedGtu> gtus = record.getLane().getGtuList().toList();
+                    ImmutableList<LaneBasedGtu> gtus = record.getLane().getGtuList();
                     if (gtus.isEmpty())
                     {
                         return gtus;
@@ -274,10 +294,9 @@ public class LaneStructure
                     {
                         from++;
                     }
-                    int to = gtus.size() - 1;
-                    Length pos = Length.min(record.getStartDistance().neg().plus(dx), record.getLength());
-                    while (to >= 0 && (position(gtus.get(to), record, otherPosition).gt(pos)
-                            || gtus.get(to).getId().equals(this.egoGtu.getId())))
+                    double pos = Math.min(-record.getStartDistance() + dx.si, record.getLength().si);
+                    int to = findLastBeforeOrAt((i) -> position(gtus.get(i), record, otherPosition), gtus.size(), pos);
+                    while (to >= 0 && gtus.get(to).getId().equals(this.egoGtu.getId()))
                     {
                         to--;
                     }
@@ -285,13 +304,9 @@ public class LaneStructure
                     {
                         return Collections.emptyList();
                     }
-                    if (from > 0 || to < gtus.size() - 1)
-                    {
-                        gtus = gtus.subList(from, to + 1);
-                    }
-                    Collections.reverse(gtus);
-                    return gtus;
-                }, (t, r) -> dxDistance.minus(r.getStartDistance().plus(position(t, r, otherDistancePosition))));
+                    ImmutableList<LaneBasedGtu> subList = from > 0 || to < gtus.size() - 1 ? gtus.subList(from, to + 1) : gtus;
+                    return reversed((i) -> subList.get(i), subList.size());
+                }, (t, r) -> dxDistance.si - r.getStartDistance() - position(t, r, otherDistancePosition));
     }
 
     /**
@@ -311,23 +326,22 @@ public class LaneStructure
             final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
     {
         update();
-        Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(egoPosition).dx();
-        Length dxDistance = LaneStructure.this.egoGtu.getRelativePositions().get(egoDistancePosition).dx();
-        return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream,
+        Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
+        Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
+        return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream, true,
                 start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
                 {
                     // this navigator only returns records when there are no GTUs on the lane
                     return record.getLane()
-                            .getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
-                                    record.getLane().getNetwork().getSimulator().getSimulatorTime())
-                            .isEmpty() ? record.getNext() : new LinkedHashSet<>();
+                            .getGtuAhead(Length.ofSI(-record.getStartDistance() + dx.si), otherPosition, this.updated).isEmpty()
+                                    ? record.getNext() : Collections.emptySet();
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
-                    Optional<LaneBasedGtu> down = record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx),
-                            otherPosition, record.getLane().getNetwork().getSimulator().getSimulatorTime());
+                    Optional<LaneBasedGtu> down = record.getLane().getGtuAhead(Length.ofSI(-record.getStartDistance() + dx.si),
+                            otherPosition, this.updated);
                     return down.isEmpty() ? Collections.emptyList() : List.of(down.get());
-                }, (t, r) -> r.getStartDistance().plus(position(t, r, otherDistancePosition)).minus(dxDistance));
+                }, (t, r) -> r.getStartDistance() + position(t, r, otherDistancePosition) - dxDistance.si);
     }
 
     /**
@@ -347,29 +361,30 @@ public class LaneStructure
             final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
     {
         update();
-        Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(egoPosition).dx();
-        Length dxDistance = LaneStructure.this.egoGtu.getRelativePositions().get(egoDistancePosition).dx();
-        return new NavigatingIterable<>(LaneBasedGtu.class, this.upstream,
+        Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
+        Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
+        return new NavigatingIterable<>(LaneBasedGtu.class, this.upstream, false,
                 start((record) -> startUpstream(record, egoPosition), relativeLane), (record) ->
                 {
                     // this navigator only returns records when there are no GTUs on the lane (it may thus ignore a GTU on a
                     // lateral lane that is closer) and combines the upstream and lateral records
-                    Optional<LaneBasedGtu> gtu = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx),
-                            otherPosition, record.getLane().getNetwork().getSimulator().getSimulatorTime());
-                    Set<LaneRecord> set = new LinkedHashSet<>();
-                    if (gtu.isEmpty())
+                    Optional<LaneBasedGtu> gtu = record.getLane().getGtuBehind(Length.ofSI(-record.getStartDistance() + dx.si),
+                            otherPosition, this.updated);
+                    if (!gtu.isEmpty())
                     {
-                        set.addAll(record.getPrev());
-                        set.addAll(record.lateral());
+                        return Collections.emptySet();
                     }
+                    Set<LaneRecord> set = new SmallArraySet<>();
+                    set.addAll(record.getPrev());
+                    set.addAll(record.lateral());
                     return set;
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
-                    Optional<LaneBasedGtu> up = record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx),
-                            otherPosition, record.getLane().getNetwork().getSimulator().getSimulatorTime());
+                    Optional<LaneBasedGtu> up = record.getLane().getGtuBehind(Length.ofSI(-record.getStartDistance() + dx.si),
+                            otherPosition, this.updated);
                     return up.isEmpty() ? Collections.emptyList() : List.of(up.get());
-                }, (t, r) -> dxDistance.minus(r.getStartDistance().plus(position(t, r, otherDistancePosition))));
+                }, (t, r) -> dxDistance.si - r.getStartDistance() - position(t, r, otherDistancePosition));
     }
 
     /**
@@ -381,15 +396,12 @@ public class LaneStructure
     private Collection<LaneRecord> start(final Function<LaneRecord, Collection<LaneRecord>> starter,
             final RelativeLane relativeLane)
     {
-        Collection<LaneRecord> collection = new LinkedHashSet<>();
+        Collection<LaneRecord> collection = new SmallArraySet<>();
         if (this.crossSection.containsKey(relativeLane))
         {
             for (LaneRecord record : this.crossSection.get(relativeLane))
             {
-                for (LaneRecord start : starter.apply(record))
-                {
-                    collection.add(start);
-                }
+                collection.addAll(starter.apply(record));
             }
         }
         return collection;
@@ -404,16 +416,30 @@ public class LaneStructure
      */
     private Collection<LaneRecord> startDownstream(final LaneRecord record, final RelativePosition.Type position)
     {
-        if (position(LaneStructure.this.egoGtu, record, position).ge0())
+        Collection<LaneRecord> result = new SmallArraySet<>();
+        startDownstream(record, position, result);
+        return result;
+    }
+
+    /**
+     * Recursively move to upstream records if the relative position is upstream of the record, to start a downstream search
+     * from these upstream records.
+     * @param record current record in search.
+     * @param position relative position type.
+     * @param result result to store found lane records in
+     */
+    private void startDownstream(final LaneRecord record, final RelativePosition.Type position,
+            final Collection<LaneRecord> result)
+    {
+        if (egoPosition(record, position) >= 0.0)
         {
-            return Set.of(record); // position is on the lane
+            result.add(record);
+            return; // position is on the lane
         }
-        Set<LaneRecord> set = new LinkedHashSet<>();
         for (LaneRecord up : record.getPrev())
         {
-            set.addAll(startDownstream(up, position));
+            startDownstream(up, position, result);
         }
-        return set;
     }
 
     /**
@@ -425,16 +451,41 @@ public class LaneStructure
      */
     private Collection<LaneRecord> startUpstream(final LaneRecord record, final RelativePosition.Type position)
     {
-        if (position(LaneStructure.this.egoGtu, record, position).lt(record.getLane().getLength()))
+        Collection<LaneRecord> result = new SmallArraySet<>();
+        startUpstream(record, position, result);
+        return result;
+    }
+
+    /**
+     * Recursively move to downstream records if the relative position is downstream of the record, to start an upstream search
+     * from these downstream records.
+     * @param record current record in search.
+     * @param position relative position type.
+     * @param result result to store found lane records in
+     */
+    private void startUpstream(final LaneRecord record, final RelativePosition.Type position,
+            final Collection<LaneRecord> result)
+    {
+        if (egoPosition(record, position) < record.getLane().getLength().si)
         {
-            return Set.of(record); // position is on the lane
+            result.add(record);
+            return; // position is on the lane
         }
-        Set<LaneRecord> set = new LinkedHashSet<>();
         for (LaneRecord down : record.getNext())
         {
-            set.addAll(startUpstream(down, position));
+            startUpstream(down, position, result);
         }
-        return set;
+    }
+
+    /**
+     * Returns the position of the GTU on the lane of the given record.
+     * @param record lane record.
+     * @param positionType relative position type.
+     * @return position of the GTU on the lane of the given record.
+     */
+    private double egoPosition(final LaneRecordInterface<?> record, final RelativePosition.Type positionType)
+    {
+        return -record.getStartDistance() + LaneStructure.this.egoGtu.getRelativePosition(positionType).dx().si;
     }
 
     /**
@@ -444,14 +495,10 @@ public class LaneStructure
      * @param positionType relative position type.
      * @return position of the GTU on the lane of the given record.
      */
-    private Length position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
+    private double position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
             final RelativePosition.Type positionType)
     {
-        if (gtu.equals(LaneStructure.this.egoGtu))
-        {
-            return Length.ofSI(-record.getStartDistance().si + gtu.getRelativePositions().get(positionType).dx().si);
-        }
-        return gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType));
+        return gtu.getPosition(record.getLane(), gtu.getRelativePosition(positionType)).si;
     }
 
     /**
@@ -459,26 +506,30 @@ public class LaneStructure
      */
     private synchronized void update()
     {
-        if (this.updated != null && this.updated.equals(this.egoGtu.getSimulator().getSimulatorTime()))
+        if (this.updated != null && this.updated.si == this.egoGtu.getSimulator().getSimulatorTime().si)
         {
             return;
         }
 
+        this.updated = this.egoGtu.getSimulator().getSimulatorTime();
+        this.route = LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute().orElse(null);
         this.crossSection.clear();
         this.rootCrossSection.clear();
-        Set<Lane> visited = new LinkedHashSet<>();
-        Deque<LaneRecord> downQueue = new LinkedList<>();
-        Deque<LaneRecord> upQueue = new LinkedList<>();
-        Deque<LaneRecord> latDownQueue = new LinkedList<>();
-        Deque<LaneRecord> latUpQueue = new LinkedList<>();
+        this.rootCrossSectionRecords.clear();
+        Set<Lane> visited = new HashSet<>();
+        Deque<LaneRecord> downQueue = new ArrayDeque<>();
+        Deque<LaneRecord> upQueue = new ArrayDeque<>();
+        Deque<LaneRecord> latDownQueue = new ArrayDeque<>();
+        Deque<LaneRecord> latUpQueue = new ArrayDeque<>();
         LanePosition position = this.egoGtu.getPosition();
-        LaneRecord root = new LaneRecord(position.lane(), RelativeLane.CURRENT, position.position().neg(), Length.ZERO);
+        LaneRecord root = new LaneRecord(position.lane(), RelativeLane.CURRENT, -position.position().si, Length.ZERO);
         visited.add(position.lane());
         addToCrossSection(root);
         downQueue.add(root);
         upQueue.add(root);
         latDownQueue.add(root); // does not matter which lat queue this is, it is the root cross section
         this.rootCrossSection.put(root.getRelativeLane(), root);
+        this.rootCrossSectionRecords.add(root);
         while (!downQueue.isEmpty() || !upQueue.isEmpty() || !latDownQueue.isEmpty() || !latUpQueue.isEmpty())
         {
             if (!downQueue.isEmpty())
@@ -494,7 +545,6 @@ public class LaneStructure
                 nextLateral(visited, downQueue, upQueue, latDownQueue, latUpQueue);
             }
         }
-        this.updated = this.egoGtu.getSimulator().getSimulatorTime();
     }
 
     /**
@@ -507,23 +557,24 @@ public class LaneStructure
     {
         LaneRecord record = downQueue.poll();
         Set<Lane> downstreamLanes = record.getLane().nextLanes(null);
-        if (!record.getLane().getType().isCompatible(this.egoGtu.getType()))
-        {
-            /*
-             * Progress downstream from an incompatible lane only to other incompatible lanes. Compatible lanes downstream of an
-             * incompatible lane will have to be found through a lateral move. Only in this way can a merge be detected.
-             */
-            downstreamLanes = new LinkedHashSet<>(downstreamLanes); // safe copy
-            downstreamLanes.removeAll(record.getLane().nextLanes(this.egoGtu.getType()));
-        }
+        /*
+         * Progress downstream from an incompatible lane only to other incompatible lanes. Compatible lanes downstream of an
+         * incompatible lane will have to be found through a lateral move. Only in this way can a merge be detected.
+         */
+        Set<Lane> nextToSkip = !record.getLane().getType().isCompatible(this.egoGtu.getType())
+                ? record.getLane().nextLanes(this.egoGtu.getType()) : null;
         for (Lane lane : downstreamLanes)
         {
+            if (nextToSkip != null && nextToSkip.contains(lane))
+            {
+                continue;
+            }
             LaneRecord down = new LaneRecord(lane, record.getRelativeLane(), record.getEndDistance(), Length.ZERO);
             record.addNext(down);
             down.addPrev(record);
             visited.add(lane);
             addToCrossSection(down);
-            if (down.getEndDistance().lt(this.downstream))
+            if (down.getEndDistance() < this.downstream.si)
             {
                 downQueue.add(down);
             }
@@ -546,15 +597,15 @@ public class LaneStructure
              * Upstream of a merge we ignore visited lanes. Upstream not of a merge, we just continue. I.e. on a roundabout one
              * lane can be both upstream and downstream.
              */
-            if (!visited.contains(lane) || record.getMergeDistance().eq0())
+            if (!visited.contains(lane) || record.getMergeDistance().si == 0.0)
             {
-                LaneRecord up = new LaneRecord(lane, record.getRelativeLane(),
-                        record.getStartDistance().minus(lane.getLength()), record.getMergeDistance());
+                LaneRecord up = new LaneRecord(lane, record.getRelativeLane(), record.getStartDistance() - lane.getLength().si,
+                        record.getMergeDistance());
                 record.addPrev(up);
                 up.addNext(record);
                 visited.add(lane);
                 addToCrossSection(up);
-                if (up.getStartDistance().neg().plus(up.getMergeDistance()).lt(this.upstream))
+                if (-up.getStartDistance() + up.getMergeDistance().si < this.upstream.si)
                 {
                     upQueue.add(up);
                 }
@@ -607,11 +658,12 @@ public class LaneStructure
                      * If the zero-position is on the record, the fractional position is used. Otherwise the start distance is
                      * such that the start is equal in a downstream search, and the end is equal in an upstream search.
                      */
-                    Length startDistance;
-                    if (record.getStartDistance().lt0() && record.getEndDistance().gt0())
+                    double startDistance;
+                    if (record.getStartDistance() < 0.0 && record.getEndDistance() > 0.0)
                     {
-                        startDistance = lane.getLength()
-                                .times(record.getStartDistance().neg().si / record.getLane().getLength().si).neg();
+                        Point2d p = record.getLane().getCenterLine().getLocation(-record.getStartDistance());
+                        double f = lane.projectFractionalAt(p.x, p.y, FractionalFallback.ENDPOINT);
+                        startDistance = -f * lane.getLength().si;
                     }
                     else if (down)
                     {
@@ -619,7 +671,7 @@ public class LaneStructure
                     }
                     else
                     {
-                        startDistance = record.getEndDistance().minus(lane.getLength());
+                        startDistance = record.getEndDistance() - lane.getLength().si;
                     }
 
                     /*
@@ -627,11 +679,11 @@ public class LaneStructure
                      * with a merge at a distance of the start of these two lanes.
                      */
                     Length mergeDistance;
-                    if (down && record.getStartDistance().gt0())
+                    if (down && record.getStartDistance() > 0.0)
                     {
-                        if (!getUpstreamLinks(lane).equals(getUpstreamLinks(record.getLane())))
+                        if (!lane.prevLinks(null).equals(record.getLane().prevLinks(null)))
                         {
-                            mergeDistance = record.getStartDistance();
+                            mergeDistance = Length.ofSI(record.getStartDistance());
                         }
                         else
                         {
@@ -650,15 +702,16 @@ public class LaneStructure
                     visited.add(lane);
                     addToCrossSection(lat);
                     // from the cross-section directly from the root, we initiate both an upstream and downstream search
-                    if (this.rootCrossSection.containsValue(record))
+                    if (this.rootCrossSectionRecords.contains(record))
                     {
                         this.rootCrossSection.put(lat.getRelativeLane(), lat);
+                        this.rootCrossSectionRecords.add(lat);
                         latDownQueue.add(lat); // does not matter which lat queue this is, it is the root cross section
-                        if (lat.getEndDistance().lt(this.downstream))
+                        if (lat.getEndDistance() < this.downstream.si)
                         {
                             downQueue.add(lat);
                         }
-                        if (lat.getStartDistance().neg().lt(this.upstream))
+                        if (-lat.getStartDistance() < this.upstream.si)
                         {
                             upQueue.add(lat);
                         }
@@ -666,10 +719,10 @@ public class LaneStructure
                     else if (down)
                     {
                         latDownQueue.add(lat);
-                        if (lat.getEndDistance().lt(this.downstream))
+                        if (lat.getEndDistance() < this.downstream.si)
                         {
                             downQueue.add(lat);
-                            if (mergeDistance.gt0())
+                            if (mergeDistance.si > 0.0)
                             {
                                 upQueue.add(lat);
                             }
@@ -678,7 +731,7 @@ public class LaneStructure
                     else
                     {
                         latUpQueue.add(lat);
-                        if (lat.getStartDistance().neg().plus(lat.getMergeDistance()).lt(this.upstream))
+                        if (-lat.getStartDistance() + lat.getMergeDistance().si < this.upstream.si)
                         {
                             upQueue.add(lat);
                         }
@@ -695,25 +748,10 @@ public class LaneStructure
      */
     private void addToCrossSection(final LaneRecord record)
     {
-        if (record.getStartDistance().le0() && record.getEndDistance().gt0())
+        if (record.getStartDistance() <= 0.0 && record.getEndDistance() > 0.0)
         {
-            this.crossSection.computeIfAbsent(record.getRelativeLane(), (r) -> new LinkedHashSet<>()).add(record);
+            this.crossSection.computeIfAbsent(record.getRelativeLane(), (r) -> new SmallArraySet<>()).add(record);
         }
-    }
-
-    /**
-     * Returns the links upstream of the lane.
-     * @param lane lane.
-     * @return upstream lanes.
-     */
-    private Set<Link> getUpstreamLinks(final Lane lane)
-    {
-        Set<Link> set = new LinkedHashSet<>();
-        for (Lane prev : lane.prevLanes(null))
-        {
-            set.add(prev.getLink());
-        }
-        return set;
     }
 
     /**
@@ -723,7 +761,7 @@ public class LaneStructure
     public SortedSet<RelativeLane> getRootCrossSection()
     {
         update();
-        return new TreeSet<>(this.rootCrossSection.keySet());
+        return Collections.unmodifiableSortedSet(this.rootCrossSection.keySet());
     }
 
     /**
@@ -749,13 +787,104 @@ public class LaneStructure
     }
 
     /**
-     * Returns the set of records in the cross-section on the given lane.
-     * @param lane lane.
-     * @return set of records in the cross-section on the given lane.
+     * Returns an {@link Iterable} that returns iterators that iterate in the reversed order over the random access.
+     * @param <T> element type
+     * @param randomAccess random access
+     * @param size size of the random access
+     * @return an {@link Iterable} that returns iterators that iterate in the reversed order over the random access
      */
-    public Set<LaneRecord> getCrossSectionRecords(final RelativeLane lane)
+    public static <T> Iterable<T> reversed(final Function<Integer, T> randomAccess, final int size)
     {
-        return new LinkedHashSet<>(this.crossSection.get(lane));
+        return () -> new Iterator<>()
+        {
+            private int index = size;
+
+            @Override
+            public boolean hasNext()
+            {
+                return this.index > 0;
+            }
+
+            @Override
+            public T next()
+            {
+                if (!hasNext())
+                {
+                    throw new NoSuchElementException();
+                }
+                return randomAccess.apply(--this.index);
+            }
+        };
+    }
+
+    /**
+     * Binary search to find the first object after (or at) the given bound.
+     * @param location position function for i'th object
+     * @param size size of list of objects being searched
+     * @param bound bound
+     * @return index of first object after (or at) the given bound, or {@code size} if no such object
+     */
+    public static int findFirstAfterOrAt(final IntToDoubleFunction location, final int size, final double bound)
+    {
+        // return fast for intermediate lane boundaries between GTU and the range
+        if (size == 0 || location.applyAsDouble(0) >= bound)
+        {
+            return 0; // all elements are after
+        }
+        if (location.applyAsDouble(size - 1) < bound)
+        {
+            return size; // no element is after
+        }
+        int low = 0;
+        int high = size;
+        while (low < high)
+        {
+            int mid = (low + high) >>> 1;
+            if (location.applyAsDouble(mid) < bound)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid;
+            }
+        }
+        return low;
+    }
+
+    /**
+     * Binary search to find the first object before (or at) the given bound.
+     * @param location position function for i'th object
+     * @param size size of list of objects being searched
+     * @param bound bound
+     * @return index of first object before (or at) the given bound, or {@code -1} if no such object
+     */
+    public static int findLastBeforeOrAt(final IntToDoubleFunction location, final int size, final double bound)
+    {
+        // return fast for intermediate lane boundaries between GTU and the range
+        if (size == 0 || location.applyAsDouble(0) > bound)
+        {
+            return -1; // no element is before
+        }
+        if (location.applyAsDouble(size - 1) <= bound)
+        {
+            return size - 1; // all elements are before
+        }
+        int low = -1;
+        int high = size - 1;
+        while (low < high)
+        {
+            int mid = (low + high + 1) >>> 1;
+            if (location.applyAsDouble(mid) > bound)
+            {
+                high = mid - 1;
+            }
+            else
+            {
+                low = mid;
+            }
+        }
+        return low;
     }
 
 }

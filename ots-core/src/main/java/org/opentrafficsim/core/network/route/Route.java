@@ -1,10 +1,10 @@
 package org.opentrafficsim.core.network.route;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.djutils.base.Identifiable;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -25,11 +25,12 @@ import org.opentrafficsim.core.network.Node;
  */
 public class Route implements Identifiable
 {
+
     /** The nodes of the route. */
     private final List<Node> nodes;
 
-    /** The nodes of the route as a Set for quick containsNode() method. */
-    private final Set<Node> nodeSet = new LinkedHashSet<>();
+    /** Node indices for quick lookup. */
+    private final Map<Node, Integer> nodeIndex = new HashMap<>();
 
     /** Name of the route. */
     private final String id;
@@ -61,7 +62,10 @@ public class Route implements Identifiable
     {
         this.id = id;
         this.nodes = new ArrayList<>(nodes); // defensive copy
-        this.nodeSet.addAll(nodes);
+        for (int i = 0; i < nodes.size(); i++)
+        {
+            this.nodeIndex.put(nodes.get(i), i);
+        }
         verify();
         this.gtuType = gtuType;
         Node fromNode = null;
@@ -128,7 +132,7 @@ public class Route implements Identifiable
      * @return this route for method chaining
      * @throws NetworkException in case node could not be added to the route.
      */
-    public final Route addNode(final Node node) throws NetworkException
+    public Route addNode(final Node node) throws NetworkException
     {
         if (getNodes().size() > 0)
         {
@@ -140,7 +144,7 @@ public class Route implements Identifiable
             }
         }
         this.nodes.add(node);
-        this.nodeSet.add(node);
+        this.nodeIndex.put(node, this.nodes.size() - 1);
         verify();
         return this;
     }
@@ -149,7 +153,7 @@ public class Route implements Identifiable
      * Returns nodes.
      * @return nodes.
      */
-    public final List<Node> getNodes()
+    public List<Node> getNodes()
     {
         return this.nodes;
     }
@@ -160,7 +164,7 @@ public class Route implements Identifiable
      * @return node i.
      * @throws NetworkException if i &lt; 0 or i &gt; size
      */
-    public final Node getNode(final int i) throws NetworkException
+    public Node getNode(final int i) throws NetworkException
     {
         if (i < 0 || i >= this.nodes.size())
         {
@@ -174,7 +178,7 @@ public class Route implements Identifiable
      * @return the first node of the route.
      * @throws NetworkException when the list has no nodes.
      */
-    public final Node originNode() throws NetworkException
+    public Node originNode() throws NetworkException
     {
         if (this.nodes.size() == 0)
         {
@@ -188,7 +192,7 @@ public class Route implements Identifiable
      * @return the number of nodes in the list. If the list contains more than Integer.MAX_VALUE elements, returns
      *         Integer.MAX_VALUE.
      */
-    public final int size()
+    public int size()
     {
         return this.nodes.size();
     }
@@ -198,7 +202,7 @@ public class Route implements Identifiable
      * @return the last node of the route.
      * @throws NetworkException when the list has no nodes.
      */
-    public final Node destinationNode() throws NetworkException
+    public Node destinationNode() throws NetworkException
     {
         if (this.nodes.size() == 0)
         {
@@ -213,9 +217,9 @@ public class Route implements Identifiable
      * @param node the Node to find
      * @return returns index of node.
      */
-    public final int indexOf(final Node node)
+    public int indexOf(final Node node)
     {
-        return this.nodes.indexOf(node);
+        return this.nodeIndex.get(node);
     }
 
     /**
@@ -223,16 +227,13 @@ public class Route implements Identifiable
      * @param node the Node to find
      * @return whether the route contains this node (quick using LinkedHashSet);
      */
-    public final boolean contains(final Node node)
+    public boolean contains(final Node node)
     {
-        return this.nodeSet.contains(node);
+        return this.nodeIndex.containsKey(node);
     }
 
-    /**
-     * @return name.
-     */
     @Override
-    public final String getId()
+    public String getId()
     {
         return this.id;
     }
@@ -242,10 +243,10 @@ public class Route implements Identifiable
      * @param link the link to check in the route.
      * @return whether the link is part of the route or not.
      */
-    public final boolean containsLink(final Link link)
+    public boolean containsLink(final Link link)
     {
-        int index1 = getNodes().indexOf(link.getStartNode());
-        int index2 = getNodes().indexOf(link.getEndNode());
+        int index1 = this.nodeIndex.getOrDefault(link.getStartNode(), -1);
+        int index2 = this.nodeIndex.getOrDefault(link.getEndNode(), -1);
         return index1 >= 0 && index2 >= 0 && (index2 - index1) == 1;
     }
 

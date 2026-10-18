@@ -65,7 +65,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
             return desiredSpeed;
         }
         LanePerception perception = this.gtu.getTacticalPlanner().getPerception();
-        Optional<NeighborsPerception> neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.class);
+        Optional<NeighborsPerception> neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE);
         if (neighbors.isPresent())
         {
             var followers = neighbors.get().getFollowers(RelativeLane.CURRENT);

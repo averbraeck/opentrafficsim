@@ -1,6 +1,7 @@
 package org.opentrafficsim.base.geometry;
 
 import java.awt.geom.Line2D;
+import java.util.Objects;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.line.PolyLine2d;
@@ -59,8 +60,11 @@ public final class FractionalProjectionHelper
      */
     private EdgeHelpers edgeNullNull; // cached helpers for (null,null)
 
-    /** Last none-both-{@code null} directions. */
-    private DirectionKey lastKey; // last used (may include null on one side)
+    /** Last start direction for which helpers were derived. */
+    private Double lastStartDir; // last used (this OR lastEndKey may be null, nut not both)
+
+    /** Last end direction for which helpers were derived. */
+    private Double lastEndDir; // last used (this OR lastStartKey may be null, nut not both)
 
     /** Helpers of last none-both-{@code null} directions. */
     private EdgeHelpers edgeLast; // cached helpers for lastKey
@@ -85,7 +89,7 @@ public final class FractionalProjectionHelper
     }
 
     /**
-     * Pre-computes all fixed helpers.
+     * Pre-computes all fixed interior (none-edge) helpers and the two direction-independent offset intersections.
      */
     private void precomputeFixedHelpers()
     {
@@ -99,13 +103,14 @@ public final class FractionalProjectionHelper
         PolyLine2d prevOfs = unitOffsetSegment(0);
         PolyLine2d nextOfs = unitOffsetSegment(1);
 
-        Point2d parStart = intersectionOrFallbackMid(prevOfs.get(0), prevOfs.get(1), nextOfs.get(0), nextOfs.get(1));
-        this.firstOffsetIntersection = parStart;
+        double[] parStart = intersectionOrFallbackMid(prevOfs.getX(0), prevOfs.getY(0), prevOfs.getX(1), prevOfs.getY(1),
+                nextOfs.getX(0), nextOfs.getY(0), nextOfs.getX(1), nextOfs.getY(1));
+        this.firstOffsetIntersection = new Point2d(parStart[0], parStart[1]);
 
         // Special case: exactly two segments -> lastOffsetIntersection equals parStart
         if (this.n == 2)
         {
-            this.lastOffsetIntersection = parStart;
+            this.lastOffsetIntersection = new Point2d(parStart[0], parStart[1]);
             return; // no interior helpers to compute
         }
 
@@ -117,27 +122,30 @@ public final class FractionalProjectionHelper
             {
                 nextOfs = unitOffsetSegment(i + 1);
             }
-            final Point2d parEnd = intersectionOrFallbackMid(prevOfs.get(0), prevOfs.get(1), nextOfs.get(0), nextOfs.get(1));
+            final double[] parEnd = intersectionOrFallbackMid(prevOfs.getX(0), prevOfs.getY(0), prevOfs.getX(1),
+                    prevOfs.getY(1), nextOfs.getX(0), nextOfs.getY(0), nextOfs.getX(1), nextOfs.getY(1));
 
             // Intersection of helper lines: (vertex i -> parStart) and (vertex i+1 -> parEnd)
-            final Point2d c = intersectionOrNull(this.line.get(i), parStart, this.line.get(i + 1), parEnd);
+            int j = i + 1;
+            final double[] c = intersectionOrNull(this.line.getX(i), this.line.getY(i), parStart[0], parStart[1],
+                    this.line.getX(j), this.line.getY(j), parEnd[0], parEnd[1]);
             if (c != null)
             {
                 this.isCenter[i] = true;
-                this.centerX[i] = c.x;
-                this.centerY[i] = c.y;
+                this.centerX[i] = c[0];
+                this.centerY[i] = c[1];
             }
             else
             {
                 this.isCenter[i] = false;
-                this.dirX[i] = parStart.x - this.line.get(i).x;
-                this.dirY[i] = parStart.y - this.line.get(i).y;
+                this.dirX[i] = parStart[0] - this.line.getX(i);
+                this.dirY[i] = parStart[1] - this.line.getY(i);
             }
 
             parStart = parEnd;
             if (i == this.n - 2)
             {
-                this.lastOffsetIntersection = parStart;
+                this.lastOffsetIntersection = new Point2d(parStart[0], parStart[1]);
             }
         }
     }
@@ -168,59 +176,68 @@ public final class FractionalProjectionHelper
     {
         Throw.whenNull(fallback, "fallback");
 
-        // Determine edge helpers for these directions (2-slot cache: (null,null) + lastKey).
+        // Determine edge helpers for these directions (2-slot cache: (null,null) + (start,end)).
         final EdgeHelpers edges = getEdgeHelpers(start, end);
 
         // Compute distances to segments; consider only those near the minimum distance.
         double minD = Double.POSITIVE_INFINITY;
         final double[] segDist = new double[this.n];
-        for (int i = 0; i < this.n; i++)
+        double x1, y1, x2, y2;
+        x1 = this.line.getX(0);
+        y1 = this.line.getY(0);
+        for (int i = 0; i < this.line.size() - 1; i++)
         {
-            Point2d a = this.line.get(i);
-            Point2d b = this.line.get(i + 1);
-            segDist[i] = Line2D.ptSegDist(a.x, a.y, b.x, b.y, x, y);
+            int j = i + 1;
+            x2 = this.line.getX(j);
+            y2 = this.line.getY(j);
+            segDist[i] = Line2D.ptSegDist(x1, y1, x2, y2, x, y);
             if (segDist[i] < minD)
             {
                 minD = segDist[i];
             }
+            x1 = x2;
+            y1 = y2;
         }
 
         double bestDistance = Double.POSITIVE_INFINITY;
         int bestSeg = -1;
         double bestSegFrac = 0.0;
 
-        final Point2d ext = new Point2d(x, y);
-
-        for (int i = 0; i < this.n; i++)
+        for (int i = 0; i < this.line.size() - 1; i++)
         {
             if (segDist[i] > minD + FRAC_PROJ_PRECISION)
             {
                 continue;
             }
             final Helper h = helperForSegment(i, edges);
-            final Point2d p = intersectProjection(i, h, ext);
+            final double[] p = intersectProjection(i, h, x, y);
             if (p == null)
             {
                 continue;
             }
 
             // Ensure intersection lies on segment (within tolerance)
-            Point2d a = this.line.get(i);
-            Point2d b = this.line.get(i + 1);
-            final double segLen = a.distance(b) + FRAC_PROJ_PRECISION;
-            if (p.distance(a) > segLen || p.distance(b) > segLen)
+            int j = i + 1;
+            x1 = this.line.getX(i);
+            y1 = this.line.getY(i);
+            x2 = this.line.getX(j);
+            y2 = this.line.getY(j);
+            final double segActual = fastHypot(x2 - x1, y2 - y1);
+            final double segLen = segActual + FRAC_PROJ_PRECISION;
+            if (fastHypot(x1 - p[0], y1 - p[1]) > segLen || fastHypot(x2 - p[0], y2 - p[1]) > segLen)
             {
                 continue;
             }
 
             // Prefer the nearest intersection to the external point
-            final double dist = p.distance(ext);
+            double dx = p[0] - x;
+            double dy = p[1] - y;
+            final double dist = fastHypot(dx, dy);
             if (dist < bestDistance)
             {
                 bestDistance = dist;
                 // Compute fraction within segment
-                final double segActual = a.distance(b);
-                final double along = a.distance(p);
+                final double along = fastHypot(p[0] - x1, p[1] - y1);
                 bestSegFrac = Math.min(1.0, Math.max(0.0, segActual > 0.0 ? (along / segActual) : 0.0));
                 bestSeg = i;
             }
@@ -236,7 +253,7 @@ public final class FractionalProjectionHelper
         final double segStartLen = this.line.lengthAtIndex(bestSeg);
         final double segEndLen = this.line.lengthAtIndex(bestSeg + 1);
         final double abs = segStartLen + bestSegFrac * (segEndLen - segStartLen);
-        final double total = this.line.lengthAtIndex(this.line.size() - 1);
+        final double total = this.line.lengthAtIndex(this.n);
         return abs / total;
     }
 
@@ -374,27 +391,6 @@ public final class FractionalProjectionHelper
     }
 
     /**
-     * Cache key for directions (normalized angles; nulls allowed).
-     * @param start start direction
-     * @param end end direction
-     */
-    public record DirectionKey(Double start, Double end)
-    {
-        /**
-         * Create key with normalized directions, which may be {@code null}.
-         * @param start start direction
-         * @param end end direction
-         * @return key
-         */
-        public static DirectionKey of(final Direction start, final Direction end)
-        {
-            Double sa = (start == null) ? null : AngleUtil.normalizeAroundZero(start.si);
-            Double ea = (end == null) ? null : AngleUtil.normalizeAroundZero(end.si);
-            return new DirectionKey(sa, ea);
-        }
-    }
-
-    /**
      * Returns helper for interior (non-edge) segment.
      * @param segIndex index
      * @return helper for interior (non-edge) segment
@@ -443,13 +439,15 @@ public final class FractionalProjectionHelper
             }
             return this.edgeNullNull;
         }
-        final DirectionKey key = DirectionKey.of(start, end);
-        if (key.equals(this.lastKey) && this.edgeLast != null)
+        final Double startDir = (start == null) ? null : AngleUtil.normalizeAroundZero(start.si);
+        final Double endDir = (end == null) ? null : AngleUtil.normalizeAroundZero(end.si);
+        if (Objects.equals(startDir, this.lastStartDir) && Objects.equals(endDir, this.lastEndDir) && this.edgeLast != null)
         {
             return this.edgeLast;
         }
         this.edgeLast = computeEdgeHelpers(start, end);
-        this.lastKey = key;
+        this.lastStartDir = startDir;
+        this.lastEndDir = endDir;
         return this.edgeLast;
     }
 
@@ -463,28 +461,29 @@ public final class FractionalProjectionHelper
     {
         // Angles (default to segment direction if null)
         final double startAng = (start == null)
-                ? Math.atan2(this.line.get(1).y - this.line.get(0).y, this.line.get(1).x - this.line.get(0).x) : start.si;
-        final double endAng = (end == null) ? Math.atan2(this.line.get(this.n).y - this.line.get(this.n - 1).y,
-                this.line.get(this.n).x - this.line.get(this.n - 1).x) : end.si;
+                ? Math.atan2(this.line.getY(1) - this.line.getY(0), this.line.getX(1) - this.line.getX(0)) : start.si;
+        final double endAng = (end == null) ? Math.atan2(this.line.getY(this.n) - this.line.getY(this.n - 1),
+                this.line.getX(this.n) - this.line.getX(this.n - 1)) : end.si;
 
         // Unit offset points at start and end of line
-        final Point2d p1 = new Point2d(this.line.get(0).x + Math.cos(startAng + Math.PI / 2.0),
-                this.line.get(0).y + Math.sin(startAng + Math.PI / 2.0));
-        final Point2d p2 = new Point2d(this.line.get(this.n).x + Math.cos(endAng + Math.PI / 2.0),
-                this.line.get(this.n).y + Math.sin(endAng + Math.PI / 2.0));
+        final Point2d p1 = new Point2d(this.line.getX(0) + Math.cos(startAng + Math.PI / 2.0),
+                this.line.getY(0) + Math.sin(startAng + Math.PI / 2.0));
+        final Point2d p2 = new Point2d(this.line.getX(this.n) + Math.cos(endAng + Math.PI / 2.0),
+                this.line.getY(this.n) + Math.sin(endAng + Math.PI / 2.0));
 
         Helper hFirst, hLast;
         if (this.n == 1)
         {
             // Single segment: edges collapse; center is intersection of offset rays
-            final Point2d c = intersectionOrNull(this.line.get(0), p1, this.line.get(1), p2);
+            final double[] c = intersectionOrNull(this.line.getX(0), this.line.getY(0), p1.x, p1.y, this.line.getX(1),
+                    this.line.getY(1), p2.x, p2.y);
             if (c != null)
             {
-                hFirst = Helper.center(c.x, c.y);
+                hFirst = Helper.center(c[0], c[1]);
             }
             else
             {
-                hFirst = Helper.direction(p1.x - this.line.get(0).x, p1.y - this.line.get(0).y);
+                hFirst = Helper.direction(p1.x - this.line.getX(0), p1.y - this.line.getY(0));
             }
             // Same for last (same segment)
             hLast = hFirst;
@@ -492,25 +491,27 @@ public final class FractionalProjectionHelper
         else
         {
             // Use direction-independent offset intersections
-            Point2d cFirst = intersectionOrNull(this.line.get(0), p1, this.line.get(1), this.firstOffsetIntersection);
+            double[] cFirst = intersectionOrNull(this.line.getX(0), this.line.getY(0), p1.x, p1.y, this.line.getX(1),
+                    this.line.getY(1), this.firstOffsetIntersection.x, this.firstOffsetIntersection.y);
             if (cFirst != null)
             {
-                hFirst = Helper.center(cFirst.x, cFirst.y);
+                hFirst = Helper.center(cFirst[0], cFirst[1]);
             }
             else
             {
-                hFirst = Helper.direction(p1.x - this.line.get(0).x, p1.y - this.line.get(0).y);
+                hFirst = Helper.direction(p1.x - this.line.getX(0), p1.y - this.line.getY(0));
             }
 
-            Point2d cLast =
-                    intersectionOrNull(this.line.get(this.n - 1), this.lastOffsetIntersection, this.line.get(this.n), p2);
+            double[] cLast =
+                    intersectionOrNull(this.line.getX(this.n - 1), this.line.getY(this.n - 1), this.lastOffsetIntersection.x,
+                            this.lastOffsetIntersection.y, this.line.getX(this.n), this.line.getY(this.n), p2.x, p2.y);
             if (cLast != null)
             {
-                hLast = Helper.center(cLast.x, cLast.y);
+                hLast = Helper.center(cLast[0], cLast[1]);
             }
             else
             {
-                hLast = Helper.direction(p2.x - this.line.get(this.n).x, p2.y - this.line.get(this.n).y);
+                hLast = Helper.direction(p2.x - this.line.getX(this.n), p2.y - this.line.getY(this.n));
             }
         }
         return new EdgeHelpers(hFirst, hLast);
@@ -520,26 +521,29 @@ public final class FractionalProjectionHelper
      * Projects external point to segment.
      * @param segIndex index
      * @param helper helper of the segment
-     * @param ext external point
+     * @param xExt x-coordinate of external point
+     * @param yExt y-coordinate of external point
      * @return projection to segment, or {@code null} if no valid projection
      */
-    private Point2d intersectProjection(final int segIndex, final Helper helper, final Point2d ext)
+    private double[] intersectProjection(final int segIndex, final Helper helper, final double xExt, final double yExt)
     {
-        final Point2d a = this.line.get(segIndex);
-        final Point2d b = this.line.get(segIndex + 1);
+        int j = segIndex + 1;
+        double x1 = this.line.getX(segIndex);
+        double y1 = this.line.getY(segIndex);
+        double x2 = this.line.getX(j);
+        double y2 = this.line.getY(j);
 
         if (helper.hasCenter)
         {
             // Intersection of (center -> ext) ray with segment line
-            final Point2d c = new Point2d(helper.cx, helper.cy);
-            final Point2d p = intersectionOrNull(c, ext, a, b);
+            final double[] p = intersectionOrNull(helper.cx, helper.cy, xExt, yExt, x1, y1, x2, y2);
             if (p == null)
             {
                 return null;
             }
             // Ensure center is not between ext and intersection:
-            final double v1x = p.x - c.x, v1y = p.y - c.y;
-            final double v2x = ext.x - c.x, v2y = ext.y - c.y;
+            final double v1x = p[0] - helper.cx, v1y = p[1] - helper.cy;
+            final double v2x = xExt - helper.cx, v2y = yExt - helper.cy;
             final double dot = v1x * v2x + v1y * v2y;
             if (dot <= FRAC_PROJ_PRECISION)
             {
@@ -548,70 +552,89 @@ public final class FractionalProjectionHelper
             return p;
         }
         // Parallel helper lines: project along stored direction from ext
-        final Point2d off = new Point2d(ext.x + helper.dx, ext.y + helper.dy);
-        return intersectionOrNull(ext, off, a, b);
+        return intersectionOrNull(xExt, yExt, xExt + helper.dx, yExt + helper.dy, x1, y1, x2, y2);
     }
 
     /**
      * Intersection of infinite lines (p1->p2) and (p3->p4). Returns null if near-parallel.
-     * @param p1 first point of first line
-     * @param p2 second point of first line
-     * @param p3 first point of second line
-     * @param p4 second point of second line
+     * @param x1 x-coordinate of point 1
+     * @param y1 y-coordinate of point 1
+     * @param x2 x-coordinate of point 2
+     * @param y2 y-coordinate of point 2
+     * @param x3 x-coordinate of point 3
+     * @param y3 y-coordinate of point 3
+     * @param x4 x-coordinate of point 4
+     * @param y4 y-coordinate of point 4
      * @return intersection
      */
-    // TODO: can be replaced with djutils version with eps once it is published in djutils
-    private static Point2d intersectionOrNull(final Point2d p1, final Point2d p2, final Point2d p3, final Point2d p4)
+    @SuppressWarnings("parameternumber")
+    private static double[] intersectionOrNull(final double x1, final double y1, final double x2, final double y2,
+            final double x3, final double y3, final double x4, final double y4)
     {
-        final double x1 = p1.x, y1 = p1.y;
-        final double x2 = p2.x, y2 = p2.y;
-        final double x3 = p3.x, y3 = p3.y;
-        final double x4 = p4.x, y4 = p4.y;
-
         final double dx1 = x2 - x1, dy1 = y2 - y1;
         final double dx2 = x4 - x3, dy2 = y4 - y3;
-
         final double denom = dx1 * dy2 - dy1 * dx2;
         if (Math.abs(denom) < INTERSECTION_EPS)
         {
             return null; // near-parallel
         }
         final double t = ((x3 - x1) * dy2 - (y3 - y1) * dx2) / denom;
-        return new Point2d(x1 + t * dx1, y1 + t * dy1);
+        return new double[] {x1 + t * dx1, y1 + t * dy1};
     }
 
     /**
      * Returns intersection for parallel segments, or midpoint fallback when intersection is null or unstable.
-     * @param a1 first point of first parallel segment
-     * @param a2 second point of first parallel segment
-     * @param b1 first point of second parallel segment
-     * @param b2 second point of second parallel segment
+     * @param x1 x-coordinate of point 1
+     * @param y1 y-coordinate of point 1
+     * @param x2 x-coordinate of point 2
+     * @param y2 y-coordinate of point 2
+     * @param x3 x-coordinate of point 3
+     * @param y3 y-coordinate of point 3
+     * @param x4 x-coordinate of point 4
+     * @param y4 y-coordinate of point 4
      * @return intersection
      */
-    private static Point2d intersectionOrFallbackMid(final Point2d a1, final Point2d a2, final Point2d b1, final Point2d b2)
+    @SuppressWarnings("parameternumber")
+    private static double[] intersectionOrFallbackMid(final double x1, final double y1, final double x2, final double y2,
+            final double x3, final double y3, final double x4, final double y4)
     {
-        final Point2d inter = intersectionOrNull(a1, a2, b1, b2);
+        final double[] inter = intersectionOrNull(x1, y1, x2, y2, x3, y3, x4, y4);
         if (inter == null)
         {
-            return midpoint(a2, b1);
+            return midpoint(x2, y2, x3, y3);
         }
-        final double dStraight = a2.distance(b1);
-        if (dStraight < Math.min(a2.distance(inter), b1.distance(inter)))
+        final double dStraight = fastHypot(x3 - x2, y3 - y2);
+        final double d2i = fastHypot(inter[0] - x2, inter[1] - y2);
+        final double d3i = fastHypot(inter[0] - x3, inter[1] - y3);
+        if (dStraight < d2i && dStraight < d3i)
         {
-            return midpoint(a2, b1);
+            return midpoint(x2, y2, x3, y3);
         }
         return inter;
     }
 
     /**
      * Computes the mid-point.
-     * @param p first point
-     * @param q second point
-     * @return mid-point
+     * @param x1 x-coordinate of point 1
+     * @param y1 y-coordinate of point 1
+     * @param x2 x-coordinate of point 2
+     * @param y2 y-coordinate of point 2
+     * @return mid-point x, y
      */
-    private static Point2d midpoint(final Point2d p, final Point2d q)
+    private static double[] midpoint(final double x1, final double y1, final double x2, final double y2)
     {
-        return new Point2d(0.5 * (p.x + q.x), 0.5 * (p.y + q.y));
+        return new double[] {0.5 * (x1 + x2), 0.5 * (y1 + y2)};
+    }
+
+    /**
+     * Returns the hypotenuse. This does not use {@link Math#hypot} as this is considerably slower than {@link Math#sqrt}.
+     * @param dx dx
+     * @param dy dy
+     * @return the hypotenuse
+     */
+    private static double fastHypot(final double dx, final double dy)
+    {
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
 }

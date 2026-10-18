@@ -3,6 +3,7 @@ package org.opentrafficsim.road.od;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.djunits.unit.DurationUnit;
@@ -134,15 +135,17 @@ public class SplitFraction
      */
     public Link draw(final GtuType gtuType)
     {
-        for (GtuType gtu : this.fractions.keySet())
+        for (Entry<GtuType, Map<Link, Map<Duration, Double>>>  entry : this.fractions.entrySet())
         {
+            GtuType gtu = entry.getKey();
+            Map<Link, Map<Duration, Double>> fraction = entry.getValue();
             if (gtuType.isOfType(gtu))
             {
                 Map<Link, Double> currentFractions = new LinkedHashMap<>();
                 double t = this.simulator.getSimulatorTime().si;
-                for (Link link : this.fractions.get(gtu).keySet())
+                for (Entry<Link, Map<Duration, Double>> entry2 : fraction.entrySet())
                 {
-                    Iterator<Duration> iterator = this.fractions.get(gtu).get(link).keySet().iterator();
+                    Iterator<Duration> iterator = entry2.getValue().keySet().iterator();
                     Duration prev = iterator.next();
                     while (iterator.hasNext())
                     {
@@ -153,15 +156,15 @@ public class SplitFraction
                             double f;
                             if (this.interpolation.equals(Interpolation.STEPWISE))
                             {
-                                f = this.fractions.get(gtuType).get(link).get(prev);
+                                f = this.fractions.get(gtuType).get(entry2.getKey()).get(prev);
                             }
                             else
                             {
                                 double r = (t - prev.si) / (next.si - prev.si);
-                                f = (1 - r) * this.fractions.get(gtuType).get(link).get(prev)
-                                        + r * this.fractions.get(gtuType).get(link).get(next);
+                                f = (1 - r) * this.fractions.get(gtuType).get(entry2.getKey()).get(prev)
+                                        + r * this.fractions.get(gtuType).get(entry2.getKey()).get(next);
                             }
-                            currentFractions.put(link, f);
+                            currentFractions.put(entry2.getKey(), f);
                             break;
                         }
                     }

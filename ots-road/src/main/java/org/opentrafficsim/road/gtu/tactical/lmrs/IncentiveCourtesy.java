@@ -70,13 +70,13 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
         double dRightNo = 0;
         double socio = context.getParameters().getParameter(SOCIO);
         Acceleration b = context.getParameters().getParameter(B);
-        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.class);
-        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+        NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
+        InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
         boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
         boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
         for (LateralDirectionality dir : LateralDirectionality.LEFT_AND_RIGHT)
         {
-            Iterable<PerceivedGtu> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
+            Iterable<PerceivedGtu> leaders = neighbors.getLeaders(RelativeLane.of(dir, 1));
             if (leaders != null)
             {
                 for (PerceivedGtu leader : leaders)
@@ -105,7 +105,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                 }
             }
             // consider close followers on 2 lanes away
-            Iterable<PerceivedGtu> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
+            Iterable<PerceivedGtu> followers = neighbors.getFollowers(RelativeLane.of(dir, 2));
             if (followers != null)
             {
                 for (PerceivedGtu follower : followers)
@@ -138,7 +138,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                     }
                 }
             }
-            leaders = neighbors.getLeaders(new RelativeLane(dir, 2));
+            leaders = neighbors.getLeaders(RelativeLane.of(dir, 2));
             if (leaders != null)
             {
                 for (PerceivedGtu leader : leaders)

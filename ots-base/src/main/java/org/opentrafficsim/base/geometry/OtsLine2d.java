@@ -24,17 +24,19 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * </p>
  * @author Alexander Verbraeck
  * @author Peter Knoppers
- * @author Guus Tamminga
  * @author Wouter Schakel
  */
 public class OtsLine2d extends PolyLine2d implements Locatable
 {
 
     /** Fractional projection helper. */
-    private final FractionalProjectionHelper fracHelper;
+    private FractionalProjectionHelper fracHelper;
 
     /** Radius calculator. */
-    private final RadiusCalculator2d radiusCalc;
+    private RadiusCalculator2d radiusCalc;
+
+    /** Typed length. */
+    private Length length;
 
     /**
      * Constructor from points.
@@ -43,8 +45,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
     public OtsLine2d(final Point2d... points)
     {
         super(0.0, points);
-        this.fracHelper = new FractionalProjectionHelper(this);
-        this.radiusCalc = new RadiusCalculator2d(this, this.fracHelper);
+        this.length = Length.ofSI(super.getLength());
     }
 
     /**
@@ -54,8 +55,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
     public OtsLine2d(final PolyLine2d line2d)
     {
         super(0.0, line2d.iterator());
-        this.fracHelper = new FractionalProjectionHelper(this);
-        this.radiusCalc = new RadiusCalculator2d(this, this.fracHelper);
+        this.length = Length.ofSI(super.getLength());
     }
 
     /**
@@ -65,8 +65,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
     public OtsLine2d(final Iterator<Point2d> line2d)
     {
         super(0.0, line2d);
-        this.fracHelper = new FractionalProjectionHelper(this);
-        this.radiusCalc = new RadiusCalculator2d(this, this.fracHelper);
+        this.length = Length.ofSI(super.getLength());
     }
 
     /**
@@ -76,8 +75,30 @@ public class OtsLine2d extends PolyLine2d implements Locatable
     public OtsLine2d(final List<Point2d> pointList)
     {
         super(0.0, pointList);
-        this.fracHelper = new FractionalProjectionHelper(this);
-        this.radiusCalc = new RadiusCalculator2d(this, this.fracHelper);
+        this.length = Length.ofSI(super.getLength());
+    }
+
+    /**
+     * Prepare {@link #fracHelper} if it is currently {@code null}.
+     */
+    private void prepareFracHelper()
+    {
+        if (this.fracHelper == null)
+        {
+            this.fracHelper = new FractionalProjectionHelper(this);
+        }
+    }
+
+    /**
+     * Prepare {@link #radiusCalc} if it is currently {@code null}.
+     */
+    private void prepareRadiusCalc()
+    {
+        if (this.radiusCalc == null)
+        {
+            prepareFracHelper();
+            this.radiusCalc = new RadiusCalculator2d(this, this.fracHelper);
+        }
     }
 
     /**
@@ -210,7 +231,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public Length getTypedLength()
     {
-        return Length.ofSI(super.getLength());
+        return this.length;
     }
 
     /**
@@ -273,8 +294,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public double projectOrthogonalSnapAt(final double x, final double y, final boolean clampToDomain)
     {
-        final int nPoints = size();
-        if (nPoints < 2)
+        final int last = size() - 1;
+        if (last < 1)
         {
             return Double.NaN; // no segments to project on
         }
@@ -284,14 +305,14 @@ public class OtsLine2d extends PolyLine2d implements Locatable
         double bestFraction = Double.NaN;
 
         // Useful constants
-        final double totalLength = lengthAtIndex(nPoints - 1);
+        final double totalLength = lengthAtIndex(last);
         final double xFirst = getX(0);
         final double yFirst = getY(0);
-        final double xLast = getX(nPoints - 1);
-        final double yLast = getY(nPoints - 1);
+        final double xLast = getX(last);
+        final double yLast = getY(last);
 
         // Loop over segments and compute the closest point (orthogonal if interior, otherwise snap to an end-point)
-        for (int i = 0; i < nPoints - 1; i++)
+        for (int i = 0; i < last; i++)
         {
             final double xA = getX(i);
             final double yA = getY(i);
@@ -370,7 +391,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
                         else
                         {
                             // Extended: if this is the last vertex, return a fraction beyond 1
-                            if (i + 1 == nPoints - 1)
+                            if (i + 1 == last)
                             {
                                 final double dEnd = Math.hypot(x - xLast, y - yLast);
                                 bestFraction = (totalLength + dEnd) / totalLength;
@@ -446,6 +467,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
     public double projectFractionalAt(final Direction start, final Direction end, final double x, final double y,
             final FractionalFallback fallback)
     {
+        prepareFracHelper();
         return this.fracHelper.projectFractionalAt(start, end, x, y, fallback);
     }
 
@@ -461,6 +483,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public Optional<Length> radiusAtFraction(final double fraction) throws IllegalArgumentException
     {
+        prepareRadiusCalc();
         return this.radiusCalc.radiusAtFraction(fraction);
     }
 
@@ -475,6 +498,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable
      */
     public Optional<Length> radiusAtVertex(final int index) throws IndexOutOfBoundsException
     {
+        prepareRadiusCalc();
         return this.radiusCalc.radiusAtVertex(index);
     }
 

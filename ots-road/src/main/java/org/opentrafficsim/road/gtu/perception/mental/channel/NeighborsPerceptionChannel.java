@@ -7,13 +7,13 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.categories.AbstractLanePerceptionCategory;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.Estimation;
@@ -32,7 +32,7 @@ import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry
  * </p>
  * @author Wouter Schakel
  */
-public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+public class NeighborsPerceptionChannel extends AbstractLanePerceptionCategory<NeighborsPerception>
         implements NeighborsPerception
 {
 
@@ -71,13 +71,12 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
                 new AnticipationPerceivedGtuType(estimation, anticipation, () -> mental.getPerceptionDelay(ChannelTask.REAR));
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedSet<PerceivedGtu> getFirstLeaders(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
-        return computeIfAbsent("firstLeaders", () -> computeFirstLeaders(lat), lat);
+        return computeIfAbsent(Keys.FIRST_LEADERS, () -> computeFirstLeaders(lat), lat);
     }
 
     /**
@@ -91,7 +90,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         {
             SortedSet<PerceivedGtu> set = new TreeSet<>();
             PerceivedGtuType perceivedGtuType = lat.isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight;
-            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(new RelativeLane(lat, 1),
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(RelativeLane.of(lat, 1),
                     RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR))
             {
                 set.add(perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), true));
@@ -104,13 +103,12 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedSet<PerceivedGtu> getFirstFollowers(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
-        return computeIfAbsent("firstFollowers", () -> computeFirstFollowers(lat), lat);
+        return computeIfAbsent(Keys.FIRST_FOLLOWERS, () -> computeFirstFollowers(lat), lat);
     }
 
     /**
@@ -124,7 +122,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         {
             SortedSet<PerceivedGtu> set = new TreeSet<>();
             PerceivedGtuType perceivedGtuType = lat.isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight;
-            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(new RelativeLane(lat, 1),
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(RelativeLane.of(lat, 1),
                     RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT))
             {
                 set.add(perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), false));
@@ -137,13 +135,12 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isGtuAlongside(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
-        return computeIfAbsent("gtuAlongside", () -> computeGtuAlongside(lat), lat);
+        return computeIfAbsent(Keys.GTU_ALONGSIDE, () -> computeGtuAlongside(lat), lat);
     }
 
     /**
@@ -156,7 +153,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         try
         {
             // check if any GTU is downstream of the rear, within the vehicle length
-            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(new RelativeLane(lat, 1),
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(RelativeLane.of(lat, 1),
                     RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR))
             {
                 if (entry.distance().le0())
@@ -166,7 +163,7 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
             }
 
             // check if any GTU is upstream of the front, within the vehicle length
-            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(new RelativeLane(lat, 1),
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(RelativeLane.of(lat, 1),
                     RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.REAR, RelativePosition.FRONT))
             {
                 if (entry.distance().le0())
@@ -183,12 +180,11 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getLeaders(final RelativeLane lane)
     {
         Throw.whenNull(lane, "Lane may not be null.");
-        return computeIfAbsent("leaders", () -> computeLeaders(lane), lane);
+        return computeIfAbsent(Keys.LEADERS, () -> computeLeaders(lane), lane);
     }
 
     /**
@@ -212,12 +208,11 @@ public class NeighborsPerceptionChannel extends AbstractPerceptionCategory<LaneB
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getFollowers(final RelativeLane lane)
     {
         Throw.whenNull(lane, "Lane may not be null.");
-        return computeIfAbsent("followers", () -> computeFollowers(lane), lane);
+        return computeIfAbsent(Keys.FOLLOWERS, () -> computeFollowers(lane), lane);
     }
 
     /**

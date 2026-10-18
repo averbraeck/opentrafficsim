@@ -518,10 +518,8 @@ public final class OpenDriveParser
      */
     private void buildNetwork() throws NetworkException
     {
-        for (Entry<String, TRoad> roadEntry : this.roadMap.entrySet())
+        for (TRoad road : this.roadMap.values())
         {
-            TRoad road = roadEntry.getValue();
-
             // gather discontinuities
             NavigableMap<Double, TRoadLanesLaneSection> laneSections = new TreeMap<>();
             NavigableMap<Double, TRoadType> roadTypes = new TreeMap<>();
@@ -1035,9 +1033,8 @@ public final class OpenDriveParser
         Double prevOffset = null;
         double prevWidth = 0.0;
         boolean passing = true;
-        for (Entry<Double, TRoadLanesLaneSectionLcrLaneRoadMarkTypeLine> lineEntry : lateral.entrySet())
+        for (TRoadLanesLaneSectionLcrLaneRoadMarkTypeLine line : lateral.values())
         {
-            TRoadLanesLaneSectionLcrLaneRoadMarkTypeLine line = lineEntry.getValue();
             passing &= !line.getRule().equals(ERoadMarkRule.NO_PASSING);
             if (prevOffset != null)
             {
@@ -1260,9 +1257,8 @@ public final class OpenDriveParser
     {
         ImmutableMap<String, Link> links = network.getLinkMap();
         List<Lane> lanes = new ArrayList<>();
-        for (String linkId : links.keySet())
+        for (Link link : links.values())
         {
-            Link link = links.get(linkId);
             if (link instanceof CrossSectionLink)
             {
                 for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
@@ -1446,15 +1442,15 @@ public final class OpenDriveParser
             vPrev = entry.getValue();
         }
         fPrev = Double.NaN;
-        for (Entry<Double, Double> entry : map.entrySet())
+        for (double key : map.keySet())
         {
-            if (Math.abs(fPrev - entry.getKey()) < EPS_S_OFFSET)
+            if (Math.abs(fPrev - key) < EPS_S_OFFSET)
             {
-                remove.add(entry.getKey());
+                remove.add(key);
             }
             else
             {
-                fPrev = entry.getKey();
+                fPrev = key;
             }
         }
         remove.forEach((f) -> map.remove(f));

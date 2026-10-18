@@ -18,11 +18,9 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.structure.LaneRecord;
@@ -48,7 +46,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimits;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class DirectInfrastructurePerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+public class DirectInfrastructurePerception extends AbstractLanePerceptionCategory<InfrastructurePerception>
         implements InfrastructurePerception
 {
 
@@ -70,45 +68,45 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
     @Override
     public SortedSet<LaneChangeInfo> getLegalLaneChangeInfo(final RelativeLane lane)
     {
-        return computeIfAbsent("legalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL), lane);
+        return computeIfAbsent(Keys.LEGAL_LANE_CHANGE_INFO, () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL), lane);
     }
 
     @Override
     public SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(final RelativeLane lane)
     {
-        return computeIfAbsent("physicalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.PHYSICAL), lane);
+        return computeIfAbsent(Keys.PHYSICAL_LANE_CHANGE_INFO, () -> computeLaneChangeInfo(lane, LaneAccessLaw.PHYSICAL), lane);
     }
 
     @Override
     public SpeedLimits getSpeedLimits(final RelativeLane lane)
     {
-        return computeIfAbsent("speedLimitProspect", () -> computeSpeedLimits(lane), lane);
+        return computeIfAbsent(Keys.SPEED_LIMITS, () -> computeSpeedLimits(lane), lane);
     }
 
     @Override
     public Length getLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
-        return computeIfAbsent("legalLaneChange", () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.LEGAL),
-                fromLane, lat);
+        return computeIfAbsent(Keys.LEGAL_LANE_CHANGE_POSSIBILITY,
+                () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.LEGAL), fromLane, lat);
     }
 
     @Override
     public Length getPhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
-        return computeIfAbsent("physicalLaneChange", () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.PHYSICAL),
-                fromLane, lat);
+        return computeIfAbsent(Keys.LEGAL_LANE_CHANGE_POSSIBILITY,
+                () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.PHYSICAL), fromLane, lat);
     }
 
     @Override
     public SortedSet<RelativeLane> getCrossSection()
     {
-        return computeIfAbsent("crossSection", () -> getLaneStructure().getRootCrossSection());
+        return computeIfAbsent(Keys.CROSS_SECTION, () -> getLaneStructure().getRootCrossSection());
     }
 
     @Override
     public boolean isShoulder(final RelativeLane lane)
     {
-        return computeIfAbsent("isShoulder", () ->
+        return computeIfAbsent(Keys.IS_SHOULDER, () ->
         {
             LaneRecord laneRecord = getLaneStructure().getRootRecord(lane);
             return laneRecord != null && laneRecord.getLane() instanceof Shoulder;
@@ -153,12 +151,12 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         {
             Length range = getGtu().getParameters().getOptionalParameter(LANE_STRUCTURE)
                     .orElseThrow(() -> new OtsRuntimeException("Parameter LANE_STRUCTURE not available."));
-            Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
+            Length front = getGtu().getRelativePosition(RelativePosition.FRONT).dx();
             ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route.get(), getGtu().getType(),
-                    range.minus(record.getStartDistance()).plus(front), laneLaw);
+                    Length.ofSI(range.si - record.getStartDistance() + front.si), laneLaw);
             for (LaneChangeInfo laneChangeInfo : set)
             {
-                Length dist = laneChangeInfo.remainingDistance().plus(record.getStartDistance()).minus(front);
+                Length dist = Length.ofSI(laneChangeInfo.remainingDistance().si + record.getStartDistance() - front.si);
                 out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist, laneChangeInfo.deadEnd(),
                         laneChangeInfo.lateralDirectionality()));
             }
@@ -192,18 +190,18 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
         // check tail
         Length tail = getPerception().getGtu().getRear().dx();
-        Length tailImpossibility = null;
-        while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty())
+        Double tailImpossibility = null;
+        while (record != null && record.getStartDistance() > tail.si && !record.getPrev().isEmpty())
         {
             if (record.getPrev().size() > 1)
             {
-                tailImpossibility = tail.minus(record.getStartDistance()); // merge prevents lane change
+                tailImpossibility = tail.si - record.getStartDistance(); // merge prevents lane change
                 break;
             }
             record = record.getPrev().iterator().next();
             if (!canChange(record, lat, accessLaw))
             {
-                tailImpossibility = tail.minus(record.getEndDistance());
+                tailImpossibility = tail.si - record.getEndDistance();
                 break;
             }
         }
@@ -216,26 +214,26 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         {
             while (record != null && canChange(record, lat, accessLaw))
             {
-                if (record.getEndDistance().gt(lookAhead))
+                if (record.getEndDistance() > lookAhead.si)
                 {
                     return Length.POSITIVE_INFINITY;
                 }
                 prevRecord = record;
                 record = record.getNext().isEmpty() ? null : record.getNext().iterator().next();
             }
-            Length d = prevRecord.getEndDistance().minus(getPerception().getGtu().getFront().dx());
-            if (d.gt0())
+            double d = prevRecord.getEndDistance() - getPerception().getGtu().getFront().dx().si;
+            if (d > 0)
             {
-                return tailImpossibility == null ? d : tailImpossibility;
+                return Length.ofSI(tailImpossibility == null ? d : tailImpossibility);
             }
             // nose is beyond lane, and next lane does not allow a lane change, we can do a !canChange() search
         }
-        while (record != null && !canChange(record, lat, accessLaw) && record.getStartDistance().lt(lookAhead))
+        while (record != null && !canChange(record, lat, accessLaw) && record.getStartDistance() < lookAhead.si)
         {
             prevRecord = record;
             record = record.getNext().isEmpty() ? null : record.getNext().iterator().next();
         }
-        return getPerception().getGtu().getRear().dx().minus(prevRecord.getEndDistance());
+        return Length.ofSI(getPerception().getGtu().getRear().dx().si - prevRecord.getEndDistance());
     }
 
     /**
@@ -266,7 +264,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
     {
         SortedMap<Length, DirectedPoint2d> out = new TreeMap<>();
         EgoPerception<?, ?> ego =
-                Try.assign(() -> getPerception().getPerceptionCategory(EgoPerception.class), "No ego perception.");
+                Try.assign(() -> getPerception().getPerceptionCategory(EgoPerception.TYPE), "No ego perception.");
         Parameters parameters = getPerception().getGtu().getParameters();
 
         // distance step based on current speed and model time step
@@ -302,7 +300,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         for (int i = first; i < last; i++)
         {
             Length ahead = step.times(i);
-            if (ahead.gt(record.getStartDistance().plus(record.getLength())))
+            if (ahead.si > record.getEndDistance())
             {
                 for (LaneRecord next : record.getNext())
                 {
@@ -310,7 +308,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
                 }
                 return;
             }
-            Length position = ahead.minus(record.getStartDistance());
+            Length position = Length.ofSI(ahead.si - record.getStartDistance());
             DirectedPoint2d point = record.getLane().getCenterLine().getLocation(position);
             // ignore if essentially the same direction as the previous point
             if (Math.abs(AngleUtil.normalizeAroundZero(point.dirZ - phi)) > 1e-3)

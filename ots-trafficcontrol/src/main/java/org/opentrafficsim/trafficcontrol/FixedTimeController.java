@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -116,9 +117,10 @@ public class FixedTimeController extends AbstractTrafficController
         }
         // Collect all flanks that persist for nonzero duration
         int nextNumber = 0;
-        for (String trafficLightId : signalGroupsOfTrafficLight.keySet())
+        for (Entry<String, List<SignalGroup>> entry : signalGroupsOfTrafficLight.entrySet())
         {
-            List<SignalGroup> sgList = signalGroupsOfTrafficLight.get(trafficLightId);
+            String trafficLightId = entry.getKey();
+            List<SignalGroup> sgList = entry.getValue();
             if (sgList.size() > 1)
             {
                 // Check for overlapping or adjacent green phases

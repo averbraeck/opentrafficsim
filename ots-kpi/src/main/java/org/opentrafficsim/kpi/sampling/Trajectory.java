@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.sampling;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
@@ -766,18 +767,16 @@ public final class Trajectory<G extends GtuData>
                 out.t[n - 1] = (float) (this.t[bounds.to] * (1 - bounds.fTo) + this.t[bounds.to + 1] * bounds.fTo);
             }
             out.size = n;
-            for (ExtendedDataType<?, ?, ?, ? super G> extendedDataType : this.extendedData.keySet())
+            for (Entry<ExtendedDataType<?, ?, ?, ? super G>, Object> entry : this.extendedData.entrySet())
             {
                 int j = 0;
-                ExtendedDataType<T, ?, S, G> edt = (ExtendedDataType<T, ?, S, G>) extendedDataType;
-                S fromList = (S) this.extendedData.get(extendedDataType);
+                ExtendedDataType<T, ?, S, G> edt = (ExtendedDataType<T, ?, S, G>) entry.getKey();
+                S fromList = (S) entry.getValue();
                 S toList = edt.initializeStorage();
                 if (nBefore == 1)
                 {
-                    toList = edt.setValue(toList, j,
-                            ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
-                                    edt.getStorageValue(fromList, bounds.from), edt.getStorageValue(fromList, bounds.from + 1),
-                                    bounds.fFrom));
+                    toList = edt.setValue(toList, j, edt.interpolate(edt.getStorageValue(fromList, bounds.from),
+                            edt.getStorageValue(fromList, bounds.from + 1), bounds.fFrom));
                     j++;
                 }
                 for (int i = bounds.from + 1; i <= bounds.to; i++)
@@ -787,12 +786,10 @@ public final class Trajectory<G extends GtuData>
                 }
                 if (nAfter == 1)
                 {
-                    toList = edt.setValue(toList, j,
-                            ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
-                                    edt.getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1),
-                                    bounds.fTo));
+                    toList = edt.setValue(toList, j, edt.interpolate(edt.getStorageValue(fromList, bounds.to),
+                            edt.getStorageValue(fromList, bounds.to + 1), bounds.fTo));
                 }
-                out.extendedData.put(extendedDataType, toList);
+                out.extendedData.put(edt, toList);
             }
         }
         return out;

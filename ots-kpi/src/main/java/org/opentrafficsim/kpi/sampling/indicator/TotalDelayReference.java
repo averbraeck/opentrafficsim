@@ -3,6 +3,7 @@ package org.opentrafficsim.kpi.sampling.indicator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -85,10 +86,10 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
             }
         }
         Duration delaySum = Duration.ZERO;
-        for (String id : gtuTimes.keySet())
+        for (Entry<String, Duration> entry : gtuTimes.entrySet())
         {
-            Duration gtuTime = gtuTimes.get(id);
-            Duration gtuRefTime = gtuRefTimes.get(id);
+            Duration gtuTime = entry.getValue();
+            Duration gtuRefTime = gtuRefTimes.get(entry.getKey());
             if (gtuTime.gt(gtuRefTime))
             {
                 delaySum = delaySum.plus(gtuTime.minus(gtuRefTime));

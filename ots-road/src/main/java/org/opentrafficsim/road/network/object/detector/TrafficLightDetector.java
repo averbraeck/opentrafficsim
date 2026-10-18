@@ -242,8 +242,8 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             if (this.lanes.size() == 1)
             {
                 Lane lane = this.lanes.iterator().next();
-                Length frontPos = gtu.getPosition(lane, gtu.getRelativePositions().get(this.entryA.getPositionType()));
-                Length rearPos = gtu.getPosition(lane, gtu.getRelativePositions().get(this.exitB.getPositionType()));
+                Length frontPos = gtu.getPosition(lane, gtu.getRelativePosition(this.entryA.getPositionType()));
+                Length rearPos = gtu.getPosition(lane, gtu.getRelativePosition(this.exitB.getPositionType()));
                 if (frontPos.gt(this.entryA.getLongitudinalPosition()) && rearPos.lt(this.exitB.getLongitudinalPosition()))
                 {
                     addGtu(gtu);
@@ -273,7 +273,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             if (this.entryA.getLane().equals(lane))
             {
                 Length frontPos =
-                        gtu.getPosition(this.entryA.getLane(), gtu.getRelativePositions().get(this.entryA.getPositionType()));
+                        gtu.getPosition(this.entryA.getLane(), gtu.getRelativePosition(this.entryA.getPositionType()));
                 if (frontPos.gt(this.entryA.getLongitudinalPosition()))
                 {
                     addGtu(gtu);
@@ -285,7 +285,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             if (this.exitB.getLane().equals(lane))
             {
                 Length rearPos =
-                        gtu.getPosition(this.exitB.getLane(), gtu.getRelativePositions().get(this.exitB.getPositionType()));
+                        gtu.getPosition(this.exitB.getLane(), gtu.getRelativePosition(this.exitB.getPositionType()));
                 if (rearPos.lt(this.exitB.getLongitudinalPosition()))
                 {
                     addGtu(gtu);

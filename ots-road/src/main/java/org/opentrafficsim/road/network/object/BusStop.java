@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.object;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -94,7 +93,7 @@ public class BusStop extends AbstractLaneBasedObject
             Length position = getLongitudinalPosition();
             while (lane != null)
             {
-                List<LaneBasedObject> objects = lane.getObjectAhead(position);
+                ImmutableSet<LaneBasedObject> objects = lane.getObjectAhead(position);
                 while (!objects.isEmpty())
                 {
                     for (LaneBasedObject object : objects)
@@ -108,7 +107,7 @@ public class BusStop extends AbstractLaneBasedObject
                             }
                         }
                     }
-                    objects = lane.getObjectAhead(objects.get(0).getLongitudinalPosition());
+                    objects = lane.getObjectAhead(objects.iterator().next().getLongitudinalPosition());
                 }
                 //
                 Set<Lane> downstreamLanes = lane.nextLanes(this.busType);

@@ -27,22 +27,18 @@ import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.djutils.immutablecollections.Immutable;
-import org.djutils.immutablecollections.ImmutableLinkedHashMap;
-import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.collections.IndexedMap;
 import org.opentrafficsim.base.geometry.OffsetRectangleShape;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
-import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -150,7 +146,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     private final OtsShape shape;
 
     /** Relative positions to the reference point of type RelativePosition.REFERENCE. */
-    private final Map<RelativePosition.Type, RelativePosition> relativePositions = new LinkedHashMap<>();
+    private final Map<RelativePosition.Type, RelativePosition> relativePositions = new IndexedMap<>();
 
     /** The maximum length of the GTU (parallel with driving direction). */
     private final Length length;
@@ -343,12 +339,13 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     }
 
     /**
-     * Get relative positions.
-     * @return the positions for this GTU, but not the contour points.
+     * Returns the relative position of given type.
+     * @param positionType position type
+     * @return the relative position of given type
      */
-    public ImmutableMap<Type, RelativePosition> getRelativePositions()
+    public RelativePosition getRelativePosition(final RelativePosition.Type positionType)
     {
-        return new ImmutableLinkedHashMap<>(this.relativePositions, Immutable.WRAP);
+        return this.relativePositions.get(positionType);
     }
 
     /**
@@ -693,15 +690,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
             {
                 return this.odometer.get(time);
             }
-            try
-            {
-                return this.odometer.get(time).plus(getOperationalPlan(time).getTraveledDistance(time));
-            }
-            catch (OperationalPlanException ope)
-            {
-                Logger.ots().warn("OperationalPlan could not give a traveled distance it the requested time.");
-                return this.odometer.get(time);
-            }
+            return this.odometer.get(time).plus(getOperationalPlan(time).getTraveledDistance(time));
         }
     }
 
@@ -886,14 +875,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      */
     public synchronized DirectedPoint2d getLocation(final Duration time)
     {
-        try
-        {
-            return this.operationalPlan.get(time).getLocation(time);
-        }
-        catch (OperationalPlanException exception)
-        {
-            return new DirectedPoint2d(0, 0, 0);
-        }
+        return this.operationalPlan.get(time).getLocation(time);
     }
 
     @Override
@@ -912,15 +894,8 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     @Override
     public Polygon2d getAbsoluteContour(final Duration time)
     {
-        try
-        {
-            return new Polygon2d(0.0, OtsShape.toAbsoluteTransform(this.operationalPlan.get(time).getLocation(time))
-                    .transform(getRelativeContour().iterator()));
-        }
-        catch (OperationalPlanException exception)
-        {
-            throw new OtsRuntimeException(exception);
-        }
+        return new Polygon2d(0.0, OtsShape.toAbsoluteTransform(this.operationalPlan.get(time).getLocation(time))
+                .transform(getRelativeContour().iterator()));
     }
 
     /**

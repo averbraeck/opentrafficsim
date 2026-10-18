@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.perception.categories;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -8,11 +7,11 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.collections.IndexedMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
@@ -30,7 +29,7 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerc
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class AnticipationTrafficPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+public class AnticipationTrafficPerception extends AbstractLanePerceptionCategory<TrafficPerception>
         implements TrafficPerception
 {
 
@@ -41,19 +40,19 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     private Duration lastSpeedTime = null;
 
     /** Anticipated speed by vehicles in the left lane. */
-    private Map<RelativeLane, Double> antFromLeft = new LinkedHashMap<>();
+    private final Map<RelativeLane, Double> antFromLeft = new IndexedMap<>();
 
     /** Anticipated speed by vehicles in the lane. */
-    private Map<RelativeLane, Double> antInLane = new LinkedHashMap<>();
+    private final Map<RelativeLane, Double> antInLane = new IndexedMap<>();
 
     /** Anticipated speed by vehicles in the right lane. */
-    private Map<RelativeLane, Double> antFromRight = new LinkedHashMap<>();
+    private final Map<RelativeLane, Double> antFromRight = new IndexedMap<>();
 
     /** Anticipated speed combined. */
-    private Map<RelativeLane, Speed> speed = new LinkedHashMap<>();
+    private final Map<RelativeLane, Speed> speed = new IndexedMap<>();
 
     /** Anticipated density combined. */
-    private Map<RelativeLane, TimeStampedObject<LinearDensity>> density = new LinkedHashMap<>();
+    private final Map<RelativeLane, TimeStampedObject<LinearDensity>> density = new IndexedMap<>();
 
     /** Density collector. */
     private static final AnticipationDensity DENSITY = new AnticipationDensity();
@@ -85,9 +84,9 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         {
             LaneBasedGtu gtu = getPerception().getGtu();
             vAnt = anticipationSpeed(lane, gtu.getParameters(),
-                    getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+                    getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category")),
-                    getPerception().getPerceptionCategoryOptional(InfrastructurePerception.class).orElseThrow(
+                    getPerception().getPerceptionCategoryOptional(InfrastructurePerception.TYPE).orElseThrow(
                             () -> new NoSuchElementException("No infrastructure perception category")),
                     desiredSpeed);
             this.speed.put(lane, vAnt);
@@ -160,7 +159,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         TimeStampedObject<LinearDensity> tK = this.density.get(lane);
         if (tK == null || tK.timestamp().si < now.si)
         {
-            LinearDensity k = getPerception().getPerceptionCategoryOptional(NeighborsPerception.class)
+            LinearDensity k = getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                     .orElseThrow(() -> new NoSuchElementException("No neighbors perception category")).getLeaders(lane)
                     .collect(DENSITY);
             this.density.put(lane, new TimeStampedObject<>(k, now));
