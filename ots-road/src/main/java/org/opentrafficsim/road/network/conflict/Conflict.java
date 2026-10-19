@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.conflict;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -708,53 +707,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         {
             return this.perceptionGtuType.createPerceivedGtu(getObject(), Conflict.this, object,
                     this.downstream ? distance.minus(getLength()) : distance, this.downstream);
-        }
-    }
-
-    /**
-     * Reiterable of which the main purpose is efficiency. Storing the result for multiple GTUs is more efficient than invoking
-     * the NavigatingIterable logic for each.
-     */
-    private class Reiterable implements Iterable<Entry<LaneBasedGtu>>
-    {
-        /** Base iterator from NavigatingIterable. */
-        private final Iterator<Entry<LaneBasedGtu>> base;
-
-        /** List of found GTUs so far. */
-        private final List<Entry<LaneBasedGtu>> soFar = new ArrayList<>();
-
-        /**
-         * Constructor.
-         * @param base base iterable.
-         */
-        Reiterable(final Iterable<Entry<LaneBasedGtu>> base)
-        {
-            this.base = base.iterator();
-        }
-
-        @Override
-        public Iterator<Entry<LaneBasedGtu>> iterator()
-        {
-            return new Iterator<Entry<LaneBasedGtu>>()
-            {
-                private int index = 0;
-
-                @Override
-                public Entry<LaneBasedGtu> next()
-                {
-                    return Reiterable.this.soFar.get(this.index++);
-                }
-
-                @Override
-                public boolean hasNext()
-                {
-                    if (this.index >= Reiterable.this.soFar.size() && Reiterable.this.base.hasNext())
-                    {
-                        Reiterable.this.soFar.add(Reiterable.this.base.next());
-                    }
-                    return this.index < Reiterable.this.soFar.size();
-                }
-            };
         }
     }
 
