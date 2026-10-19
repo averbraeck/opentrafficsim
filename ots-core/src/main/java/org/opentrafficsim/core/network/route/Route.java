@@ -212,14 +212,13 @@ public class Route implements Identifiable
     }
 
     /**
-     * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. <br>
-     * If this route contains the Node more than once, the index of the first is returned.
+     * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node.
      * @param node the Node to find
      * @return returns index of node.
      */
     public int indexOf(final Node node)
     {
-        return this.nodeIndex.get(node);
+        return this.nodeIndex.getOrDefault(node, -1);
     }
 
     /**
