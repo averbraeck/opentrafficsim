@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
@@ -54,8 +55,11 @@ public class LaneStructure
     /** Length to build lane structure downstream of GTU. */
     private Length downstream;
 
+    /** Effective length to build lane structure downstream of GTU anticipating in-lane movement before next update. */
+    private double effectiveDownstream;
+
     /** Time at which the structure was updated. */
-    private Duration updated = null;
+    private Duration updateTime = null;
 
     /** Route in last update. */
     private Route route;
@@ -333,13 +337,13 @@ public class LaneStructure
                 {
                     // this navigator only returns records when there are no GTUs on the lane
                     return record.getLane()
-                            .getGtuAhead(Length.ofSI(-record.getStartDistance() + dx.si), otherPosition, this.updated).isEmpty()
-                                    ? record.getNext() : Collections.emptySet();
+                            .getGtuAhead(Length.ofSI(-record.getStartDistance() + dx.si), otherPosition, this.updateTime)
+                            .isEmpty() ? record.getNext() : Collections.emptySet();
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
                     Optional<LaneBasedGtu> down = record.getLane().getGtuAhead(Length.ofSI(-record.getStartDistance() + dx.si),
-                            otherPosition, this.updated);
+                            otherPosition, this.updateTime);
                     return down.isEmpty() ? Collections.emptyList() : List.of(down.get());
                 }, (t, r) -> r.getStartDistance() + position(t, r, otherDistancePosition) - dxDistance.si);
     }
@@ -369,7 +373,7 @@ public class LaneStructure
                     // this navigator only returns records when there are no GTUs on the lane (it may thus ignore a GTU on a
                     // lateral lane that is closer) and combines the upstream and lateral records
                     Optional<LaneBasedGtu> gtu = record.getLane().getGtuBehind(Length.ofSI(-record.getStartDistance() + dx.si),
-                            otherPosition, this.updated);
+                            otherPosition, this.updateTime);
                     if (!gtu.isEmpty())
                     {
                         return Collections.emptySet();
@@ -382,7 +386,7 @@ public class LaneStructure
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
                     Optional<LaneBasedGtu> up = record.getLane().getGtuBehind(Length.ofSI(-record.getStartDistance() + dx.si),
-                            otherPosition, this.updated);
+                            otherPosition, this.updateTime);
                     return up.isEmpty() ? Collections.emptyList() : List.of(up.get());
                 }, (t, r) -> dxDistance.si - r.getStartDistance() - position(t, r, otherDistancePosition));
     }
@@ -506,13 +510,32 @@ public class LaneStructure
      */
     private synchronized void update()
     {
-        if (this.updated != null && this.updated.si == this.egoGtu.getSimulator().getSimulatorTime().si)
+        if (this.updateTime != null && this.updateTime.si == this.egoGtu.getSimulator().getSimulatorTime().si)
         {
             return;
         }
+        this.updateTime = this.egoGtu.getSimulator().getSimulatorTime();
 
-        this.updated = this.egoGtu.getSimulator().getSimulatorTime();
-        this.route = LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute().orElse(null);
+        LanePosition position = this.egoGtu.getPosition();
+        Lane lane = position.lane();
+        double positionSI = position.position().si;
+
+        // Check if only the start distance needs to be updated as the GTU is still on the same lane with the same route
+        LaneRecord prevRootRecord = this.rootCrossSection.get(RelativeLane.CURRENT);
+        Route prevRoute = this.route;
+        this.route = this.egoGtu.getStrategicalPlanner().getRoute().orElse(null);
+        if (prevRootRecord != null && prevRootRecord.getLane().equals(lane) && Objects.equals(this.route, prevRoute))
+        {
+            // Skip entirely on same position
+            if (prevRootRecord.getStartDistance() != -positionSI)
+            {
+                prevRootRecord.setStartDistance(-positionSI, this);
+            }
+            return;
+        }
+
+        // Rebuild the structure
+        this.effectiveDownstream = lane.getLength().si - positionSI + this.downstream.si;
         this.crossSection.clear();
         this.rootCrossSection.clear();
         this.rootCrossSectionRecords.clear();
@@ -521,16 +544,18 @@ public class LaneStructure
         Deque<LaneRecord> upQueue = new ArrayDeque<>();
         Deque<LaneRecord> latDownQueue = new ArrayDeque<>();
         Deque<LaneRecord> latUpQueue = new ArrayDeque<>();
-        LanePosition position = this.egoGtu.getPosition();
-        LaneRecord root = new LaneRecord(position.lane(), RelativeLane.CURRENT, -position.position().si, Length.ZERO);
-        visited.add(position.lane());
-        addToCrossSection(root);
-        downQueue.add(root);
-        upQueue.add(root);
+        LaneRecord root = new LaneRecord(lane, RelativeLane.CURRENT, -positionSI, Length.ZERO);
+        visited.add(lane);
+        checkCrossSection(root);
+        downQueue.add(root); // given effectiveDownstream there is an inherent downstream move, no need to check distance
+        if (-root.getStartDistance() < this.upstream.si)
+        {
+            upQueue.add(root);
+        }
         latDownQueue.add(root); // does not matter which lat queue this is, it is the root cross section
         this.rootCrossSection.put(root.getRelativeLane(), root);
         this.rootCrossSectionRecords.add(root);
-        while (!downQueue.isEmpty() || !upQueue.isEmpty() || !latDownQueue.isEmpty() || !latUpQueue.isEmpty())
+        for (;;)
         {
             if (!downQueue.isEmpty())
             {
@@ -540,9 +565,17 @@ public class LaneStructure
             {
                 nextUp(visited, upQueue, latUpQueue);
             }
+            else if (!latDownQueue.isEmpty())
+            {
+                nextLateral(visited, downQueue, upQueue, latDownQueue, latUpQueue, true);
+            }
+            else if (!latUpQueue.isEmpty())
+            {
+                nextLateral(visited, downQueue, upQueue, latDownQueue, latUpQueue, false);
+            }
             else
             {
-                nextLateral(visited, downQueue, upQueue, latDownQueue, latUpQueue);
+                break;
             }
         }
     }
@@ -570,11 +603,11 @@ public class LaneStructure
                 continue;
             }
             LaneRecord down = new LaneRecord(lane, record.getRelativeLane(), record.getEndDistance(), Length.ZERO);
-            record.addNext(down);
-            down.addPrev(record);
+            record.addNext(down, true);
+            down.addPrev(record, false);
             visited.add(lane);
-            addToCrossSection(down);
-            if (down.getEndDistance() < this.downstream.si)
+            checkCrossSection(down);
+            if (down.getEndDistance() < this.effectiveDownstream)
             {
                 downQueue.add(down);
             }
@@ -601,10 +634,10 @@ public class LaneStructure
             {
                 LaneRecord up = new LaneRecord(lane, record.getRelativeLane(), record.getStartDistance() - lane.getLength().si,
                         record.getMergeDistance());
-                record.addPrev(up);
-                up.addNext(record);
+                record.addPrev(up, true);
+                up.addNext(record, false);
                 visited.add(lane);
-                addToCrossSection(up);
+                checkCrossSection(up);
                 if (-up.getStartDistance() + up.getMergeDistance().si < this.upstream.si)
                 {
                     upQueue.add(up);
@@ -621,23 +654,12 @@ public class LaneStructure
      * @param upQueue queue of records to be processed in upstream search
      * @param latDownQueue queue of records to be processed in lateral direction, as part of a downstream search
      * @param latUpQueue queue of records to be processed in lateral direction, as part of an upstream search
+     * @param down whether this step is a part of a downstream or upstream search
      */
     private void nextLateral(final Set<Lane> visited, final Deque<LaneRecord> downQueue, final Deque<LaneRecord> upQueue,
-            final Deque<LaneRecord> latDownQueue, final Deque<LaneRecord> latUpQueue)
+            final Deque<LaneRecord> latDownQueue, final Deque<LaneRecord> latUpQueue, final boolean down)
     {
-        boolean down;
-        Deque<LaneRecord> latQueue;
-        if (!latDownQueue.isEmpty())
-        {
-            down = true;
-            latQueue = latDownQueue;
-        }
-        else
-        {
-            down = false;
-            latQueue = latUpQueue;
-        }
-        LaneRecord record = latQueue.poll();
+        LaneRecord record = down ? latDownQueue.poll() : latUpQueue.poll();
         for (LateralDirectionality latDirection : LateralDirectionality.LEFT_AND_RIGHT)
         {
             for (Lane lane : record.getLane().accessibleAdjacentLanesPhysical(latDirection, null))
@@ -695,19 +717,16 @@ public class LaneStructure
                         mergeDistance = record.getMergeDistance(); // zero, or continue same value in upstream branch
                     }
                     LaneRecord lat = new LaneRecord(lane, relativeLane, startDistance, mergeDistance);
-                    if (!down)
-                    {
-                        record.addLateral(lat);
-                    }
+                    record.addLateral(lat, down);
                     visited.add(lane);
-                    addToCrossSection(lat);
+                    checkCrossSection(lat);
                     // from the cross-section directly from the root, we initiate both an upstream and downstream search
                     if (this.rootCrossSectionRecords.contains(record))
                     {
                         this.rootCrossSection.put(lat.getRelativeLane(), lat);
                         this.rootCrossSectionRecords.add(lat);
                         latDownQueue.add(lat); // does not matter which lat queue this is, it is the root cross section
-                        if (lat.getEndDistance() < this.downstream.si)
+                        if (lat.getEndDistance() < this.effectiveDownstream)
                         {
                             downQueue.add(lat);
                         }
@@ -719,13 +738,13 @@ public class LaneStructure
                     else if (down)
                     {
                         latDownQueue.add(lat);
-                        if (lat.getEndDistance() < this.downstream.si)
+                        if (lat.getEndDistance() < this.effectiveDownstream)
                         {
                             downQueue.add(lat);
-                            if (mergeDistance.si > 0.0)
-                            {
-                                upQueue.add(lat);
-                            }
+                        }
+                        if (mergeDistance.si > 0.0)
+                        {
+                            upQueue.add(lat);
                         }
                     }
                     else
@@ -746,12 +765,36 @@ public class LaneStructure
      * distance).
      * @param record record.
      */
-    private void addToCrossSection(final LaneRecord record)
+    private void checkCrossSection(final LaneRecord record)
     {
         if (record.getStartDistance() <= 0.0 && record.getEndDistance() > 0.0)
         {
-            this.crossSection.computeIfAbsent(record.getRelativeLane(), (r) -> new SmallArraySet<>()).add(record);
+            addToCrossSection(record);
         }
+    }
+
+    /**
+     * Removes the record from the cross-section. This is used when the start distance of the record is changed and the record
+     * is no longer in the cross-section.
+     * @param record record to remove from the cross-section
+     */
+    void removeFromCrossSection(final LaneRecord record)
+    {
+        Set<LaneRecord> set = this.crossSection.get(record.getRelativeLane());
+        if (set != null)
+        {
+            set.remove(record);
+        }
+    }
+
+    /**
+     * Adds the record to the cross-section. This is used when the start distance of the record is changed and the record
+     * becomes part of the cross-section.
+     * @param record record to remove from the cross-section
+     */
+    void addToCrossSection(final LaneRecord record)
+    {
+        this.crossSection.computeIfAbsent(record.getRelativeLane(), (r) -> new SmallArraySet<>()).add(record);
     }
 
     /**
