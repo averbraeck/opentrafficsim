@@ -130,14 +130,14 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
                     ObjectIterator closestObjectIterator = null;
                     for (ObjectIterator objectIterator : map.values())
                     {
-                        Entry<T> objectEntry = objectIterator.poll();
+                        Entry<T> objectEntry = objectIterator.peek();
                         if (objectEntry.distance().si < minDistance)
                         {
                             minDistance = objectEntry.distance().si;
                             closestObjectIterator = objectIterator;
                         }
                     }
-                    this.next = closestObjectIterator.next(); // advance the object iterator; it was only polled above
+                    this.next = closestObjectIterator.next(); // advance the object iterator; it was only peeked above
                 }
                 if (this.next != null && this.next.distance().si > NavigatingIterable.this.range.si)
                 {
@@ -228,7 +228,7 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
             while (this.next == null && this.iterator.hasNext())
             {
                 Object object = this.iterator.next();
-                if (this.clazz.isAssignableFrom(object.getClass()))
+                if (this.clazz.isInstance(object))
                 {
                     @SuppressWarnings("unchecked")
                     T t = (T) object;
@@ -242,16 +242,16 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
         @Override
         public Entry<T> next()
         {
-            Entry<T> out = poll();
+            Entry<T> out = peek();
             this.next = null;
             return out;
         }
 
         /**
          * Returns the entry that {@code next()} will return, without advancing the iterator.
-         * @return poll entry.
+         * @return peek entry.
          */
-        public Entry<T> poll()
+        public Entry<T> peek()
         {
             Throw.when(!hasNext(), NoSuchElementException.class, "No more object of type %s.", this.clazz);
             return this.next;
