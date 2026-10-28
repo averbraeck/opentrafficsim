@@ -57,6 +57,8 @@ public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDa
         NumberAxis yAxis = new NumberAxis("Count [-]");
         yAxis.setAutoRangeIncludesZero(true);
         XYBarRenderer renderer = new XYBarRenderer();
+        renderer.setShadowXOffset(2.0);
+        renderer.setShadowYOffset(2.0);
         renderer.setLegendItemLabelGenerator((dataset, series) -> source.seriesLabels(this.data.dataKey())[series]);
         XYPlot plot = new XYPlot(this, xAxis, yAxis, renderer);
         return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot,
