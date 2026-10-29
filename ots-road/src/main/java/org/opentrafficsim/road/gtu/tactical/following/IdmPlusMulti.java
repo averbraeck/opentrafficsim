@@ -10,6 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 
 /**
  * Multiple leader implementation of the IDM+. This uses the minimum interaction term of N leaders, where each is considered
@@ -34,17 +35,19 @@ public class IdmPlusMulti extends AbstractIdm
      */
     public IdmPlusMulti()
     {
-        super(HEADWAY, DESIRED_SPEED);
+        super(HEADWAY, DESIRED_SPEED, Relaxation.DYNAMIC);
     }
 
     /**
      * Constructor with modular models for desired headway and desired speed.
      * @param desiredHeadwayModel desired headway model
      * @param desiredSpeedModel desired speed model
+     * @param relaxation relaxation
      */
-    public IdmPlusMulti(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    public IdmPlusMulti(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel,
+            final Relaxation relaxation)
     {
-        super(desiredHeadwayModel, desiredSpeedModel);
+        super(desiredHeadwayModel, desiredSpeedModel, relaxation);
     }
 
     @Override
@@ -73,7 +76,7 @@ public class IdmPlusMulti extends AbstractIdm
         {
             // desired headway is scaled to the i'th leader
             // current headway is the sum of net headways (i.e. vehicle lengths of vehicles in between are subtracted)
-            double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway.times(i), leader.getSpeed()).si
+            double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway.times(i), leader.getSpeed())
                     / (leader.getDistance().si - cumulVehicleLengths);
             double aIntSingle = a.si * (1 - sRatio * sRatio);
             aIntMulti = aIntMulti < aIntSingle ? aIntMulti : aIntSingle;

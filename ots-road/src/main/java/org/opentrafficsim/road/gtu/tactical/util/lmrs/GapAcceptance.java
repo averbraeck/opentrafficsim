@@ -67,14 +67,14 @@ public interface GapAcceptance extends NamedConstants
             for (PerceivedGtu follower : neighbors.getFirstFollowers(lat))
             {
                 Acceleration aFollow =
-                        LmrsUtil.relaxedAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
+                        LmrsUtil.synchronizationAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
                 if (threshold.gt(aFollow))
                 {
                     return false;
                 }
             }
 
-            if (!GapAcceptance.acceptLaneChangers(context, lat, threshold))
+            if (!GapAcceptance.acceptLaneChangersAcceleration(context, lat, threshold))
             {
                 return false;
             }
@@ -116,7 +116,7 @@ public interface GapAcceptance extends NamedConstants
                 Parameters folParams = follower.getBehavior().getParameters();
                 folParams.setParameterOverride(ParameterTypes.TMAX, tMaxEgo);
                 Acceleration aFollow =
-                        LmrsUtil.relaxedAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
+                        LmrsUtil.synchronizationAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
                 folParams.removeParameterOverride(ParameterTypes.TMAX);
                 if (threshold.gt(aFollow))
                 {
@@ -124,7 +124,7 @@ public interface GapAcceptance extends NamedConstants
                 }
             }
 
-            if (!GapAcceptance.acceptLaneChangers(context, lat, threshold))
+            if (!GapAcceptance.acceptLaneChangersAcceleration(context, lat, threshold))
             {
                 return false;
             }
@@ -157,7 +157,7 @@ public interface GapAcceptance extends NamedConstants
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
                     .getFirstLeaders(lat))
             {
-                Acceleration a = LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
+                Acceleration a = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
                 if (threshold.gt(a))
                 {
                     return false;
@@ -176,7 +176,7 @@ public interface GapAcceptance extends NamedConstants
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    private static boolean acceptLaneChangers(final TacticalContextEgo context, final LateralDirectionality lat,
+    private static boolean acceptLaneChangersAcceleration(final TacticalContextEgo context, final LateralDirectionality lat,
             final Acceleration threshold) throws ParameterException, OperationalPlanException
     {
         if (context.getSpeed().gt0())
@@ -208,6 +208,77 @@ public interface GapAcceptance extends NamedConstants
         }
         return true;
     }
+
+    /** Relaxed gap-acceptance operating directly on a gap comparison using a relaxed definition of {@code s*}. */
+    GapAcceptance RELAXED = new GapAcceptance()
+    {
+        @Override
+        public boolean acceptGap(final TacticalContextEgo context, final double desire, final LateralDirectionality lat)
+                throws ParameterException, OperationalPlanException
+        {
+            NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
+            if (neighbors.isGtuAlongside(lat))
+            {
+                return false;
+            }
+
+            Parameters parameters = context.getParameters();
+            Relaxation relaxation = context.getCarFollowingModel().getRelaxation();
+            double k = Math.max(0.0, Math.min(desire, 1.0));
+
+            var adjacentLeaders = neighbors.getFirstLeaders(lat);
+            for (PerceivedGtu leader : adjacentLeaders)
+            {
+                if (!relaxation.isSafeGap(parameters, context.getSpeed(), leader.getDistance(), leader.getSpeed(), k))
+                {
+                    return false;
+                }
+            }
+
+            for (PerceivedGtu follower : neighbors.getFirstFollowers(lat))
+            {
+                if (!relaxation.isSafeGap(parameters, follower.getSpeed(), follower.getDistance(), context.getSpeed(), k))
+                {
+                    return false;
+                }
+            }
+
+            // account for leaders in the second lane over changing to the target lane
+            if (context.getSpeed().si > 0.0)
+            {
+                double range = Double.POSITIVE_INFINITY;
+                // we consider only the range up to the first leader in the target lane
+                if (!adjacentLeaders.isEmpty())
+                {
+                    range = 0.0;
+                    for (PerceivedGtu leader : adjacentLeaders)
+                    {
+                        double s = leader.getDistance().si;
+                        range = s > range ? s : range;
+                    }
+                }
+                for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 2)))
+                {
+                    if (leader.getDistance().si > range)
+                    {
+                        return true;
+                    }
+                    if (leader.getManeuver().isChangingLane(lat.flip()))
+                    {
+                        return relaxation.isSafeGap(parameters, context.getSpeed(), leader.getDistance(), leader.getSpeed(), k);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        public String name()
+        {
+            return "RELAXED";
+        }
+    };
 
     /**
      * Determine whether a gap is acceptable.

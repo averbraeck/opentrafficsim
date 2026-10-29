@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,6 +43,10 @@ import org.opentrafficsim.animation.graphs.BarPlot.BarDataSource;
 import org.opentrafficsim.animation.graphs.BarPlot.BarPlotData;
 import org.opentrafficsim.animation.graphs.GraphPath;
 import org.opentrafficsim.animation.graphs.PlotScheduler;
+import org.opentrafficsim.animation.graphs.Scatterplot;
+import org.opentrafficsim.animation.graphs.Scatterplot.Bounds;
+import org.opentrafficsim.animation.graphs.Scatterplot.ScatterDecoration;
+import org.opentrafficsim.animation.graphs.Scatterplot.ScatterPoint;
 import org.opentrafficsim.animation.graphs.TrajectoryPlot;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
@@ -85,7 +90,9 @@ import org.opentrafficsim.road.gtu.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Cooperation;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.network.CrossSectionLink;
@@ -149,6 +156,12 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
     /** Cooperation. */
     static final Cooperation COOPERATION = Cooperation.PASSIVE_MOVING;
 
+    /** Gap-acceptance. */
+    static final GapAcceptance GAP_ACCEPTANCE = GapAcceptance.RELAXED;
+
+    /** Relaxation. */
+    static final Relaxation RELAXATION = Relaxation.DYNAMIC;
+
     /** Use additional incentives. */
     static final boolean ADDITIONAL_INCENTIVES = true;
 
@@ -205,6 +218,23 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 new BarPlotData("dv/dt [m/s\u00B2]", LcGapDataSource.ACCELERATION, source));
         BarPlot lcLocPlot = new BarPlot(scheduler, "Merge location", updateInterval, Duration.ZERO,
                 new BarPlotData("location [m]", LcGapDataSource.MERGE_LOCATION, source));
+        // dv-s scatter plots
+        String title = "Speed difference vs. distance (follower)";
+        String[] labels = {"< -2.0m/s\u00B2", "[-2.0 -1.0)m/s\u00B2", "[-1.0 0.0)m/s\u00B2", "[0.0 0.5]m/s\u00B2",
+                "(0.5 1.0]m/s\u00B2", "> 1.0m/s\u00B2"};
+        Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE};
+        ScatterDecoration scatterPlotInfo =
+                new ScatterDecoration("dv [m/s]", "s [m]", labels, colors, 5, new Bounds(-10.0, 10.0, 0.0, null));
+        List<ScatterPoint>[] emptyScatterState = emptyScatterState();
+        int[] processed = {0};
+        Supplier<List<ScatterPoint>[]> stateSupplier =
+                () -> extractScatterData(source.followerScatter, emptyScatterState, processed);
+        Scatterplot lcDvAccPlotFollower = new Scatterplot(scheduler, title, updateInterval, scatterPlotInfo, stateSupplier);
+        title = "Speed difference vs. distance (lane changer)";
+        List<ScatterPoint>[] emptyScatterState2 = emptyScatterState();
+        int[] processed2 = {0};
+        stateSupplier = () -> extractScatterData(source.laneChangerScatter, emptyScatterState2, processed2);
+        Scatterplot lcDvAccPlotLaneChanger = new Scatterplot(scheduler, title, updateInterval, scatterPlotInfo, stateSupplier);
 
         ValueMarker marker = new ValueMarker(network.getLink("BC").get().getLength().si);
         marker.setPaint(Color.BLACK);
@@ -218,12 +248,53 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         SwingPlot lcTtcSwingPlot = new SwingPlot(lcTtcPlot);
         SwingPlot lcAccSwingPlot = new SwingPlot(lcAccPlot);
         SwingPlot lcLocSwingPlot = new SwingPlot(lcLocPlot);
-        TablePanel charts = new TablePanel(2, 2);
+        SwingPlot lcDvAccSwingPlotFollower = new SwingPlot(lcDvAccPlotFollower);
+        SwingPlot lcDvAccSwingPlotLaneChanger = new SwingPlot(lcDvAccPlotLaneChanger);
+        TablePanel charts = new TablePanel(3, 2);
         charts.setCell(lcGapSwingPlot.getContentPane(), 0, 0);
         charts.setCell(lcTtcSwingPlot.getContentPane(), 0, 1);
         charts.setCell(lcAccSwingPlot.getContentPane(), 1, 0);
         charts.setCell(lcLocSwingPlot.getContentPane(), 1, 1);
+        charts.setCell(lcDvAccSwingPlotFollower.getContentPane(), 2, 0);
+        charts.setCell(lcDvAccSwingPlotLaneChanger.getContentPane(), 2, 1);
         animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "lane change stats", charts);
+    }
+
+    /**
+     * Incrementally obtain scatter data.
+     * @param data data
+     * @param scatter scatter data to add new data to
+     * @param processed number of items processed in data
+     * @return scatter
+     */
+    private static List<ScatterPoint>[] extractScatterData(final List<LcGapDataSource.DvSA> data, final List<ScatterPoint>[] scatter,
+            final int[] processed)
+    {
+        int i = processed[0];
+        while (i < data.size())
+        {
+            LcGapDataSource.DvSA p = data.get(i);
+            int r = p.a < -2.0 ? 0 : p.a < -1.0 ? 1 : p.a < 0.0 ? 2 : p.a <= 0.5 ? 3 : p.a <= 1.0 ? 4 : 5;
+            scatter[r].add(new ScatterPoint((float) p.dv, (float) p.s));
+            i++;
+        }
+        processed[0] = i;
+        return scatter;
+    }
+
+    /**
+     * Creates empty scatter state.
+     * @return empty scatter state
+     */
+    private static List<ScatterPoint>[] emptyScatterState()
+    {
+        @SuppressWarnings("unchecked")
+        List<ScatterPoint>[] scatter = new List[6];
+        for (int i = 0; i < 6; i++)
+        {
+            scatter[i] = new ArrayList<>();
+        }
+        return scatter;
     }
 
     /**
@@ -327,7 +398,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             IdSupplier idGenerator = new IdSupplier("");
 
             LmrsFactory<Lmrs> tacticalFactory = new LmrsFactory<Lmrs>(Lmrs::new).setStream(stream)
-                    .set(Setting.SYNCHRONIZATION, SYNCHRONIZATION).set(Setting.COOPERATION, COOPERATION);
+                    .set(Setting.SYNCHRONIZATION, SYNCHRONIZATION).set(Setting.COOPERATION, COOPERATION)
+                    .set(Setting.GAP_ACCEPTANCE, GAP_ACCEPTANCE).set(Setting.RELAXATION, RELAXATION);
             if (ADDITIONAL_INCENTIVES)
             {
                 tacticalFactory.set(Setting.INCENTIVE_COURTESY, true);
@@ -436,6 +508,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
 
         /**
+         * Make generator.
          * @param lane the reference lane for this generator
          * @param generationSpeed the speed of the GTU
          * @param id the id of the supplier itself
@@ -450,6 +523,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          * @throws SimRuntimeException in case of scheduling problems
          * @throws NetworkException if the object could not be added to the network
          */
+        @SuppressWarnings("parameternumber")
         private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id, final IdSupplier idSupplier,
                 final ObjectDistribution<LaneBasedGtuTemplate> distribution, final Supplier<Duration> headwaySupplier,
                 final RoomChecker roomChecker, final ParameterFactory bcFactory,
@@ -546,6 +620,12 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         /** Data map. */
         private final Map<String, float[][]> data = new LinkedHashMap<>();
 
+        /** dv-a scatter points of the follower. */
+        private final List<DvSA> followerScatter = Collections.synchronizedList(new ArrayList<>());
+
+        /** dv-a scatter points of the lane changer. */
+        private final List<DvSA> laneChangerScatter = Collections.synchronizedList(new ArrayList<>());
+
         /**
          * Constructor.
          * @param network network
@@ -612,6 +692,11 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 Optional<Gtu> gtu = this.network.getGTU((String) content[0]);
                 if (gtu.isPresent() && gtu.get() instanceof LaneBasedGtu lGtu)
                 {
+                    Point2d point = lGtu.getLocation();
+                    if (point.y > 0.0)
+                    {
+                        return;
+                    }
                     RelativeLane lane = RelativeLane.of(LateralDirectionality.valueOf((String) content[1]), 1);
 
                     try
@@ -655,18 +740,23 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                         addValue(minLagGap, LcGapDataSource.GAP, 0);
                         addValue(minLagTtc, LcGapDataSource.TTC, 0);
 
-                        addValue(gtu.get().getAcceleration().si, LcGapDataSource.ACCELERATION, 1);
+                        // get lane changer acceleration once the new plan is made with updated acceleration
+                        gtu.get().getSimulator().scheduleEventNow(
+                                () -> addValue(gtu.get().getAcceleration().si, LcGapDataSource.ACCELERATION, 1));
                         // get follower acceleration from its first move after the lane change
                         if (nearestFollower != null)
                         {
                             nearestFollower.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
                         }
 
-                        Point2d point = lGtu.getLocation();
-                        if (point.y < 0.0)
+                        addValue(point.x - this.network.getNode("B").get().getLocation().x, LcGapDataSource.MERGE_LOCATION, 0);
+
+                        Optional<Entry<LaneBasedGtu>> leader = getLeader((LaneBasedGtu) gtu.get(), RelativeLane.LEFT);
+                        if (leader.isPresent())
                         {
-                            addValue(point.x - this.network.getNode("B").get().getLocation().x, LcGapDataSource.MERGE_LOCATION,
-                                    0);
+                            double dv = gtu.get().getSpeed().si - leader.get().object().getSpeed().si;
+                            double s = leader.get().distance().si;
+                            this.laneChangerScatter.add(new DvSA(dv, s, gtu.get().getAcceleration().si));
                         }
                     }
                     catch (ParameterException ex)
@@ -680,6 +770,13 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 Optional<Gtu> gtu = this.network.getGTU((String) ((Object[]) event.getContent())[0]);
                 if (gtu.isPresent() && gtu.get() instanceof LaneBasedGtu lGtu)
                 {
+                    Optional<Entry<LaneBasedGtu>> leader = getLeader((LaneBasedGtu) gtu.get(), RelativeLane.CURRENT);
+                    if (leader.isPresent())
+                    {
+                        double dv = gtu.get().getSpeed().si - leader.get().object().getSpeed().si;
+                        double s = leader.get().distance().si;
+                        this.followerScatter.add(new DvSA(dv, s, gtu.get().getAcceleration().si));
+                    }
                     addValue(gtu.get().getAcceleration().si, LcGapDataSource.ACCELERATION, 0);
                     lGtu.removeListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT);
                 }
@@ -703,6 +800,32 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
 
         /**
+         * Obtain leader of GTU at given lane.
+         * @param gtu GTU
+         * @param lane lane
+         * @return leader of GTU at given lane
+         */
+        private static Optional<Entry<LaneBasedGtu>> getLeader(final LaneBasedGtu gtu, final RelativeLane lane)
+        {
+            try
+            {
+                Iterable<Entry<LaneBasedGtu>> leaders =
+                        gtu.getTacticalPlanner().getPerception().getLaneStructure().getDownstreamGtus(lane,
+                                RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR);
+                Iterator<Entry<LaneBasedGtu>> it = leaders.iterator();
+                if (it.hasNext())
+                {
+                    return Optional.of(it.next());
+                }
+                return Optional.empty();
+            }
+            catch (ParameterException ex)
+            {
+                return Optional.empty();
+            }
+        }
+
+        /**
          * Add value to data.
          * @param value value
          * @param key data key
@@ -720,6 +843,16 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             {
                 this.data.get(key)[series][item]++;
             }
+        }
+
+        /**
+         * Scatter data point.
+         * @param dv speed difference
+         * @param s distance
+         * @param a acceleration
+         */
+        public record DvSA(double dv, double s, double a)
+        {
         }
 
     }

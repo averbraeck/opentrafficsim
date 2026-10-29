@@ -61,19 +61,25 @@ public interface Cooperation extends NamedConstants
             double a = Double.MAX_VALUE;
             double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
+            Relaxation relaxation = context.getCarFollowingModel().getRelaxation();
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
                     .getLeaders(relativeLane))
             {
                 double desire = getLaneChangeDesire(leader, lat.flip(), dCoop);
                 if (desire >= dCoop)
                 {
-                    if (lmrsData != null)
+                    double k = relaxation.requiredRelaxationLevel(context.getParameters(), context.getSpeed(), leader)
+                            .orElse(desire);
+                    if (k <= 1.0)
                     {
-                        lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
+                        if (lmrsData != null)
+                        {
+                            lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
+                        }
+                        Acceleration aSingle = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(),
+                                leader.getSpeed(), Math.max(0.0, k));
+                        a = a < aSingle.si ? a : aSingle.si;
                     }
-                    Acceleration aSingle =
-                            LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
-                    a = a < aSingle.si ? a : aSingle.si;
                 }
             }
             return Acceleration.ofSI(a > b ? a : b);
@@ -99,10 +105,11 @@ public interface Cooperation extends NamedConstants
                 return 0.0;
             }
             double d = leader.getBehavior().getLaneChangeDesire(lat);
-            if (d < dCoop && leader.getSignals().isIndicatorOn(lat))
-            {
-                return 1.0;
-            }
+            // The follow triggers cooperation when the indicator is on for whatever
+            // if (d < dCoop && leader.getSignals().isIndicatorOn(lat))
+            // {
+            // return 1.0;
+            // }
             return d;
         }
 

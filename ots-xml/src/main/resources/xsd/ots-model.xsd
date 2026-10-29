@@ -539,9 +539,9 @@
     </xsd:attribute>
     <xsd:attribute name="Synchronization" use="optional">
       <xsd:annotation>
-        <xsd:documentation xml:lang="en">PASSIVE: follow first leader in target lane. PASSIVE_MOVING: keep moving
-          below cooperation threshold. ALIGNGAP: align to middle of adjacent gap. ACTIVE: actively consider whether gaps can be
-          reached in time (not advised).
+        <xsd:documentation xml:lang="en">PASSIVE: follow first leader in target lane. PASSIVE_MOVING: follow first
+          leader in target lane or creep. ALIGN_GAP: align to middle of adjacent gap. ALIGN_GAP_MOVING: align to middle of
+          adjacent gap or creep.
         </xsd:documentation>
         <xsd:appinfo>
           <ots:defaultValue>PASSIVE</ots:defaultValue>
@@ -554,7 +554,7 @@
               <xsd:enumeration value="PASSIVE" />
               <xsd:enumeration value="PASSIVE_MOVING" />
               <xsd:enumeration value="ALIGN_GAP" />
-              <xsd:enumeration value="ACTIVE" />
+              <xsd:enumeration value="ALIGN_GAP_MOVING" />
             </xsd:restriction>
           </xsd:simpleType>
         </xsd:union>
@@ -562,8 +562,8 @@
     </xsd:attribute>
     <xsd:attribute name="Cooperation" use="optional">
       <xsd:annotation>
-        <xsd:documentation xml:lang="en">PASSIVE: follow potential lane changer. PASSIVE_MOVING: follow potential
-          lane changer except at low ego-speed. ACTIVE: follow potential lane changer except when it decelerates strongly.
+        <xsd:documentation xml:lang="en">NONE: none. PASSIVE: follow potential lane changer. PASSIVE_MOVING: follow
+          potential lane changer or creep.
         </xsd:documentation>
         <xsd:appinfo>
           <ots:defaultValue>PASSIVE</ots:defaultValue>
@@ -573,9 +573,9 @@
         <xsd:union memberTypes="ots:Expression">
           <xsd:simpleType>
             <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="NONE" />
               <xsd:enumeration value="PASSIVE" />
               <xsd:enumeration value="PASSIVE_MOVING" />
-              <xsd:enumeration value="ACTIVE" />
             </xsd:restriction>
           </xsd:simpleType>
         </xsd:union>
@@ -583,11 +583,11 @@
     </xsd:attribute>
     <xsd:attribute name="GapAcceptance" use="optional">
       <xsd:annotation>
-        <xsd:documentation xml:lang="en">Accept gap based on potential follower acceleration from car-following
-          model. INFORMED: use headway parameters of potential follower. EGO_HEADWAY use own headway parameters.
+        <xsd:documentation xml:lang="en">INFORMED: car-following acceleration using actual parameters. EGO_HEADWAY:
+          car-following acceleration using ego parameters. RELAXED: based on car-following model relaxation.
         </xsd:documentation>
         <xsd:appinfo>
-          <ots:defaultValue>INFORMED</ots:defaultValue>
+          <ots:defaultValue>RELAXED</ots:defaultValue>
         </xsd:appinfo>
       </xsd:annotation>
       <xsd:simpleType>
@@ -596,6 +596,28 @@
             <xsd:restriction base="xsd:string">
               <xsd:enumeration value="INFORMED" />
               <xsd:enumeration value="EGO_HEADWAY" />
+              <xsd:enumeration value="RELAXED" />
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:union>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="Relaxation" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en">LMRS: T between Tmin and Tmax. STATIC: T between 0 and Tmax. DYNAMIC: T
+          between 0 and Tmax and relaxed speed difference sensitivity.
+        </xsd:documentation>
+        <xsd:appinfo>
+          <ots:defaultValue>DYNAMIC</ots:defaultValue>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:union memberTypes="ots:Expression">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="LMRS" />
+              <xsd:enumeration value="STATIC" />
+              <xsd:enumeration value="DYNAMIC" />
             </xsd:restriction>
           </xsd:simpleType>
         </xsd:union>

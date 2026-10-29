@@ -8,6 +8,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
@@ -51,6 +52,15 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
      */
     Acceleration followingAcceleration(Parameters parameters, Speed speed, SpeedLimits speedLimits, Speed maxVehicleSpeed,
             PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException;
+
+    /**
+     * Returns relaxation. Default implementation returns {@link Relaxation#DYNAMIC}.
+     * @return relaxation
+     */
+    default Relaxation getRelaxation()
+    {
+        return Relaxation.DYNAMIC;
+    }
 
     /**
      * Return the name of the car-following model.

@@ -2,6 +2,8 @@ package org.opentrafficsim.road.gtu.tactical.following;
 
 import java.util.function.Supplier;
 
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
+
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -31,11 +33,12 @@ public class IdmPlusFactory extends AbstractIdmFactory<IdmPlus>
      * @param randomStream random number stream
      * @param desiredHeadway desired headway model
      * @param desiredSpeed desired speed model
+     * @param relaxation relaxation
      */
     public IdmPlusFactory(final StreamInterface randomStream, final Supplier<? extends DesiredHeadwayModel> desiredHeadway,
-            final Supplier<? extends DesiredSpeedModel> desiredSpeed)
+            final Supplier<? extends DesiredSpeedModel> desiredSpeed, final Supplier<? extends Relaxation> relaxation)
     {
-        super(() -> new IdmPlus(desiredHeadway.get(), desiredSpeed.get()), randomStream);
+        super(() -> new IdmPlus(desiredHeadway.get(), desiredSpeed.get(), relaxation.get()), randomStream);
     }
 
     @Override

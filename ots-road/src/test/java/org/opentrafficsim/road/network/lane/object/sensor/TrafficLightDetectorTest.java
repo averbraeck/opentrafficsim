@@ -215,10 +215,8 @@ public final class TrafficLightDetectorTest implements EventListener
                 LanePosition initialLongitudinalPositions = new LanePosition(gtuPosition.lane(), gtuPosition.position());
                 Parameters parameters = DefaultTestParameters.create();
                 LaneBasedStrategicalPlanner strategicalPlanner =
-                        new LaneBasedStrategicalRoutePlanner(
-                                new LmrsFactory<>(Lmrs::new)
-                                        .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing().get()).create(gtu),
-                                gtu);
+                        new LaneBasedStrategicalRoutePlanner(new LmrsFactory<>(Lmrs::new)
+                                .set(Setting.CAR_FOLLOWING_MODEL, (h, v, r) -> new FixedCarFollowing().get()).create(gtu), gtu);
                 gtu.setParameters(parameters);
                 Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
                 if (lanes.length == 6 && pos >= 103)

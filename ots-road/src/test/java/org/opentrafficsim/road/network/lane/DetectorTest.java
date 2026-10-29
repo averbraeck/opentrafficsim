@@ -120,7 +120,7 @@ public final class DetectorTest implements UNITS
         LaneBasedGtu car = new LaneBasedGtu(carID, gtuType, carLength, carWidth, maximumSpeed, carLength.times(0.5),
                 (RoadNetwork) network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory<>(Lmrs::new)
-                .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing(Acceleration.ofSI(0.5)).get()).create(car),
+                .set(Setting.CAR_FOLLOWING_MODEL, (h, v, r) -> new FixedCarFollowing(Acceleration.ofSI(0.5)).get()).create(car),
                 car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions.getLocation(), initialSpeed);

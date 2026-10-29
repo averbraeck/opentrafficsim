@@ -7,6 +7,8 @@ import org.opentrafficsim.road.gtu.tactical.following.DesiredHeadwayModel;
 import org.opentrafficsim.road.gtu.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.gtu.tactical.following.Idm;
 import org.opentrafficsim.road.gtu.tactical.following.IdmPlus;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.CarFollowingModelSupplier;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 
 /**
  * Type for car-following models based on {@link DesiredHeadwayModel} and {@link DesiredSpeedModel}.
@@ -16,7 +18,8 @@ import org.opentrafficsim.road.gtu.tactical.following.IdmPlus;
  * </p>
  * @author Wouter Schakel
  */
-public class CarFollowingModelType extends ExpressionType<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>>
+public class CarFollowingModelType
+        extends ExpressionType<CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel>>
 {
 
     /** Serialization version UID. */
@@ -25,15 +28,16 @@ public class CarFollowingModelType extends ExpressionType<BiFunction<DesiredHead
     /** Function to convert output from expression to the right type. */
     @SuppressWarnings("unchecked")
     public static final SerializableFunction<Object,
-            BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>> TO_TYPE = SerializableFunction.of(
-                    (Class<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>>) (Class<?>) BiFunction.class,
-                    CarFollowingModelType::valueOf);
+            CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel>> TO_TYPE =
+                    SerializableFunction.of((Class<CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation,
+                            CarFollowingModel>>) (Class<?>) BiFunction.class, CarFollowingModelType::valueOf);
 
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
      */
-    public CarFollowingModelType(final BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> value)
+    public CarFollowingModelType(
+            final CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel> value)
     {
         super(value);
     }
@@ -52,7 +56,8 @@ public class CarFollowingModelType extends ExpressionType<BiFunction<DesiredHead
      * @param str input string
      * @return parsed output
      */
-    public static BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> valueOf(final String str)
+    public static CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel> valueOf(
+            final String str)
     {
         if ("idm".equalsIgnoreCase(str))
         {

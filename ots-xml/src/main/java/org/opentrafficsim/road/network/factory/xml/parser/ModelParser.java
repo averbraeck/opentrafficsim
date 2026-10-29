@@ -542,6 +542,7 @@ public final class ModelParser
         setForModel(lmrsFactory, gtuTypeModel.getSynchronization(), Setting.SYNCHRONIZATION, gtuType, eval);
         setForModel(lmrsFactory, gtuTypeModel.getCooperation(), Setting.COOPERATION, gtuType, eval);
         setForModel(lmrsFactory, gtuTypeModel.getGapAcceptance(), Setting.GAP_ACCEPTANCE, gtuType, eval);
+        setForModel(lmrsFactory, gtuTypeModel.getRelaxation(), Setting.RELAXATION, gtuType, eval);
 
         // mandatory incentives
         MandatoryIncentives mi = gtuTypeModel.getMandatoryIncentives();

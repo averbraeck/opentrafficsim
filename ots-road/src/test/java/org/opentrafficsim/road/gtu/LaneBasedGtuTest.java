@@ -140,7 +140,7 @@ public final class LaneBasedGtuTest implements UNITS
         LaneBasedGtu truck =
                 new LaneBasedGtu("Truck", truckType, truckLength, truckWidth, maximumSpeed, truckLength.times(0.5), network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory<>(Lmrs::new)
-                .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing().get()).create(truck), truck);
+                .set(Setting.CAR_FOLLOWING_MODEL, (h, v, r) -> new FixedCarFollowing().get()).create(truck), truck);
         truck.setParameters(parameters);
         truck.init(strategicalPlanner, getReferencePosition(truckPositions).getLocation(), truckSpeed);
         // Verify that the truck is registered on the correct Lanes
@@ -215,7 +215,7 @@ public final class LaneBasedGtuTest implements UNITS
                 LaneBasedGtu car =
                         new LaneBasedGtu("Car", carType, carLength, carWidth, maximumSpeed, carLength.times(0.5), network);
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory<>(Lmrs::new)
-                        .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing().get()).create(car), car);
+                        .set(Setting.CAR_FOLLOWING_MODEL, (h, v, r) -> new FixedCarFollowing().get()).create(car), car);
                 car.setParameters(parameters);
                 car.init(strategicalPlanner, getReferencePosition(carPositions).getLocation(), carSpeed);
                 // leader = truck.headway(forwardMaxDistance);
@@ -432,7 +432,7 @@ public final class LaneBasedGtuTest implements UNITS
             LaneBasedGtu car = new LaneBasedGtu("Car" + this.idGenerator.get(), carType, new Length(4, METER),
                     new Length(1.8, METER), maximumSpeed, Length.ofSI(2.0), network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory<>(Lmrs::new)
-                    .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing().get()).create(car), car);
+                    .set(Setting.CAR_FOLLOWING_MODEL, (h, v, r) -> new FixedCarFollowing().get()).create(car), car);
             car.setParameters(parameters);
             car.init(strategicalPlanner, getReferencePosition(carPositions).getLocation(), carSpeed);
             // Let the simulator execute the move method of the car

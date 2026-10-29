@@ -50,8 +50,7 @@ public interface Synchronization extends NamedConstants
     {
         @Override
         public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
@@ -59,7 +58,7 @@ public interface Synchronization extends NamedConstants
             if (leader != null)
             {
                 // follow prospective leader
-                a = LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
+                a = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
 
                 // never stop before we can actually merge
                 Length xMerge = Synchronization.getMergeDistance(context.getPerception(), lat).minus(context.getLength());
@@ -92,15 +91,14 @@ public interface Synchronization extends NamedConstants
     {
         @Override
         public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
             if (context.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si
                     && !Synchronization.leaderIsCreeping(context, desire, lat))
             {
                 return Acceleration.POS_MAXVALUE;
             }
-            return PASSIVE.synchronize(context, desire, lat, lmrsData, initiatedLaneChange);
+            return PASSIVE.synchronize(context, desire, lat, initiatedLaneChange);
         }
 
         @Override
@@ -120,8 +118,7 @@ public interface Synchronization extends NamedConstants
     {
         @Override
         public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
@@ -129,7 +126,7 @@ public interface Synchronization extends NamedConstants
             if (leader != null)
             {
                 // follow prospective leader
-                a = LmrsUtil.relaxedAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
+                a = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
 
                 // follow middle of gap, allow acceleration to be higher
                 PerceivedGtu follower = Synchronization.getProspectiveFollower(context, relativeLane, leader);
@@ -177,15 +174,14 @@ public interface Synchronization extends NamedConstants
     {
         @Override
         public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LmrsData lmrsData, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
             if (context.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si
                     && !Synchronization.leaderIsCreeping(context, desire, lat))
             {
                 return Acceleration.POS_MAXVALUE;
             }
-            return ALIGN_GAP.synchronize(context, desire, lat, lmrsData, initiatedLaneChange);
+            return ALIGN_GAP.synchronize(context, desire, lat, initiatedLaneChange);
         }
 
         @Override
@@ -200,13 +196,12 @@ public interface Synchronization extends NamedConstants
      * @param context tactical information such as parameters and car-following model
      * @param desire level of lane change desire
      * @param lat lateral direction for synchronization
-     * @param lmrsData LMRS data
      * @param initiatedLaneChange lateral direction of initiated lane change
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    Acceleration synchronize(TacticalContextEgo context, double desire, LateralDirectionality lat, LmrsData lmrsData,
+    Acceleration synchronize(TacticalContextEgo context, double desire, LateralDirectionality lat,
             LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException;
 
     /**
@@ -225,20 +220,16 @@ public interface Synchronization extends NamedConstants
         double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                 context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(relativeLane);
-
-        if (leaders != null)
+        if (!leaders.isEmpty())
         {
-            if (desire >= dCoop && !leaders.isEmpty())
+            Relaxation relaxation = context.getCarFollowingModel().getRelaxation();
+            for (PerceivedGtu leader : leaders)
             {
-                // for dCoop < d take first leader
-                return leaders.first();
-            }
-            else
-            {
-                // for dSync < d < dCoop take first leader with non-zero speed
-                for (PerceivedGtu leader : leaders)
+                if (desire >= dCoop || leader.getSpeed().si > 0.0)
                 {
-                    if (leader.getSpeed().gt0())
+                    double k = relaxation.requiredRelaxationLevel(context.getParameters(), context.getSpeed(), leader)
+                            .orElse(desire);
+                    if (k <= 1.0)
                     {
                         return leader;
                     }

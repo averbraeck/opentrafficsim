@@ -208,6 +208,14 @@
         </jaxb:baseType>
       </jaxb:property>
     </jaxb:bindings>
+    <jaxb:bindings node="//xsd:complexType[@name='LmrsModel']/xsd:attribute[@name='Relaxation']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.RelaxationType"
+            adapter="org.opentrafficsim.xml.bindings.RelaxationAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
   </jaxb:bindings>
 
   <jaxb:bindings schemaLocation="ots-demand.xsd">

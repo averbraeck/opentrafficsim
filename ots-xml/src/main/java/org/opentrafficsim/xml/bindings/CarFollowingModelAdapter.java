@@ -1,10 +1,10 @@
 package org.opentrafficsim.xml.bindings;
 
-import java.util.function.BiFunction;
-
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.tactical.following.DesiredHeadwayModel;
 import org.opentrafficsim.road.gtu.tactical.following.DesiredSpeedModel;
+import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.CarFollowingModelSupplier;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 import org.opentrafficsim.xml.bindings.types.CarFollowingModelType;
 
 /**
@@ -15,8 +15,8 @@ import org.opentrafficsim.xml.bindings.types.CarFollowingModelType;
  * </p>
  * @author Wouter Schakel
  */
-public class CarFollowingModelAdapter
-        extends ExpressionAdapter<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>, CarFollowingModelType>
+public class CarFollowingModelAdapter extends ExpressionAdapter<
+        CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel>, CarFollowingModelType>
 {
 
     @Override

@@ -12,9 +12,11 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.base.parameters.constraint.DualBound;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
@@ -62,6 +64,10 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     public static final ParameterTypeDouble DELTA = new ParameterTypeDouble("delta",
             "Acceleration flattening exponent towards desired speed", 4.0, ConstraintInterface.POSITIVE);
 
+    /** Parameter describing the level of speed difference relaxation in car-following. */
+    public static final ParameterTypeDouble KAPPA =
+            new ParameterTypeDouble("kappa", "car-following relaxation", 0.0, DualBound.UNITINTERVAL);
+
     /** Default IDM desired headway model. */
     public static final IdmDesiredHeadwayModel HEADWAY = IdmDesiredHeadwayModel.SINGLETON;
 
@@ -72,10 +78,12 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
      * Constructor with modular models for desired headway and desired speed.
      * @param desiredHeadwayModel desired headway model
      * @param desiredSpeedModel desired speed model
+     * @param relaxation relaxation
      */
-    public AbstractIdm(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    public AbstractIdm(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel,
+            final Relaxation relaxation)
     {
-        super(desiredHeadwayModel, desiredSpeedModel);
+        super(desiredHeadwayModel, desiredSpeedModel, relaxation);
     }
 
     /**
@@ -136,10 +144,10 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
      * @return Dynamic desired headway.
      * @throws ParameterException In case of parameter exception.
      */
-    protected final Length dynamicDesiredHeadway(final Parameters parameters, final Speed speed, final Length desiredHeadway,
+    protected final double dynamicDesiredHeadway(final Parameters parameters, final Speed speed, final Length desiredHeadway,
             final Speed leaderSpeed) throws ParameterException
     {
-        Length sStar = desiredHeadway.plus(dynamicHeadwayTerm(parameters, speed, leaderSpeed));
+        double sStar = desiredHeadway.si + dynamicHeadwayTerm(parameters, speed, leaderSpeed);
         /*
          * Due to a power of 2 in the IDM, negative values of sStar are not allowed. A negative sStar means that the leader is
          * faster to such an extent, that the equilibrium headway (s0+vT) is completely compensated by the dynamic part in
@@ -147,28 +155,31 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
          * equilibrium headway minus the stopping distance (i.e. sStar > s0), which means the driver wants to follow with
          * acceleration. Note that usually the free term determines acceleration in such cases.
          */
-        Length s0 = parameters.getParameter(S0);
+        double s0 = parameters.getParameter(S0).si;
         /*
          * Limit used to be 0, but the IDM is very sensitive there. With a decelerating leader, an ok acceleration in one time
          * step, may results in acceleration < -10 in the next.
          */
-        return sStar.si > s0.si ? sStar : s0;
+        return Math.max(sStar, s0);
     }
 
     /**
      * Determines the dynamic headway term. May be used on individual leaders for multi-anticipative following.
      * @param parameters Parameters.
-     * @param speed Current speed.
+     * @param egoSpeed Current speed.
      * @param leaderSpeed Speed of the leading vehicle.
      * @return Dynamic headway term.
      * @throws ParameterException In case of parameter exception.
      */
-    protected final Length dynamicHeadwayTerm(final Parameters parameters, final Speed speed, final Speed leaderSpeed)
+    protected final double dynamicHeadwayTerm(final Parameters parameters, final Speed egoSpeed, final Speed leaderSpeed)
             throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
         Acceleration b = parameters.getParameter(B);
-        return Length.ofSI(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)));
+        double dv = egoSpeed.si - leaderSpeed.si;
+        double k = parameters.getParameter(KAPPA);
+        double v2 = (1.0 - k) * egoSpeed.si + k * Math.abs(dv);
+        return v2 * dv / (2 * Math.sqrt(a.si * b.si));
     }
 
     /**

@@ -7,6 +7,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 
 /**
  * Implementation of the IDM. See <a
@@ -25,17 +26,19 @@ public class Idm extends AbstractIdm
      */
     public Idm()
     {
-        super(HEADWAY, DESIRED_SPEED);
+        super(HEADWAY, DESIRED_SPEED, Relaxation.DYNAMIC);
     }
 
     /**
      * Constructor with modular models for desired headway and desired speed.
      * @param desiredHeadwayModel desired headway model
      * @param desiredSpeedModel desired speed model
+     * @param relaxation relaxation
      */
-    public Idm(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    public Idm(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel,
+            final Relaxation relaxation)
     {
-        super(desiredHeadwayModel, desiredSpeedModel);
+        super(desiredHeadwayModel, desiredSpeedModel, relaxation);
     }
 
     @Override
@@ -57,8 +60,7 @@ public class Idm extends AbstractIdm
     {
         Acceleration a = parameters.getParameter(A);
         PerceivedObject leader = leaders.first();
-        double sRatio =
-                dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
+        double sRatio = dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()) / leader.getDistance().si;
         double aInt = -a.si * sRatio * sRatio;
         return Acceleration.ofSI(aFree.si + aInt);
     }

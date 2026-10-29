@@ -133,7 +133,7 @@ public final class CarTest implements UNITS
         LaneBasedGtu gtu = new LaneBasedGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), network);
         gtu.setParameters(parameters);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory<>(Lmrs::new)
-                .set(Setting.CAR_FOLLOWING_MODEL, (h, v) -> new FixedCarFollowing().get()).create(gtu), gtu);
+                .set(Setting.CAR_FOLLOWING_MODEL, (h, v, r) -> new FixedCarFollowing().get()).create(gtu), gtu);
         gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition).getLocation(), initialSpeed);
 
         return gtu;

@@ -13,11 +13,13 @@ import org.opentrafficsim.xml.bindings.CarFollowingModelAdapter;
 import org.opentrafficsim.xml.bindings.CooperationAdapter;
 import org.opentrafficsim.xml.bindings.GapAcceptanceAdapter;
 import org.opentrafficsim.xml.bindings.OnOffAdapter;
+import org.opentrafficsim.xml.bindings.RelaxationAdapter;
 import org.opentrafficsim.xml.bindings.SynchronizationAdapter;
 import org.opentrafficsim.xml.bindings.types.BooleanType;
 import org.opentrafficsim.xml.bindings.types.CarFollowingModelType;
 import org.opentrafficsim.xml.bindings.types.CooperationType;
 import org.opentrafficsim.xml.bindings.types.GapAcceptanceType;
+import org.opentrafficsim.xml.bindings.types.RelaxationType;
 import org.opentrafficsim.xml.bindings.types.SynchronizationType;
 
 
@@ -116,7 +118,7 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
  *                 <enumeration value="PASSIVE"/>
  *                 <enumeration value="PASSIVE_MOVING"/>
  *                 <enumeration value="ALIGN_GAP"/>
- *                 <enumeration value="ACTIVE"/>
+ *                 <enumeration value="ALIGN_GAP_MOVING"/>
  *               </restriction>
  *             </simpleType>
  *           </union>
@@ -127,9 +129,9 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
  *           <union memberTypes=" {http://www.opentrafficsim.org/ots}Expression">
  *             <simpleType>
  *               <restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *                 <enumeration value="NONE"/>
  *                 <enumeration value="PASSIVE"/>
  *                 <enumeration value="PASSIVE_MOVING"/>
- *                 <enumeration value="ACTIVE"/>
  *               </restriction>
  *             </simpleType>
  *           </union>
@@ -142,6 +144,20 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
  *               <restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *                 <enumeration value="INFORMED"/>
  *                 <enumeration value="EGO_HEADWAY"/>
+ *                 <enumeration value="RELAXED"/>
+ *               </restriction>
+ *             </simpleType>
+ *           </union>
+ *         </simpleType>
+ *       </attribute>
+ *       <attribute name="Relaxation">
+ *         <simpleType>
+ *           <union memberTypes=" {http://www.opentrafficsim.org/ots}Expression">
+ *             <simpleType>
+ *               <restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *                 <enumeration value="LMRS"/>
+ *                 <enumeration value="STATIC"/>
+ *                 <enumeration value="DYNAMIC"/>
  *               </restriction>
  *             </simpleType>
  *           </union>
@@ -208,30 +224,38 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
     @XmlJavaTypeAdapter(CarFollowingModelAdapter.class)
     protected CarFollowingModelType carFollowingModel;
     /**
-     * PASSIVE: follow first leader in target lane. PASSIVE_MOVING: keep moving
-     *           below cooperation threshold. ALIGNGAP: align to middle of adjacent gap. ACTIVE: actively consider whether gaps can be
-     *           reached in time (not advised).
+     * PASSIVE: follow first leader in target lane. PASSIVE_MOVING: follow first
+     *           leader in target lane or creep. ALIGN_GAP: align to middle of adjacent gap. ALIGN_GAP_MOVING: align to middle of
+     *           adjacent gap or creep.
      * 
      */
     @XmlAttribute(name = "Synchronization")
     @XmlJavaTypeAdapter(SynchronizationAdapter.class)
     protected SynchronizationType synchronization;
     /**
-     * PASSIVE: follow potential lane changer. PASSIVE_MOVING: follow potential
-     *           lane changer except at low ego-speed. ACTIVE: follow potential lane changer except when it decelerates strongly.
+     * NONE: none. PASSIVE: follow potential lane changer. PASSIVE_MOVING: follow
+     *           potential lane changer or creep.
      * 
      */
     @XmlAttribute(name = "Cooperation")
     @XmlJavaTypeAdapter(CooperationAdapter.class)
     protected CooperationType cooperation;
     /**
-     * Accept gap based on potential follower acceleration from car-following
-     *           model. INFORMED: use headway parameters of potential follower. EGO_HEADWAY use own headway parameters.
+     * INFORMED: car-following acceleration using actual parameters. EGO_HEADWAY:
+     *           car-following acceleration using ego parameters. RELAXED: based on car-following model relaxation.
      * 
      */
     @XmlAttribute(name = "GapAcceptance")
     @XmlJavaTypeAdapter(GapAcceptanceAdapter.class)
     protected GapAcceptanceType gapAcceptance;
+    /**
+     * LMRS: T between Tmin and Tmax. STATIC: T between 0 and Tmax. DYNAMIC: T
+     *           between 0 and Tmax and relaxed speed difference sensitivity.
+     * 
+     */
+    @XmlAttribute(name = "Relaxation")
+    @XmlJavaTypeAdapter(RelaxationAdapter.class)
+    protected RelaxationType relaxation;
 
     /**
      * Mandatory lane change incentives that increasingly overrule incongruent
@@ -387,9 +411,9 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
     }
 
     /**
-     * PASSIVE: follow first leader in target lane. PASSIVE_MOVING: keep moving
-     *           below cooperation threshold. ALIGNGAP: align to middle of adjacent gap. ACTIVE: actively consider whether gaps can be
-     *           reached in time (not advised).
+     * PASSIVE: follow first leader in target lane. PASSIVE_MOVING: follow first
+     *           leader in target lane or creep. ALIGN_GAP: align to middle of adjacent gap. ALIGN_GAP_MOVING: align to middle of
+     *           adjacent gap or creep.
      * 
      * @return
      *     possible object is
@@ -414,8 +438,8 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
     }
 
     /**
-     * PASSIVE: follow potential lane changer. PASSIVE_MOVING: follow potential
-     *           lane changer except at low ego-speed. ACTIVE: follow potential lane changer except when it decelerates strongly.
+     * NONE: none. PASSIVE: follow potential lane changer. PASSIVE_MOVING: follow
+     *           potential lane changer or creep.
      * 
      * @return
      *     possible object is
@@ -440,8 +464,8 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
     }
 
     /**
-     * Accept gap based on potential follower acceleration from car-following
-     *           model. INFORMED: use headway parameters of potential follower. EGO_HEADWAY use own headway parameters.
+     * INFORMED: car-following acceleration using actual parameters. EGO_HEADWAY:
+     *           car-following acceleration using ego parameters. RELAXED: based on car-following model relaxation.
      * 
      * @return
      *     possible object is
@@ -463,6 +487,32 @@ import org.opentrafficsim.xml.bindings.types.SynchronizationType;
      */
     public void setGapAcceptance(GapAcceptanceType value) {
         this.gapAcceptance = value;
+    }
+
+    /**
+     * LMRS: T between Tmin and Tmax. STATIC: T between 0 and Tmax. DYNAMIC: T
+     *           between 0 and Tmax and relaxed speed difference sensitivity.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public RelaxationType getRelaxation() {
+        return relaxation;
+    }
+
+    /**
+     * Sets the value of the relaxation property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     * @see #getRelaxation()
+     */
+    public void setRelaxation(RelaxationType value) {
+        this.relaxation = value;
     }
 
 

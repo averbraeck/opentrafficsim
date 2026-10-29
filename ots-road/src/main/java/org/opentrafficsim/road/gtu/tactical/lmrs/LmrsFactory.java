@@ -92,6 +92,7 @@ import org.opentrafficsim.road.gtu.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.MandatoryIncentive;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.VoluntaryIncentive;
@@ -356,25 +357,30 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     /** Car-following model: IDM, IDM_PLUS (default) or IDM_PLUS_MULTI. */
     @Option(names = {"--carFollowingModel"}, description = "Car-following model: IDM, IDM_PLUS or IDM_PLUS_MULTI",
             defaultValue = "IDM_PLUS", split = "\\|", splitSynopsisLabel = "|", converter = CarFollowingModelConverter.class)
-    private List<
-            BiFunction<? super DesiredHeadwayModel, ? super DesiredSpeedModel, ? extends CarFollowingModel>> carFollowingModel =
-                    listOf(IdmPlus::new);
+    private List<CarFollowingModelSupplier<? super DesiredHeadwayModel, ? super DesiredSpeedModel, ? super Relaxation,
+            ? extends CarFollowingModel>> carFollowingModel = listOf(IdmPlus::new);
 
-    /** Lane change synchronization: PASSIVE (default), PASSIVE_MOVING, ALIGN_GAP or ACTIVE. */
+    /** Lane change synchronization: PASSIVE, PASSIVE_MOVING, ALIGN_GAP or ALIGN_GAP_MOVING (default). */
     @Option(names = {"--synchronization"},
-            description = "Lane change synchronization: PASSIVE, PASSIVE_MOVING, ALIGN_GAP or ACTIVE", defaultValue = "PASSIVE",
-            split = "\\|", splitSynopsisLabel = "|", converter = SynchronizationConverter.class)
-    private List<Synchronization> synchronization = listOf(Synchronization.PASSIVE);
+            description = "Lane change synchronization: PASSIVE, PASSIVE_MOVING, ALIGN_GAP or ALIGN_GAP_MOVING",
+            defaultValue = "ALIGN_GAP_MOVING", split = "\\|", splitSynopsisLabel = "|",
+            converter = SynchronizationConverter.class)
+    private List<Synchronization> synchronization = listOf(Synchronization.ALIGN_GAP_MOVING);
 
-    /** Lane change cooperation: PASSIVE (default), PASSIVE_MOVING or ACTIVE. */
-    @Option(names = {"--cooperation"}, description = "Lane change cooperation: PASSIVE, PASSIVE_MOVING or ACTIVE",
-            defaultValue = "PASSIVE", split = "\\|", splitSynopsisLabel = "|", converter = CooperationConverter.class)
-    private List<Cooperation> cooperation = listOf(Cooperation.PASSIVE);
+    /** Lane change cooperation: NONE, PASSIVE or PASSIVE_MOVING (default). */
+    @Option(names = {"--cooperation"}, description = "Lane change cooperation: NONE, PASSIVE or PASSIVE_MOVING",
+            defaultValue = "PASSIVE_MOVING", split = "\\|", splitSynopsisLabel = "|", converter = CooperationConverter.class)
+    private List<Cooperation> cooperation = listOf(Cooperation.PASSIVE_MOVING);
 
-    /** Lane change gap-acceptance: INFORMED (default) or EGO_HEADWAY. */
-    @Option(names = {"--gapAcceptance"}, description = "Lane change gap-acceptance: INFORMED or EGO_HEADWAY",
-            defaultValue = "INFORMED", split = "\\|", splitSynopsisLabel = "|", converter = GapAcceptanceConverter.class)
-    private List<GapAcceptance> gapAcceptance = listOf(GapAcceptance.INFORMED);
+    /** Lane change gap-acceptance: INFORMED, EGO_HEADWAY or RELAXED (default). */
+    @Option(names = {"--gapAcceptance"}, description = "Lane change gap-acceptance: INFORMED, EGO_HEADWAY or RELAXED",
+            defaultValue = "RELAXED", split = "\\|", splitSynopsisLabel = "|", converter = GapAcceptanceConverter.class)
+    private List<GapAcceptance> gapAcceptance = listOf(GapAcceptance.RELAXED);
+
+    /** Lane change relaxation: LMRS, STATIC or DYNAMIC (default). */
+    @Option(names = {"--gapAcceptance"}, description = "Lane change relaxation: LMRS, STATIC or DYNAMIC",
+            defaultValue = "DYNAMIC", split = "\\|", splitSynopsisLabel = "|", converter = RelaxationConverter.class)
+    private List<Relaxation> relaxation = listOf(Relaxation.DYNAMIC);
 
     // LMRS -> Mandatory incentives
 
@@ -827,7 +833,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         {
             DesiredSpeedModel desiredSpeedModel = get(this.socioSpeed, gtuType)
                     ? new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED) : AbstractIdm.DESIRED_SPEED;
-            return get(this.carFollowingModel, gtuType).apply(AbstractIdm.HEADWAY, desiredSpeedModel);
+            Relaxation relax = get(this.relaxation, gtuType);
+            return get(this.carFollowingModel, gtuType).get(AbstractIdm.HEADWAY, desiredSpeedModel, relax);
         });
     }
 
@@ -1298,17 +1305,21 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         // LMRS
 
         /** Car-following model: IDM, IDM_PLUS (default) or IDM_PLUS_MULTI. */
-        public static final Setting<BiFunction<? super DesiredHeadwayModel, ? super DesiredSpeedModel,
-                ? extends CarFollowingModel>> CAR_FOLLOWING_MODEL = new Setting<>((factory) -> factory.carFollowingModel);
+        public static final Setting<CarFollowingModelSupplier<? super DesiredHeadwayModel, ? super DesiredSpeedModel,
+                ? super Relaxation, ? extends CarFollowingModel>> CAR_FOLLOWING_MODEL =
+                        new Setting<>((factory) -> factory.carFollowingModel);
 
-        /** Lane change synchronization: PASSIVE (default), PASSIVE_MOVING, ALIGN_GAP or ACTIVE. */
+        /** Lane change synchronization: PASSIVE, PASSIVE_MOVING, ALIGN_GAP or ALIGN_GAP_MOVING (default). */
         public static final Setting<Synchronization> SYNCHRONIZATION = new Setting<>((factory) -> factory.synchronization);
 
-        /** Lane change cooperation: PASSIVE (default), PASSIVE_MOVING or ACTIVE. */
+        /** Lane change cooperation: NONE, PASSIVE or PASSIVE_MOVING (default). */
         public static final Setting<Cooperation> COOPERATION = new Setting<>((factory) -> factory.cooperation);
 
-        /** Lane change gap-acceptance: INFORMED (default) or EGO_HEADWAY. */
+        /** Lane change gap-acceptance: INFORMED, EGO_HEADWAY or RELAXED (default). */
         public static final Setting<GapAcceptance> GAP_ACCEPTANCE = new Setting<>((factory) -> factory.gapAcceptance);
+
+        /** Lane change relaxation: LMRS, STATIC or DYNAMIC (default). */
+        public static final Setting<Relaxation> RELAXATION = new Setting<>((factory) -> factory.relaxation);
 
         // LMRS -> Mandatory incentives
 
@@ -1522,10 +1533,29 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     }
 
     /**
+     * Car-following model supplier.
+     * @param <H> desired headway model type
+     * @param <S> desired speed model type
+     * @param <R> relaxation type
+     * @param <C> car-following model type
+     */
+    public interface CarFollowingModelSupplier<H, S, R, C>
+    {
+        /**
+         * Returns the car-following model.
+         * @param desiredHeadwayModel desired headway model
+         * @param desiredSpeedModel desired speed model
+         * @param relaxation relaxation
+         * @return car-following model.
+         */
+        C get(H desiredHeadwayModel, S desiredSpeedModel, R relaxation);
+    }
+
+    /**
      * Argument converter for car-following supplier.
      */
-    public static class CarFollowingModelConverter
-            implements ITypeConverter<BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>>
+    public static class CarFollowingModelConverter implements
+            ITypeConverter<CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel>>
     {
         /**
          * Constructor.
@@ -1536,8 +1566,8 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         }
 
         @Override
-        public BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> convert(final String value)
-                throws Exception
+        public CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel> convert(
+                final String value) throws Exception
         {
             return switch (value.toLowerCase())
             {
@@ -1554,15 +1584,16 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
      * Recognition interface to add nLeaders parameter.
      */
     public static final class IdmPlusMultiFunction
-            implements BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel>, Stateless<IdmPlusMultiFunction>
+            implements CarFollowingModelSupplier<DesiredHeadwayModel, DesiredSpeedModel, Relaxation, CarFollowingModel>,
+            Stateless<IdmPlusMultiFunction>
     {
         /** Singleton instance. */
         public static final IdmPlusMultiFunction SINGLETON = new IdmPlusMultiFunction();
 
         @Override
-        public CarFollowingModel apply(final DesiredHeadwayModel t, final DesiredSpeedModel u)
+        public CarFollowingModel get(final DesiredHeadwayModel t, final DesiredSpeedModel u, final Relaxation r)
         {
-            return new IdmPlusMulti(t, u);
+            return new IdmPlusMulti(t, u, r);
         }
 
         @Override
@@ -1658,9 +1689,42 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
                     return GapAcceptance.INFORMED;
                 case "ego_headway":
                     return GapAcceptance.EGO_HEADWAY;
+                case "relaxed":
+                    return GapAcceptance.RELAXED;
                 default:
                     throw new IllegalArgumentException(
                             "Unable to parse gap-acceptance " + value + ". Use any of INFORMED or EGO_HEADWAY.");
+            }
+        }
+    }
+
+    /**
+     * Argument converter for {@link Relaxation}.
+     */
+    public static class RelaxationConverter implements ITypeConverter<Relaxation>
+    {
+        /**
+         * Constructor.
+         */
+        public RelaxationConverter()
+        {
+            //
+        }
+
+        @Override
+        public Relaxation convert(final String value) throws Exception
+        {
+            switch (value.toLowerCase())
+            {
+                case "lmrs":
+                    return Relaxation.LMRS;
+                case "static":
+                    return Relaxation.STATIC;
+                case "dynamic":
+                    return Relaxation.DYNAMIC;
+                default:
+                    throw new IllegalArgumentException(
+                            "Unable to parse relaxation " + value + ". Use any of LRMS, STATIC or DYNAMIC.");
             }
         }
     }

@@ -10,6 +10,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Relaxation;
 import org.opentrafficsim.road.network.speed.SpeedLimits;
 
 /**
@@ -29,15 +30,27 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     /** Desired speed model. */
     private DesiredSpeedModel desiredSpeedModel;
 
+    /** Relaxation. */
+    private Relaxation relaxation;
+
     /**
      * Constructor.
      * @param desiredHeadwayModel desired headway model
      * @param desiredSpeedModel desired speed model
+     * @param relaxation relaxation
      */
-    public AbstractCarFollowingModel(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
+    public AbstractCarFollowingModel(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel,
+            final Relaxation relaxation)
     {
         this.desiredHeadwayModel = desiredHeadwayModel;
         this.desiredSpeedModel = desiredSpeedModel;
+        this.relaxation = relaxation;
+    }
+
+    @Override
+    public Relaxation getRelaxation()
+    {
+        return this.relaxation;
     }
 
     @Override
