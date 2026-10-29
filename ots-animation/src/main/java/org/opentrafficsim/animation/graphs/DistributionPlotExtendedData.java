@@ -32,7 +32,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
  * @param <Z> value type that needs to be consistent between extended data type and label data
  */
 public class DistributionPlotExtendedData<G extends GtuData, Z extends Number> extends AbstractPlot<DistributionPaintState>
-        implements IntervalXYDataset
+        implements IntervalXYDataset, TabularDataset
 {
 
     /** Sampler data. */

@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.graphs;
 
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -14,7 +15,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYShapeRenderer;
 import org.jfree.data.DomainOrder;
-import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.animation.graphs.AbstractPlot.PaintState;
 import org.opentrafficsim.animation.graphs.Scatterplot.ScatterState;
 
@@ -25,11 +25,14 @@ import org.opentrafficsim.animation.graphs.Scatterplot.ScatterState;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * @author Wouter Schakel
  */
-public class Scatterplot extends AbstractPlot<ScatterState> implements XYDataset
+public class Scatterplot extends AbstractPlot<ScatterState> implements TabularDataset
 {
 
     /** Data source. */
     private final Supplier<List<ScatterPoint>[]> source;
+
+    /** Series labels. */
+    private final String[] labels;
 
     /**
      * Constructor.
@@ -47,6 +50,7 @@ public class Scatterplot extends AbstractPlot<ScatterState> implements XYDataset
         Throw.whenNull(scatterDecoration, "scatterPlotInfo");
         Throw.whenNull(source, "source");
         this.source = source;
+        this.labels = scatterDecoration.seriesLabels();
         setChart(createChart(scatterDecoration));
     }
 
@@ -139,14 +143,14 @@ public class Scatterplot extends AbstractPlot<ScatterState> implements XYDataset
     @SuppressWarnings("rawtypes")
     public Comparable getSeriesKey(final int series)
     {
-        return Integer.valueOf(series);
+        return this.labels[series];
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public int indexOf(final Comparable seriesKey)
     {
-        return (Integer) seriesKey;
+        return Arrays.asList(this.labels).indexOf(seriesKey);
     }
 
     @Override

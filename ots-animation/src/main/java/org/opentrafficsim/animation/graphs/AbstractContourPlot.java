@@ -34,7 +34,7 @@ import org.opentrafficsim.animation.graphs.ContourDataSource.Dimension;
  * @param <Z> z-value type
  */
 public abstract class AbstractContourPlot<Z extends Number> extends AbstractSpaceTimePlot<ContourPaintState>
-        implements XyInterpolatedDataset
+        implements XyInterpolatedDataset, TabularDataset
 {
 
     /** Color scale for the graph. */

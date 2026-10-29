@@ -18,7 +18,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.DomainOrder;
-import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.animation.graphs.AbstractPlot.PaintState;
 import org.opentrafficsim.animation.graphs.FundamentalDiagram.FdPaintState;
 
@@ -32,7 +31,7 @@ import org.opentrafficsim.animation.graphs.FundamentalDiagram.FdPaintState;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class FundamentalDiagram extends AbstractBoundedPlot<FdPaintState> implements XYDataset
+public class FundamentalDiagram extends AbstractBoundedPlot<FdPaintState> implements TabularDataset
 {
 
     /** Source providing the data. */
@@ -85,16 +84,14 @@ public class FundamentalDiagram extends AbstractBoundedPlot<FdPaintState> implem
         quantities.remove(rangeQuantity);
         this.setOtherQuantity(quantities.iterator().next());
         this.source = source;
-        int d = 0;
-        if (fdLine != null)
-        {
-            d = 1;
-            this.seriesLabels.add(fdLine.getName());
-            this.laneVisible.add(true);
-        }
         for (int series = 0; series < source.getNumberOfSeries(); series++)
         {
-            this.seriesLabels.add(series + d, source.getName(series));
+            this.seriesLabels.add(series, source.getName(series));
+            this.laneVisible.add(true);
+        }
+        if (fdLine != null)
+        {
+            this.seriesLabels.add(fdLine.getName());
             this.laneVisible.add(true);
         }
         setChart(createChart());

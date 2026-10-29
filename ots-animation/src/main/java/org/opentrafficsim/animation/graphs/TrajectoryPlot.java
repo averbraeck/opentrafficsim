@@ -55,7 +55,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class TrajectoryPlot extends AbstractSpaceTimePlot<TrajectoriesPaintState> implements XYDataset
+public class TrajectoryPlot extends AbstractSpaceTimePlot<TrajectoriesPaintState> implements TabularDataset
 {
 
     /** Sampler data. */

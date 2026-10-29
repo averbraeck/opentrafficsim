@@ -18,7 +18,7 @@ import org.opentrafficsim.animation.graphs.BarPlot.BarPaintState;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * @author Wouter Schakel
  */
-public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDataset
+public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDataset, TabularDataset
 {
 
     /** Plot data. */
@@ -111,14 +111,14 @@ public class BarPlot extends AbstractPlot<BarPaintState> implements IntervalXYDa
     @Override
     public Comparable getSeriesKey(final int series)
     {
-        return series;
+        return this.data.source().seriesLabels(this.data.dataKey())[series];
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     public int indexOf(final Comparable seriesKey)
     {
-        return (Integer) seriesKey;
+        return Arrays.asList(this.data.source().seriesLabels(this.data.dataKey())).indexOf(seriesKey);
     }
 
     @Override
