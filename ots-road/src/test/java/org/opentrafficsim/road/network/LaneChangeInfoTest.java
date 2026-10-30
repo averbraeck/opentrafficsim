@@ -29,24 +29,23 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
+import org.opentrafficsim.road.network.RoadNetwork.LaneChangeTiming;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
- * Test for lane change info. <br>
- * <br>
- * Copyright (c) 2022-2024 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved. See
- * for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project is
- * distributed under a three-clause BSD-style license, which can be found at
- * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
+ * Test for lane change info.
+ * <p>
+ * Copyright (c) 2022-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.<br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * @author Wouter Schakel
  */
 public final class LaneChangeInfoTest
 {
 
-    /** */
+    /** Constructor. */
     private LaneChangeInfoTest()
     {
         // do not instantiate test class
@@ -59,6 +58,7 @@ public final class LaneChangeInfoTest
      * @throws NamingException on exception
      */
     @Test
+    @SuppressWarnings("methodlength")
     public void laneChangeInfoTest() throws NetworkException, SimRuntimeException, NamingException
     {
 
@@ -99,137 +99,199 @@ public final class LaneChangeInfoTest
         Node nodeH2 = new Node(network, "H2", new Point2d(3500, 3.5), Direction.ZERO);
 
         // Lanes
-        List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, simulator, policy)
+        List<Lane> lsAB = new LaneFactory(network, nodeA, nodeB, freeway, simulator, policy)
                 .leftToRight(4.0, laneWidth, freewayLane, speedLimits)
                 .addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED).getLanes();
-        List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, simulator, policy)
+        List<Lane> lsBC = new LaneFactory(network, nodeB, nodeC, freeway, simulator, policy)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, simulator, policy)
+        List<Lane> lsCD = new LaneFactory(network, nodeC, nodeD, freeway, simulator, policy)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.LEFT, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesDE = new LaneFactory(network, nodeD, nodeE, freeway, simulator, policy)
+        List<Lane> lsDE = new LaneFactory(network, nodeD, nodeE, freeway, simulator, policy)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimits)
                 .addLanes(DefaultsRoadNl.LEFT, DefaultsRoadNl.DASHED, DefaultsRoadNl.RIGHT).getLanes();
-        List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, simulator, policy)
+        List<Lane> lsEF = new LaneFactory(network, nodeE, nodeF, freeway, simulator, policy)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesEF2 = new LaneFactory(network, nodeE, nodeF2, freeway, simulator, policy)
+        List<Lane> lsEF2 = new LaneFactory(network, nodeE, nodeF2, freeway, simulator, policy)
                 .leftToRight(0.0, laneWidth, freewayLane, speedLimits).addLanes().getLanes();
-        List<Lane> lanesFG = new LaneFactory(network, nodeF, nodeG, freeway, simulator, policy)
+        List<Lane> lsFG = new LaneFactory(network, nodeF, nodeG, freeway, simulator, policy)
                 .leftToRight(4.0, laneWidth, freewayLane, speedLimits)
                 .addLanes(DefaultsRoadNl.LEFT, DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED).getLanes();
-        List<Lane> lanesGH = new LaneFactory(network, nodeG, nodeH, freeway, simulator, policy)
+        List<Lane> lsGH = new LaneFactory(network, nodeG, nodeH, freeway, simulator, policy)
                 .leftToRight(3.0, laneWidth, freewayLane, speedLimits).addLanes(DefaultsRoadNl.DASHED, DefaultsRoadNl.DASHED)
                 .getLanes();
-        List<Lane> lanesGH2 = new LaneFactory(network, nodeG, nodeH2, freeway, simulator, policy)
+        List<Lane> lsGH2 = new LaneFactory(network, nodeG, nodeH2, freeway, simulator, policy)
                 .leftToRight(4.0, laneWidth, freewayLane, speedLimits).addLanes().getLanes();
 
         // Preparation
         LaneAccessLaw law = LaneAccessLaw.LEGAL;
         LateralDirectionality left = LateralDirectionality.LEFT;
         LateralDirectionality right = LateralDirectionality.RIGHT;
-        Length range = Length.ofSI(10000);
+        Length r = Length.ofSI(10000);
+        LaneChangeTiming te = LaneChangeTiming.EARLIEST_FEASIBLE;
+        LaneChangeTiming tl = LaneChangeTiming.LATEST_FEASIBLE;
 
         // Route A -> F2
-        Route routeAF2 = network.getShortestRouteBetween(car, nodeA, nodeF2);
+        Route rAF2 = network.getShortestRouteBetween(car, nodeA, nodeF2);
         // AB -> F2
-        check(network.getLaneChangeInfo(lanesAB.get(0), routeAF2, car, range, law), right, new int[] {1, 2, 4},
+        check(network.getLaneChangeInfo(lsAB.get(0), rAF2, tl, car, r, law), right, new int[] {1, 2, 4},
                 new double[] {200, 500, 1400});
-        check(network.getLaneChangeInfo(lanesAB.get(1), routeAF2, car, range, law), right, new int[] {1, 3},
-                new double[] {500, 1400});
-        check(network.getLaneChangeInfo(lanesAB.get(2), routeAF2, car, range, law), right, new int[] {2}, new double[] {1400});
-        check(network.getLaneChangeInfo(lanesAB.get(3), routeAF2, car, range, law), right, new int[] {1}, new double[] {1400});
+        check(network.getLaneChangeInfo(lsAB.get(1), rAF2, tl, car, r, law), right, new int[] {1, 3}, new double[] {500, 1400});
+        check(network.getLaneChangeInfo(lsAB.get(2), rAF2, tl, car, r, law), right, new int[] {2}, new double[] {1400});
+        check(network.getLaneChangeInfo(lsAB.get(3), rAF2, tl, car, r, law), right, new int[] {1}, new double[] {1400});
+        check(network.getLaneChangeInfo(lsAB.get(0), rAF2, te, car, r, law), right, new int[] {3, 4}, new double[] {0, 900});
+        check(network.getLaneChangeInfo(lsAB.get(1), rAF2, te, car, r, law), right, new int[] {2, 3}, new double[] {0, 900});
+        check(network.getLaneChangeInfo(lsAB.get(2), rAF2, te, car, r, law), right, new int[] {1, 2}, new double[] {0, 900});
+        check(network.getLaneChangeInfo(lsAB.get(3), rAF2, te, car, r, law), right, new int[] {1}, new double[] {900});
         // BC -> F2
-        check(network.getLaneChangeInfo(lanesBC.get(0), routeAF2, car, range, law), right, new int[] {1, 3},
-                new double[] {300, 1200});
-        check(network.getLaneChangeInfo(lanesBC.get(1), routeAF2, car, range, law), right, new int[] {2}, new double[] {1200});
-        check(network.getLaneChangeInfo(lanesBC.get(2), routeAF2, car, range, law), right, new int[] {1}, new double[] {1200});
+        check(network.getLaneChangeInfo(lsBC.get(0), rAF2, tl, car, r, law), right, new int[] {1, 3}, new double[] {300, 1200});
+        check(network.getLaneChangeInfo(lsBC.get(1), rAF2, tl, car, r, law), right, new int[] {2}, new double[] {1200});
+        check(network.getLaneChangeInfo(lsBC.get(2), rAF2, tl, car, r, law), right, new int[] {1}, new double[] {1200});
+        check(network.getLaneChangeInfo(lsBC.get(0), rAF2, te, car, r, law), right, new int[] {2, 3}, new double[] {0, 700});
+        check(network.getLaneChangeInfo(lsBC.get(1), rAF2, te, car, r, law), right, new int[] {1, 2}, new double[] {0, 700});
+        check(network.getLaneChangeInfo(lsBC.get(2), rAF2, te, car, r, law), right, new int[] {1}, new double[] {700});
         // CD - F2
-        assertTrue(network.getLaneChangeInfo(lanesCD.get(0), routeAF2, car, range, law).isEmpty());
-        check(network.getLaneChangeInfo(lanesCD.get(1), routeAF2, car, range, law), right, new int[] {2}, new double[] {900});
-        check(network.getLaneChangeInfo(lanesCD.get(2), routeAF2, car, range, law), right, new int[] {1}, new double[] {900});
+        assertTrue(network.getLaneChangeInfo(lsCD.get(0), rAF2, tl, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsCD.get(1), rAF2, tl, car, r, law), right, new int[] {2}, new double[] {900});
+        check(network.getLaneChangeInfo(lsCD.get(2), rAF2, tl, car, r, law), right, new int[] {1}, new double[] {900});
+        assertTrue(network.getLaneChangeInfo(lsCD.get(0), rAF2, te, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsCD.get(1), rAF2, te, car, r, law), right, new int[] {1, 2}, new double[] {0, 400});
+        check(network.getLaneChangeInfo(lsCD.get(2), rAF2, te, car, r, law), right, new int[] {1}, new double[] {400});
         // DE - F2
-        assertTrue(network.getLaneChangeInfo(lanesDE.get(0), routeAF2, car, range, law).isEmpty());
-        check(network.getLaneChangeInfo(lanesDE.get(1), routeAF2, car, range, law), right, new int[] {2}, new double[] {500});
-        check(network.getLaneChangeInfo(lanesDE.get(2), routeAF2, car, range, law), right, new int[] {1}, new double[] {500});
+        assertTrue(network.getLaneChangeInfo(lsDE.get(0), rAF2, tl, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsDE.get(1), rAF2, tl, car, r, law), right, new int[] {2}, new double[] {500});
+        check(network.getLaneChangeInfo(lsDE.get(2), rAF2, tl, car, r, law), right, new int[] {1}, new double[] {500});
+        assertTrue(network.getLaneChangeInfo(lsDE.get(0), rAF2, te, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsDE.get(1), rAF2, te, car, r, law), right, new int[] {2}, new double[] {0});
+        check(network.getLaneChangeInfo(lsDE.get(2), rAF2, te, car, r, law), right, new int[] {1}, new double[] {0});
         // EF2
-        check(network.getLaneChangeInfo(lanesEF2.get(0), routeAF2, car, range, law), null, new int[] {}, new double[] {});
+        assertTrue(network.getLaneChangeInfo(lsEF2.get(0), rAF2, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsEF2.get(0), rAF2, te, car, r, law).isEmpty());
 
         // Route A -> H2
-        Route routeAH2 = network.getShortestRouteBetween(car, nodeA, nodeH2);
+        Route rAH2 = network.getShortestRouteBetween(car, nodeA, nodeH2);
         // AB -> H2
-        check(network.getLaneChangeInfo(lanesAB.get(0), routeAH2, car, range, law), right, new int[] {1}, new double[] {200});
-        check(network.getLaneChangeInfo(lanesAB.get(1), routeAH2, car, range, law), left, new int[] {1}, new double[] {2700});
-        check(network.getLaneChangeInfo(lanesAB.get(2), routeAH2, car, range, law), left, new int[] {2}, new double[] {2700});
-        check(network.getLaneChangeInfo(lanesAB.get(3), routeAH2, car, range, law), left, new int[] {3}, new double[] {2700});
+        check(network.getLaneChangeInfo(lsAB.get(0), rAH2, tl, car, r, law), right, new int[] {1}, new double[] {200});
+        check(network.getLaneChangeInfo(lsAB.get(1), rAH2, tl, car, r, law), left, new int[] {1}, new double[] {2700});
+        check(network.getLaneChangeInfo(lsAB.get(2), rAH2, tl, car, r, law), left, new int[] {2}, new double[] {2700});
+        check(network.getLaneChangeInfo(lsAB.get(3), rAH2, tl, car, r, law), left, new int[] {3}, new double[] {2700});
+        check(network.getLaneChangeInfo(lsAB.get(0), rAH2, te, car, r, law), right, new int[] {1}, new double[] {0});
+        check(network.getLaneChangeInfo(lsAB.get(1), rAH2, te, car, r, law), left, new int[] {1}, new double[] {2000});
+        check(network.getLaneChangeInfo(lsAB.get(2), rAH2, te, car, r, law), left, new int[] {1, 2}, new double[] {0, 2000});
+        check(network.getLaneChangeInfo(lsAB.get(3), rAH2, te, car, r, law), left, new int[] {2, 3}, new double[] {0, 2000});
         // BC -> H2
-        check(network.getLaneChangeInfo(lanesBC.get(0), routeAH2, car, range, law), left, new int[] {1}, new double[] {2500});
-        check(network.getLaneChangeInfo(lanesBC.get(1), routeAH2, car, range, law), left, new int[] {2}, new double[] {2500});
-        check(network.getLaneChangeInfo(lanesBC.get(2), routeAH2, car, range, law), left, new int[] {3}, new double[] {2500});
+        check(network.getLaneChangeInfo(lsBC.get(0), rAH2, tl, car, r, law), left, new int[] {1}, new double[] {2500});
+        check(network.getLaneChangeInfo(lsBC.get(1), rAH2, tl, car, r, law), left, new int[] {2}, new double[] {2500});
+        check(network.getLaneChangeInfo(lsBC.get(2), rAH2, tl, car, r, law), left, new int[] {3}, new double[] {2500});
+        check(network.getLaneChangeInfo(lsBC.get(0), rAH2, te, car, r, law), left, new int[] {1}, new double[] {1800});
+        check(network.getLaneChangeInfo(lsBC.get(1), rAH2, te, car, r, law), left, new int[] {1, 2}, new double[] {0, 1800});
+        check(network.getLaneChangeInfo(lsBC.get(2), rAH2, te, car, r, law), left, new int[] {2, 3}, new double[] {0, 1800});
         // CD -> H2
-        check(network.getLaneChangeInfo(lanesCD.get(0), routeAH2, car, range, law), left, new int[] {1}, new double[] {2200});
-        check(network.getLaneChangeInfo(lanesCD.get(1), routeAH2, car, range, law), left, new int[] {2}, new double[] {2200});
-        check(network.getLaneChangeInfo(lanesCD.get(2), routeAH2, car, range, law), left, new int[] {3}, new double[] {2200});
+        check(network.getLaneChangeInfo(lsCD.get(0), rAH2, tl, car, r, law), left, new int[] {1}, new double[] {2200});
+        check(network.getLaneChangeInfo(lsCD.get(1), rAH2, tl, car, r, law), left, new int[] {2}, new double[] {2200});
+        check(network.getLaneChangeInfo(lsCD.get(2), rAH2, tl, car, r, law), left, new int[] {3}, new double[] {2200});
+        check(network.getLaneChangeInfo(lsCD.get(0), rAH2, te, car, r, law), left, new int[] {1}, new double[] {1500});
+        check(network.getLaneChangeInfo(lsCD.get(1), rAH2, te, car, r, law), left, new int[] {1, 2}, new double[] {0, 1500});
+        check(network.getLaneChangeInfo(lsCD.get(2), rAH2, te, car, r, law), left, new int[] {2, 3}, new double[] {0, 1500});
         // DE -> H2
-        check(network.getLaneChangeInfo(lanesDE.get(0), routeAH2, car, range, law), left, new int[] {1}, new double[] {1800});
-        check(network.getLaneChangeInfo(lanesDE.get(1), routeAH2, car, range, law), left, new int[] {2}, new double[] {1800});
-        check(network.getLaneChangeInfo(lanesDE.get(2), routeAH2, car, range, law), left, new int[] {3}, new double[] {1800});
-        assertTrue(network.getLaneChangeInfo(lanesDE.get(3), routeAH2, car, range, law).isEmpty());
+        check(network.getLaneChangeInfo(lsDE.get(0), rAH2, tl, car, r, law), left, new int[] {1}, new double[] {1800});
+        check(network.getLaneChangeInfo(lsDE.get(1), rAH2, tl, car, r, law), left, new int[] {2}, new double[] {1800});
+        check(network.getLaneChangeInfo(lsDE.get(2), rAH2, tl, car, r, law), left, new int[] {3}, new double[] {1800});
+        assertTrue(network.getLaneChangeInfo(lsDE.get(3), rAH2, tl, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsDE.get(0), rAH2, te, car, r, law), left, new int[] {1}, new double[] {1100});
+        check(network.getLaneChangeInfo(lsDE.get(1), rAH2, te, car, r, law), left, new int[] {1, 2}, new double[] {0, 1100});
+        check(network.getLaneChangeInfo(lsDE.get(2), rAH2, te, car, r, law), left, new int[] {2, 3}, new double[] {0, 1100});
+        assertTrue(network.getLaneChangeInfo(lsDE.get(3), rAH2, te, car, r, law).isEmpty());
         // EF -> H2
-        check(network.getLaneChangeInfo(lanesEF.get(0), routeAH2, car, range, law), left, new int[] {1}, new double[] {1300});
-        check(network.getLaneChangeInfo(lanesEF.get(1), routeAH2, car, range, law), left, new int[] {2}, new double[] {1300});
-        check(network.getLaneChangeInfo(lanesEF.get(2), routeAH2, car, range, law), left, new int[] {3}, new double[] {1300});
+        check(network.getLaneChangeInfo(lsEF.get(0), rAH2, tl, car, r, law), left, new int[] {1}, new double[] {1300});
+        check(network.getLaneChangeInfo(lsEF.get(1), rAH2, tl, car, r, law), left, new int[] {2}, new double[] {1300});
+        check(network.getLaneChangeInfo(lsEF.get(2), rAH2, tl, car, r, law), left, new int[] {3}, new double[] {1300});
+        check(network.getLaneChangeInfo(lsEF.get(0), rAH2, te, car, r, law), left, new int[] {1}, new double[] {600});
+        check(network.getLaneChangeInfo(lsEF.get(1), rAH2, te, car, r, law), left, new int[] {1, 2}, new double[] {0, 600});
+        check(network.getLaneChangeInfo(lsEF.get(2), rAH2, te, car, r, law), left, new int[] {2, 3}, new double[] {0, 600});
         // FG -> H2
-        check(network.getLaneChangeInfo(lanesFG.get(0), routeAH2, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesFG.get(1), routeAH2, car, range, law), left, new int[] {1}, new double[] {700});
-        check(network.getLaneChangeInfo(lanesFG.get(2), routeAH2, car, range, law), left, new int[] {2}, new double[] {700});
-        check(network.getLaneChangeInfo(lanesFG.get(3), routeAH2, car, range, law), left, new int[] {3}, new double[] {700});
+        assertTrue(network.getLaneChangeInfo(lsFG.get(0), rAH2, tl, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsFG.get(1), rAH2, tl, car, r, law), left, new int[] {1}, new double[] {700});
+        check(network.getLaneChangeInfo(lsFG.get(2), rAH2, tl, car, r, law), left, new int[] {2}, new double[] {700});
+        check(network.getLaneChangeInfo(lsFG.get(3), rAH2, tl, car, r, law), left, new int[] {3}, new double[] {700});
+        assertTrue(network.getLaneChangeInfo(lsFG.get(0), rAH2, te, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsFG.get(1), rAH2, te, car, r, law), left, new int[] {1}, new double[] {0});
+        check(network.getLaneChangeInfo(lsFG.get(2), rAH2, te, car, r, law), left, new int[] {2}, new double[] {0});
+        check(network.getLaneChangeInfo(lsFG.get(3), rAH2, te, car, r, law), left, new int[] {3}, new double[] {0});
         // GH2
-        check(network.getLaneChangeInfo(lanesGH2.get(0), routeAH2, car, range, law), null, new int[] {}, new double[] {});
+        assertTrue(network.getLaneChangeInfo(lsGH2.get(0), rAH2, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsGH2.get(0), rAH2, te, car, r, law).isEmpty());
 
         // Route A -> H
-        Route routeAH = network.getShortestRouteBetween(car, nodeA, nodeH);
+        Route rAH = network.getShortestRouteBetween(car, nodeA, nodeH);
         // AB -> H
-        check(network.getLaneChangeInfo(lanesAB.get(0), routeAH, car, range, law), right, new int[] {1}, new double[] {200});
-        check(network.getLaneChangeInfo(lanesAB.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesAB.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesAB.get(3), routeAH, car, range, law), null, new int[] {}, new double[] {});
+        check(network.getLaneChangeInfo(lsAB.get(0), rAH, tl, car, r, law), right, new int[] {1}, new double[] {200});
+        assertTrue(network.getLaneChangeInfo(lsAB.get(1), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsAB.get(2), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsAB.get(3), rAH, tl, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsAB.get(0), rAH, te, car, r, law), right, new int[] {1}, new double[] {0});
+        assertTrue(network.getLaneChangeInfo(lsAB.get(1), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsAB.get(2), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsAB.get(3), rAH, te, car, r, law).isEmpty());
         // BC -> H
-        check(network.getLaneChangeInfo(lanesBC.get(0), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesBC.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesBC.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
+        assertTrue(network.getLaneChangeInfo(lsBC.get(0), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsBC.get(1), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsBC.get(2), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsBC.get(0), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsBC.get(1), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsBC.get(2), rAH, te, car, r, law).isEmpty());
         // CD -> H
-        check(network.getLaneChangeInfo(lanesCD.get(0), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesCD.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesCD.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
+        assertTrue(network.getLaneChangeInfo(lsCD.get(0), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsCD.get(1), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsCD.get(2), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsCD.get(0), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsCD.get(1), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsCD.get(2), rAH, te, car, r, law).isEmpty());
         // DE -> H
-        check(network.getLaneChangeInfo(lanesDE.get(0), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesDE.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesDE.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        assertTrue(network.getLaneChangeInfo(lanesDE.get(3), routeAH, car, range, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(0), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(1), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(2), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(3), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(0), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(1), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(2), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsDE.get(3), rAH, te, car, r, law).isEmpty());
         // EF -> H
-        check(network.getLaneChangeInfo(lanesEF.get(0), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesEF.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesEF.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
+        assertTrue(network.getLaneChangeInfo(lsEF.get(0), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsEF.get(1), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsEF.get(2), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsEF.get(0), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsEF.get(1), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsEF.get(2), rAH, te, car, r, law).isEmpty());
         // FG -> H
-        assertTrue(network.getLaneChangeInfo(lanesFG.get(0), routeAH, car, range, law).isEmpty());
-        check(network.getLaneChangeInfo(lanesFG.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesFG.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesFG.get(3), routeAH, car, range, law), null, new int[] {}, new double[] {});
+        assertTrue(network.getLaneChangeInfo(lsFG.get(0), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsFG.get(1), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsFG.get(2), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsFG.get(3), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsFG.get(0), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsFG.get(1), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsFG.get(2), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsFG.get(3), rAH, te, car, r, law).isEmpty());
         // GH
-        check(network.getLaneChangeInfo(lanesGH.get(0), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesGH.get(1), routeAH, car, range, law), null, new int[] {}, new double[] {});
-        check(network.getLaneChangeInfo(lanesGH.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
+        assertTrue(network.getLaneChangeInfo(lsGH.get(0), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsGH.get(1), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsGH.get(2), rAH, tl, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsGH.get(0), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsGH.get(1), rAH, te, car, r, law).isEmpty());
+        assertTrue(network.getLaneChangeInfo(lsGH.get(2), rAH, te, car, r, law).isEmpty());
 
         // Shorter ranges for AB -> F2
-        range = Length.ofSI(1000);
-        check(network.getLaneChangeInfo(lanesAB.get(0), routeAF2, car, range, law), right, new int[] {1, 2},
-                new double[] {200, 500});
-        range = Length.ofSI(400);
-        check(network.getLaneChangeInfo(lanesAB.get(0), routeAF2, car, range, law), right, new int[] {1}, new double[] {200});
-        range = Length.ofSI(100);
-        check(network.getLaneChangeInfo(lanesAB.get(0), routeAF2, car, range, law), null, new int[] {}, new double[] {});
+        r = Length.ofSI(1000);
+        check(network.getLaneChangeInfo(lsAB.get(0), rAF2, tl, car, r, law), right, new int[] {1, 2}, new double[] {200, 500});
+        check(network.getLaneChangeInfo(lsAB.get(0), rAF2, te, car, r, law), right, new int[] {3, 4}, new double[] {0, 900});
+        r = Length.ofSI(400);
+        check(network.getLaneChangeInfo(lsAB.get(0), rAF2, tl, car, r, law), right, new int[] {1}, new double[] {200});
+        check(network.getLaneChangeInfo(lsAB.get(0), rAF2, te, car, r, law), right, new int[] {3}, new double[] {0});
+        r = Length.ofSI(100);
+        assertTrue(network.getLaneChangeInfo(lsAB.get(0), rAF2, tl, car, r, law).isEmpty());
+        check(network.getLaneChangeInfo(lsAB.get(0), rAF2, te, car, r, law), right, new int[] {3}, new double[] {0});
 
     }
 

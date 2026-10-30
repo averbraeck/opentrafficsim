@@ -5,13 +5,17 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
+import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.djutils.immutablecollections.ImmutableTreeSet;
 import org.djutils.multikeymap.MultiKeyMap;
@@ -46,11 +50,12 @@ public class RoadNetwork extends Network
     private RouteWeightedGraph physicalLaneGraph = null;
 
     /** Cached legal lane change info, over complete length of route. */
-    private MultiKeyMap<SortedSet<LaneChangeInfo>> legalLaneChangeInfoCache =
-            new MultiKeyMap<>(GtuType.class, Route.class, Lane.class);
+    private MultiKeyMap<NavigableSet<LaneChangeInfo>> legalLaneChangeInfoCache =
+            new MultiKeyMap<>(GtuType.class, Route.class, LaneChangeTiming.class, Lane.class);
 
     /** Cached physical lane change info, over complete length of route. */
-    private MultiKeyMap<SortedSet<LaneChangeInfo>> physicalLaneChangeInfoCache = new MultiKeyMap<>(Route.class, Lane.class);
+    private MultiKeyMap<NavigableSet<LaneChangeInfo>> physicalLaneChangeInfoCache =
+            new MultiKeyMap<>(Route.class, LaneChangeTiming.class, Lane.class);
 
     /**
      * Construction of an empty network.
@@ -66,15 +71,16 @@ public class RoadNetwork extends Network
      * Returns lane change info from the given lane. Distances are given from the start of the lane and will never exceed the
      * given range. This method returns {@code null} if no valid path exists. If there are no reasons to change lane within
      * range, an empty set is returned.
-     * @param lane from lane.
-     * @param route route.
-     * @param gtuType GTU Type.
-     * @param range maximum range of info to consider, from the start of the given lane.
-     * @param laneAccessLaw lane access law.
-     * @return lane change info from the given lane, or empty if no path exists.
+     * @param lane from lane
+     * @param route route
+     * @param timing lane change timing
+     * @param gtuType GTU Type
+     * @param range maximum range of info to consider, from the start of the given lane
+     * @param laneAccessLaw lane access law
+     * @return lane change info from the given lane, or empty if no path exists
      */
-    public ImmutableSortedSet<LaneChangeInfo> getLaneChangeInfo(final Lane lane, final Route route, final GtuType gtuType,
-            final Length range, final LaneAccessLaw laneAccessLaw)
+    public ImmutableSortedSet<LaneChangeInfo> getLaneChangeInfo(final Lane lane, final Route route,
+            final LaneChangeTiming timing, final GtuType gtuType, final Length range, final LaneAccessLaw laneAccessLaw)
     {
         Throw.whenNull(lane, "Lane may not be null.");
         Throw.whenNull(route, "Route may not be null.");
@@ -84,126 +90,115 @@ public class RoadNetwork extends Network
         Throw.when(range.le0(), IllegalArgumentException.class, "Range should be a positive value.");
 
         // get the complete info
-        SortedSet<LaneChangeInfo> info = getCompleteLaneChangeInfo(lane, route, gtuType, laneAccessLaw);
+        NavigableSet<LaneChangeInfo> info = getCompleteLaneChangeInfo(lane, route, timing, gtuType, laneAccessLaw);
         if (info == null)
         {
             return new ImmutableTreeSet<>(Collections.emptySet());
         }
-
-        // find first LaneChangeInfo beyond range, if any
-        LaneChangeInfo lcInfoBeyondHorizon = null;
-        Iterator<LaneChangeInfo> iterator = info.iterator();
-        while (lcInfoBeyondHorizon == null && iterator.hasNext())
-        {
-            LaneChangeInfo lcInfo = iterator.next();
-            if (lcInfo.remainingDistance().gt(range))
-            {
-                lcInfoBeyondHorizon = lcInfo;
-            }
-        }
-
-        // return subset in range
-        if (lcInfoBeyondHorizon != null)
-        {
-            return new ImmutableTreeSet<>(info.headSet(lcInfoBeyondHorizon));
-        }
-        return new ImmutableTreeSet<>(info); // empty, or all in range
+        return new ImmutableTreeSet<>(
+                info.headSet(new LaneChangeInfo(Integer.MAX_VALUE, range, false, LateralDirectionality.NONE), true),
+                Immutable.WRAP);
     }
 
     /**
      * Returns the complete (i.e. without range) lane change info from the given lane. It is either taken from cache, or
      * created.
-     * @param lane from lane.
-     * @param route route.
-     * @param gtuType GTU Type.
-     * @param laneAccessLaw lane access law.
-     * @return complete (i.e. without range) lane change info from the given lane, or {@code null} if no path exists.
+     * @param lane from lane
+     * @param route route
+     * @param timing lane change timing
+     * @param gtuType GTU Type
+     * @param laneAccessLaw lane access law
+     * @return complete (i.e. without range) lane change info from the given lane, or {@code null} if no path exists
      */
-    private SortedSet<LaneChangeInfo> getCompleteLaneChangeInfo(final Lane lane, final Route route, final GtuType gtuType,
-            final LaneAccessLaw laneAccessLaw)
+    private NavigableSet<LaneChangeInfo> getCompleteLaneChangeInfo(final Lane lane, final Route route,
+            final LaneChangeTiming timing, final GtuType gtuType, final LaneAccessLaw laneAccessLaw)
     {
-        // try to get info from the right cache
-        SortedSet<LaneChangeInfo> outputLaneChangeInfo;
-        if (laneAccessLaw.equals(LaneAccessLaw.LEGAL))
+        return switch (laneAccessLaw)
         {
-            outputLaneChangeInfo = this.legalLaneChangeInfoCache.get(gtuType, route, lane);
-            // build info if required
-            if (outputLaneChangeInfo == null)
-            {
-                // get the right lane graph for the GTU type, or build it
-                RouteWeightedGraph graph = this.legalLaneGraph.get(gtuType);
-                if (graph == null)
-                {
-                    graph = new RouteWeightedGraph();
-                    this.legalLaneGraph.put(gtuType, graph);
-                    buildGraph(graph, gtuType, laneAccessLaw);
-                }
-                List<LaneChangeInfoEdge> path = findPath(lane, graph, gtuType, route);
+            case LEGAL -> determineLaneChangeInfo(lane, getLegalGraph(gtuType), gtuType, route, timing,
+                    (l) -> this.legalLaneChangeInfoCache.get(gtuType, route, timing, l),
+                    (l, info) -> this.legalLaneChangeInfoCache.put(info, gtuType, route, timing, l));
+            case PHYSICAL -> determineLaneChangeInfo(lane, getPhysicalGraph(), gtuType, route, timing,
+                    (l) -> this.physicalLaneChangeInfoCache.get(route, timing, l),
+                    (l, info) -> this.physicalLaneChangeInfoCache.put(info, route, timing, l));
+        };
+    }
 
-                if (path != null)
+    /**
+     * Returns legal graph representation of lane network.
+     * @param gtuType GTU type
+     * @return legal graph representation of lane network
+     */
+    private RouteWeightedGraph getLegalGraph(final GtuType gtuType)
+    {
+        RouteWeightedGraph graph = this.legalLaneGraph.get(gtuType);
+        if (graph == null)
+        {
+            graph = new RouteWeightedGraph();
+            this.legalLaneGraph.put(gtuType, graph);
+            buildGraph(graph, gtuType, LaneAccessLaw.LEGAL);
+        }
+        return graph;
+    }
+
+    /**
+     * Returns physical graph representation of lane network.
+     * @return physical graph representation of lane network
+     */
+    private RouteWeightedGraph getPhysicalGraph()
+    {
+        if (this.physicalLaneGraph == null)
+        {
+            this.physicalLaneGraph = new RouteWeightedGraph();
+            buildGraph(this.physicalLaneGraph, null, LaneAccessLaw.PHYSICAL);
+        }
+        return this.physicalLaneGraph;
+    }
+
+    /**
+     * Determines the lane change information from the given lane following the given route. This methods uses caching.
+     * @param lane lane
+     * @param graph graph representation of lane network
+     * @param gtuType GTU type, for physical only relevant to find shortest path when route is {@code null}
+     * @param route route, may be {@code null}
+     * @param timing lane change timing
+     * @param cacheGet get from cache (may return {@code null} if not in cache)
+     * @param cachePut put in cache
+     * @return lane change information from the given lane following the given route
+     */
+    private NavigableSet<LaneChangeInfo> determineLaneChangeInfo(final Lane lane, final RouteWeightedGraph graph,
+            final GtuType gtuType, final Route route, final LaneChangeTiming timing,
+            final Function<Lane, NavigableSet<LaneChangeInfo>> cacheGet,
+            final BiConsumer<Lane, NavigableSet<LaneChangeInfo>> cachePut)
+    {
+        NavigableSet<LaneChangeInfo> outputLaneChangeInfo = cacheGet.apply(lane);
+        if (outputLaneChangeInfo == null)
+        {
+            List<LaneChangeInfoEdge> path = findPath(lane, graph, gtuType, route, timing);
+            if (path != null)
+            {
+                boolean originalPath = true;
+                while (!path.isEmpty())
                 {
-                    // derive lane change info from every lane along the path and cache it
-                    boolean originalPath = true;
-                    while (!path.isEmpty())
+                    NavigableSet<LaneChangeInfo> laneChangeInfo = extractLaneChangeInfo(path, timing);
+                    if (originalPath)
                     {
-                        SortedSet<LaneChangeInfo> laneChangeInfo = extractLaneChangeInfo(path);
-                        if (originalPath)
-                        {
-                            outputLaneChangeInfo = laneChangeInfo;
-                            originalPath = false;
-                        }
-                        this.legalLaneChangeInfoCache.put(laneChangeInfo, gtuType, route, path.get(0).fromLane());
-                        path.remove(0); // next lane
+                        outputLaneChangeInfo = laneChangeInfo;
+                        originalPath = false;
                     }
+                    cachePut.accept(path.get(0).fromLane(), laneChangeInfo);
+                    path.remove(0); // build laneChangeInfo and cache for next lane
                 }
             }
-        }
-        else if (laneAccessLaw.equals(LaneAccessLaw.PHYSICAL))
-        {
-            outputLaneChangeInfo = this.physicalLaneChangeInfoCache.get(route, lane);
-            // build info if required
-            if (outputLaneChangeInfo == null)
-            {
-                // build the lane graph if required
-                if (this.physicalLaneGraph == null)
-                {
-                    this.physicalLaneGraph = new RouteWeightedGraph();
-                    // TODO: Is the GTU type actually relevant for physical? It is used still to find adjacent lanes.
-                    buildGraph(this.physicalLaneGraph, gtuType, laneAccessLaw);
-                }
-                List<LaneChangeInfoEdge> path = findPath(lane, this.physicalLaneGraph, gtuType, route);
-
-                if (path != null)
-                {
-                    // derive lane change info from every lane along the path and cache it
-                    boolean originalPath = true;
-                    while (!path.isEmpty())
-                    {
-                        SortedSet<LaneChangeInfo> laneChangeInfo = extractLaneChangeInfo(path);
-                        if (originalPath)
-                        {
-                            outputLaneChangeInfo = laneChangeInfo;
-                            originalPath = false;
-                        }
-                        this.physicalLaneChangeInfoCache.put(laneChangeInfo, route, path.get(0).fromLane());
-                        path.remove(0); // next lane
-                    }
-                }
-            }
-        }
-        else
-        {
-            // in case it is inadvertently extended in the future
-            throw new OtsRuntimeException(String.format("Unknown LaneChangeLaw %s", laneAccessLaw));
         }
         return outputLaneChangeInfo;
     }
 
     /**
      * Builds the graph.
-     * @param graph empty graph to build.
-     * @param gtuType GTU type.
-     * @param laneChangeLaw lane change law, legal or physical.
+     * @param graph empty graph to build
+     * @param gtuType GTU type
+     * @param laneChangeLaw lane change law, legal or physical
      */
     private void buildGraph(final RouteWeightedGraph graph, final GtuType gtuType, final LaneAccessLaw laneChangeLaw)
     {
@@ -265,21 +260,22 @@ public class RoadNetwork extends Network
 
     /**
      * Returns a set of lane change info, extracted from the graph.
-     * @param lane from lane.
-     * @param graph graph.
-     * @param gtuType GTU Type.
-     * @param route route.
+     * @param lane from lane
+     * @param graph graph
+     * @param gtuType GTU Type
+     * @param route route
+     * @param timing lane change timing
      * @return path derived from the graph, or {@code null} if there is no path.
      */
     private List<LaneChangeInfoEdge> findPath(final Lane lane, final RouteWeightedGraph graph, final GtuType gtuType,
-            final Route route)
+            final Route route, final LaneChangeTiming timing)
     {
         // if there is no route, find the destination node by moving down the links (no splits allowed)
         Node destination = null;
         Route routeForWeights = route;
         if (route == null)
         {
-            destination = graph.getNoRouteDestinationNode(gtuType);
+            destination = graph.getNoRouteDestinationNode();
             try
             {
                 routeForWeights = getShortestRouteBetween(gtuType, lane.getLink().getStartNode(), destination);
@@ -298,7 +294,7 @@ public class RoadNetwork extends Network
             {
                 Link link = getLink(nodes.get(i - 1), nodes.get(i))
                         .orElseThrow(() -> new OtsRuntimeException("Unable to find link for two consecutive nodes in route."));
-                if (link instanceof CrossSectionLink && !((CrossSectionLink) link).getLanes().isEmpty())
+                if (link instanceof CrossSectionLink cLink && !cLink.getLanes().isEmpty())
                 {
                     destination = nodes.get(i);
                     break; // found most downstream link with lanes, who's end node is the destination for lane changes
@@ -309,7 +305,7 @@ public class RoadNetwork extends Network
         }
 
         // set the route on the path for route-dependent edge weights
-        graph.setRoute(routeForWeights);
+        graph.setWeightInformation(routeForWeights, timing);
 
         // find the shortest path
         GraphPath<Identifiable, LaneChangeInfoEdge> path = DijkstraShortestPath.findPathBetween(graph, lane, destination);
@@ -318,15 +314,18 @@ public class RoadNetwork extends Network
 
     /**
      * Extracts lane change info from a path.
-     * @param path path.
-     * @return lane change info.
+     * @param path path
+     * @param timing lane change timing
+     * @return lane change info
      */
-    private SortedSet<LaneChangeInfo> extractLaneChangeInfo(final List<LaneChangeInfoEdge> path)
+    private NavigableSet<LaneChangeInfo> extractLaneChangeInfo(final List<LaneChangeInfoEdge> path,
+            final LaneChangeTiming timing)
     {
-        SortedSet<LaneChangeInfo> info = new TreeSet<>();
+        NavigableSet<LaneChangeInfo> info = new TreeSet<>();
         Length x = Length.ZERO; // cumulative longitudinal distance
         int n = 0; // number of applied lane changes
         boolean inLateralState = false; // consecutive lateral moves in the path create 1 LaneChangeInfo
+        boolean lateralMoveIsDeadEnd = false;
         for (LaneChangeInfoEdge edge : path)
         {
             LaneChangeInfoEdgeType lcType = edge.laneChangeInfoEdgeType();
@@ -350,12 +349,15 @@ public class RoadNetwork extends Network
                 // lateral move stop
                 if (inLateralState)
                 {
-                    // TODO: isDeadEnd should be removed from LaneChangeInfo, behavior should consider legal vs. physical
-                    boolean isDeadEnd = false;
-                    info.add(new LaneChangeInfo(Math.abs(n), x, isDeadEnd,
+                    info.add(new LaneChangeInfo(Math.abs(n), x, lateralMoveIsDeadEnd,
                             n < 0 ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT));
                     inLateralState = false;
-                    // don't add the length of the previous lane, that was already done for the first lane of all lateral moves
+                    if (LaneChangeTiming.EARLIEST_FEASIBLE.equals(timing))
+                    {
+                        // need to add length of last lane of all lateral moves for next info
+                        x = x.plus(edge.fromLane().getLength());
+                    }
+                    // don't add the length for LATEST_FEASIBLE, that was already done for the first lane of all lateral moves
                 }
                 else
                 {
@@ -368,7 +370,11 @@ public class RoadNetwork extends Network
                 // lateral move start
                 if (!inLateralState)
                 {
-                    x = x.plus(edge.fromLane().getLength()); // need to add length of first lane of all lateral moves
+                    lateralMoveIsDeadEnd = edge.fromLane().nextLanes(null).isEmpty();
+                    if (LaneChangeTiming.LATEST_FEASIBLE.equals(timing))
+                    {
+                        x = x.plus(edge.fromLane().getLength()); // need to add length of first lane of all lateral moves
+                    }
                     inLateralState = true;
                 }
                 // increase lane change count (negative for left)
@@ -386,20 +392,26 @@ public class RoadNetwork extends Network
     {
         this.legalLaneGraph.clear();
         this.physicalLaneGraph = null;
-        this.legalLaneChangeInfoCache = new MultiKeyMap<>(GtuType.class, Route.class, Lane.class);
-        this.physicalLaneChangeInfoCache = new MultiKeyMap<>(Route.class, Lane.class);
+        this.legalLaneChangeInfoCache = new MultiKeyMap<>(GtuType.class, Route.class, LaneChangeTiming.class, Lane.class);
+        this.physicalLaneChangeInfoCache = new MultiKeyMap<>(Route.class, LaneChangeTiming.class, Lane.class);
     }
 
     /**
-     * A {@code SimpleDirectedWeightedGraph} to search over the lanes, where the weight of an edge (movement between lanes) is
-     * tailored to providing lane change information. The vertex type is {@code Identifiable} such that both {@code Lane}'s and
-     * {@code Node}'s can be used. The latter is required to find paths towards a destination node.
-     * <p>
-     * Copyright (c) 2022-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
+     * Timing of lane changes regarding lane change information.
+     */
+    public enum LaneChangeTiming
+    {
+        /** As soon as possible. */
+        EARLIEST_FEASIBLE,
+
+        /** As late as possible. */
+        LATEST_FEASIBLE;
+    }
+
+    /**
+     * A {@link SimpleDirectedWeightedGraph} to search over the lanes, where the weight of an edge (movement between lanes) is
+     * tailored to providing lane change information. The vertex type is {@link Identifiable} such that both {@link Lane}'s and
+     * {@link Node}'s can be used. The latter is required to find paths towards a destination node.
      */
     private class RouteWeightedGraph extends SimpleDirectedWeightedGraph<Identifiable, LaneChangeInfoEdge>
     {
@@ -409,6 +421,9 @@ public class RoadNetwork extends Network
 
         /** Route. */
         private Route route;
+
+        /** Timing for the lane change information. */
+        private LaneChangeTiming timing;
 
         /** Node in the network that is the destination if no route is used. */
         private Node noRouteDestination = null;
@@ -423,21 +438,24 @@ public class RoadNetwork extends Network
 
         /**
          * Set the route.
-         * @param route route.
+         * @param route route
+         * @param timing lane change timing
          */
-        public void setRoute(final Route route)
+        @SuppressWarnings("hiddenfield")
+        public void setWeightInformation(final Route route, final LaneChangeTiming timing)
         {
-            Throw.whenNull(route, "Route may not be null for lane change information.");
             this.route = route;
+            this.timing = timing;
         }
 
         /**
-         * Returns the weight of moving from one lane to the next. In order to find the latest possible location at which lane
-         * changes may still be performed, the longitudinal weights are 1.0 while the lateral weights are 1.0 + 1/X, where X is
-         * the number (index) of the link within the route. This favors later lane changes for the shortest path algorithm, as
-         * we are interested in the distances within which the lane change have to be performed. In the case an edge is towards
-         * a link that is not in a given route, a positive infinite weight is returned. Finally, when the edge is towards a
-         * node, which may be the destination in a route, 0.0 is returned.
+         * Returns the weight of moving from one lane to the next. In order to find the earliest/latest possible location at
+         * which lane changes may be performed, the longitudinal weights are 1.0 while the lateral weights are 1.0 - 1/(X+1) for
+         * earliest and 1.0 + 1/(X+1) for latest lane changes, where X is the number (index) of the link within the route. This
+         * favors earlier/later lane changes for the shortest path algorithm, as we are interested in the distances within which
+         * the lane changes can or have to be performed. In the case an edge is towards a link that is not in a given route, a
+         * positive infinite weight is returned. Finally, when the edge is towards a node, which may be the destination in a
+         * route, 0.0 is returned.
          */
         @Override
         public double getEdgeWeight(final LaneChangeInfoEdge e)
@@ -446,7 +464,12 @@ public class RoadNetwork extends Network
                     || e.laneChangeInfoEdgeType().equals(LaneChangeInfoEdgeType.RIGHT))
             {
                 int indexEndNode = this.route.indexOf(e.fromLane().getLink().getEndNode());
-                return 1.0 + 1.0 / indexEndNode; // lateral, reduce weight for further lane changes
+                if (indexEndNode < 0)
+                {
+                    return Double.POSITIVE_INFINITY;
+                }
+                double sign = LaneChangeTiming.EARLIEST_FEASIBLE.equals(this.timing) ? -1.0 : 1.0;
+                return 1.0 + sign / (indexEndNode + 1); // earliest -> reduce weight for nearer lane changes
             }
             Link toLink = e.toLink();
             if (toLink == null)
@@ -463,10 +486,9 @@ public class RoadNetwork extends Network
 
         /**
          * Returns the destination node to use when no route is available. This will be the last node found moving downstream.
-         * @param gtuType GTU type.
          * @return destination node to use when no route is available.
          */
-        public Node getNoRouteDestinationNode(final GtuType gtuType)
+        public Node getNoRouteDestinationNode()
         {
             if (this.noRouteDestination == null)
             {
@@ -483,42 +505,34 @@ public class RoadNetwork extends Network
                 }
                 Throw.when(lane == null, OtsRuntimeException.class, "Requesting destination node on network without lanes.");
                 // move to downstream link for as long as there is 1 downstream link
-                try
-                {
-                    Link link = lane.getLink();
-                    Set<Link> downstreamLinks = link.getEndNode().nextLinks(gtuType, link);
-                    while (downstreamLinks.size() == 1)
-                    {
-                        link = downstreamLinks.iterator().next();
-                        downstreamLinks = link.getEndNode().nextLinks(gtuType, link);
-                    }
-                    Throw.when(downstreamLinks.size() > 1, OtsRuntimeException.class, "Using null route on network with split. "
-                            + "Unable to find a destination to find lane change info towards.");
-                    this.noRouteDestination = link.getEndNode();
-                }
-                catch (NetworkException ne)
-                {
-                    throw new OtsRuntimeException("Requesting lane change info from link that does not allow the GTU type.",
-                            ne);
-                }
+                this.noRouteDestination = getEndNode(lane.getLink());
             }
             return this.noRouteDestination;
         }
+
+        /**
+         * Finds the next link along a corridor. The end-node of the input link should have only two links connected.
+         * @param link link
+         * @return the next link along a corridor
+         */
+        private Node getEndNode(final Link link)
+        {
+            Set<Link> set = link.getEndNode().getLinks().stream().filter((l) -> l.getStartNode().equals(link.getEndNode())
+                    && l instanceof CrossSectionLink cLink && !cLink.getLanes().isEmpty()).collect(Collectors.toSet());
+            Throw.when(set.size() > 1, OtsRuntimeException.class,
+                    "Using null route on network with split. Unable to find a destination to find lane change info towards.");
+            return set.isEmpty() ? link.getEndNode() : getEndNode(set.iterator().next());
+        }
+
     }
 
     /**
      * Edge between two lanes, or between a lane and a node (to provide the shortest path algorithm with a suitable
      * destination). From a list of these from a path, the lane change information along the path (distances and number of lane
      * changes) can be derived.
-     * <p>
-     * Copyright (c) 2022-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
-     * @param fromLane from lane, to allow construction of distances from a path.
-     * @param laneChangeInfoEdgeType the type of lane to lane movement performed along this edge.
-     * @param toLink to link (of the lane this edge moves to).
+     * @param fromLane from lane, to allow construction of distances from a path
+     * @param laneChangeInfoEdgeType the type of lane to lane movement performed along this edge
+     * @param toLink to link (of the lane this edge moves to), or {@code null} for an edge to a node
      */
     private record LaneChangeInfoEdge(Lane fromLane, LaneChangeInfoEdgeType laneChangeInfoEdgeType, Link toLink)
     {
@@ -526,12 +540,6 @@ public class RoadNetwork extends Network
 
     /**
      * Enum to provide information on the lane to lane movement in a path.
-     * <p>
-     * Copyright (c) 2022-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
      */
     private enum LaneChangeInfoEdgeType
     {

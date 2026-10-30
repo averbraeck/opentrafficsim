@@ -29,6 +29,7 @@ import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneAccessLaw;
 import org.opentrafficsim.road.network.LaneChangeInfo;
+import org.opentrafficsim.road.network.RoadNetwork.LaneChangeTiming;
 import org.opentrafficsim.road.network.Shoulder;
 import org.opentrafficsim.road.network.object.SpeedBump;
 import org.opentrafficsim.road.network.speed.SpeedLimits;
@@ -66,15 +67,24 @@ public class DirectInfrastructurePerception extends AbstractLanePerceptionCatego
     }
 
     @Override
+    public SortedSet<LaneChangeInfo> getCourtesyLaneChangeInfo(final RelativeLane lane)
+    {
+        return computeIfAbsent(Keys.COURTESY_LANE_CHANGE_INFO,
+                () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL, LaneChangeTiming.EARLIEST_FEASIBLE), lane);
+    }
+
+    @Override
     public SortedSet<LaneChangeInfo> getLegalLaneChangeInfo(final RelativeLane lane)
     {
-        return computeIfAbsent(Keys.LEGAL_LANE_CHANGE_INFO, () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL), lane);
+        return computeIfAbsent(Keys.LEGAL_LANE_CHANGE_INFO,
+                () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL, LaneChangeTiming.LATEST_FEASIBLE), lane);
     }
 
     @Override
     public SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(final RelativeLane lane)
     {
-        return computeIfAbsent(Keys.PHYSICAL_LANE_CHANGE_INFO, () -> computeLaneChangeInfo(lane, LaneAccessLaw.PHYSICAL), lane);
+        return computeIfAbsent(Keys.PHYSICAL_LANE_CHANGE_INFO,
+                () -> computeLaneChangeInfo(lane, LaneAccessLaw.PHYSICAL, LaneChangeTiming.LATEST_FEASIBLE), lane);
     }
 
     @Override
@@ -117,9 +127,11 @@ public class DirectInfrastructurePerception extends AbstractLanePerceptionCatego
      * Compute lane change info.
      * @param lane lane
      * @param laneLaw lane change law
+     * @param timing lane change timing
      * @return lane change info
      */
-    private SortedSet<LaneChangeInfo> computeLaneChangeInfo(final RelativeLane lane, final LaneAccessLaw laneLaw)
+    private SortedSet<LaneChangeInfo> computeLaneChangeInfo(final RelativeLane lane, final LaneAccessLaw laneLaw,
+            final LaneChangeTiming timing)
     {
         SortedSet<LaneChangeInfo> out = new TreeSet<>();
         Optional<Route> route = getGtu().getStrategicalPlanner().getRoute();
@@ -152,8 +164,8 @@ public class DirectInfrastructurePerception extends AbstractLanePerceptionCatego
             Length range = getGtu().getParameters().getOptionalParameter(LANE_STRUCTURE)
                     .orElseThrow(() -> new OtsRuntimeException("Parameter LANE_STRUCTURE not available."));
             Length front = getGtu().getRelativePosition(RelativePosition.FRONT).dx();
-            ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route.get(), getGtu().getType(),
-                    Length.ofSI(range.si - record.getStartDistance() + front.si), laneLaw);
+            ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route.get(), timing,
+                    getGtu().getType(), Length.ofSI(range.si - record.getStartDistance() + front.si), laneLaw);
             for (LaneChangeInfo laneChangeInfo : set)
             {
                 Length dist = Length.ofSI(laneChangeInfo.remainingDistance().si + record.getStartDistance() - front.si);

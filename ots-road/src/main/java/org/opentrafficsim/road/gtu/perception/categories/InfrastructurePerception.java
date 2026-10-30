@@ -35,6 +35,30 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory<In
     }
 
     /**
+     * Returns infrastructure lane change info of a lane. A set is returned as multiple points may allow lane changes. Which
+     * point is considered most relevant is a matter of driver interpretation and may change over time. Other than legal and
+     * physical lane change info, this method uses an as-soon-as-possible lane change heuristic. This is shown below for a
+     * vehicle A.
+     *
+     * <pre>
+     * _______
+     * _ _A_ _\_________
+     * _ _ _ _ _ _ _ _ _
+     * _________ _ _ ___
+     *          \_______
+     *     ()         Right now: 2 lane changes in   0m (  0m per lane change)
+     *     (----)     Off-ramp:  3 lane changes in 900m (300m per lane change)
+     * </pre>
+     *
+     * This method returns lane change information regarding regular lanes only. Shoulders are ignored. There is one exception
+     * to this, and that is when a GTU is itself on a shoulder. In that case a possible lane change is assumed immediately
+     * towards a regular lane.
+     * @param lane relative lateral lane
+     * @return infrastructure lane change info of a lane
+     */
+    SortedSet<LaneChangeInfo> getCourtesyLaneChangeInfo(RelativeLane lane);
+
+    /**
      * Returns infrastructure lane change info of a lane. A set is returned as multiple points may force lane changes. Which
      * point is considered most critical is a matter of driver interpretation and may change over time. This is shown below.
      * Suppose vehicle A needs to take the off-ramp, and that behavior is that the minimum distance per required lane change
@@ -144,6 +168,9 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory<In
      */
     enum Keys
     {
+        /** Legal lane change info. */
+        COURTESY_LANE_CHANGE_INFO,
+
         /** Legal lane change info. */
         LEGAL_LANE_CHANGE_INFO,
 

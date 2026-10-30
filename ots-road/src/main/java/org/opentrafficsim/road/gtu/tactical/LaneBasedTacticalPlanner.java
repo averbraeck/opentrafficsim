@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneAccessLaw;
 import org.opentrafficsim.road.network.LaneChangeInfo;
+import org.opentrafficsim.road.network.RoadNetwork.LaneChangeTiming;
 
 /**
  * <p>
@@ -51,8 +52,8 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
         LaneChangeInfo bestInfo = null;
         for (Lane lane : lanes)
         {
-            ImmutableSortedSet<LaneChangeInfo> lcInfo =
-                    lane.getNetwork().getLaneChangeInfo(lane, route, getGtu().getType(), perception, LaneAccessLaw.LEGAL);
+            ImmutableSortedSet<LaneChangeInfo> lcInfo = lane.getNetwork().getLaneChangeInfo(lane, route,
+                    LaneChangeTiming.LATEST_FEASIBLE, getGtu().getType(), perception, LaneAccessLaw.LEGAL);
             LaneChangeInfo info = lcInfo.isEmpty() ? null : lcInfo.first();
             int comp = bestInfo == null ? (info == null ? 0 : -info.compareTo(bestInfo)) : bestInfo.compareTo(info);
             if (comp >= 0)
