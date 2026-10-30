@@ -28,6 +28,7 @@ import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.OtsRuntimeException;
+import org.opentrafficsim.base.collections.SmallArraySet;
 import org.opentrafficsim.base.geometry.FractionalProjectionHelper.FractionalFallback;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -1145,30 +1146,26 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     @SuppressWarnings("hiddenfield")
     private Set<Lane> getNextLanesForRoute(final Lane lane)
     {
-        Set<Lane> out = new LinkedHashSet<>();
-        Set<Lane> nextPhysical = lane.nextLanes(null);
-
-        Link link = Try.assign(() -> getStrategicalPlanner().nextLink(lane.getLink(), getType()),
+        Link nextLink = Try.assign(() -> getStrategicalPlanner().nextLink(lane.getLink(), getType()),
                 "Strategical planner experiences exception on network.");
-
-        if (nextPhysical.isEmpty())
+        Set<Lane> out = new SmallArraySet<>();
+        GtuType gtuType = getType();
+        while (true)
         {
-            return out;
-        }
-
-        Set<Lane> next = lane.nextLanes(getType());
-        if (next.isEmpty())
-        {
-            next = nextPhysical;
-        }
-        for (Lane l : next)
-        {
-            if (l.getLink().equals(link))
+            Set<Lane> next = lane.nextLanes(gtuType);
+            for (Lane nextLane : next)
             {
-                out.add(l);
+                if (nextLane.getLink().equals(nextLink))
+                {
+                    out.add(nextLane);
+                }
             }
+            if (!out.isEmpty() || gtuType == null)
+            {
+                return out;
+            }
+            gtuType = null; // attempt again, but for physical
         }
-        return out;
     }
 
     /**

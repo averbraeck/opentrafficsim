@@ -47,7 +47,9 @@ public final class DeadEndUtil
         SimpleOperationalPlan simplePlan = plan;
         // deal with dead-end situations
         InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
-        SortedSet<LaneChangeInfo> lcInfo = infra.getPhysicalLaneChangeInfo(RelativeLane.CURRENT);
+        // we accept moving on to the shoulder only on free ways, i.e. at intersections and roundabouts this is not suitable
+        SortedSet<LaneChangeInfo> lcInfo = DeadEndUtil.isFreeway(context)
+                ? infra.getPhysicalLaneChangeInfo(RelativeLane.CURRENT) : infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         if (!lcInfo.isEmpty())
         {
             Length remainingDist = lcInfo.first().remainingDistance();
@@ -89,6 +91,16 @@ public final class DeadEndUtil
             }
         }
         return simplePlan;
+    }
+
+    /**
+     * Returns whether the current situation is considered a free way.
+     * @param context tactical context
+     * @return whether the current situation is considered a free way
+     */
+    private static boolean isFreeway(final TacticalContextEgo context)
+    {
+        return context.getPosition().lane().getSpeedLimit().map((v) -> v.speed().si > 55.0 / 3.6).orElse(true);
     }
 
 }
