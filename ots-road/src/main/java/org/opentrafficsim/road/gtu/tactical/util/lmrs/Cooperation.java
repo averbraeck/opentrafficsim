@@ -32,7 +32,7 @@ public interface Cooperation extends NamedConstants
     {
         @Override
         public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
-                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
+                final LmrsData lmrsData) throws ParameterException, OperationalPlanException
         {
             return Acceleration.POS_MAXVALUE;
         }
@@ -51,38 +51,44 @@ public interface Cooperation extends NamedConstants
     {
         @Override
         public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
-                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
+                final LmrsData lmrsData) throws ParameterException, OperationalPlanException
         {
             if (!context.getPerception().getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
                 return Acceleration.POS_MAXVALUE;
             }
-            double b = -context.getParameters().getParameter(ParameterTypes.B).si;
+            double b0 = context.getParameters().getParameter(ParameterTypes.B0).si;
+            double b = context.getParameters().getParameter(ParameterTypes.B).si;
             double a = Double.MAX_VALUE;
             double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
             Relaxation relaxation = context.getCarFollowingModel().getRelaxation();
+            String coop = null;
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
                     .getLeaders(relativeLane))
             {
-                double desire = getLaneChangeDesire(leader, lat.flip(), dCoop);
-                if (desire >= dCoop)
+                SingleUrgency urgency = getLaneChangeUrgency(leader, lat.flip(), dCoop);
+                if (urgency.desire() >= dCoop)
                 {
                     double k = relaxation.requiredRelaxationLevel(context.getParameters(), context.getSpeed(), leader)
-                            .orElse(desire);
+                            .orElse(urgency.desire());
                     if (k <= 1.0)
                     {
                         if (lmrsData != null)
                         {
+                            coop = coop == null ? leader.getId() : null;
                             lmrsData.setSynchronizationState(Synchronizable.State.COOPERATING);
                         }
-                        Acceleration aSingle = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(),
-                                leader.getSpeed(), Math.max(0.0, k));
-                        a = a < aSingle.si ? a : aSingle.si;
+                        double aSingle = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(), leader.getSpeed(),
+                                Math.max(0.0, k)).si;
+                        double u = urgency.urgency();
+                        double bUrg = u >= dCoop ? b : b0;
+                        aSingle = Math.max(aSingle, -bUrg);
+                        a = Math.min(a, aSingle);
                     }
                 }
             }
-            return Acceleration.ofSI(a > b ? a : b);
+            return Acceleration.ofSI(a);
         }
 
         /**
@@ -97,20 +103,27 @@ public interface Cooperation extends NamedConstants
          * @param lat lateral direction
          * @return the level of lane change desire as perceived for the given vehicle
          */
-        private static double getLaneChangeDesire(final PerceivedGtu leader, final LateralDirectionality lat,
+        private static SingleUrgency getLaneChangeUrgency(final PerceivedGtu leader, final LateralDirectionality lat,
                 final double dCoop)
         {
             if (LateralDirectionality.NONE.equals(lat))
             {
-                return 0.0;
+                return SingleUrgency.ZERO;
             }
             double d = leader.getBehavior().getLaneChangeDesire(lat);
+            double u = leader.getBehavior().getLaneChangeUrgency(lat);
             // The follow triggers cooperation when the indicator is on for whatever
             // if (d < dCoop && leader.getSignals().isIndicatorOn(lat))
             // {
             // return 1.0;
             // }
-            return d;
+            return new SingleUrgency(d, u);
+        }
+
+        record SingleUrgency(double desire, double urgency)
+        {
+            /** Zero instance. */
+            private static final SingleUrgency ZERO = new SingleUrgency(0.0, 0.0);
         }
 
         @Override
@@ -129,13 +142,13 @@ public interface Cooperation extends NamedConstants
     {
         @Override
         public Acceleration cooperate(final TacticalContextEgo context, final LateralDirectionality lat,
-                final LmrsData lmrsData, final Desire ownDesire) throws ParameterException, OperationalPlanException
+                final LmrsData lmrsData) throws ParameterException, OperationalPlanException
         {
             if (context.getSpeed().si < context.getParameters().getParameter(Synchronization.CREEP_SPEED).si)
             {
                 return Acceleration.POS_MAXVALUE;
             }
-            return PASSIVE.cooperate(context, lat, lmrsData, ownDesire);
+            return PASSIVE.cooperate(context, lat, lmrsData);
         }
 
         @Override
@@ -149,12 +162,11 @@ public interface Cooperation extends NamedConstants
      * Determine acceleration for cooperation.
      * @param context tactical information such as parameters and car-following model
      * @param lat lateral direction for cooperation
-     * @param lmrsData lmrs data to store COOPERATION synchronization state in, may be {@code null}
-     * @param ownDesire own lane change desire
+     * @param lmrsData LMRS data to store COOPERATION synchronization state in, may be {@code null}
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    Acceleration cooperate(TacticalContextEgo context, LateralDirectionality lat, LmrsData lmrsData, Desire ownDesire)
+    Acceleration cooperate(TacticalContextEgo context, LateralDirectionality lat, LmrsData lmrsData)
             throws ParameterException, OperationalPlanException;
 }

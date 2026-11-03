@@ -85,6 +85,12 @@ public interface LmrsParameters
     /** Current right lane change desire. */
     ParameterTypeDouble DRIGHT = new ParameterTypeDouble("dRight", "Right lane change desire", 0.0);
 
+    /** Current left lane change urgency. */
+    ParameterTypeDouble ULEFT = new ParameterTypeDouble("uLeft", "Left lane change urgency", 0.0);
+
+    /** Current right lane change urgency. */
+    ParameterTypeDouble URIGHT = new ParameterTypeDouble("uRight", "Right lane change urgency", 0.0);
+
     /** Lane change desire of current lane change. */
     ParameterTypeDouble DLC = new ParameterTypeDouble("dLaneChange", "Desire of current lane change", 0.0);
 

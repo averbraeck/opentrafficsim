@@ -17,7 +17,6 @@ import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
-import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.VoluntaryIncentive;
 
 /**
@@ -110,12 +109,11 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
             {
                 for (PerceivedGtu follower : followers)
                 {
-                    double desire = dir.isLeft() ? follower.getBehavior().rightLaneChangeDesire()
-                            : follower.getBehavior().leftLaneChangeDesire();
-                    Acceleration a = follower.getDistance().lt0() ? b.neg()
-                            : LmrsUtil.synchronizationAcceleration(follower, follower.getDistance(), context.getSpeed(), desire);
+                    Acceleration a = CarFollowingUtil.followSingleLeader(follower, follower.getDistance(), context.getSpeed());
                     if (a.lt0())
                     {
+                        double desire = dir.isLeft() ? follower.getBehavior().rightLaneChangeDesire()
+                                : follower.getBehavior().leftLaneChangeDesire();
                         if (desire > 0)
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0);
@@ -147,7 +145,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                             : leader.getBehavior().leftLaneChangeDesire();
                     if (desire > 0)
                     {
-                        Acceleration a = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(), leader.getSpeed(), desire);
+                        Acceleration a = CarFollowingUtil.followSingleLeader(context, leader);
                         if (a.lt0())
                         {
                             double d = desire * Math.min(-a.si / b.si, 1.0); // (1 - leader.getDistance().si / x0.si) * desire;

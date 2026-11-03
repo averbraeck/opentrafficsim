@@ -134,21 +134,21 @@ public final class LmrsUtil implements LmrsParameters
         lmrsData.setDesiredSpeed(context.getDesiredSpeed());
 
         // determine lane change desire based on incentives
-        Desire desire = getLaneChangeDesire(context, incentives);
+        Urgency desire = getLaneChangeUrgency(context, incentives);
 
         // lane change decision
         LateralDirectionality initiatedOrContinuedLaneChange;
         TurnIndicatorStatus turnIndicatorStatus = null;
         double dFree = context.getParameters().getParameter(DFREE);
         initiatedOrContinuedLaneChange = LateralDirectionality.NONE;
-        if (desire.leftIsLargerOrEqual() && desire.left() >= dFree)
+        if (desire.leftIsLargerOrEqual() && desire.desireLeft() >= dFree)
         {
-            if (acceptLaneChange(context, desire.left(), LateralDirectionality.LEFT, lmrsData.getGapAcceptance()))
+            if (acceptLaneChange(context, desire.desireLeft(), LateralDirectionality.LEFT, lmrsData.getGapAcceptance()))
             {
                 // change left
                 initiatedOrContinuedLaneChange = LateralDirectionality.LEFT;
                 turnIndicatorStatus = TurnIndicatorStatus.LEFT;
-                context.getParameters().setClaimedParameter(DLC, desire.left(), PARAMETER_KEY);
+                context.getParameters().setClaimedParameter(DLC, desire.desireLeft(), PARAMETER_KEY);
                 leaders = neighbors.getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
@@ -162,14 +162,14 @@ public final class LmrsUtil implements LmrsParameters
                                 context.getSpeedLimits(), context.getMaximumSpeed(), neighbors.getLeaders(RelativeLane.LEFT)));
             }
         }
-        else if (!desire.leftIsLargerOrEqual() && desire.right() >= dFree)
+        else if (!desire.leftIsLargerOrEqual() && desire.desireRight() >= dFree)
         {
-            if (acceptLaneChange(context, desire.right(), LateralDirectionality.RIGHT, lmrsData.getGapAcceptance()))
+            if (acceptLaneChange(context, desire.desireRight(), LateralDirectionality.RIGHT, lmrsData.getGapAcceptance()))
             {
                 // change right
                 initiatedOrContinuedLaneChange = LateralDirectionality.RIGHT;
                 turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
-                context.getParameters().setClaimedParameter(DLC, desire.right(), PARAMETER_KEY);
+                context.getParameters().setClaimedParameter(DLC, desire.desireRight(), PARAMETER_KEY);
                 leaders = neighbors.getLeaders(RelativeLane.RIGHT);
                 if (!leaders.isEmpty())
                 {
@@ -184,8 +184,10 @@ public final class LmrsUtil implements LmrsParameters
             }
         }
 
-        context.getParameters().setClaimedParameter(DLEFT, desire.left(), PARAMETER_KEY);
-        context.getParameters().setClaimedParameter(DRIGHT, desire.right(), PARAMETER_KEY);
+        context.getParameters().setClaimedParameter(DLEFT, desire.desireLeft(), PARAMETER_KEY);
+        context.getParameters().setClaimedParameter(DRIGHT, desire.desireRight(), PARAMETER_KEY);
+        context.getParameters().setClaimedParameter(ULEFT, desire.urgencyLeft(), PARAMETER_KEY);
+        context.getParameters().setClaimedParameter(URIGHT, desire.urgencyRight(), PARAMETER_KEY);
         if (initiatedOrContinuedLaneChange.isNone())
         {
             // take action if we cannot change lane
@@ -194,9 +196,9 @@ public final class LmrsUtil implements LmrsParameters
             // synchronize
             double dSync = context.getParameters().getParameter(DSYNC);
             lmrsData.setSynchronizationState(Synchronizable.State.NONE);
-            if (desire.leftIsLargerOrEqual() && desire.left() >= dSync)
+            if (desire.leftIsLargerOrEqual() && desire.desireLeft() >= dSync)
             {
-                if (desire.left() >= context.getParameters().getParameter(DCOOP))
+                if (desire.desireLeft() >= context.getParameters().getParameter(DCOOP))
                 {
                     // switch on left indicator
                     turnIndicatorStatus = TurnIndicatorStatus.LEFT;
@@ -206,13 +208,13 @@ public final class LmrsUtil implements LmrsParameters
                 {
                     lmrsData.setSynchronizationState(Synchronizable.State.SYNCHRONIZING);
                 }
-                aSync = lmrsData.getSynchronization().synchronize(context, desire.left(), LateralDirectionality.LEFT,
-                        initiatedOrContinuedLaneChange);
+                aSync = lmrsData.getSynchronization().synchronize(context, desire.desireLeft(), desire.urgencyLeft(),
+                        LateralDirectionality.LEFT, initiatedOrContinuedLaneChange);
                 a = applyAcceleration(a, aSync);
             }
-            else if (!desire.leftIsLargerOrEqual() && desire.right() >= dSync)
+            else if (!desire.leftIsLargerOrEqual() && desire.desireRight() >= dSync)
             {
-                if (desire.right() >= context.getParameters().getParameter(DCOOP))
+                if (desire.desireRight() >= context.getParameters().getParameter(DCOOP))
                 {
                     // switch on right indicator
                     turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
@@ -222,15 +224,15 @@ public final class LmrsUtil implements LmrsParameters
                 {
                     lmrsData.setSynchronizationState(Synchronizable.State.SYNCHRONIZING);
                 }
-                aSync = lmrsData.getSynchronization().synchronize(context, desire.right(), LateralDirectionality.RIGHT,
-                        initiatedOrContinuedLaneChange);
+                aSync = lmrsData.getSynchronization().synchronize(context, desire.desireRight(), desire.urgencyRight(),
+                        LateralDirectionality.RIGHT, initiatedOrContinuedLaneChange);
                 a = applyAcceleration(a, aSync);
             }
 
             // cooperate
-            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.LEFT, lmrsData, desire);
+            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.LEFT, lmrsData);
             a = applyAcceleration(a, aSync);
-            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.RIGHT, lmrsData, desire);
+            aSync = lmrsData.getCooperation().cooperate(context, LateralDirectionality.RIGHT, lmrsData);
             a = applyAcceleration(a, aSync);
 
             // relaxation
@@ -299,7 +301,7 @@ public final class LmrsUtil implements LmrsParameters
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException if there is no mandatory incentive, the model requires at least one
      */
-    public static Desire getLaneChangeDesire(final TacticalContextEgo context,
+    public static Urgency getLaneChangeUrgency(final TacticalContextEgo context,
             final AbstractIncentivesTacticalPlanner incentives) throws ParameterException, OperationalPlanException
     {
         double dSync = context.getParameters().getParameter(DSYNC);
@@ -310,8 +312,9 @@ public final class LmrsUtil implements LmrsParameters
         double thetaA = context.getParameters().getParameter(LAMBDA_V);
         double leftThetaV = getThetaV(mandatoryDesire.left(), voluntaryDesire.left(), dSync, dCoop);
         double rightThetaV = getThetaV(mandatoryDesire.right(), voluntaryDesire.right(), dSync, dCoop);
-        return new Desire(mandatoryDesire.left() + thetaA * leftThetaV * voluntaryDesire.left(),
-                mandatoryDesire.right() + thetaA * rightThetaV * voluntaryDesire.right());
+        return new Urgency(mandatoryDesire.left() + thetaA * leftThetaV * voluntaryDesire.left(),
+                mandatoryDesire.right() + thetaA * rightThetaV * voluntaryDesire.right(), mandatoryDesire.left(),
+                mandatoryDesire.right());
     }
 
     /**

@@ -400,6 +400,12 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
 
     // LMRS -> Voluntary incentives
 
+    /** Voluntary lane change incentive for early lane changes for the route (default: true). */
+    @Option(names = {"--incentiveRouteCourtesy"},
+            description = "Voluntary lane change incentive for early lane changes for the route", defaultValue = "true",
+            split = "\\|", splitSynopsisLabel = "|", negatable = true)
+    private List<Boolean> incentiveRouteCourtesy = listOf(true);
+
     /** Voluntary lane change incentive for speed with courtesy (default: true). */
     @Option(names = {"--incentiveSpeedWithCourtesy"}, description = "Voluntary lane change incentive for speed with courtesy",
             defaultValue = "true", split = "\\|", splitSynopsisLabel = "|", negatable = true)
@@ -1011,6 +1017,10 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
         get(this.customMandatoryIncentives, gtuType).forEach((s) -> tacticalPlanner.addMandatoryIncentive(s.get()));
 
         // Voluntary incentives
+        if (get(this.incentiveRouteCourtesy, gtuType))
+        {
+            tacticalPlanner.addVoluntaryIncentive(new IncentiveRouteCourtesy());
+        }
         if (get(this.incentiveSpeedWithCourtesy, gtuType))
         {
             tacticalPlanner.addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
@@ -1334,6 +1344,10 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
                 new Setting<>((factory) -> factory.customMandatoryIncentives);
 
         // LMRS -> Voluntary incentives
+
+        /** Voluntary lane change incentive for early lane changes for the route (default: true). */
+        public static final Setting<Boolean> INCENTIVE_ROUTE_COURTESY =
+                new Setting<>((factory) -> factory.incentiveRouteCourtesy);
 
         /** Voluntary lane change incentive for speed with courtesy (default: true). */
         public static final Setting<Boolean> INCENTIVE_SPEED_WITH_COURTESY =

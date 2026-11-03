@@ -49,8 +49,9 @@ public interface Synchronization extends NamedConstants
     Synchronization PASSIVE = new Synchronization()
     {
         @Override
-        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
+        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final double urgency,
+                final LateralDirectionality lat, final LateralDirectionality initiatedLaneChange)
+                throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
@@ -69,8 +70,9 @@ public interface Synchronization extends NamedConstants
                 }
 
                 // limit deceleration based on desire
-                Acceleration b = context.getParameters().getParameter(ParameterTypes.B);
-                a = a.si > -b.si ? a : b.neg();
+                double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
+                double bUrg = context.getParameters().getParameter(urgency >= dCoop ? ParameterTypes.B : ParameterTypes.B0).si;
+                a = a.si > -bUrg ? a : Acceleration.ofSI(-bUrg);
             }
             return a;
         }
@@ -90,15 +92,16 @@ public interface Synchronization extends NamedConstants
     Synchronization PASSIVE_MOVING = new Synchronization()
     {
         @Override
-        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
+        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final double urgency,
+                final LateralDirectionality lat, final LateralDirectionality initiatedLaneChange)
+                throws ParameterException, OperationalPlanException
         {
             if (context.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si
                     && !Synchronization.leaderIsCreeping(context, desire, lat))
             {
                 return Acceleration.POS_MAXVALUE;
             }
-            return PASSIVE.synchronize(context, desire, lat, initiatedLaneChange);
+            return PASSIVE.synchronize(context, desire, urgency, lat, initiatedLaneChange);
         }
 
         @Override
@@ -117,8 +120,9 @@ public interface Synchronization extends NamedConstants
     Synchronization ALIGN_GAP = new Synchronization()
     {
         @Override
-        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
+        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final double urgency,
+                final LateralDirectionality lat, final LateralDirectionality initiatedLaneChange)
+                throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
@@ -149,8 +153,9 @@ public interface Synchronization extends NamedConstants
                 }
 
                 // limit deceleration based on desire
-                Acceleration b = context.getParameters().getParameter(ParameterTypes.B);
-                a = a.si > -b.si ? a : b.neg();
+                double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
+                double bUrg = context.getParameters().getParameter(urgency >= dCoop ? ParameterTypes.B : ParameterTypes.B0).si;
+                a = a.si > -bUrg ? a : Acceleration.ofSI(-bUrg);
             }
             return a;
         }
@@ -173,15 +178,16 @@ public interface Synchronization extends NamedConstants
     Synchronization ALIGN_GAP_MOVING = new Synchronization()
     {
         @Override
-        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final LateralDirectionality lat,
-                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
+        public Acceleration synchronize(final TacticalContextEgo context, final double desire, final double urgency,
+                final LateralDirectionality lat, final LateralDirectionality initiatedLaneChange)
+                throws ParameterException, OperationalPlanException
         {
             if (context.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si
                     && !Synchronization.leaderIsCreeping(context, desire, lat))
             {
                 return Acceleration.POS_MAXVALUE;
             }
-            return ALIGN_GAP.synchronize(context, desire, lat, initiatedLaneChange);
+            return ALIGN_GAP.synchronize(context, desire, urgency, lat, initiatedLaneChange);
         }
 
         @Override
@@ -195,13 +201,14 @@ public interface Synchronization extends NamedConstants
      * Determine acceleration for synchronization.
      * @param context tactical information such as parameters and car-following model
      * @param desire level of lane change desire
+     * @param urgency level of lane change urgency
      * @param lat lateral direction for synchronization
      * @param initiatedLaneChange lateral direction of initiated lane change
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    Acceleration synchronize(TacticalContextEgo context, double desire, LateralDirectionality lat,
+    Acceleration synchronize(TacticalContextEgo context, double desire, double urgency, LateralDirectionality lat,
             LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException;
 
     /**

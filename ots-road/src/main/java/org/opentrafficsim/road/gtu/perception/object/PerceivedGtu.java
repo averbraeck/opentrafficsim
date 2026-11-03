@@ -381,21 +381,21 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
         Optional<Route> getRoute();
 
         /**
-         * Returns the perceived left lane change desire, a value between -1 and 1.
-         * @return the perceived left lane change desire, a value between -1 and 1
+         * Returns the perceived left lane change desire, a value between -1 and 1 (both inclusive).
+         * @return the perceived left lane change desire, a value between -1 and 1 (both inclusive)
          */
         double leftLaneChangeDesire();
 
         /**
-         * Returns the perceived right lane change desire, a value between -1 and 1.
-         * @return the perceived right lane change desire, a value between -1 and 1
+         * Returns the perceived right lane change desire, a value between -1 and 1 (both inclusive).
+         * @return the perceived right lane change desire, a value between -1 and 1 (both inclusive)
          */
         double rightLaneChangeDesire();
 
         /**
-         * Returns the perceived lane change desire, a value between -1 and 1, for the given direction.
+         * Returns the perceived lane change desire, a value between -1 and 1 (both inclusive), for the given direction.
          * @param lat lateral direction
-         * @return the perceived lane change desire, a value between -1 and 1, for the given direction
+         * @return the perceived lane change desire, a value between -1 and 1 (both inclusive), for the given direction
          */
         default double getLaneChangeDesire(final LateralDirectionality lat)
         {
@@ -403,8 +403,30 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
         }
 
         /**
-         * Returns the perceived social pressure, a value between 0 and 1.
-         * @return the perceived social pressure, a value between 0 and 1
+         * Returns the perceived left lane change desire, a value between -1 and 1 (both inclusive).
+         * @return the perceived left lane change desire, a value between -1 and 1 (both inclusive)
+         */
+        double leftLaneChangeUrgency();
+
+        /**
+         * Returns the perceived right lane change urgency, a value between 0 and 1 (both inclusive).
+         * @return the perceived right lane change urgency, a value between 0 and 1 (both inclusive)
+         */
+        double rightLaneChangeUrgency();
+
+        /**
+         * Returns the perceived lane change urgency, a value between -1 and 1 (both inclusive), for the given direction.
+         * @param lat lateral direction
+         * @return the perceived lane change urgency, a value between -1 and 1 (both inclusive), for the given direction
+         */
+        default double getLaneChangeUrgency(final LateralDirectionality lat)
+        {
+            return lat.isLeft() ? leftLaneChangeUrgency() : rightLaneChangeUrgency();
+        }
+
+        /**
+         * Returns the perceived social pressure, a value between 0 and 1 (both inclusive).
+         * @return the perceived social pressure, a value between 0 and 1 (both inclusive)
          */
         double socialPressure();
 
@@ -553,6 +575,18 @@ public interface PerceivedGtu extends PerceivedObject, TacticalContext
                 public double rightLaneChangeDesire()
                 {
                     return parameters.getOptionalParameter(LmrsParameters.DRIGHT).orElse(0.0);
+                }
+
+                @Override
+                public double leftLaneChangeUrgency()
+                {
+                    return parameters.getOptionalParameter(LmrsParameters.ULEFT).orElse(0.0);
+                }
+
+                @Override
+                public double rightLaneChangeUrgency()
+                {
+                    return parameters.getOptionalParameter(LmrsParameters.URIGHT).orElse(0.0);
                 }
 
                 @Override

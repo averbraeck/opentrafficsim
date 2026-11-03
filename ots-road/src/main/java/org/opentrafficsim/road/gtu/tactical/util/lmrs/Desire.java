@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.tactical.util.lmrs;
 
-import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
@@ -35,21 +34,11 @@ public record Desire(double left, double right)
     }
 
     /**
-     * Constructor which sets the supplied desire. Desire is bounded to [-1 1].
-     * @param left Left desire.
-     * @param right Right desire.
-     */
-    public Desire(final Dimensionless left, final Dimensionless right)
-    {
-        this(left.si, right.si);
-    }
-
-    /**
      * Returns desire in the given direction.
      * @param dir Direction for the desire to return.
      * @return Desire in the given direction.
      */
-    public final double get(final LateralDirectionality dir)
+    public double get(final LateralDirectionality dir)
     {
         if (dir.equals(LateralDirectionality.LEFT))
         {
@@ -66,7 +55,7 @@ public record Desire(double left, double right)
      * Returns whether the left desire is larger than (or equal to) the right.
      * @return Returns whether the left desire is larger than (or equal to) the right.
      */
-    public final boolean leftIsLargerOrEqual()
+    public boolean leftIsLargerOrEqual()
     {
         return this.left >= this.right;
     }

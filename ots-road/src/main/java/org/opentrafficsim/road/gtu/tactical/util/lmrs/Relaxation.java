@@ -90,8 +90,8 @@ public interface Relaxation extends NamedConstants
         @Override
         public void setRelaxation(final Parameters params, final double relaxation) throws ParameterException
         {
-            double urgency = Math.max(0.0, Math.min(relaxation, 1.0));
-            double tRelaxed = (1.0 - urgency) * params.getParameter(ParameterTypes.TMAX).si;
+            double rel = Math.max(0.0, Math.min(relaxation, 1.0));
+            double tRelaxed = (1.0 - rel) * params.getParameter(ParameterTypes.TMAX).si;
             params.setParameterOverride(ParameterTypes.T, Duration.ofSI(tRelaxed));
         }
 

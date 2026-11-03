@@ -97,9 +97,9 @@ import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.tactical.lmrs.LmrsFactory.Setting;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Cooperation;
-import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsUtil;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Urgency;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.LanePosition;
@@ -605,19 +605,19 @@ public class RampMeteringDemo extends AbstractSimulationScript
             TacticalContextEgo context = new TacticalContextEgo(getGtu());
 
             // LMRS desire
-            Desire desire = LmrsUtil.getLaneChangeDesire(context, this);
+            Urgency desire = LmrsUtil.getLaneChangeUrgency(context, this);
 
             // other vehicles respond to these 'interpreted' levels of lane change desire
-            getGtu().getParameters().setClaimedParameter(LmrsParameters.DLEFT, desire.left(), this);
-            getGtu().getParameters().setClaimedParameter(LmrsParameters.DRIGHT, desire.right(), this);
+            getGtu().getParameters().setClaimedParameter(LmrsParameters.DLEFT, desire.desireLeft(), this);
+            getGtu().getParameters().setClaimedParameter(LmrsParameters.DRIGHT, desire.desireRight(), this);
 
             // car-following
             Acceleration a = context.getCarFollowingAcceleration();
 
             // cooperation
-            Acceleration aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.LEFT, null, desire);
+            Acceleration aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.LEFT, null);
             a = Acceleration.min(a, aCoop);
-            aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.RIGHT, null, desire);
+            aCoop = Cooperation.PASSIVE.cooperate(context, LateralDirectionality.RIGHT, null);
             a = Acceleration.min(a, aCoop);
 
             // compose human plan
@@ -629,19 +629,19 @@ public class RampMeteringDemo extends AbstractSimulationScript
             double dFree = getGtu().getParameters().getParameter(LmrsParameters.DFREE);
             if (this.laneChangeSystem.initiatedLaneChange().isNone())
             {
-                if (desire.leftIsLargerOrEqual() && desire.left() > dFree)
+                if (desire.leftIsLargerOrEqual() && desire.desireLeft() > dFree)
                 {
                     this.laneChangeSystem.initiateLaneChange(LateralDirectionality.LEFT);
                 }
-                else if (desire.right() > dFree)
+                else if (desire.desireRight() > dFree)
                 {
                     this.laneChangeSystem.initiateLaneChange(LateralDirectionality.RIGHT);
                 }
             }
             else
             {
-                if ((this.laneChangeSystem.initiatedLaneChange().isLeft() && desire.left() < dFree)
-                        || (this.laneChangeSystem.initiatedLaneChange().isRight() && desire.right() < dFree))
+                if ((this.laneChangeSystem.initiatedLaneChange().isLeft() && desire.desireLeft() < dFree)
+                        || (this.laneChangeSystem.initiatedLaneChange().isRight() && desire.desireRight() < dFree))
                 {
                     this.laneChangeSystem.initiateLaneChange(LateralDirectionality.NONE);
                 }
