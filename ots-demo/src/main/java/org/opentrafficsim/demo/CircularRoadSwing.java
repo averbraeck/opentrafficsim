@@ -16,11 +16,11 @@ import org.opentrafficsim.animation.graphs.ContourPlotFlow;
 import org.opentrafficsim.animation.graphs.ContourPlotSpeed;
 import org.opentrafficsim.animation.graphs.FdDataSource;
 import org.opentrafficsim.animation.graphs.FundamentalDiagram;
+import org.opentrafficsim.animation.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.animation.graphs.GraphCrossSection;
 import org.opentrafficsim.animation.graphs.GraphPath;
 import org.opentrafficsim.animation.graphs.PlotScheduler;
 import org.opentrafficsim.animation.graphs.TrajectoryPlot;
-import org.opentrafficsim.animation.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.network.LinkPosition;
@@ -165,7 +165,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         TablePanel trajectoryChart = new TablePanel(2, 2);
         plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("Trajectory all lanes", updateInterval, scheduler, sampler.getSamplerData(), path01));
-        trajectoryChart.setCell(plot.getContentPane(), 0, 0);
+        trajectoryChart.setCell(plot, 0, 0);
 
         List<LaneData<?>> lanes = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
@@ -190,12 +190,12 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY,
                 Quantity.FLOW,
                 FdDataSource.sourceFromSampler(sampler, scheduler, crossSection, true, Duration.ofSI(60.0), false), null));
-        trajectoryChart.setCell(plot.getContentPane(), 1, 0);
+        trajectoryChart.setCell(plot, 1, 0);
 
         plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW,
                 Quantity.SPEED,
                 FdDataSource.sourceFromSampler(sampler, scheduler, crossSection, false, Duration.ofSI(60.0), false), null));
-        trajectoryChart.setCell(plot.getContentPane(), 1, 1);
+        trajectoryChart.setCell(plot, 1, 1);
 
         simulationPanel.getTabbedPane().addTab(simulationPanel.getTabbedPane().getTabCount(), "trajectories", trajectoryChart);
 
@@ -207,19 +207,19 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
             plot = new SwingTrajectoryPlot(
                     new TrajectoryPlot("Trajectory lane " + lane, updateInterval, scheduler, sampler.getSamplerData(), path));
-            charts.setCell(plot.getContentPane(), 0, 0);
+            charts.setCell(plot, 0, 0);
 
             plot = new SwingContourPlot(new ContourPlotDensity("Density lane " + lane, source));
-            charts.setCell(plot.getContentPane(), 1, 0);
+            charts.setCell(plot, 1, 0);
 
             plot = new SwingContourPlot(new ContourPlotSpeed("Speed lane " + lane, source));
-            charts.setCell(plot.getContentPane(), 1, 1);
+            charts.setCell(plot, 1, 1);
 
             plot = new SwingContourPlot(new ContourPlotFlow("Flow lane " + lane, source));
-            charts.setCell(plot.getContentPane(), 2, 0);
+            charts.setCell(plot, 2, 0);
 
             plot = new SwingContourPlot(new ContourPlotAcceleration("Accceleration lane " + lane, source));
-            charts.setCell(plot.getContentPane(), 2, 1);
+            charts.setCell(plot, 2, 1);
 
             simulationPanel.getTabbedPane().addTab(simulationPanel.getTabbedPane().getTabCount(), "stats lane " + lane, charts);
         }

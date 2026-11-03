@@ -140,19 +140,19 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
 
         plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("TrajectoryPlot", Duration.ofSI(10.0), scheduler, sampler.getSamplerData(), path));
-        charts.setCell(plot.getContentPane(), 0, 0);
+        charts.setCell(plot, 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", source));
-        charts.setCell(plot.getContentPane(), 1, 0);
+        charts.setCell(plot, 1, 0);
 
         plot = new SwingContourPlot(new ContourPlotSpeed("SpeedPlot", source));
-        charts.setCell(plot.getContentPane(), 2, 0);
+        charts.setCell(plot, 2, 0);
 
         plot = new SwingContourPlot(new ContourPlotFlow("FlowPlot", source));
-        charts.setCell(plot.getContentPane(), 1, 1);
+        charts.setCell(plot, 1, 1);
 
         plot = new SwingContourPlot(new ContourPlotAcceleration("AccelerationPlot", source));
-        charts.setCell(plot.getContentPane(), 2, 1);
+        charts.setCell(plot, 2, 1);
 
         simulation.getTabbedPane().addTab(simulation.getTabbedPane().getTabCount(), "statistics ", charts);
     }

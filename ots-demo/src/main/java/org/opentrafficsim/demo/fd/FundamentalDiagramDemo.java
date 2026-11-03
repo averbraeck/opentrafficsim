@@ -43,12 +43,12 @@ import org.djutils.math.means.HarmonicMean;
 import org.opentrafficsim.animation.data.util.GraphLaneUtil;
 import org.opentrafficsim.animation.graphs.FdDataSource;
 import org.opentrafficsim.animation.graphs.FundamentalDiagram;
+import org.opentrafficsim.animation.graphs.FundamentalDiagram.FdLine;
+import org.opentrafficsim.animation.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.animation.graphs.GraphCrossSection;
 import org.opentrafficsim.animation.graphs.GraphPath;
 import org.opentrafficsim.animation.graphs.PlotScheduler;
 import org.opentrafficsim.animation.graphs.TrajectoryPlot;
-import org.opentrafficsim.animation.graphs.FundamentalDiagram.FdLine;
-import org.opentrafficsim.animation.graphs.FundamentalDiagram.Quantity;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -679,7 +679,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         this.trajectoryPlot =
                 new TrajectoryPlot("Trajectories", Duration.ofSI(5.0), this.scheduler, this.sampler.getSamplerData(), path);
         this.trajectoryPlot.updateFixedDomainRange(true);
-        SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(this.trajectoryPlot)
+        this.trajectoryPanel = new SwingTrajectoryPlot(this.trajectoryPlot)
         {
             /** Serialization version UID. */
             private static final long serialVersionUID = 20251121L;
@@ -690,7 +690,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 // disable: always fixed time range
             }
         };
-        this.trajectoryPanel = swingTrajectoryPlot.getContentPane();
 
         // create fundamental diagrams
         createFundamentalDiagramsForCrossSections();
@@ -781,9 +780,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         this.funamentalDiagrams.add(fdPlotc);
 
         // create swing plots and add them to the graph panel
-        Container fda = new SwingFundamentalDiagram(fdPlota).getContentPane();
-        Container fdb = new SwingFundamentalDiagram(fdPlotb).getContentPane();
-        Container fdc = new SwingFundamentalDiagram(fdPlotc).getContentPane();
+        Container fda = new SwingFundamentalDiagram(fdPlota);
+        Container fdb = new SwingFundamentalDiagram(fdPlotb);
+        Container fdc = new SwingFundamentalDiagram(fdPlotc);
         Dimension preferredGraphSize = new Dimension(375, 230);
         fda.setPreferredSize(preferredGraphSize);
         fdb.setPreferredSize(preferredGraphSize);

@@ -29,7 +29,10 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.title.Title;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
@@ -164,12 +167,24 @@ public abstract class AbstractPlot<S extends PaintState> implements Identifiable
         chart.setTitle(new TextTitle(chart.getTitle().getText(), new Font("SansSerif", java.awt.Font.BOLD, 16)));
 
         // default colors and zoom behavior
-        chart.getPlot().setBackgroundPaint(Color.LIGHT_GRAY);
-        chart.setBackgroundPaint(Color.WHITE);
+        chart.getPlot().setBackgroundPaint(new Color(224, 224, 224));
+        for (Title title : chart.getSubtitles())
+        {
+            if (title instanceof LegendTitle legTitle)
+            {
+                legTitle.setBackgroundPaint(null);
+            }
+            else if (title instanceof PaintScaleLegend psTitle)
+            {
+                psTitle.setBackgroundPaint(null);
+            }
+        }
         if (chart.getPlot() instanceof XYPlot)
         {
             chart.getXYPlot().setDomainGridlinePaint(Color.WHITE);
             chart.getXYPlot().setRangeGridlinePaint(Color.WHITE);
+            chart.getXYPlot().setDomainPannable(true);
+            chart.getXYPlot().setRangePannable(true);
         }
     }
 

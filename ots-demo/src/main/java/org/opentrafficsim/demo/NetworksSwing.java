@@ -150,7 +150,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             GraphPath.initRecording(sampler, path);
             SwingPlot plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1),
                     updateInterval, new OtsPlotScheduler(network.getSimulator()), sampler.getSamplerData(), path));
-            charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
+            charts.setCell(plot, graphIndex % columns, graphIndex / columns);
         }
 
         simulationPanel.getTabbedPane().addTab(simulationPanel.getTabbedPane().getTabCount(), "statistics ", charts);
@@ -163,6 +163,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
         private static final long serialVersionUID = 1L;
 
         /**
+         * Constructor.
          * @param inputParameterMap the parameter map to display
          */
         NetworksParameterDialog(final InputParameterMap inputParameterMap)

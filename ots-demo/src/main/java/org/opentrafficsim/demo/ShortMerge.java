@@ -205,8 +205,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         SwingTrajectoryPlot plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("Trajectory right lane", updateInterval, scheduler, sampler.getSamplerData(), path), true);
         plot.addColorer(new SynchronizationTrajectoryColorer(syncData), false);
-        animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "trajectories",
-                plot.getContentPane());
+        animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "trajectories", plot);
 
         // lane change statistics
         LcGapDataSource source = new LcGapDataSource(network);
@@ -251,12 +250,12 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         SwingPlot lcDvAccSwingPlotFollower = new SwingPlot(lcDvAccPlotFollower);
         SwingPlot lcDvAccSwingPlotLaneChanger = new SwingPlot(lcDvAccPlotLaneChanger);
         TablePanel charts = new TablePanel(3, 2);
-        charts.setCell(lcGapSwingPlot.getContentPane(), 0, 0);
-        charts.setCell(lcTtcSwingPlot.getContentPane(), 0, 1);
-        charts.setCell(lcAccSwingPlot.getContentPane(), 1, 0);
-        charts.setCell(lcLocSwingPlot.getContentPane(), 1, 1);
-        charts.setCell(lcDvAccSwingPlotFollower.getContentPane(), 2, 0);
-        charts.setCell(lcDvAccSwingPlotLaneChanger.getContentPane(), 2, 1);
+        charts.setCell(lcGapSwingPlot, 0, 0);
+        charts.setCell(lcTtcSwingPlot, 0, 1);
+        charts.setCell(lcAccSwingPlot, 1, 0);
+        charts.setCell(lcLocSwingPlot, 1, 1);
+        charts.setCell(lcDvAccSwingPlotFollower, 2, 0);
+        charts.setCell(lcDvAccSwingPlotLaneChanger, 2, 1);
         animationPanel.getTabbedPane().addTab(animationPanel.getTabbedPane().getTabCount(), "lane change stats", charts);
     }
 
@@ -267,8 +266,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
      * @param processed number of items processed in data
      * @return scatter
      */
-    private static List<ScatterPoint>[] extractScatterData(final List<LcGapDataSource.DvSA> data, final List<ScatterPoint>[] scatter,
-            final int[] processed)
+    private static List<ScatterPoint>[] extractScatterData(final List<LcGapDataSource.DvSA> data,
+            final List<ScatterPoint>[] scatter, final int[] processed)
     {
         int i = processed[0];
         while (i < data.size())

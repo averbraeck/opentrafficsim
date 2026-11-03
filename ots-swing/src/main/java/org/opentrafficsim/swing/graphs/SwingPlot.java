@@ -1,11 +1,19 @@
 package org.opentrafficsim.swing.graphs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedOutputStream;
@@ -16,16 +24,20 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.stream.XMLStreamException;
 
@@ -43,6 +55,7 @@ import org.opentrafficsim.animation.graphs.AbstractPlot;
 import org.opentrafficsim.animation.graphs.JFileChooserWithSettings;
 import org.opentrafficsim.animation.graphs.PointerHandler;
 import org.opentrafficsim.animation.graphs.TabularDataset;
+import org.opentrafficsim.swing.gui.AppearanceControl;
 
 /**
  * Swing wrapper of all plots. This schedules regular updates, creates menus and deals with listeners. There are a number of
@@ -55,7 +68,7 @@ import org.opentrafficsim.animation.graphs.TabularDataset;
  * @author Peter Knoppers
  * @author Wouter Schakel
  */
-public class SwingPlot extends JFrame
+public class SwingPlot extends JPanel
 {
     /** ID. */
     private static final long serialVersionUID = 20190823L;
@@ -65,7 +78,10 @@ public class SwingPlot extends JFrame
     protected final AbstractPlot<?> plot;
 
     /** Status label. */
-    private JLabel statusLabel;
+    private final JLabel statusLabel;
+
+    /** Hint label. */
+    private final JLabel hintLabel;
 
     /** Detach menu item. */
     private JMenuItem detach;
@@ -73,17 +89,94 @@ public class SwingPlot extends JFrame
     /** Chart panel. */
     private ChartPanel chartPanel;
 
+    /** Status bar hint text. */
+    private final String hintText;
+
     /**
      * Construct a new Swing container for an AbstractPlot.
      * @param plot the plot to embed
      */
     public SwingPlot(final AbstractPlot<?> plot)
     {
+        super(new BorderLayout());
         this.plot = plot;
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 10), 1),
+                BorderFactory.createEmptyBorder(5, 5, 0, 5)));
         // status label
+        JLayeredPane statusPanel = new JLayeredPane()
+        {
+            @Override
+            public Dimension getPreferredSize()
+            {
+                Dimension d1 = SwingPlot.this.statusLabel.getPreferredSize();
+                Dimension d2 = SwingPlot.this.hintLabel.getPreferredSize();
+                return new Dimension(Math.max(d1.width, d2.width), Math.max(d1.height, d2.height));
+            }
+
+            @Override
+            public void doLayout()
+            {
+                Dimension status = SwingPlot.this.statusLabel.getPreferredSize();
+                Dimension hint = SwingPlot.this.hintLabel.getPreferredSize();
+                int w = getWidth();
+                int h = getHeight();
+                SwingPlot.this.statusLabel.setBounds((w - status.width) / 2, (h - status.height) / 2, status.width,
+                        status.height);
+                SwingPlot.this.hintLabel.setBounds(w - hint.width - 5, (h - hint.height) / 2, hint.width, hint.height);
+            }
+
+            @Override
+            protected void paintChildren(final Graphics g)
+            {
+                super.paintChildren(g);
+                Rectangle status = SwingPlot.this.statusLabel.getBounds();
+                Rectangle hint = SwingPlot.this.hintLabel.getBounds();
+                int statusRight = status.x + status.width;
+                int hintLeft = hint.x;
+                int overlap = statusRight - hintLeft;
+                int fadeWidth = 20;
+                if (overlap > -fadeWidth && SwingPlot.this.statusLabel.isVisible())
+                {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    Color bg = getBackground();
+                    Color c1 = new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), 255);
+                    Color c2 = new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), 0);
+                    g2.setPaint(new GradientPaint(statusRight, 0, c1, statusRight + fadeWidth, 0, c2));
+                    g2.fillRect(statusRight, 0, fadeWidth, getHeight());
+                    g2.setPaint(new GradientPaint(status.x - fadeWidth, 0, c2, status.x, 0, c1));
+                    g2.fillRect(status.x - fadeWidth, 0, fadeWidth, getHeight());
+                    g2.dispose();
+                }
+            }
+        };
+        statusPanel.setLayout(null);
         this.statusLabel = new JLabel(" ", SwingConstants.CENTER);
-        add(this.statusLabel, BorderLayout.SOUTH);
+        this.statusLabel.setOpaque(true);
+        this.statusLabel.setBackground(UIManager.getColor("Panel.background"));
+        statusPanel.add(this.statusLabel);
+        class AppearanceControlLabel extends JLabel implements AppearanceControl
+        {
+            private static final long serialVersionUID = 20261103L;
+
+            @Override
+            public boolean isForeground()
+            {
+                return false;
+            }
+        }
+        this.hintLabel = new AppearanceControlLabel();
+        this.hintLabel.setForeground(UIManager.getColor("Label.disabledForeground"));
+        statusPanel.add(this.hintLabel);
+        add(statusPanel, BorderLayout.SOUTH);
         setChart(plot.getChart());
+        String hint = "\u24D8 reset: drag\u2196, zoom: scroll/drag\u2198";
+        if (plot.getChart().getPlot() instanceof XYPlot)
+        {
+            String modifier =
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() == InputEvent.META_DOWN_MASK ? "\u2318" : "ctrl";
+            hint += ", pan: " + modifier + "+drag";
+        }
+        this.hintText = hint;
     }
 
     /**
@@ -109,7 +202,7 @@ public class SwingPlot extends JFrame
             {
                 if (Double.isNaN(domainValue))
                 {
-                    setStatusLabel(" ");
+                    removeStatusLabel();
                 }
                 else
                 {
@@ -127,6 +220,17 @@ public class SwingPlot extends JFrame
         addSaveAsDataItems(chart, popupMenu);
         addDetachedWindowItem(popupMenu);
         addPopUpMenuItems(popupMenu);
+    }
+
+    @Override
+    public void setBackground(final Color c)
+    {
+        super.setBackground(c);
+        ChartPanel p = this.chartPanel;
+        if (p != null)
+        {
+            p.getChart().setBackgroundPaint(c);
+        }
     }
 
     /**
@@ -181,7 +285,7 @@ public class SwingPlot extends JFrame
             {
                 SwingPlot.this.detach.setEnabled(false);
                 JFrame window = new JFrame(getPlot().getCaption());
-                window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 window.add(SwingPlot.this.chartPanel, BorderLayout.CENTER);
                 window.add(SwingPlot.this.statusLabel, BorderLayout.SOUTH);
                 window.addWindowListener(new WindowAdapter()
@@ -192,13 +296,13 @@ public class SwingPlot extends JFrame
                         add(SwingPlot.this.chartPanel, BorderLayout.CENTER);
                         add(SwingPlot.this.statusLabel, BorderLayout.SOUTH);
                         SwingPlot.this.detach.setEnabled(true);
-                        SwingPlot.this.getContentPane().validate();
-                        SwingPlot.this.getContentPane().repaint();
+                        SwingPlot.this.validate();
+                        SwingPlot.this.repaint();
                     }
                 });
                 window.pack();
                 window.setVisible(true);
-                SwingPlot.this.getContentPane().repaint();
+                SwingPlot.this.repaint();
             }
         });
         popupMenu.add(this.detach);
@@ -304,8 +408,11 @@ public class SwingPlot extends JFrame
                         h = getHeight();
                     }
                     OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(filename)));
+                    Paint bg = SwingPlot.this.plot.getChart().getBackgroundPaint();
+                    SwingPlot.this.plot.getChart().setBackgroundPaint(new Color(0, 0, 0, 0));
                     out.write(SwingPlot.this.plot.encodeAsPng(w, h, fs));
                     out.close();
+                    SwingPlot.this.plot.getChart().setBackgroundPaint(bg);
                 }
             }
         };
@@ -400,10 +507,31 @@ public class SwingPlot extends JFrame
      */
     protected void setStatusLabel(final String label)
     {
-        if (this.statusLabel != null)
+        this.hintLabel.setText(this.hintText);
+        if (label == null || label.isBlank())
+        {
+            this.statusLabel.setText("");
+            this.statusLabel.setVisible(false);
+        }
+        else
         {
             this.statusLabel.setText(label);
+            this.statusLabel.setVisible(true);
         }
+        this.statusLabel.getParent().revalidate();
+        this.statusLabel.getParent().repaint();
+    }
+
+    /**
+     * Removes the status label.
+     */
+    protected void removeStatusLabel()
+    {
+        this.hintLabel.setText(" ");
+        this.statusLabel.setText("");
+        this.statusLabel.setVisible(false);
+        this.statusLabel.getParent().revalidate();
+        this.statusLabel.getParent().repaint();
     }
 
     /**

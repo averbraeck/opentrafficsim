@@ -193,6 +193,7 @@ public class TrajectoryPlot extends AbstractSpaceTimePlot<TrajectoriesPaintState
                 this.colorbar.setPosition(RectangleEdge.RIGHT);
                 // some padding to make space for last tick number on adjacent axes, and vertically match those axes
                 this.colorbar.setPadding(10.0, 15.0, 40.0, 10.0);
+                this.colorbar.setBackgroundPaint(null);
                 getChart().addSubtitle(this.colorbar);
             }
             else if (colorer instanceof LegendColorer<?> legendColorer)
