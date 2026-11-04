@@ -277,14 +277,16 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
             {
                 case DOWNSTREAM -> parent.startDistance + parent.getLength().si;
                 case UPSTREAM -> parent.startDistance - child().getLength().si;
-                case LATERAL_DOWNSTREAM -> {
+                case LATERAL_DOWNSTREAM ->
+                {
                     if (parent.startDistance < 0.0 && parent.getEndDistance() > 0.0)
                     {
                         yield getProjectedPoint(point);
                     }
                     yield parent.startDistance;
                 }
-                case LATERAL_UPSTREAM -> {
+                case LATERAL_UPSTREAM ->
+                {
                     if (parent.startDistance < 0.0 && parent.getEndDistance() > 0.0)
                     {
                         yield getProjectedPoint(point);

@@ -642,7 +642,7 @@ public class LaneStructure
                 {
                     upQueue.add(up);
                 }
-                else if (!up.getLane().prevLanes(null).isEmpty() && up.isDownstreamMergeBranch())
+                else if (up.isDownstreamMergeBranch() && !up.getLane().prevLanes(null).isEmpty())
                 {
                     // upstream branch has not reached 0-point, but this record is as close as it gets (out of range)
                     addToRoot(up);
@@ -777,7 +777,7 @@ public class LaneStructure
             // reached 0-point
             addToRoot(record);
         }
-        else if (record.getLane().prevLanes(null).isEmpty() && record.isDownstreamMergeBranch())
+        else if (record.isDownstreamMergeBranch() && record.getLane().prevLanes(null).isEmpty())
         {
             // upstream branch has not reached 0-point, but this record is as close as it gets (no more lanes)
             addToRoot(record);
