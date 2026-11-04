@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.tactical.util.lmrs;
 
 import java.util.Optional;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -105,7 +106,8 @@ public interface Relaxation extends NamedConstants
         public void initRelaxation(final Parameters params, final Speed egoSpeed, final PerceivedGtu leader,
                 final RelaxationTrigger trigger) throws ParameterException
         {
-            double k = requiredRelaxationLevel(params, egoSpeed, leader.getDistance().si, leader.getSpeed());
+            Acceleration b = params.getParameter(ParameterTypes.B);
+            double k = requiredRelaxationLevel(params, egoSpeed, leader.getDistance().si, leader.getSpeed(), b);
             k = Math.max(0.0, Math.min(k, 1.0));
             double tMax = params.getParameter(ParameterTypes.TMAX).si;
             params.setClaimedParameter(AbstractIdm.KAPPA, k, KAPPA_KEY);
@@ -137,20 +139,20 @@ public interface Relaxation extends NamedConstants
          * @param egoSpeed ego speed
          * @param distance object distance
          * @param leaderSpeed object speed
+         * @param b value to use for b depending on context
          * @return unbounded (can be &lt;0 or &gt;1) level of relaxation required to follow an object
          * @throws ParameterException in case of a missing parameter
          */
         private double requiredRelaxationLevel(final Parameters params, final Speed egoSpeed, final double distance,
-                final Speed leaderSpeed) throws ParameterException
+                final Speed leaderSpeed, final Acceleration b) throws ParameterException
         {
             double s0 = params.getParameter(ParameterTypes.S0).si;
             double tMax = params.getParameter(ParameterTypes.TMAX).si;
             double a = params.getParameter(ParameterTypes.A).si;
-            double b = params.getParameter(ParameterTypes.B).si;
             double v = egoSpeed.si;
             double dv = v - leaderSpeed.si;
 
-            double sqrtab2 = 2.0 * Math.sqrt(a * b);
+            double sqrtab2 = 2.0 * Math.sqrt(a * b.si);
             double sk0 = Math.max(0.0, v * tMax + v * dv / sqrtab2); // excluding s0, which does not matter for the difference
             double sk1 = Math.max(0.0, Math.abs(dv) * dv / sqrtab2);
             return (s0 + sk0 - distance) / (sk0 - sk1);
@@ -173,11 +175,11 @@ public interface Relaxation extends NamedConstants
 
         @Override
         public Optional<Double> requiredRelaxationLevel(final Parameters params, final Speed egoSpeed,
-                final PerceivedGtu leader) throws ParameterException
+                final PerceivedGtu leader, final Acceleration maxDeceleration) throws ParameterException
         {
             // add s0 + l to achieve a logic based on "ego nose reasonably behind leader nose"
             double s = leader.getDistance().si + leader.getLength().si + params.getParameter(ParameterTypes.S0).si;
-            return Optional.of(requiredRelaxationLevel(params, egoSpeed, s, leader.getSpeed()));
+            return Optional.of(requiredRelaxationLevel(params, egoSpeed, s, leader.getSpeed(), maxDeceleration));
         }
 
         @Override
@@ -244,11 +246,13 @@ public interface Relaxation extends NamedConstants
      * @param params parameters
      * @param egoSpeed ego speed
      * @param leader leading vehicle in adjacent lane
+     * @param maxDeceleration maximum deceleration accepted for relaxation
      * @return whether the vehicle in the adjacent lane is accepted for synchronization or cooperation, empty if implementation
      *         has no logic for it
      * @throws ParameterException when a parameter is missing or out of bounds
      */
-    Optional<Double> requiredRelaxationLevel(Parameters params, Speed egoSpeed, PerceivedGtu leader) throws ParameterException;
+    Optional<Double> requiredRelaxationLevel(Parameters params, Speed egoSpeed, PerceivedGtu leader,
+            Acceleration maxDeceleration) throws ParameterException;
 
     /**
      * Returns whether the gap expressed in leader-follower distance and speed is accepted. This either involves a prospective
@@ -331,7 +335,7 @@ public interface Relaxation extends NamedConstants
 
         @Override
         public Optional<Double> requiredRelaxationLevel(final Parameters params, final Speed egoSpeed,
-                final PerceivedGtu leader) throws ParameterException
+                final PerceivedGtu leader, final Acceleration maxDeceleration) throws ParameterException
         {
             return Optional.empty();
         }

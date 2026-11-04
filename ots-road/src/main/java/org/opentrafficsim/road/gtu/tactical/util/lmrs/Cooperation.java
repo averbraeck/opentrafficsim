@@ -57,8 +57,8 @@ public interface Cooperation extends NamedConstants
             {
                 return Acceleration.POS_MAXVALUE;
             }
-            double b0 = context.getParameters().getParameter(ParameterTypes.B0).si;
-            double b = context.getParameters().getParameter(ParameterTypes.B).si;
+            Acceleration b0 = context.getParameters().getParameter(ParameterTypes.B0);
+            Acceleration b = context.getParameters().getParameter(ParameterTypes.B);
             double a = Double.MAX_VALUE;
             double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
@@ -70,7 +70,9 @@ public interface Cooperation extends NamedConstants
                 SingleUrgency urgency = getLaneChangeUrgency(leader, lat.flip(), dCoop);
                 if (urgency.desire() >= dCoop)
                 {
-                    double k = relaxation.requiredRelaxationLevel(context.getParameters(), context.getSpeed(), leader)
+                    double u = urgency.urgency();
+                    Acceleration bUrg = u >= dCoop ? b : b0;
+                    double k = relaxation.requiredRelaxationLevel(context.getParameters(), context.getSpeed(), leader, bUrg)
                             .orElse(urgency.desire());
                     if (k <= 1.0)
                     {
@@ -81,9 +83,7 @@ public interface Cooperation extends NamedConstants
                         }
                         double aSingle = LmrsUtil.synchronizationAcceleration(context, leader.getDistance(), leader.getSpeed(),
                                 Math.max(0.0, k)).si;
-                        double u = urgency.urgency();
-                        double bUrg = u >= dCoop ? b : b0;
-                        aSingle = Math.max(aSingle, -bUrg);
+                        aSingle = Math.max(aSingle, -bUrg.si);
                         a = Math.min(a, aSingle);
                     }
                 }

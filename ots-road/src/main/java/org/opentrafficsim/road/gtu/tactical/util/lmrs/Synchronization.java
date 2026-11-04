@@ -55,7 +55,7 @@ public interface Synchronization extends NamedConstants
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
-            PerceivedGtu leader = Synchronization.getProspectiveLeader(context, relativeLane, desire);
+            PerceivedGtu leader = Synchronization.getProspectiveLeader(context, relativeLane, desire, urgency);
             if (leader != null)
             {
                 // follow prospective leader
@@ -70,8 +70,8 @@ public interface Synchronization extends NamedConstants
                 }
 
                 // limit deceleration based on desire
-                double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
-                double bUrg = context.getParameters().getParameter(urgency >= dCoop ? ParameterTypes.B : ParameterTypes.B0).si;
+                double dSync = context.getParameters().getParameter(LmrsParameters.DSYNC);
+                double bUrg = context.getParameters().getParameter(urgency >= dSync ? ParameterTypes.B : ParameterTypes.B0).si;
                 a = a.si > -bUrg ? a : Acceleration.ofSI(-bUrg);
             }
             return a;
@@ -97,7 +97,7 @@ public interface Synchronization extends NamedConstants
                 throws ParameterException, OperationalPlanException
         {
             if (context.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si
-                    && !Synchronization.leaderIsCreeping(context, desire, lat))
+                    && !Synchronization.leaderIsCreeping(context, desire, urgency, lat))
             {
                 return Acceleration.POS_MAXVALUE;
             }
@@ -126,7 +126,7 @@ public interface Synchronization extends NamedConstants
         {
             Acceleration a = Acceleration.POS_MAXVALUE;
             RelativeLane relativeLane = RelativeLane.of(lat, 1);
-            PerceivedGtu leader = Synchronization.getProspectiveLeader(context, relativeLane, desire);
+            PerceivedGtu leader = Synchronization.getProspectiveLeader(context, relativeLane, desire, urgency);
             if (leader != null)
             {
                 // follow prospective leader
@@ -183,7 +183,7 @@ public interface Synchronization extends NamedConstants
                 throws ParameterException, OperationalPlanException
         {
             if (context.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si
-                    && !Synchronization.leaderIsCreeping(context, desire, lat))
+                    && !Synchronization.leaderIsCreeping(context, desire, urgency, lat))
             {
                 return Acceleration.POS_MAXVALUE;
             }
@@ -217,12 +217,13 @@ public interface Synchronization extends NamedConstants
      * @param context tactical context
      * @param relativeLane relative lane
      * @param desire lane change desire
+     * @param urgency lane change urgency
      * @return leader to consider for synchronization
      * @throws OperationalPlanException when the neighbors perception category is missing
      * @throws ParameterException when the dCoop parameter is missing
      */
     static PerceivedGtu getProspectiveLeader(final TacticalContextEgo context, final RelativeLane relativeLane,
-            final double desire) throws OperationalPlanException, ParameterException
+            final double desire, final double urgency) throws OperationalPlanException, ParameterException
     {
         double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
@@ -234,7 +235,10 @@ public interface Synchronization extends NamedConstants
             {
                 if (desire >= dCoop || leader.getSpeed().si > 0.0)
                 {
-                    double k = relaxation.requiredRelaxationLevel(context.getParameters(), context.getSpeed(), leader)
+                    double dSync = context.getParameters().getParameter(LmrsParameters.DSYNC);
+                    Acceleration b =
+                            context.getParameters().getParameter(urgency > dSync ? ParameterTypes.B : ParameterTypes.B0);
+                    double k = relaxation.requiredRelaxationLevel(context.getParameters(), context.getSpeed(), leader, b)
                             .orElse(desire);
                     if (k <= 1.0)
                     {
@@ -307,15 +311,16 @@ public interface Synchronization extends NamedConstants
      * Returns whether the leader in the target lane is considered to be creeping.
      * @param context tactical context
      * @param desire lane change desire
+     * @param urgency lane change urgency
      * @param lat lateral directionality of lane change desire
      * @return whether the leader in the target lane is considered to be creeping
      * @throws OperationalPlanException when the neighbors perception category is missing
      * @throws ParameterException when the dCoop or vCreep parameter is missing
      */
-    static boolean leaderIsCreeping(final TacticalContextEgo context, final double desire, final LateralDirectionality lat)
-            throws OperationalPlanException, ParameterException
+    static boolean leaderIsCreeping(final TacticalContextEgo context, final double desire, final double urgency,
+            final LateralDirectionality lat) throws OperationalPlanException, ParameterException
     {
-        PerceivedGtu leader = getProspectiveLeader(context, RelativeLane.of(lat, 1), desire);
+        PerceivedGtu leader = getProspectiveLeader(context, RelativeLane.of(lat, 1), desire, urgency);
         return leader != null && leader.getSpeed().si < context.getParameters().getParameter(CREEP_SPEED).si;
     }
 
