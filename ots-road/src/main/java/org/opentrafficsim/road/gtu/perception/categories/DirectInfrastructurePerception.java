@@ -169,8 +169,8 @@ public class DirectInfrastructurePerception extends AbstractLanePerceptionCatego
             for (LaneChangeInfo laneChangeInfo : set)
             {
                 Length dist = Length.ofSI(laneChangeInfo.remainingDistance().si + record.getStartDistance() - front.si);
-                out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist, laneChangeInfo.deadEnd(),
-                        laneChangeInfo.lateralDirectionality()));
+                out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist.si < 0.0 ? Length.ZERO : dist,
+                        laneChangeInfo.deadEnd(), laneChangeInfo.lateralDirectionality()));
             }
         }
         return out;

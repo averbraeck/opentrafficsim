@@ -195,24 +195,50 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      */
     public void setStartDistance(final double distance, final LaneStructure structure)
     {
-        boolean wasCrossSection = this.startDistance < 0.0 && this.startDistance + getLength().si > 0.0;
+        boolean wasRoot = isRoot();
         this.startDistance = distance;
-        boolean isCrossSection = distance < 0.0 && distance + getLength().si > 0.0;
-        if (wasCrossSection != isCrossSection)
+        if (wasRoot != isRoot())
         {
-            if (wasCrossSection)
+            if (wasRoot)
             {
-                structure.removeFromCrossSection(this);
+                structure.removeFromRoot(this);
             }
             else
             {
-                structure.addToCrossSection(this);
+                structure.addToRoot(this);
             }
         }
         for (LinkedRecord linkedRecord : this.linked)
         {
             linkedRecord.updateStartDistance(this, this::getPoint, structure);
         }
+    }
+
+    /**
+     * Returns whether the record belongs to the root.
+     * @return whether the record belongs to the root
+     */
+    private boolean isRoot()
+    {
+        return (this.startDistance <= 0.0 && this.startDistance + getLength().si > 0.0) || isDownstreamMergeBranchRoot();
+    }
+
+    /**
+     * Returns whether the record is the root as it is the upstream end of a downstream merge branch.
+     * @return whether the record is the root as it is the upstream end of a downstream merge branch
+     */
+    private boolean isDownstreamMergeBranchRoot()
+    {
+        return isDownstreamMergeBranch() && getPrev().isEmpty();
+    }
+
+    /**
+     * Returns whether the record is on a downstream merge branch.
+     * @return whether the record is on a downstream merge branch
+     */
+    boolean isDownstreamMergeBranch()
+    {
+        return getRelativeLane().getNumLanes() > 0 && getMergeDistance().si > 0.0 && getStartDistance() > 0.0;
     }
 
     /**
@@ -251,16 +277,14 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
             {
                 case DOWNSTREAM -> parent.startDistance + parent.getLength().si;
                 case UPSTREAM -> parent.startDistance - child().getLength().si;
-                case LATERAL_DOWNSTREAM ->
-                {
+                case LATERAL_DOWNSTREAM -> {
                     if (parent.startDistance < 0.0 && parent.getEndDistance() > 0.0)
                     {
                         yield getProjectedPoint(point);
                     }
                     yield parent.startDistance;
                 }
-                case LATERAL_UPSTREAM ->
-                {
+                case LATERAL_UPSTREAM -> {
                     if (parent.startDistance < 0.0 && parent.getEndDistance() > 0.0)
                     {
                         yield getProjectedPoint(point);

@@ -64,8 +64,8 @@ public class LaneStructure
     /** Route in last update. */
     private Route route;
 
-    /** Cross section of lane records at different relative lanes. */
-    private final Map<RelativeLane, Set<LaneRecord>> crossSection = new IndexedMap<>();
+    /** Root lane records at different relative lanes. */
+    private final Map<RelativeLane, Set<LaneRecord>> rootAtLane = new IndexedMap<>();
 
     /** Cross section of lane records directly found laterally from the root. */
     private final SortedKeySetMap<RelativeLane, LaneRecord> rootCrossSection = new IndexedMap<>();
@@ -401,9 +401,9 @@ public class LaneStructure
             final RelativeLane relativeLane)
     {
         Collection<LaneRecord> collection = new SmallArraySet<>();
-        if (this.crossSection.containsKey(relativeLane))
+        if (this.rootAtLane.containsKey(relativeLane))
         {
-            for (LaneRecord record : this.crossSection.get(relativeLane))
+            for (LaneRecord record : this.rootAtLane.get(relativeLane))
             {
                 collection.addAll(starter.apply(record));
             }
@@ -435,7 +435,7 @@ public class LaneStructure
     private void startDownstream(final LaneRecord record, final RelativePosition.Type position,
             final Collection<LaneRecord> result)
     {
-        if (egoPosition(record, position) >= 0.0)
+        if (egoPosition(record, position) >= 0.0 || record.getPrev().isEmpty())
         {
             result.add(record);
             return; // position is on the lane
@@ -470,7 +470,7 @@ public class LaneStructure
     private void startUpstream(final LaneRecord record, final RelativePosition.Type position,
             final Collection<LaneRecord> result)
     {
-        if (egoPosition(record, position) < record.getLane().getLength().si)
+        if (egoPosition(record, position) < record.getLane().getLength().si || record.getNext().isEmpty())
         {
             result.add(record);
             return; // position is on the lane
@@ -536,7 +536,7 @@ public class LaneStructure
 
         // Rebuild the structure
         this.effectiveDownstream = lane.getLength().si - positionSI + this.downstream.si;
-        this.crossSection.clear();
+        this.rootAtLane.clear();
         this.rootCrossSection.clear();
         this.rootCrossSectionRecords.clear();
         Set<Lane> visited = new HashSet<>();
@@ -546,7 +546,7 @@ public class LaneStructure
         Deque<LaneRecord> latUpQueue = new ArrayDeque<>();
         LaneRecord root = new LaneRecord(lane, RelativeLane.CURRENT, -positionSI, Length.ZERO);
         visited.add(lane);
-        checkCrossSection(root);
+        checkRoot(root);
         downQueue.add(root); // given effectiveDownstream there is an inherent downstream move, no need to check distance
         if (-root.getStartDistance() < this.upstream.si)
         {
@@ -606,7 +606,7 @@ public class LaneStructure
             record.addNext(down, true);
             down.addPrev(record, false);
             visited.add(lane);
-            checkCrossSection(down);
+            checkRoot(down);
             if (down.getEndDistance() < this.effectiveDownstream)
             {
                 downQueue.add(down);
@@ -637,10 +637,15 @@ public class LaneStructure
                 record.addPrev(up, true);
                 up.addNext(record, false);
                 visited.add(lane);
-                checkCrossSection(up);
+                checkRoot(up);
                 if (-up.getStartDistance() + up.getMergeDistance().si < this.upstream.si)
                 {
                     upQueue.add(up);
+                }
+                else if (!up.getLane().prevLanes(null).isEmpty() && up.isDownstreamMergeBranch())
+                {
+                    // upstream branch has not reached 0-point, but this record is as close as it gets (out of range)
+                    addToRoot(up);
                 }
                 latUpQueue.add(up);
             }
@@ -719,7 +724,7 @@ public class LaneStructure
                     LaneRecord lat = new LaneRecord(lane, relativeLane, startDistance, mergeDistance);
                     record.addLateral(lat, down);
                     visited.add(lane);
-                    checkCrossSection(lat);
+                    checkRoot(lat);
                     // from the cross-section directly from the root, we initiate both an upstream and downstream search
                     if (this.rootCrossSectionRecords.contains(record))
                     {
@@ -761,26 +766,32 @@ public class LaneStructure
     }
 
     /**
-     * Adds the lane to the cross-section, if the zero position is somewhere on the lane (negative start distance, positive end
+     * Adds the lane to the root, if the zero position is somewhere on the lane (negative start distance, positive end
      * distance).
-     * @param record record.
+     * @param record record
      */
-    private void checkCrossSection(final LaneRecord record)
+    private void checkRoot(final LaneRecord record)
     {
         if (record.getStartDistance() <= 0.0 && record.getEndDistance() > 0.0)
         {
-            addToCrossSection(record);
+            // reached 0-point
+            addToRoot(record);
+        }
+        else if (record.getLane().prevLanes(null).isEmpty() && record.isDownstreamMergeBranch())
+        {
+            // upstream branch has not reached 0-point, but this record is as close as it gets (no more lanes)
+            addToRoot(record);
         }
     }
 
     /**
-     * Removes the record from the cross-section. This is used when the start distance of the record is changed and the record
-     * is no longer in the cross-section.
-     * @param record record to remove from the cross-section
+     * Removes the record from the root. This is used when the start distance of the record is changed and the record is no
+     * longer in the root.
+     * @param record record to remove from the root
      */
-    void removeFromCrossSection(final LaneRecord record)
+    void removeFromRoot(final LaneRecord record)
     {
-        Set<LaneRecord> set = this.crossSection.get(record.getRelativeLane());
+        Set<LaneRecord> set = this.rootAtLane.get(record.getRelativeLane());
         if (set != null)
         {
             set.remove(record);
@@ -792,9 +803,9 @@ public class LaneStructure
      * becomes part of the cross-section.
      * @param record record to remove from the cross-section
      */
-    void addToCrossSection(final LaneRecord record)
+    void addToRoot(final LaneRecord record)
     {
-        this.crossSection.computeIfAbsent(record.getRelativeLane(), (r) -> new SmallArraySet<>()).add(record);
+        this.rootAtLane.computeIfAbsent(record.getRelativeLane(), (r) -> new SmallArraySet<>()).add(record);
     }
 
     /**
@@ -815,7 +826,7 @@ public class LaneStructure
     public boolean exists(final RelativeLane lane)
     {
         update();
-        return this.crossSection.containsKey(lane);
+        return this.rootAtLane.containsKey(lane);
     }
 
     /**
