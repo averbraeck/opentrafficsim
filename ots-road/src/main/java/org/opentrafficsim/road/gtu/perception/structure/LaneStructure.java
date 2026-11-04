@@ -46,6 +46,9 @@ import org.opentrafficsim.road.network.object.LaneBasedObject;
 public class LaneStructure
 {
 
+    /** Margin around lane edges to start an upstream or downstream search regardless of relative position. */
+    private static final double EDGE_MARGIN = 40.0;
+
     /** GTU. */
     private final LaneBasedGtu egoGtu;
 
@@ -236,7 +239,7 @@ public class LaneStructure
                     {
                         return gtus;
                     }
-                    double pos = Math.max(-record.getStartDistance() + dx.si, 0.0);
+                    double pos = -record.getStartDistance() + dx.si;
                     int from = findFirstAfterOrAt((i) -> position(gtus.get(i), record, otherPosition), gtus.size(), pos);
                     while (from < gtus.size() && gtus.get(from).getId().equals(this.egoGtu.getId()))
                     {
@@ -298,7 +301,7 @@ public class LaneStructure
                     {
                         from++;
                     }
-                    double pos = Math.min(-record.getStartDistance() + dx.si, record.getLength().si);
+                    double pos = -record.getStartDistance() + dx.si;
                     int to = findLastBeforeOrAt((i) -> position(gtus.get(i), record, otherPosition), gtus.size(), pos);
                     while (to >= 0 && gtus.get(to).getId().equals(this.egoGtu.getId()))
                     {
@@ -435,7 +438,7 @@ public class LaneStructure
     private void startDownstream(final LaneRecord record, final RelativePosition.Type position,
             final Collection<LaneRecord> result)
     {
-        if (egoPosition(record, position) >= 0.0 || record.getPrev().isEmpty())
+        if (egoPosition(record, position) - EDGE_MARGIN >= 0.0 || record.getPrev().isEmpty())
         {
             result.add(record);
             return; // position is on the lane
@@ -470,7 +473,7 @@ public class LaneStructure
     private void startUpstream(final LaneRecord record, final RelativePosition.Type position,
             final Collection<LaneRecord> result)
     {
-        if (egoPosition(record, position) < record.getLane().getLength().si || record.getNext().isEmpty())
+        if (egoPosition(record, position) + EDGE_MARGIN < record.getLane().getLength().si || record.getNext().isEmpty())
         {
             result.add(record);
             return; // position is on the lane
