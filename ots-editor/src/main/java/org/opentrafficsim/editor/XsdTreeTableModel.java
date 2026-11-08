@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor;
 
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
@@ -8,6 +7,8 @@ import javax.swing.SwingUtilities;
 
 import org.djutils.eval.Eval;
 import org.w3c.dom.Document;
+
+import com.google.common.base.Objects;
 
 import de.javagl.treetable.AbstractTreeTableModel;
 import de.javagl.treetable.JTreeTable;
@@ -49,17 +50,46 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     /** Tree table, so it can be updated visually when a value has changed. */
     private JTreeTable treeTable;
 
+    /** Root of the data structure. */
+    private final XsdTreeNodeRoot dataStructureRoot;
+
     /**
      * Constructor.
      * @param document XSD document.
      * @param ignoreChanges whether to ignore changes
      * @param evalSupplier eval supplier
-     * @throws RemoteException when unable to listen for created nodes.
      */
     protected XsdTreeTableModel(final Document document, final Supplier<Boolean> ignoreChanges,
-            final Supplier<Eval> evalSupplier) throws RemoteException
+            final Supplier<Eval> evalSupplier)
     {
         super(document == null ? null : new XsdTreeNodeRoot(new Schema(document), ignoreChanges, evalSupplier));
+        this.dataStructureRoot = (XsdTreeNodeRoot) this.root; // created in line above, set by super
+    }
+
+    // TODO: ego code using (XsdTreeNodeRoot) getRoot() needs a special method and cast:
+    // XsdTreeNodeRoot root = ((XsdTreeTableModel) getModel()).getRootNode()
+
+    /**
+     * Changes the root of the tree table model (not of the data structure as such).
+     * @param root new root, may be {@code null} to show the complete data structure
+     */
+    public void setRoot(final XsdTreeNode root)
+    {
+        XsdTreeNode potentialRoot = root == null ? this.dataStructureRoot : root;
+        if (!Objects.equal(potentialRoot, this.root))
+        {
+            this.root = potentialRoot;
+            fireTreeStructureChanged(this, new Object[] {this.root}, null, null);
+        }
+    }
+
+    /**
+     * Returns the root of the data structure, rather than of the tree table view.
+     * @return the root of the data structure, rather than of the tree table view
+     */
+    public XsdTreeNodeRoot getDataRoot()
+    {
+        return this.dataStructureRoot;
     }
 
     /**

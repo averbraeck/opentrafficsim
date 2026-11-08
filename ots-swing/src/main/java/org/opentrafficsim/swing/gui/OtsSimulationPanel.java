@@ -390,6 +390,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
                 setToggleSectionButtonsState(selected);
             }
         });
+        expand.setFocusPainted(false);
         expand.setToolTipText(action + " all animation toggle sections");
         expand.setContentAreaFilled(false);
         expand.setBorder(null);
@@ -516,6 +517,7 @@ public class OtsSimulationPanel extends JPanel implements ActionListener, EventL
     public void startToggleSection(final String name, final boolean visibleDefault)
     {
         AppearanceJToggleButton toggle = new AppearanceJToggleButton();
+        toggle.setFocusPainted(false);
         toggle.setSelectedIcon(EXPANDED_ICON);
         toggle.setIcon(COLLAPSED_ICON);
         String key = getToggleSectionKey(name);

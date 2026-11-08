@@ -3,8 +3,6 @@ package org.opentrafficsim.editor.extensions.map;
 import java.util.Locale;
 import java.util.Optional;
 
-import javax.swing.SwingUtilities;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
@@ -208,6 +206,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
         setValue((v) -> this.position = v, Adapters.get(LengthBeginEnd.class), getNode(), "Position");
         setLocation();
+        getMap().update();
     }
 
     @Override
@@ -243,7 +242,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             // MapLinkData.LAYOUT_REBUILT
             setLocation();
         }
-        SwingUtilities.invokeLater(() -> getMap().update());
+        getMap().update();
     }
 
     /**

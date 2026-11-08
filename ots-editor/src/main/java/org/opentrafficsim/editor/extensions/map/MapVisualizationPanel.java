@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -13,9 +14,12 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
+import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
+import org.opentrafficsim.base.geometry.OtsShape;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
+import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 
@@ -32,6 +36,9 @@ public class MapVisualizationPanel extends VisualizationPanel
 
     /** Serialization version UID. */
     private static final long serialVersionUID = 20260212L;
+
+    /** Extra selection margin around map data, independent of zoom. */
+    private static final double SELECTION_MARGIN_PX = 6.0;
 
     /** Event when extent changed. */
     public static final EventType EXTENT_CHANGED = new EventType(new MetaData("EXTENT_CHANGED", "EXTENT_CHANGED"));
@@ -203,7 +210,54 @@ public class MapVisualizationPanel extends VisualizationPanel
     @Override
     public List<Locatable> getSelectedObjects(final Point2D mousePoint)
     {
-        return super.getSelectedObjects(mousePoint);
+        List<Locatable> selected = new ArrayList<>();
+        try
+        {
+            double xScale = getRenderableScale().getXScale(getExtent(), getSize());
+            double yScale = getRenderableScale().getYScale(getExtent(), getSize());
+            for (Renderable2dInterface<? extends Locatable> renderable : new ArrayList<>(getElements()))
+            {
+                if (!isShowElement(renderable))
+                {
+                    continue;
+                }
+                boolean containsPoint =
+                        renderable.contains(mousePoint, getExtent(), getSize(), getRenderableScale(), 0.0, SELECTION_MARGIN_PX);
+                double worldMargin = Math.max(xScale, yScale) * SELECTION_MARGIN_PX;
+                if (containsPoint || withinSelectionMargin(renderable, mousePoint, worldMargin))
+                {
+                    selected.add(renderable.getSource());
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            CategoryLogger.always().warn(exception, "getSelectedObjects");
+        }
+        return selected;
+    }
+
+    /**
+     * Test whether a map-data source is within the pixel selection margin of its contour.
+     * @param renderable renderable to test
+     * @param mousePoint pointer location in pixels
+     * @param worldMargin maximum distance in world units corresponding to the pixel margin
+     * @return whether the source is inside the expanded contour
+     */
+    private boolean withinSelectionMargin(final Renderable2dInterface<? extends Locatable> renderable, final Point2D mousePoint,
+            final double worldMargin)
+    {
+        if (!(renderable.getSource() instanceof MapData mapData))
+        {
+            return false;
+        }
+        Point2d worldPoint = getRenderableScale().getWorldCoordinates(mousePoint, getExtent(), getSize());
+        if (worldPoint == null)
+        {
+            return false;
+        }
+        Point2d relativePoint = OtsShape.toRelativeTransform(mapData.getLocation()).transform(worldPoint);
+        return mapData.signedDistance(relativePoint) <= worldMargin;
     }
 
     @Override

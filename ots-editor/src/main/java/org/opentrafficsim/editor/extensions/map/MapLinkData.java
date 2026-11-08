@@ -176,6 +176,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /** Whether layout is dirty. */
     private boolean dirtyLayout = true;
 
+    /** Escape delayed execution when object was destroyed. */
+    private volatile boolean destroyed = false;
+
     /**
      * Constructor.
      * @param map map.
@@ -190,7 +193,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.isConnector = "Connector".equals(linkNode.getNodeName());
         if (this.isConnector)
         {
-            SwingUtilities.invokeLater(() ->
+            laterIfNotDestroyed(() ->
             {
                 // this is for 1) when delete is undone, as some children are recovered later, and 2) when the centroid or node
                 // is later in a loaded xml
@@ -208,7 +211,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
 
         // as RoadLayout is the default, a setOption() never triggers this (for DefinedRoadLayout this is not required)
-        SwingUtilities.invokeLater(() ->
+        laterIfNotDestroyed(() ->
         {
             XsdTreeNode layout = linkNode.getChild(1);
             layout.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
@@ -221,7 +224,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         // for when node is duplicated, set data immediately if (getNode().isActive())
         if (getNode().isActive())
         {
-            SwingUtilities.invokeLater(() ->
+            laterIfNotDestroyed(() ->
             {
                 // this is for 1) when delete is undone, as some children are recovered later, including the shape node, and 2)
                 // when the start or end node are later in a loaded xml
@@ -241,10 +244,27 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
     }
 
+    /**
+     * Executes the runnable later on the Swing EDT, but only if at that time the object is not destroyed.
+     * @param r runnable
+     */
+    private void laterIfNotDestroyed(final Runnable r)
+    {
+        SwingUtilities.invokeLater(() ->
+        {
+            if (!this.destroyed)
+            {
+                r.run();
+            }
+        });
+    }
+
     @Override
     public void destroy()
     {
+        this.destroyed = true;
         super.destroy();
+        removeAllListeners();
         for (Renderable2d<?> renderable : this.crossSectionElements)
         {
             getMap().removeAnimation(renderable);
@@ -276,6 +296,14 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         if (this.nodeEnd != null)
         {
             this.nodeEnd.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        }
+        if (this.centroid != null)
+        {
+            this.centroid.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        }
+        if (this.connectorNode != null)
+        {
+            this.connectorNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
         this.roadLayoutNode = null;
     }
@@ -634,6 +662,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         // TODO: move this to a parallel process?
 
+        XsdTreeNode linkNode = getNode();
+        if (linkNode.getParent() == null || !linkNode.isActive()
+                || (this.isConnector && (this.centroid == null || this.connectorNode == null)) || (!this.isConnector
+                        && (this.nodeStart == null || this.nodeEnd == null || this.shapeListener.shapeNode == null)))
+        {
+            this.dirtyGeometry = false;
+            this.dirtyLayout = false;
+            return;
+        }
+
         // Connector
         if (this.isConnector)
         {
@@ -808,6 +846,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
         this.dirtyLayout = false;
         fireEvent(LAYOUT_REBUILT, this);
+        getMap().update();
     }
 
     /**
@@ -988,6 +1027,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
+        this.centroid = replaceNode(this.centroid, getNode().getCoupledNodeAttribute("Centroid").orElse(null));
+        this.connectorNode = replaceNode(this.connectorNode, getNode().getCoupledNodeAttribute("Node").orElse(null));
         setDirtyEndCheckValidity();
     }
 
@@ -1007,6 +1048,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             this.nodeEnd = null;
             this.directionEnd = null;
+            setDirtyEndCheckValidity();
+        }
+        else if (node.equals(this.centroid))
+        {
+            this.centroid = null;
+            setDirtyEndCheckValidity();
+        }
+        else if (node.equals(this.connectorNode))
+        {
+            this.connectorNode = null;
             setDirtyEndCheckValidity();
         }
     }
@@ -1168,7 +1219,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
                     }
                     // later as values may not be loaded yet during loading
-                    SwingUtilities.invokeLater(() -> updateShape());
+                    laterIfNotDestroyed(() -> updateShape());
                 }
                 else
                 {
@@ -1194,7 +1245,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     else if (this.shapeNode.getNodeName().equals(Clothoid.class.getSimpleName()))
                     {
                         // later as flattener may not be loaded yet during loading
-                        SwingUtilities.invokeLater(() ->
+                        laterIfNotDestroyed(() ->
                         {
                             this.shapeNode.getChild(0).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
                             for (XsdTreeNode option : this.shapeNode.getChild(0).getChildren())
@@ -1208,10 +1259,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                             || this.shapeNode.getNodeName().equals(Bezier.class.getSimpleName()))
                     {
                         // later as flattener may not be loaded yet during loading
-                        SwingUtilities.invokeLater(() -> setFlattenerListener());
+                        laterIfNotDestroyed(() -> setFlattenerListener());
                     }
                     // later as values/coordinates may not be loaded yet during loading
-                    SwingUtilities.invokeLater(() -> updateShape());
+                    laterIfNotDestroyed(() -> updateShape());
                 }
                 setDirtyEndCheckValidity();
             }
@@ -1540,7 +1591,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     // Bezier methods
 
     /**
-     * Returns whether the link has a Bezier shape.
+     * Returns whether the link has a Bezier shape. Connectors have no shape child and return {@code false}.
      * @return whether the link has a Bezier shape
      */
     public boolean isBezier()
@@ -1549,27 +1600,27 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Returns the shape value of the Bezier.
-     * @return the shape value of the Bezier
+     * Returns the shape value of the Bezier. Connectors have no shape child and return the default value.
+     * @return the shape value of the Bezier, or 1.0 when no Bezier shape is present
      */
     public double getBezierShape()
     {
-        return this.shapeListener.shape == null ? 1.0 : this.shapeListener.shape;
+        return !hasShapeNode() || this.shapeListener.shape == null ? 1.0 : this.shapeListener.shape;
     }
 
     /**
-     * Returns whether the Bezier is weighted.
+     * Returns whether the Bezier is weighted. Connectors have no Bezier shape and return {@code false}.
      * @return whether the Bezier is weighted
      */
     public boolean isWeightedBezier()
     {
-        return this.shapeListener.weighted == null ? false : this.shapeListener.weighted;
+        return hasShapeNode() && Boolean.TRUE.equals(this.shapeListener.weighted);
     }
 
     // Polyline methods
 
     /**
-     * Returns whether the link has a polyline shape.
+     * Returns whether the link has a polyline shape. Connectors have no shape child and return {@code false}.
      * @return whether the link has a polyline shape
      */
     public boolean isPolyline()
@@ -1578,18 +1629,19 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Returns a safe copy of the polyline coordinates, mapped from XSD node to point.
-     * @return a safe copy of the polyline coordinates
+     * Returns a safe copy of the polyline coordinates, mapped from XSD node to point. Connectors have no shape child and return
+     * an empty map.
+     * @return a safe copy of the polyline coordinates, or an empty map when no shape child is present
      */
     public NavigableMap<XsdTreeNode, Point2d> getPolylineCoordinates()
     {
-        return new TreeMap<>(this.shapeListener.coordinates);
+        return hasShapeNode() ? new TreeMap<>(this.shapeListener.coordinates) : new TreeMap<>();
     }
 
     // Clothoid methods
 
     /**
-     * Returns whether the link has a clothoid shape.
+     * Returns whether the link has a clothoid shape. Connectors have no shape child and return {@code false}.
      * @return whether the link has a clothoid shape
      */
     public boolean isClothoid()
@@ -1598,12 +1650,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Returns the start curvature from the clothoid.
-     * @return start curvature from the clothoid.
+     * Returns the start curvature from the clothoid. Connectors have no clothoid shape and return {@code null}.
+     * @return start curvature from the clothoid, or {@code null} when no clothoid is present
      */
     public LinearDensity getClothoidStartCurvature()
     {
-        if (this.designLine != null && this.designLine instanceof Clothoid2d)
+        if (hasShapeNode() && this.designLine instanceof Clothoid2d)
         {
             return LinearDensity.ofSI(((Clothoid2d) this.designLine).getStartCurvature());
         }
@@ -1611,12 +1663,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Returns the end curvature from the clothoid.
-     * @return end curvature from the clothoid.
+     * Returns the end curvature from the clothoid. Connectors have no clothoid shape and return {@code null}.
+     * @return end curvature from the clothoid, or {@code null} when no clothoid is present
      */
     public LinearDensity getClothoidEndCurvature()
     {
-        if (this.designLine != null && this.designLine instanceof Clothoid2d)
+        if (hasShapeNode() && this.designLine instanceof Clothoid2d)
         {
             return LinearDensity.ofSI(((Clothoid2d) this.designLine).getEndCurvature());
         }
@@ -1624,12 +1676,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Returns the length from the clothoid.
-     * @return length from the clothoid.
+     * Returns the length from the clothoid. Connectors have no clothoid shape and return {@code null}.
+     * @return length from the clothoid, or {@code null} when no clothoid is present
      */
     public Length getClothoidLength()
     {
-        if (this.designLine != null && this.designLine instanceof Clothoid2d)
+        if (hasShapeNode() && this.designLine instanceof Clothoid2d)
         {
             return Length.ofSI(((Clothoid2d) this.designLine).getLength());
         }
@@ -1637,12 +1689,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Returns the A value from the clothoid.
-     * @return A value from the clothoid.
+     * Returns the A value from the clothoid. Connectors have no clothoid shape and return {@code null}.
+     * @return A value from the clothoid, or {@code null} when no clothoid is present
      */
     public Length getClothoidA()
     {
-        if (this.designLine != null && this.designLine instanceof Clothoid2d)
+        if (hasShapeNode() && this.designLine instanceof Clothoid2d)
         {
             return Length.ofSI(((Clothoid2d) this.designLine).getA());
         }
@@ -1651,12 +1703,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Returns whether the shape was applied as a Clothoid, an Arc, or as a Straight, depending on start and end position and
-     * direction.
-     * @return "Clothoid", "Arc" or "Straight".
+     * direction. Connectors have no Clothoid shape and return {@code null}.
+     * @return "Clothoid", "Arc" or "Straight", or {@code null} when no Clothoid shape is present
      */
     public String getClothoidAppliedShape()
     {
-        if (this.designLine != null && this.designLine instanceof Clothoid2d)
+        if (hasShapeNode() && this.designLine instanceof Clothoid2d)
         {
             return ((Clothoid2d) this.designLine).getAppliedShape();
         }
@@ -1670,7 +1722,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     private boolean isShape(final Class<?> clazz)
     {
-        return this.shapeListener.shapeNode.getNodeName().equals(clazz.getSimpleName());
+        return hasShapeNode() && this.shapeListener.shapeNode.getNodeName().equals(clazz.getSimpleName());
+    }
+
+    /**
+     * Returns whether this LinkData has a Link shape node. Connectors do not have shape child nodes.
+     * @return whether a Link shape node is available
+     */
+    private boolean hasShapeNode()
+    {
+        return !this.isConnector && this.shapeListener.shapeNode != null;
     }
 
     @Override

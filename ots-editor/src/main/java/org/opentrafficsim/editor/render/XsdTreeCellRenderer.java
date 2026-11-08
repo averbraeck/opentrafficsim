@@ -18,6 +18,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeTableModel;
 
 /**
  * Renderer for the nodes in the tree.
@@ -84,7 +85,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         {
             preAppend(this.description, false);
         }
-        if (node.isChoice() && !node.isIncluded())
+        if (node.isChoice() && !node.isIncluded() && !node.equals(((XsdTreeTableModel) tree.getModel()).getDataRoot()))
         {
             preAppend(this.dropdown, false);
         }

@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -17,22 +19,27 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.naming.NamingException;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.Box.Filler;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
@@ -60,6 +67,7 @@ import org.opentrafficsim.animation.road.StripeAnimation.StripeData;
 import org.opentrafficsim.animation.road.TrafficLightAnimation;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.core.geometry.CurveFlattener;
+import org.opentrafficsim.editor.ComboBoxSearchSupport;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -106,6 +114,45 @@ public final class EditorMap extends JPanel implements EventListener
     /** Panel with tools. */
     private final JPanel toolPanel;
 
+    /** Add mode button. */
+    private AbstractButton addModeButton;
+
+    /** Centroid mode button. */
+    private AbstractButton centroidModeButton;
+
+    /** Auto-fix button. */
+    private AbstractButton autoFixButton;
+
+    /** Default shape selector. */
+    private JComboBox<String> defaultShape;
+
+    /** Shape paint button. */
+    private AbstractButton shapeApplyButton;
+
+    /** Default road layout selector. */
+    private JComboBox<String> defaultRoadLayout;
+
+    /** Road layout paint button. */
+    private AbstractButton roadLayoutApplyButton;
+
+    /** Default link type selector. */
+    private JComboBox<String> defaultLinkType;
+
+    /** Link type paint button. */
+    private AbstractButton linkTypeApplyButton;
+
+    /** Link type show button. */
+    private AbstractButton linkTypeShowButton;
+
+    /** Current document root. */
+    private XsdTreeNodeRoot root;
+
+    /** Defined road layouts represented in the selector. */
+    private final Map<XsdTreeNode, String> definedRoadLayouts = new LinkedHashMap<>();
+
+    /** Defined link types represented in the selector. */
+    private final Map<XsdTreeNode, String> definedLinkTypes = new LinkedHashMap<>();
+
     /** Panel with toggles. */
     private final JPanel togglePanel;
 
@@ -123,18 +170,6 @@ public final class EditorMap extends JPanel implements EventListener
 
     /** Animation objects of all data's drawn. */
     private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
-
-    /** Whether we can ignore maintaining the scale. */
-    // private boolean ignoreKeepScale = false;
-
-    /** Last x-scale. */
-    // private Double lastXScale = null;
-
-    /** Last y-scale. */
-    // private Double lastYScale = null;
-
-    /** Last screen size. */
-    // private Dimension lastScreen = null;
 
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
@@ -210,107 +245,88 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.setPreferredSize(new Dimension(350, 28));
         this.toolPanel.setLayout(new BoxLayout(this.toolPanel, BoxLayout.X_AXIS));
         this.toolPanel.add(Box.createHorizontalStrut(5));
-        this.toolPanel.add(new JLabel("Add tools:"));
-        this.toolPanel.add(Box.createHorizontalStrut(5));
-
-        // button group that allows no selection when toggling the currently selected
-        ButtonGroup group = new ButtonGroup()
-        {
-            @Override
-            public void setSelected(final ButtonModel model, final boolean selected)
-            {
-                if (selected)
-                {
-                    super.setSelected(model, selected);
-                }
-                else
-                {
-                    clearSelection();
-                }
-            }
-        };
 
         Dimension buttonSize = new Dimension(24, 24);
-        JToggleButton nodeButton = new JToggleButton(IconUtil.of("Node24.png").imageSize(18, 18).get());
-        nodeButton.setPreferredSize(buttonSize);
-        nodeButton.setMinimumSize(buttonSize);
-        nodeButton.setMaximumSize(buttonSize);
-        nodeButton.setToolTipText("Add node");
-        group.add(nodeButton);
-        this.toolPanel.add(nodeButton);
+        int iconSize = 18;
+        Dimension applyButtonSize = new Dimension(19, 22);
+        int applyIconSize = 16;
+        Dimension shapeSizeSmall = new Dimension(80, 22);
+        Dimension shapeSizeLarge = new Dimension(100, 22);
+        Dimension definitionSizeSmall = new Dimension(50, 22);
+        Dimension definitionSizeLarge = new Dimension(150, 22);
+        Border paintBorder = new CompoundBorder(new MatteBorder(1, 0, 1, 1, MetalLookAndFeel.getControlDarkShadow()),
+                new EmptyBorder(0, 1, 0, 0));
 
-        JToggleButton linkButton = new JToggleButton(IconUtil.of("Link24.png").imageSize(18, 18).get());
-        linkButton.setPreferredSize(buttonSize);
-        linkButton.setMinimumSize(buttonSize);
-        linkButton.setMaximumSize(buttonSize);
-        linkButton.setToolTipText("Add link");
-        group.add(linkButton);
-        this.toolPanel.add(linkButton);
-
-        JToggleButton centroidButton = new JToggleButton(IconUtil.of("Centroid24.png").imageSize(18, 18).get());
-        centroidButton.setPreferredSize(buttonSize);
-        centroidButton.setMinimumSize(buttonSize);
-        centroidButton.setMaximumSize(buttonSize);
-        centroidButton.setToolTipText("Add centroid");
-        group.add(centroidButton);
-        this.toolPanel.add(centroidButton);
-
-        JToggleButton connectorButton = new JToggleButton(IconUtil.of("Connector24.png").imageSize(18, 18).get());
-        connectorButton.setPreferredSize(buttonSize);
-        connectorButton.setMinimumSize(buttonSize);
-        connectorButton.setMaximumSize(buttonSize);
-        connectorButton.setToolTipText("Add connector");
-        group.add(connectorButton);
-        this.toolPanel.add(connectorButton);
+        String modifier =
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() == InputEvent.META_DOWN_MASK ? "\u2318" : "ctrl";
+        this.addModeButton =
+                createToolButton(buttonSize, "NetworkAddMode24.png", "Add mode (" + modifier + ")", true, iconSize);
+        this.centroidModeButton = createToolButton(buttonSize, "Centroid24.png", "Add centroid (shift)", true, iconSize);
+        this.autoFixButton =
+                createToolButton(buttonSize, "AutoFix24.png", "Automatically align created elements", true, iconSize);
+        storedToggleSetting(this.addModeButton, "addMode");
+        storedToggleSetting(this.centroidModeButton, "centroidMode");
+        storedToggleSetting(this.autoFixButton, "autoFix");
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
-        JComboBox<String> shape = new AppearanceControlComboBox<>();
-        shape.setModel(new DefaultComboBoxModel<>(new String[] {"Straight", "Bezier", "Clothoid", "Arc", "PolyLine"}));
-        shape.setMinimumSize(new Dimension(80, 22));
-        shape.setMaximumSize(new Dimension(100, 22));
-        shape.setPreferredSize(new Dimension(100, 22));
-        shape.setToolTipText("Standard shape for new links");
-        // Renderer to combine icon and text
-        Map<String, Icon> shapeIcons = Map.of("straight", IconUtil.of("Straight24.png").imageSize(18, 18).get(), "bezier",
-                IconUtil.of("Bezier24.png").imageSize(18, 18).get(), "clothoid",
-                IconUtil.of("Clothoid24.png").imageSize(18, 18).get(), "arc", IconUtil.of("Arc24.png").imageSize(18, 18).get(),
-                "polyline", IconUtil.of("PolyLine24.png").imageSize(18, 18).get());
-        shape.setRenderer(new DefaultListCellRenderer()
+        this.defaultShape = new AppearanceControlComboBox<>();
+        this.defaultShape
+                .setModel(new DefaultComboBoxModel<>(new String[] {"Straight", "Bezier", "Clothoid", "Arc", "PolyLine"}));
+        setSize(this.defaultShape, shapeSizeSmall, shapeSizeLarge);
+        this.defaultShape.setToolTipText("Shape for new links");
+        Map<String,
+                Icon> shapeIcons = Map.of("straight", IconUtil.of("Straight24.png").imageSize(iconSize, iconSize).get(),
+                        "bezier", IconUtil.of("Bezier24.png").imageSize(iconSize, iconSize).get(), "clothoid",
+                        IconUtil.of("Clothoid24.png").imageSize(iconSize, iconSize).get(), "arc",
+                        IconUtil.of("Arc24.png").imageSize(iconSize, iconSize).get(), "polyline",
+                        IconUtil.of("PolyLine24.png").imageSize(iconSize, iconSize).get());
+        DefaultListCellRenderer shapeRenderer = new DefaultListCellRenderer();
+        this.defaultShape.setRenderer((list, value, index, isSelected, cellHasFocus) ->
         {
-            @Override
-            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
-                    final boolean isSelected, final boolean cellHasFocus)
-            {
-                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                String shapeId = label.getText().toLowerCase();
-                if (shapeIcons.containsKey(shapeId))
-                {
-                    label.setIcon(shapeIcons.get(shapeId));
-                }
-                return label;
-            }
+            JLabel label = (JLabel) shapeRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            String shapeId = label.getText().toLowerCase();
+            label.setIcon(shapeIcons.get(shapeId));
+            return label;
         });
-        this.toolPanel.add(shape);
+        String key = PropertiesStore.key("map.shape");
+        String value = OtsEditor.PROPERTIES_STORE.getOptionalProperty(key).orElse("Straight");
+        this.defaultShape.setSelectedItem(value);
+        this.defaultShape.addActionListener(
+                (a) -> OtsEditor.PROPERTIES_STORE.setProperty(key, (String) this.defaultShape.getSelectedItem()));
+        OtsEditor.PROPERTIES_STORE.setProperty(key, value);
+        this.toolPanel.add(this.defaultShape);
+        this.shapeApplyButton =
+                createToolButton(applyButtonSize, "Apply24.png", "Apply shape to selection", false, applyIconSize);
+        this.shapeApplyButton.setBorder(paintBorder);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
-        JComboBox<String> roadLayout = new AppearanceControlComboBox<>();
-        roadLayout.setModel(new DefaultComboBoxModel<>(new String[] {}));
-        roadLayout.setMinimumSize(new Dimension(50, 22));
-        roadLayout.setMaximumSize(new Dimension(125, 22));
-        roadLayout.setPreferredSize(new Dimension(125, 22));
-        roadLayout.setToolTipText("Standard defined road layout for new links");
-        roadLayout.setEnabled(false);
-        this.toolPanel.add(roadLayout);
+        this.defaultRoadLayout = new AppearanceControlComboBox<>();
+        this.defaultRoadLayout
+                .setRenderer(definitionRenderer("RoadLayout24.png", iconSize, "<no layout>", this.defaultRoadLayout));
+        this.defaultRoadLayout.setModel(new DefaultComboBoxModel<>(new String[] {}));
+        setSize(this.defaultRoadLayout, definitionSizeSmall, definitionSizeLarge);
+        this.defaultRoadLayout.setToolTipText("Road layout for new links");
+        ComboBoxSearchSupport.install(this.defaultRoadLayout, "defaultRoadLayout");
+        this.toolPanel.add(this.defaultRoadLayout);
+        this.roadLayoutApplyButton =
+                createToolButton(applyButtonSize, "Apply24.png", "Apply road layout to selection", false, applyIconSize);
+        this.roadLayoutApplyButton.setBorder(paintBorder);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
-        JComboBox<String> linkType = new AppearanceControlComboBox<>();
-        linkType.setModel(new DefaultComboBoxModel<>(new String[] {}));
-        linkType.setMinimumSize(new Dimension(50, 22));
-        linkType.setMaximumSize(new Dimension(125, 22));
-        linkType.setPreferredSize(new Dimension(125, 22));
-        linkType.setToolTipText("Standard link type for new links and connectors");
-        linkType.setEnabled(false);
-        this.toolPanel.add(linkType);
+        this.defaultLinkType = new AppearanceControlComboBox<>();
+        this.defaultLinkType.setRenderer(definitionRenderer("Link24.png", iconSize, "<no link type>", this.defaultLinkType));
+        this.defaultLinkType.setModel(new DefaultComboBoxModel<>(new String[] {}));
+        setSize(this.defaultLinkType, definitionSizeSmall, definitionSizeLarge);
+        this.defaultLinkType.setToolTipText("Link type for new links and connectors");
+        ComboBoxSearchSupport.install(this.defaultLinkType, "defaultLinkType");
+        this.toolPanel.add(this.defaultLinkType);
+        this.linkTypeApplyButton =
+                createToolButton(applyButtonSize, "Apply24.png", "Apply link type to selection", false, applyIconSize);
+        this.linkTypeApplyButton.setBorder(paintBorder);
+        this.linkTypeShowButton =
+                createToolButton(applyButtonSize, "Eye24.png", "Show links with link type", true, applyIconSize);
+        this.linkTypeShowButton.setBorder(paintBorder);
+        storedToggleSetting(this.linkTypeShowButton, "showLinkType");
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
         Dimension minDim = new Dimension(0, 1);
@@ -318,29 +334,21 @@ public final class EditorMap extends JPanel implements EventListener
         Dimension maxDim = new Dimension(5000, 1);
         this.toolPanel.add(new Filler(minDim, prefDim, maxDim)); // pushes further elements right aligned
 
-        this.toolPanel.add(new JLabel("Show:"));
-
         this.toolPanel.add(Box.createHorizontalStrut(5));
-        JButton resetY = new JButton(IconUtil.of("UpDown24.png").imageSize(18, 18).get());
-        resetY.setMinimumSize(buttonSize);
-        resetY.setMaximumSize(buttonSize);
-        resetY.setPreferredSize(buttonSize);
+        JButton resetY = new JButton(IconUtil.of("UpDown24.png").imageSize(iconSize, iconSize).get());
+        setSize(resetY, buttonSize, buttonSize);
         resetY.setToolTipText("Reset Y-zoom");
         resetY.addActionListener((e) -> this.visualizationPanel.resetZoomY());
         this.toolPanel.add(resetY);
 
-        JButton extent = new JButton(IconUtil.of("ZoomAll24.png").imageSize(18, 18).get());
-        extent.setMinimumSize(buttonSize);
-        extent.setMaximumSize(buttonSize);
-        extent.setPreferredSize(buttonSize);
+        JButton extent = new JButton(IconUtil.of("ZoomAll24.png").imageSize(iconSize, iconSize).get());
+        setSize(extent, buttonSize, buttonSize);
         extent.setToolTipText("Zoom whole network");
         extent.addActionListener((e) -> safeZoomAll());
         this.toolPanel.add(extent);
 
-        JButton grid = new JButton(IconUtil.of("Grid24.png").imageSize(18, 18).get());
-        grid.setMinimumSize(buttonSize);
-        grid.setMaximumSize(buttonSize);
-        grid.setPreferredSize(buttonSize);
+        JButton grid = new JButton(IconUtil.of("Grid24.png").imageSize(iconSize, iconSize).get());
+        setSize(grid, buttonSize, buttonSize);
         grid.setToolTipText("Toggle grid on/off");
         grid.addActionListener((e) ->
         {
@@ -353,6 +361,86 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(Box.createHorizontalStrut(5));
 
         add(this.toolPanel, BorderLayout.NORTH);
+    }
+
+    /**
+     * Sets stored selected state on toggle and makes sure any change in the state is stored.
+     * @param button button
+     * @param key key (without "map.toggle.", this method will add this part)
+     */
+    private void storedToggleSetting(final AbstractButton button, final String key)
+    {
+        String keyAddress = PropertiesStore.key("map.toggle." + key);
+        boolean toggleOn = OtsEditor.PROPERTIES_STORE.getOptionalBoolean(keyAddress).orElse(false);
+        button.setSelected(toggleOn);
+        button.addActionListener((a) -> OtsEditor.PROPERTIES_STORE.setBoolean(keyAddress, button.isSelected()));
+        OtsEditor.PROPERTIES_STORE.setBoolean(keyAddress, toggleOn);
+    }
+
+    /**
+     * Sets small as minimum and large as preferred and maximum size.
+     * @param component component
+     * @param small small size
+     * @param large large size
+     */
+    private void setSize(final JComponent component, final Dimension small, final Dimension large)
+    {
+        component.setMinimumSize(small);
+        component.setPreferredSize(large);
+        component.setMaximumSize(large);
+    }
+
+    /**
+     * Creates a toggle button for the tool bar.
+     * @param buttonSize button size
+     * @param icon icon name
+     * @param toolTip tool tip
+     * @param toggle toggle or trigger
+     * @param iconSize size of icon
+     * @return a toggle button for the tool bar
+     */
+    private AbstractButton createToolButton(final Dimension buttonSize, final String icon, final String toolTip,
+            final boolean toggle, final int iconSize)
+    {
+        Icon i = IconUtil.of(icon).imageSize(iconSize, iconSize).get();
+        AbstractButton button = toggle ? new JToggleButton(i) : new JButton(i);
+        button.setFocusPainted(false);
+        button.setPreferredSize(buttonSize);
+        button.setMinimumSize(buttonSize);
+        button.setMaximumSize(buttonSize);
+        button.setToolTipText(toolTip);
+        this.toolPanel.add(button);
+        return button;
+    }
+
+    /**
+     * Returns renderer for combo box with icon in main bar only.
+     * @param icon icon name
+     * @param iconSize icon size
+     * @param emptyText text in the main bar if there are no options
+     * @param comboBox combo box this will be the renderer for
+     * @return renderer for combo box with icon in main bar only
+     */
+    private ListCellRenderer<? super String> definitionRenderer(final String icon, final int iconSize, final String emptyText,
+            final JComboBox<String> comboBox)
+    {
+        Icon linkTypeIcon = IconUtil.of(icon).gray().imageSize(iconSize, iconSize).get();
+        DefaultListCellRenderer linkTypeRenderer = new DefaultListCellRenderer();
+        return (list, value, index, isSelected, cellHasFocus) ->
+        {
+            JLabel label = (JLabel) linkTypeRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            label.setIcon(index == -1 ? linkTypeIcon : null);
+            if (value == null)
+            {
+                label.setText(emptyText);
+                comboBox.setForeground(Color.LIGHT_GRAY);
+            }
+            else
+            {
+                comboBox.setForeground(Color.BLACK);
+            }
+            return label;
+        };
     }
 
     /**
@@ -499,208 +587,385 @@ public final class EditorMap extends JPanel implements EventListener
     {
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
-            for (XsdTreeNode node : new LinkedHashSet<>(this.datas.keySet()))
-            {
-                remove(node);
-            }
-            this.datas.clear();
-            this.links.clear();
-            for (Renderable2d<?> animation : this.animations.values())
-            {
-                animation.destroy(this.contextualized);
-                removeAnimation(animation);
-            }
-            this.animations.clear();
-            for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
-            {
-                roadLayoutListener.destroy();
-            }
-            this.roadLayoutListeners.clear();
-            if (this.networkFlattenerListener != null)
-            {
-                this.networkFlattenerListener.destroy();
-                this.networkFlattenerListener = null;
-            }
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
-            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
-            SwingUtilities.invokeLater(() -> safeZoomAll());
+            newFileEvent(event);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
-            Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
-            if (isType(node))
-            {
-                node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-                node.addListener(this, XsdTreeNode.OPTION_CHANGED);
-                if (node.isActive())
-                {
-                    add(node);
-                }
-                if (node.getPathString().equals(XsdPaths.NODE))
-                {
-                    this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
-                }
-            }
-            else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
-            {
-                for (MapLinkData linkData : this.links.keySet())
-                {
-                    linkData.addCoordinate(node);
-                }
-            }
-            else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
-            {
-                addRoadLayout(node);
-            }
-            else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
-            {
-                setNetworkFlattener(node);
-            }
-            else if (node.getPathString().endsWith("LaneOverride") || node.getPathString().endsWith("StripeOverride"))
-            {
-                ChangeListener<Object> listener = new ChangeListener<>(node, () -> this.editor.getEval())
-                {
-                    @Override
-                    public void notify(final Event event)
-                    {
-                        if (event.getType().equals(ChangeListener.CHANGE_EVENT))
-                        {
-                            MapData data = EditorMap.this.datas.get(getNode().getParent().getParent());
-                            if (data instanceof MapLinkData linkData)
-                            {
-                                linkData.evalChanged();
-                            }
-                        }
-                        else
-                        {
-                            super.notify(event);
-                        }
-                    }
-
-                    @Override
-                    Object calculateData()
-                    {
-                        return null; // This change listener represents no data
-                    }
-                };
-                this.overrideListeners.put(node, listener);
-                listener.addListener(listener, ChangeListener.CHANGE_EVENT); // register to self, but for change events
-            }
-            // When a node is restored, child nodes may also be restored later.
-            SwingUtilities.invokeLater(() ->
-            {
-                this.updater.update();
-            });
+            nodeCreatedEvent(event);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
-            Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
-            if (this.datas.containsKey(node)) // node.isType does not work as parent is gone, i.e. type is just "Node"
-            {
-                remove(node); // updates animation panel
-                this.links.keySet().forEach((linkData) -> linkData.notifyNodeRemoved(node));
-            }
-            else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
-            {
-                for (MapLinkData linkData : this.links.keySet())
-                {
-                    linkData.removeCoordinate(node);
-                }
-            }
-            else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
-            {
-                removeRoadLayout(node);
-            }
-            else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
-            {
-                removeNetworkFlattener();
-            }
-            else if (node.getPathString().endsWith("LaneOverride") || node.getPathString().endsWith("StripeOverride"))
-            {
-                ChangeListener<Object> listener = this.overrideListeners.remove(node);
-                if (listener != null)
-                {
-                    listener.removeListener(listener, ChangeListener.CHANGE_EVENT);
-                    listener.destroy();
-                }
-            }
-            else if (node.getPathString().equals(XsdPaths.NODE))
-            {
-                // usually "if (this.datas.containsKey(node))" will catch this, but not always
-                this.links.keySet().forEach((linkData) -> linkData.notifyNodeRemoved(node));
-            }
-            this.updater.update();
+            nodeRemovedEvent(event);
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
         {
-            Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
-            if (isType(node))
-            {
-                if ((boolean) content[1])
-                {
-                    add(node);
-                }
-                else
-                {
-                    remove(node);
-                }
-            }
-            else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
-            {
-                if ((boolean) content[1])
-                {
-                    addRoadLayout(node);
-                }
-                else
-                {
-                    removeRoadLayout(node);
-                }
-            }
-            else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
-            {
-                if ((boolean) content[1])
-                {
-                    setNetworkFlattener(node);
-                }
-                else
-                {
-                    removeNetworkFlattener();
-                }
-            }
-            this.updater.update();
+            activationChangedEvent(event);
         }
         else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
         {
-            Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
-            XsdTreeNode selected = (XsdTreeNode) content[1];
-            XsdTreeNode previous = (XsdTreeNode) content[2];
-            if (node.equals(selected))
-            {
-                if (isType(previous))
-                {
-                    remove(previous);
-                }
-                if (isType(selected) && selected.isActive())
-                {
-                    add(selected);
-                }
-            }
-            this.updater.update();
+            optionChangedEvent(event);
         }
         else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
-            Object[] content = (Object[]) event.getContent();
-            if ("Id".equals(content[1]))
+            attributeChangedEvent(event);
+        }
+    }
+
+    /**
+     * New file event.
+     * @param event event
+     */
+    private void newFileEvent(final Event event)
+    {
+        this.definedRoadLayouts.keySet().forEach((node) ->
+        {
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        });
+        this.definedLinkTypes.keySet().forEach((node) ->
+        {
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        });
+        this.definedRoadLayouts.clear();
+        this.definedLinkTypes.clear();
+        updateDefinedItems(this.defaultRoadLayout, this.definedRoadLayouts);
+        updateDefinedItems(this.defaultLinkType, this.definedLinkTypes);
+        for (XsdTreeNode node : new LinkedHashSet<>(this.datas.keySet()))
+        {
+            remove(node);
+        }
+        this.datas.clear();
+        this.links.clear();
+        for (Renderable2d<?> animation : this.animations.values())
+        {
+            animation.destroy(this.contextualized);
+            removeAnimation(animation);
+        }
+        this.animations.clear();
+        for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
+        {
+            roadLayoutListener.destroy();
+        }
+        this.roadLayoutListeners.clear();
+        if (this.networkFlattenerListener != null)
+        {
+            this.networkFlattenerListener.destroy();
+            this.networkFlattenerListener = null;
+        }
+        this.root = (XsdTreeNodeRoot) event.getContent();
+        this.root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
+        this.root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+        SwingUtilities.invokeLater(() -> safeZoomAll());
+    }
+
+    /**
+     * Node created event.
+     * @param event event
+     */
+    private void nodeCreatedEvent(final Event event)
+    {
+        Object[] content = (Object[]) event.getContent();
+        XsdTreeNode node = (XsdTreeNode) content[0];
+        if (isDefinedItem(node))
+        {
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
+            updateDefinedItem(node);
+        }
+        if (isType(node))
+        {
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            node.addListener(this, XsdTreeNode.OPTION_CHANGED);
+            if (node.isActive())
+            {
+                add(node);
+            }
+            if (node.getPathString().equals(XsdPaths.NODE))
+            {
+                node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+                this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
+            }
+        }
+        else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
+        {
+            for (MapLinkData linkData : this.links.keySet())
+            {
+                linkData.addCoordinate(node);
+            }
+        }
+        else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
+        {
+            addRoadLayout(node);
+        }
+        else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
+        {
+            setNetworkFlattener(node);
+        }
+        else if (node.getPathString().endsWith("LaneOverride") || node.getPathString().endsWith("StripeOverride"))
+        {
+            ChangeListener<Object> listener = new ChangeListener<>(node, () -> this.editor.getEval())
+            {
+                @Override
+                public void notify(final Event event)
+                {
+                    if (event.getType().equals(ChangeListener.CHANGE_EVENT))
+                    {
+                        MapData data = EditorMap.this.datas.get(getNode().getParent().getParent());
+                        if (data instanceof MapLinkData linkData)
+                        {
+                            linkData.evalChanged();
+                        }
+                    }
+                    else
+                    {
+                        super.notify(event);
+                    }
+                }
+
+                @Override
+                Object calculateData()
+                {
+                    return null; // This change listener represents no data
+                }
+            };
+            this.overrideListeners.put(node, listener);
+            listener.addListener(listener, ChangeListener.CHANGE_EVENT); // register to self, but for change events
+        }
+        // When a node is restored, child nodes may also be restored later.
+        // SwingUtilities.invokeLater(() ->
+        // {
+        this.updater.update();
+        // });
+    }
+
+    /**
+     * Node removed event.
+     * @param event event
+     */
+    private void nodeRemovedEvent(final Event event)
+    {
+        Object[] content = (Object[]) event.getContent();
+        XsdTreeNode node = (XsdTreeNode) content[0];
+        if (isDefinedItem(node) || this.definedRoadLayouts.containsKey(node) || this.definedLinkTypes.containsKey(node))
+        {
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            removeDefinedItem(node);
+        }
+        if (this.datas.containsKey(node)) // node.isType does not work as parent is gone, i.e. type is just "Node"
+        {
+            remove(node); // updates animation panel
+            this.links.keySet().forEach((linkData) -> linkData.notifyNodeRemoved(node));
+        }
+        else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
+        {
+            for (MapLinkData linkData : this.links.keySet())
+            {
+                linkData.removeCoordinate(node);
+            }
+        }
+        else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
+        {
+            removeRoadLayout(node);
+        }
+        else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
+        {
+            removeNetworkFlattener();
+        }
+        else if (node.getPathString().endsWith("LaneOverride") || node.getPathString().endsWith("StripeOverride"))
+        {
+            ChangeListener<Object> listener = this.overrideListeners.remove(node);
+            if (listener != null)
+            {
+                listener.removeListener(listener, ChangeListener.CHANGE_EVENT);
+                listener.destroy();
+            }
+        }
+        else if (node.getPathString().equals(XsdPaths.NODE))
+        {
+            // usually "if (this.datas.containsKey(node))" will catch this, but not always
+            this.links.keySet().forEach((linkData) -> linkData.notifyNodeRemoved(node));
+        }
+        this.updater.update();
+    }
+
+    /**
+     * Activation changed event.
+     * @param event event
+     */
+    private void activationChangedEvent(final Event event)
+    {
+        Object[] content = (Object[]) event.getContent();
+        XsdTreeNode node = (XsdTreeNode) content[0];
+        if (isDefinedItem(node))
+        {
+            updateDefinedItem(node);
+        }
+        if (isType(node))
+        {
+            if ((boolean) content[1])
+            {
+                add(node);
+            }
+            else
+            {
+                remove(node);
+            }
+        }
+        else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
+        {
+            if ((boolean) content[1])
+            {
+                addRoadLayout(node);
+            }
+            else
+            {
+                removeRoadLayout(node);
+            }
+        }
+        else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
+        {
+            if ((boolean) content[1])
+            {
+                setNetworkFlattener(node);
+            }
+            else
+            {
+                removeNetworkFlattener();
+            }
+        }
+        this.updater.update();
+    }
+
+    /**
+     * Option changed event.
+     * @param event event
+     */
+    private void optionChangedEvent(final Event event)
+    {
+        Object[] content = (Object[]) event.getContent();
+        XsdTreeNode node = (XsdTreeNode) content[0];
+        XsdTreeNode selected = (XsdTreeNode) content[1];
+        XsdTreeNode previous = (XsdTreeNode) content[2];
+        if (node.equals(selected))
+        {
+            if (isType(previous))
+            {
+                remove(previous);
+            }
+            if (isType(selected) && selected.isActive())
+            {
+                add(selected);
+            }
+        }
+        this.updater.update();
+    }
+
+    /**
+     * Attribute changed event.
+     * @param event event
+     */
+    private void attributeChangedEvent(final Event event)
+    {
+        Object[] content = (Object[]) event.getContent();
+        if ("Id".equals(content[1]))
+        {
+            XsdTreeNode node = (XsdTreeNode) content[0];
+            if (isDefinedItem(node))
+            {
+                updateDefinedItem(node);
+            }
+            if (node.getPathString().equals(XsdPaths.NODE))
             {
                 this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
             }
-            this.updater.update();
         }
+        this.updater.update();
+    }
+
+    /**
+     * Whether a node defines a road layout or link type.
+     * @param node node
+     * @return whether the node defines a road layout or link type
+     */
+    private boolean isDefinedItem(final XsdTreeNode node)
+    {
+        return node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT)
+                || node.getPathString().equals(XsdPaths.DEFINED_LINKTYPE);
+    }
+
+    /**
+     * Add or update a defined item in its selector.
+     * @param node definition node
+     */
+    private void updateDefinedItem(final XsdTreeNode node)
+    {
+        boolean roadLayout = node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT);
+        Map<XsdTreeNode, String> definitions = roadLayout ? this.definedRoadLayouts : this.definedLinkTypes;
+        JComboBox<String> comboBox = roadLayout ? this.defaultRoadLayout : this.defaultLinkType;
+        String previousId = definitions.get(node);
+        boolean selectedNode = previousId != null && previousId.equals(comboBox.getSelectedItem());
+        String id = node.isActive() ? node.getId() : null;
+        if (id == null || id.isEmpty())
+        {
+            definitions.remove(node);
+        }
+        else
+        {
+            definitions.put(node, id);
+        }
+        updateDefinedItems(comboBox, definitions, selectedNode ? id : null);
+    }
+
+    /**
+     * Remove a definition from its selector.
+     * @param node definition node
+     */
+    private void removeDefinedItem(final XsdTreeNode node)
+    {
+        if (this.definedRoadLayouts.remove(node) != null)
+        {
+            updateDefinedItems(this.defaultRoadLayout, this.definedRoadLayouts);
+        }
+        if (this.definedLinkTypes.remove(node) != null)
+        {
+            updateDefinedItems(this.defaultLinkType, this.definedLinkTypes);
+        }
+    }
+
+    /**
+     * Rebuild a selector from its active definitions while retaining its current selection when possible.
+     * @param comboBox selector
+     * @param definitions active definitions
+     */
+    private void updateDefinedItems(final JComboBox<String> comboBox, final Map<XsdTreeNode, String> definitions)
+    {
+        updateDefinedItems(comboBox, definitions, null);
+    }
+
+    /**
+     * Rebuild a selector, optionally preferring a selection identified by its definition node.
+     * @param comboBox selector
+     * @param definitions active definitions
+     * @param preferredSelection item to select if present
+     */
+    private void updateDefinedItems(final JComboBox<String> comboBox, final Map<XsdTreeNode, String> definitions,
+            final String preferredSelection)
+    {
+        Object selected = comboBox.getSelectedItem();
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        definitions.values().forEach(model::addElement);
+        if (preferredSelection != null && definitions.containsValue(preferredSelection))
+        {
+            comboBox.setSelectedItem(preferredSelection);
+        }
+        else if (selected instanceof String selectedId && definitions.containsValue(selectedId))
+        {
+            comboBox.setSelectedItem(selectedId);
+        }
+        comboBox.setFocusable(!definitions.isEmpty());
+        comboBox.setModel(model);
     }
 
     /**
@@ -785,33 +1050,34 @@ public final class EditorMap extends JPanel implements EventListener
         {
             data = new MapNodeData(this, node, this.editor);
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-            SwingUtilities.invokeLater(() ->
+            // SwingUtilities.invokeLater(() ->
+            // {
+            for (MapLinkData linkData : this.links.keySet())
             {
-                for (MapLinkData linkData : this.links.keySet())
-                {
-                    linkData.evalChanged();
-                }
-            });
+                linkData.evalChanged();
+            }
+            // });
         }
         else if (node.getPathString().equals(XsdPaths.LINK) || node.getPathString().equals(XsdPaths.CONNECTOR))
         {
             MapLinkData linkData = new MapLinkData(this, node, this.editor);
             data = linkData;
-            if (this.networkFlattenerListener != null)
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+            if (this.networkFlattenerListener != null && !linkData.isConnector())
             {
                 this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
             }
             this.links.put(linkData, null);
-            SwingUtilities.invokeLater(() ->
+            // SwingUtilities.invokeLater(() ->
+            // {
+            for (MapData d : this.datas.values())
             {
-                for (MapData d : this.datas.values())
+                if (d instanceof MapLaneBasedObjectData)
                 {
-                    if (d instanceof MapLaneBasedObjectData)
-                    {
-                        d.evalChanged();
-                    }
+                    d.evalChanged();
                 }
-            });
+            }
+            // });
         }
         else if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
         {
@@ -838,7 +1104,7 @@ public final class EditorMap extends JPanel implements EventListener
     }
 
     /**
-     * Remove the drawing data of pertaining to the node.
+     * Remove the drawing data pertaining to the node.
      * @param node node
      */
     private void remove(final XsdTreeNode node)
@@ -847,21 +1113,25 @@ public final class EditorMap extends JPanel implements EventListener
         {
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
-        if (node.getPathString().equals(XsdPaths.LINK))
+        if (node.getPathString().equals(XsdPaths.LINK) || node.getPathString().equals(XsdPaths.CONNECTOR))
         {
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             Iterator<MapLinkData> it = this.links.keySet().iterator();
             while (it.hasNext())
             {
                 MapLinkData link = it.next();
                 if (link.getNode().equals(node))
                 {
-                    for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
+                    if (!link.isConnector())
                     {
-                        roadLayoutListener.removeListener(link, ChangeListener.CHANGE_EVENT);
-                    }
-                    if (this.networkFlattenerListener != null)
-                    {
-                        this.networkFlattenerListener.removeListener(link, ChangeListener.CHANGE_EVENT);
+                        for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
+                        {
+                            roadLayoutListener.removeListener(link, ChangeListener.CHANGE_EVENT);
+                        }
+                        if (this.networkFlattenerListener != null)
+                        {
+                            this.networkFlattenerListener.removeListener(link, ChangeListener.CHANGE_EVENT);
+                        }
                     }
                     it.remove();
                     break;
@@ -907,7 +1177,10 @@ public final class EditorMap extends JPanel implements EventListener
         RoadLayoutListener roadLayoutListener = new RoadLayoutListener(node, () -> this.editor.getEval());
         for (MapLinkData linkData : this.links.keySet())
         {
-            roadLayoutListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            if (!linkData.isConnector())
+            {
+                roadLayoutListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            }
         }
         this.roadLayoutListeners.put(node, roadLayoutListener);
     }
@@ -928,10 +1201,18 @@ public final class EditorMap extends JPanel implements EventListener
      */
     private void setNetworkFlattener(final XsdTreeNode node)
     {
+        if (this.networkFlattenerListener != null)
+        {
+            this.editor.removeEvalListener(this.networkFlattenerListener);
+            this.networkFlattenerListener.destroy();
+        }
         this.networkFlattenerListener = new FlattenerListener(node, () -> this.editor.getEval());
         for (MapLinkData linkData : this.links.keySet())
         {
-            this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            if (!linkData.isConnector())
+            {
+                this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            }
             this.editor.addEvalListener(this.networkFlattenerListener);
         }
         node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
@@ -945,8 +1226,8 @@ public final class EditorMap extends JPanel implements EventListener
         if (this.networkFlattenerListener != null)
         {
             this.editor.removeEvalListener(this.networkFlattenerListener);
+            this.networkFlattenerListener.destroy();
         }
-        this.networkFlattenerListener.destroy();
         for (MapLinkData linkData : this.links.keySet())
         {
             linkData.notify(new Event(ChangeListener.CHANGE_EVENT, this.networkFlattenerListener.getNode()));
@@ -987,7 +1268,80 @@ public final class EditorMap extends JPanel implements EventListener
     }
 
     /**
-     * Update via updater.
+     * Returns whether map add mode is selected.
+     * @return whether map add mode is selected
+     */
+    public boolean isAddMode()
+    {
+        return this.addModeButton.isSelected();
+    }
+
+    /**
+     * Returns whether centroid mode is selected.
+     * @return whether centroid mode is selected
+     */
+    public boolean isCentroidMode()
+    {
+        return this.centroidModeButton.isSelected();
+    }
+
+    /**
+     * Returns whether map auto fix mode is selected.
+     * @return whether map auto fix mode is selected
+     */
+    public boolean isAutoFixMode()
+    {
+        return this.autoFixButton.isSelected();
+    }
+
+    /**
+     * Returns the selected default shape.
+     * @return selected default shape, or {@code null}
+     */
+    public String getDefaultShape()
+    {
+        return (String) this.defaultShape.getSelectedItem();
+    }
+
+    /**
+     * Returns the selected default road layout.
+     * @return selected default road layout, or {@code null}
+     */
+    public String getDefaultRoadLayout()
+    {
+        return (String) this.defaultRoadLayout.getSelectedItem();
+    }
+
+    /**
+     * Returns the selected default link type.
+     * @return selected default link type, or {@code null}
+     */
+    public String getDefaultLinkType()
+    {
+        return (String) this.defaultLinkType.getSelectedItem();
+    }
+
+    /**
+     * Returns the Network node in the current document.
+     * @return Network node, or {@code null} if there is no document
+     */
+    public XsdTreeNode getNetworkNode()
+    {
+        return this.root == null || !this.root.hasChild("Network") ? null : this.root.getFirstChild("Network");
+    }
+
+    /**
+     * Adds a temporary renderable to the visualization panel.
+     * @param animation renderable
+     */
+    public void addAnimation(final Renderable2d<?> animation)
+    {
+        this.visualizationPanel.objectAdded(animation);
+        this.updater.update();
+    }
+
+    /**
+     * Update via updater. The updater will collect multiple updates in to a single update.
      */
     public void update()
     {
@@ -1034,6 +1388,10 @@ public final class EditorMap extends JPanel implements EventListener
      */
     public static class MapUpdater extends LocalEventProducer
     {
+
+        /** Whether an update is currently queued. */
+        private boolean updateQueued;
+
         /**
          * Constructor.
          */
@@ -1047,7 +1405,15 @@ public final class EditorMap extends JPanel implements EventListener
          */
         public void update()
         {
-            fireEvent(AnimatorInterface.UPDATE_ANIMATION_EVENT);
+            if (!this.updateQueued)
+            {
+                this.updateQueued = true;
+                SwingUtilities.invokeLater(() ->
+                {
+                    this.updateQueued = false;
+                    fireEvent(AnimatorInterface.UPDATE_ANIMATION_EVENT);
+                });
+            }
         }
     }
 

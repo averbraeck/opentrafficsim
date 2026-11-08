@@ -52,6 +52,8 @@ public final class DownloadIcons
         // downloadIcon("mdi", "car-cruise-control", "Acc");
         // downloadIcon("mdi", "car-speed-limiter", "Isa");
 
+        downloadIcon("mdi", "pencil-plus", "AddMode");
+        downloadIcon("mdi", "auto-fix", "AutoFix");
         downloadIcon("ic", "baseline-edit-road", "RoadLayout");
         downloadIcon("iconoir", "dot-arrow-right", "Connector");
         downloadIcon("ix", "road-filled", "Lane");
@@ -68,6 +70,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "car-multiple", "Queue");
         downloadIcon("mdi", "car-side", "Gtu");
         downloadIcon("mdi", "chart-ppf", "Clothoid");
+        downloadIcon("mdi", "chart-timeline-variant-shimmer", "Apply");
         downloadIcon("mdi", "chevron-down", "Expanded");
         downloadIcon("mdi", "chevron-right", "Collapsed");
         downloadIcon("mdi", "chevron-up", "Up");
@@ -101,6 +104,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "ray-vertex", "Node");
         downloadIcon("mdi", "restore", "Restore");
         downloadIcon("mdi", "routes", "Directions");
+        downloadIcon("mdi", "search", "Search");
         downloadIcon("mdi", "sign-caution", "Blockage");
         downloadIcon("mdi", "sign-yield", "Yield");
         downloadIcon("mdi", "skip-next-circle-outline", "Next");
@@ -128,7 +132,7 @@ public final class DownloadIcons
      * @param iconSet icon set on Iconify
      * @param icon icon name on Iconify
      * @param file file name for in resources (minus "24.png")
-     * @param transformations e.g. {@code flip=horizontal} or {@code rotate=45}
+     * @param transformations e.g. {@code "flip=horizontal"} or {@code "rotate=45"}
      */
     private static void downloadIcon(final String iconSet, final String icon, final String file,
             final String... transformations)

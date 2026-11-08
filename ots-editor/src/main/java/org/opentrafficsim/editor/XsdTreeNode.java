@@ -114,6 +114,10 @@ public class XsdTreeNode extends LocalEventProducer
     @SuppressWarnings("checkstyle:visibilitymodifier")
     XsdTreeNode parent;
 
+    /** Whether the node is expanded. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    boolean expanded;
+
     /** Node from XSD that this {@code XsdTreeNode} represents. Most typically an xsd:element node. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Node xsdNode;

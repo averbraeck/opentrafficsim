@@ -73,6 +73,8 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
@@ -123,6 +125,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Objects;
+
 import de.javagl.treetable.JTreeTable;
 
 /**
@@ -149,6 +153,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     /** Event when the selection in the tree is changed. */
     public static final EventType SELECTION_CHANGED = new EventType("SELECTIONCHANGED", new MetaData("Selection",
             "Selection changed", new ObjectDescriptor("Selected node", "Selected node", XsdTreeNode.class)));
+
+    /** Event when a mouse event took place on a node. */
+    public static final EventType MOUSE_EVENT = new EventType("MOUSE_EVENT",
+            new MetaData("MouseEvent", "Mouse event on node",
+                    new ObjectDescriptor("Concerned node", "Concerned node", XsdTreeNode.class),
+                    new ObjectDescriptor("Mouse event", "Mouse event", MouseEvent.class)));
 
     /** Width of the divider between parts of the screen. */
     private static final int DIVIDER_SIZE = 4;
@@ -472,7 +482,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      */
     private void runSingle()
     {
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
+        XsdTreeNodeRoot root = ((XsdTreeTableModel) this.treeTable.getTree().getModel()).getDataRoot();
         if (!root.isValid())
         {
             dialogs().showInvalidToRunMessage();
@@ -523,7 +533,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      */
     protected void runBatch(final boolean all)
     {
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
+        XsdTreeNodeRoot root = ((XsdTreeTableModel) this.treeTable.getTree().getModel()).getDataRoot();
         if (!root.isValid())
         {
             dialogs().showInvalidToRunMessage();
@@ -572,11 +582,32 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
+     * Selects the given node in the tree.
+     * @param node node
+     * @param attribute attribute name, may be {@code null} to just show the node
+     */
+    public void select(final XsdTreeNode node, final String attribute)
+    {
+        show(node, attribute, false);
+    }
+
+    /**
      * Shows and selects the given node in the tree.
-     * @param node node.
-     * @param attribute attribute name, may be {@code null} to just show the node.
+     * @param node node
+     * @param attribute attribute name, may be {@code null} to just show the node
      */
     public void show(final XsdTreeNode node, final String attribute)
+    {
+        show(node, attribute, true);
+    }
+
+    /**
+     * Shows and selects the given node in the tree.
+     * @param node node
+     * @param attribute attribute name, may be {@code null} to just show the node
+     * @param scroll whether to scroll to the element
+     */
+    private void show(final XsdTreeNode node, final String attribute, final boolean scroll)
     {
         if (node.getParent() == null)
         {
@@ -599,20 +630,34 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             }
         }
         List<XsdTreeNode> nodePath = node.getPath();
-        TreePath path = new TreePath(nodePath.toArray());
-        TreePath partialPath = new TreePath(nodePath.subList(0, nodePath.size() - 1).toArray());
-        this.treeTable.getTree().expandPath(partialPath);
-        this.treeTable.getTree().setSelectionPath(path);
-        this.treeTable.getTree().scrollPathToVisible(path);
-        this.treeTable.updateUI();
-        Rectangle bounds = this.treeTable.getTree().getPathBounds(path);
-        if (bounds == null)
+        int rootIndex = nodePath.indexOf(this.treeTable.getTree().getModel().getRoot());
+        if (rootIndex > 0)
         {
-            return; // trying to show node that is in collapsed part of the tree
+            nodePath = nodePath.subList(rootIndex, nodePath.size());
         }
-        bounds.x += this.treeTable.getX();
-        bounds.y += this.treeTable.getY();
-        ((JComponent) this.treeTable.getParent()).scrollRectToVisible(bounds);
+        TreePath path = new TreePath(nodePath.toArray());
+        if (scroll)
+        {
+            if (nodePath.size() > 1)
+            {
+                this.treeTable.getTree().expandPath(new TreePath(nodePath.subList(0, nodePath.size() - 1).toArray()));
+            }
+            this.treeTable.getTree().setSelectionPath(path);
+            this.treeTable.getTree().scrollPathToVisible(path);
+            Rectangle bounds = this.treeTable.getTree().getPathBounds(path);
+            if (bounds == null)
+            {
+                return; // trying to show node that is in collapsed part of the tree
+            }
+            bounds.x += this.treeTable.getX();
+            bounds.y += this.treeTable.getY();
+            ((JComponent) this.treeTable.getParent()).scrollRectToVisible(bounds);
+        }
+        else if (this.treeTable.getTree().isVisible(path))
+        {
+            this.treeTable.getTree().setSelectionPath(path);
+        }
+        this.treeTable.updateUI();
 
         this.attributesTable.setModel(new AttributesTableModel(node.isActive() ? node : null, this.treeTable));
         if (attribute != null)
@@ -627,12 +672,49 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
+     * Highlight node.
+     * @param node highlighted node, may be {@code null}
+     */
+    public void setHighlight(final XsdTreeNode node)
+    {
+        XsdTreeTableModel model = (XsdTreeTableModel) this.treeTable.getTree().getModel();
+        XsdTreeNode wasRoot = (XsdTreeNode) model.getRoot();
+        model.setRoot(node);
+        XsdTreeNode isRoot = (XsdTreeNode) model.getRoot();
+        if (!Objects.equal(wasRoot, isRoot))
+        {
+            restoreExpansion(isRoot, new TreePath(isRoot));
+            this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
+        }
+    }
+
+    /**
+     * Restore node expansion.
+     * @param node node
+     * @param path path
+     */
+    private void restoreExpansion(final XsdTreeNode node, final TreePath path)
+    {
+        if (node.expanded)
+        {
+            this.treeTable.getTree().expandPath(path);
+        }
+        if (node.getChildCount() > 0)
+        {
+            for (XsdTreeNode child : node.getChildren())
+            {
+                restoreExpansion(child, path.pathByAddingChild(child));
+            }
+        }
+    }
+
+    /**
      * Invalidate the entire tree and repaint both the tree and attributes table. This method may take a bit of time. Be careful
-     * and conservative in invoking this method on the AWT thread. Consider invoking with {@link SwingUtilities#invokeLater}.
+     * and conservative in invoking this method on the Swing EDT. Consider invoking with {@link SwingUtilities#invokeLater}.
      */
     public void invalidateAndRepaint()
     {
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot();
+        XsdTreeNodeRoot root = ((XsdTreeTableModel) this.treeTable.getTree().getModel()).getDataRoot();
         if (root != null)
         {
             root.invalidateAll();
@@ -692,7 +774,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         save.addActionListener((a) -> saveFile());
         JMenuItem saveAs = new JMenuItem("Save as...");
         fileMenu.add(saveAs);
-        saveAs.addActionListener((a) -> saveFileAs((XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot()));
+        saveAs.addActionListener(
+                (a) -> saveFileAs(((XsdTreeTableModel) OtsEditor.this.treeTable.getTree().getModel()).getDataRoot()));
         fileMenu.add(new JSeparator());
         JMenuItem propertiesItem = new JMenuItem("Properties...");
         fileMenu.add(propertiesItem);
@@ -792,7 +875,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         StringBuilder title = new StringBuilder("OTS | The Open Traffic Simulator | Editor");
         if (this.lastFile != null)
         {
-            title.append(" (").append(Path.of(this.lastDirectory)).append(this.lastFile).append(")");
+            title.append(" (").append(Path.of(this.lastDirectory).resolve(this.lastFile)).append(")");
         }
         if (this.unsavedChanges)
         {
@@ -920,6 +1003,34 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
         // sets custom icon and appends the choice icon for choice nodes
         this.treeTable.getTree().setCellRenderer(new XsdTreeCellRenderer(this));
+        this.treeTable.addMouseListener(new MouseAdapter()
+        {
+            // this listener forwards the mouse event so something can respond to ctrl or shift, and not only selection itself
+            @Override
+            public void mousePressed(final MouseEvent e)
+            {
+                XsdTreeNode node = getTreeNodeAtPoint(e.getPoint());
+                // if attributesTable is editing Swing sees this as a stop-editing event; selection in table will not change
+                if (node != null && !OtsEditor.this.attributesTable.isEditing())
+                {
+                    fireEvent(MOUSE_EVENT, new Object[] {node, e});
+                }
+            }
+        });
+        this.treeTable.getTree().addTreeExpansionListener(new TreeExpansionListener()
+        {
+            @Override
+            public void treeExpanded(final TreeExpansionEvent event)
+            {
+                ((XsdTreeNode) event.getPath().getLastPathComponent()).expanded = true;
+            }
+
+            @Override
+            public void treeCollapsed(final TreeExpansionEvent event)
+            {
+                ((XsdTreeNode) event.getPath().getLastPathComponent()).expanded = false;
+            }
+        });
 
         // this listener changes Id or node Value for each key being pressed
         // this listener starts a new undo event when the editor gets focus on the JTreeTable
@@ -940,7 +1051,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
         this.rightSplitPane.setDividerLocation(dividerLocation);
 
-        final XsdTreeNodeRoot root = (XsdTreeNodeRoot) treeModel.getRoot();
+        final XsdTreeNodeRoot root = treeModel.getDataRoot();
         EventListener listener = new ChangesListener(this, this.scenario);
         root.addListener(listener, XsdTreeNodeRoot.NODE_CREATED);
         root.addListener(listener, XsdTreeNodeRoot.NODE_REMOVED);
@@ -1528,8 +1639,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     /**
      * Load file. This file may come from a place in to which the file cannot be saved. Although includes are imported, no
      * directory is remembered from which the file came. The user will have to save any changes elsewhere, at which point
-     * imports may no longer work. If includes use {@code default:}, such as {@code default:default_gtutypes.xml} the editor
-     * will recognize a default resource which can be imported if a file is not saved, or wherever it is saved.
+     * imports may no longer work. If includes use {@code builtin:}, such as {@code builtin:gtutypes} the editor will recognize
+     * a default resource which can be imported if a file is not saved, or wherever it is saved.
      * <p>
      * This method should be called using {@link SwingUtilities#invokeLater} to prevent concurrent modification of Swing.
      * @param resource resource
@@ -1575,7 +1686,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
                     this.properties.add(attributes.item(i).getNodeValue());
                 }
             }
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
+            XsdTreeNodeRoot root = ((XsdTreeTableModel) OtsEditor.this.treeTable.getTree().getModel()).getDataRoot();
             root.setBaseUri(basePath);
             root.loadXmlNodes(document.getFirstChild());
             this.evalWrapper.setIgnoreEval(false);
@@ -1602,13 +1713,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      */
     private void saveFile()
     {
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot();
+        XsdTreeNodeRoot root = ((XsdTreeTableModel) this.treeTable.getTree().getModel()).getDataRoot();
         if (this.lastDirectory == null || this.lastFile == null)
         {
             saveFileAs(root);
             return;
         }
-        save(new File(this.lastDirectory + this.lastFile), root, true);
+        save(Path.of(this.lastDirectory).resolve(this.lastFile).toFile(), root, true);
         setUnsavedChanges(false);
         setStatusLabel("Saved");
     }
@@ -1853,6 +1964,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     public void removeEvalListener(final EvalListener listener)
     {
         this.evalWrapper.removeListener(listener);
+    }
+
+    /**
+     * Sets the color of the tree column.
+     * @param color color
+     */
+    public void setTreeColumnColor(final Color color)
+    {
+        this.treeTable.setBackground(color);
     }
 
     @Override

@@ -72,10 +72,8 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      * @param schema XSD Schema.
      * @param ignoreChanges whether to ignore changes
      * @param evalSupplier eval supplier
-     * @throws RemoteException when unable to listen for created nodes.
      */
     public XsdTreeNodeRoot(final Schema schema, final Supplier<Boolean> ignoreChanges, final Supplier<Eval> evalSupplier)
-            throws RemoteException
     {
         super(schema);
         this.ignoreChanges = ignoreChanges;
@@ -148,9 +146,8 @@ public class XsdTreeNodeRoot extends XsdTreeNode
      * Sets up the listener that reports on new and removed nodes for each xsd:key, xsd:keyref and xsd:unique. It is up to each
      * key to determine whether the node is relevant for the key.
      * @param schema schema.
-     * @throws RemoteException when unable to listen for created nodes.
      */
-    private void setupXPathListener(final Schema schema) throws RemoteException
+    private void setupXPathListener(final Schema schema)
     {
         Set<KeyValidator> keys = new LinkedHashSet<>();
         for (Entry<String, Node> entry : schema.keys().entrySet())

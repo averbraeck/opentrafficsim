@@ -46,8 +46,8 @@ public final class XsdTreeNodeUtil
 
     /** Defaults description. */
     public static final String DEFAULTS_DESCRIPTION =
-            "Provide a relative path to your file. Built-in defaults can be loaded by using \"default:default_{x}.xml\""
-                    + ", where \"{x}\" is any of definition node names in lowercase, e.g. \"default:default_gtutypes.xml\"";
+            "Provide a relative path to your file. Built-in defaults can be loaded using \"" + XmlParser.BUILTIN + "{x}\", "
+                    + "where \"{x}\" is any of definition node names in lowercase, e.g. \"" + XmlParser.BUILTIN + "gtutypes\"";
 
     /** Options for all built-in include files. */
     private static List<String> includeOptions;

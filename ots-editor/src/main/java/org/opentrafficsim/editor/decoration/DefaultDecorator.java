@@ -234,12 +234,12 @@ public final class DefaultDecorator
     private static void setupValidators(final OtsEditor editor)
     {
         new ParentValidator(editor, "Ots.Definitions.GtuTypes.GtuType");
-        new ParentValidator(editor, "Ots.Definitions.LinkTypes.LinkType");
-        new ParentValidator(editor, "Ots.Definitions.LaneTypes.LaneType");
+        new ParentValidator(editor, XsdPaths.DEFINED_LINKTYPE);
+        new ParentValidator(editor, XsdPaths.DEFINED_LANETYPE);
         new ParentValidator(editor, "Ots.Definitions.DetectorTypes.DetectorType");
         new ParentValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State")
                 .setContext("Ots.Demand.OdOptions.OdOptionsItem").setIdAttribute("GtuType");
-        new AttributesNotEqualValidator(editor, "Ots.Network.Link", "NodeStart", "NodeEnd");
+        new AttributesNotEqualValidator(editor, XsdPaths.LINK, "NodeStart", "NodeEnd");
         new AttributesNotEqualValidator(editor, "Ots.Demand.Cell", "Origin", "Destination");
         new AttributesNotEqualValidator(editor, "Ots.Demand.InjectionGenerator.Arrivals.Arrival", "Origin", "Destination");
         new RoadLayoutElementValidator(editor, "Ots.Network.Link.LaneOverride", LayoutCoupling.PARENT_IS_LINK,

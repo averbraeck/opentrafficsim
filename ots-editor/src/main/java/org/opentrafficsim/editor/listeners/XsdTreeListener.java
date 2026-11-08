@@ -95,7 +95,11 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         if (e.getPaths().length > 0)
         {
             // update label of expand/collapse action
-            TreePath path = (e.getPaths().length == 1 ? e.getPaths()[0] : e.getNewLeadSelectionPath());
+            TreePath path = this.treeTable.getTree().getSelectionPath();
+            if (path == null)
+            {
+                return;
+            }
             boolean expanded = this.treeTable.getTree().isExpanded(path);
             this.editor.actions().expandOrCollapseNode().putValue(Action.NAME, expanded ? "Collapse" : "Expand");
 
@@ -300,7 +304,8 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             Rectangle labelPortion = this.treeTable.getTree()
                     .getPathBounds(this.treeTable.getTree().getPathForLocation(e.getPoint().x - x, e.getPoint().y));
             if (labelPortion != null && labelPortion.contains(e.getPoint().x - x, e.getPoint().y)
-                    && this.editor.mayPresentChoice() && treeNode.isChoice())
+                    && this.editor.mayPresentChoice() && treeNode.isChoice()
+                    && !treeNode.equals(((XsdTreeTableModel) this.treeTable.getTree().getModel()).getDataRoot()))
             {
                 JPopupMenu popup = new JPopupMenu();
                 for (XsdOption option : treeNode.getOptions())

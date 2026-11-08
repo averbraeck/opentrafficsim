@@ -106,6 +106,18 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
     }
 
     /**
+     * Select the attribute and/or node in the tree that is affected by the draggable.
+     * @param editor editor
+     */
+    public void selectValue(final OtsEditor editor)
+    {
+        if (getSource().node != null)
+        {
+            editor.select(getSource().node, getSource().attribute);
+        }
+    }
+
+    /**
      * Delete represented data of draggable.
      */
     public void delete()

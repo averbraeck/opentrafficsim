@@ -19,6 +19,12 @@ public final class XsdPaths
     /** Defined road layout path. */
     public static final String DEFINED_ROADLAYOUT = DEFINITIONS + ".RoadLayouts.RoadLayout";
 
+    /** Defined link type. */
+    public static final String DEFINED_LINKTYPE = DEFINITIONS + ".LinkTypes.LinkType";
+
+    /** Defined lane type. */
+    public static final String DEFINED_LANETYPE = DEFINITIONS + ".LaneTypes.LaneType";
+
     /** Network path. */
     public static final String NETWORK = "Ots.Network";
 

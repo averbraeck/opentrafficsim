@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor.extensions.map.edit;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -7,9 +8,11 @@ import java.awt.geom.Point2D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Optional;
@@ -31,6 +34,7 @@ import javax.swing.SwingUtilities;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.Flattener2d;
 import org.djutils.draw.curve.Flattener2d.NumSegments;
@@ -49,6 +53,7 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.editor.extensions.map.EditorMap;
 import org.opentrafficsim.editor.extensions.map.MapData;
 import org.opentrafficsim.editor.extensions.map.MapLaneBasedObjectData;
@@ -130,6 +135,12 @@ public class MapInputListener extends InputListener implements EventListener
     /** Editor map. */
     private final EditorMap editorMap;
 
+    /** Current tree root observed for removals. */
+    private XsdTreeNodeRoot treeRoot;
+
+    /** Number of active annotation/gesture references per tree node. */
+    private final Map<XsdTreeNode, Integer> activationListenerCounts = new LinkedHashMap<>();
+
     /** Mouse click screen coordinates. */
     private Point2D mousePressed = null;
 
@@ -141,6 +152,27 @@ public class MapInputListener extends InputListener implements EventListener
 
     /** Currently selected draggable. */
     private DraggableAnnotation selectedDraggable;
+
+    /** Start node for a link or connector being added. */
+    private MapNodeData addingStart;
+
+    /** Highlight of the start node while adding a link or connector. */
+    private HighlightAnnotation addingStartHighlight;
+
+    /** Current end-node candidate and its highlight. */
+    private MapNodeData addingEnd;
+
+    /** Highlight of the current end-node candidate. */
+    private HighlightAnnotation addingEndHighlight;
+
+    /** Helper line shown while adding a link or connector. */
+    private HelperAnnotation addingHelper;
+
+    /** Whether the click event following an add drag should be ignored. */
+    private boolean ignoreClickAfterAddDrag;
+
+    /** Whether the mouse release following Esc should be ignored. */
+    private boolean ignoreMouseReleaseAfterEscape;
 
     /** Node of poly line coordinate that is selected. */
     private XsdTreeNode selectedPolyLineCoordinateNode;
@@ -174,6 +206,31 @@ public class MapInputListener extends InputListener implements EventListener
         this.snapDistance = Length.valueOf(OtsEditor.PROPERTIES_STORE.getPropertyOrDefault(SNAP_DISTANCE_KEY, "10 cm"));
         this.snapAngle = Angle.valueOf(OtsEditor.PROPERTIES_STORE.getPropertyOrDefault(SNAP_ANGLE_KEY, "3 deg"));
         this.editor.addListener(this, OtsEditor.NEW_FILE);
+        this.editor.addListener((e) ->
+        {
+            Object[] payload = (Object[]) e.getContent();
+            XsdTreeNode node = (XsdTreeNode) payload[0];
+            MouseEvent me = (MouseEvent) payload[1];
+            MapData data = editorMap.getData(node).orElse(null);
+            boolean pan = (me.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
+            if (data != null && data.isValid())
+            {
+                if (pan)
+                {
+                    panToData(data);
+                }
+                select(data, false, false, false);
+            }
+        }, OtsEditor.MOUSE_EVENT);
+        this.editor.addListener((e) ->
+        {
+            XsdTreeNode node = (XsdTreeNode) e.getContent();
+            MapData data = editorMap.getData(node).orElse(null);
+            if (data != null && data.isValid())
+            {
+                select(data, false, false, false);
+            }
+        }, OtsEditor.SELECTION_CHANGED);
     }
 
     /**
@@ -201,13 +258,18 @@ public class MapInputListener extends InputListener implements EventListener
         this.editorMap.getPanel().requestFocus();
         if (SwingUtilities.isLeftMouseButton(e))
         {
+            removeAddingHelper();
+            this.addingStart = null;
+            this.dragging = false;
+            this.ignoreClickAfterAddDrag = false;
+            this.ignoreMouseReleaseAfterEscape = false;
             this.mousePressed = e.getPoint();
             List<Locatable> locatables = this.editorMap.getPanel().getSelectedObjects(e.getPoint());
             if (!locatables.isEmpty())
             {
                 // dragging?
                 List<Draggable<?>> draggablesDatas = locatables.stream().filter(Draggable.class::isInstance)
-                        .<Draggable<?>> map(Draggable.class::cast).toList();
+                        .<Draggable<?>>map(Draggable.class::cast).toList();
                 if (!draggablesDatas.isEmpty())
                 {
                     Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
@@ -233,6 +295,14 @@ public class MapInputListener extends InputListener implements EventListener
             }
             this.selectedPolyLineCoordinateNode = null;
             this.selectedDraggable = null;
+            if (isAddMode(e))
+            {
+                this.addingStart = getNodeAt(e.getPoint(), null);
+                if (this.addingStart != null)
+                {
+                    addActivationListener(this.addingStart.getNode());
+                }
+            }
         }
     }
 
@@ -240,6 +310,13 @@ public class MapInputListener extends InputListener implements EventListener
     public void mouseDragged(final MouseEvent e)
     {
         this.dragging = true;
+        if (this.addingStart != null && !isAddMode(e))
+        {
+            removeAddingHelper();
+            this.addingStart = null;
+            this.ignoreMouseReleaseAfterEscape = true;
+            this.ignoreClickAfterAddDrag = true;
+        }
         if (this.selectedDraggable != null)
         {
             this.snap = this.snapSetting ^ e.isControlDown();
@@ -249,17 +326,48 @@ public class MapInputListener extends InputListener implements EventListener
             this.editorMap.update();
             e.consume();
         }
+        else if (this.addingStart != null)
+        {
+            updateAddingHelper(e.getPoint());
+            e.consume();
+        }
     }
 
     @Override
     public void mouseReleased(final MouseEvent e)
     {
+        if (this.ignoreMouseReleaseAfterEscape)
+        {
+            this.ignoreMouseReleaseAfterEscape = false;
+            this.dragging = false;
+            this.mousePressed = null;
+            return;
+        }
+        boolean addDrag = this.addingStart != null && this.dragging && SwingUtilities.isLeftMouseButton(e) && isAddMode(e);
         if (this.dragging && this.selectedDraggable != null)
         {
             Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
                     this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
             this.selectedDraggable.mouseReleased(world);
             this.editor.repaint(); // not just panel to also update attribute or node value in (tree) tables
+        }
+        else if (this.addingStart != null)
+        {
+            if (addDrag)
+            {
+                MapNodeData end = getNodeAt(e.getPoint(), this.addingStart);
+                if (end != null && isAddMode(e))
+                {
+                    addConnection(this.addingStart, end);
+                }
+                this.ignoreClickAfterAddDrag = true;
+            }
+            else if (this.dragging)
+            {
+                this.ignoreClickAfterAddDrag = true;
+            }
+            removeAddingHelper();
+            this.addingStart = null;
         }
         // Pan if either shift is down or the left mouse button is used.
         else if (SwingUtilities.isLeftMouseButton(e))
@@ -268,6 +376,7 @@ public class MapInputListener extends InputListener implements EventListener
             this.editorMap.update();
         }
         this.dragging = false;
+        this.mousePressed = null;
     }
 
     @Override
@@ -275,6 +384,12 @@ public class MapInputListener extends InputListener implements EventListener
     {
 
         this.editorMap.getPanel().requestFocus();
+
+        if (this.ignoreClickAfterAddDrag)
+        {
+            this.ignoreClickAfterAddDrag = false;
+            return;
+        }
 
         if (this.selectedDraggable != null && SwingUtilities.isLeftMouseButton(e))
         {
@@ -287,6 +402,10 @@ public class MapInputListener extends InputListener implements EventListener
             {
                 this.selectedDraggable.showValue(this.editor);
             }
+            else
+            {
+                this.selectedDraggable.selectValue(this.editor);
+            }
             return;
         }
 
@@ -294,14 +413,34 @@ public class MapInputListener extends InputListener implements EventListener
                 .filter(MapData.class::isInstance).map(MapData.class::cast).toList();
         if (mapDatas.size() == 1 && SwingUtilities.isLeftMouseButton(e))
         {
-            select(mapDatas.get(0), e.isControlDown(), e.isShiftDown());
+            if (!e.isControlDown())
+            {
+                this.editor.setHighlight(!e.isShiftDown() ? mapDatas.get(0).getNode() : null);
+                // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
+                SwingUtilities.invokeLater(() -> select(mapDatas.get(0), e.isControlDown(), true, e.isShiftDown()));
+            }
+            else
+            {
+                this.editor.setHighlight(null);
+                select(mapDatas.get(0), e.isControlDown(), true, e.isShiftDown());
+            }
         }
         else if (!mapDatas.isEmpty() && SwingUtilities.isLeftMouseButton(e))
         {
             Optional<MapData> highest = mapDatas.stream().max(Comparator.comparingDouble(MapData::getZ));
             if (highest.isPresent())
             {
-                select(highest.get(), e.isControlDown(), e.isShiftDown());
+                if (!e.isControlDown())
+                {
+                    this.editor.setHighlight(!e.isShiftDown() ? highest.get().getNode() : null);
+                    // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
+                    SwingUtilities.invokeLater(() -> select(highest.get(), e.isControlDown(), true, e.isShiftDown()));
+                }
+                else
+                {
+                    this.editor.setHighlight(null);
+                    select(highest.get(), e.isControlDown(), true, e.isShiftDown());
+                }
             }
         }
         else if (!mapDatas.isEmpty() && SwingUtilities.isRightMouseButton(e))
@@ -312,15 +451,261 @@ public class MapInputListener extends InputListener implements EventListener
         {
             showSettingsMenu(e);
         }
-        else if (!e.isControlDown())
+        else if (mapDatas.isEmpty() && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && isAddMode(e))
         {
+            this.snap = !this.editorMap.isAddMode() || this.snapSetting;
+            Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
+                    this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
+            addPoint(snapPointToGrid(world), this.editorMap.isCentroidMode() ^ e.isShiftDown());
+        }
+        else if (!e.isControlDown() || !isAddMode(e))
+        {
+            this.editor.setHighlight(null);
             deselect();
+        }
+    }
+
+    /**
+     * Returns the effective add mode for a mouse event, with Ctrl temporarily toggling the toolbar state.
+     * @param event mouse event
+     * @return effective add mode
+     */
+    private boolean isAddMode(final MouseEvent event)
+    {
+        return this.editorMap.isAddMode() ^ event.isControlDown();
+    }
+
+    /**
+     * Returns the compatible map node under a screen location.
+     * @param point screen location
+     * @param exclude node to ignore
+     * @return compatible map node, or {@code null}
+     */
+    private MapNodeData getNodeAt(final Point2D point, final MapNodeData exclude)
+    {
+        return this.editorMap.getPanel().getSelectedObjects(point).stream().filter(MapNodeData.class::isInstance)
+                .map(MapNodeData.class::cast).filter(MapNodeData::isValid).filter((node) -> !node.equals(exclude))
+                .filter((node) -> this.addingStart == null || !this.addingStart.isCentroid() || !node.isCentroid())
+                .filter((node) -> this.addingStart == null || !hasDirectedConnection(this.addingStart, node))
+                .max(Comparator.comparingDouble(MapNodeData::getZ)).orElse(null);
+    }
+
+    /**
+     * Returns whether a link or connector already joins the nodes in the requested direction.
+     * @param start starting map node
+     * @param end ending map node
+     * @return whether the directed connection already exists
+     */
+    private boolean hasDirectedConnection(final MapNodeData start, final MapNodeData end)
+    {
+        XsdTreeNode network = this.editorMap.getNetworkNode();
+        if (network == null)
+        {
+            return false;
+        }
+        for (XsdTreeNode element : network.getChildren())
+        {
+            if (!element.isActive())
+            {
+                continue;
+            }
+            XsdTreeNode from;
+            XsdTreeNode to;
+            if (element.getPathString().equals(XsdPaths.LINK))
+            {
+                from = element.getCoupledNodeAttribute("NodeStart").orElse(null);
+                to = element.getCoupledNodeAttribute("NodeEnd").orElse(null);
+            }
+            else if (element.getPathString().equals(XsdPaths.CONNECTOR))
+            {
+                XsdTreeNode centroid = element.getCoupledNodeAttribute("Centroid").orElse(null);
+                XsdTreeNode node = element.getCoupledNodeAttribute("Node").orElse(null);
+                String outbound = element.getAttributeValueOrDefault("Outbound");
+                if (centroid == null || node == null
+                        || !"true".equalsIgnoreCase(outbound) && !"false".equalsIgnoreCase(outbound))
+                {
+                    continue;
+                }
+                from = "true".equalsIgnoreCase(outbound) ? centroid : node;
+                to = "true".equalsIgnoreCase(outbound) ? node : centroid;
+            }
+            else
+            {
+                continue;
+            }
+            if (start.getNode().equals(from) && end.getNode().equals(to))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Update the temporary line to the pointer, snapping it to a compatible endpoint when present.
+     * @param point pointer location
+     */
+    private void updateAddingHelper(final Point2D point)
+    {
+        Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(point,
+                this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
+        MapNodeData end = getNodeAt(point, this.addingStart);
+        if (this.addingStartHighlight == null)
+        {
+            this.addingStartHighlight = new HighlightAnnotation(this.addingStart, this.editorMap);
+            this.editorMap.addAnimation(this.addingStartHighlight);
+        }
+        updateAddingEndHighlight(end);
+        Point2d location = end == null ? world : end.getLocation();
+        if (this.addingHelper == null)
+        {
+            Point2d start = this.addingStart.getLocation();
+            Function<Point2d, PolyLine2d> line = (p) ->
+            {
+                double x = start.x - p.x;
+                double y = start.y - p.y;
+                if (x == 0.0 && y == 0.0)
+                {
+                    x = 1e-6;
+                    y = 1e-6;
+                }
+                return new PolyLine2d(new Point2d(x, y), new Point2d(0.0, 0.0));
+            };
+            this.addingHelper = new HelperAnnotation(new Helper(location, line), this.editorMap, Scaling.SCALE);
+            this.editorMap.addAnimation(this.addingHelper);
+        }
+        else
+        {
+            this.addingHelper.getSource().setLocation(location);
+        }
+        this.editorMap.update();
+    }
+
+    /**
+     * Highlight the current compatible endpoint candidate.
+     * @param end candidate endpoint, or {@code null}
+     */
+    private void updateAddingEndHighlight(final MapNodeData end)
+    {
+        if (end == this.addingEnd)
+        {
+            return;
+        }
+        if (this.addingEndHighlight != null)
+        {
+            this.editorMap.removeAnimation(this.addingEndHighlight);
+            this.addingEndHighlight = null;
+        }
+        if (this.addingEnd != null)
+        {
+            removeActivationListener(this.addingEnd.getNode());
+        }
+        this.addingEnd = end;
+        if (end != null)
+        {
+            addActivationListener(end.getNode());
+            this.addingEndHighlight = new HighlightAnnotation(end, this.editorMap);
+            this.editorMap.addAnimation(this.addingEndHighlight);
+        }
+    }
+
+    /**
+     * Remove endpoint highlights shown during creation of a link or connector.
+     */
+    private void removeAddingHighlights()
+    {
+        updateAddingEndHighlight(null);
+        if (this.addingStartHighlight != null)
+        {
+            this.editorMap.removeAnimation(this.addingStartHighlight);
+            this.addingStartHighlight = null;
+        }
+        if (this.addingStart != null)
+        {
+            removeActivationListener(this.addingStart.getNode());
+        }
+    }
+
+    /**
+     * Remove the temporary line shown while creating a link or connector.
+     */
+    private void removeAddingHelper()
+    {
+        if (this.addingHelper != null)
+        {
+            this.editorMap.removeAnimation(this.addingHelper);
+            this.addingHelper = null;
+        }
+        removeAddingHighlights();
+        this.editorMap.update();
+        this.editorMap.getPanel().repaint();
+    }
+
+    /**
+     * Add a node or centroid at a snapped coordinate.
+     * @param coordinate world coordinate
+     * @param centroid whether to add a centroid
+     */
+    private void addPoint(final Point2d coordinate, final boolean centroid)
+    {
+        XsdTreeNode added = MapAdder.addPoint(this.editor, this.editorMap, pointToCoordinateString(coordinate), centroid);
+        if (added != null)
+        {
+            select(added);
+        }
+    }
+
+    /**
+     * Add a link between two nodes or a connector between a node and centroid.
+     * @param start starting map node
+     * @param end ending map node
+     */
+    private void addConnection(final MapNodeData start, final MapNodeData end)
+    {
+        XsdTreeNode added = MapAdder.addConnection(this.editor, this.editorMap, start, end, this.editorMap.getDefaultShape(),
+                this.editorMap.getDefaultRoadLayout(), this.editorMap.getDefaultLinkType());
+        if (added != null)
+        {
+            select(added);
+        }
+    }
+
+    /**
+     * Show and select a newly created tree/map element.
+     * @param node created element
+     */
+    private void select(final XsdTreeNode node)
+    {
+        this.editor.setHighlight(node);
+        this.editorMap.getData(node).ifPresentOrElse((data) -> select(data, false, true, false),
+                () -> this.editor.select(node, null));
+    }
+
+    /**
+     * Pan towards data if not (partially) visible.
+     * @param data data
+     */
+    private void panToData(final MapData data)
+    {
+        Bounds2d extent = this.editorMap.getPanel().getExtent();
+        if (!data.getAbsoluteContour().intersects(new Polygon2d(extent.getPointList())))
+        {
+            Point2d mid = data.getLocation();
+            double dx = 0.5 * extent.getDeltaX();
+            double dy = 0.5 * extent.getDeltaY();
+            Bounds2d newBounds = new Bounds2d(mid.x - dx, mid.x + dx, mid.y - dy, mid.y + dy);
+            this.editorMap.getPanel().setExtent(newBounds);
         }
     }
 
     @Override
     public void keyPressed(final KeyEvent e)
     {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && cancelActiveMapEdit())
+        {
+            e.consume();
+            return;
+        }
         super.keyPressed(e);
         switch (e.getKeyCode())
         {
@@ -357,6 +742,49 @@ public class MapInputListener extends InputListener implements EventListener
     }
 
     /**
+     * Cancel an active draggable edit or Link/Connector creation gesture.
+     * @return whether an active edit was cancelled
+     */
+    private boolean cancelActiveMapEdit()
+    {
+        boolean cancelAdding = this.addingStart != null;
+        boolean cancelDraggable = this.selectedDraggable != null;
+        if (!cancelAdding && !cancelDraggable)
+        {
+            return false;
+        }
+
+        boolean mouseGestureActive = this.dragging || this.mousePressed != null;
+        if (cancelAdding)
+        {
+            removeAddingHelper();
+            this.addingStart = null;
+        }
+        this.selectedDraggable = null;
+        this.dragging = false;
+        this.mousePressed = null;
+        if (mouseGestureActive)
+        {
+            this.ignoreMouseReleaseAfterEscape = true;
+            this.ignoreClickAfterAddDrag = true;
+        }
+
+        MapData selectedData =
+                this.selectionIndicators.size() == 1 ? this.selectionIndicators.iterator().next().getSource().mapData() : null;
+        if (cancelDraggable && selectedData != null)
+        {
+            select(selectedData, false, false, false);
+        }
+        else if (cancelDraggable)
+        {
+            removeDraggables();
+        }
+        this.editorMap.update();
+        this.editorMap.getPanel().repaint();
+        return true;
+    }
+
+    /**
      * Show menu to select locatable.
      * @param locatables list of locatables under mouse event
      * @param e mouse event
@@ -379,7 +807,11 @@ public class MapInputListener extends InputListener implements EventListener
             JMenuItem item = new JMenuItem(mapData.getNode().toString());
             item.addActionListener((ev) ->
             {
-                select(mapData, e.isControlDown(), e.isShiftDown());
+                if (!e.isControlDown() && !e.isShiftDown())
+                {
+                    this.editor.setHighlight(mapData.getNode());
+                }
+                select(mapData, e.isControlDown(), true, e.isShiftDown());
                 this.editorMap.update();
                 remover.run();
             });
@@ -459,9 +891,10 @@ public class MapInputListener extends InputListener implements EventListener
      * Select map data object.
      * @param mapData map data
      * @param add whether to add to selection
-     * @param show show the accompanying {@link XsdTreeNode} in the tree
+     * @param selectInTree show the accompanying {@link XsdTreeNode} in the tree
+     * @param showInTree show the accompanying {@link XsdTreeNode} in the tree
      */
-    private void select(final MapData mapData, final boolean add, final boolean show)
+    private void select(final MapData mapData, final boolean add, final boolean selectInTree, final boolean showInTree)
     {
         Optional<SelectionAnnotation> currentlySelected =
                 this.selectionIndicators.stream().filter((r) -> r.getSource().mapData().equals(mapData)).findFirst();
@@ -469,8 +902,12 @@ public class MapInputListener extends InputListener implements EventListener
         {
             // ctrl-click on selected item, remove it from selection
             removeDraggables();
-            this.selectionIndicators.remove(currentlySelected.get());
-            this.editorMap.removeAnimation(currentlySelected.get());
+            SelectionAnnotation annotation = currentlySelected.get();
+            MapData selectedData = annotation.getSource().mapData();
+            selectedData.removeListener(this, MapData.MAP_DATA_CHANGED);
+            removeActivationListener(selectedData.getNode());
+            this.selectionIndicators.remove(annotation);
+            this.editorMap.removeAnimation(annotation);
             return;
         }
         else if (add && this.selectionIndicators.size() == 1)
@@ -512,10 +949,18 @@ public class MapInputListener extends InputListener implements EventListener
             }
         }
         this.selectionIndicators.add(new SelectionAnnotation(mapData, MapInputListener.this.editorMap));
+        addActivationListener(mapData.getNode());
         this.editorMap.update();
-        if (show)
+        if (!add)
         {
-            this.editor.show(mapData.getNode(), null);
+            if (showInTree)
+            {
+                this.editor.show(mapData.getNode(), null);
+            }
+            else if (selectInTree)
+            {
+                this.editor.select(mapData.getNode(), null);
+            }
         }
     }
 
@@ -524,13 +969,36 @@ public class MapInputListener extends InputListener implements EventListener
     {
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
+            if (this.treeRoot != null)
+            {
+                this.treeRoot.removeListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+            }
+            removeAddingHelper();
+            this.addingStart = null;
+            this.ignoreClickAfterAddDrag = false;
             deselect();
+            this.treeRoot = (XsdTreeNodeRoot) event.getContent();
+            this.treeRoot.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
+            return;
+        }
+        if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+        {
+            clearAnnotationsForNode((XsdTreeNode) ((Object[]) event.getContent())[0]);
+            return;
+        }
+        if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
+        {
+            Object[] content = (Object[]) event.getContent();
+            if (!(boolean) content[1])
+            {
+                clearAnnotationsForNode((XsdTreeNode) content[0]);
+            }
             return;
         }
         // MapData.MAP_DATA_CHANGED
         if (this.selectionIndicators.size() == 1)
         {
-            select(this.selectionIndicators.stream().findFirst().get().getSource().mapData(), false, false);
+            select(this.selectionIndicators.stream().findFirst().get().getSource().mapData(), false, false, false);
         }
     }
 
@@ -540,60 +1008,10 @@ public class MapInputListener extends InputListener implements EventListener
      */
     private void addNodeDraggables(final MapNodeData nodeData)
     {
-        // rotation draggable
-        UnaryOperator<Point2d> rotationSnapper = (p) ->
+        if (!nodeData.isCentroid())
         {
-            double a = Math.atan2(p.y - nodeData.getLocation().y, p.x - nodeData.getLocation().x);
-            if (this.snap)
-            {
-                a = Math.round(a / this.snapAngle.si) * this.snapAngle.si;
-            }
-            return getRotationPoint(nodeData, a);
-        };
-        Function<Point2d, Direction> rotationFunction =
-                (p) -> Direction.ofSI(Math.atan2(p.y - nodeData.getLocation().y, p.x - nodeData.getLocation().x));
-        Consumer<Direction> rotationWriter = (v) ->
-        {
-            String value = this.snap ? ANGLE_FORMAT.format(Math.toDegrees(v.si)) : Math.toDegrees(v.si) + " deg";
-            MapInputListener.this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, nodeData.getNode(), "Direction");
-            nodeData.getNode().setAttributeValue("Direction", value);
-        };
-        DraggableAnnotation rotationDraggable =
-                new DraggableAnnotation(
-                        new Draggable<>(getRotationPoint(nodeData, nodeData.getDirZ()), CIRCLE, rotationSnapper,
-                                rotationFunction, rotationWriter).setNodeAttribute(nodeData.getNode(), "Direction"),
-                        MapInputListener.this.editorMap);
-        this.draggables.add(rotationDraggable);
-
-        // line from node to rotation draggable
-        Function<Point2d, PolyLine2d> lineFunction = (p) ->
-        {
-            return new PolyLine2d(new Point2d(nodeData.getLocation().x - p.x, nodeData.getLocation().y - p.y),
-                    new Point2d(0.0, 0.0));
-        };
-        HelperAnnotation rotationLine =
-                new HelperAnnotation(new Helper(getRotationPoint(nodeData, nodeData.getDirZ()), lineFunction),
-                        MapInputListener.this.editorMap, Scaling.SCALE);
-        rotationDraggable.addHelperAnnotation(rotationLine, UpdateMode.DYNAMIC);
-
-        // listen to panel extent to update rotation annotations as location is based on pixels
-        this.editorMap.getPanel().addListener(new EventListener()
-        {
-            @Override
-            public void notify(final Event event)
-            {
-                if (MapInputListener.this.draggables.contains(rotationDraggable))
-                {
-                    Point2d p = getRotationPoint(nodeData, nodeData.getDirZ());
-                    rotationDraggable.getSource().setPointSnapped(p);
-                    rotationLine.getSource().setLocation(p);
-                }
-                else
-                {
-                    MapInputListener.this.editorMap.getPanel().removeListener(this, MapVisualizationPanel.EXTENT_CHANGED);
-                }
-            }
-        }, MapVisualizationPanel.EXTENT_CHANGED);
+            addNodeRotationDraggable(nodeData);
+        }
 
         // position draggable
         Consumer<Point2d> positionWriter = (p) ->
@@ -612,6 +1030,62 @@ public class MapInputListener extends InputListener implements EventListener
         Polygon2d circle = circle(ANGLE_POINT_OFFSET_PX, 32);
         positionDraggable.addHelperAnnotation(new HelperAnnotation(new Helper(nodeData.getLocation(), (p) -> circle),
                 MapInputListener.this.editorMap, Scaling.NO_SCALE), UpdateMode.STATIC);
+    }
+
+    /**
+     * Add the Direction draggable and its helper line to a Node.
+     * @param nodeData node data
+     */
+    private void addNodeRotationDraggable(final MapNodeData nodeData)
+    {
+        UnaryOperator<Point2d> rotationSnapper = (p) ->
+        {
+            double a = Math.atan2(p.y - nodeData.getLocation().y, p.x - nodeData.getLocation().x);
+            if (this.snap)
+            {
+                a = Math.round(a / this.snapAngle.si) * this.snapAngle.si;
+            }
+            return getRotationPoint(nodeData, a);
+        };
+        Function<Point2d, Direction> rotationFunction =
+                (p) -> Direction.ofSI(Math.atan2(p.y - nodeData.getLocation().y, p.x - nodeData.getLocation().x));
+        Consumer<Direction> rotationWriter = (v) ->
+        {
+            String value = this.snap ? ANGLE_FORMAT.format(Math.toDegrees(v.si)) : Math.toDegrees(v.si) + " deg";
+            this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, nodeData.getNode(), "Direction");
+            nodeData.getNode().setAttributeValue("Direction", value);
+        };
+        DraggableAnnotation rotationDraggable =
+                new DraggableAnnotation(
+                        new Draggable<>(getRotationPoint(nodeData, nodeData.getDirZ()), CIRCLE, rotationSnapper,
+                                rotationFunction, rotationWriter).setNodeAttribute(nodeData.getNode(), "Direction"),
+                        this.editorMap);
+        this.draggables.add(rotationDraggable);
+
+        Function<Point2d, PolyLine2d> lineFunction =
+                (p) -> new PolyLine2d(new Point2d(nodeData.getLocation().x - p.x, nodeData.getLocation().y - p.y),
+                        new Point2d(0.0, 0.0));
+        HelperAnnotation rotationLine = new HelperAnnotation(
+                new Helper(getRotationPoint(nodeData, nodeData.getDirZ()), lineFunction), this.editorMap, Scaling.SCALE);
+        rotationDraggable.addHelperAnnotation(rotationLine, UpdateMode.DYNAMIC);
+
+        this.editorMap.getPanel().addListener(new EventListener()
+        {
+            @Override
+            public void notify(final Event event)
+            {
+                if (MapInputListener.this.draggables.contains(rotationDraggable))
+                {
+                    Point2d p = getRotationPoint(nodeData, nodeData.getDirZ());
+                    rotationDraggable.getSource().setPointSnapped(p);
+                    rotationLine.getSource().setLocation(p);
+                }
+                else
+                {
+                    MapInputListener.this.editorMap.getPanel().removeListener(this, MapVisualizationPanel.EXTENT_CHANGED);
+                }
+            }
+        }, MapVisualizationPanel.EXTENT_CHANGED);
     }
 
     /**
@@ -1100,12 +1574,92 @@ public class MapInputListener extends InputListener implements EventListener
             if (selectionRenderable.getSource() instanceof MapData mapData)
             {
                 mapData.removeListener(this, MapData.MAP_DATA_CHANGED);
+                removeActivationListener(mapData.getNode());
             }
             this.editorMap.removeAnimation(selectionRenderable);
         }
         this.selectionIndicators.clear();
         removeDraggables();
         this.editorMap.update();
+    }
+
+    /**
+     * Remove annotations that refer to a tree node that is removed or deactivated.
+     * @param node removed or deactivated node
+     */
+    private void clearAnnotationsForNode(final XsdTreeNode node)
+    {
+        if (this.addingStart != null && this.addingStart.getNode().equals(node))
+        {
+            removeAddingHelper();
+            this.addingStart = null;
+        }
+        else if (this.addingEnd != null && this.addingEnd.getNode().equals(node))
+        {
+            updateAddingEndHighlight(null);
+        }
+
+        boolean selected = this.selectionIndicators.stream()
+                .anyMatch((annotation) -> annotation.getSource().mapData().getNode().equals(node));
+        if (!selected)
+        {
+            return;
+        }
+        if (this.selectionIndicators.size() == 1)
+        {
+            deselect();
+            this.editorMap.getPanel().repaint();
+            return;
+        }
+        for (SelectionAnnotation annotation : new LinkedHashSet<>(this.selectionIndicators))
+        {
+            MapData mapData = annotation.getSource().mapData();
+            if (mapData.getNode().equals(node))
+            {
+                mapData.removeListener(this, MapData.MAP_DATA_CHANGED);
+                removeActivationListener(mapData.getNode());
+                this.selectionIndicators.remove(annotation);
+                this.editorMap.removeAnimation(annotation);
+            }
+        }
+        this.editorMap.update();
+        this.editorMap.getPanel().repaint();
+    }
+
+    /**
+     * Keep one activation listener per node while any selection or drag annotation references it.
+     * @param node node to observe
+     */
+    private void addActivationListener(final XsdTreeNode node)
+    {
+        int count = this.activationListenerCounts.getOrDefault(node, 0);
+        if (count == 0)
+        {
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
+        }
+        this.activationListenerCounts.put(node, count + 1);
+    }
+
+    /**
+     * Release one selection or drag annotation reference to a node.
+     * @param node node to stop observing when unused
+     */
+    private void removeActivationListener(final XsdTreeNode node)
+    {
+        Integer count = this.activationListenerCounts.get(node);
+        if (count == null)
+        {
+            return;
+        }
+        if (count <= 1)
+        {
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            this.activationListenerCounts.remove(node);
+        }
+        else
+        {
+            this.activationListenerCounts.put(node, count - 1);
+        }
     }
 
     /**
@@ -1128,7 +1682,10 @@ public class MapInputListener extends InputListener implements EventListener
     public void removeRenderable(final Renderable2d<?> renderable)
     {
         this.draggables.remove(renderable);
-        this.selectionIndicators.remove(renderable);
+        if (this.selectionIndicators.remove(renderable) && renderable instanceof SelectionAnnotation selection)
+        {
+            removeActivationListener(selection.getSource().mapData().getNode());
+        }
         if (renderable != null && renderable.equals(this.selectedDraggable))
         {
             this.selectedDraggable = null;
