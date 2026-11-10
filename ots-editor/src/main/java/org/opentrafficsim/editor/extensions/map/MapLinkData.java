@@ -69,7 +69,7 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import org.opentrafficsim.xml.generated.Link.Arc;
 import org.opentrafficsim.xml.generated.Link.Bezier;
 import org.opentrafficsim.xml.generated.Link.Clothoid;
-import org.opentrafficsim.xml.generated.Link.Polyline;
+import org.opentrafficsim.xml.generated.Link.PolyLine;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 
@@ -116,11 +116,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /** End offset. */
     private Length offsetEnd;
 
-    /** From point. */
-    private Point2d from;
+    /** Start point. */
+    private Point2d pointStart;
 
-    /** To point. */
-    private Point2d to;
+    /** End point. */
+    private Point2d pointEnd;
 
     /** Continuous design line. */
     private OffsetCurve2d designLine = null;
@@ -200,11 +200,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
                 this.centroid = replaceNode(this.centroid, linkNode.getCoupledNodeAttribute("Centroid").orElse(null));
                 this.connectorNode = replaceNode(this.connectorNode, linkNode.getCoupledNodeAttribute("Node").orElse(null));
-                setDirtyEndCheckValidity();
+                setDirtyAndCheckValidity();
             });
             return;
         }
-        if (Set.of("Straight", "PolyLine", "Bezier", "Clothoid", "Arc").contains(linkNode.getChild(0).getNodeName()))
+        if (EditorMap.LINK_SHAPES.contains(linkNode.getChild(0).getNodeName()))
         {
             linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
             this.shapeListener.shapeNode = linkNode.getChild(0);
@@ -239,7 +239,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 XsdTreeNode shape = linkNode.getChild(0);
                 this.shapeListener.notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
 
-                setDirtyEndCheckValidity();
+                setDirtyAndCheckValidity();
             });
         }
     }
@@ -309,7 +309,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Check for dirty geometry, and restore it if its dirty.
+     * Check for dirty geometry, and restore it if it is dirty.
      */
     private void checkDirtyGeometry()
     {
@@ -421,7 +421,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
                 this.flattenerListener = new FlattenerListener(selected, this::getEval);
             }
-            this.dirtyLayout = true;
+            setDirtyLayout();
             return;
         }
         else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
@@ -437,7 +437,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 getMap().getRoadLayoutListener(this.roadLayoutNode).addListener(this, ChangeListener.CHANGE_EVENT,
                         ReferenceType.WEAK);
             }
-            this.dirtyLayout = true;
+            setDirtyLayout();
             return;
         }
         else if (event.getType().equals(ChangeListener.CHANGE_EVENT))
@@ -452,13 +452,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
                 if (node.equals(this.roadLayoutNode) && node.reportInvalidId().isEmpty())
                 {
-                    this.dirtyLayout = true;
+                    setDirtyLayout();
                 }
             }
             else
             {
                 // change in flattener
-                setDirtyEndCheckValidity();
+                setDirtyAndCheckValidity();
             }
             return;
         }
@@ -504,7 +504,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             // Otherwise: other attribute, not important, do not build design line
             return;
         }
-        setDirtyEndCheckValidity();
+        setDirtyAndCheckValidity();
     }
 
     /**
@@ -588,7 +588,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         if (this.shapeListener.shapeNode != null && this.shapeListener.shapeNode.equals(node.getParent()))
         {
             this.shapeListener.coordinates.put(node, orNull(node.getValueOrDefault(), Adapters.get(Point2d.class)));
-            setDirtyEndCheckValidity();
+            setDirtyAndCheckValidity();
             node.addListener(this.shapeListener, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
             node.addListener(this.shapeListener, XsdTreeNode.MOVED, ReferenceType.WEAK);
         }
@@ -609,7 +609,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             if (node.equals(key))
             {
                 it.remove();
-                setDirtyEndCheckValidity();
+                setDirtyAndCheckValidity();
                 node.removeListener(this.shapeListener, XsdTreeNode.VALUE_CHANGED);
                 node.removeListener(this.shapeListener, XsdTreeNode.MOVED);
                 return;
@@ -621,7 +621,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * Sets the link as dirty. Validity is checked such that the visualization may start to request the center line. This will
      * then be calculated when dirty.
      */
-    private void setDirtyEndCheckValidity()
+    private void setDirtyAndCheckValidity()
     {
         this.dirtyGeometry = true;
 
@@ -644,15 +644,24 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             setInvalid();
             return;
         }
-        setValue((v) -> this.from = v, Adapters.get(Point2d.class), this.nodeStart, "Coordinate");
-        setValue((v) -> this.to = v, Adapters.get(Point2d.class), this.nodeEnd, "Coordinate");
-        if (this.from == null || this.to == null)
+        setValue((v) -> this.pointStart = v, Adapters.get(Point2d.class), this.nodeStart, "Coordinate");
+        setValue((v) -> this.pointEnd = v, Adapters.get(Point2d.class), this.nodeEnd, "Coordinate");
+        if (this.pointStart == null || this.pointEnd == null)
         {
             setInvalid();
             return;
         }
 
         setValid();
+    }
+
+    /**
+     * Set only the layout as dirty.
+     */
+    private void setDirtyLayout()
+    {
+        this.dirtyLayout = true;
+        fireEvent(new Event(MAP_DATA_CHANGED, null));
     }
 
     /**
@@ -675,10 +684,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         // Connector
         if (this.isConnector)
         {
-            setValue((v) -> this.from = v, Adapters.get(Point2d.class), this.centroid, "Coordinate");
-            setValue((v) -> this.to = v, Adapters.get(Point2d.class), this.connectorNode, "Coordinate");
-            DirectedPoint2d fromPoint = new DirectedPoint2d(this.from, this.from.directionTo(this.to));
-            this.designLine = new Straight2d(fromPoint, this.from.distance(this.to));
+            setValue((v) -> this.pointStart = v, Adapters.get(Point2d.class), this.centroid, "Coordinate");
+            setValue((v) -> this.pointEnd = v, Adapters.get(Point2d.class), this.connectorNode, "Coordinate");
+            DirectedPoint2d fromPoint = new DirectedPoint2d(this.pointStart, this.pointStart.directionTo(this.pointEnd));
+            this.designLine = new Straight2d(fromPoint, this.pointStart.distance(this.pointEnd));
             setGeometry();
             return;
         }
@@ -686,10 +695,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         // Node
         setValue((v) -> this.directionStart = v, Adapters.get(Direction.class), this.nodeStart, "Direction");
         double dirStart = this.directionStart == null ? 0.0 : this.directionStart.si;
-        DirectedPoint2d fromPoint = new DirectedPoint2d(this.from, dirStart);
+        DirectedPoint2d fromPoint = new DirectedPoint2d(this.pointStart, dirStart);
         setValue((v) -> this.directionEnd = v, Adapters.get(Direction.class), this.nodeEnd, "Direction");
         double dirEnd = this.directionEnd == null ? 0.0 : this.directionEnd.si;
-        DirectedPoint2d toPoint = new DirectedPoint2d(this.to, dirEnd);
+        DirectedPoint2d toPoint = new DirectedPoint2d(this.pointEnd, dirEnd);
         if (this.offsetStart != null)
         {
             fromPoint = OtsGeometryUtil.offsetPoint(fromPoint, this.offsetStart.si);
@@ -1016,7 +1025,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 setValue((v) -> this.offsetEnd = v, Adapters.get(Length.class), node, "OffsetEnd");
             }
             this.shapeListener.updateShape();
-            setDirtyEndCheckValidity();
+            setDirtyAndCheckValidity();
         }
     }
 
@@ -1029,7 +1038,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));
         this.centroid = replaceNode(this.centroid, getNode().getCoupledNodeAttribute("Centroid").orElse(null));
         this.connectorNode = replaceNode(this.connectorNode, getNode().getCoupledNodeAttribute("Node").orElse(null));
-        setDirtyEndCheckValidity();
+        setDirtyAndCheckValidity();
     }
 
     /**
@@ -1042,23 +1051,23 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             this.nodeStart = null;
             this.directionStart = null;
-            setDirtyEndCheckValidity();
+            setDirtyAndCheckValidity();
         }
         else if (node.equals(this.nodeEnd))
         {
             this.nodeEnd = null;
             this.directionEnd = null;
-            setDirtyEndCheckValidity();
+            setDirtyAndCheckValidity();
         }
         else if (node.equals(this.centroid))
         {
             this.centroid = null;
-            setDirtyEndCheckValidity();
+            setDirtyAndCheckValidity();
         }
         else if (node.equals(this.connectorNode))
         {
             this.connectorNode = null;
-            setDirtyEndCheckValidity();
+            setDirtyAndCheckValidity();
         }
     }
 
@@ -1093,492 +1102,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Remembers minimum and maximum start and end offset, to return the mean of both.
-     */
-    public class MiddleOffset
-    {
-        /** Minimum start offset. */
-        private double startOffsetMin = Double.POSITIVE_INFINITY;
-
-        /** Minimum start offset. */
-        private double startOffsetMax = Double.NEGATIVE_INFINITY;
-
-        /** Minimum end offset. */
-        private double endOffsetMin = Double.POSITIVE_INFINITY;
-
-        /** Maximum end offset. */
-        private double endOffsetMax = Double.NEGATIVE_INFINITY;
-
-        /**
-         * Constructor.
-         */
-        public MiddleOffset()
-        {
-            //
-        }
-
-        /**
-         * Get start offset.
-         * @return start offset
-         */
-        public double getStartOffset()
-        {
-            return .5 * (this.startOffsetMin + this.startOffsetMax);
-        }
-
-        /**
-         * Add start offset.
-         * @param startOffset start offset.
-         */
-        public void addStartOffset(final double startOffset)
-        {
-            this.startOffsetMin = Math.min(this.startOffsetMin, startOffset);
-            this.startOffsetMax = Math.max(this.startOffsetMax, startOffset);
-        }
-
-        /**
-         * Get end offset.
-         * @return end offset
-         */
-        public double getEndOffset()
-        {
-            return .5 * (this.endOffsetMin + this.endOffsetMax);
-        }
-
-        /**
-         * Add end offset.
-         * @param endOffset end offset
-         */
-        public void addEndOffset(final double endOffset)
-        {
-            this.endOffsetMin = Math.min(this.endOffsetMin, endOffset);
-            this.endOffsetMax = Math.max(this.endOffsetMax, endOffset);
-        }
-    }
-
-    /**
-     * Listener to events that affect the shape. This class can also deliver the resulting line.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
-     */
-    private final class ShapeListener implements EventListener
-    {
-        /** Node of the shape. */
-        private XsdTreeNode shapeNode;
-
-        /** Bezier shape. */
-        private Double shape;
-
-        /** Bezier weighted or not. */
-        private Boolean weighted;
-
-        /** Clothoid start curvature. */
-        private LinearDensity startCurvature;
-
-        /** Clothoid end curvature. */
-        private LinearDensity endCurvature;
-
-        /** Clothoid length. */
-        private Length length;
-
-        /** Clothoid a-value. */
-        private Length a;
-
-        /** Arc radius. */
-        private Length radius;
-
-        /** Arc direction. */
-        private ArcDirection direction;
-
-        /** Polyline coordinates. */
-        private NavigableMap<XsdTreeNode, Point2d> coordinates = new TreeMap<>(new Comparator<>()
-        {
-            @Override
-            public int compare(final XsdTreeNode o1, final XsdTreeNode o2)
-            {
-                List<XsdTreeNode> list = ShapeListener.this.shapeNode.getChildren();
-                return Integer.compare(list.indexOf(o1), list.indexOf(o2));
-            }
-        });
-
-        @Override
-        public void notify(final Event event)
-        {
-            if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
-            {
-                XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[1];
-                if (node.getParent().equals(this.shapeNode))
-                {
-                    // clothoid option changed
-                    for (XsdTreeNode option : node.getChildren())
-                    {
-                        option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                    }
-                    // later as values may not be loaded yet during loading
-                    laterIfNotDestroyed(() -> updateShape());
-                }
-                else
-                {
-                    // shape node changed
-                    if (this.shapeNode != null)
-                    {
-                        if (this.shapeNode.getChildCount() > 0)
-                        {
-                            this.shapeNode.getChild(0).removeListener(this, XsdTreeNode.OPTION_CHANGED);
-                        }
-                        this.shapeNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-                    }
-                    this.shapeNode = node;
-                    this.shapeNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-                    if (this.shapeNode.getNodeName().equals(Polyline.class.getSimpleName()))
-                    {
-                        for (XsdTreeNode option : this.shapeNode.getChildren())
-                        {
-                            option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                            option.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
-                        }
-                    }
-                    else if (this.shapeNode.getNodeName().equals(Clothoid.class.getSimpleName()))
-                    {
-                        // later as flattener may not be loaded yet during loading
-                        laterIfNotDestroyed(() ->
-                        {
-                            this.shapeNode.getChild(0).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-                            for (XsdTreeNode option : this.shapeNode.getChild(0).getChildren())
-                            {
-                                option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                            }
-                        });
-                    }
-                    if (this.shapeNode.getNodeName().equals(Clothoid.class.getSimpleName())
-                            || this.shapeNode.getNodeName().equals(Arc.class.getSimpleName())
-                            || this.shapeNode.getNodeName().equals(Bezier.class.getSimpleName()))
-                    {
-                        // later as flattener may not be loaded yet during loading
-                        laterIfNotDestroyed(() -> setFlattenerListener());
-                    }
-                    // later as values/coordinates may not be loaded yet during loading
-                    laterIfNotDestroyed(() -> updateShape());
-                }
-                setDirtyEndCheckValidity();
-            }
-            else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
-            {
-                setAttribute((String) ((Object[]) event.getContent())[1]);
-                setDirtyEndCheckValidity();
-            }
-            else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
-            {
-                // clothoid option specification or polyline coordinate
-                Object[] content = (Object[]) event.getContent();
-                XsdTreeNode node = (XsdTreeNode) content[0];
-                try
-                {
-                    switch (node.getNodeName())
-                    {
-                        case "Coordinate":
-                            this.coordinates.put(node, orNull(node.getValueOrDefault(), Adapters.get(Point2d.class)));
-                            break;
-                        case "StartCurvature":
-                            this.startCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
-                            break;
-                        case "EndCurvature":
-                            this.endCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
-                            break;
-                        case "Length":
-                            this.length = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
-                            break;
-                        case "A":
-                            this.a = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
-                            break;
-                        default:
-                            Logger.ots().warn(node.getNodeName()
-                                    + " is unknown node name of which the value is assumed to affect link center line.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // leave line as is, new value is not a valid value
-                    return;
-                }
-                setDirtyEndCheckValidity();
-            }
-            else if (event.getType().equals(XsdTreeNode.MOVED))
-            {
-                // order of coordinates changed
-                updateShape();
-                setDirtyEndCheckValidity();
-            }
-            else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
-            {
-                // flattener node
-                boolean activated = (boolean) ((Object[]) event.getContent())[1];
-                if (activated)
-                {
-                    setFlattenerListener();
-                }
-                else
-                {
-                    if (MapLinkData.this.flattenerListener != null)
-                    {
-                        MapLinkData.this.flattenerListener.destroy();
-                    }
-                    MapLinkData.this.flattenerListener = null;
-                }
-                setDirtyEndCheckValidity();
-            }
-        }
-
-        /**
-         * Sets the flattener listener in the link.
-         */
-        private void setFlattenerListener()
-        {
-            if (MapLinkData.this.flattenerListener != null)
-            {
-                MapLinkData.this.flattenerListener.destroy();
-            }
-            MapLinkData.this.flattenerListener = new FlattenerListener(this.shapeNode.getChild(0), () -> getEval());
-            MapLinkData.this.flattenerListener.addListener(MapLinkData.this, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
-            this.shapeNode.getChild(0).addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-        }
-
-        /**
-         * Update the line, clearing all fields, and setting any already available attributes (as the shape node was previously
-         * selected and edited).
-         */
-        private void updateShape()
-        {
-            this.shape = null;
-            this.weighted = null;
-            this.startCurvature = null;
-            this.endCurvature = null;
-            this.length = null;
-            this.a = null;
-            this.radius = null;
-            this.direction = null;
-            this.coordinates.clear();
-            if (this.shapeNode == null)
-            {
-                return;
-            }
-            switch (this.shapeNode.getNodeName())
-            {
-                case "Straight":
-                    setDirtyEndCheckValidity();
-                    break;
-                case "Polyline":
-                    for (XsdTreeNode child : this.shapeNode.getChildren())
-                    {
-                        try
-                        {
-                            this.coordinates.put(child, orNull(child.getValueOrDefault(), Adapters.get(Point2d.class)));
-                        }
-                        catch (Exception ex)
-                        {
-                            orNull(child.getValueOrDefault(), Adapters.get(Point2d.class));
-                            throw new OtsRuntimeException(
-                                    "Expression adapter could not unmarshal value for polyline coordinate.");
-                        }
-                    }
-                    setDirtyEndCheckValidity();
-                    break;
-                case "Bezier":
-                    setAttribute("Shape");
-                    setAttribute("Weighted");
-                    setDirtyEndCheckValidity();
-                    setFlattenerListener();
-                    break;
-                case "Clothoid":
-                    if (this.shapeNode.getChildCount() > 0 && this.shapeNode.getChild(0).getChildCount() > 0)
-                    {
-                        // child is an xsd:sequence, take children from that
-                        for (int childIndex = 0; childIndex < this.shapeNode.getChild(0).getChildCount(); childIndex++)
-                        {
-                            XsdTreeNode child = this.shapeNode.getChild(0).getChild(childIndex);
-                            try
-                            {
-                                switch (child.getNodeName())
-                                {
-                                    case "StartCurvature":
-                                        this.startCurvature =
-                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
-                                        break;
-                                    case "EndCurvature":
-                                        this.endCurvature =
-                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
-                                        break;
-                                    case "Length":
-                                        this.length = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
-                                        break;
-                                    case "A":
-                                        this.a = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
-                                        break;
-                                    default:
-                                        throw new OtsRuntimeException(
-                                                "Clothoid child " + child.getNodeName() + " not supported.");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new OtsRuntimeException("Expression adapter could not unmarshal value for Clothoid child "
-                                        + child.getNodeName());
-                            }
-                        }
-                    }
-                    setDirtyEndCheckValidity();
-                    setFlattenerListener();
-                    break;
-                case "Arc":
-                    setAttribute("Radius");
-                    setAttribute("Direction");
-                    setDirtyEndCheckValidity();
-                    setFlattenerListener();
-                    break;
-                case "xsd:choice":
-                    // inactive node, will be invalid
-                    setDirtyEndCheckValidity();
-                    break;
-                default:
-                    throw new OtsRuntimeException(
-                            "Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
-            }
-        }
-
-        /**
-         * Set the given attribute from the shape node.
-         * @param attribute attribute name.
-         */
-        private void setAttribute(final String attribute)
-        {
-            if (!this.shapeNode.reportInvalidAttributeValue(this.shapeNode.getAttributeIndexByName(attribute)).isEmpty())
-            {
-                // invalid value, do nothing
-                return;
-            }
-            switch (attribute)
-            {
-                case "Shape":
-                    this.shape = getOrNull(attribute, Adapters.DOUBLE_POSITIVE_ADAPTER);
-                    break;
-                case "Weighted":
-                    this.weighted = getOrNull(attribute, Adapters.get(Boolean.class));
-                    break;
-                case "Length":
-                    this.length = getOrNull(attribute, Adapters.get(Length.class));
-                    break;
-                case "Radius":
-                    this.radius = getOrNull(attribute, Adapters.get(Length.class));
-                    break;
-                case "Direction":
-                    this.direction = getOrNull(attribute, Adapters.get(ArcDirection.class));
-                    break;
-                default:
-                    // an attribute was changed that does not change the shape
-            }
-        }
-
-        /**
-         * Returns the attribute value with appropriate adapter, or {@code null} if the attribute is not given.
-         * @param <T> type of the attribute value after unmarshaling.
-         * @param attribute attribute.
-         * @param adapter adapter for values of type T.
-         * @return unmarshaled value.
-         */
-        private <T> T getOrNull(final String attribute, final ExpressionAdapter<T, ?> adapter)
-        {
-            String value = this.shapeNode.getAttributeValueOrDefault(attribute);
-            return orNull(value, adapter);
-        }
-
-        /**
-         * Returns the continuous line.
-         * @param fromPoint possibly offset start point.
-         * @param toPoint possibly offset end point.
-         * @return line from the shape and attributes.
-         */
-        public OffsetCurve2d getContiuousLine(final DirectedPoint2d fromPoint, final DirectedPoint2d toPoint)
-        {
-            switch (this.shapeNode.getNodeName())
-            {
-                case "Straight":
-                    return new Straight2d(fromPoint, fromPoint.distance(toPoint));
-                case "Polyline":
-                    List<Point2d> list = new ArrayList<>();
-                    list.add(fromPoint);
-                    for (Point2d value : this.coordinates.values())
-                    {
-                        list.add(value);
-                    }
-                    list.add(toPoint);
-                    if (list.contains(null))
-                    {
-                        if (list.size() == 3)
-                        {
-                            // one coordinate tree node with empty or invalid coordinate value, allow map to show 1 draggable
-                            list.remove(1);
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                    return new PolyLineCurve2d(new PolyLine2d(0.0, list), fromPoint.dirZ, toPoint.dirZ);
-                case "Bezier":
-                    return new BezierCubic2d(new Ray2d(fromPoint), new Ray2d(toPoint), this.shape == null ? 1.0 : this.shape,
-                            this.weighted == null ? false : this.weighted);
-                case "Clothoid":
-                    if (this.shapeNode.getChildCount() == 0 || this.shapeNode.getChild(0).getChildCount() == 0
-                            || this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Interpolated"))
-                    {
-                        return new Clothoid2d(fromPoint, toPoint);
-                    }
-                    else if (this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Length"))
-                    {
-                        if (this.length == null || this.startCurvature == null || this.endCurvature == null)
-                        {
-                            return null;
-                        }
-                        return Clothoid2d.withLength(fromPoint, this.length.si, this.startCurvature.si, this.endCurvature.si);
-                    }
-                    else
-                    {
-                        if (this.a == null || this.startCurvature == null || this.endCurvature == null)
-                        {
-                            return null;
-                        }
-                        return new Clothoid2d(fromPoint, this.a.si, this.startCurvature.si, this.endCurvature.si);
-                    }
-                case "Arc":
-                    if (this.direction == null || this.radius == null)
-                    {
-                        return null;
-                    }
-                    boolean left = this.direction.equals(ArcDirection.LEFT);
-                    double endHeading = toPoint.dirZ;
-                    while (left && endHeading < fromPoint.dirZ)
-                    {
-                        endHeading += 2.0 * Math.PI;
-                    }
-                    while (!left && endHeading > fromPoint.dirZ)
-                    {
-                        endHeading -= 2.0 * Math.PI;
-                    }
-                    Angle angle = Angle.ofSI(
-                            AngleUtil.normalizeAroundPi(left ? endHeading - fromPoint.dirZ : fromPoint.dirZ - endHeading));
-                    return new Arc2d(fromPoint, this.radius.si, left, angle.si);
-                default:
-                    throw new OtsRuntimeException(
-                            "Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
-            }
-        }
-    }
-
-    /**
      * Returns the design line.
      * @return design line
      */
@@ -1586,6 +1109,34 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         checkDirtyGeometry();
         return this.designLine;
+    }
+
+    /**
+     * Returns whether the link has a Straight shape. Connectors have no shape child and return {@code false}.
+     * @return whether the link has a Straight shape
+     */
+    public boolean isStraight()
+    {
+        return hasShapeNode() && this.shapeListener.shapeNode.getNodeName().equals("Straight");
+    }
+
+    /**
+     * Returns whether the link has a Arc shape. Connectors have no shape child and return {@code false}.
+     * @return whether the link has a Arc shape
+     */
+    public boolean isArc()
+    {
+        return hasShapeNode() && this.shapeListener.shapeNode.getNodeName().equals("Arc");
+    }
+
+    /**
+     * Returns whether the link has the given shape.
+     * @param clazz class of generated class of XML tag
+     * @return whether the link has the given shape
+     */
+    private boolean isShape(final Class<?> clazz)
+    {
+        return hasShapeNode() && this.shapeListener.shapeNode.getNodeName().equals(clazz.getSimpleName());
     }
 
     // Bezier methods
@@ -1625,7 +1176,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public boolean isPolyline()
     {
-        return isShape(Polyline.class);
+        return isShape(PolyLine.class);
     }
 
     /**
@@ -1715,29 +1266,615 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         return null;
     }
 
-    /**
-     * Returns whether the link has the given shape.
-     * @param clazz class of generated class of XML tag
-     * @return whether the link has the given shape
-     */
-    private boolean isShape(final Class<?> clazz)
-    {
-        return hasShapeNode() && this.shapeListener.shapeNode.getNodeName().equals(clazz.getSimpleName());
-    }
+    // MapAligner interaction
 
     /**
      * Returns whether this LinkData has a Link shape node. Connectors do not have shape child nodes.
      * @return whether a Link shape node is available
      */
-    private boolean hasShapeNode()
+    public boolean hasShapeNode()
     {
         return !this.isConnector && this.shapeListener.shapeNode != null;
+    }
+
+    /**
+     * Returns shape node.
+     * @return shape node
+     */
+    public XsdTreeNode getShapeNode()
+    {
+        return this.shapeListener.shapeNode;
+    }
+
+    /**
+     * Returns start node.
+     * @return start node
+     */
+    public XsdTreeNode getStartNode()
+    {
+        return this.nodeStart;
+    }
+
+    /**
+     * Returns end node.
+     * @return end node
+     */
+    public XsdTreeNode getEndNode()
+    {
+        return this.nodeEnd;
+    }
+
+    /**
+     * Returns start point.
+     * @return start point
+     */
+    public Point2d getStartPoint()
+    {
+        return this.pointStart;
+    }
+
+    /**
+     * Returns end point.
+     * @return end point
+     */
+    public Point2d getEndPoint()
+    {
+        return this.pointEnd;
+    }
+
+    /**
+     * Returns start direction.
+     * @return start direction
+     */
+    public Direction getStartDirection()
+    {
+        return this.directionStart;
+    }
+
+    /**
+     * Returns end direction.
+     * @return end direction
+     */
+    public Direction getEndDirection()
+    {
+        return this.directionEnd;
+    }
+
+    /**
+     * Returns start offset.
+     * @return start offset
+     */
+    public Length getStartOffset()
+    {
+        return this.offsetStart;
+    }
+
+    /**
+     * Returns end offset.
+     * @return end offset
+     */
+    public Length getEndOffset()
+    {
+        return this.offsetEnd;
     }
 
     @Override
     public String toString()
     {
-        return (this.isConnector ? "Connector" : "Link ") + this.id;
+        return (this.isConnector ? "Connector " : "Link ") + this.id;
+    }
+
+    /**
+     * Remembers minimum and maximum start and end offset, to return the mean of both.
+     */
+    public class MiddleOffset
+    {
+        /** Minimum start offset. */
+        private double startOffsetMin = Double.POSITIVE_INFINITY;
+
+        /** Minimum start offset. */
+        private double startOffsetMax = Double.NEGATIVE_INFINITY;
+
+        /** Minimum end offset. */
+        private double endOffsetMin = Double.POSITIVE_INFINITY;
+
+        /** Maximum end offset. */
+        private double endOffsetMax = Double.NEGATIVE_INFINITY;
+
+        /**
+         * Constructor.
+         */
+        public MiddleOffset()
+        {
+            //
+        }
+
+        /**
+         * Get start offset.
+         * @return start offset
+         */
+        public double getStartOffset()
+        {
+            return .5 * (this.startOffsetMin + this.startOffsetMax);
+        }
+
+        /**
+         * Add start offset.
+         * @param startOffset start offset.
+         */
+        public void addStartOffset(final double startOffset)
+        {
+            this.startOffsetMin = Math.min(this.startOffsetMin, startOffset);
+            this.startOffsetMax = Math.max(this.startOffsetMax, startOffset);
+        }
+
+        /**
+         * Get end offset.
+         * @return end offset
+         */
+        public double getEndOffset()
+        {
+            return .5 * (this.endOffsetMin + this.endOffsetMax);
+        }
+
+        /**
+         * Add end offset.
+         * @param endOffset end offset
+         */
+        public void addEndOffset(final double endOffset)
+        {
+            this.endOffsetMin = Math.min(this.endOffsetMin, endOffset);
+            this.endOffsetMax = Math.max(this.endOffsetMax, endOffset);
+        }
+    }
+
+    /**
+     * Listener to events that affect the shape. This class can also deliver the resulting line.
+     * @author Wouter Schakel
+     */
+    private final class ShapeListener implements EventListener
+    {
+        /** Threshold to consider input to be a trivial straight or circle arc. The value is 1/10th of a degree. */
+        private static final double ANGLE_TOLERANCE = 2.0 * Math.PI / 3600.0;
+
+        /** Node of the shape. */
+        private XsdTreeNode shapeNode;
+
+        /** Bezier shape. */
+        private Double shape;
+
+        /** Bezier weighted or not. */
+        private Boolean weighted;
+
+        /** Clothoid start curvature. */
+        private LinearDensity startCurvature;
+
+        /** Clothoid end curvature. */
+        private LinearDensity endCurvature;
+
+        /** Clothoid length. */
+        private Length length;
+
+        /** Clothoid a-value. */
+        private Length a;
+
+        /** Arc radius. */
+        private Length radius;
+
+        /** Arc direction. */
+        private ArcDirection direction;
+
+        /** Polyline coordinates. */
+        private NavigableMap<XsdTreeNode, Point2d> coordinates = new TreeMap<>(new Comparator<>()
+        {
+            @Override
+            public int compare(final XsdTreeNode o1, final XsdTreeNode o2)
+            {
+                List<XsdTreeNode> list = ShapeListener.this.shapeNode.getChildren();
+                return Integer.compare(list.indexOf(o1), list.indexOf(o2));
+            }
+        });
+
+        @Override
+        public void notify(final Event event)
+        {
+            if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
+            {
+                XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[1];
+                if (node.getParent().equals(this.shapeNode))
+                {
+                    // clothoid option changed
+                    for (XsdTreeNode option : node.getChildren())
+                    {
+                        option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+                    }
+                    // later as values may not be loaded yet during loading
+                    laterIfNotDestroyed(() -> updateShape());
+                }
+                else
+                {
+                    // shape node changed
+                    if (this.shapeNode != null)
+                    {
+                        if (this.shapeNode.getChildCount() > 0)
+                        {
+                            this.shapeNode.getChild(0).removeListener(this, XsdTreeNode.OPTION_CHANGED);
+                        }
+                        this.shapeNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+                    }
+                    this.shapeNode = node;
+                    this.shapeNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+                    if (this.shapeNode.getNodeName().equals(PolyLine.class.getSimpleName()))
+                    {
+                        for (XsdTreeNode option : this.shapeNode.getChildren())
+                        {
+                            option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+                            option.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
+                        }
+                    }
+                    else if (this.shapeNode.getNodeName().equals(Clothoid.class.getSimpleName()))
+                    {
+                        // later as flattener may not be loaded yet during loading
+                        laterIfNotDestroyed(() ->
+                        {
+                            this.shapeNode.getChild(0).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+                            for (XsdTreeNode option : this.shapeNode.getChild(0).getChildren())
+                            {
+                                option.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+                            }
+                        });
+                    }
+                    if (this.shapeNode.getNodeName().equals(Clothoid.class.getSimpleName())
+                            || this.shapeNode.getNodeName().equals(Arc.class.getSimpleName())
+                            || this.shapeNode.getNodeName().equals(Bezier.class.getSimpleName()))
+                    {
+                        // later as flattener may not be loaded yet during loading
+                        laterIfNotDestroyed(() -> setFlattenerListener());
+                    }
+                    // later as values/coordinates may not be loaded yet during loading
+                    laterIfNotDestroyed(() -> updateShape());
+                }
+                setDirtyAndCheckValidity();
+            }
+            else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+            {
+                setAttribute((String) ((Object[]) event.getContent())[1]);
+                setDirtyAndCheckValidity();
+            }
+            else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
+            {
+                // clothoid option specification or polyline coordinate
+                Object[] content = (Object[]) event.getContent();
+                XsdTreeNode node = (XsdTreeNode) content[0];
+                try
+                {
+                    switch (node.getNodeName())
+                    {
+                        case "Coordinate":
+                            this.coordinates.put(node, orNull(node.getValueOrDefault(), Adapters.get(Point2d.class)));
+                            break;
+                        case "StartCurvature":
+                            this.startCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                            break;
+                        case "EndCurvature":
+                            this.endCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                            break;
+                        case "Length":
+                            this.length = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
+                            break;
+                        case "A":
+                            this.a = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
+                            break;
+                        default:
+                            Logger.ots().warn(node.getNodeName()
+                                    + " is unknown node name of which the value is assumed to affect link center line.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // leave line as is, new value is not a valid value
+                    return;
+                }
+                setDirtyAndCheckValidity();
+            }
+            else if (event.getType().equals(XsdTreeNode.MOVED))
+            {
+                // order of coordinates changed
+                updateShape();
+                setDirtyAndCheckValidity();
+            }
+            else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
+            {
+                // flattener node
+                boolean activated = (boolean) ((Object[]) event.getContent())[1];
+                if (activated)
+                {
+                    setFlattenerListener();
+                }
+                else
+                {
+                    if (MapLinkData.this.flattenerListener != null)
+                    {
+                        MapLinkData.this.flattenerListener.destroy();
+                    }
+                    MapLinkData.this.flattenerListener = null;
+                }
+                setDirtyAndCheckValidity();
+            }
+        }
+
+        /**
+         * Sets the flattener listener in the link.
+         */
+        private void setFlattenerListener()
+        {
+            if (MapLinkData.this.flattenerListener != null)
+            {
+                MapLinkData.this.flattenerListener.destroy();
+            }
+            MapLinkData.this.flattenerListener = new FlattenerListener(this.shapeNode.getChild(0), () -> getEval());
+            MapLinkData.this.flattenerListener.addListener(MapLinkData.this, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
+            this.shapeNode.getChild(0).addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        }
+
+        /**
+         * Update the line, clearing all fields, and setting any already available attributes (as the shape node was previously
+         * selected and edited).
+         */
+        private void updateShape()
+        {
+            this.shape = null;
+            this.weighted = null;
+            this.startCurvature = null;
+            this.endCurvature = null;
+            this.length = null;
+            this.a = null;
+            this.radius = null;
+            this.direction = null;
+            this.coordinates.clear();
+            if (this.shapeNode == null)
+            {
+                return;
+            }
+            switch (this.shapeNode.getNodeName())
+            {
+                case "Straight":
+                    setDirtyAndCheckValidity();
+                    break;
+                case "PolyLine":
+                    for (XsdTreeNode child : this.shapeNode.getChildren())
+                    {
+                        try
+                        {
+                            this.coordinates.put(child, orNull(child.getValueOrDefault(), Adapters.get(Point2d.class)));
+                        }
+                        catch (Exception ex)
+                        {
+                            orNull(child.getValueOrDefault(), Adapters.get(Point2d.class));
+                            throw new OtsRuntimeException(
+                                    "Expression adapter could not unmarshal value for polyline coordinate.");
+                        }
+                    }
+                    setDirtyAndCheckValidity();
+                    break;
+                case "Bezier":
+                    setAttribute("Shape");
+                    setAttribute("Weighted");
+                    setDirtyAndCheckValidity();
+                    setFlattenerListener();
+                    break;
+                case "Clothoid":
+                    if (this.shapeNode.getChildCount() > 0 && this.shapeNode.getChild(0).getChildCount() > 0)
+                    {
+                        // child is an xsd:sequence, take children from that
+                        for (int childIndex = 0; childIndex < this.shapeNode.getChild(0).getChildCount(); childIndex++)
+                        {
+                            XsdTreeNode child = this.shapeNode.getChild(0).getChild(childIndex);
+                            try
+                            {
+                                switch (child.getNodeName())
+                                {
+                                    case "StartCurvature":
+                                        this.startCurvature =
+                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                                        break;
+                                    case "EndCurvature":
+                                        this.endCurvature =
+                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                                        break;
+                                    case "Length":
+                                        this.length = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
+                                        break;
+                                    case "A":
+                                        this.a = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
+                                        break;
+                                    default:
+                                        throw new OtsRuntimeException(
+                                                "Clothoid child " + child.getNodeName() + " not supported.");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new OtsRuntimeException("Expression adapter could not unmarshal value for Clothoid child "
+                                        + child.getNodeName());
+                            }
+                        }
+                    }
+                    setDirtyAndCheckValidity();
+                    setFlattenerListener();
+                    break;
+                case "Arc":
+                    setAttribute("Radius");
+                    setAttribute("Direction");
+                    setDirtyAndCheckValidity();
+                    setFlattenerListener();
+                    break;
+                case "xsd:choice":
+                    // inactive node, will be invalid
+                    setDirtyAndCheckValidity();
+                    break;
+                default:
+                    throw new OtsRuntimeException(
+                            "Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
+            }
+        }
+
+        /**
+         * Set the given attribute from the shape node.
+         * @param attribute attribute name.
+         */
+        private void setAttribute(final String attribute)
+        {
+            if (!this.shapeNode.reportInvalidAttributeValue(this.shapeNode.getAttributeIndexByName(attribute)).isEmpty())
+            {
+                // invalid value, do nothing
+                return;
+            }
+            switch (attribute)
+            {
+                case "Shape":
+                    this.shape = getOrNull(attribute, Adapters.DOUBLE_POSITIVE_ADAPTER);
+                    break;
+                case "Weighted":
+                    this.weighted = getOrNull(attribute, Adapters.get(Boolean.class));
+                    break;
+                case "Length":
+                    this.length = getOrNull(attribute, Adapters.get(Length.class));
+                    break;
+                case "Radius":
+                    this.radius = getOrNull(attribute, Adapters.get(Length.class));
+                    break;
+                case "Direction":
+                    this.direction = getOrNull(attribute, Adapters.get(ArcDirection.class));
+                    break;
+                default:
+                    // an attribute was changed that does not change the shape
+            }
+        }
+
+        /**
+         * Returns the attribute value with appropriate adapter, or {@code null} if the attribute is not given.
+         * @param <T> type of the attribute value after unmarshaling.
+         * @param attribute attribute.
+         * @param adapter adapter for values of type T.
+         * @return unmarshaled value.
+         */
+        private <T> T getOrNull(final String attribute, final ExpressionAdapter<T, ?> adapter)
+        {
+            String value = this.shapeNode.getAttributeValueOrDefault(attribute);
+            return orNull(value, adapter);
+        }
+
+        /**
+         * Returns the continuous line.
+         * @param fromPoint possibly offset start point.
+         * @param toPoint possibly offset end point.
+         * @return line from the shape and attributes.
+         */
+        public OffsetCurve2d getContiuousLine(final DirectedPoint2d fromPoint, final DirectedPoint2d toPoint)
+        {
+            switch (this.shapeNode.getNodeName())
+            {
+                case "Straight":
+                    return new Straight2d(fromPoint, fromPoint.distance(toPoint));
+                case "PolyLine":
+                    List<Point2d> list = new ArrayList<>();
+                    list.add(fromPoint);
+                    for (Point2d value : this.coordinates.values())
+                    {
+                        list.add(value);
+                    }
+                    list.add(toPoint);
+                    if (list.contains(null))
+                    {
+                        if (list.size() == 3)
+                        {
+                            // one coordinate tree node with empty or invalid coordinate value, allow map to show 1 draggable
+                            list.remove(1);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    return new PolyLineCurve2d(new PolyLine2d(0.0, list), fromPoint.dirZ, toPoint.dirZ);
+                case "Bezier":
+                    // similar to how Clothoid fixes this
+                    double[] phiBezier = phi(fromPoint, toPoint);
+                    if (Math.abs(phiBezier[0]) < ANGLE_TOLERANCE && Math.abs(phiBezier[1]) < ANGLE_TOLERANCE)
+                    {
+                        return new Straight2d(fromPoint, fromPoint.distance(toPoint));
+                    }
+                    return new BezierCubic2d(new Ray2d(fromPoint), new Ray2d(toPoint), this.shape == null ? 1.0 : this.shape,
+                            this.weighted == null ? false : this.weighted);
+                case "Clothoid":
+                    if (this.shapeNode.getChildCount() == 0 || this.shapeNode.getChild(0).getChildCount() == 0
+                            || this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Interpolated"))
+                    {
+                        return new Clothoid2d(fromPoint, toPoint);
+                    }
+                    else if (this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Length"))
+                    {
+                        if (this.length == null || this.startCurvature == null || this.endCurvature == null
+                                || this.startCurvature.si == this.endCurvature.si)
+                        {
+                            return null;
+                        }
+                        return Clothoid2d.withLength(fromPoint, this.length.si, this.startCurvature.si, this.endCurvature.si);
+                    }
+                    else
+                    {
+                        if (this.a == null || this.startCurvature == null || this.endCurvature == null
+                                || this.startCurvature.si == this.endCurvature.si)
+                        {
+                            return null;
+                        }
+                        return new Clothoid2d(fromPoint, this.a.si, this.startCurvature.si, this.endCurvature.si);
+                    }
+                case "Arc":
+                    if (this.direction == null || this.radius == null)
+                    {
+                        return null;
+                    }
+                    boolean left = this.direction.equals(ArcDirection.LEFT);
+                    double endHeading = toPoint.dirZ;
+                    while (left && endHeading < fromPoint.dirZ)
+                    {
+                        endHeading += 2.0 * Math.PI;
+                    }
+                    while (!left && endHeading > fromPoint.dirZ)
+                    {
+                        endHeading -= 2.0 * Math.PI;
+                    }
+                    Angle angle = Angle.ofSI(
+                            AngleUtil.normalizeAroundPi(left ? endHeading - fromPoint.dirZ : fromPoint.dirZ - endHeading));
+                    if (Math.abs(angle.si) < ANGLE_TOLERANCE)
+                    {
+                        return new Straight2d(fromPoint, fromPoint.distance(toPoint));
+                    }
+                    return new Arc2d(fromPoint, this.radius.si, left, angle.si);
+                default:
+                    throw new OtsRuntimeException(
+                            "Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
+            }
+        }
+
+        /**
+         * Compute angles between end point directions and the line connecting them.
+         * @param fromPoint from point
+         * @param toPoint to point
+         * @return angles between end point directions and the line connecting them
+         */
+        private static double[] phi(final DirectedPoint2d fromPoint, final DirectedPoint2d toPoint)
+        {
+            // similar to how Clothoid fixes this
+            double dx = toPoint.x - fromPoint.x;
+            double dy = toPoint.y - fromPoint.y;
+            double d = Math.atan2(dy, dx); // angle of line through start and end points
+            double phi1 = AngleUtil.normalizeAroundZero(d - fromPoint.dirZ);
+            double phi2 = AngleUtil.normalizeAroundZero(toPoint.dirZ - d);
+            return new double[] {phi1, phi2};
+        }
     }
 
 }

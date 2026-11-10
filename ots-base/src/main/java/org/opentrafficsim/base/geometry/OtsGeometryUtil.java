@@ -8,6 +8,7 @@ import java.util.stream.DoubleStream;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -24,7 +25,7 @@ import org.djutils.exceptions.Throw;
  */
 public final class OtsGeometryUtil
 {
-    /** */
+    /** Constructor. */
     private OtsGeometryUtil()
     {
         // do not instantiate this class.
@@ -78,6 +79,19 @@ public final class OtsGeometryUtil
     {
         return new DirectedPoint2d(point.x - Math.sin(point.dirZ) * offset, point.y + Math.cos(point.dirZ) * offset,
                 point.dirZ);
+    }
+
+    /**
+     * Returns a ray on a line through the given point, perpendicular to the given direction, at the offset distance. A
+     * negative offset is towards the right hand side relative to the direction.
+     * @param ray ray.
+     * @param offset offset, negative values are to the right.
+     * @return offset point.
+     */
+    public static Ray2d offsetRay(final Ray2d ray, final double offset)
+    {
+        return new Ray2d(ray.x - Math.sin(ray.dirZ) * offset, ray.y + Math.cos(ray.dirZ) * offset,
+                ray.dirZ);
     }
 
     /**

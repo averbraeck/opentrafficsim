@@ -38,6 +38,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.Flattener2d;
 import org.djutils.draw.curve.Flattener2d.NumSegments;
+import org.djutils.draw.curve.Straight2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
@@ -110,10 +111,10 @@ public class MapInputListener extends InputListener implements EventListener
     private static final double ANGLE_POINT_OFFSET_PX = 30.0;
 
     /** Minimum Bezier shape value when dragging. */
-    private static final double BEZIES_SHAPE_MIN = 0.01;
+    protected static final double BEZIES_SHAPE_MIN = 0.01;
 
     /** Minimum Bezier shape value when dragging. */
-    private static final double BEZIES_SHAPE_MAX = 2.0;
+    protected static final double BEZIES_SHAPE_MAX = 2.0;
 
     /** Minimum distance between point on polyline. */
     private static final double POLYLINE_DIST_MIN_M = 0.05;
@@ -422,7 +423,7 @@ public class MapInputListener extends InputListener implements EventListener
             else
             {
                 this.editor.setHighlight(null);
-                select(mapDatas.get(0), e.isControlDown(), true, e.isShiftDown());
+                select(mapDatas.get(0), e.isControlDown(), false, e.isShiftDown());
             }
         }
         else if (!mapDatas.isEmpty() && SwingUtilities.isLeftMouseButton(e))
@@ -439,29 +440,69 @@ public class MapInputListener extends InputListener implements EventListener
                 else
                 {
                     this.editor.setHighlight(null);
-                    select(highest.get(), e.isControlDown(), true, e.isShiftDown());
+                    select(highest.get(), e.isControlDown(), false, e.isShiftDown());
                 }
             }
         }
         else if (!mapDatas.isEmpty() && SwingUtilities.isRightMouseButton(e))
         {
-            showSelectLocatableMenu(mapDatas, e);
+            if (mapDatas.size() == 1 && this.selectionIndicators.size() <= 1)
+            {
+                this.editor.setHighlight(mapDatas.get(0).getNode());
+                // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
+                SwingUtilities.invokeLater(() ->
+                {
+                    select(mapDatas.get(0), false, true, false);
+                    showContextMenu(mapDatas, e);
+                });
+            }
+            else
+            {
+                showContextMenu(mapDatas, e);
+            }
         }
         else if (mapDatas.isEmpty() && SwingUtilities.isRightMouseButton(e))
         {
             showSettingsMenu(e);
         }
-        else if (mapDatas.isEmpty() && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1 && isAddMode(e))
+        else if (mapDatas.isEmpty() && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1)
         {
-            this.snap = !this.editorMap.isAddMode() || this.snapSetting;
-            Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
-                    this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
-            addPoint(snapPointToGrid(world), this.editorMap.isCentroidMode() ^ e.isShiftDown());
+            if (!e.isControlDown() && !this.selectionIndicators.isEmpty())
+            {
+                // normal click but there is a selection -> deselect even in add mode
+                this.editor.setHighlight(null);
+                deselect();
+            }
+            else if (isAddMode(e) && (!e.isControlDown() || this.selectionIndicators.size() < 2))
+            {
+                // skip ctrl click if there is a multi-selection (losing your selection is annoying)
+                this.snap = !this.editorMap.isAddMode() || this.snapSetting;
+                Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
+                        this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
+                addPoint(snapPointToGrid(world), this.editorMap.isCentroidMode() ^ e.isShiftDown());
+            }
         }
         else if (!e.isControlDown() || !isAddMode(e))
         {
             this.editor.setHighlight(null);
             deselect();
+        }
+    }
+
+    /**
+     * Show context menu based on map data's under the mouse.
+     * @param mapDatas map data's
+     * @param e mouse event
+     */
+    private void showContextMenu(final List<MapData> mapDatas, final MouseEvent e)
+    {
+        Optional<MapData> selected = mapDatas.stream().filter(this::isSelected).findFirst();
+        if (selected.isEmpty() || e.isControlDown()
+                || !MapContextActions.showContextMenu(
+                        this.selectionIndicators.stream().map((a) -> a.getSource().mapData()).toList(),
+                        this.editorMap.getPanel(), e))
+        {
+            showSelectLocatableMenu(mapDatas, e);
         }
     }
 
@@ -542,7 +583,7 @@ public class MapInputListener extends InputListener implements EventListener
     }
 
     /**
-     * Update the temporary line to the pointer, snapping it to a compatible endpoint when present.
+     * Update the temporary line to the pointer, snapping it to a compatible end point when present.
      * @param point pointer location
      */
     private void updateAddingHelper(final Point2D point)
@@ -782,6 +823,16 @@ public class MapInputListener extends InputListener implements EventListener
         this.editorMap.update();
         this.editorMap.getPanel().repaint();
         return true;
+    }
+
+    /**
+     * Returns whether the given map data is part of the current selection.
+     * @param mapData map data
+     * @return whether the given map data is part of the current selection
+     */
+    private boolean isSelected(final MapData mapData)
+    {
+        return this.selectionIndicators.stream().anyMatch((annotation) -> annotation.getSource().mapData().equals(mapData));
     }
 
     /**
@@ -1139,6 +1190,12 @@ public class MapInputListener extends InputListener implements EventListener
      */
     private void addBezierDraggables(final MapLinkData linkData)
     {
+        if (linkData.getDesignLine() instanceof Straight2d)
+        {
+            // cannot change a straight "Bezier"
+            return;
+        }
+
         // define geometry
         Function<Boolean, Double> computeWeight = (startSide) ->
         {
@@ -1292,7 +1349,7 @@ public class MapInputListener extends InputListener implements EventListener
             // intermediary point
             if (prev.distance(entry.getValue()) > POLYLINE_DIST_MIN_M * 2)
             {
-                intermediary = addPolylineDraggable(linkData, line, intermediaryLocation, CIRCLE, (p) ->
+                intermediary = addPolyLineDraggable(linkData, line, intermediaryLocation, CIRCLE, (p) ->
                 {
                     String value = pointToCoordinateString(p);
                     MapInputListener.this.editor.getUndo().startAction(ActionType.ADD, entry.getKey(), null);
@@ -1303,12 +1360,12 @@ public class MapInputListener extends InputListener implements EventListener
                     newNode.setValue(value);
                     this.editor.updateTree();
                 }, snapStartRay, null); // endRay always null; last intermediate point is created outside of loop
-                addPolylinePrediction(linkData, entry.getKey(), intermediary, true, coordinates);
+                addPolyLinePrediction(linkData, entry.getKey(), intermediary, true, coordinates);
             }
 
             // coordinate
             DraggableAnnotation coordinate =
-                    addPolylineDraggable(linkData, line, coordinates.get(entry.getKey()), SQUARE, (p) ->
+                    addPolyLineDraggable(linkData, line, coordinates.get(entry.getKey()), SQUARE, (p) ->
                     {
                         String value = pointToCoordinateString(p);
                         MapInputListener.this.editor.getUndo().startAction(ActionType.VALUE_CHANGE, entry.getKey(), null);
@@ -1327,7 +1384,7 @@ public class MapInputListener extends InputListener implements EventListener
                 coordinate.setHighlightIfDeletable(true);
                 this.selectedDraggable = coordinate;
             }
-            addPolylinePrediction(linkData, entry.getKey(), coordinate, false, coordinates);
+            addPolyLinePrediction(linkData, entry.getKey(), coordinate, false, coordinates);
 
             // location for intermediary node on intermediary segment
             // higher node as this is used in the next loop, and this higher node should be the next segment's lower node
@@ -1345,7 +1402,7 @@ public class MapInputListener extends InputListener implements EventListener
             Point2d from = coordinates.isEmpty() || coordinates.size() == 1 && coordinates.values().contains(null)
                     ? line.getFirst() : coordinates.lastEntry().getValue();
             intermediaryLocation = from.interpolate(line.getLast(), 0.5);
-            intermediary = addPolylineDraggable(linkData, line, intermediaryLocation, CIRCLE, (p) ->
+            intermediary = addPolyLineDraggable(linkData, line, intermediaryLocation, CIRCLE, (p) ->
             {
                 String value = pointToCoordinateString(p);
                 XsdTreeNode newNode;
@@ -1365,7 +1422,7 @@ public class MapInputListener extends InputListener implements EventListener
                 newNode.setValue(value);
                 this.editor.updateTree();
             }, snapStartRay, endRay);
-            addPolylinePrediction(linkData, null, intermediary, true, coordinates);
+            addPolyLinePrediction(linkData, null, intermediary, true, coordinates);
         }
     }
 
@@ -1380,7 +1437,7 @@ public class MapInputListener extends InputListener implements EventListener
      * @param endRay end point ray relevant for last intermediary draggable and last coordinate, {@code null} otherwise
      * @return draggable
      */
-    private DraggableAnnotation addPolylineDraggable(final MapLinkData linkData, final PolyLine2d line,
+    private DraggableAnnotation addPolyLineDraggable(final MapLinkData linkData, final PolyLine2d line,
             final Point2d initialLocation, final PolyLine2d annotation, final Consumer<Point2d> valueWriter,
             final Ray2d startRay, final Ray2d endRay)
     {
@@ -1446,7 +1503,7 @@ public class MapInputListener extends InputListener implements EventListener
     {
         Point2d point = ray.closestPointOnRay(p);
         // we add 1e-9 to make sure "< POLYLINE_DIST_MIN_M" does not invalidate this point
-        return ray.distance(point) < POLYLINE_DIST_MIN_M ? OtsGeometryUtil.offsetPoint(ray, POLYLINE_DIST_MIN_M + 1e-9) : point;
+        return ray.distance(point) < POLYLINE_DIST_MIN_M ? OtsGeometryUtil.offsetRay(ray, POLYLINE_DIST_MIN_M + 1e-9) : point;
     }
 
     /**
@@ -1484,7 +1541,7 @@ public class MapInputListener extends InputListener implements EventListener
      * @param intermediate whether this concerns a draggable of an intermediary node
      * @param coordinates coordinates
      */
-    private void addPolylinePrediction(final MapLinkData linkData, final XsdTreeNode node, final DraggableAnnotation draggable,
+    private void addPolyLinePrediction(final MapLinkData linkData, final XsdTreeNode node, final DraggableAnnotation draggable,
             final boolean intermediate, final NavigableMap<XsdTreeNode, Point2d> coordinates)
     {
         Function<Point2d, PolyLine2d> predictionFunction = (p) ->
@@ -1689,6 +1746,52 @@ public class MapInputListener extends InputListener implements EventListener
         if (renderable != null && renderable.equals(this.selectedDraggable))
         {
             this.selectedDraggable = null;
+        }
+    }
+
+    /**
+     * Apply road layout to selection.
+     * @param roadLayout road layout
+     */
+    public void applyRoadLayoutToSelection(final String roadLayout)
+    {
+        if (this.selectionIndicators.isEmpty())
+        {
+            return;
+        }
+        // Link.Defined(1).DefinedLayout(0)
+        XsdTreeNode network = this.selectionIndicators.iterator().next().getSource().mapData().getNode().getParent();
+        this.editor.getUndo().startAction(ActionType.VALUE_CHANGE, network, null);
+        for (SelectionAnnotation i : this.selectionIndicators)
+        {
+            XsdTreeNode layout = i.getSource().mapData().getNode().getChild(1);
+            if (layout.getNodeName().equals("RoadLayout"))
+            {
+                XsdTreeNode defined = layout.getOptions().stream().map((o) -> o.optionNode())
+                        .filter((n) -> n.getNodeName().equals("Defined")).findFirst().get();
+                layout.setOption(defined);
+                layout = defined;
+            }
+            layout.getChild(0).setValue(roadLayout);
+        }
+    }
+
+    /**
+     * Apply link type to selection.
+     * @param linkType link type
+     */
+    public void applyLinkTypeToSelection(final String linkType)
+    {
+        if (this.selectionIndicators.isEmpty())
+        {
+            return;
+        }
+        XsdTreeNode network = this.selectionIndicators.iterator().next().getSource().mapData().getNode().getParent();
+        this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, network, null);
+        for (SelectionAnnotation i : this.selectionIndicators)
+        {
+            XsdTreeNode link = i.getSource().mapData().getNode();
+            link.setAttributeValue("Type", linkType);
         }
     }
 

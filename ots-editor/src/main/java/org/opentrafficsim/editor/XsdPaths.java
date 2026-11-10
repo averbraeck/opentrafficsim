@@ -44,7 +44,7 @@ public final class XsdPaths
     public static final String TRAFFIC_LIGHT = LINK + ".TrafficLight";
 
     /** Polyline coordinate path. */
-    public static final String POLYLINE_COORDINATE = LINK + ".Polyline.Coordinate";
+    public static final String POLYLINE_COORDINATE = LINK + ".PolyLine.Coordinate";
 
     /** Road layout path. */
     public static final String ROADLAYOUT = LINK + ".RoadLayout";

@@ -63,19 +63,20 @@ public class NodeAnimation extends OtsRenderableLabeled<NodeData, Text>
         setRendering(graphics);
         double scale = Math.sqrt(graphics.getTransform().getDeterminant());
         double factor = 4.0 / Math.min(scale, 4.0); // do not make smaller when zooming out below scale 4
+        graphics.scale(factor, factor);
         graphics.setColor(Color.BLACK);
-        graphics.setStroke(new BasicStroke((float) (factor * 0.5), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        graphics.draw(new Ellipse2D.Double(-0.5 * factor, -0.5 * factor, 1.0 * factor, 1.0 * factor));
+        graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
         if (!getSource().isCentroid())
         {
             double direction = getSource().getLocation().getDirZ();
             if (!Double.isNaN(direction))
             {
                 GeneralPath arrow = new GeneralPath(Path2D.WIND_EVEN_ODD, 3);
-                arrow.moveTo(0.7 * factor, -0.7 * factor);
-                arrow.lineTo(1.4 * factor, 0.0);
-                arrow.lineTo(0.7 * factor, 0.7 * factor);
-                graphics.setStroke(new BasicStroke((float) (factor * 0.25), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                arrow.moveTo(0.7, -0.7);
+                arrow.lineTo(1.4, 0.0);
+                arrow.lineTo(0.7, 0.7);
+                graphics.setStroke(new BasicStroke(0.25f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                 graphics.draw(arrow);
             }
         }

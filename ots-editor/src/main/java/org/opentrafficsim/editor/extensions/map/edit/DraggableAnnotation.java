@@ -273,7 +273,7 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
 
         /**
          * Sets node of which this draggable affects the value. This is for display purposes (shift-click draggable to show in
-         * tree).
+         * tree) and to avoid changing expression values.
          * @param node node of which this draggable affects the value
          * @return this, for method chaining
          */
@@ -296,7 +296,7 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
 
         /**
          * Sets node and attribute of the node of which this draggable affects the value. This is for display purposes
-         * (shift-click draggable to show in tree).
+         * (shift-click draggable to show in tree) and to avoid changing expression values.
          * @param node node of which this draggable affects an attribute value
          * @param attribute attribute name
          * @return this, for method chaining

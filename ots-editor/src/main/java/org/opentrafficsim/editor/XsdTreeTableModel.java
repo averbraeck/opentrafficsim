@@ -66,9 +66,6 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         this.dataStructureRoot = (XsdTreeNodeRoot) this.root; // created in line above, set by super
     }
 
-    // TODO: ego code using (XsdTreeNodeRoot) getRoot() needs a special method and cast:
-    // XsdTreeNodeRoot root = ((XsdTreeTableModel) getModel()).getRootNode()
-
     /**
      * Changes the root of the tree table model (not of the data structure as such).
      * @param root new root, may be {@code null} to show the complete data structure

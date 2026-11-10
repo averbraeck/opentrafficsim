@@ -11,6 +11,7 @@ import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.Undo;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 
@@ -71,6 +72,24 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
     public Eval getEval()
     {
         return this.editor.getEval();
+    }
+
+    /**
+     * Returns the editor.
+     * @return editor
+     */
+    public OtsEditor getEditor()
+    {
+        return this.editor;
+    }
+
+    /**
+     * Returns the undo.
+     * @return undo
+     */
+    public Undo getUndo()
+    {
+        return this.editor.getUndo();
     }
 
     /**

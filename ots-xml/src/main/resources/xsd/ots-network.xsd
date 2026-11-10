@@ -95,7 +95,7 @@
               <xsd:attribute name="Direction" type="ots:ArcDirectionType" use="required" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="Polyline">
+          <xsd:element name="PolyLine">
             <xsd:complexType>
               <!-- Not necessary to specify the points on the two nodes. -->
               <xsd:sequence>

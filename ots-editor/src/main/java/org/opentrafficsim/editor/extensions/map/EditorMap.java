@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -102,6 +103,13 @@ public final class EditorMap extends JPanel implements EventListener
     private static final Set<String> TYPES = Set.of(XsdPaths.CENTROID, XsdPaths.CONNECTOR, XsdPaths.NODE, XsdPaths.LINK,
             XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK, XsdPaths.GENERATOR, XsdPaths.LIST_GENERATOR);
 
+    /** Color for links with the selected link type. */
+    private static final Color LINK_TYPE_COLOR =
+            OtsEditor.PROPERTIES_STORE.getColorOrDefault("map.linkTypeColor", Color.GREEN.darker());
+
+    /** Link shapes. */
+    public static final List<String> LINK_SHAPES = List.of("Straight", "Bezier", "Clothoid", "Arc", "PolyLine");
+
     /** Context provider. */
     private final Contextualized contextualized;
 
@@ -125,9 +133,6 @@ public final class EditorMap extends JPanel implements EventListener
 
     /** Default shape selector. */
     private JComboBox<String> defaultShape;
-
-    /** Shape paint button. */
-    private AbstractButton shapeApplyButton;
 
     /** Default road layout selector. */
     private JComboBox<String> defaultRoadLayout;
@@ -167,6 +172,9 @@ public final class EditorMap extends JPanel implements EventListener
 
     /** Listener to flattener at network level. */
     private FlattenerListener networkFlattenerListener;
+
+    /** Input listener. */
+    private MapInputListener inputListener;
 
     /** Animation objects of all data's drawn. */
     private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
@@ -229,11 +237,11 @@ public final class EditorMap extends JPanel implements EventListener
                 this.visualizationPanel.removeKeyListener(il);
             }
         }
-        MapInputListener listener = new MapInputListener(this.editor, this);
-        this.visualizationPanel.addMouseListener(listener);
-        this.visualizationPanel.addMouseMotionListener(listener);
-        this.visualizationPanel.addMouseWheelListener(listener);
-        this.visualizationPanel.addKeyListener(listener);
+        this.inputListener = new MapInputListener(this.editor, this);
+        this.visualizationPanel.addMouseListener(this.inputListener);
+        this.visualizationPanel.addMouseMotionListener(this.inputListener);
+        this.visualizationPanel.addMouseWheelListener(this.inputListener);
+        this.visualizationPanel.addKeyListener(this.inputListener);
     }
 
     /**
@@ -257,21 +265,22 @@ public final class EditorMap extends JPanel implements EventListener
         Border paintBorder = new CompoundBorder(new MatteBorder(1, 0, 1, 1, MetalLookAndFeel.getControlDarkShadow()),
                 new EmptyBorder(0, 1, 0, 0));
 
+        // add tools
         String modifier =
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() == InputEvent.META_DOWN_MASK ? "\u2318" : "ctrl";
-        this.addModeButton =
-                createToolButton(buttonSize, "NetworkAddMode24.png", "Add mode (" + modifier + ")", true, iconSize);
-        this.centroidModeButton = createToolButton(buttonSize, "Centroid24.png", "Add centroid (shift)", true, iconSize);
+        this.addModeButton = createToolButton(buttonSize, "AddMode24.png", "Add mode (" + modifier + ")", true, iconSize);
+        this.centroidModeButton =
+                createToolButton(buttonSize, "Centroid24.png", "Add centroid rather than node (shift)", true, iconSize);
         this.autoFixButton =
                 createToolButton(buttonSize, "AutoFix24.png", "Automatically align created elements", true, iconSize);
         storedToggleSetting(this.addModeButton, "addMode");
         storedToggleSetting(this.centroidModeButton, "centroidMode");
         storedToggleSetting(this.autoFixButton, "autoFix");
 
+        // shape
         this.toolPanel.add(Box.createHorizontalStrut(5));
         this.defaultShape = new AppearanceControlComboBox<>();
-        this.defaultShape
-                .setModel(new DefaultComboBoxModel<>(new String[] {"Straight", "Bezier", "Clothoid", "Arc", "PolyLine"}));
+        this.defaultShape.setModel(new DefaultComboBoxModel<>(LINK_SHAPES.toArray(new String[LINK_SHAPES.size()])));
         setSize(this.defaultShape, shapeSizeSmall, shapeSizeLarge);
         this.defaultShape.setToolTipText("Shape for new links");
         Map<String,
@@ -295,10 +304,8 @@ public final class EditorMap extends JPanel implements EventListener
                 (a) -> OtsEditor.PROPERTIES_STORE.setProperty(key, (String) this.defaultShape.getSelectedItem()));
         OtsEditor.PROPERTIES_STORE.setProperty(key, value);
         this.toolPanel.add(this.defaultShape);
-        this.shapeApplyButton =
-                createToolButton(applyButtonSize, "Apply24.png", "Apply shape to selection", false, applyIconSize);
-        this.shapeApplyButton.setBorder(paintBorder);
 
+        // layout
         this.toolPanel.add(Box.createHorizontalStrut(5));
         this.defaultRoadLayout = new AppearanceControlComboBox<>();
         this.defaultRoadLayout
@@ -311,7 +318,16 @@ public final class EditorMap extends JPanel implements EventListener
         this.roadLayoutApplyButton =
                 createToolButton(applyButtonSize, "Apply24.png", "Apply road layout to selection", false, applyIconSize);
         this.roadLayoutApplyButton.setBorder(paintBorder);
+        this.roadLayoutApplyButton.addActionListener((a) ->
+        {
+            String selected = (String) this.defaultRoadLayout.getSelectedItem();
+            if (selected != null)
+            {
+                this.inputListener.applyRoadLayoutToSelection(selected);
+            }
+        });
 
+        // link type
         this.toolPanel.add(Box.createHorizontalStrut(5));
         this.defaultLinkType = new AppearanceControlComboBox<>();
         this.defaultLinkType.setRenderer(definitionRenderer("Link24.png", iconSize, "<no link type>", this.defaultLinkType));
@@ -319,21 +335,33 @@ public final class EditorMap extends JPanel implements EventListener
         setSize(this.defaultLinkType, definitionSizeSmall, definitionSizeLarge);
         this.defaultLinkType.setToolTipText("Link type for new links and connectors");
         ComboBoxSearchSupport.install(this.defaultLinkType, "defaultLinkType");
+        this.defaultLinkType.addActionListener((a) -> updateLinkTypeColors());
         this.toolPanel.add(this.defaultLinkType);
         this.linkTypeApplyButton =
                 createToolButton(applyButtonSize, "Apply24.png", "Apply link type to selection", false, applyIconSize);
         this.linkTypeApplyButton.setBorder(paintBorder);
+        this.linkTypeApplyButton.addActionListener((a) ->
+        {
+            String selected = (String) this.defaultLinkType.getSelectedItem();
+            if (selected != null)
+            {
+                this.inputListener.applyLinkTypeToSelection(selected);
+            }
+        });
         this.linkTypeShowButton =
                 createToolButton(applyButtonSize, "Eye24.png", "Show links with link type", true, applyIconSize);
         this.linkTypeShowButton.setBorder(paintBorder);
         storedToggleSetting(this.linkTypeShowButton, "showLinkType");
+        this.linkTypeShowButton.addActionListener((a) -> updateLinkTypeColors());
 
+        // filler
         this.toolPanel.add(Box.createHorizontalStrut(5));
         Dimension minDim = new Dimension(0, 1);
         Dimension prefDim = new Dimension(0, 1);
         Dimension maxDim = new Dimension(5000, 1);
         this.toolPanel.add(new Filler(minDim, prefDim, maxDim)); // pushes further elements right aligned
 
+        // view buttons
         this.toolPanel.add(Box.createHorizontalStrut(5));
         JButton resetY = new JButton(IconUtil.of("UpDown24.png").imageSize(iconSize, iconSize).get());
         setSize(resetY, buttonSize, buttonSize);
@@ -375,6 +403,40 @@ public final class EditorMap extends JPanel implements EventListener
         button.setSelected(toggleOn);
         button.addActionListener((a) -> OtsEditor.PROPERTIES_STORE.setBoolean(keyAddress, button.isSelected()));
         OtsEditor.PROPERTIES_STORE.setBoolean(keyAddress, toggleOn);
+    }
+
+    /**
+     * Updates the color of all links based on the link type shown in the map, if the link type show button is selected.
+     */
+    private void updateLinkTypeColors()
+    {
+        for (MapLinkData linkData : this.links.keySet())
+        {
+            updateLinkTypeColor(linkData);
+        }
+        this.updater.update();
+    }
+
+    /**
+     * Updates the color of a link based on the link type shown in the map, if the link type show button is selected.
+     * @param linkData link data
+     */
+    private void updateLinkTypeColor(final MapLinkData linkData)
+    {
+        Renderable2d<?> animation = this.animations.get(linkData.getNode());
+        if (animation instanceof LinkAnimation linkAnimation)
+        {
+            String selected = (String) this.defaultLinkType.getSelectedItem();
+            if (this.linkTypeShowButton.isSelected() && selected != null
+                    && selected.equals(linkData.getNode().getAttributeValueOrDefault("Type")))
+            {
+                linkAnimation.setColor(LINK_TYPE_COLOR);
+            }
+            else
+            {
+                linkAnimation.resetColor();
+            }
+        }
     }
 
     /**
@@ -733,10 +795,10 @@ public final class EditorMap extends JPanel implements EventListener
             listener.addListener(listener, ChangeListener.CHANGE_EVENT); // register to self, but for change events
         }
         // When a node is restored, child nodes may also be restored later.
-        // SwingUtilities.invokeLater(() ->
-        // {
-        this.updater.update();
-        // });
+        SwingUtilities.invokeLater(() ->
+        {
+            this.updater.update();
+        });
     }
 
     /**
@@ -881,6 +943,18 @@ public final class EditorMap extends JPanel implements EventListener
                 this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
             }
         }
+        else if ("Type".equals(content[1]))
+        {
+            XsdTreeNode node = (XsdTreeNode) content[0];
+            for (MapLinkData linkData : this.links.keySet())
+            {
+                if (linkData.getNode().equals(node))
+                {
+                    updateLinkTypeColor(linkData);
+                    break;
+                }
+            }
+        }
         this.updater.update();
     }
 
@@ -1023,6 +1097,10 @@ public final class EditorMap extends JPanel implements EventListener
             throw new UnsupportedOperationException("Data cannot be added by the map editor.");
         }
         this.animations.put(node, animation);
+        if (data instanceof MapLinkData linkData)
+        {
+            updateLinkTypeColor(linkData);
+        }
     }
 
     /**

@@ -52,8 +52,6 @@ public final class DownloadIcons
         // downloadIcon("mdi", "car-cruise-control", "Acc");
         // downloadIcon("mdi", "car-speed-limiter", "Isa");
 
-        downloadIcon("mdi", "pencil-plus", "AddMode");
-        downloadIcon("mdi", "auto-fix", "AutoFix");
         downloadIcon("ic", "baseline-edit-road", "RoadLayout");
         downloadIcon("iconoir", "dot-arrow-right", "Connector");
         downloadIcon("ix", "road-filled", "Lane");
@@ -63,6 +61,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "arrow-expand-all", "ZoomAll");
         downloadIcon("mdi", "arrow-right-bold-circle-outline", "Step");
         downloadIcon("mdi", "arrow-up-down", "UpDown");
+        downloadIcon("mdi", "auto-fix", "AutoFix");
         downloadIcon("mdi", "bus-stop", "BusStop");
         downloadIcon("mdi", "calendar-clock-outline", "Calendar");
         downloadIcon("mdi", "car-electric", "Detector");
@@ -71,6 +70,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "car-side", "Gtu");
         downloadIcon("mdi", "chart-ppf", "Clothoid");
         downloadIcon("mdi", "chart-timeline-variant-shimmer", "Apply");
+        downloadIcon("mdi", "check", "Check");
         downloadIcon("mdi", "chevron-down", "Expanded");
         downloadIcon("mdi", "chevron-right", "Collapsed");
         downloadIcon("mdi", "chevron-up", "Up");
@@ -96,6 +96,7 @@ public final class DownloadIcons
         downloadIcon("mdi", "map-marker-check-outline", "Sink");
         downloadIcon("mdi", "menu-close", "Dropdown");
         downloadIcon("mdi", "pause-circle-outline", "Pause");
+        downloadIcon("mdi", "pencil-plus", "AddMode");
         downloadIcon("mdi", "play-circle-outline", "Play");
         downloadIcon("mdi", "puzzle-outline", "Component");
         downloadIcon("mdi", "question-mark-circle-outline", "Question");

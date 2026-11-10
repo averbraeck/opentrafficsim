@@ -192,15 +192,15 @@ public final class NetworkParser
             {
                 designLine = new Straight2d(start, Math.hypot(end.x - start.x, end.y - start.y));
             }
-            else if (xmlLink.getPolyline() != null)
+            else if (xmlLink.getPolyLine() != null)
             {
-                int intermediatePoints = xmlLink.getPolyline().getCoordinate().size();
+                int intermediatePoints = xmlLink.getPolyLine().getCoordinate().size();
                 coordinates = new Point2d[intermediatePoints + 2];
                 coordinates[0] = startPoint;
                 coordinates[intermediatePoints + 1] = endPoint;
                 for (int p = 0; p < intermediatePoints; p++)
                 {
-                    coordinates[p + 1] = xmlLink.getPolyline().getCoordinate().get(p).get(eval);
+                    coordinates[p + 1] = xmlLink.getPolyLine().getCoordinate().get(p).get(eval);
                 }
                 designLine = new PolyLineCurve2d(new PolyLine2d(0.0, coordinates), startHeading, endHeading);
             }

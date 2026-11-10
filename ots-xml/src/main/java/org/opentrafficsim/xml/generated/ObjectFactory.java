@@ -1223,13 +1223,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.Polyline }
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.PolyLine }
      * 
      * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.Polyline }
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.PolyLine }
      */
-    public org.opentrafficsim.xml.generated.Link.Polyline createLinkPolyline() {
-        return new org.opentrafficsim.xml.generated.Link.Polyline();
+    public org.opentrafficsim.xml.generated.Link.PolyLine createLinkPolyLine() {
+        return new org.opentrafficsim.xml.generated.Link.PolyLine();
     }
 
     /**

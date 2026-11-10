@@ -46,8 +46,11 @@ public class LinkAnimation extends OtsRenderableLabeled<LinkData, Text>
     /** Drawable path for end point. */
     private Path2D.Float endPoint;
 
+    /** Default color. */
+    private final Color defaultColor;
+
     /** Color. */
-    private final Color color;
+    private Color color;
 
     /** Design line, also cached in parent, this is to see if it has changed. */
     private PolyLine2d designLine;
@@ -63,7 +66,34 @@ public class LinkAnimation extends OtsRenderableLabeled<LinkData, Text>
         super(link, contextualized);
         this.width = width;
         setPath();
-        this.color = getSource().isConnector() ? Color.PINK.darker() : Colors.OTS_BLUE;
+        this.defaultColor = getSource().isConnector() ? Color.PINK.darker() : Colors.OTS_BLUE;
+        this.color = this.defaultColor;
+    }
+
+    /**
+     * Sets the color to paint the link with.
+     * @param color color
+     */
+    public void setColor(final Color color)
+    {
+        this.color = color;
+    }
+
+    /**
+     * Resets the color to the default color for a link or connector.
+     */
+    public void resetColor()
+    {
+        this.color = this.defaultColor;
+    }
+
+    /**
+     * Returns the color the link is painted with.
+     * @return color
+     */
+    public Color getColor()
+    {
+        return this.color;
     }
 
     @Override
@@ -104,7 +134,8 @@ public class LinkAnimation extends OtsRenderableLabeled<LinkData, Text>
     }
 
     /**
-     * @param pointEnd the end of the design line where a end point must be highlighted
+     * Get end point.
+     * @param pointEnd the end of the design line where an end point must be highlighted
      * @param nextPoint the point nearest {@code pointEnd} (needed to figure out the direction of the design line)
      * @return Path2D.Float; path to draw an end point
      */

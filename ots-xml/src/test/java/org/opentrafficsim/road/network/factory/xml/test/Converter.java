@@ -422,7 +422,7 @@ public class Converter
                     }
                     pw.println("/>");
                 }
-                else if (layoutNode.getNodeName().equals("Polyline"))
+                else if (layoutNode.getNodeName().equals("PolyLine"))
                 {
                     pw.println("      <Polyline>");
                     String[] coords = layoutNode.getAttributes().getNamedItem("IntermediatePoints").getNodeValue().split(" ");

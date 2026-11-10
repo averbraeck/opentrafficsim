@@ -64,6 +64,9 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
             return;
         }
         setRendering(graphics);
+        double scale = Math.sqrt(graphics.getTransform().getDeterminant());
+        double factor = 4.0 / Math.min(scale, 4.0); // do not make smaller when zooming out below scale 4
+        graphics.scale(factor, factor);
         if (getSource().isAllStop() || getSource().isStop())
         {
             paintOctagon(graphics, 1.0, SHADOW, true, true);
@@ -269,17 +272,6 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
     private void paintString(final Graphics2D graphics, final String text, final Color color, final float fontSize,
             final float dy)
     {
-        if (graphics.getTransform().getDeterminant() > 400000)
-        {
-            // TODO
-            /*
-             * If we are very zoomed in, the font gets huge on screen. FontMetrics somehow uses this actual image size in Java
-             * 11, and this gives a bug for fonts above a certain size. Dimensions become 0, and this does not recover after we
-             * zoom out again. The text never shows anymore. A later java version may not require skipping painting the font.
-             * See more at: https://bugs.openjdk.org/browse/JDK-8233097
-             */
-            return;
-        }
         graphics.setColor(color);
         int fontSizeMetrics = 100;
         float factor = fontSize / fontSizeMetrics;
@@ -294,13 +286,6 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
 
     /**
      * Data for priority animation.
-     * <p>
-     * Copyright (c) 2024-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Alexander Verbraeck
-     * @author Peter Knoppers
      * @author Wouter Schakel
      */
     public interface PriorityData extends OtsShape

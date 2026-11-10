@@ -98,7 +98,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *               </complexContent>
  *             </complexType>
  *           </element>
- *           <element name="Polyline">
+ *           <element name="PolyLine">
  *             <complexType>
  *               <complexContent>
  *                 <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
@@ -182,7 +182,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     "bezier",
     "clothoid",
     "arc",
-    "polyline",
+    "polyLine",
     "roadLayout",
     "definedLayout",
     "laneOverride",
@@ -204,8 +204,8 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     protected Link.Clothoid clothoid;
     @XmlElement(name = "Arc")
     protected Link.Arc arc;
-    @XmlElement(name = "Polyline")
-    protected Link.Polyline polyline;
+    @XmlElement(name = "PolyLine")
+    protected Link.PolyLine polyLine;
     @XmlElement(name = "RoadLayout")
     protected Link.RoadLayout roadLayout;
     @XmlElement(name = "DefinedLayout", type = String.class)
@@ -343,27 +343,27 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the polyline property.
+     * Gets the value of the polyLine property.
      * 
      * @return
      *     possible object is
-     *     {@link Link.Polyline }
+     *     {@link Link.PolyLine }
      *     
      */
-    public Link.Polyline getPolyline() {
-        return polyline;
+    public Link.PolyLine getPolyLine() {
+        return polyLine;
     }
 
     /**
-     * Sets the value of the polyline property.
+     * Sets the value of the polyLine property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Link.Polyline }
+     *     {@link Link.PolyLine }
      *     
      */
-    public void setPolyline(Link.Polyline value) {
-        this.polyline = value;
+    public void setPolyLine(Link.PolyLine value) {
+        this.polyLine = value;
     }
 
     /**
@@ -1470,7 +1470,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     @XmlType(name = "", propOrder = {
         "coordinate"
     })
-    public static class Polyline
+    public static class PolyLine
         implements Serializable
     {
 
