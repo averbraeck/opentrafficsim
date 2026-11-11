@@ -6,12 +6,12 @@ import java.util.Optional;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.swing.gui.OtsSimulationPanel;
 import org.w3c.dom.Node;
-
-import de.javagl.treetable.JTreeTable;
 
 /**
  * Model for a {@code JTable} to display the attributes of a {@code XsdTreeNode}.
@@ -21,7 +21,7 @@ import de.javagl.treetable.JTreeTable;
  * </p>
  * @author Wouter Schakel
  */
-public class AttributesTableModel extends AbstractTableModel
+public class AttributesTableModel extends AbstractTableModel implements EventListener
 {
 
     /** Serialization version UID. */
@@ -49,20 +49,49 @@ public class AttributesTableModel extends AbstractTableModel
     private static final int[] PREFERRED_COLUMN_WIDTHS = new int[] {400, 400, 30, 20};
 
     /** The node of which the attributes are displayed. */
-    private final XsdTreeNode node;
-
-    /** Tree table, so it can be updated visually when a value has changed. */
-    private final JTreeTable treeTable;
+    private XsdTreeNode node;
 
     /**
-     * Constructor.
-     * @param node node of which the attributes are displayed.
-     * @param treeTable tree table.
+     * Sets the node of which the attributes are displayed. A previous node, if any, is no longer listened to.
+     * @param node node of which the attributes are displayed, may be {@code null}
      */
-    public AttributesTableModel(final XsdTreeNode node, final JTreeTable treeTable)
+    public void setNode(final XsdTreeNode node)
     {
+        if (this.node == node)
+        {
+            return;
+        }
+        if (this.node != null)
+        {
+            this.node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            this.node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        }
         this.node = node;
-        this.treeTable = treeTable;
+        if (this.node != null)
+        {
+            this.node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            this.node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        }
+        fireTableDataChanged();
+    }
+
+    @Override
+    public void notify(final Event event)
+    {
+        Object[] content = (Object[]) event.getContent();
+        if (content[0] != this.node)
+        {
+            return;
+        }
+        if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        {
+            int index = this.node.getAttributeIndexByName((String) content[1]);
+            fireTableRowsUpdated(index, index);
+        }
+        else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
+        {
+            fireTableDataChanged();
+        }
     }
 
     @Override
@@ -142,8 +171,6 @@ public class AttributesTableModel extends AbstractTableModel
             return;
         }
         this.node.setAttributeValue(rowIndex, aValue.toString());
-        this.treeTable.updateUI();
-        fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     /**

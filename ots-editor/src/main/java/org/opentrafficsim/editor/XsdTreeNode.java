@@ -433,6 +433,22 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
+     * Fires the event on this node, and additionally on the root of the tree. This allows a single listener on the root to
+     * observe all changes in the data structure, rather than having to register a listener on every individual node. Note that
+     * the root does not forward its own events, as it has no parent.
+     * @param event event to fire.
+     */
+    @Override
+    public void fireEvent(final Event event)
+    {
+        super.fireEvent(event);
+        if (this.parent != null)
+        {
+            getRoot().fireEvent(event);
+        }
+    }
+
+    /**
      * Returns the relevant node describing this element. This is {@code this.referringXsdNode} if there is one,
      * {@code this.xsdNode} otherwise.
      * @return the relevant node describing this element
@@ -1348,8 +1364,13 @@ public class XsdTreeNode extends LocalEventProducer
             int indexSelected = this.choice.options.indexOf(this.choice.selected);
             XsdTreeNode selectedOption = node.options.get(indexSelected);
             node.choice.setOption(selectedOption);
+            int movedFrom = this.parent.children.indexOf(selectedOption);
             this.parent.children.remove(selectedOption); // needs to be at the right index
             this.parent.children.add(index, selectedOption);
+            if (movedFrom != index)
+            {
+                selectedOption.fireEvent(MOVED, new Object[] {selectedOption, movedFrom, index});
+            }
             node.options.get(indexSelected).setActive();
             return selectedOption;
         }
@@ -2599,7 +2620,8 @@ public class XsdTreeNode extends LocalEventProducer
                     if (!relevantForAny)
                     {
                         // can't do a remove() on the node, as it might just become deactivated and still be visible
-                        this.children.remove(index);
+                        XsdTreeNode child = this.children.remove(index);
+                        getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, this, index});
                     }
                     else
                     {

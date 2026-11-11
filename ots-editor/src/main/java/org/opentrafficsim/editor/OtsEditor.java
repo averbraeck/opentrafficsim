@@ -199,6 +199,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     /** Table for attributes at the bottom of the right-hand side. */
     private final JTable attributesTable;
 
+    /** Model of the table for attributes. */
+    private final AttributesTableModel attributesTableModel = new AttributesTableModel();
+
     /** Status label. */
     private final JLabel statusLabel;
 
@@ -334,20 +337,21 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         UIManager.put("Tree.rightChildIndent", 7);
 
         // empty tree table
-        this.treeTable = new AppearanceControlTreeTable(new XsdTreeTableModel(null, this::ignoreChanges, this::getEval));
+        XsdTreeTableModel emptyModel = new XsdTreeTableModel(null, this::ignoreChanges, this::getEval);
+        this.treeTable = new AppearanceControlTreeTable(emptyModel);
+        emptyModel.setTreeTable(this.treeTable);
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
 
         // attributes table
-        AttributesTableModel tableModel = new AttributesTableModel(null, this.treeTable);
         DefaultTableColumnModel columns = new DefaultTableColumnModel();
-        for (int i = 0; i < tableModel.getColumnCount(); i++)
+        for (int i = 0; i < this.attributesTableModel.getColumnCount(); i++)
         {
             TableColumn column = new TableColumn(i);
-            column.setHeaderValue(tableModel.getColumnName(i));
+            column.setHeaderValue(this.attributesTableModel.getColumnName(i));
             columns.addColumn(column);
         }
-        this.attributesTable = new JTable(tableModel, columns)
+        this.attributesTable = new JTable(this.attributesTableModel, columns)
         {
             /** Serialization version UID. */
             private static final long serialVersionUID = 20260215L;
@@ -657,9 +661,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         {
             this.treeTable.getTree().setSelectionPath(path);
         }
-        this.treeTable.updateUI();
-
-        this.attributesTable.setModel(new AttributesTableModel(node.isActive() ? node : null, this.treeTable));
+        this.attributesTableModel.setNode(node.isActive() ? node : null);
         if (attribute != null)
         {
             int index = node.getAttributeIndexByName(attribute);
@@ -684,7 +686,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         if (!Objects.equal(wasRoot, isRoot))
         {
             restoreExpansion(isRoot, new TreePath(isRoot));
-            this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
+            this.attributesTableModel.setNode(null);
         }
     }
 
@@ -721,14 +723,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         }
         this.treeTable.repaint();
         this.attributesTable.repaint();
-    }
-
-    /**
-     * Updates the tree. Call this method when a repaint does not work.
-     */
-    public void updateTree()
-    {
-        this.treeTable.updateUI();
     }
 
     /**
@@ -949,7 +943,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
                     return;
                 }
                 setUnsavedChanges(true);
-                this.treeTable.updateUI();
                 file.delete();
             }
             else if (userInput.isPresent() && !userInput.get())
@@ -970,7 +963,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             {
                 this.undo.setIgnoreChanges(true);
                 initializeTree();
-                this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
                 this.undo.clear();
             }
             catch (IOException exception)
@@ -989,15 +981,16 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.scenario.removeAllItems();
         this.scenario.addItem(new ScenarioWrapper(null));
         setDefaultProperties();
+        this.attributesTableModel.setNode(null);
 
         // tree table
         XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument, this::ignoreChanges, this::getEval);
         this.treeTable = new AppearanceControlTreeTable(treeModel);
+        treeModel.setTreeTable(this.treeTable);
         this.treeTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.actions = new Actions(this, this.attributesTable);
         this.actions.setTreeTable(this.treeTable);
         this.treeTable.putClientProperty("terminateEditOnFocusLost", true);
-        treeModel.setTreeTable(this.treeTable);
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
         ((DefaultCellEditor) this.treeTable.getDefaultEditor(String.class)).setClickCountToStart(1);
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
@@ -1035,7 +1028,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         // this listener changes Id or node Value for each key being pressed
         // this listener starts a new undo event when the editor gets focus on the JTreeTable
         // this listener may cause new undo actions when cells are navigated using the keyboard
-        new XsdTreeEditorListener(this, this.treeTable, this.attributesTable);
+        new XsdTreeEditorListener(this, this.treeTable);
 
         // throws selection events and updates the attributes table
         // this listener will make sure no choice pop-up is presented by a left-click on expand/collapse, even for a choice node
@@ -1115,20 +1108,20 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     public void startUndoActionOnTreeTable()
     {
         // allow selection to update after any events triggering this
-        SwingUtilities.invokeLater(() ->
+        // SwingUtilities.invokeLater(() ->
+        // {
+        XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(),
+                this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN)); // columns may have been moved
+        int col = this.treeTable.convertColumnIndexToModel(this.treeTable.getSelectedColumn());
+        if (col == XsdTreeTableModel.ID_COLUMN)
         {
-            XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(),
-                    this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN)); // columns may have been moved
-            int col = this.treeTable.convertColumnIndexToModel(this.treeTable.getSelectedColumn());
-            if (col == XsdTreeTableModel.ID_COLUMN)
-            {
-                this.undo.startAction(ActionType.ID_CHANGE, node, null);
-            }
-            else if (col == XsdTreeTableModel.VALUE_COLUMN)
-            {
-                this.undo.startAction(ActionType.VALUE_CHANGE, node, null);
-            }
-        });
+            this.undo.startAction(ActionType.ID_CHANGE, node, null);
+        }
+        else if (col == XsdTreeTableModel.VALUE_COLUMN)
+        {
+            this.undo.startAction(ActionType.VALUE_CHANGE, node, null);
+        }
+        // });
     }
 
     /**
@@ -1308,7 +1301,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             JMenuItem item = new JMenuItem(option);
             item.setName(option);
             item.setVisible(index++ < maxDropdown);
-            item.addActionListener(new PopupValueSelectedListener(option, table, action, this.treeTable));
+            item.addActionListener(new PopupValueSelectedListener(option, table, action));
             item.setFont(table.getFont());
             popup.add(item);
         }
@@ -1317,8 +1310,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             JMenuItem item = new JMenuItem(PopupValueSelectedListener.REMOVE_OPTION);
             item.setName(PopupValueSelectedListener.REMOVE_OPTION);
             item.setVisible(true);
-            item.addActionListener(
-                    new PopupValueSelectedListener(PopupValueSelectedListener.REMOVE_OPTION, table, action, this.treeTable));
+            item.addActionListener(new PopupValueSelectedListener(PopupValueSelectedListener.REMOVE_OPTION, table, action));
             item.setFont(table.getFont());
             popup.add(new JPopupMenu.Separator());
             item.setIcon(PopupValueSelectedListener.REMOVE_ICON);
@@ -1697,13 +1689,14 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             this.undo.updateButtons();
             this.navigation.clear();
             // knowing/changing the directory may change validation status through imports
-            SwingUtilities.invokeLater(() -> this.treeTable.updateUI());
+            SwingUtilities.invokeLater(() -> ((XsdTreeTableModel) this.treeTable.getTree().getModel()).refresh());
             return true;
         }
         catch (SAXException | IOException | ParserConfigurationException exception)
         {
             this.evalWrapper.setIgnoreEval(false);
             this.ignoreChanges = false;
+            SwingUtilities.invokeLater(() -> ((XsdTreeTableModel) this.treeTable.getTree().getModel()).refresh());
             return false;
         }
     }
@@ -1752,8 +1745,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         {
             this.undo.setIgnoreChanges(true);
             root.setBaseUri(this.lastDirectory);
-            this.treeTable.updateUI();
-            this.attributesTable.updateUI();
+            invalidateAndRepaint();
             setUnsavedChanges(false);
             this.undo.setIgnoreChanges(false);
         }

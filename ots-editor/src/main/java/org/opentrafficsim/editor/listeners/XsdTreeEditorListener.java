@@ -4,7 +4,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.DefaultCellEditor;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
@@ -38,20 +37,15 @@ public class XsdTreeEditorListener implements FocusListener, CellEditorListener
     /** Tree table. */
     private final JTreeTable treeTable;
 
-    /** Attributes table. */
-    private final JTable attributesTable;
-
     /**
      * Constructor.
      * @param editor editor
      * @param treeTable tree table
-     * @param attributesTable attributes table
      */
-    public XsdTreeEditorListener(final OtsEditor editor, final JTreeTable treeTable, final JTable attributesTable)
+    public XsdTreeEditorListener(final OtsEditor editor, final JTreeTable treeTable)
     {
         this.editor = editor;
         this.treeTable = treeTable;
-        this.attributesTable = attributesTable;
         DefaultCellEditor cellEditor = (DefaultCellEditor) this.treeTable.getDefaultEditor(String.class);
         cellEditor.getComponent().addFocusListener(this);
         cellEditor.addCellEditorListener(this);
@@ -81,12 +75,11 @@ public class XsdTreeEditorListener implements FocusListener, CellEditorListener
         if (editorCol == XsdTreeTableModel.ID_COLUMN || editorCol == XsdTreeTableModel.VALUE_COLUMN)
         {
             int row = this.treeTable.getSelectedRow();
-            int col = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may have been moved
+            int col = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may be moved
             XsdTreeNode treeNode = (XsdTreeNode) this.treeTable.getValueAt(row, col);
             if (editorCol == XsdTreeTableModel.ID_COLUMN)
             {
                 treeNode.setId(textField.getText());
-                this.attributesTable.updateUI();
             }
             else if (editorCol == XsdTreeTableModel.VALUE_COLUMN)
             {

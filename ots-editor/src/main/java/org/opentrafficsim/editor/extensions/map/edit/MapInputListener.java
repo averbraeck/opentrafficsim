@@ -350,7 +350,6 @@ public class MapInputListener extends InputListener implements EventListener
             Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
                     this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
             this.selectedDraggable.mouseReleased(world);
-            this.editor.repaint(); // not just panel to also update attribute or node value in (tree) tables
         }
         else if (this.addingStart != null)
         {
@@ -397,7 +396,6 @@ public class MapInputListener extends InputListener implements EventListener
             if (e.getClickCount() > 1)
             {
                 this.selectedDraggable.getSource().writeDefaultValue();
-                this.editor.repaint();
             }
             else if (e.isShiftDown())
             {
@@ -1358,7 +1356,6 @@ public class MapInputListener extends InputListener implements EventListener
                     MapInputListener.this.editor.getUndo().setPostActionShowNode(newNode);
                     this.selectedPolyLineCoordinateNode = newNode;
                     newNode.setValue(value);
-                    this.editor.updateTree();
                 }, snapStartRay, null); // endRay always null; last intermediate point is created outside of loop
                 addPolyLinePrediction(linkData, entry.getKey(), intermediary, true, coordinates);
             }
@@ -1420,7 +1417,6 @@ public class MapInputListener extends InputListener implements EventListener
                 MapInputListener.this.editor.getUndo().setPostActionShowNode(newNode);
                 this.selectedPolyLineCoordinateNode = newNode;
                 newNode.setValue(value);
-                this.editor.updateTree();
             }, snapStartRay, endRay);
             addPolyLinePrediction(linkData, null, intermediary, true, coordinates);
         }
@@ -1601,7 +1597,6 @@ public class MapInputListener extends InputListener implements EventListener
             MapInputListener.this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, laneBasedObjectData.getNode(),
                     "Position");
             laneBasedObjectData.getNode().setAttributeValue("Position", value);
-            MapInputListener.this.editor.repaint();
         };
         DraggableAnnotation positionDraggable = new DraggableAnnotation(
                 new Draggable<>(laneBasedObjectData.getLocation(), SQUARE, snapper, valueFunction, positionWriter)

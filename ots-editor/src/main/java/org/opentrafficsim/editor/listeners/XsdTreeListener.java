@@ -162,7 +162,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             {
                 cellEditor.stopCellEditing();
             }
-            this.attributesTable.setModel(new AttributesTableModel(node, this.treeTable));
+            ((AttributesTableModel) this.attributesTable.getModel()).setNode(node);
 
             // fire selection changed event
             this.editor.fireEvent(OtsEditor.SELECTION_CHANGED, node);
@@ -170,7 +170,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         else
         {
             // no selection, clear attributes table
-            this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
+            ((AttributesTableModel) this.attributesTable.getModel()).setNode(null);
         }
     }
 
@@ -281,8 +281,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 {
                     this.editor.getUndo().startAction(ActionType.ACTIVATE, treeNode, null);
                     treeNode.setActive();
-                    this.treeTable.updateUI();
-                    this.attributesTable.setModel(new AttributesTableModel(treeNode, this.treeTable));
+                    ((AttributesTableModel) this.attributesTable.getModel()).setNode(treeNode);
                 }
                 return;
             }

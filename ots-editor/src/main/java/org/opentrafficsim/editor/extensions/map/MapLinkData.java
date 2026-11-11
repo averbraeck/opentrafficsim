@@ -469,7 +469,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         String attribute = (String) content[1];
         String value = node.getAttributeValueOrDefault(attribute);
 
-        if ("Id".equals(attribute))
+        if ("Id".equals(attribute) && node.getNodeName().equals("Link"))
         {
             this.id = value == null ? "" : value;
             return;

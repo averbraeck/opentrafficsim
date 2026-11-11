@@ -1,11 +1,15 @@
 package org.opentrafficsim.editor;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
-import javax.swing.SwingUtilities;
-
 import org.djutils.eval.Eval;
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.w3c.dom.Document;
 
 import com.google.common.base.Objects;
@@ -22,7 +26,7 @@ import de.javagl.treetable.TreeTableModel;
  * </p>
  * @author Wouter Schakel
  */
-public class XsdTreeTableModel extends AbstractTreeTableModel
+public class XsdTreeTableModel extends AbstractTreeTableModel implements EventListener
 {
 
     /** Column names. */
@@ -47,11 +51,20 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     private static final Class<?>[] COLUMN_CLASSES =
             new Class<?>[] {TreeTableModel.class, String.class, String.class, String.class};
 
-    /** Tree table, so it can be updated visually when a value has changed. */
+    /** Tree table, so it can be repainted when a value or attribute has changed. */
     private JTreeTable treeTable;
 
     /** Root of the data structure. */
     private final XsdTreeNodeRoot dataStructureRoot;
+
+    /**
+     * Nodes that have been inserted into the tree table model. This is used to prevent removal or replacement events for nodes
+     * that are not visible in the tree, e.g. options of a choice that are not selected.
+     */
+    private final Set<XsdTreeNode> inserted = Collections.newSetFromMap(new IdentityHashMap<>());
+
+    /** Whether changes should be ignored, e.g. while loading a file. */
+    private final Supplier<Boolean> ignoreChanges;
 
     /**
      * Constructor.
@@ -64,6 +77,17 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     {
         super(document == null ? null : new XsdTreeNodeRoot(new Schema(document), ignoreChanges, evalSupplier));
         this.dataStructureRoot = (XsdTreeNodeRoot) this.root; // created in line above, set by super
+        this.ignoreChanges = ignoreChanges;
+        if (this.dataStructureRoot != null)
+        {
+            this.dataStructureRoot.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
+            this.dataStructureRoot.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+            this.dataStructureRoot.addListener(this, XsdTreeNode.VALUE_CHANGED);
+            this.dataStructureRoot.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            this.dataStructureRoot.addListener(this, XsdTreeNode.OPTION_CHANGED);
+            this.dataStructureRoot.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            this.dataStructureRoot.addListener(this, XsdTreeNode.MOVED);
+        }
     }
 
     /**
@@ -81,6 +105,15 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     }
 
     /**
+     * Sets the tree table. This is used to repaint the tree table when a node value or attribute changes.
+     * @param treeTable tree table.
+     */
+    public void setTreeTable(final JTreeTable treeTable)
+    {
+        this.treeTable = treeTable;
+    }
+
+    /**
      * Returns the root of the data structure, rather than of the tree table view.
      * @return the root of the data structure, rather than of the tree table view
      */
@@ -90,12 +123,238 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     }
 
     /**
-     * Sets the tree table.
-     * @param treeTable tree table.
+     * Refreshes the entire tree table. This can be used after bulk changes to the data structure, such as loading a file, where
+     * the individual events would result in many redundant updates. This also rebuilds the administration of nodes that are
+     * currently visible.
      */
-    public void setTreeTable(final JTreeTable treeTable)
+    public void refresh()
     {
-        this.treeTable = treeTable;
+        this.inserted.clear();
+        if (this.dataStructureRoot != null)
+        {
+            markInserted(this.dataStructureRoot);
+        }
+        if (this.root != null)
+        {
+            fireTreeStructureChanged(this, new Object[] {this.root}, null, null);
+        }
+    }
+
+    @Override
+    public void notify(final Event event)
+    {
+        if (this.ignoreChanges != null && this.ignoreChanges.get())
+        {
+            return; // bulk changes, e.g. loading a file, are followed by a refresh
+        }
+        Object[] content = (Object[]) event.getContent();
+        if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
+        {
+            nodeCreated((XsdTreeNode) content[0]);
+        }
+        else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+        {
+            nodeRemoved((XsdTreeNode) content[0], (XsdTreeNode) content[1], (Integer) content[2]);
+        }
+        else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED) || event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        {
+            nodeChanged((XsdTreeNode) content[0]);
+        }
+        else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
+        {
+            optionChanged((XsdTreeNode) content[0], (XsdTreeNode) content[1], (XsdTreeNode) content[2]);
+        }
+        else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
+        {
+            activationChanged((XsdTreeNode) content[0]);
+        }
+        else if (event.getType().equals(XsdTreeNode.MOVED))
+        {
+            nodeMoved((XsdTreeNode) content[0], (Integer) content[1], (Integer) content[2]);
+        }
+    }
+
+    /**
+     * Handles a created node. Nodes that are not (yet) part of the visible tree, such as options of a choice that are not
+     * selected, are ignored.
+     * @param node created node
+     */
+    private void nodeCreated(final XsdTreeNode node)
+    {
+        XsdTreeNode parent = node.getParent();
+        if (parent == null || !parent.isActive())
+        {
+            return; // root, or parent is not visible
+        }
+        Object[] path = pathTo(parent);
+        if (path == null)
+        {
+            return;
+        }
+        int index = parent.children == null ? -1 : parent.children.indexOf(node);
+        if (index < 0)
+        {
+            return; // node is not part of the visible tree (yet)
+        }
+        markInserted(node);
+        fireTreeNodesInserted(this, path, new int[] {index}, new Object[] {node});
+    }
+
+    /**
+     * Handles a removed node.
+     * @param node removed node
+     * @param parent parent of the removed node
+     * @param index index at which the node was located in the parent
+     */
+    private void nodeRemoved(final XsdTreeNode node, final XsdTreeNode parent, final int index)
+    {
+        if (parent == null || !parent.isActive() || index < 0)
+        {
+            return;
+        }
+        Object[] path = pathTo(parent);
+        if (path == null || !this.inserted.remove(node))
+        {
+            return;
+        }
+        fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {node});
+    }
+
+    /**
+     * Handles a change of a node value or attribute. The tree table is repainted directly, rather than firing a tree model
+     * event. The {@code TreeTableModelAdapter} translates any tree model event into a full table data change, and
+     * {@code JTable} clears its selection on such an event. That would deselect the row after the first keystroke while
+     * editing. A value or attribute change does not alter the tree structure, so a repaint is sufficient and keeps the
+     * selection and the cell editor intact.
+     * @param node changed node
+     */
+    private void nodeChanged(final XsdTreeNode node)
+    {
+        if (this.treeTable != null && pathTo(node) != null)
+        {
+            node.invalidate();
+            this.treeTable.repaint();
+        }
+    }
+
+    /**
+     * Handles a change of the selected option of a choice. The event is fired for every option, so only the event of the newly
+     * selected option is used.
+     * @param option option on which the event was fired
+     * @param selected newly selected option
+     * @param previous previously selected option
+     */
+    private void optionChanged(final XsdTreeNode option, final XsdTreeNode selected, final XsdTreeNode previous)
+    {
+        if (option != selected || selected == null)
+        {
+            return;
+        }
+        XsdTreeNode parent = selected.getParent();
+        if (parent == null || !parent.isActive())
+        {
+            return;
+        }
+        Object[] path = pathTo(parent);
+        if (path == null)
+        {
+            return;
+        }
+        int index = parent.children == null ? -1 : parent.children.indexOf(selected);
+        if (index < 0)
+        {
+            return;
+        }
+        if (previous != null && this.inserted.remove(previous))
+        {
+            fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {previous});
+        }
+        markInserted(selected);
+        fireTreeNodesInserted(this, path, new int[] {index}, new Object[] {selected});
+    }
+
+    /**
+     * Handles a change of the activation state of a node. The children of the node are added or removed, which is a change of
+     * the structure at the node.
+     * @param node node with changed activation
+     */
+    private void activationChanged(final XsdTreeNode node)
+    {
+        Object[] path = pathTo(node);
+        if (path != null)
+        {
+            fireTreeStructureChanged(this, path, null, null);
+        }
+    }
+
+    /**
+     * Handles a moved node.
+     * @param node moved node
+     * @param oldIndex old index of the node in the parent
+     * @param newIndex new index of the node in the parent
+     */
+    private void nodeMoved(final XsdTreeNode node, final int oldIndex, final int newIndex)
+    {
+        XsdTreeNode parent = node.getParent();
+        if (parent == null || !parent.isActive())
+        {
+            return;
+        }
+        Object[] path = pathTo(parent);
+        if (path == null || !this.inserted.contains(node))
+        {
+            return;
+        }
+        fireTreeNodesRemoved(this, path, new int[] {oldIndex}, new Object[] {node});
+        fireTreeNodesInserted(this, path, new int[] {newIndex}, new Object[] {node});
+    }
+
+    /**
+     * Marks a node and all currently existing visible descendants as inserted. This is required as nodes can be created while
+     * they are not visible, e.g. options of a choice that is not selected, and become visible later without new creation
+     * events.
+     * @param node node that has become visible
+     */
+    private void markInserted(final XsdTreeNode node)
+    {
+        this.inserted.add(node);
+        if (node.children != null)
+        {
+            for (XsdTreeNode child : node.children)
+            {
+                markInserted(child);
+            }
+        }
+    }
+
+    /**
+     * Returns the path from the current root of the model to the given node, or {@code null} if the node is not visible in the
+     * current model.
+     * @param node node
+     * @return path from the current root of the model to the given node, or {@code null} if the node is not visible in the
+     *         current model
+     */
+    private Object[] pathTo(final XsdTreeNode node)
+    {
+        if (node == null || this.root == null)
+        {
+            return null;
+        }
+        List<XsdTreeNode> path = node.getPath();
+        int index = path.indexOf(this.root);
+        if (index < 0)
+        {
+            return null;
+        }
+        for (int i = index + 1; i < path.size(); i++)
+        {
+            XsdTreeNode parent = path.get(i - 1);
+            if (!parent.isActive() || parent.children == null || !parent.children.contains(path.get(i)))
+            {
+                return null; // node is not part of the visible tree
+            }
+        }
+        return path.subList(index, path.size()).toArray();
     }
 
     @Override
@@ -195,8 +454,6 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         {
             ((XsdTreeNode) node).setValue(aValue.toString());
         }
-        // invoking directly results in a NullPointerException when clicking on the table during editing of a value in the table
-        SwingUtilities.invokeLater(() -> this.treeTable.updateUI());
     }
 
     /**

@@ -113,8 +113,6 @@ public class NodeActions
         TreePath path = new TreePath(nodePath.toArray());
         this.treeTable.getTree().setSelectionPath(path);
         this.editor.getUndo().setPostActionShowNode(parent.getChild(childIndex));
-
-        this.treeTable.updateUI();
     }
 
     /**

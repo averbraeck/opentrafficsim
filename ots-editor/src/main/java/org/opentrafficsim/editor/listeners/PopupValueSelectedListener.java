@@ -10,8 +10,6 @@ import javax.swing.JTable;
 
 import org.opentrafficsim.animation.data.util.IconUtil;
 
-import de.javagl.treetable.JTreeTable;
-
 /**
  * Listener to when a value is selected in a pop-up showing a list of values. This is either in the tree table or the attributes
  * table. The resulting action depends on the creator of this listener, e.g. setting an Id.
@@ -50,23 +48,17 @@ public class PopupValueSelectedListener implements ActionListener
     /** The resulting action upon option selection. */
     private final Consumer<String> action;
 
-    /** Tree table which needs to be visually updated when the option is selected. */
-    private final JTreeTable treeTable;
-
     /**
      * Constructor.
      * @param option option value
      * @param table the table where the value is selected (tree or attributes)
      * @param action the resulting action upon option selection
-     * @param treeTable tree table which needs to be visually updated when the option is selected
      */
-    public PopupValueSelectedListener(final String option, final JTable table, final Consumer<String> action,
-            final JTreeTable treeTable)
+    public PopupValueSelectedListener(final String option, final JTable table, final Consumer<String> action)
     {
         this.option = option;
         this.table = table;
         this.action = action;
-        this.treeTable = treeTable;
     }
 
     @Override
@@ -85,6 +77,5 @@ public class PopupValueSelectedListener implements ActionListener
         {
             cellEditor.cancelCellEditing();
         }
-        this.treeTable.updateUI();
     }
 }
