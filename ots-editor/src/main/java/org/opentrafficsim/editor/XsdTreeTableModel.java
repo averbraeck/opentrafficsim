@@ -92,13 +92,13 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         this.ignoreChanges = ignoreChanges;
         if (this.dataStructureRoot != null)
         {
-            this.dataStructureRoot.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
-            this.dataStructureRoot.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
-            this.dataStructureRoot.addListener(this, XsdTreeNode.VALUE_CHANGED);
-            this.dataStructureRoot.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            this.dataStructureRoot.addListener(this, XsdTreeNode.OPTION_CHANGED);
-            this.dataStructureRoot.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-            this.dataStructureRoot.addListener(this, XsdTreeNode.MOVED);
+            this.dataStructureRoot.addAllNodesListener(this, XsdTreeNodeRoot.NODE_CREATED);
+            this.dataStructureRoot.addAllNodesListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+            this.dataStructureRoot.addAllNodesListener(this, XsdTreeNode.VALUE_CHANGED);
+            this.dataStructureRoot.addAllNodesListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            this.dataStructureRoot.addAllNodesListener(this, XsdTreeNode.OPTION_CHANGED);
+            this.dataStructureRoot.addAllNodesListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            this.dataStructureRoot.addAllNodesListener(this, XsdTreeNode.MOVED);
         }
     }
 
@@ -405,6 +405,18 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         finally
         {
             this.restoringSelection = false;
+        }
+    }
+
+    /**
+     * Clears the selection in the tree. Any pending restoration of the selection is cancelled.
+     */
+    public void clearSelection()
+    {
+        this.selectedNode = null;
+        if (this.treeTable != null)
+        {
+            this.treeTable.getTree().clearSelection();
         }
     }
 

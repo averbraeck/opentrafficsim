@@ -11,6 +11,8 @@ import java.util.function.Supplier;
 import org.djutils.eval.Eval;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.EventListenerMap;
+import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.metadata.MetaData;
@@ -37,6 +39,19 @@ import org.w3c.dom.Node;
  */
 public class XsdTreeNodeRoot extends XsdTreeNode
 {
+
+    /** All event producer. */
+    private final EventProducer allEventProducer = new EventProducer()
+    {
+        /** Listener map. */
+        private final EventListenerMap map = new EventListenerMap();
+
+        @Override
+        public EventListenerMap getEventListenerMap()
+        {
+            return this.map;
+        }
+    };
 
     /**
      * Event when a node is created. This event is always thrown by the root of the data structure. Listeners should register
@@ -80,6 +95,37 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         this.evalSupplier = evalSupplier;
         // pointless to fire NODE_CREATED event, no one can be listening yet
         setupXPathListener(schema);
+    }
+
+    /**
+     * Notify all-node listeners of the event.
+     * @param event event
+     */
+    protected void notifyAllNodesListeners(final Event event)
+    {
+        this.allEventProducer.fireEvent(event);
+    }
+
+    /**
+     * Fires the event on this node, and additionally on the all node listeners. Events on child nodes are forwarded by
+     * {@code XsdTreeNode.fireEvent(...)}.
+     * @param event event to fire
+     */
+    @Override
+    public void fireEvent(final Event event)
+    {
+        super.fireEvent(event);
+        notifyAllNodesListeners(event);
+    }
+
+    /**
+     * Add a listener that receives events on any node in the tree.
+     * @param listener listener
+     * @param type event type
+     */
+    public void addAllNodesListener(final EventListener listener, final EventType type)
+    {
+        this.allEventProducer.addListener(listener, type);
     }
 
     /**
@@ -170,7 +216,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 if (key.getKeyName().equals(keyName))
                 {
                     String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
-                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, key, this.ignoreChanges));
+                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, key, this, this.ignoreChanges));
                     break;
                 }
             }
@@ -179,7 +225,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 if (unique.getKeyName().equals(keyName))
                 {
                     String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
-                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, unique, this.ignoreChanges));
+                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, unique, this, this.ignoreChanges));
                     break;
                 }
             }

@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -70,6 +71,7 @@ import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.editor.ComboBoxSearchSupport;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.Undo;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
@@ -203,6 +205,7 @@ public final class EditorMap extends JPanel implements EventListener
         super(new BorderLayout());
         this.contextualized = contextualized;
         this.editor = editor;
+        this.editor.getUndo().addListener(this, Undo.UNDO_EVENT);
 
         this.visualizationPanel = new MapVisualizationPanel(new Bounds2d(500, 500), this.updater, contextualized.getContext());
         this.visualizationPanel.setShowGrid(OtsEditor.PROPERTIES_STORE.getOptionalBoolean("map.grid").orElse(true));
@@ -512,18 +515,23 @@ public final class EditorMap extends JPanel implements EventListener
     {
         if (!this.visualizationPanel.getElements().isEmpty())
         {
-            this.visualizationPanel.zoomAll();
-        }
-        else
-        {
             try
             {
-                this.visualizationPanel.home();
+                this.visualizationPanel.zoomAll();
+                return;
             }
-            catch (Exception ex)
+            catch (ArithmeticException | IllegalArgumentException exception)
             {
-                SwingUtilities.invokeLater(() -> this.visualizationPanel.home());
+                // elements may not have a valid location (yet), use the home extent instead
             }
+        }
+        try
+        {
+            this.visualizationPanel.home();
+        }
+        catch (Exception ex)
+        {
+            SwingUtilities.invokeLater(() -> this.visualizationPanel.home());
         }
     }
 
@@ -671,6 +679,13 @@ public final class EditorMap extends JPanel implements EventListener
         {
             attributeChangedEvent(event);
         }
+        else if (event.getType().equals(Undo.UNDO_EVENT))
+        {
+            @SuppressWarnings("unchecked")
+            Collection<XsdTreeNode> nodes = (Collection<XsdTreeNode>) event.getContent();
+            // first let any invokeLater as a response to the undo changes occur (e.g. XsdTreeTableModel.restoreSelection())
+            SwingUtilities.invokeLater(() -> this.inputListener.setSelection(nodes));
+        }
     }
 
     /**
@@ -746,7 +761,8 @@ public final class EditorMap extends JPanel implements EventListener
             if (node.getPathString().equals(XsdPaths.NODE))
             {
                 node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-                this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
+                // later as this can be part of a delete-undo that first needs to complete to leave valid nodes
+                SwingUtilities.invokeLater(() -> this.links.keySet().forEach((linkData) -> linkData.nodeCreatedOrIdChanged()));
             }
         }
         else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
@@ -940,7 +956,7 @@ public final class EditorMap extends JPanel implements EventListener
             }
             if (node.getPathString().equals(XsdPaths.NODE))
             {
-                this.links.keySet().forEach((linkData) -> linkData.notifyNodeIdChanged());
+                this.links.keySet().forEach((linkData) -> linkData.nodeCreatedOrIdChanged());
             }
         }
         else if ("Type".equals(content[1]))

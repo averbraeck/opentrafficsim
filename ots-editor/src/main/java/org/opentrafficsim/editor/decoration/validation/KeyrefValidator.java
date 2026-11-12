@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.w3c.dom.Node;
 
 /**
@@ -31,6 +32,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     /** Key that is referred to by an xsd:keyref. */
     private final KeyValidator refer;
 
+    /** Root. */
+    private final XsdTreeNodeRoot root;
+
     /** Nodes who's value has to match some field in this validator. */
     private final Set<XsdTreeNode> valueValidatingKeyrefNodes = new LinkedHashSet<>();
 
@@ -45,9 +49,10 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
      * @param keyrefNode node defining the xsd:keyref
      * @param keyrefPath path where the keyref was defined, defining the context
      * @param refer key that is referred to by this xsd:keyref
+     * @param root root
      * @param ignore boolean supplier with logic on when to ignore validation
      */
-    public KeyrefValidator(final Node keyrefNode, final String keyrefPath, final KeyValidator refer,
+    public KeyrefValidator(final Node keyrefNode, final String keyrefPath, final KeyValidator refer, final XsdTreeNodeRoot root,
             final Supplier<Boolean> ignore)
     {
         super(keyrefNode, keyrefPath, ignore);
@@ -59,7 +64,14 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
                 "The key node refers to key/unique %s, but the provided refer validator has name %s.", referName,
                 refer.getKeyName());
         this.refer = refer;
+        this.root = root;
         refer.addListeningKeyrefValidator(this);
+    }
+
+    @Override
+    public XsdTreeNodeRoot getRoot()
+    {
+        return this.root;
     }
 
     @Override

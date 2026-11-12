@@ -92,14 +92,10 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     @Override
     public void valueChanged(final TreeSelectionEvent e)
     {
-        if (e.getPaths().length > 0)
+        TreePath path = this.treeTable.getTree().getSelectionPath();
+        if (path != null)
         {
             // update label of expand/collapse action
-            TreePath path = this.treeTable.getTree().getSelectionPath();
-            if (path == null)
-            {
-                return;
-            }
             boolean expanded = this.treeTable.getTree().isExpanded(path);
             this.editor.actions().expandOrCollapseNode().putValue(Action.NAME, expanded ? "Collapse" : "Expand");
 
@@ -128,7 +124,6 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
 
             // update status at bottom of screen pertaining to selected cell
-            this.editor.removeStatusLabel();
             String status = null;
             if (!node.isSelfValid())
             {

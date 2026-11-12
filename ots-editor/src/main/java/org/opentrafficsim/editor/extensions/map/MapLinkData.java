@@ -1101,9 +1101,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Notification from the Map that a node (Ots.Network.Node) id was changed.
+     * Notification from the Map that a node (Ots.Network.Node) was created or its id was changed.
      */
-    public void notifyNodeIdChanged()
+    public void nodeCreatedOrIdChanged()
     {
         this.nodeStart = replaceNode(this.nodeStart, getNode().getCoupledNodeAttribute("NodeStart").orElse(null));
         this.nodeEnd = replaceNode(this.nodeEnd, getNode().getCoupledNodeAttribute("NodeEnd").orElse(null));

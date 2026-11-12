@@ -67,18 +67,15 @@ public interface CoupledValidator extends ValueValidator
         XsdTreeNode prevToNode = getCouplings().put(fromNode, toNode);
         if (!Objects.equals(toNode, prevToNode))
         {
-            XsdTreeNodeRoot root = toNode.getParent() != null ? toNode.getRoot() : (fromNode.getParent() != null
-                    ? fromNode.getRoot() : (prevToNode.getParent() != null ? prevToNode.getRoot() : null));
-            /*
-             * If all have no parent, all were deleted. For example as all were children under the same parent. This occurs when
-             * imported definition nodes are invalidated. This occurs by deleting and restoring all children.
-             */
-            if (root != null)
-            {
-                root.fireEvent(COUPLING, new Object[] {this, fromNode, toNode, prevToNode});
-            }
+            getRoot().fireEvent(COUPLING, new Object[] {this, fromNode, toNode, prevToNode});
         }
     }
+
+    /**
+     * Returns the root node.
+     * @return root node
+     */
+    XsdTreeNodeRoot getRoot();
 
     /**
      * Remove coupling of node. Makes the root throw a COUPLING event (with {@code null} for toNode value).

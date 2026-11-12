@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 /**
  * Navigation through coupled nodes.
@@ -107,7 +108,11 @@ public class Navigation
         @Override
         public void actionPerformed(final ActionEvent e)
         {
-            Navigation.this.editor.show(Navigation.this.backNode.pollLast(), Navigation.this.backAttribute.pollLast());
+            Navigation.this.editor.setHighlight(null);
+            XsdTreeNode bNode = Navigation.this.backNode.pollLast();
+            String bAttribute = Navigation.this.backAttribute.pollLast();
+            // later to allow setHighlight to take effect through the tree change listeners
+            SwingUtilities.invokeLater(() -> Navigation.this.editor.show(bNode, bAttribute));
             if (Navigation.this.backNode.isEmpty())
             {
                 putValue(NAME, "Go back");
@@ -155,7 +160,10 @@ public class Navigation
                 Navigation.this.goBackAction.putValue(NAME,
                         "Go back to " + back.getNodeName() + (back.isIdentifiable() ? " " + back.getId() : ""));
                 Navigation.this.goBackAction.setEnabled(Navigation.this.backNode.peekLast() != null);
-                Navigation.this.editor.show(Navigation.this.coupledNode, null);
+                Navigation.this.editor.setHighlight(null);
+                XsdTreeNode cNode = Navigation.this.coupledNode;
+                // later to allow setHighlight to take effect through the tree change listeners
+                SwingUtilities.invokeLater(() -> Navigation.this.editor.show(cNode, null));
             }
         }
     };

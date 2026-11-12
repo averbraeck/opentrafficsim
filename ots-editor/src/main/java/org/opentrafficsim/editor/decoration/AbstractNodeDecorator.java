@@ -23,6 +23,9 @@ public abstract class AbstractNodeDecorator implements EventListener
     /** Predicate to accept nodes that should have this attribute decorator. */
     private final Predicate<XsdTreeNode> predicate;
 
+    /** Root. */
+    private XsdTreeNodeRoot root;
+
     /**
      * Constructor.
      * @param editor editor.
@@ -32,6 +35,15 @@ public abstract class AbstractNodeDecorator implements EventListener
     {
         this.predicate = predicate;
         editor.addListener(this, OtsEditor.NEW_FILE);
+    }
+
+    /**
+     * Returns the root.
+     * @return root
+     */
+    public XsdTreeNodeRoot getRoot()
+    {
+        return this.root;
     }
 
     /**
@@ -49,8 +61,8 @@ public abstract class AbstractNodeDecorator implements EventListener
     {
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
+            this.root = (XsdTreeNodeRoot) event.getContent();
+            this.root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {

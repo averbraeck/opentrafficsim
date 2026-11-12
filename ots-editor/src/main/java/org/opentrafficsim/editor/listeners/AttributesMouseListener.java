@@ -62,7 +62,6 @@ public class AttributesMouseListener extends MouseAdapter
             this.editor.dialogs().showDescription(description.orElse(null), node.getAttributeNameByIndex(row));
         }
         // set status label to invalid message or description
-        this.editor.removeStatusLabel();
         String status = null;
         if (!node.isSelfValid())
         {

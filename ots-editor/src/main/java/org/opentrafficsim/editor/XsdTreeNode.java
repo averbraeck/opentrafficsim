@@ -433,9 +433,9 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Fires the event on this node, and additionally on the root of the tree. This allows a single listener on the root to
-     * observe all changes in the data structure, rather than having to register a listener on every individual node. Note that
-     * the root does not forward its own events, as it has no parent.
+     * Fires the event on this node, and additionally on the root of the tree for its all-event listeners. This allows a single
+     * listener on the root to observe all changes in the data structure, rather than having to register a listener on every
+     * individual node. Note that the root does not forward its own events, as it has no parent.
      * @param event event to fire.
      */
     @Override
@@ -444,7 +444,7 @@ public class XsdTreeNode extends LocalEventProducer
         super.fireEvent(event);
         if (this.parent != null)
         {
-            getRoot().fireEvent(event);
+            getRoot().notifyAllNodesListeners(event);
         }
     }
 

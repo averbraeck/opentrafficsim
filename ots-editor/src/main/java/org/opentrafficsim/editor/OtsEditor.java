@@ -596,6 +596,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
+     * Clears the selection in the tree, and with that the attributes table.
+     */
+    public void clearSelection()
+    {
+        setHighlight(null);
+        ((XsdTreeTableModel) this.treeTable.getTree().getModel()).clearSelection();
+    }
+
+    /**
      * Shows and selects the given node in the tree.
      * @param node node
      * @param attribute attribute name, may be {@code null} to just show the node

@@ -1,6 +1,8 @@
 package org.opentrafficsim.editor;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,7 +12,12 @@ import javax.swing.AbstractButton;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.EventListenerMap;
+import org.djutils.event.EventProducer;
+import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 
 /**
@@ -23,11 +30,18 @@ import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
  * </p>
  * @author Wouter Schakel
  */
-public class Undo implements EventListener
+public class Undo implements EventListener, EventProducer
 {
+
+    /** Undo event. */
+    public static final EventType UNDO_EVENT = new EventType(new MetaData("UNDO_EVENT", "undo event",
+            new ObjectDescriptor("nodes", "Collection (unmodifiable) of affected nodes by an undo or redo", Collection.class)));
 
     /** Maximum number of undo actions stored. */
     private static final int MAX_UNDO = 50;
+
+    /** Listener map. */
+    private final EventListenerMap eventListenerMap = new EventListenerMap();
 
     /** Queue of actions. */
     private LinkedList<Action> queue = new LinkedList<>();
@@ -36,7 +50,10 @@ public class Undo implements EventListener
     private int cursor = -1;
 
     /** Current queue of sub-actions from a single user input. */
-    private Deque<SubAction> currentSet;
+    private Deque<SubAction> currentSubActionSet;
+
+    /** Current queue of nodes affected by a single user input. */
+    private Deque<XsdTreeNode> currentNodesAffected;
 
     /** OTS editor. */
     private final OtsEditor editor;
@@ -56,8 +73,8 @@ public class Undo implements EventListener
     /**
      * Constructor.
      * @param editor editor.
-     * @param undoItem undo GUI item.
-     * @param redoItem redo GUI item.
+     * @param undoItem undo GUI item
+     * @param redoItem redo GUI item
      */
     public Undo(final OtsEditor editor, final AbstractButton undoItem, final AbstractButton redoItem)
     {
@@ -75,7 +92,7 @@ public class Undo implements EventListener
     public void clear()
     {
         this.ignoreChanges = false;
-        this.currentSet = null;
+        this.currentSubActionSet = null;
         this.cursor = -1;
         this.queue = new LinkedList<>();
         this.undoItem.setEnabled(false);
@@ -84,7 +101,7 @@ public class Undo implements EventListener
 
     /**
      * Tells the undo unit to ignore all changes. Reset this by calling {@code clear()}. Useful during file loading.
-     * @param ignore ignore changes.
+     * @param ignore ignore changes
      */
     public void setIgnoreChanges(final boolean ignore)
     {
@@ -108,9 +125,9 @@ public class Undo implements EventListener
      * and then makes a new change, rolled back undo steps can no longer be redone. Clearing rolled back undo steps is performed
      * lazily on the first concrete change by a sub-action. Starting a new action does not clear rolled back undo steps by
      * itself.
-     * @param type action type.
-     * @param node node on which the action is applied, i.e. node that should be selected on undo/redo.
-     * @param attribute attribute name, may be {@code null} for actions that are not an attribute value change.
+     * @param type action type
+     * @param node node on which the action is applied, i.e. node that should be selected on undo/redo
+     * @param attribute attribute name, may be {@code null} for actions that are not an attribute value change
      */
     public void startAction(final ActionType type, final XsdTreeNode node, final String attribute)
     {
@@ -120,14 +137,15 @@ public class Undo implements EventListener
         }
         // allocate a next action with the right type, nodes and attribute, but with an empty set of sub-actions for now
         // this does not yet represent an actual undoable action until any sub-action is added to it
-        this.nextAction = new Action(type, new ArrayDeque<>(), node, node.parent, attribute);
+        this.nextAction = new Action(type, new ArrayDeque<>(), new ArrayDeque<>(), node, node.parent, attribute);
     }
 
     /**
      * Adds sub-action to current action.
-     * @param subAction sub-action.
+     * @param subAction sub-action
+     * @param affectedNode affected node
      */
-    private void add(final SubAction subAction)
+    private void add(final SubAction subAction, final XsdTreeNode affectedNode)
     {
         if (this.ignoreChanges)
         {
@@ -141,7 +159,8 @@ public class Undo implements EventListener
             {
                 this.queue.pollLast();
             }
-            this.currentSet = this.nextAction.subActions;
+            this.currentSubActionSet = this.nextAction.subActions;
+            this.currentNodesAffected = this.nextAction.affectedNodes;
             this.queue.add(this.nextAction);
             while (this.queue.size() > MAX_UNDO)
             {
@@ -151,9 +170,13 @@ public class Undo implements EventListener
             this.cursor = this.queue.size() - 1;
             updateButtons();
         }
-        Throw.when(this.currentSet == null, IllegalStateException.class,
+        Throw.when(this.currentSubActionSet == null, IllegalStateException.class,
                 "Adding undo action without having called startUndoAction()");
-        this.currentSet.add(subAction);
+        this.currentSubActionSet.add(subAction);
+        if (affectedNode != null)
+        {
+            this.currentNodesAffected.add(affectedNode);
+        }
     }
 
     /**
@@ -167,7 +190,7 @@ public class Undo implements EventListener
 
     /**
      * Returns whether a redo is available.
-     * @return whether a redo is available.
+     * @return whether a redo is available
      */
     public boolean canRedo()
     {
@@ -210,10 +233,18 @@ public class Undo implements EventListener
             action.parent.children.forEach((n) -> n.invalidate());
             action.parent.invalidate();
         }
-        this.editor.show(action.node, action.attribute);
+        if (action.postActionClearSelection)
+        {
+            this.editor.clearSelection();
+        }
+        else
+        {
+            this.editor.show(action.node, action.attribute);
+        }
         this.cursor--;
         updateButtons();
         this.ignoreChanges = false;
+        fireEvent(UNDO_EVENT, Collections.unmodifiableCollection(action.affectedNodes));
     }
 
     /**
@@ -231,9 +262,17 @@ public class Undo implements EventListener
         action.subActions.forEach((a) -> a.redo());
         action.parent.children.forEach((n) -> n.invalidate());
         action.parent.invalidate();
-        this.editor.show(action.postActionShowNode, action.attribute);
+        if (action.postActionClearSelection)
+        {
+            this.editor.clearSelection();
+        }
+        else
+        {
+            this.editor.show(action.postActionShowNode, action.attribute);
+        }
         updateButtons();
         this.ignoreChanges = false;
+        fireEvent(UNDO_EVENT, Collections.unmodifiableCollection(action.affectedNodes));
     }
 
     /**
@@ -280,7 +319,7 @@ public class Undo implements EventListener
                 }
                 node.parent = parent;
                 root.fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
-            }, "Create " + node.getPathString()));
+            }, "Create " + node.getPathString()), node);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -307,7 +346,7 @@ public class Undo implements EventListener
                 node.parent.children.remove(node);
                 node.parent = null;
                 root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {node, parent, index});
-            }, "Remove " + node.getPathString()));
+            }, "Remove " + node.getPathString()), node);
         }
         else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
         {
@@ -320,7 +359,7 @@ public class Undo implements EventListener
             }, () ->
             {
                 node.setValue(value); // invokes event
-            }, "Change " + node.getPathString() + " value: " + value));
+            }, "Change " + node.getPathString() + " value: " + value), node);
         }
         else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
@@ -332,11 +371,11 @@ public class Undo implements EventListener
             // for include nodes, setAttributeValue will trigger addition and removal of nodes, we can ignore these events
             if (node.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
-                if (this.currentSet == null)
+                if (this.currentSubActionSet == null)
                 {
                     return;
                 }
-                this.currentSet.clear();
+                this.currentSubActionSet.clear();
             }
             add(new SubAction(() ->
             {
@@ -344,7 +383,7 @@ public class Undo implements EventListener
             }, () ->
             {
                 node.setAttributeValue(attribute, value); // invokes event
-            }, "Create " + node.getPathString() + ".@" + attribute + ": " + value));
+            }, "Create " + node.getPathString() + ".@" + attribute + ": " + value), node);
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
         {
@@ -359,7 +398,7 @@ public class Undo implements EventListener
             {
                 node.active = activated;
                 node.fireEvent(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {node, activated});
-            }, "Activation " + node.getPathString() + " " + activated));
+            }, "Activation " + node.getPathString() + " " + activated), node);
         }
         else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
         {
@@ -374,7 +413,7 @@ public class Undo implements EventListener
                 }, () ->
                 {
                     previous.setOption(node); // invokes event
-                }, "Set option " + node.getPathString()));
+                }, "Set option " + node.getPathString()), node);
             }
         }
         else if (event.getType().equals(XsdTreeNode.MOVED))
@@ -393,11 +432,11 @@ public class Undo implements EventListener
                 node.parent.children.remove(node);
                 node.parent.children.add(newIndex, node);
                 node.fireEvent(XsdTreeNode.MOVED, new Object[] {node, oldIndex, newIndex});
-            }, "Move " + node.getPathString()));
+            }, "Move " + node.getPathString()), node);
         }
         else if (event.getType().equals(CoupledValidator.COUPLING))
         {
-            if (this.currentSet == null)
+            if (this.currentSubActionSet == null)
             {
                 return; // We can ignore couplings created by node expansion after loading a file
             }
@@ -419,7 +458,7 @@ public class Undo implements EventListener
                 fromNode.invalidate();
             };
             add(new SubAction(() -> consumer.accept(prevToNode), () -> consumer.accept(toNode),
-                    "Coupling " + fromNode.getNodeName()));
+                    "Coupling " + fromNode.getNodeName()), null);
         }
     }
 
@@ -460,11 +499,33 @@ public class Undo implements EventListener
      * Sets the node to show in the tree after the action. This is for example useful to set the selection on the duplicate of a
      * duplicated node when redoing the duplication. Note that the node of the action that is otherwise shown would be the
      * duplicated node, rather than the duplicate.
-     * @param node node to show in the tree after the action.
+     * @param node node to show in the tree after the action
      */
     public void setPostActionShowNode(final XsdTreeNode node)
     {
         this.queue.get(this.cursor).postActionShowNode = node;
+    }
+
+    /**
+     * Sets that the selection in the tree should be cleared after the action, and after undo and redo. This is useful when
+     * multiple objects are removed, in which case there is no meaningful single node to select.
+     */
+    public void setPostActionClearSelection()
+    {
+        if (this.nextAction != null)
+        {
+            this.nextAction.postActionClearSelection = true;
+        }
+        else if (this.cursor >= 0)
+        {
+            this.queue.get(this.cursor).postActionClearSelection = true;
+        }
+    }
+
+    @Override
+    public EventListenerMap getEventListenerMap()
+    {
+        return this.eventListenerMap;
     }
 
     /**
@@ -480,6 +541,9 @@ public class Undo implements EventListener
         /** Queue of sub-actions. */
         private final Deque<SubAction> subActions;
 
+        /** Queue of affected nodes. */
+        private final Deque<XsdTreeNode> affectedNodes;
+
         /** Node involved in the action. */
         private final XsdTreeNode node;
 
@@ -492,19 +556,24 @@ public class Undo implements EventListener
         /** Node to gain focus after the action. */
         private XsdTreeNode postActionShowNode;
 
+        /** Whether to clear the selection in the tree after the action. */
+        private boolean postActionClearSelection;
+
         /**
          * Constructor.
          * @param type type of the action, as presented with the undo/redo buttons.
          * @param subActions queue of sub-actions.
+         * @param affectedNodes affected nodes
          * @param node node involved in the action.
          * @param parent parent node of the node involved in the action.
          * @param attribute attribute for an attribute change, {@code null} otherwise.
          */
-        Action(final ActionType type, final Deque<SubAction> subActions, final XsdTreeNode node, final XsdTreeNode parent,
-                final String attribute)
+        Action(final ActionType type, final Deque<SubAction> subActions, final Deque<XsdTreeNode> affectedNodes,
+                final XsdTreeNode node, final XsdTreeNode parent, final String attribute)
         {
             this.type = type;
             this.subActions = subActions;
+            this.affectedNodes = affectedNodes;
             this.node = node;
             this.parent = parent;
             this.attribute = attribute;
@@ -579,9 +648,9 @@ public class Undo implements EventListener
 
         /**
          * Constructor.
-         * @param undo undo runnable.
-         * @param redo redo runnable.
-         * @param string string representation of this sub-action.
+         * @param undo undo runnable
+         * @param redo redo runnable
+         * @param string string representation of this sub-action
          */
         SubAction(final Runnable undo, final Runnable redo, final String string)
         {

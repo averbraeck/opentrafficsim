@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -214,7 +215,7 @@ public class MapInputListener extends InputListener implements EventListener
             MouseEvent me = (MouseEvent) payload[1];
             MapData data = editorMap.getData(node).orElse(null);
             boolean pan = (me.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
-            if (data != null && data.isValid())
+            if (data != null && data.isValid() && (pan || this.selectionIndicators.size() < 2))
             {
                 if (pan)
                 {
@@ -227,7 +228,7 @@ public class MapInputListener extends InputListener implements EventListener
         {
             XsdTreeNode node = (XsdTreeNode) e.getContent();
             MapData data = editorMap.getData(node).orElse(null);
-            if (data != null && data.isValid())
+            if (data != null && data.isValid() && this.selectionIndicators.size() < 2)
             {
                 select(data, false, false, false);
             }
@@ -270,7 +271,7 @@ public class MapInputListener extends InputListener implements EventListener
             {
                 // dragging?
                 List<Draggable<?>> draggablesDatas = locatables.stream().filter(Draggable.class::isInstance)
-                        .<Draggable<?>>map(Draggable.class::cast).toList();
+                        .<Draggable<?>> map(Draggable.class::cast).toList();
                 if (!draggablesDatas.isEmpty())
                 {
                     Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
@@ -760,20 +761,25 @@ public class MapInputListener extends InputListener implements EventListener
                     {
                         return;
                     }
-                    XsdTreeNode first = null;
-                    Set<SelectionAnnotation> set = new LinkedHashSet<>(this.selectionIndicators);
-                    for (SelectionAnnotation selectionAnnotation : set)
+                    List<XsdTreeNode> nodes =
+                            this.selectionIndicators.stream().map((s) -> s.getSource().mapData().getNode()).toList();
+                    boolean multiple = nodes.size() > 1;
+                    XsdTreeNode network = nodes.get(0).getParent();
+                    this.editor.getUndo().startAction(ActionType.REMOVE, network, null);
+                    if (multiple)
                     {
-                        XsdTreeNode parent = selectionAnnotation.getSource().mapData().getNode().getParent();
-                        if (first == null)
-                        {
-                            first = selectionAnnotation.getSource().mapData().getNode();
-                            this.editor.getUndo().startAction(ActionType.REMOVE, first, null);
-                        }
-                        selectionAnnotation.getSource().mapData().getNode().remove();
-                        this.editor.show(parent, null);
+                        this.editor.getUndo().setPostActionClearSelection();
                     }
                     deselect(); // remove selection annotations
+                    nodes.forEach((n) -> n.remove());
+                    if (multiple)
+                    {
+                        this.editor.clearSelection();
+                    }
+                    else
+                    {
+                        this.editor.show(network, null);
+                    }
                 }
                 break;
             default:
@@ -934,6 +940,28 @@ public class MapInputListener extends InputListener implements EventListener
         popup.add(angleMenu);
 
         popup.show(this.editorMap.getPanel(), (int) event.getPoint().getX(), (int) event.getPoint().getY());
+    }
+
+    /**
+     * Set selection in map to elements regarding given nodes.
+     * @param nodes nodes
+     */
+    public void setSelection(final Collection<XsdTreeNode> nodes)
+    {
+        boolean deselected = false;
+        for (XsdTreeNode node : nodes)
+        {
+            Optional<MapData> data = this.editorMap.getData(node);
+            if (data.isPresent())
+            {
+                if (!deselected)
+                {
+                    deselect();
+                    deselected = true;
+                }
+                select(data.get(), true, false, false);
+            }
+        }
     }
 
     /**
