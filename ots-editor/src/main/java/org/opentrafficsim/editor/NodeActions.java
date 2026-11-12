@@ -79,8 +79,8 @@ public class NodeActions
         XsdTreeNode parent = node.getParent();
         int index = parent.getChildren().indexOf(node);
         node.remove();
-        index = Math.min(index, parent.getChildren().size() - 1);
-        XsdTreeNode replaced = parent.getChild(index);
+        XsdTreeNode replaced =
+                parent.getChildCount() == 0 ? parent : parent.getChild(Math.min(index, parent.getChildCount() - 1));
         this.editor.getUndo().setPostActionShowNode(replaced);
         this.editor.show(replaced, null);
     }
@@ -108,11 +108,12 @@ public class NodeActions
 
         node.remove();
 
-        childIndex = Math.min(childIndex, parent.getChildCount() - 1);
-        List<XsdTreeNode> nodePath = childIndex < 0 ? parent.getPath() : parent.getChild(childIndex).getPath();
+        XsdTreeNode replaced = childIndex < 0 || parent.getChildCount() == 0 ? parent
+                : parent.getChild(Math.min(childIndex, parent.getChildCount() - 1));
+        List<XsdTreeNode> nodePath = replaced.getPath();
         TreePath path = new TreePath(nodePath.toArray());
         this.treeTable.getTree().setSelectionPath(path);
-        this.editor.getUndo().setPostActionShowNode(parent.getChild(childIndex));
+        this.editor.getUndo().setPostActionShowNode(replaced);
     }
 
     /**

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import javax.swing.SwingUtilities;
+import javax.swing.tree.TreePath;
+
 import org.djutils.eval.Eval;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -53,6 +56,15 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
 
     /** Tree table, so it can be repainted when a value or attribute has changed. */
     private JTreeTable treeTable;
+
+    /** Node that is selected, or that should be selected when the tree table has processed pending changes. */
+    private XsdTreeNode selectedNode;
+
+    /** Whether the model is currently processing a data structure event. */
+    private boolean updatingSelection;
+
+    /** Whether the selection is currently being restored from the selected node. */
+    private boolean restoringSelection;
 
     /** Root of the data structure. */
     private final XsdTreeNodeRoot dataStructureRoot;
@@ -105,12 +117,29 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
     }
 
     /**
-     * Sets the tree table. This is used to repaint the tree table when a node value or attribute changes.
+     * Sets the tree table. This is used to repaint the tree table when a node value or attribute changes, and to track the
+     * selected node so the selection can be restored when the tree table processes changes in the tree structure.
      * @param treeTable tree table.
      */
     public void setTreeTable(final JTreeTable treeTable)
     {
         this.treeTable = treeTable;
+        if (treeTable != null)
+        {
+            TreePath path = treeTable.getTree().getSelectionPath();
+            this.selectedNode = path == null ? null : (XsdTreeNode) path.getLastPathComponent();
+            treeTable.getTree().addTreeSelectionListener((event) ->
+            {
+                if (!this.updatingSelection && !this.restoringSelection)
+                {
+                    TreePath selectionPath = treeTable.getTree().getSelectionPath();
+                    if (selectionPath != null)
+                    {
+                        this.selectedNode = (XsdTreeNode) selectionPath.getLastPathComponent();
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -147,30 +176,46 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         {
             return; // bulk changes, e.g. loading a file, are followed by a refresh
         }
-        Object[] content = (Object[]) event.getContent();
-        if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
+        this.updatingSelection = true;
+        boolean structuralEvent = true;
+        try
         {
-            nodeCreated((XsdTreeNode) content[0]);
+            Object[] content = (Object[]) event.getContent();
+            if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
+            {
+                nodeCreated((XsdTreeNode) content[0]);
+            }
+            else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+            {
+                nodeRemoved((XsdTreeNode) content[0], (XsdTreeNode) content[1], (Integer) content[2]);
+            }
+            else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED) || event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+            {
+                structuralEvent = false;
+                nodeChanged((XsdTreeNode) content[0]);
+            }
+            else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
+            {
+                optionChanged((XsdTreeNode) content[0], (XsdTreeNode) content[1], (XsdTreeNode) content[2]);
+            }
+            else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
+            {
+                activationChanged((XsdTreeNode) content[0]);
+            }
+            else if (event.getType().equals(XsdTreeNode.MOVED))
+            {
+                nodeMoved((XsdTreeNode) content[0], (Integer) content[1], (Integer) content[2]);
+            }
         }
-        else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+        finally
         {
-            nodeRemoved((XsdTreeNode) content[0], (XsdTreeNode) content[1], (Integer) content[2]);
+            this.updatingSelection = false;
         }
-        else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED) || event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        if (structuralEvent)
         {
-            nodeChanged((XsdTreeNode) content[0]);
-        }
-        else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
-        {
-            optionChanged((XsdTreeNode) content[0], (XsdTreeNode) content[1], (XsdTreeNode) content[2]);
-        }
-        else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
-        {
-            activationChanged((XsdTreeNode) content[0]);
-        }
-        else if (event.getType().equals(XsdTreeNode.MOVED))
-        {
-            nodeMoved((XsdTreeNode) content[0], (Integer) content[1], (Integer) content[2]);
+            // The tree table defers its table data change, and clears its selection when processing it. Restore the selection
+            // only after a structural change by the above events.
+            SwingUtilities.invokeLater(this::restoreSelection);
         }
     }
 
@@ -197,6 +242,12 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
             return; // node is not part of the visible tree (yet)
         }
         markInserted(node);
+        if (this.selectedNode == null || !this.selectedNode.equals(parent))
+        {
+            // A new node becomes the selection, unless it is created while its parent is selected. The latter typically
+            // happens when children are created lazily as a result of expanding the selected parent.
+            this.selectedNode = node;
+        }
         fireTreeNodesInserted(this, path, new int[] {index}, new Object[] {node});
     }
 
@@ -216,6 +267,11 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         if (path == null || !this.inserted.remove(node))
         {
             return;
+        }
+        if (isDescendantOrSelf(node, this.selectedNode))
+        {
+            int childCount = parent.children == null ? 0 : parent.children.size();
+            this.selectedNode = childCount == 0 ? parent : parent.children.get(Math.min(index, childCount - 1));
         }
         fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {node});
     }
@@ -265,6 +321,10 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         {
             return;
         }
+        if (isDescendantOrSelf(previous, this.selectedNode))
+        {
+            this.selectedNode = equivalentNode(previous, selected, this.selectedNode);
+        }
         if (previous != null && this.inserted.remove(previous))
         {
             fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {previous});
@@ -281,6 +341,10 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
     private void activationChanged(final XsdTreeNode node)
     {
         Object[] path = pathTo(node);
+        if (this.selectedNode != null && pathTo(this.selectedNode) == null && path != null)
+        {
+            this.selectedNode = node;
+        }
         if (path != null)
         {
             fireTreeStructureChanged(this, path, null, null);
@@ -307,6 +371,99 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         }
         fireTreeNodesRemoved(this, path, new int[] {oldIndex}, new Object[] {node});
         fireTreeNodesInserted(this, path, new int[] {newIndex}, new Object[] {node});
+    }
+
+    /**
+     * Restores the selection after the tree table has processed a change in the tree structure. The tree table clears its
+     * selection when its table model changes, which is triggered by the tree model events that keep the tree table up to date.
+     * A node that is not currently visible, for example because an ancestor is collapsed, is left unselected. Selecting it
+     * would expand the collapsed ancestor.
+     */
+    private void restoreSelection()
+    {
+        this.restoringSelection = true;
+        try
+        {
+            if (this.treeTable == null || this.selectedNode == null)
+            {
+                return;
+            }
+            if (this.ignoreChanges != null && this.ignoreChanges.get())
+            {
+                return;
+            }
+            Object[] path = pathTo(this.selectedNode);
+            if (path != null)
+            {
+                int row = this.treeTable.getTree().getRowForPath(new TreePath(path));
+                if (row >= 0 && !this.treeTable.isRowSelected(row))
+                {
+                    this.treeTable.setRowSelectionInterval(row, row);
+                }
+            }
+        }
+        finally
+        {
+            this.restoringSelection = false;
+        }
+    }
+
+    /**
+     * Returns whether the given node is equal to, or a descendant of, the possible ancestor.
+     * @param ancestor possible ancestor
+     * @param node possible descendant
+     * @return whether the given node is equal to, or a descendant of, the possible ancestor
+     */
+    private static boolean isDescendantOrSelf(final XsdTreeNode ancestor, final XsdTreeNode node)
+    {
+        if (ancestor == null || node == null)
+        {
+            return false;
+        }
+        for (XsdTreeNode current = node; current != null; current = current.getParent())
+        {
+            if (current == ancestor)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the node in the newly selected option that corresponds to the selection in the previously selected option. If no
+     * corresponding node can be found, the newly selected option itself is returned.
+     * @param previous previously selected option
+     * @param selected newly selected option
+     * @param selection selected node, which is the previous option or a descendant of it
+     * @return node in the newly selected option that corresponds to the selection
+     */
+    private static XsdTreeNode equivalentNode(final XsdTreeNode previous, final XsdTreeNode selected,
+            final XsdTreeNode selection)
+    {
+        if (selection == previous)
+        {
+            return selected;
+        }
+        List<XsdTreeNode> path = selection.getPath();
+        int index = path.indexOf(previous);
+        if (index < 0)
+        {
+            return selected;
+        }
+        XsdTreeNode equivalent = selected;
+        for (int i = index + 1; i < path.size(); i++)
+        {
+            XsdTreeNode source = path.get(i);
+            int childIndex = source.getParent() == null || source.getParent().children == null ? -1
+                    : source.getParent().children.indexOf(source);
+            if (childIndex < 0 || equivalent.children == null || childIndex >= equivalent.children.size())
+            {
+                return selected;
+            }
+            equivalent = equivalent.children.get(childIndex);
+        }
+        return equivalent;
     }
 
     /**
