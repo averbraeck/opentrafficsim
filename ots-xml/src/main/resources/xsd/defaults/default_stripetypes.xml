@@ -4,25 +4,19 @@
 
   <ots:StripeType Id="NL.SOLID" RightChangeLane="false" LeftChangeLane="false" Builtin="true">
     <ots:Elements>
-      <ots:Line Width="20cm">
-        <ots:Continuous />
-      </ots:Line>
+      <ots:Continuous Width="20cm" />
     </ots:Elements>
   </ots:StripeType>
   <ots:StripeType Id="NL.LEFT" RightChangeLane="false" LeftChangeLane="true" Builtin="true">
     <ots:Elements>
-      <ots:Line Width="20cm">
-        <ots:Continuous />
-      </ots:Line>
+      <ots:Continuous Width="20cm" />
       <ots:Gap Width="20cm" />
-      <ots:Line Width="20cm">
-        <ots:Dashed>
-          <ots:GapDash>
-            <ots:Gap>9m</ots:Gap>
-            <ots:Dash>3m</ots:Dash>
-          </ots:GapDash>
-        </ots:Dashed>
-      </ots:Line>
+      <ots:Dashed Width="20cm">
+        <ots:GapDash>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
     </ots:Elements>
     <ots:DashOffset>
       <ots:SyncUpstream />
@@ -30,18 +24,14 @@
   </ots:StripeType>
   <ots:StripeType Id="NL.RIGHT" RightChangeLane="true" LeftChangeLane="false" Builtin="true">
     <ots:Elements>
-      <ots:Line Width="20cm">
-        <ots:Dashed>
-          <ots:GapDash>
-            <ots:Gap>9m</ots:Gap>
-            <ots:Dash>3m</ots:Dash>
-          </ots:GapDash>
-        </ots:Dashed>
-      </ots:Line>
+      <ots:Dashed Width="20cm">
+        <ots:GapDash>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
       <ots:Gap Width="20cm" />
-      <ots:Line Width="20cm">
-        <ots:Continuous />
-      </ots:Line>
+      <ots:Continuous Width="20cm" />
     </ots:Elements>
     <ots:DashOffset>
       <ots:SyncUpstream />
@@ -49,14 +39,12 @@
   </ots:StripeType>
   <ots:StripeType Id="NL.DASHED" RightChangeLane="true" LeftChangeLane="true" Builtin="true">
     <ots:Elements>
-      <ots:Line Width="20cm">
-        <ots:Dashed>
-          <ots:GapDash>
-            <ots:Gap>9m</ots:Gap>
-            <ots:Dash>3m</ots:Dash>
-          </ots:GapDash>
-        </ots:Dashed>
-      </ots:Line>
+      <ots:Dashed Width="20cm">
+        <ots:GapDash>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
     </ots:Elements>
     <ots:DashOffset>
       <ots:SyncUpstream />
@@ -64,34 +52,26 @@
   </ots:StripeType>
   <ots:StripeType Id="NL.DOUBLE_SOLID" RightChangeLane="false" LeftChangeLane="false" Builtin="true">
     <ots:Elements>
-      <ots:Line Width="20cm">
-        <ots:Continuous />
-      </ots:Line>
+      <ots:Continuous Width="20cm" />
       <ots:Gap Width="20cm" />
-      <ots:Line Width="20cm">
-        <ots:Continuous />
-      </ots:Line>
+      <ots:Continuous Width="20cm" />
     </ots:Elements>
   </ots:StripeType>
   <ots:StripeType Id="NL.DOUBLE_DASHED" RightChangeLane="true" LeftChangeLane="true" Builtin="true">
     <ots:Elements>
-      <ots:Line Width="20cm">
-        <ots:Dashed>
-          <ots:GapDash>
-            <ots:Gap>9m</ots:Gap>
-            <ots:Dash>3m</ots:Dash>
-          </ots:GapDash>
-        </ots:Dashed>
-      </ots:Line>
+      <ots:Dashed Width="20cm">
+        <ots:GapDash>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
       <ots:Gap Width="20cm" />
-      <ots:Line Width="20cm">
-        <ots:Dashed>
-          <ots:GapDash>
-            <ots:Gap>9m</ots:Gap>
-            <ots:Dash>3m</ots:Dash>
-          </ots:GapDash>
-        </ots:Dashed>
-      </ots:Line>
+      <ots:Dashed Width="20cm">
+        <ots:GapDash>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
     </ots:Elements>
     <ots:DashOffset>
       <ots:SyncUpstream />
@@ -99,14 +79,12 @@
   </ots:StripeType>
   <ots:StripeType Id="NL.BLOCK" RightChangeLane="true" LeftChangeLane="true" Block="true" Builtin="true">
     <ots:Elements>
-      <ots:Line Width="40cm">
-        <ots:Dashed>
-          <ots:GapDash>
-            <ots:Gap>3m</ots:Gap>
-            <ots:Dash>1m</ots:Dash>
-          </ots:GapDash>
-        </ots:Dashed>
-      </ots:Line>
+      <ots:Dashed  Width="40cm">
+        <ots:GapDash>
+          <ots:Gap>3m</ots:Gap>
+          <ots:Dash>1m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
     </ots:Elements>
     <ots:DashOffset>
       <ots:SyncUpstream />

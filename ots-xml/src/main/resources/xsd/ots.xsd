@@ -423,6 +423,12 @@
       <xsd:selector xpath="ots:Network/ots:Link/ots:LaneOverride/ots:GtuTypeSpeedLimit" />
       <xsd:field xpath="@Id" />
     </xsd:keyref>
+    
+    <!-- Network.Link.StripeOverride.DefinedStripe = StripeType.Id -->
+    <xsd:keyref name="stripeOverrideStripeTypeRef" refer="ots:stripeTypeKey">
+      <xsd:selector xpath="ots:Network/ots:Link/ots:StripeOverride" />
+      <xsd:field xpath="ots:DefinedStripe" />
+    </xsd:keyref>
 
     <!-- Network.Connector.Type = LinkType.Id -->
     <xsd:keyref name="connectorTypeIdRef" refer="ots:linkTypeKey">

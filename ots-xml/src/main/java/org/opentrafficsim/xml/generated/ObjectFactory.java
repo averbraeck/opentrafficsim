@@ -343,6 +343,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
+     * 
+     * @return
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
+     */
+    public org.opentrafficsim.xml.generated.Link.StripeOverride createLinkStripeOverride() {
+        return new org.opentrafficsim.xml.generated.Link.StripeOverride();
+    }
+
+    /**
      * Create an instance of {@link ModelType }
      * 
      * @return
@@ -483,23 +493,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link StripeElements.Line }
+     * Create an instance of {@link StripeElements.Dashed }
      * 
      * @return
-     *     the new instance of {@link StripeElements.Line }
+     *     the new instance of {@link StripeElements.Dashed }
      */
-    public StripeElements.Line createStripeElementsLine() {
-        return new StripeElements.Line();
-    }
-
-    /**
-     * Create an instance of {@link StripeElements.Line.Dashed }
-     * 
-     * @return
-     *     the new instance of {@link StripeElements.Line.Dashed }
-     */
-    public StripeElements.Line.Dashed createStripeElementsLineDashed() {
-        return new StripeElements.Line.Dashed();
+    public StripeElements.Dashed createStripeElementsDashed() {
+        return new StripeElements.Dashed();
     }
 
     /**
@@ -1250,16 +1250,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public org.opentrafficsim.xml.generated.Link.LaneOverride createLinkLaneOverride() {
         return new org.opentrafficsim.xml.generated.Link.LaneOverride();
-    }
-
-    /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
-     * 
-     * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
-     */
-    public org.opentrafficsim.xml.generated.Link.StripeOverride createLinkStripeOverride() {
-        return new org.opentrafficsim.xml.generated.Link.StripeOverride();
     }
 
     /**
@@ -2303,6 +2293,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride.Custom }
+     * 
+     * @return
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride.Custom }
+     */
+    public org.opentrafficsim.xml.generated.Link.StripeOverride.Custom createLinkStripeOverrideCustom() {
+        return new org.opentrafficsim.xml.generated.Link.StripeOverride.Custom();
+    }
+
+    /**
      * Create an instance of {@link ModelType.GtuTypeParameters }
      * 
      * @return
@@ -2423,6 +2423,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link StripeElements.Continuous }
+     * 
+     * @return
+     *     the new instance of {@link StripeElements.Continuous }
+     */
+    public StripeElements.Continuous createStripeElementsContinuous() {
+        return new StripeElements.Continuous();
+    }
+
+    /**
      * Create an instance of {@link StripeElements.Gap }
      * 
      * @return
@@ -2433,13 +2443,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link StripeElements.Line.Dashed.GapDash }
+     * Create an instance of {@link StripeElements.Dashed.GapDash }
      * 
      * @return
-     *     the new instance of {@link StripeElements.Line.Dashed.GapDash }
+     *     the new instance of {@link StripeElements.Dashed.GapDash }
      */
-    public StripeElements.Line.Dashed.GapDash createStripeElementsLineDashedGapDash() {
-        return new StripeElements.Line.Dashed.GapDash();
+    public StripeElements.Dashed.GapDash createStripeElementsDashedGapDash() {
+        return new StripeElements.Dashed.GapDash();
     }
 
     /**

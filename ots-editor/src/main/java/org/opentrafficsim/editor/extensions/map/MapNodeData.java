@@ -127,11 +127,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         }
         else if ("Coordinate".equals(attribute))
         {
-            setValue((v) -> this.coordinate = v, Adapters.get(Point2d.class), getNode(), "Coordinate");
+            executeForAttribute((v) -> this.coordinate = v, getNode(), "Coordinate", Adapters.get(Point2d.class));
         }
         else if ("Direction".equals(attribute))
         {
-            setValue((v) -> this.direction = v, Adapters.get(Direction.class), getNode(), "Direction");
+            executeForAttribute((v) -> this.direction = v, getNode(), "Direction", Adapters.get(Direction.class));
         }
         else
         {
@@ -144,11 +144,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     public void evalChanged()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
-        setValue((v) -> this.coordinate = v, Adapters.get(Point2d.class), getNode(), "Coordinate");
+        executeForAttribute((v) -> this.coordinate = v, getNode(), "Coordinate", Adapters.get(Point2d.class));
         XsdTreeNode node = getNode();
         if (node != null && node.getPathString().equals(XsdPaths.NODE)) // Centroids have no direction
         {
-            setValue((v) -> this.direction = v, Adapters.get(Direction.class), node, "Direction");
+            executeForAttribute((v) -> this.direction = v, node, "Direction", Adapters.get(Direction.class));
         }
         setLocation();
     }

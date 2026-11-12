@@ -18,6 +18,8 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
 
 
 /**
+ * Laterally adjacent stripe elements, e.g. Continuous-Gap-Continuous for a double line.
+ * 
  * <p>Java class for StripeElements complex type</p>.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
@@ -27,36 +29,33 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <choice maxOccurs="unbounded">
- *         <element name="Line">
+ *         <element name="Continuous">
+ *           <complexType>
+ *             <complexContent>
+ *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 <attribute name="Width" use="required" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
+ *                 <attribute name="Color" type="{http://www.opentrafficsim.org/ots}ColorType" default="WHITE" />
+ *               </restriction>
+ *             </complexContent>
+ *           </complexType>
+ *         </element>
+ *         <element name="Dashed">
  *           <complexType>
  *             <complexContent>
  *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 <sequence>
- *                   <choice>
- *                     <element name="Continuous" type="{http://www.opentrafficsim.org/ots}EmptyType"/>
- *                     <element name="Dashed">
- *                       <complexType>
- *                         <complexContent>
- *                           <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                             <sequence>
- *                               <element name="GapDash" maxOccurs="unbounded">
- *                                 <complexType>
- *                                   <complexContent>
- *                                     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                       <sequence>
- *                                         <element name="Gap" type="{http://www.opentrafficsim.org/ots}LengthType"/>
- *                                         <element name="Dash" type="{http://www.opentrafficsim.org/ots}LengthType"/>
- *                                       </sequence>
- *                                     </restriction>
- *                                   </complexContent>
- *                                 </complexType>
- *                               </element>
- *                             </sequence>
- *                           </restriction>
- *                         </complexContent>
- *                       </complexType>
- *                     </element>
- *                   </choice>
+ *                   <element name="GapDash" maxOccurs="unbounded">
+ *                     <complexType>
+ *                       <complexContent>
+ *                         <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                           <sequence>
+ *                             <element name="Gap" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+ *                             <element name="Dash" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+ *                           </sequence>
+ *                         </restriction>
+ *                       </complexContent>
+ *                     </complexType>
+ *                   </element>
  *                 </sequence>
  *                 <attribute name="Width" use="required" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
  *                 <attribute name="Color" type="{http://www.opentrafficsim.org/ots}ColorType" default="WHITE" />
@@ -83,7 +82,7 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StripeElements", propOrder = {
-    "lineOrGap"
+    "continuousOrDashedOrGap"
 })
 @SuppressWarnings("all") public class StripeElements
     implements Serializable
@@ -91,42 +90,44 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
 
     private static final long serialVersionUID = 10102L;
     @XmlElements({
-        @XmlElement(name = "Line", type = StripeElements.Line.class),
+        @XmlElement(name = "Continuous", type = StripeElements.Continuous.class),
+        @XmlElement(name = "Dashed", type = StripeElements.Dashed.class),
         @XmlElement(name = "Gap", type = StripeElements.Gap.class)
     })
-    protected List<Serializable> lineOrGap;
+    protected List<Serializable> continuousOrDashedOrGap;
 
     /**
-     * Gets the value of the lineOrGap property.
+     * Gets the value of the continuousOrDashedOrGap property.
      * 
      * <p>This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the lineOrGap property.</p>
+     * This is why there is not a <CODE>set</CODE> method for the continuousOrDashedOrGap property.</p>
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * </p>
      * <pre>
-     * getLineOrGap().add(newItem);
+     * getContinuousOrDashedOrGap().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
+     * {@link StripeElements.Continuous }
+     * {@link StripeElements.Dashed }
      * {@link StripeElements.Gap }
-     * {@link StripeElements.Line }
      * </p>
      * 
      * 
      * @return
-     *     The value of the lineOrGap property.
+     *     The value of the continuousOrDashedOrGap property.
      */
-    public List<Serializable> getLineOrGap() {
-        if (lineOrGap == null) {
-            lineOrGap = new ArrayList<>();
+    public List<Serializable> getContinuousOrDashedOrGap() {
+        if (continuousOrDashedOrGap == null) {
+            continuousOrDashedOrGap = new ArrayList<>();
         }
-        return this.lineOrGap;
+        return this.continuousOrDashedOrGap;
     }
 
 
@@ -140,6 +141,7 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
      *   <complexContent>
      *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       <attribute name="Width" use="required" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
+     *       <attribute name="Color" type="{http://www.opentrafficsim.org/ots}ColorType" default="WHITE" />
      *     </restriction>
      *   </complexContent>
      * </complexType>
@@ -149,13 +151,16 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
-    public static class Gap implements Serializable
+    public static class Continuous implements Serializable
     {
 
         private static final long serialVersionUID = 10102L;
         @XmlAttribute(name = "Width", required = true)
         @XmlJavaTypeAdapter(PositiveLengthAdapter.class)
         protected org.opentrafficsim.xml.bindings.types.LengthType width;
+        @XmlAttribute(name = "Color")
+        @XmlJavaTypeAdapter(ColorAdapter.class)
+        protected ColorType color;
 
         /**
          * Gets the value of the width property.
@@ -181,6 +186,34 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
             this.width = value;
         }
 
+        /**
+         * Gets the value of the color property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public ColorType getColor() {
+            if (color == null) {
+                return new ColorAdapter().unmarshal("WHITE");
+            } else {
+                return color;
+            }
+        }
+
+        /**
+         * Sets the value of the color property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setColor(ColorType value) {
+            this.color = value;
+        }
+
     }
 
 
@@ -194,31 +227,18 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
      *   <complexContent>
      *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       <sequence>
-     *         <choice>
-     *           <element name="Continuous" type="{http://www.opentrafficsim.org/ots}EmptyType"/>
-     *           <element name="Dashed">
-     *             <complexType>
-     *               <complexContent>
-     *                 <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                   <sequence>
-     *                     <element name="GapDash" maxOccurs="unbounded">
-     *                       <complexType>
-     *                         <complexContent>
-     *                           <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                             <sequence>
-     *                               <element name="Gap" type="{http://www.opentrafficsim.org/ots}LengthType"/>
-     *                               <element name="Dash" type="{http://www.opentrafficsim.org/ots}LengthType"/>
-     *                             </sequence>
-     *                           </restriction>
-     *                         </complexContent>
-     *                       </complexType>
-     *                     </element>
-     *                   </sequence>
-     *                 </restriction>
-     *               </complexContent>
-     *             </complexType>
-     *           </element>
-     *         </choice>
+     *         <element name="GapDash" maxOccurs="unbounded">
+     *           <complexType>
+     *             <complexContent>
+     *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *                 <sequence>
+     *                   <element name="Gap" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+     *                   <element name="Dash" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+     *                 </sequence>
+     *               </restriction>
+     *             </complexContent>
+     *           </complexType>
+     *         </element>
      *       </sequence>
      *       <attribute name="Width" use="required" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
      *       <attribute name="Color" type="{http://www.opentrafficsim.org/ots}ColorType" default="WHITE" />
@@ -231,22 +251,14 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "continuous",
-        "dashed"
+        "gapDash"
     })
-    public static class Line implements Serializable
+    public static class Dashed implements Serializable
     {
 
         private static final long serialVersionUID = 10102L;
-        @XmlElement(name = "Continuous")
-        protected EmptyType continuous;
-        /**
-         * Dashes per line. If the pattern involves multiple dash and gap
-         *                     lengths, include additional gap/dash pairs.
-         * 
-         */
-        @XmlElement(name = "Dashed")
-        protected StripeElements.Line.Dashed dashed;
+        @XmlElement(name = "GapDash", required = true)
+        protected List<StripeElements.Dashed.GapDash> gapDash;
         @XmlAttribute(name = "Width", required = true)
         @XmlJavaTypeAdapter(PositiveLengthAdapter.class)
         protected org.opentrafficsim.xml.bindings.types.LengthType width;
@@ -255,53 +267,35 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
         protected ColorType color;
 
         /**
-         * Gets the value of the continuous property.
+         * Gets the value of the gapDash property.
+         * 
+         * <p>This accessor method returns a reference to the live list,
+         * not a snapshot. Therefore any modification you make to the
+         * returned list will be present inside the JAXB object.
+         * This is why there is not a <CODE>set</CODE> method for the gapDash property.</p>
+         * 
+         * <p>
+         * For example, to add a new item, do as follows:
+         * </p>
+         * <pre>
+         * getGapDash().add(newItem);
+         * </pre>
+         * 
+         * 
+         * <p>
+         * Objects of the following type(s) are allowed in the list
+         * {@link StripeElements.Dashed.GapDash }
+         * </p>
+         * 
          * 
          * @return
-         *     possible object is
-         *     {@link EmptyType }
-         *     
+         *     The value of the gapDash property.
          */
-        public EmptyType getContinuous() {
-            return continuous;
-        }
-
-        /**
-         * Sets the value of the continuous property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link EmptyType }
-         *     
-         */
-        public void setContinuous(EmptyType value) {
-            this.continuous = value;
-        }
-
-        /**
-         * Dashes per line. If the pattern involves multiple dash and gap
-         *                     lengths, include additional gap/dash pairs.
-         * 
-         * @return
-         *     possible object is
-         *     {@link StripeElements.Line.Dashed }
-         *     
-         */
-        public StripeElements.Line.Dashed getDashed() {
-            return dashed;
-        }
-
-        /**
-         * Sets the value of the dashed property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link StripeElements.Line.Dashed }
-         *     
-         * @see #getDashed()
-         */
-        public void setDashed(StripeElements.Line.Dashed value) {
-            this.dashed = value;
+        public List<StripeElements.Dashed.GapDash> getGapDash() {
+            if (gapDash == null) {
+                gapDash = new ArrayList<>();
+            }
+            return this.gapDash;
         }
 
         /**
@@ -367,18 +361,8 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
          *   <complexContent>
          *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
          *       <sequence>
-         *         <element name="GapDash" maxOccurs="unbounded">
-         *           <complexType>
-         *             <complexContent>
-         *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 <sequence>
-         *                   <element name="Gap" type="{http://www.opentrafficsim.org/ots}LengthType"/>
-         *                   <element name="Dash" type="{http://www.opentrafficsim.org/ots}LengthType"/>
-         *                 </sequence>
-         *               </restriction>
-         *             </complexContent>
-         *           </complexType>
-         *         </element>
+         *         <element name="Gap" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+         *         <element name="Dash" type="{http://www.opentrafficsim.org/ots}LengthType"/>
          *       </sequence>
          *     </restriction>
          *   </complexContent>
@@ -389,136 +373,123 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
-            "gapDash"
+            "gap",
+            "dash"
         })
-        public static class Dashed
+        public static class GapDash
             implements Serializable
         {
 
             private static final long serialVersionUID = 10102L;
-            @XmlElement(name = "GapDash", required = true)
-            protected List<StripeElements.Line.Dashed.GapDash> gapDash;
+            @XmlElement(name = "Gap", required = true, type = String.class)
+            @XmlJavaTypeAdapter(LengthAdapter.class)
+            protected org.opentrafficsim.xml.bindings.types.LengthType gap;
+            @XmlElement(name = "Dash", required = true, type = String.class)
+            @XmlJavaTypeAdapter(LengthAdapter.class)
+            protected org.opentrafficsim.xml.bindings.types.LengthType dash;
 
             /**
-             * Gets the value of the gapDash property.
-             * 
-             * <p>This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the gapDash property.</p>
-             * 
-             * <p>
-             * For example, to add a new item, do as follows:
-             * </p>
-             * <pre>
-             * getGapDash().add(newItem);
-             * </pre>
-             * 
-             * 
-             * <p>
-             * Objects of the following type(s) are allowed in the list
-             * {@link StripeElements.Line.Dashed.GapDash }
-             * </p>
-             * 
+             * Gets the value of the gap property.
              * 
              * @return
-             *     The value of the gapDash property.
+             *     possible object is
+             *     {@link String }
+             *     
              */
-            public List<StripeElements.Line.Dashed.GapDash> getGapDash() {
-                if (gapDash == null) {
-                    gapDash = new ArrayList<>();
-                }
-                return this.gapDash;
+            public org.opentrafficsim.xml.bindings.types.LengthType getGap() {
+                return gap;
             }
-
 
             /**
-             * <p>Java class for anonymous complex type</p>.
+             * Sets the value of the gap property.
              * 
-             * <p>The following schema fragment specifies the expected content contained within this class.</p>
-             * 
-             * <pre>{@code
-             * <complexType>
-             *   <complexContent>
-             *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       <sequence>
-             *         <element name="Gap" type="{http://www.opentrafficsim.org/ots}LengthType"/>
-             *         <element name="Dash" type="{http://www.opentrafficsim.org/ots}LengthType"/>
-             *       </sequence>
-             *     </restriction>
-             *   </complexContent>
-             * </complexType>
-             * }</pre>
-             * 
-             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
              */
-            @XmlAccessorType(XmlAccessType.FIELD)
-            @XmlType(name = "", propOrder = {
-                "gap",
-                "dash"
-            })
-            public static class GapDash
-                implements Serializable
-            {
-
-                private static final long serialVersionUID = 10102L;
-                @XmlElement(name = "Gap", required = true, type = String.class)
-                @XmlJavaTypeAdapter(LengthAdapter.class)
-                protected org.opentrafficsim.xml.bindings.types.LengthType gap;
-                @XmlElement(name = "Dash", required = true, type = String.class)
-                @XmlJavaTypeAdapter(LengthAdapter.class)
-                protected org.opentrafficsim.xml.bindings.types.LengthType dash;
-
-                /**
-                 * Gets the value of the gap property.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link String }
-                 *     
-                 */
-                public org.opentrafficsim.xml.bindings.types.LengthType getGap() {
-                    return gap;
-                }
-
-                /**
-                 * Sets the value of the gap property.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link String }
-                 *     
-                 */
-                public void setGap(org.opentrafficsim.xml.bindings.types.LengthType value) {
-                    this.gap = value;
-                }
-
-                /**
-                 * Gets the value of the dash property.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link String }
-                 *     
-                 */
-                public org.opentrafficsim.xml.bindings.types.LengthType getDash() {
-                    return dash;
-                }
-
-                /**
-                 * Sets the value of the dash property.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link String }
-                 *     
-                 */
-                public void setDash(org.opentrafficsim.xml.bindings.types.LengthType value) {
-                    this.dash = value;
-                }
-
+            public void setGap(org.opentrafficsim.xml.bindings.types.LengthType value) {
+                this.gap = value;
             }
 
+            /**
+             * Gets the value of the dash property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public org.opentrafficsim.xml.bindings.types.LengthType getDash() {
+                return dash;
+            }
+
+            /**
+             * Sets the value of the dash property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setDash(org.opentrafficsim.xml.bindings.types.LengthType value) {
+                this.dash = value;
+            }
+
+        }
+
+    }
+
+
+    /**
+     * <p>Java class for anonymous complex type</p>.
+     * 
+     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * 
+     * <pre>{@code
+     * <complexType>
+     *   <complexContent>
+     *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       <attribute name="Width" use="required" type="{http://www.opentrafficsim.org/ots}PositiveLengthType" />
+     *     </restriction>
+     *   </complexContent>
+     * </complexType>
+     * }</pre>
+     * 
+     * 
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
+    public static class Gap implements Serializable
+    {
+
+        private static final long serialVersionUID = 10102L;
+        @XmlAttribute(name = "Width", required = true)
+        @XmlJavaTypeAdapter(PositiveLengthAdapter.class)
+        protected org.opentrafficsim.xml.bindings.types.LengthType width;
+
+        /**
+         * Gets the value of the width property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public org.opentrafficsim.xml.bindings.types.LengthType getWidth() {
+            return width;
+        }
+
+        /**
+         * Sets the value of the width property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setWidth(org.opentrafficsim.xml.bindings.types.LengthType value) {
+            this.width = value;
         }
 
     }

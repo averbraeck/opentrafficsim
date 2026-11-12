@@ -142,33 +142,119 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
     }
 
     /**
-     * Generic method to set a value based on a changed attribute. If the new value is {@code null}, the setter is invoked to
-     * set a {@code null} value. If the value is an invalid expression, or the value cannot be unmarshalled by the adapter, no
-     * change is made.
-     * @param <T> type of the value to set.
-     * @param setter setter that receives a successfully derived value.
-     * @param adapter adapter.
-     * @param treeNode node that has the attribute, will often be {@code getNode()}.
-     * @param attribute name of the attribute.
+     * Generic method to execute based on a (changed) attribute. If the value is {@code null}, the execution is invoked with a
+     * {@code null} value. If the value is an invalid expression, or the value cannot be unmarshalled by the adapter, the
+     * execution is not invoked. Typical usage is:
+     *
+     * <pre>
+     * executeForAttribute((v) -> this.offsetStart = v, node, "OffsetStart", Adapters.get(Length.class));
+     * </pre>
+     *
+     * @param <T> type of the value to set
+     * @param execution setter that receives a successfully derived value to set locally
+     * @param treeNode node that has the attribute or value, will often be {@link #getNode}
+     * @param attribute name of the attribute, or {@code null} to read node value
+     * @param adapter adapter
      */
-    protected <T> void setValue(final Consumer<T> setter, final ExpressionAdapter<T, ?> adapter, final XsdTreeNode treeNode,
-            final String attribute)
+    protected <T> void executeForAttribute(final Consumer<T> execution, final XsdTreeNode treeNode, final String attribute,
+            final ExpressionAdapter<T, ?> adapter)
+    {
+        execute(execution, treeNode, attribute, true, adapter);
+    }
+
+    /**
+     * Generic method to execute based on a (changed) attribute. If the value is {@code null}, the value is an invalid
+     * expression, or the value cannot be unmarshalled by the adapter, the execution is not invoked. Typical usage is:
+     *
+     * <pre>
+     * executeForNonNullAttribute((v) -> offsets.add(v), node, "OffsetStart", Adapters.get(Length.class));
+     * </pre>
+     *
+     * @param <T> type of the value to set
+     * @param execution setter that receives a successfully derived value to set locally
+     * @param treeNode node that has the attribute or value, will often be {@link #getNode}
+     * @param attribute name of the attribute, or {@code null} to read node value
+     * @param adapter adapter
+     */
+    protected <T> void executeForNonNullAttribute(final Consumer<T> execution, final XsdTreeNode treeNode,
+            final String attribute, final ExpressionAdapter<T, ?> adapter)
+    {
+        execute(execution, treeNode, attribute, false, adapter);
+    }
+
+    /**
+     * Generic method to execute based on a (changed) node value. If the value is {@code null}, the execution is invoked with a
+     * {@code null} value. If the value is an invalid expression, or the value cannot be unmarshalled by the adapter, the
+     * execution is not invoked. Typical usage is:
+     *
+     * <pre>
+     * executeValue((v) -> this.width = v, node, Adapters.get(Length.class));
+     * </pre>
+     *
+     * @param <T> type of the value to set
+     * @param execution setter that receives a successfully derived value to set locally
+     * @param treeNode node that has the attribute or value, will often be {@link #getNode}
+     * @param adapter adapter
+     */
+    protected <T> void executeForValue(final Consumer<T> execution, final XsdTreeNode treeNode,
+            final ExpressionAdapter<T, ?> adapter)
+    {
+        execute(execution, treeNode, null, true, adapter);
+    }
+
+    /**
+     * Generic method to execute based on a (changed) node value. If the value is {@code null}, the execution is invoked with a
+     * {@code null} value. If the value is an invalid expression, or the value cannot be unmarshalled by the adapter, the
+     * execution is not invoked. Typical usage is:
+     *
+     * <pre>
+     * executeForNonNullValue((v) -> width.add(v), node, Adapters.get(Length.class));
+     * </pre>
+     *
+     * @param <T> type of the value to set
+     * @param execution setter that receives a successfully derived value to set locally
+     * @param treeNode node that has the attribute or value, will often be {@link #getNode}
+     * @param adapter adapter
+     */
+    protected <T> void executeForNonNullValue(final Consumer<T> execution, final XsdTreeNode treeNode,
+            final ExpressionAdapter<T, ?> adapter)
+    {
+        execute(execution, treeNode, null, false, adapter);
+    }
+
+    /**
+     * Generic method to execute based on a (changed) attribute or value. If the value is {@code null}, the execution is invoked
+     * with a {@code null} value if {@code null} is allowed. If the value is an invalid expression, or the value cannot be
+     * unmarshalled by the adapter, the execution is not invoked.
+     * @param <T> type of the value to set
+     * @param execution setter that receives a successfully derived value to set locally
+     * @param treeNode node that has the attribute or value, will often be {@link #getNode}
+     * @param attribute name of the attribute, or {@code null} to read node value
+     * @param acceptNull whether to accept null
+     * @param adapter adapter
+     */
+    private <T> void execute(final Consumer<T> execution, final XsdTreeNode treeNode, final String attribute,
+            final boolean acceptNull, final ExpressionAdapter<T, ?> adapter)
     {
         try
         {
-            String stringValue = treeNode.getAttributeValueOrDefault(attribute);
+            String stringValue =
+                    attribute == null ? treeNode.getValueOrDefault() : treeNode.getAttributeValueOrDefault(attribute);
             if (stringValue == null)
             {
-                setter.accept(null);
+                if (acceptNull)
+                {
+                    execution.accept(null);
+                }
                 return;
             }
             T value = adapter.unmarshal(stringValue).get(getEval());
-            setter.accept(value);
+            execution.accept(value);
         }
         catch (IllegalArgumentException ex)
         {
             setInvalid();
-            // IllegalArgumentException: invalid coordinate value, keep old coordinate
+            // IllegalArgumentException: invalid value, keep old value for now
         }
         catch (Exception ex)
         {

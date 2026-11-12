@@ -203,8 +203,8 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link").orElse(null);
             setLinkNode(linkNode);
         }
-        setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
-        setValue((v) -> this.position = v, Adapters.get(LengthBeginEnd.class), getNode(), "Position");
+        executeForAttribute((v) -> this.lane = v, getNode(), "Lane", Adapters.get(String.class));
+        executeForAttribute((v) -> this.position = v, getNode(), "Position", Adapters.get(LengthBeginEnd.class));
         setLocation();
         getMap().update();
     }
@@ -228,12 +228,12 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             }
             else if ("Lane".equals(attribute))
             {
-                setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
+                executeForAttribute((v) -> this.lane = v, getNode(), "Lane", Adapters.get(String.class));
                 setLocation();
             }
             else if ("Position".equals(attribute))
             {
-                setValue((v) -> this.position = v, Adapters.get(LengthBeginEnd.class), getNode(), "Position");
+                executeForAttribute((v) -> this.position = v, getNode(), "Position", Adapters.get(LengthBeginEnd.class));
                 setLocation();
             }
         }

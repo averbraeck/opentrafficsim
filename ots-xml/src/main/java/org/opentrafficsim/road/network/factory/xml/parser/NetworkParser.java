@@ -87,10 +87,10 @@ import org.opentrafficsim.xml.generated.Link.StripeOverride;
 import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.StripeCompatibility;
+import org.opentrafficsim.xml.generated.StripeElements.Continuous;
+import org.opentrafficsim.xml.generated.StripeElements.Dashed;
+import org.opentrafficsim.xml.generated.StripeElements.Dashed.GapDash;
 import org.opentrafficsim.xml.generated.StripeElements.Gap;
-import org.opentrafficsim.xml.generated.StripeElements.Line;
-import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed;
-import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed.GapDash;
 import org.opentrafficsim.xml.generated.StripeType;
 import org.opentrafficsim.xml.generated.TemporalSpeedLimit;
 import org.opentrafficsim.xml.generated.TrafficLightType;
@@ -362,31 +362,39 @@ public final class NetworkParser
                     {
                         if (stripe.getId().equals(stripeOverride.getStripe().get(eval)))
                         {
-                            if (stripeOverride.getElements() != null)
+                            if (stripeOverride.getDefinedStripe() != null)
                             {
-                                stripe.getCustom().setElements(stripeOverride.getElements());
+                                StripeType stripeType = stripes.get(stripeOverride.getDefinedStripe().get(eval));
+                                setDefinedStripe(stripe, stripeType);
                             }
-                            if (stripeOverride.getDashOffset() != null)
+                            else if (stripeOverride.getCustom() != null)
                             {
-                                stripe.getCustom().setDashOffset(stripeOverride.getDashOffset());
+                                if (stripeOverride.getCustom().getElements() != null)
+                                {
+                                    stripe.getCustom().setElements(stripeOverride.getCustom().getElements());
+                                }
+                                if (stripeOverride.getCustom().getDashOffset() != null)
+                                {
+                                    stripe.getCustom().setDashOffset(stripeOverride.getCustom().getDashOffset());
+                                }
+                                if (stripeOverride.getCustom().getLateralSync() != null)
+                                {
+                                    stripe.getCustom().setLateralSync(stripeOverride.getCustom().getLateralSync());
+                                }
+                                if (stripeOverride.getCustom().getLeftChangeLane() != null)
+                                {
+                                    stripe.getCustom().setLeftChangeLane(stripeOverride.getCustom().getLeftChangeLane());
+                                }
+                                if (stripeOverride.getCustom().getRightChangeLane() != null)
+                                {
+                                    stripe.getCustom().setRightChangeLane(stripeOverride.getCustom().getRightChangeLane());
+                                }
+                                if (stripeOverride.getCustom().getBlock() != null)
+                                {
+                                    stripe.getCustom().setBlock(stripeOverride.getCustom().getBlock());
+                                }
+                                stripe.getCustom().getCompatibility().addAll(stripeOverride.getCustom().getCompatibility());
                             }
-                            if (stripeOverride.getLateralSync() != null)
-                            {
-                                stripe.getCustom().setLateralSync(stripeOverride.getLateralSync());
-                            }
-                            if (stripeOverride.getLeftChangeLane() != null)
-                            {
-                                stripe.getCustom().setLeftChangeLane(stripeOverride.getLeftChangeLane());
-                            }
-                            if (stripeOverride.getRightChangeLane() != null)
-                            {
-                                stripe.getCustom().setRightChangeLane(stripeOverride.getRightChangeLane());
-                            }
-                            if (stripeOverride.getBlock() != null)
-                            {
-                                stripe.getCustom().setBlock(stripeOverride.getBlock());
-                            }
-                            stripe.getCustom().getCompatibility().addAll(stripeOverride.getCompatibility());
                         }
                     }
                 }
@@ -518,17 +526,27 @@ public final class NetworkParser
             if (stripe.getDefinedStripe() != null)
             {
                 StripeType stripeType = stripes.get(stripe.getDefinedStripe().get(eval));
-                Custom custom = new Custom();
-                stripe.setCustom(custom);
-                stripe.setDefinedStripe(null);
-                custom.setElements(stripeType.getElements());
-                custom.setDashOffset(stripeType.getDashOffset());
-                custom.setLateralSync(stripeType.getLateralSync());
-                custom.setLeftChangeLane(stripeType.getLeftChangeLane());
-                custom.setRightChangeLane(stripeType.getRightChangeLane());
-                custom.setBlock(stripeType.getBlock());
+                setDefinedStripe(stripe, stripeType);
             }
         }
+    }
+
+    /**
+     * Set defined stripe type in stripe tag.
+     * @param stripe stripe tag
+     * @param stripeType defined stripe type
+     */
+    private static void setDefinedStripe(final CseStripe stripe, final StripeType stripeType)
+    {
+        Custom custom = new Custom();
+        stripe.setCustom(custom);
+        stripe.setDefinedStripe(null);
+        custom.setElements(stripeType.getElements());
+        custom.setDashOffset(stripeType.getDashOffset());
+        custom.setLateralSync(stripeType.getLateralSync());
+        custom.setLeftChangeLane(stripeType.getLeftChangeLane());
+        custom.setRightChangeLane(stripeType.getRightChangeLane());
+        custom.setBlock(stripeType.getBlock());
     }
 
     /** Temporary fix for CseShoulder.getLaneType() always being null. */
@@ -557,26 +575,25 @@ public final class NetworkParser
     {
         Length width = Length.ZERO;
         List<StripeElement> elements = new ArrayList<>();
-        for (Serializable serializable : stripeTag.getCustom().getElements().getLineOrGap())
+        for (Serializable serializable : stripeTag.getCustom().getElements().getContinuousOrDashedOrGap())
         {
-            if (serializable instanceof Line line)
-            {
-                Length w = line.getWidth().get(eval);
-                width = width.plus(w);
-                if (line.getDashed() == null)
-                {
-                    elements.add(StripeElement.continuous(w, line.getColor().get(eval)));
-                }
-                else
-                {
-                    elements.add(StripeElement.dashed(w, line.getColor().get(eval), getDashes(line.getDashed(), eval)));
-                }
-            }
-            else if (serializable instanceof Gap gap)
+            if (serializable instanceof Gap gap)
             {
                 Length w = gap.getWidth().get(eval);
                 width = width.plus(w);
                 elements.add(StripeElement.gap(w));
+            }
+            else if (serializable instanceof Continuous line)
+            {
+                Length w = line.getWidth().get(eval);
+                width = width.plus(w);
+                elements.add(StripeElement.continuous(w, line.getColor().get(eval)));
+            }
+            else if (serializable instanceof Dashed dashed)
+            {
+                Length w = dashed.getWidth().get(eval);
+                width = width.plus(w);
+                elements.add(StripeElement.dashed(w, dashed.getColor().get(eval), getDashes(dashed, eval)));
             }
         }
         ContinuousPiecewiseLinearFunction offsetFunc =

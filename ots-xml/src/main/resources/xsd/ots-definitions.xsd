@@ -273,32 +273,37 @@
   </xsd:complexType>
 
   <xsd:complexType name="StripeElements">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">Laterally adjacent stripe elements, e.g. Continuous-Gap-Continuous for a double line.
+      </xsd:documentation>
+    </xsd:annotation>
     <xsd:choice maxOccurs="unbounded">
-      <xsd:element name="Line">
+      <xsd:element name="Continuous">
+        <xsd:annotation>
+          <xsd:documentation xml:lang="en">Straightforward continuous line.
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:attribute name="Width" type="ots:PositiveLengthType" use="required" />
+          <xsd:attribute name="Color" type="ots:ColorType" default="WHITE" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Dashed">
+        <xsd:annotation>
+          <xsd:documentation xml:lang="en">Dashes per line. If the pattern involves multiple dash and gap
+            lengths, include additional gap/dash pairs.
+          </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:choice>
-              <xsd:element name="Continuous" type="ots:EmptyType" />
-              <xsd:element name="Dashed">
-                <xsd:annotation>
-                  <xsd:documentation xml:lang="en">Dashes per line. If the pattern involves multiple dash and gap
-                    lengths, include additional gap/dash pairs.
-                  </xsd:documentation>
-                </xsd:annotation>
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="GapDash" maxOccurs="unbounded">
-                      <xsd:complexType>
-                        <xsd:sequence>
-                          <xsd:element name="Gap" type="ots:LengthType" />
-                          <xsd:element name="Dash" type="ots:LengthType" />
-                        </xsd:sequence>
-                      </xsd:complexType>
-                    </xsd:element>
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:choice>
+            <xsd:element name="GapDash" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="Gap" type="ots:LengthType" />
+                  <xsd:element name="Dash" type="ots:LengthType" />
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
           </xsd:sequence>
           <xsd:attribute name="Width" type="ots:PositiveLengthType" use="required" />
           <xsd:attribute name="Color" type="ots:ColorType" default="WHITE" />

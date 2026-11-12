@@ -140,16 +140,22 @@
             </xsd:element>
             <xsd:element name="StripeOverride" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
-                <xsd:sequence>
-                  <xsd:element name="Elements" type="ots:StripeElements" minOccurs="0" />
-                  <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
-                  <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0"
-                    maxOccurs="unbounded" />
-                </xsd:sequence>
-                <xsd:attribute name="LeftChangeLane" type="ots:boolean" />
-                <xsd:attribute name="RightChangeLane" type="ots:boolean" />
-                <xsd:attribute name="Block" type="ots:boolean" />
-                <xsd:attribute name="LateralSync" type="ots:LateralSync" />
+                <xsd:choice>
+                  <xsd:element name="DefinedStripe" type="ots:string" />
+                  <xsd:element name="Custom">
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:element name="Elements" type="ots:StripeElements" minOccurs="0" />
+                        <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
+                        <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0" maxOccurs="unbounded" />
+                      </xsd:sequence>
+                      <xsd:attribute name="LeftChangeLane" type="ots:boolean" />
+                      <xsd:attribute name="RightChangeLane" type="ots:boolean" />
+                      <xsd:attribute name="Block" type="ots:boolean" />
+                      <xsd:attribute name="LateralSync" type="ots:LateralSync" />
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:choice>
                 <xsd:attribute name="Stripe" type="ots:string" use="required" />
               </xsd:complexType>
             </xsd:element>
