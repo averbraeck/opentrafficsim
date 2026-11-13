@@ -58,9 +58,10 @@ public final class StripeSynchronization<T>
         List<SynchronizableStripe<T>> stripesCopy = new ArrayList<>();
         this.stripes.values().stream().filter((s) -> !s.getSynchronization().equals(StripePhaseSync.NONE))
                 .forEach(stripesCopy::add);
+        Set<SynchronizableStripe<T>> inProgress = new LinkedHashSet<>();
         while (!stripesCopy.isEmpty())
         {
-            synchronize(stripesCopy.get(0), stripesCopy);
+            synchronize(stripesCopy.get(0), stripesCopy, inProgress);
         }
     }
 
@@ -68,27 +69,30 @@ public final class StripeSynchronization<T>
      * Synchronizes the stripe.
      * @param stripe stripe
      * @param stripesToDo stripes still to process
+     * @param inProgress stripes currently being synchronized in the recursion stack, used to detect cycles
      */
-    private void synchronize(final SynchronizableStripe<T> stripe, final List<SynchronizableStripe<T>> stripesToDo)
+    private void synchronize(final SynchronizableStripe<T> stripe, final List<SynchronizableStripe<T>> stripesToDo,
+            final Set<SynchronizableStripe<T>> inProgress)
     {
         if (!stripesToDo.contains(stripe))
         {
             // already synchronized
             return;
         }
+        inProgress.add(stripe);
         if (stripe.getSynchronization().equals(StripePhaseSync.DOWNSTREAM))
         {
-            SynchronizableStripe<T> down = this.stripes.get(stripe.getDownstreamStripe().get());
+            SynchronizableStripe<T> down = stripe.getDownstreamStripe().map(this.stripes::get).orElse(null);
             if (down != null)
             {
-                if (stripesToDo.contains(down))
+                if (inProgress.contains(down))
                 {
                     // circular dependency; use as anchor instead
                     stripesToDo.remove(down);
                 }
-                else
+                else if (stripesToDo.contains(down))
                 {
-                    synchronize(down, stripesToDo);
+                    synchronize(down, stripesToDo, inProgress);
                 }
                 // get common stripes first, as period might be changed by setting start phase due to snapping
                 Set<T> commonOffsetStripes = stripe.getCommonPhaseStripes();
@@ -105,17 +109,17 @@ public final class StripeSynchronization<T>
         }
         else if (stripe.getSynchronization().equals(StripePhaseSync.UPSTREAM))
         {
-            SynchronizableStripe<T> up = this.stripes.get(stripe.getUpstreamStripe().orElse(null));
+            SynchronizableStripe<T> up = stripe.getUpstreamStripe().map(this.stripes::get).orElse(null);
             if (up != null)
             {
-                if (stripesToDo.contains(up))
+                if (inProgress.contains(up))
                 {
                     // circular dependency; use as anchor instead
                     stripesToDo.remove(up);
                 }
-                else
+                else if (stripesToDo.contains(up))
                 {
-                    synchronize(up, stripesToDo);
+                    synchronize(up, stripesToDo, inProgress);
                 }
                 // get common stripes first, as period might be changed by setting start phase due to snapping
                 Set<T> commonOffsetStripes = stripe.getCommonPhaseStripes();
@@ -131,6 +135,7 @@ public final class StripeSynchronization<T>
             }
         }
         stripesToDo.remove(stripe);
+        inProgress.remove(stripe);
     }
 
     /**
@@ -227,7 +232,9 @@ public final class StripeSynchronization<T>
                 {
                     return 0.0;
                 }
-                return ((stripe.getLength().si + stripe.getDashOffset().si) % getPeriod()) / getPeriod();
+                double length = stripe.getLateralSync().isLinkBased() ? stripe.getLinkReferenceLine().getLength()
+                        : stripe.getCenterLine().getLength();
+                return ((length + stripe.getDashOffset().si) % getPeriod()) / getPeriod();
             }
 
             @Override
@@ -335,7 +342,9 @@ public final class StripeSynchronization<T>
             @Override
             public void setEndPhase(final double phase)
             {
-                double len = getPeriod() - ((stripe.getCenterLine().getLength() - phase * getPeriod()) % getPeriod());
+                double length = stripe.getLateralSync().isLinkBased() ? stripe.getLinkReferenceLine().getLength()
+                        : stripe.getCenterLine().getLength();
+                double len = getPeriod() - ((length - phase * getPeriod()) % getPeriod());
                 stripe.setDashOffset(Length.ofSI(len));
             }
         };

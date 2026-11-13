@@ -88,7 +88,10 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     }
 
     /**
-     * Generate the drawing commands for a dash pattern.
+     * Generate the drawing commands for a dash pattern. Dash center points are determined on the reference line (with only gaps
+     * stretched to match the synchronized start and end phase), projected to the center line for lateral alignment, and each dash
+     * is drawn with its original intended length around that center. Virtual dashes before and beyond the link are considered so
+     * that partially visible dashes at link boundaries are included.
      * @param centerLine the design line of the striped pattern
      * @param referenceLine reference line to which dashes are applied
      * @param width width of the stripes in meters
@@ -102,6 +105,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             final double startOffset, final double[] dashes)
     {
         double period = 0;
+        double maxDash = 0.0;
         for (double length : dashes)
         {
             if (length < 0)
@@ -114,52 +118,229 @@ public class StripeAnimation extends OtsRenderable<StripeData>
         {
             throw new Error("Bad pattern - repeat period length is 0");
         }
-        // TODO link length when that is chosen
+        // First value is a gap; dash elements are at odd indices in the base pattern.
+        for (int i = 1; i < dashes.length; i += 2)
+        {
+            maxDash = Math.max(maxDash, dashes[i]);
+        }
+
         double referenceLength = referenceLine.getLength();
+        double centerLength = centerLine.getLength();
+        if (referenceLength <= 0.0 || centerLength <= 0.0)
+        {
+            return new ArrayList<>();
+        }
+
+        // Collect all nominal dash instances in an extended range (virtual dashes before/beyond the link) so that any dash whose
+        // fixed-length extent can reach into [0, referenceLength] is considered.
+        double margin = 0.5 * maxDash + period;
+        List<Segment> nominal = new ArrayList<>();
         double position = -startOffset + dashes[0];
         int phase = 1;
-        ArrayList<Point2d> result = new ArrayList<>();
-        boolean first = true;
-        boolean sameLine = centerLine.getPointList().equals(referenceLine.getPointList());
-        while (position < referenceLength)
+        while (position < referenceLength + margin)
         {
-            double nextBoundary = position + dashes[phase++ % dashes.length];
-            if (nextBoundary > 0) // Skip this one; this entire dash lies within the startOffset
+            double dashStart = position;
+            double dashEnd = position + dashes[phase++ % dashes.length];
+            if (dashEnd > -margin)
             {
-                if (!first)
-                {
-                    result.add(PaintPolygons.NEWPATH);
-                }
-                first = false;
-                if (position < 0)
-                {
-                    position = 0; // Draw a partial dash, starting at 0 (begin of the center line)
-                }
-                double endPosition = nextBoundary;
-                if (endPosition > referenceLength)
-                {
-                    endPosition = referenceLength; // Draw a partial dash, ending at length (end of the center line)
-                }
-
-                double fraction1 = position / referenceLength;
-                double fraction2 = endPosition / referenceLength;
-                if (!sameLine)
-                {
-                    // project dash from reference line on the own center line, using fractional projection (i.e. pizza slices)
-                    DirectedPoint2d p1 = referenceLine.getLocationFraction(fraction1);
-                    DirectedPoint2d p2 = referenceLine.getLocationFraction(fraction2);
-                    fraction1 = centerLine.projectFractional(p1.x, p1.y, FractionalFallback.ENDPOINT);
-                    fraction2 = centerLine.projectFractional(p2.x, p2.y, FractionalFallback.ENDPOINT);
-                }
-                DirectionalPolyLine dashCenter = centerLine.extractFractional(fraction1, fraction2);
-
-                // create offsets on dash center line to add dash contour line
-                dashCenter.directionalOffsetLine(width / 2).iterator().forEachRemaining(result::add);
-                dashCenter.directionalOffsetLine(-width / 2).reverse().iterator().forEachRemaining(result::add);
+                nominal.add(new Segment(dashStart, dashEnd));
             }
-            position = nextBoundary + dashes[phase++ % dashes.length];
+            position = dashEnd + dashes[phase++ % dashes.length];
+        }
+
+        ArrayList<Point2d> result = new ArrayList<>();
+        if (nominal.isEmpty())
+        {
+            return result;
+        }
+
+        // Visible nominal dashes (overlapping [0, referenceLength]) determine gap stretching over the fitted range.
+        List<Segment> visibleNominal = new ArrayList<>();
+        for (Segment segment : nominal)
+        {
+            double start = Math.max(0.0, segment.start);
+            double end = Math.min(referenceLength, segment.end);
+            if (end > start)
+            {
+                visibleNominal.add(segment);
+            }
+        }
+
+        double gapScale = 1.0;
+        if (!visibleNominal.isEmpty())
+        {
+            double refDashSum = 0.0;
+            for (Segment segment : visibleNominal)
+            {
+                refDashSum += Math.min(referenceLength, segment.end) - Math.max(0.0, segment.start);
+            }
+            double firstVisStart = Math.max(0.0, visibleNominal.get(0).start);
+            double lastVisEnd = Math.min(referenceLength, visibleNominal.get(visibleNominal.size() - 1).end);
+            double origGapSum = firstVisStart;
+            for (int i = 1; i < visibleNominal.size(); i++)
+            {
+                double start = Math.min(referenceLength, Math.max(0.0, visibleNominal.get(i - 1).end));
+                double end = Math.max(0.0, Math.min(referenceLength, visibleNominal.get(i).start));
+                origGapSum += Math.max(0.0, end - start);
+            }
+            origGapSum += Math.max(0.0, referenceLength - lastVisEnd);
+            double targetGapSum = Math.max(0.0, referenceLength - refDashSum);
+            gapScale = origGapSum > 1e-9 ? targetGapSum / origGapSum : 1.0;
+        }
+
+        boolean sameLine = centerLine.getPointList().equals(referenceLine.getPointList());
+        boolean first = true;
+        for (Segment segment : nominal)
+        {
+            double nominalCenter = 0.5 * (segment.start + segment.end);
+            double dashLen = segment.end - segment.start;
+            double stretchedCenter = stretchedPosition(nominalCenter, nominal, gapScale, referenceLength);
+
+            // Dash centre on reference line, projected for lateral alignment; draw original dash length around it.
+            double centerFraction;
+            if (sameLine)
+            {
+                centerFraction = stretchedCenter / referenceLength;
+            }
+            else
+            {
+                // Project dash centre from (stretched) reference line to center line for lateral alignment.
+                double refFraction = stretchedCenter / referenceLength;
+                double clampedRef = Math.max(0.0, Math.min(1.0, refFraction));
+                DirectedPoint2d p = referenceLine.getLocationFraction(clampedRef);
+                double projected = centerLine.projectFractional(p.x, p.y, FractionalFallback.ENDPOINT);
+                if (refFraction < 0.0)
+                {
+                    centerFraction = projected + (stretchedCenter / referenceLength);
+                }
+                else if (refFraction > 1.0)
+                {
+                    centerFraction = projected + (stretchedCenter - referenceLength) / referenceLength;
+                }
+                else
+                {
+                    centerFraction = projected;
+                }
+            }
+
+            double centerPos = centerFraction * centerLength;
+            double half = 0.5 * dashLen;
+            double start = centerPos - half;
+            double end = centerPos + half;
+            if (end <= 0.0 || start >= centerLength)
+            {
+                continue;
+            }
+            start = Math.max(0.0, start);
+            end = Math.min(centerLength, end);
+            if (end <= start)
+            {
+                continue;
+            }
+
+            if (!first)
+            {
+                result.add(PaintPolygons.NEWPATH);
+            }
+            first = false;
+
+            DirectionalPolyLine dashCenter = centerLine.extractFractional(start / centerLength, end / centerLength);
+            dashCenter.directionalOffsetLine(width / 2).iterator().forEachRemaining(result::add);
+            dashCenter.directionalOffsetLine(-width / 2).reverse().iterator().forEachRemaining(result::add);
         }
         return result;
+    }
+
+    /**
+     * Returns the stretched position of a nominal reference-line coordinate, stretching only gaps to fit [0, referenceLength]
+     * while preserving dash lengths. Uses nominal dashes that overlap [0, referenceLength] for in-link mapping and preserves
+     * fixed dash length for virtual boundary dashes outside the range.
+     * @param x nominal coordinate
+     * @param nominal nominal dash segments in order
+     * @param gapScale scale factor for gaps
+     * @param referenceLength reference length
+     * @return stretched coordinate
+     */
+    private static double stretchedPosition(final double x, final List<Segment> nominal, final double gapScale,
+            final double referenceLength)
+    {
+        if (referenceLength <= 0.0)
+        {
+            return x;
+        }
+
+        // Visible nominal dashes overlapping [0, referenceLength] define the in-link mapping.
+        List<Segment> visible = new ArrayList<>();
+        for (Segment s : nominal)
+        {
+            if (Math.min(referenceLength, s.end) > Math.max(0.0, s.start))
+            {
+                visible.add(s);
+            }
+        }
+        if (visible.isEmpty())
+        {
+            return x * gapScale;
+        }
+
+        Segment first = visible.get(0);
+        Segment last = visible.get(visible.size() - 1);
+
+        // Virtual dash crossing the start boundary: preserve fixed dash length relative to nominal 0 -> stretched 0.
+        if (x < 0.0)
+        {
+            if (first.start < 0.0 && x >= first.start && x <= first.end)
+            {
+                return x;
+            }
+            return x * gapScale;
+        }
+        // Virtual dash crossing the end boundary: preserve fixed dash length relative to nominal L -> stretched L.
+        if (x > referenceLength)
+        {
+            if (last.end > referenceLength && x >= last.start && x <= last.end)
+            {
+                return referenceLength + (x - referenceLength);
+            }
+            return referenceLength + (x - referenceLength) * gapScale;
+        }
+
+        double nom = 0.0;
+        double str = 0.0;
+        for (int i = 0; i < visible.size(); i++)
+        {
+            Segment s = visible.get(i);
+            double dashStartIn = Math.max(0.0, s.start);
+            double dashEndIn = Math.min(referenceLength, s.end);
+
+            // Gap before this dash.
+            if (x <= dashStartIn)
+            {
+                return str + (x - nom) * gapScale;
+            }
+            str += (dashStartIn - nom) * gapScale;
+            nom = dashStartIn;
+
+            // Dash: fixed length preserved.
+            if (x <= dashEndIn)
+            {
+                return str + (x - dashStartIn);
+            }
+            str += (dashEndIn - dashStartIn);
+            nom = dashEndIn;
+        }
+
+        // Trailing gap.
+        return str + (x - nom) * gapScale;
+    }
+
+    /**
+     * Nominal dash segment along the reference line.
+     * @param start nominal start
+     * @param end nominal end
+     */
+    private record Segment(double start, double end)
+    {
     }
 
     @Override

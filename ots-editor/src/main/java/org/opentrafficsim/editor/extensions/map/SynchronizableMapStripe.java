@@ -33,6 +33,9 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
     /** Cached period. */
     private Double period = null;
 
+    /** Dash offset as defined, before any synchronization. */
+    private final Length initialDashOffset;
+
     /**
      * Constructor.
      * @param linkData link data
@@ -44,6 +47,17 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
         this.linkData = linkData;
         this.data = data;
         this.phaseSync = phaseSync;
+        this.initialDashOffset = data.getDashOffset();
+    }
+
+    /**
+     * Resets the dash offset to the defined offset. This is required before each synchronization, as a stripe that is an anchor
+     * (e.g. at a merge with multiple upstream stripes) is not synchronized and should keep its defined offset, rather than an
+     * offset from a previous synchronization with incomplete geometry.
+     */
+    public void resetDashOffset()
+    {
+        this.data.setDashOffset(this.initialDashOffset);
     }
 
     @Override
@@ -63,7 +77,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
         {
             return 0.0;
         }
-        return ((this.data.getCenterLine().getLength() + this.data.getDashOffset().si) % getPeriod()) / getPeriod();
+        return ((this.data.getReferenceLine().getLength() + this.data.getDashOffset().si) % getPeriod()) / getPeriod();
     }
 
     @Override
@@ -90,6 +104,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
         {
             return Optional.empty();
         }
+        MapStripeData upstream = null;
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
             if (networkChild.getNodeName().equals("Link")
@@ -98,48 +113,59 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
                 Optional<MapData> otherLink = this.linkData.getMap().getData(networkChild);
                 if (otherLink.isEmpty())
                 {
-                    return Optional.empty();
+                    continue;
                 }
                 for (MapStripeData otherStripe : ((MapLinkData) otherLink.get()).getStripeData())
                 {
                     if (otherStripe.getCenterLine().getLast().distance(this.data.getCenterLine().getFirst()) < Lane.MARGIN.si)
                     {
-                        return Optional.of(otherStripe);
+                        if (upstream != null)
+                        {
+                            // multiple upstream stripes, no point in synchronizing, make stripe an anchor
+                            return Optional.empty();
+                        }
+                        upstream = otherStripe;
                     }
                 }
             }
         }
-        return Optional.empty();
+        return Optional.ofNullable(upstream);
     }
 
     @Override
     public Optional<MapStripeData> getDownstreamStripe()
     {
-        Optional<XsdTreeNode> fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeEnd");
-        if (fromNode.isEmpty())
+        Optional<XsdTreeNode> toNode = this.linkData.getNode().getCoupledNodeAttribute("NodeEnd");
+        if (toNode.isEmpty())
         {
             return Optional.empty();
         }
+        MapStripeData downstream = null;
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
             if (networkChild.getNodeName().equals("Link")
-                    && fromNode.get().equals(networkChild.getCoupledNodeAttribute("NodeStart").orElse(null)))
+                    && toNode.get().equals(networkChild.getCoupledNodeAttribute("NodeStart").orElse(null)))
             {
                 Optional<MapData> otherLink = this.linkData.getMap().getData(networkChild);
                 if (otherLink.isEmpty())
                 {
-                    return Optional.empty();
+                    continue;
                 }
                 for (MapStripeData otherStripe : ((MapLinkData) otherLink.get()).getStripeData())
                 {
                     if (otherStripe.getCenterLine().getFirst().distance(this.data.getCenterLine().getLast()) < Lane.MARGIN.si)
                     {
-                        return Optional.of(otherStripe);
+                        if (downstream != null)
+                        {
+                            // multiple downstream stripes, no point in synchronizing, make stripe an anchor
+                            return Optional.empty();
+                        }
+                        downstream = otherStripe;
                     }
                 }
             }
         }
-        return Optional.empty();
+        return Optional.ofNullable(downstream);
     }
 
     @Override
@@ -179,7 +205,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
     @Override
     public void setEndPhase(final double phase)
     {
-        double len = getPeriod() - ((this.data.getCenterLine().getLength() - phase * getPeriod()) % getPeriod());
+        double len = getPeriod() - ((this.data.getReferenceLine().getLength() - phase * getPeriod()) % getPeriod());
         this.data.setDashOffset(Length.ofSI(len));
     }
 

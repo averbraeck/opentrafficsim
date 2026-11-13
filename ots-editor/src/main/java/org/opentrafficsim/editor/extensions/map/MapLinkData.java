@@ -177,6 +177,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /** Whether layout is dirty. */
     private boolean dirtyLayout = true;
 
+    /** Whether a rebuild is scheduled. */
+    private boolean rebuildScheduled = false;
+
     /** Escape delayed execution when object was destroyed. */
     private volatile boolean destroyed = false;
 
@@ -619,12 +622,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Sets the link as dirty. Validity is checked such that the visualization may start to request the center line. This will
-     * then be calculated when dirty.
+     * Sets the link as dirty and checks validity. A rebuild is scheduled so that geometry and layout are also updated when the
+     * link itself is not drawn, for example to update lanes and stripes after a change in the link shape.
      */
     private void setDirtyAndCheckValidity()
     {
         this.dirtyGeometry = true;
+        scheduleRebuild();
 
         // Connector
         if (this.isConnector)
@@ -671,7 +675,26 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private void setDirtyLayout()
     {
         this.dirtyLayout = true;
+        scheduleRebuild();
         fireEvent(new Event(MAP_DATA_CHANGED, null));
+    }
+
+    /**
+     * Schedules a rebuild of dirty geometry and layout. The geometry is otherwise only rebuilt when the map requests it for
+     * drawing. Therefore, changes in the link shape would not update the lane, shoulder and stripe animations when links are
+     * not shown. Multiple changes within one event cycle are combined into a single rebuild.
+     */
+    private void scheduleRebuild()
+    {
+        if (!this.rebuildScheduled)
+        {
+            this.rebuildScheduled = true;
+            laterIfNotDestroyed(() ->
+            {
+                this.rebuildScheduled = false;
+                checkDirtyGeometry();
+            });
+        }
     }
 
     /**
@@ -775,6 +798,18 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             return;
         }
+        java.util.Map<XsdTreeNode, CseData> cseDataMap = null;
+        if (this.roadLayoutNode != null)
+        {
+            RoadLayoutListener listener = this.roadLayoutListener != null ? this.roadLayoutListener
+                    : getMap().getRoadLayoutListener(this.roadLayoutNode);
+            if (listener == null)
+            {
+                // layout is not available (yet); keep the current animations and try again on the next change
+                return;
+            }
+            cseDataMap = listener.getData();
+        }
         for (Renderable2d<?> renderable : this.crossSectionElements)
         {
             getMap().removeAnimation(renderable);
@@ -786,10 +821,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.crossSectionElements.clear();
         this.laneData.clear();
         this.stripeData.clear();
-        if (this.roadLayoutNode != null)
+        if (cseDataMap != null)
         {
-            java.util.Map<XsdTreeNode, CseData> cseDataMap = this.roadLayoutListener != null ? this.roadLayoutListener.getData()
-                    : getMap().getRoadLayoutListener(this.roadLayoutNode).getData();
             MiddleOffset middleOffset = new MiddleOffset();
             Map<String, XsdTreeNode> laneOverrides = new LinkedHashMap<>();
             Map<String, XsdTreeNode> stripeOverrides = new LinkedHashMap<>();
@@ -863,10 +896,27 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
             }
         }
-        StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
+        synchronizeStripes();
+        // Re-sync once more after pending link rebuilds have settled, so synchronization uses final stripe geometry/offsets.
+        laterIfNotDestroyed(this::synchronizeStripes);
         this.dirtyLayout = false;
         fireEvent(LAYOUT_REBUILT, this);
         getMap().update();
+    }
+
+    /**
+     * Resets all dash offsets to their defined value, and synchronizes all stripes. Resetting is required as a synchronization
+     * with incomplete geometry (e.g. while other links still have to be rebuilt after a node is dragged) can give a stripe that
+     * is an anchor an offset from one of its upstream or downstream stripes. That offset should not persist, as it depends on
+     * the order in which links are rebuilt.
+     */
+    private void synchronizeStripes()
+    {
+        for (SynchronizableMapStripe stripe : getMap().getSynchronizableStripes().values())
+        {
+            stripe.resetDashOffset();
+        }
+        StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
     }
 
     /**
