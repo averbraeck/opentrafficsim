@@ -36,7 +36,6 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.Flattener2d;
 import org.djutils.draw.curve.Flattener2d.NumSegments;
 import org.djutils.draw.curve.Straight2d;
@@ -51,6 +50,7 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.math.AngleUtil;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.core.geometry.BezierCubic2d;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdPaths;
@@ -948,18 +948,17 @@ public class MapInputListener extends InputListener implements EventListener
      */
     public void setSelection(final Collection<XsdTreeNode> nodes)
     {
-        boolean deselected = false;
+        int i = 0;
         for (XsdTreeNode node : nodes)
         {
             Optional<MapData> data = this.editorMap.getData(node);
             if (data.isPresent())
             {
-                if (!deselected)
+                if (i == 0)
                 {
                     deselect();
-                    deselected = true;
                 }
-                select(data.get(), true, false, false);
+                select(data.get(), i++ > 0, false, false);
             }
         }
     }

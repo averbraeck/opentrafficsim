@@ -14,11 +14,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
+import org.opentrafficsim.core.geometry.BezierCubic2d;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdPaths;

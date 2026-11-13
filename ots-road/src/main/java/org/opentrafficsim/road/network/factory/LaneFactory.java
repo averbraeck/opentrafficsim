@@ -10,7 +10,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.draw.curve.Straight2d;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
@@ -22,6 +21,7 @@ import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.geometry.BezierCubic2d;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.geometry.PolyLineCurve2d;
 import org.opentrafficsim.core.network.LateralDirectionality;

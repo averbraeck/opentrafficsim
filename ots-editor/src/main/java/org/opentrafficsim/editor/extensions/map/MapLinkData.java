@@ -23,7 +23,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.curve.Arc2d;
-import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.Clothoid2d;
 import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.draw.curve.Straight2d;
@@ -53,6 +52,7 @@ import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.logger.Logger;
+import org.opentrafficsim.core.geometry.BezierCubic2d;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.geometry.PolyLineCurve2d;
 import org.opentrafficsim.editor.ChildNodeFinder;
@@ -634,6 +634,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 setInvalid();
                 return;
             }
+            executeForAttribute((v) -> this.pointStart = v, this.centroid, "Coordinate", Adapters.get(Point2d.class));
+            executeForAttribute((v) -> this.pointEnd = v, this.connectorNode, "Coordinate", Adapters.get(Point2d.class));
+            if (this.pointStart == null || this.pointEnd == null)
+            {
+                setInvalid();
+                return;
+            }
             setValid();
             return;
         }
@@ -646,7 +653,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             return;
         }
         executeForAttribute((v) -> this.pointStart = v, this.nodeStart, "Coordinate", Adapters.get(Point2d.class));
+        executeForAttribute((v) -> this.directionStart = v, this.nodeStart, "Direction", Adapters.get(Direction.class));
         executeForAttribute((v) -> this.pointEnd = v, this.nodeEnd, "Coordinate", Adapters.get(Point2d.class));
+        executeForAttribute((v) -> this.directionEnd = v, this.nodeEnd, "Direction", Adapters.get(Direction.class));
         if (this.pointStart == null || this.pointEnd == null)
         {
             setInvalid();
@@ -682,11 +691,14 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             return;
         }
 
+        if (this.pointStart == null || this.pointEnd == null)
+        {
+            return;
+        }
+
         // Connector
         if (this.isConnector)
         {
-            executeForAttribute((v) -> this.pointStart = v, this.centroid, "Coordinate", Adapters.get(Point2d.class));
-            executeForAttribute((v) -> this.pointEnd = v, this.connectorNode, "Coordinate", Adapters.get(Point2d.class));
             DirectedPoint2d fromPoint = new DirectedPoint2d(this.pointStart, this.pointStart.directionTo(this.pointEnd));
             this.designLine = new Straight2d(fromPoint, this.pointStart.distance(this.pointEnd));
             setGeometry();
@@ -694,10 +706,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
 
         // Node
-        executeForAttribute((v) -> this.directionStart = v, this.nodeStart, "Direction", Adapters.get(Direction.class));
         double dirStart = this.directionStart == null ? 0.0 : this.directionStart.si;
         DirectedPoint2d fromPoint = new DirectedPoint2d(this.pointStart, dirStart);
-        executeForAttribute((v) -> this.directionEnd = v, this.nodeEnd, "Direction", Adapters.get(Direction.class));
         double dirEnd = this.directionEnd == null ? 0.0 : this.directionEnd.si;
         DirectedPoint2d toPoint = new DirectedPoint2d(this.pointEnd, dirEnd);
         if (this.offsetStart != null)
