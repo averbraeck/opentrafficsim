@@ -236,9 +236,12 @@ public class Undo implements EventListener, EventProducer
         if (action.postActionClearSelection)
         {
             this.editor.clearSelection();
+            this.editor.setStatusLabel("Undo " + action.type + " on group");
         }
         else
         {
+            this.editor.setStatusLabel("Undo " + action.type + " on " + action.node
+                    + (action.attribute == null ? "" : " attribute " + action.attribute));
             this.editor.show(action.node, action.attribute);
         }
         this.cursor--;
@@ -265,9 +268,12 @@ public class Undo implements EventListener, EventProducer
         if (action.postActionClearSelection)
         {
             this.editor.clearSelection();
+            this.editor.setStatusLabel("Redo " + action.type + " on group");
         }
         else
         {
+            this.editor.setStatusLabel("Redo " + action.type + " on " + action.node
+                    + (action.attribute == null ? "" : " attribute " + action.attribute));
             this.editor.show(action.postActionShowNode, action.attribute);
         }
         updateButtons();
