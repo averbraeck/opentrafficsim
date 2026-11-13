@@ -789,7 +789,7 @@ public final class EditorMap extends JPanel implements EventListener
                 {
                     if (event.getType().equals(ChangeListener.CHANGE_EVENT))
                     {
-                        MapData data = EditorMap.this.datas.get(getNode().getParent().getParent());
+                        MapData data = EditorMap.this.datas.get(getNode().getParent());
                         if (data instanceof MapLinkData linkData)
                         {
                             linkData.evalChanged();
