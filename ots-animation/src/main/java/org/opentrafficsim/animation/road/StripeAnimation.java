@@ -41,6 +41,12 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     /** Offset that applied when paths were determined. */
     private Length pathOffset;
 
+    /** Whether a partial dash at the start was skipped when paths were determined. */
+    private boolean pathSkipPartialStart;
+
+    /** Whether a partial dash at the end was skipped when paths were determined. */
+    private boolean pathSkipPartialEnd;
+
     /**
      * Constructor.
      * @param source stripe data
@@ -75,7 +81,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             {
                 double[] dashes = element.dashes().getValuesSI();
                 path.addAll(makeDashes(stripe.getCenterLine().directionalOffsetLine(edgeOffset - .5 * w),
-                        stripe.getReferenceLine(), w, stripe.getDashOffset().si, dashes));
+                        stripe.getReferenceLine(), w, stripe.getDashOffset().si, dashes, stripe.isPartialDashAtStartSkipped(),
+                        stripe.isPartialDashAtEndSkipped()));
             }
             edgeOffset -= w;
             // can be empty for a gap element, or when no dash is within the length
@@ -89,9 +96,9 @@ public class StripeAnimation extends OtsRenderable<StripeData>
 
     /**
      * Generate the drawing commands for a dash pattern. Dash center points are determined on the reference line (with only gaps
-     * stretched to match the synchronized start and end phase), projected to the center line for lateral alignment, and each dash
-     * is drawn with its original intended length around that center. Virtual dashes before and beyond the link are considered so
-     * that partially visible dashes at link boundaries are included.
+     * stretched to match the synchronized start and end phase), projected to the center line for lateral alignment, and each
+     * dash is drawn with its original intended length around that center. Virtual dashes before and beyond the link are
+     * considered so that partially visible dashes at link boundaries are included.
      * @param centerLine the design line of the striped pattern
      * @param referenceLine reference line to which dashes are applied
      * @param width width of the stripes in meters
@@ -99,10 +106,12 @@ public class StripeAnimation extends OtsRenderable<StripeData>
      * @param dashes one or more lengths of the dashes and the gaps between those dashes. The first value in <cite>dashes</cite>
      *            is the length of a gap. If the number of values in <cite>dashes</cite> is odd, the pattern repeats inverted
      *            (gaps become dashes, dashes become gaps).
+     * @param skipPartialStart whether to skip a partial dash at the start of the stripe
+     * @param skipPartialEnd whether to skip a partial dash at the end of the stripe
      * @return the coordinates of the dashes separated and terminated by a <cite>NEWPATH</cite> Coordinate
      */
     private List<Point2d> makeDashes(final DirectionalPolyLine centerLine, final PolyLine2d referenceLine, final double width,
-            final double startOffset, final double[] dashes)
+            final double startOffset, final double[] dashes, final boolean skipPartialStart, final boolean skipPartialEnd)
     {
         double period = 0;
         double maxDash = 0.0;
@@ -131,8 +140,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             return new ArrayList<>();
         }
 
-        // Collect all nominal dash instances in an extended range (virtual dashes before/beyond the link) so that any dash whose
-        // fixed-length extent can reach into [0, referenceLength] is considered.
+        // Collect all nominal dash instances in an extended range (virtual dashes before/beyond the link) so that any dash
+        // whose fixed-length extent can reach into [0, referenceLength] is considered.
         double margin = 0.5 * maxDash + period;
         List<Segment> nominal = new ArrayList<>();
         double position = -startOffset + dashes[0];
@@ -192,9 +201,15 @@ public class StripeAnimation extends OtsRenderable<StripeData>
         boolean first = true;
         for (Segment segment : nominal)
         {
+            if ((skipPartialStart && segment.start < 0.0 && segment.end > 0.0)
+                    || (skipPartialEnd && segment.start < referenceLength && segment.end > referenceLength))
+            {
+                // partial dash at a node with 3 or more links
+                continue;
+            }
             double nominalCenter = 0.5 * (segment.start + segment.end);
             double dashLen = segment.end - segment.start;
-            double stretchedCenter = stretchedPosition(nominalCenter, nominal, gapScale, referenceLength);
+            double stretchedCenter = stretchedPosition(nominalCenter, visibleNominal, gapScale, referenceLength);
 
             // Dash centre on reference line, projected for lateral alignment; draw original dash length around it.
             double centerFraction;
@@ -256,27 +271,17 @@ public class StripeAnimation extends OtsRenderable<StripeData>
      * while preserving dash lengths. Uses nominal dashes that overlap [0, referenceLength] for in-link mapping and preserves
      * fixed dash length for virtual boundary dashes outside the range.
      * @param x nominal coordinate
-     * @param nominal nominal dash segments in order
+     * @param visible visible nominal dash segments in order
      * @param gapScale scale factor for gaps
      * @param referenceLength reference length
      * @return stretched coordinate
      */
-    private static double stretchedPosition(final double x, final List<Segment> nominal, final double gapScale,
+    private static double stretchedPosition(final double x, final List<Segment> visible, final double gapScale,
             final double referenceLength)
     {
         if (referenceLength <= 0.0)
         {
             return x;
-        }
-
-        // Visible nominal dashes overlapping [0, referenceLength] define the in-link mapping.
-        List<Segment> visible = new ArrayList<>();
-        for (Segment s : nominal)
-        {
-            if (Math.min(referenceLength, s.end) > Math.max(0.0, s.start))
-            {
-                visible.add(s);
-            }
         }
         if (visible.isEmpty())
         {
@@ -300,13 +305,13 @@ public class StripeAnimation extends OtsRenderable<StripeData>
         {
             if (last.end > referenceLength && x >= last.start && x <= last.end)
             {
-                return referenceLength + (x - referenceLength);
+                return x;
             }
             return referenceLength + (x - referenceLength) * gapScale;
         }
 
-        double nom = 0.0;
-        double str = 0.0;
+        double nominalCursor = 0.0;
+        double stretchedCursor = 0.0;
         for (int i = 0; i < visible.size(); i++)
         {
             Segment s = visible.get(i);
@@ -316,22 +321,22 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             // Gap before this dash.
             if (x <= dashStartIn)
             {
-                return str + (x - nom) * gapScale;
+                return stretchedCursor + (x - nominalCursor) * gapScale;
             }
-            str += (dashStartIn - nom) * gapScale;
-            nom = dashStartIn;
+            stretchedCursor += (dashStartIn - nominalCursor) * gapScale;
+            nominalCursor = dashStartIn;
 
             // Dash: fixed length preserved.
             if (x <= dashEndIn)
             {
-                return str + (x - dashStartIn);
+                return stretchedCursor + (x - dashStartIn);
             }
-            str += (dashEndIn - dashStartIn);
-            nom = dashEndIn;
+            stretchedCursor += (dashEndIn - dashStartIn);
+            nominalCursor = dashEndIn;
         }
 
         // Trailing gap.
-        return str + (x - nom) * gapScale;
+        return stretchedCursor + (x - nominalCursor) * gapScale;
     }
 
     /**
@@ -360,14 +365,19 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     }
 
     /**
-     * Updates paths to draw when new offset applies.
+     * Updates paths to draw when a new offset applies, or when partial boundary dashes should be skipped differently.
      */
     private void update()
     {
-        if (!getSource().getDashOffset().equals(this.pathOffset))
+        boolean skipPartialStart = getSource().isPartialDashAtStartSkipped();
+        boolean skipPartialEnd = getSource().isPartialDashAtEndSkipped();
+        if (!getSource().getDashOffset().equals(this.pathOffset) || skipPartialStart != this.pathSkipPartialStart
+                || skipPartialEnd != this.pathSkipPartialEnd)
         {
             this.paintDatas = makePaths(getSource());
             this.pathOffset = getSource().getDashOffset();
+            this.pathSkipPartialStart = skipPartialStart;
+            this.pathSkipPartialEnd = skipPartialEnd;
         }
     }
 
@@ -379,12 +389,6 @@ public class StripeAnimation extends OtsRenderable<StripeData>
 
     /**
      * StripeData provides the information required to draw a stripe.
-     * <p>
-     * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author Wouter Schakel
      */
     public interface StripeData extends LineLocatable
     {
@@ -421,6 +425,22 @@ public class StripeAnimation extends OtsRenderable<StripeData>
          * @return line width
          */
         Length getWidth(Length position);
+
+        /**
+         * Returns whether a partial dash at the start of the stripe should be skipped. This is typically {@code true} when the
+         * node at the start connects to 3 or more links, where dashes from the various links can clutter the node. A partial
+         * dash at a node with 2 links is drawn to continue a clean pattern.
+         * @return whether a partial dash at the start of the stripe should be skipped
+         */
+        boolean isPartialDashAtStartSkipped();
+
+        /**
+         * Returns whether a partial dash at the end of the stripe should be skipped. This is typically {@code true} when the
+         * node at the end connects to 3 or more links, where dashes from the various links can clutter the node. A partial dash
+         * at a node with 2 links is drawn to continue a clean pattern.
+         * @return whether a partial dash at the end of the stripe should be skipped
+         */
+        boolean isPartialDashAtEndSkipped();
 
         @Override
         default double getZ()

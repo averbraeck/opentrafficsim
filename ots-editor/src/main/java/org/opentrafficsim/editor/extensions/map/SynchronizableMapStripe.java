@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.StripeData;
@@ -99,52 +100,34 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
     @Override
     public Optional<MapStripeData> getUpstreamStripe()
     {
-        Optional<XsdTreeNode> fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeStart");
-        if (fromNode.isEmpty())
-        {
-            return Optional.empty();
-        }
-        MapStripeData upstream = null;
-        for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
-        {
-            if (networkChild.getNodeName().equals("Link")
-                    && fromNode.get().equals(networkChild.getCoupledNodeAttribute("NodeEnd").orElse(null)))
-            {
-                Optional<MapData> otherLink = this.linkData.getMap().getData(networkChild);
-                if (otherLink.isEmpty())
-                {
-                    continue;
-                }
-                for (MapStripeData otherStripe : ((MapLinkData) otherLink.get()).getStripeData())
-                {
-                    if (otherStripe.getCenterLine().getLast().distance(this.data.getCenterLine().getFirst()) < Lane.MARGIN.si)
-                    {
-                        if (upstream != null)
-                        {
-                            // multiple upstream stripes, no point in synchronizing, make stripe an anchor
-                            return Optional.empty();
-                        }
-                        upstream = otherStripe;
-                    }
-                }
-            }
-        }
-        return Optional.ofNullable(upstream);
+        return getAdjacentStripe(true);
     }
 
     @Override
     public Optional<MapStripeData> getDownstreamStripe()
     {
-        Optional<XsdTreeNode> toNode = this.linkData.getNode().getCoupledNodeAttribute("NodeEnd");
-        if (toNode.isEmpty())
+        return getAdjacentStripe(false);
+    }
+
+    /**
+     * Returns the stripe on an adjacent link that connects to this stripe at the node given by <cite>nodeAttribute</cite>.
+     * @param fromStart {@code true} to get adjacent upstream stripe, {@code false} for adjacent downstream stripe
+     * @return adjacent stripe, or empty if there is no adjacent stripe or multiple stripes connect
+     */
+    private Optional<MapStripeData> getAdjacentStripe(final boolean fromStart)
+    {
+        final String nodeAttribute = fromStart ? "NodeStart" : "NodeEnd";
+        final String adjacentNodeAttribute = fromStart ? "NodeEnd" : "NodeStart";
+        Optional<XsdTreeNode> node = this.linkData.getNode().getCoupledNodeAttribute(nodeAttribute);
+        if (node.isEmpty())
         {
             return Optional.empty();
         }
-        MapStripeData downstream = null;
+        MapStripeData adjacent = null;
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
             if (networkChild.getNodeName().equals("Link")
-                    && toNode.get().equals(networkChild.getCoupledNodeAttribute("NodeStart").orElse(null)))
+                    && node.get().equals(networkChild.getCoupledNodeAttribute(adjacentNodeAttribute).orElse(null)))
             {
                 Optional<MapData> otherLink = this.linkData.getMap().getData(networkChild);
                 if (otherLink.isEmpty())
@@ -153,19 +136,22 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
                 }
                 for (MapStripeData otherStripe : ((MapLinkData) otherLink.get()).getStripeData())
                 {
-                    if (otherStripe.getCenterLine().getFirst().distance(this.data.getCenterLine().getLast()) < Lane.MARGIN.si)
+                    Point2d otherPoint =
+                            fromStart ? otherStripe.getCenterLine().getLast() : otherStripe.getCenterLine().getFirst();
+                    Point2d thisPoint = fromStart ? this.data.getCenterLine().getFirst() : this.data.getCenterLine().getLast();
+                    if (otherPoint.distance(thisPoint) < Lane.MARGIN.si)
                     {
-                        if (downstream != null)
+                        if (adjacent != null)
                         {
-                            // multiple downstream stripes, no point in synchronizing, make stripe an anchor
+                            // multiple stripes connect; no point in synchronizing, make stripe an anchor
                             return Optional.empty();
                         }
-                        downstream = otherStripe;
+                        adjacent = otherStripe;
                     }
                 }
             }
         }
-        return Optional.ofNullable(downstream);
+        return Optional.ofNullable(adjacent);
     }
 
     @Override

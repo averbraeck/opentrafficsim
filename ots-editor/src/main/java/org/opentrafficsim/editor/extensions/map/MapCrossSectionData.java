@@ -61,6 +61,15 @@ public class MapCrossSectionData implements CrossSectionElementData
     }
 
     /**
+     * Returns the node representing the element.
+     * @return node representing the element
+     */
+    protected XsdTreeNode getLinkNode()
+    {
+        return this.linkNode;
+    }
+
+    /**
      * Returns the link id.
      * @return link id.
      */

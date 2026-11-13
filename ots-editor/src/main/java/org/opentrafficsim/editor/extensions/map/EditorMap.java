@@ -76,6 +76,7 @@ import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.editor.extensions.map.edit.MapInputListener;
+import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
 import org.opentrafficsim.swing.gui.PropertiesStore;
 
@@ -186,6 +187,9 @@ public final class EditorMap extends JPanel implements EventListener
 
     /** Map of synchronizable stripes. */
     private Map<MapStripeData, SynchronizableMapStripe> synStripes = new LinkedHashMap<>();
+
+    /** Whether synchronization of stripes is scheduled. */
+    private boolean stripeSynchronizationScheduled = false;
 
     /** Listeners to lane and stripe overrides. */
     private final Map<XsdTreeNode, ChangeListener<Object>> overrideListeners = new LinkedHashMap<>();
@@ -1475,6 +1479,39 @@ public final class EditorMap extends JPanel implements EventListener
     public Map<MapStripeData, SynchronizableMapStripe> getSynchronizableStripes()
     {
         return this.synStripes;
+    }
+
+    /**
+     * Schedules synchronization of all stripes. Multiple requests within one event cycle are bundled. Synchronization is
+     * performed in a later event so that all links that are being rebuilt have settled, e.g. after a node is dragged, such that
+     * synchronization uses final stripe geometry and offsets.
+     */
+    public void scheduleStripeSynchronization()
+    {
+        if (!this.stripeSynchronizationScheduled)
+        {
+            this.stripeSynchronizationScheduled = true;
+            SwingUtilities.invokeLater(() ->
+            {
+                this.stripeSynchronizationScheduled = false;
+                synchronizeStripes();
+                this.updater.update();
+            });
+        }
+    }
+
+    /**
+     * Resets all dash offsets to their defined value, and synchronizes all stripes. Resetting is required as a stripe that
+     * becomes an anchor (e.g. when an extra upstream link is created at a merge) may still have an offset from an earlier
+     * synchronization, while an anchor should keep its defined offset.
+     */
+    private void synchronizeStripes()
+    {
+        for (SynchronizableMapStripe stripe : this.synStripes.values())
+        {
+            stripe.resetDashOffset();
+        }
+        StripeSynchronization.synchronize(new LinkedHashMap<>(this.synStripes));
     }
 
     /**

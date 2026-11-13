@@ -63,7 +63,6 @@ import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
 import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
-import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
@@ -310,6 +309,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             this.connectorNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         }
         this.roadLayoutNode = null;
+        getMap().scheduleStripeSynchronization();
     }
 
     /**
@@ -896,27 +896,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
             }
         }
-        synchronizeStripes();
-        // Re-sync once more after pending link rebuilds have settled, so synchronization uses final stripe geometry/offsets.
-        laterIfNotDestroyed(this::synchronizeStripes);
+        getMap().scheduleStripeSynchronization();
         this.dirtyLayout = false;
         fireEvent(LAYOUT_REBUILT, this);
         getMap().update();
-    }
-
-    /**
-     * Resets all dash offsets to their defined value, and synchronizes all stripes. Resetting is required as a synchronization
-     * with incomplete geometry (e.g. while other links still have to be rebuilt after a node is dragged) can give a stripe that
-     * is an anchor an offset from one of its upstream or downstream stripes. That offset should not persist, as it depends on
-     * the order in which links are rebuilt.
-     */
-    private void synchronizeStripes()
-    {
-        for (SynchronizableMapStripe stripe : getMap().getSynchronizableStripes().values())
-        {
-            stripe.resetDashOffset();
-        }
-        StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
     }
 
     /**

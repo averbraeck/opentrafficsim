@@ -9,6 +9,8 @@ import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
 import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.road.network.CrossSectionLink;
 import org.opentrafficsim.road.network.Stripe;
 
 /**
@@ -74,6 +76,28 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     public Length getWidth(final Length location)
     {
         return getObject().getWidth(location);
+    }
+
+    @Override
+    public boolean isPartialDashAtStartSkipped()
+    {
+        return getNodeLinkCount(getObject().getLink().getStartNode()) >= 3;
+    }
+
+    @Override
+    public boolean isPartialDashAtEndSkipped()
+    {
+        return getNodeLinkCount(getObject().getLink().getEndNode()) >= 3;
+    }
+
+    /**
+     * Returns the number of road links that connect to the given node, excluding connectors.
+     * @param node node to count connected road links of
+     * @return number of road links that connect to the node
+     */
+    private static long getNodeLinkCount(final Node node)
+    {
+        return node.getLinks().stream().filter(link -> link instanceof CrossSectionLink).count();
     }
 
     @Override

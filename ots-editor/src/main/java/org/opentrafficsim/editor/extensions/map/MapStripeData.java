@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
@@ -143,6 +144,43 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     public Length getDashOffset()
     {
         return this.dashOffset;
+    }
+
+    @Override
+    public boolean isPartialDashAtStartSkipped()
+    {
+        return getNodeLinkCount("NodeStart") >= 3;
+    }
+
+    @Override
+    public boolean isPartialDashAtEndSkipped()
+    {
+        return getNodeLinkCount("NodeEnd") >= 3;
+    }
+
+    /**
+     * Returns the number of links that connect to the node at the given end of this stripe's link.
+     * @param nodeAttribute node attribute of this link, i.e. {@code NodeStart} or {@code NodeEnd}
+     * @return number of links that connect to the node
+     */
+    private int getNodeLinkCount(final String nodeAttribute)
+    {
+        Optional<XsdTreeNode> node = getLinkNode().getCoupledNodeAttribute(nodeAttribute);
+        if (node.isEmpty())
+        {
+            return 0;
+        }
+        int count = 0;
+        for (XsdTreeNode networkChild : getLinkNode().getParent().getChildren())
+        {
+            if (networkChild.getNodeName().equals("Link")
+                    && (node.get().equals(networkChild.getCoupledNodeAttribute("NodeStart").orElse(null))
+                            || node.get().equals(networkChild.getCoupledNodeAttribute("NodeEnd").orElse(null))))
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
