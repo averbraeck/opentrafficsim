@@ -882,7 +882,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         StripePhaseSync phaseSync = StripePhaseSync.NONE;
         Length dashOffset = Length.ZERO;
-        StripeLateralSync lateralSync = StripeLateralSync.NONE;
+        StripeLateralSync lateralSync = StripeLateralSync.LINK;
         List<XsdTreeNode> elementNodes;
 
         ChildNodeFinder overrideFinder =
@@ -1009,7 +1009,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         StripePhaseSync phaseSync = StripePhaseSync.NONE;
         Length dashOffset = Length.ZERO;
-        StripeLateralSync lateralSync = StripeLateralSync.NONE;
+        StripeLateralSync lateralSync = StripeLateralSync.LINK;
         List<XsdTreeNode> elementNodes;
 
         if ((overrideFinder != null && overrideFinder.hasActiveChild("DashOffset"))
@@ -1053,9 +1053,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         if ((overrideFinder != null && overrideFinder.hasActiveChild("LateralSync"))
                 || stripeFinder.hasActiveChild("LateralSync"))
         {
-            String latSyncName = overrideFinder != null && overrideFinder.hasActiveChild("DashOffset")
+            String latSyncName = overrideFinder != null && overrideFinder.hasActiveChild("LateralSync")
                     ? overrideFinder.get().getValueOrDefault() : stripeFinder.get().getValueOrDefault();
-            lateralSync = latSyncName == null ? StripeLateralSync.NONE
+            lateralSync = latSyncName == null ? StripeLateralSync.LINK
                     : Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
         }
 

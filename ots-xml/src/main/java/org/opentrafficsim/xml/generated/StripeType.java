@@ -31,7 +31,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *       <attribute name="LeftChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
  *       <attribute name="RightChangeLane" use="required" type="{http://www.opentrafficsim.org/ots}boolean" />
  *       <attribute name="Block" type="{http://www.opentrafficsim.org/ots}boolean" default="false" />
- *       <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
+ *       <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" default="LINK" />
  *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
  *       <attribute name="Builtin" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     </restriction>
@@ -206,7 +206,11 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      *     
      */
     public StripeLateralSyncType getLateralSync() {
-        return lateralSync;
+        if (lateralSync == null) {
+            return new StripeLateralSyncAdapter().unmarshal("LINK");
+        } else {
+            return lateralSync;
+        }
     }
 
     /**
