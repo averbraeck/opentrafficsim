@@ -796,7 +796,7 @@ public final class EditorMap extends JPanel implements EventListener
                         MapData data = EditorMap.this.datas.get(getNode().getParent().getParent());
                         if (data instanceof MapLinkData linkData)
                         {
-                            linkData.evalChanged();
+                            linkData.update();
                         }
                     }
                     else
@@ -1152,7 +1152,7 @@ public final class EditorMap extends JPanel implements EventListener
             // {
             for (MapLinkData linkData : this.links.keySet())
             {
-                linkData.evalChanged();
+                linkData.update();
             }
             // });
         }
@@ -1172,7 +1172,7 @@ public final class EditorMap extends JPanel implements EventListener
             {
                 if (d instanceof MapLaneBasedObjectData)
                 {
-                    d.evalChanged();
+                    d.update();
                 }
             }
             // });
@@ -1196,7 +1196,7 @@ public final class EditorMap extends JPanel implements EventListener
         {
             throw new UnsupportedOperationException("Node cannot be added by the map editor.");
         }
-        data.evalChanged();
+        data.update();
         data.addListener((e) -> this.updater.update(), MapData.MAP_DATA_CHANGED);
         this.datas.put(node, data);
     }

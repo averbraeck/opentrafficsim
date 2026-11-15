@@ -93,6 +93,17 @@ public abstract class MapData extends LocalEventProducer implements EvalListener
     }
 
     /**
+     * Updates the animation as underlying data that might be relevant has changed.
+     */
+    abstract void update();
+
+    @Override
+    public final void evalChanged()
+    {
+        update();
+    }
+
+    /**
      * Destroy this data object, e.g. remove self as listener. Override and call super if subclasses remove their own listeners.
      * Using weak references for listeners is another option to deal with obsolete listening.
      */

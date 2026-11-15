@@ -1124,7 +1124,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     @Override
-    public void evalChanged()
+    public void update()
     {
         if (getNode().isActive())
         {

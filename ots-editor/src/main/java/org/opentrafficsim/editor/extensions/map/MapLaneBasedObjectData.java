@@ -192,7 +192,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     }
 
     @Override
-    public void evalChanged()
+    public void update()
     {
         if (getNode().isIdentifiable())
         {

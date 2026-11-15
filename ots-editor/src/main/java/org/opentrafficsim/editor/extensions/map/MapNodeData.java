@@ -141,7 +141,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     }
 
     @Override
-    public void evalChanged()
+    public void update()
     {
         this.id = getNode().getId() == null ? "" : getNode().getId();
         executeForAttribute((v) -> this.coordinate = v, getNode(), "Coordinate", Adapters.get(Point2d.class));
