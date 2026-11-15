@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.function.Consumer;
 
 import javax.naming.NamingException;
 import javax.swing.AbstractButton;
@@ -1264,6 +1265,15 @@ public final class EditorMap extends JPanel implements EventListener
     public Optional<MapData> getData(final XsdTreeNode node)
     {
         return Optional.ofNullable(this.datas.get(node));
+    }
+
+    /**
+     * Perform action on each map data object.
+     * @param mapDataConsumer map data consumer
+     */
+    public void forEachMapData(final Consumer<MapData> mapDataConsumer)
+    {
+        this.datas.values().forEach(mapDataConsumer);
     }
 
     /**

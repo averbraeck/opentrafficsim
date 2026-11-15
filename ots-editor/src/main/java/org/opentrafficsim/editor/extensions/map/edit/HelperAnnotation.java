@@ -97,7 +97,7 @@ public class HelperAnnotation extends MapAnnotation<Helper>
         {
             this.location = new DirectedPoint2d(initialLocation, 0.0);
             this.lineFunction = lineFunction;
-            this.line = this.lineFunction.apply(this.location);
+            updateLine(this.location);
         }
 
         /**
@@ -108,7 +108,26 @@ public class HelperAnnotation extends MapAnnotation<Helper>
         public void setLocation(final Point2d location)
         {
             this.location = new DirectedPoint2d(location, 0.0);
-            this.line = this.lineFunction.apply(location);
+            updateLine(location);
+        }
+
+        /**
+         * Safely update line, avoiding degenerate lines.
+         * @param point point
+         */
+        private void updateLine(final Point2d point)
+        {
+            try
+            {
+                this.line = this.lineFunction.apply(this.location);
+            }
+            catch (IllegalArgumentException ex)
+            {
+                if (this.line == null)
+                {
+                    this.line = new PolyLine2d(new Point2d(0.0, 0.0), new Point2d(1e-6, 0.0));
+                }
+            }
         }
 
         @Override

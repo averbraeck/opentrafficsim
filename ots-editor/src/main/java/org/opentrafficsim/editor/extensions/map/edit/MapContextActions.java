@@ -37,7 +37,7 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * @author Wouter Schakel
  */
-public final class MapContextActions
+final class MapContextActions
 {
 
     /** Icon size in context menu items. */
@@ -369,8 +369,8 @@ public final class MapContextActions
     {
         final int n = 4;
         final int m = 20;
-        double lo = MapInputListener.BEZIES_SHAPE_MIN;
-        double hi = MapInputListener.BEZIES_SHAPE_MAX;
+        double lo = MapBezierDraggablesHelper.BEZIES_SHAPE_MIN;
+        double hi = MapBezierDraggablesHelper.BEZIES_SHAPE_MAX;
         // each level searches "m" points spanning range (lo, hi) with spacing ds = (hi - lo)/m finding best point "s"
         // for the next level the range is narrowed to (s-ds, s+ds), i.e. between adjacent evaluations around "s"
         for (int level = 0; level < n; level++)
@@ -388,7 +388,7 @@ public final class MapContextActions
                 }
             }
             double span = (hi - lo) / m;
-            lo = Math.max(MapInputListener.BEZIES_SHAPE_MIN, bestS - span);
+            lo = Math.max(MapBezierDraggablesHelper.BEZIES_SHAPE_MIN, bestS - span);
             hi = bestS + span;
         }
         return 0.5 * (lo + hi);

@@ -21,7 +21,7 @@ import org.opentrafficsim.editor.extensions.map.MapNodeData;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * @author Wouter Schakel
  */
-public final class MapAdder
+final class MapAdder
 {
 
     /** Utility class. */
