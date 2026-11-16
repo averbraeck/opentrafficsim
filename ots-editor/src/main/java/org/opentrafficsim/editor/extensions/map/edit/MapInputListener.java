@@ -501,7 +501,7 @@ public class MapInputListener extends InputListener implements EventListener
         if (selected.isEmpty() || e.isControlDown()
                 || !MapContextActions.showContextMenu(
                         this.selectionIndicators.stream().map((a) -> a.getSource().mapData()).toList(),
-                        this.editorMap.getPanel(), e))
+                        this.editorMap, this.editorMap.getPanel(), e))
         {
             showSelectLocatableMenu(mapDatas, e);
         }
@@ -758,6 +758,23 @@ public class MapInputListener extends InputListener implements EventListener
                 }
                 else if (!this.selectionIndicators.isEmpty())
                 {
+                    if (this.selectionIndicators.size() == 1)
+                    {
+                        MapData selectedData = this.selectionIndicators.iterator().next().getSource().mapData();
+                        if (selectedData instanceof MapNodeData nodeData)
+                        {
+                            XsdTreeNode network = nodeData.getNode().getParent();
+                            if (MapLinkEditActions.tryMergeNodeOnDelete(this.editor, nodeData.getNode()))
+                            {
+                                deselect();
+                                if (network != null)
+                                {
+                                    this.editor.show(network, null);
+                                }
+                                break; // exits switch
+                            }
+                        }
+                    }
                     if (this.selectionIndicators.size() >= 5
                             && !this.editor.dialogs().confirmGeneral("Delete " + this.selectionIndicators.size() + " objects?"))
                     {

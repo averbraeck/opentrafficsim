@@ -398,12 +398,24 @@ public class Undo implements EventListener, EventProducer
             boolean activated = (boolean) content[1];
             add(new SubAction(() ->
             {
-                node.active = !activated;
-                node.fireEvent(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {node, !activated});
+                if (activated)
+                {
+                    node.setInactive();
+                }
+                else
+                {
+                    node.setActive();
+                }
             }, () ->
             {
-                node.active = activated;
-                node.fireEvent(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {node, activated});
+                if (activated)
+                {
+                    node.setActive();
+                }
+                else
+                {
+                    node.setInactive();
+                }
             }, "Activation " + node.getPathString() + " " + activated), node);
         }
         else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))

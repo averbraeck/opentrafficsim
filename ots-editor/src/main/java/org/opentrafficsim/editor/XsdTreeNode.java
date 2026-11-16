@@ -1404,11 +1404,18 @@ public class XsdTreeNode extends LocalEventProducer
     {
         // empty copy
         XsdTreeNode copyNode = emptyCopy(newParent);
+
+        // copy node-local state needed by listeners on creation
         copyNode.active = this.active;
-        copyInto(copyNode);
+        copyOwnStateInto(copyNode);
+        copyNode.assureChildren();
         copyNode.invalidate();
         getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
+
+        // duplicate children after parent creation event
+        copyChildrenInto(copyNode);
+
         invalidate(); // due to e.g. duplicate ID, this node may also become invalid
         return copyNode;
     }
@@ -1468,6 +1475,20 @@ public class XsdTreeNode extends LocalEventProducer
         {
             return;
         }
+        copyOwnStateInto(copyNode);
+        copyChildrenInto(copyNode);
+    }
+
+    /**
+     * Copies value, include-state, choice/option structure, and attributes into copyNode. Does not copy child nodes.
+     * @param copyNode node to copy data in to
+     */
+    private void copyOwnStateInto(final XsdTreeNode copyNode)
+    {
+        if (this.equals(copyNode))
+        {
+            return;
+        }
         copyNode.value = this.value;
         copyNode.isIncluded = this.isIncluded;
         // copy choice
@@ -1510,16 +1531,27 @@ public class XsdTreeNode extends LocalEventProducer
         {
             copyNode.attributeValues.set(index, this.attributeValues.get(index));
         }
-        // copy children, recursive
+    }
+
+    /**
+     * Replaces copyNode's children with duplicates of this node's children.
+     * @param copyNode node to copy children in to
+     */
+    private void copyChildrenInto(final XsdTreeNode copyNode)
+    {
+        // remove existing children of target (relevant for paste/overwrite scenarios)
         if (copyNode.children != null)
         {
-            for (int index = 0; index < copyNode.getChildCount(); index++)
+            while (!copyNode.children.isEmpty())
             {
-                XsdTreeNode child = copyNode.getChild(index);
-                copyNode.children.remove(index);
+                XsdTreeNode child = copyNode.children.remove(0);
                 child.parent = null;
-                getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, copyNode, index});
+                getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, copyNode, 0});
             }
+        }
+        else
+        {
+            copyNode.children = new ArrayList<>();
         }
         if (this.children != null)
         {

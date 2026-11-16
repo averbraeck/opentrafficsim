@@ -228,6 +228,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             {
                 Object[] content = (Object[]) event.getContent();
                 XsdTreeNode node = (XsdTreeNode) content[0];
+                if (node instanceof XsdTreeNodeRoot)
+                {
+                    clear();
+                    return;
+                }
                 if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT) || node.getPathString().equals(XsdPaths.LINK))
                 {
                     // defined layout
@@ -272,6 +277,21 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             }
             super.notify(event);
         }
+    }
+
+    /**
+     * Clears all data structures.
+     */
+    private void clear()
+    {
+        this.linkValidatedNodes.clear();
+        this.layoutValidatedNodes.clear();
+        this.validatingLink.clear();
+        this.validatingLayout.clear();
+        this.parentIdListener.clear();
+        this.nonParentId.clear();
+        this.layoutIdListener.clear();
+        this.coupledNodes.clear();
     }
 
     /**
@@ -350,6 +370,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             case PARENT_IS_LINK:
             {
                 linkNode = node.getParent();
+                if (linkNode == null)
+                {
+                    layoutNode = null;
+                    break;
+                }
                 if (linkNode.isSequence())
                 {
                     linkNode = linkNode.getParent();

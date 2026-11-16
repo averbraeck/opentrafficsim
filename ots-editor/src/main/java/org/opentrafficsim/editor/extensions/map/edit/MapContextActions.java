@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.extensions.map.edit;
 
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -52,15 +53,16 @@ final class MapContextActions
     /**
      * Shows a context menu for one or more map elements. The menu is not shown if there are no such items.
      * @param dataList map elements for which to show the context menu
+     * @param editorMap editor map
      * @param visualizationPanel visualization panel
      * @param event mouse event that triggered the context menu
      * @return whether a menu with items was shown
      */
-    public static boolean showContextMenu(final List<MapData> dataList, final MapVisualizationPanel visualizationPanel,
-            final MouseEvent event)
+    public static boolean showContextMenu(final List<MapData> dataList, final EditorMap editorMap,
+            final MapVisualizationPanel visualizationPanel, final MouseEvent event)
     {
         JPopupMenu menu = new JPopupMenu();
-        fillContextMenu(dataList, menu, event);
+        fillContextMenu(dataList, editorMap, menu, event);
         if (menu.getComponentCount() == 0)
         {
             return false;
@@ -72,17 +74,19 @@ final class MapContextActions
     /**
      * Fills the given context menu with items that are specific to the map elements.
      * @param dataList map element for which to show the context menu
+     * @param editorMap editor map
      * @param menu context menu to fill
      * @param event mouse event that triggered the context menu
      */
-    private static void fillContextMenu(final List<MapData> dataList, final JPopupMenu menu, final MouseEvent event)
+    private static void fillContextMenu(final List<MapData> dataList, final EditorMap editorMap, final JPopupMenu menu,
+            final MouseEvent event)
     {
         if (dataList.size() == 1)
         {
             MapData data = dataList.get(0);
             if (data instanceof MapLinkData mapLinkData)
             {
-                fillContextMenuLink(mapLinkData, menu, event);
+                fillContextMenuLink(mapLinkData, editorMap, menu, event);
             }
         }
         else
@@ -149,10 +153,12 @@ final class MapContextActions
     /**
      * Fills the context menu with actions specific to a link.
      * @param data map element for which to show the context menu
+     * @param editorMap editor map
      * @param menu context menu
      * @param event mouse event that triggered the context menu
      */
-    private static void fillContextMenuLink(final MapLinkData data, final JPopupMenu menu, final MouseEvent event)
+    private static void fillContextMenuLink(final MapLinkData data, final EditorMap editorMap, final JPopupMenu menu,
+            final MouseEvent event)
     {
         if (!data.getNode().getPathString().equals(XsdPaths.LINK) || !data.hasShapeNode())
         {
@@ -186,6 +192,9 @@ final class MapContextActions
         }
         if (!data.isConnector())
         {
+            Point2D clickPoint = event.getPoint();
+            addContextMenuItem(menu, "Split link", null, () -> MapLinkEditActions.splitLink(editorMap, data, clickPoint),
+                    data.getEditor());
             addLinkShapeContextMenu(menu, data);
             String current = data.getNode().getAttributeValueOrDefault("Priority");
             Set<Priority> currentPriority = current == null ? Set.of(Priority.NONE)
