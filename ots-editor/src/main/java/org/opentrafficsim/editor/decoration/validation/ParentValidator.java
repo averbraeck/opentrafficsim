@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
@@ -175,10 +176,11 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     private Set<XsdTreeNode> getContext(final XsdTreeNode node)
     {
         XsdTreeNode parent = node;
-        while (!parent.getPathString().equals(this.contextPath) && parent != null)
+        while (parent != null && !parent.getPathString().equals(this.contextPath))
         {
             parent = parent.getParent();
         }
+        Throw.whenNull(parent, "parent");
         return this.nodes.computeIfAbsent(parent, (p) -> new LinkedHashSet<>());
     }
 

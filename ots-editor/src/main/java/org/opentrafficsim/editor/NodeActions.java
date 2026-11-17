@@ -122,6 +122,7 @@ public class NodeActions
      */
     public void insert(final XsdTreeNode node)
     {
+        // TODO: this will not be robust for undo/redo
         this.editor.getUndo().startAction(ActionType.INSERT, node, null);
         XsdTreeNode newNode = node.emptyCopy();
         newNode.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
@@ -139,6 +140,7 @@ public class NodeActions
      */
     public void paste(final XsdTreeNode node)
     {
+        // TODO: this will not be robust for undo/redo
         this.editor.getUndo().startAction(ActionType.PASTE, node, null);
         XsdTreeNode newNode;
         if (!node.isActive())
@@ -199,7 +201,8 @@ public class NodeActions
      */
     public void setOption(final XsdTreeNode selected)
     {
-        this.editor.getUndo().startAction(ActionType.OPTION, selected.getOption(), null);
+        this.editor.getUndo().startAction(ActionType.OPTION, selected.getOption() == null ? selected : selected.getOption(),
+                null);
         selected.setOption(selected);
         this.editor.getUndo().setPostActionShowNode(selected);
         this.editor.show(selected, null);

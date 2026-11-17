@@ -248,7 +248,15 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
             // happens when children are created lazily as a result of expanding the selected parent.
             this.selectedNode = node;
         }
-        fireTreeNodesInserted(this, path, new int[] {index}, new Object[] {node});
+        try
+        {
+            fireTreeNodesInserted(this, path, new int[] {index}, new Object[] {node});
+        }
+        catch (IndexOutOfBoundsException ex)
+        {
+            // fallback; we do not want the GUI to hang over this -- there is a hole somewhere in the registration
+            fireTreeStructureChanged(this, path, null, null);
+        }
     }
 
     /**
@@ -273,7 +281,15 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
             int childCount = parent.children == null ? 0 : parent.children.size();
             this.selectedNode = childCount == 0 ? parent : parent.children.get(Math.min(index, childCount - 1));
         }
-        fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {node});
+        try
+        {
+            fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {node});
+        }
+        catch (IndexOutOfBoundsException ex)
+        {
+            // fallback; we do not want the GUI to hang over this -- there is a hole somewhere in the registration
+            fireTreeStructureChanged(this, path, null, null);
+        }
     }
 
     /**
@@ -295,25 +311,38 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
 
     /**
      * Handles a change of the selected option of a choice. The event is fired for every option, so only the event of the newly
-     * selected option is used.
+     * selected option is used; events for cleared selections, and for options that are not selected, are ignored. Changes on
+     * nodes that are not part of the visible tree, e.g. because another node is the root of the tree table model, are also
+     * ignored, as no tree event can be fired for them.
      * @param option option on which the event was fired
-     * @param selected newly selected option
+     * @param selected newly selected option, or {@code null} when the selection was cleared
      * @param previous previously selected option
      */
     private void optionChanged(final XsdTreeNode option, final XsdTreeNode selected, final XsdTreeNode previous)
     {
-        if (option != selected || selected == null)
+        if (previous == selected)
+        {
+            return; // no structural change, e.g. an event used to trigger a listener
+        }
+        if (selected == null)
+        {
+            // A cleared selection does not change the structure of the visible tree, so there is nothing to fire.
+            return;
+        }
+        if (option != selected)
         {
             return;
         }
         XsdTreeNode parent = selected.getParent();
         if (parent == null || !parent.isActive())
         {
-            return;
+            return; // parent is not visible in the current tree
         }
         Object[] path = pathTo(parent);
         if (path == null)
         {
+            // The parent is not part of the visible tree, e.g. because another node is the root of the tree table model;
+            // firing an event would apply an index of a hidden parent to the current tree root.
             return;
         }
         int index = parent.children == null ? -1 : parent.children.indexOf(selected);
@@ -325,12 +354,24 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         {
             this.selectedNode = equivalentNode(previous, selected, this.selectedNode);
         }
-        if (previous != null && this.inserted.remove(previous))
+        boolean removedPrevious = previous != null && this.inserted.remove(previous);
+        try
         {
-            fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {previous});
+            if (removedPrevious)
+            {
+                fireTreeNodesRemoved(this, path, new int[] {index}, new Object[] {previous});
+            }
+            if (removedPrevious || !this.inserted.contains(selected))
+            {
+                markInserted(selected);
+                fireTreeNodesInserted(this, path, new int[] {index}, new Object[] {selected});
+            }
         }
-        markInserted(selected);
-        fireTreeNodesInserted(this, path, new int[] {index}, new Object[] {selected});
+        catch (IndexOutOfBoundsException ex)
+        {
+            // fallback; we do not want the GUI to hang over this -- there is a hole somewhere in the registration
+            fireTreeStructureChanged(this, path, null, null);
+        }
     }
 
     /**
@@ -369,8 +410,16 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         {
             return;
         }
-        fireTreeNodesRemoved(this, path, new int[] {oldIndex}, new Object[] {node});
-        fireTreeNodesInserted(this, path, new int[] {newIndex}, new Object[] {node});
+        try
+        {
+            fireTreeNodesRemoved(this, path, new int[] {oldIndex}, new Object[] {node});
+            fireTreeNodesInserted(this, path, new int[] {newIndex}, new Object[] {node});
+        }
+        catch (IndexOutOfBoundsException ex)
+        {
+            // fallback; we do not want the GUI to hang over this -- there is a hole somewhere in the registration
+            fireTreeStructureChanged(this, path, null, null);
+        }
     }
 
     /**

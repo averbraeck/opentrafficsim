@@ -200,7 +200,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         else if (XsdTreeNode.OPTION_CHANGED.equals(event.getType()))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            activationOrChoiceStatusChanged(node, node.getOption().equals(node));
+            activationOrChoiceStatusChanged(node, node.equals(node.getOption()));
             invalidateAllDependent();
         }
     }

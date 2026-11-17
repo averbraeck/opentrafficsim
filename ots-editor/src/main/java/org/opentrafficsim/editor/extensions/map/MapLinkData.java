@@ -198,8 +198,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             laterIfNotDestroyed(() ->
             {
-                // this is for 1) when delete is undone, as some children are recovered later, and 2) when the centroid or node
-                // is later in a loaded xml
+                // this is for when the centroid or node is later in a loaded xml
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
                 this.centroid = replaceNode(this.centroid, linkNode.getCoupledNodeAttribute("Centroid").orElse(null));
                 this.connectorNode = replaceNode(this.connectorNode, linkNode.getCoupledNodeAttribute("Node").orElse(null));
@@ -207,21 +206,28 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             });
             return;
         }
-        if (EditorMap.LINK_SHAPES.contains(linkNode.getChild(0).getNodeName()))
+        if (linkNode.getChildCount() > 0 && EditorMap.LINK_SHAPES.contains(linkNode.getChild(0).getNodeName()))
         {
             linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
             this.shapeListener.shapeNode = linkNode.getChild(0);
         }
 
-        // as RoadLayout is the default, a setOption() never triggers this (for DefinedRoadLayout this is not required)
+        // as RoadLayout is the default, a setOption() never triggers this (for Defined this is not required)
         laterIfNotDestroyed(() ->
         {
-            XsdTreeNode layout = linkNode.getChild(1);
-            layout.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-            if (layout.getOption().equals(layout))
+            if (linkNode.getChildCount() < 2)
             {
-                notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {layout, layout, layout}));
+                return; // children not (yet) available, e.g. during replay/undo-redo
             }
+            XsdTreeNode layout = linkNode.getChild(1);
+            layout.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+            layout.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+            if (layout.equals(layout.getOption()) || layout.getOption() != null)
+            {
+                XsdTreeNode selected = layout.getOption() == null ? layout : layout.getOption();
+                notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {selected, selected, layout}));
+            }
+            setDirtyAndCheckValidity();
         });
 
         // for when node is duplicated, set data immediately if (getNode().isActive())
@@ -229,18 +235,25 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             laterIfNotDestroyed(() ->
             {
+                if (linkNode.getChildCount() < 1)
+                {
+                    return; // children not (yet) available, e.g. during replay/undo-redo
+                }
                 // this is for 1) when delete is undone, as some children are recovered later, including the shape node, and 2)
                 // when the start or end node are later in a loaded xml
-                this.shapeListener.shapeNode = linkNode.getChild(0);
-                linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+                XsdTreeNode shape = linkNode.getChild(0);
+                this.shapeListener.shapeNode = shape;
+                shape.removeListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED);
+                shape.addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
 
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
                 this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledNodeAttribute("NodeStart").orElse(null));
                 this.nodeEnd = replaceNode(this.nodeEnd, linkNode.getCoupledNodeAttribute("NodeEnd").orElse(null));
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetStart", null}));
                 notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
-                XsdTreeNode shape = linkNode.getChild(0);
-                this.shapeListener.notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
+                // Use the shape node itself as previous so listeners treat this as a real selection/state sync (not a no-op).
+                this.shapeListener
+                        .notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape.getOption()}));
 
                 setDirtyAndCheckValidity();
             });
@@ -1605,7 +1618,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     // later as values may not be loaded yet during loading
                     laterIfNotDestroyed(() -> updateShape());
                 }
-                else
+                else if (!this.shapeNode.getNodeName().equals("xsd:choice"))
                 {
                     // shape node changed
                     if (this.shapeNode != null)

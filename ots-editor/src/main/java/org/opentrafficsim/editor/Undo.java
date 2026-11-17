@@ -2,7 +2,6 @@ package org.opentrafficsim.editor;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,6 +17,7 @@ import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 
 /**
@@ -93,6 +93,8 @@ public class Undo implements EventListener, EventProducer
     {
         this.ignoreChanges = false;
         this.currentSubActionSet = null;
+        this.currentNodesAffected = null;
+        this.nextAction = null;
         this.cursor = -1;
         this.queue = new LinkedList<>();
         this.undoItem.setEnabled(false);
@@ -154,6 +156,7 @@ public class Undo implements EventListener, EventProducer
         // make allocated next action a concrete next action in the queue
         if (this.nextAction != null)
         {
+            Logger.ots().trace("=== " + this.nextAction.type + " ===");
             // remove any possible redos fresher in the queue than our current pointer (i.e. rolled back undo steps)
             while (this.cursor < this.queue.size() - 1)
             {
@@ -177,6 +180,7 @@ public class Undo implements EventListener, EventProducer
         {
             this.currentNodesAffected.add(affectedNode);
         }
+        Logger.ots().trace(subAction);
     }
 
     /**
@@ -202,52 +206,63 @@ public class Undo implements EventListener, EventProducer
      */
     public synchronized void undo()
     {
-        if (this.ignoreChanges)
+        if (this.ignoreChanges || !canUndo())
         {
             return;
         }
         this.ignoreChanges = true;
-
         Action action = this.queue.get(this.cursor);
-        if (action.type.equals(ActionType.ACTIVATE))
+        try
         {
-            this.editor.collapse(action.node);
+            if (action.type.equals(ActionType.ACTIVATE))
+            {
+                this.editor.collapse(action.node);
+            }
+            // In case of Java 21: action.subActions.reversed().forEach((a) -> a.undo());
+            Iterator<SubAction> iterator = action.subActions.descendingIterator();
+            Logger.ots().trace("=== undo ===");
+            while (iterator.hasNext())
+            {
+                SubAction a = iterator.next();
+                Logger.ots().trace(a);
+                a.undo();
+            }
+            if (action.type.equals(ActionType.REMOVE))
+            {
+                /*
+                 * CoupledValidators expect VALUE_CHANGED or ATTRIBUTE_CHANGED events to validate and couple. A NODE_CREATED
+                 * event as caused by an undo of a node removal, will simply place the node back in to the tree. Therefore we
+                 * need to invalidate the whole tree.
+                 */
+                if (action.node != null)
+                {
+                    action.node.getRoot().invalidateAll();
+                }
+            }
+            else
+            {
+                action.parent.children.forEach((n) -> n.invalidate());
+                action.parent.invalidate();
+            }
+            if (action.postActionClearSelection)
+            {
+                this.editor.clearSelection();
+                this.editor.setStatusLabel("Undo " + action.type + " on group");
+            }
+            else
+            {
+                this.editor.setStatusLabel("Undo " + action.type + " on " + action.node
+                        + (action.attribute == null ? "" : " attribute " + action.attribute));
+                this.editor.show(action.node, action.attribute);
+            }
+            this.cursor--;
+            updateButtons();
         }
-        // In case of Java 21: action.subActions.reversed().forEach((a) -> a.undo());
-        Iterator<SubAction> iterator = action.subActions.descendingIterator();
-        while (iterator.hasNext())
+        finally
         {
-            iterator.next().undo();
+            this.ignoreChanges = false;
         }
-        if (action.type.equals(ActionType.REMOVE))
-        {
-            /*
-             * CoupledValidators expect VALUE_CHANGED or ATTRIBUTE_CHANGED events to validate and couple. A NODE_CREATED event
-             * as caused by an undo of a node removal, will simply place the node back in to the tree. Therefore we need to
-             * invalidate the whole tree.
-             */
-            action.node.getRoot().invalidateAll();
-        }
-        else
-        {
-            action.parent.children.forEach((n) -> n.invalidate());
-            action.parent.invalidate();
-        }
-        if (action.postActionClearSelection)
-        {
-            this.editor.clearSelection();
-            this.editor.setStatusLabel("Undo " + action.type + " on group");
-        }
-        else
-        {
-            this.editor.setStatusLabel("Undo " + action.type + " on " + action.node
-                    + (action.attribute == null ? "" : " attribute " + action.attribute));
-            this.editor.show(action.node, action.attribute);
-        }
-        this.cursor--;
-        updateButtons();
-        this.ignoreChanges = false;
-        fireEvent(UNDO_EVENT, Collections.unmodifiableCollection(action.affectedNodes));
+        fireEvent(UNDO_EVENT, new java.util.ArrayList<>(action.affectedNodes));
     }
 
     /**
@@ -255,30 +270,43 @@ public class Undo implements EventListener, EventProducer
      */
     public synchronized void redo()
     {
-        if (this.ignoreChanges)
+        if (this.ignoreChanges || !canRedo())
         {
             return;
         }
         this.ignoreChanges = true;
-        this.cursor++;
-        Action action = this.queue.get(this.cursor);
-        action.subActions.forEach((a) -> a.redo());
-        action.parent.children.forEach((n) -> n.invalidate());
-        action.parent.invalidate();
-        if (action.postActionClearSelection)
+        Action action = this.queue.get(this.cursor + 1);
+        try
         {
-            this.editor.clearSelection();
-            this.editor.setStatusLabel("Redo " + action.type + " on group");
+            Iterator<SubAction> iterator = action.subActions.iterator();
+            Logger.ots().trace("=== redo ===");
+            while (iterator.hasNext())
+            {
+                SubAction a = iterator.next();
+                Logger.ots().trace(a);
+                a.redo();
+            }
+            action.parent.children.forEach((n) -> n.invalidate());
+            action.parent.invalidate();
+            if (action.postActionClearSelection)
+            {
+                this.editor.clearSelection();
+                this.editor.setStatusLabel("Redo " + action.type + " on group");
+            }
+            else
+            {
+                this.editor.setStatusLabel("Redo " + action.type + " on " + action.node
+                        + (action.attribute == null ? "" : " attribute " + action.attribute));
+                this.editor.show(action.postActionShowNode, action.attribute);
+            }
+            this.cursor++;
+            updateButtons();
         }
-        else
+        finally
         {
-            this.editor.setStatusLabel("Redo " + action.type + " on " + action.node
-                    + (action.attribute == null ? "" : " attribute " + action.attribute));
-            this.editor.show(action.postActionShowNode, action.attribute);
+            this.ignoreChanges = false;
         }
-        updateButtons();
-        this.ignoreChanges = false;
-        fireEvent(UNDO_EVENT, Collections.unmodifiableCollection(action.affectedNodes));
+        fireEvent(UNDO_EVENT, new java.util.ArrayList<>(action.affectedNodes));
     }
 
     /**
@@ -315,8 +343,8 @@ public class Undo implements EventListener, EventProducer
             add(new SubAction(() ->
             {
                 parent.children.remove(node);
-                node.parent = null;
                 root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {node, parent, index});
+                node.parent = null;
             }, () ->
             {
                 if (index >= 0)
@@ -325,7 +353,7 @@ public class Undo implements EventListener, EventProducer
                 }
                 node.parent = parent;
                 root.fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
-            }, "Create " + node.getPathString()), node);
+            }, idSuffix("Create " + node.getPathString(), node)), node);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -345,14 +373,15 @@ public class Undo implements EventListener, EventProducer
                 else
                 {
                     parent.setChild(index, node);
+                    node.parent = parent;
                     root.fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, index});
                 }
             }, () ->
             {
                 node.parent.children.remove(node);
-                node.parent = null;
                 root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {node, parent, index});
-            }, "Remove " + node.getPathString()), node);
+                node.parent = null;
+            }, idSuffix("Remove " + node.getPathString(), node)), node);
         }
         else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
         {
@@ -365,7 +394,7 @@ public class Undo implements EventListener, EventProducer
             }, () ->
             {
                 node.setValue(value); // invokes event
-            }, "Change " + node.getPathString() + " value: " + value), node);
+            }, idSuffix("Change " + node.getPathString() + " value: " + value, node)), node);
         }
         else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
@@ -389,7 +418,7 @@ public class Undo implements EventListener, EventProducer
             }, () ->
             {
                 node.setAttributeValue(attribute, value); // invokes event
-            }, "Create " + node.getPathString() + ".@" + attribute + ": " + value), node);
+            }, idSuffix("Create " + node.getPathString() + ".@" + attribute + ": " + value, node)), node);
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
         {
@@ -416,7 +445,7 @@ public class Undo implements EventListener, EventProducer
                 {
                     node.setInactive();
                 }
-            }, "Activation " + node.getPathString() + " " + activated), node);
+            }, idSuffix("Activation " + node.getPathString() + " " + activated, node)), node);
         }
         else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
         {
@@ -431,7 +460,7 @@ public class Undo implements EventListener, EventProducer
                 }, () ->
                 {
                     previous.setOption(node); // invokes event
-                }, "Set option " + node.getPathString()), node);
+                }, idSuffix("Set option " + node.getPathString(), node)), node);
             }
         }
         else if (event.getType().equals(XsdTreeNode.MOVED))
@@ -450,7 +479,7 @@ public class Undo implements EventListener, EventProducer
                 node.parent.children.remove(node);
                 node.parent.children.add(newIndex, node);
                 node.fireEvent(XsdTreeNode.MOVED, new Object[] {node, oldIndex, newIndex});
-            }, "Move " + node.getPathString()), node);
+            }, idSuffix("Move " + node.getPathString(), node)), node);
         }
         else if (event.getType().equals(CoupledValidator.COUPLING))
         {
@@ -476,8 +505,19 @@ public class Undo implements EventListener, EventProducer
                 fromNode.invalidate();
             };
             add(new SubAction(() -> consumer.accept(prevToNode), () -> consumer.accept(toNode),
-                    "Coupling " + fromNode.getNodeName()), null);
+                    idSuffix("Coupling " + fromNode.getNodeName(), fromNode)), null);
         }
+    }
+
+    /**
+     * Appends base string with ID if the node has an ID.
+     * @param str base string
+     * @param node node
+     * @return base string, plus an ID between brackets if the node has an ID
+     */
+    private static String idSuffix(final String str, final XsdTreeNode node)
+    {
+        return node.isIdentifiable() ? str + " (" + node.getId() + ")" : str;
     }
 
     /**

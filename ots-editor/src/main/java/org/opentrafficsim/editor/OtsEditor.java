@@ -700,6 +700,17 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
+     * Returns the highlighted node, or {@code null} if no highlight.
+     * @return the highlighted node, or {@code null} if no highlight
+     */
+    public XsdTreeNode getHighlight()
+    {
+        XsdTreeTableModel model = (XsdTreeTableModel) this.treeTable.getTree().getModel();
+        XsdTreeNode node = (XsdTreeNode) model.getRoot();
+        return node instanceof XsdTreeNodeRoot ? null : node;
+    }
+
+    /**
      * Restore node expansion.
      * @param node node
      * @param path path

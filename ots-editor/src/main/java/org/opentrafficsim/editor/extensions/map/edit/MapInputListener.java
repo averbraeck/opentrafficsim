@@ -994,6 +994,11 @@ public class MapInputListener extends InputListener implements EventListener
                 select(data.get(), i++ > 0, false, false);
             }
         }
+        XsdTreeNode highlight = this.editor.getHighlight();
+        if (highlight != null && highlight.getParent() == null)
+        {
+            this.editor.setHighlight(null);
+        }
     }
 
     /**
@@ -1306,13 +1311,11 @@ public class MapInputListener extends InputListener implements EventListener
     private void deselect()
     {
         this.selectedDraggable = null;
-        for (Renderable2d<?> selectionRenderable : this.selectionIndicators)
+        for (SelectionAnnotation selectionRenderable : this.selectionIndicators)
         {
-            if (selectionRenderable.getSource() instanceof MapData mapData)
-            {
-                mapData.removeListener(this, MapData.MAP_DATA_CHANGED);
-                removeActivationListener(mapData.getNode());
-            }
+            MapData mapData = selectionRenderable.getSource().mapData();
+            mapData.removeListener(this, MapData.MAP_DATA_CHANGED);
+            removeActivationListener(mapData.getNode());
             this.editorMap.removeAnimation(selectionRenderable);
         }
         this.selectionIndicators.clear();

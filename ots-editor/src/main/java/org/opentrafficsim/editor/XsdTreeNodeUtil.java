@@ -288,7 +288,7 @@ public final class XsdTreeNodeUtil
     {
         List<XsdTreeNode> subNodes = node.children == null ? new ArrayList<>() : new ArrayList<>(node.children);
         // only selected node extends towards choice, otherwise infinite recursion
-        if (node.choice != null && node.choice.selected.equals(node))
+        if (node.choice != null && node.equals(node.choice.selected))
         {
             subNodes.add(node.choice);
             subNodes.addAll(node.choice.options);

@@ -58,6 +58,10 @@ public class SelectionAnnotation extends MapAnnotation<ZAdjustedMapData>
     @Override
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        if (getSource().getLocation() == null || getSource().getAbsoluteContour() == null)
+        {
+            return;
+        }
         setRendering(graphics);
         graphics.setStroke(new BasicStroke(px(1.75f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10.0f));
         graphics.setColor(getColor());

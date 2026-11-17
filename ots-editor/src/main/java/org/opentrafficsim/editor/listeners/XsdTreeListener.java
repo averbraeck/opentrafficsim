@@ -104,6 +104,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             if (this.listening != null)
             {
                 this.listening.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+                this.listening.removeListener(this, XsdTreeNode.VALUE_CHANGED);
             }
             if (node.isIdentifiable())
             {
@@ -172,16 +173,17 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     @Override
     public void notify(final Event event)
     {
-        if (this.listening != null)
+        if (this.listening == null || ((Object[]) event.getContent())[0] != this.listening)
         {
-            if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED) && "Id".equals(((Object[]) event.getContent())[1]))
-            {
-                this.editor.setCoupledNode(this.listening.getCoupledNodeAttribute("Id").orElse(null), this.listening, "Id");
-            }
-            else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
-            {
-                this.editor.setCoupledNode(this.listening.getCoupledNodeValue().orElse(null), this.listening, null);
-            }
+            return;
+        }
+        if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED) && "Id".equals(((Object[]) event.getContent())[1]))
+        {
+            this.editor.setCoupledNode(this.listening.getCoupledNodeAttribute("Id").orElse(null), this.listening, "Id");
+        }
+        else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
+        {
+            this.editor.setCoupledNode(this.listening.getCoupledNodeValue().orElse(null), this.listening, null);
         }
     }
 

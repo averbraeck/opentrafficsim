@@ -442,10 +442,7 @@ public class XsdTreeNode extends LocalEventProducer
     public void fireEvent(final Event event)
     {
         super.fireEvent(event);
-        if (this.parent != null)
-        {
-            getRoot().notifyAllNodesListeners(event);
-        }
+        getRoot().notifyAllNodesListeners(event);
     }
 
     /**
@@ -517,7 +514,7 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Removes option from the parent and return the appropriate index to insert newly chosen option.
+     * Removes option from the parent and returns the appropriate index to insert newly chosen option.
      * @return insertion index for new option.
      */
     private int removeOptionFromParent()
@@ -557,8 +554,8 @@ public class XsdTreeNode extends LocalEventProducer
         Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice") && !this.xsdNode.getNodeName().equals("xsd:all"),
                 IllegalStateException.class, "Can only add options for a node of type xsd:choice or xsd:all.");
         this.options = new ArrayList<>();
-        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
         this.choice = this;
+        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
         for (XsdTreeNode option : this.options)
         {
             option.minOccurs = this.minOccurs;
@@ -1167,7 +1164,7 @@ public class XsdTreeNode extends LocalEventProducer
             this.isEditable = null;
             assureAttributesAndDescription();
             assureChildren();
-            if (this.choice != null && this.choice.selected.equals(this))
+            if (this.choice != null && this.equals(this.choice.selected))
             {
                 this.choice.active = true;
                 for (XsdTreeNode option : this.choice.options)
@@ -1359,7 +1356,7 @@ public class XsdTreeNode extends LocalEventProducer
             XsdTreeNode node = new XsdTreeNode(this.choice.parent, this.choice.xsdNode, this.choice.hiddenNodes,
                     this.choice.referringXsdNode);
             getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                    new Object[] {node, node.parent, node.parent.children.indexOf(this) + 1});
+                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             node.createOptions();
             int indexSelected = this.choice.options.indexOf(this.choice.selected);
             XsdTreeNode selectedOption = node.options.get(indexSelected);
@@ -1402,21 +1399,62 @@ public class XsdTreeNode extends LocalEventProducer
      */
     public XsdTreeNode duplicate(final XsdTreeNode newParent)
     {
-        // empty copy
-        XsdTreeNode copyNode = emptyCopy(newParent);
+        XsdTreeNode copyNode;
+        if (this.choice != null)
+        {
+            int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
+            XsdTreeNode node = new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes,
+                    this.choice.referringXsdNode);
+            if (this.active)
+            {
+                node.setActive();
+            }
+            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
+            node.createOptions();
+            int indexSelected = this.choice.options.indexOf(this.choice.selected);
+            XsdTreeNode selectedOption = node.options.get(indexSelected);
+            node.choice.setOption(selectedOption);
+            int movedFrom = newParent.children.indexOf(selectedOption);
+            newParent.children.remove(selectedOption); // needs to be at the right index
+            newParent.children.add(index, selectedOption);
+            if (movedFrom != index)
+            {
+                selectedOption.fireEvent(MOVED, new Object[] {selectedOption, movedFrom, index});
+            }
+            node.options.get(indexSelected).setActive();
+            copyNode = selectedOption;
+        }
+        else
+        {
+            int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
+            XsdTreeNode node = new XsdTreeNode(newParent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
+            newParent.children.add(index, node);
+            if (this.active)
+            {
+                node.setActive();
+            }
+            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
+            copyNode = node;
+        }
 
-        // copy node-local state needed by listeners on creation
-        copyNode.active = this.active;
-        copyOwnStateInto(copyNode);
-        copyNode.assureChildren();
-        copyNode.invalidate();
-        getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
+        // value
+        if (copyNode.isEditable())
+        {
+            copyNode.setValue(this.getValue());
+        }
 
-        // duplicate children after parent creation event
+        // attributes
+        copyNode.assureAttributesAndDescription();
+        for (int index = 0; index < attributeCount(); index++)
+        {
+            copyNode.setAttributeValue(index, this.getAttributeValue(index));
+        }
+
+        // children
         copyChildrenInto(copyNode);
 
-        invalidate(); // due to e.g. duplicate ID, this node may also become invalid
         return copyNode;
     }
 
@@ -1524,6 +1562,8 @@ public class XsdTreeNode extends LocalEventProducer
                 option.active = this.choice.options.get(index).active;
                 option.choice = choiceNode;
             }
+            choiceNode.invalidate();
+            choiceNode.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, new Object[] {choiceNode, choiceNode.selected, choiceNode});
         }
         // copy attributes
         copyNode.assureAttributesAndDescription();
@@ -1545,8 +1585,8 @@ public class XsdTreeNode extends LocalEventProducer
             while (!copyNode.children.isEmpty())
             {
                 XsdTreeNode child = copyNode.children.remove(0);
-                child.parent = null;
                 getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, copyNode, 0});
+                child.parent = null;
             }
         }
         else
@@ -1585,11 +1625,11 @@ public class XsdTreeNode extends LocalEventProducer
             setInactive();
             return;
         }
-        if (this.choice != null && this.choice.selected.equals(this))
+        if (this.choice != null && this.equals(this.choice.selected))
         {
             for (XsdTreeNode option : this.choice.options)
             {
-                if (!this.choice.selected.equals(this))
+                if (!option.equals(this))
                 {
                     option.remove();
                 }
@@ -1600,8 +1640,8 @@ public class XsdTreeNode extends LocalEventProducer
         int index = this.parent.children.indexOf(this);
         this.parent.children.remove(this);
         XsdTreeNodeRoot root = getRoot(); // can't get it later as we set parent to null
-        this.parent = null;
         root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {this, parentNode, index});
+        this.parent = null;
     }
 
     /**
@@ -2654,6 +2694,7 @@ public class XsdTreeNode extends LocalEventProducer
                         // can't do a remove() on the node, as it might just become deactivated and still be visible
                         XsdTreeNode child = this.children.remove(index);
                         getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, this, index});
+                        child.parent = null;
                     }
                     else
                     {
@@ -2876,7 +2917,7 @@ public class XsdTreeNode extends LocalEventProducer
             }
             return false;
         }
-        if (this.choice.selected.equals(this))
+        if (this.equals(this.choice.selected))
         {
             for (XsdTreeNode option : this.choice.options)
             {

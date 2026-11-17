@@ -57,7 +57,7 @@ final class MapLinkEditActions
         }
 
         double f = centerLine.projectOrthogonalFractional(world);
-        if (f <= 0.0 || f >= 1.0)
+        if (f <= 0.0 || f >= 1.0 || Double.isNaN(f))
         {
             return;
         }
@@ -75,8 +75,7 @@ final class MapLinkEditActions
             return;
         }
 
-        XsdTreeNode addedNode =
-                MapAdder.addPoint(linkData.getEditor(), editorMap, "(" + split.x + "," + split.y + ")", false);
+        XsdTreeNode addedNode = MapAdder.addPoint(linkData.getEditor(), editorMap, "(" + split.x + "," + split.y + ")", false);
         if (addedNode == null || addedNode.getId() == null)
         {
             return;
@@ -87,19 +86,9 @@ final class MapLinkEditActions
         String newNodeId = addedNode.getId();
 
         linkNode.setAttributeValue("NodeEnd", newNodeId);
-        XsdTreeNode newLink = linkNode.add();
+        XsdTreeNode newLink = linkNode.duplicate();
         newLink.setAttributeValue("NodeStart", newNodeId);
         newLink.setAttributeValue("NodeEnd", endId);
-
-        newLink.setAttributeValue("Type", linkNode.getAttributeValue("Type"));
-        newLink.setAttributeValue("OffsetStart", linkNode.getAttributeValue("OffsetStart"));
-        newLink.setAttributeValue("OffsetEnd", linkNode.getAttributeValue("OffsetEnd"));
-        newLink.setAttributeValue("LaneKeeping", linkNode.getAttributeValue("LaneKeeping"));
-        newLink.setAttributeValue("Priority", linkNode.getAttributeValue("Priority"));
-
-        // TODO: deep copy of shape and road layout
-        // TODO: distribute traffic lights over both links
-        // TODO: undo - redo leaves invalid visual tree structure
 
         if ((startId + "-" + endId).equals(oldLinkId))
         {
@@ -139,7 +128,7 @@ final class MapLinkEditActions
             {
                 continue;
             }
-            Optional<XsdTreeNode> end =  element.getCoupledNodeAttribute("NodeEnd");
+            Optional<XsdTreeNode> end = element.getCoupledNodeAttribute("NodeEnd");
             if (end.isPresent() && node.getId().equals(end.get().getId()))
             {
                 if (incoming != null)
@@ -148,7 +137,7 @@ final class MapLinkEditActions
                 }
                 incoming = element;
             }
-            Optional<XsdTreeNode> start =  element.getCoupledNodeAttribute("NodeStart");
+            Optional<XsdTreeNode> start = element.getCoupledNodeAttribute("NodeStart");
             if (start.isPresent() && node.getId().equals(start.get().getId()))
             {
                 if (outgoing != null)
@@ -181,7 +170,13 @@ final class MapLinkEditActions
         incoming.setAttributeValue("NodeEnd", c);
         if ((a + "-" + nodeId).equals(incomingId))
         {
-            incoming.setId(a + "-" + c);
+            Set<String> usedLinkIds = collectLinkIds(incoming.getParent());
+            String candidate = a + "-" + c;
+            if (usedLinkIds.contains(candidate))
+            {
+                candidate = uniqueAppendedId(candidate, usedLinkIds);
+            }
+            incoming.setId(candidate);
         }
         outgoing.remove();
         node.remove();
@@ -220,6 +215,19 @@ final class MapLinkEditActions
     {
         String base = baseId == null || baseId.isBlank() ? "Link" : baseId;
         int index = 1;
+
+        int open = base.lastIndexOf('(');
+        int close = base.endsWith(")") ? base.length() - 1 : -1;
+        if (open >= 1 && close > open + 1)
+        {
+            String numberPart = base.substring(open + 1, close);
+            if (numberPart.chars().allMatch(Character::isDigit))
+            {
+                index = Integer.parseInt(numberPart);
+                base = base.substring(0, open);
+            }
+        }
+
         String candidate;
         do
         {

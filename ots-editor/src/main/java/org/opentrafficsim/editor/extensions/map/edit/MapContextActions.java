@@ -193,8 +193,10 @@ final class MapContextActions
         if (!data.isConnector())
         {
             Point2D clickPoint = event.getPoint();
-            addContextMenuItem(menu, "Split link", null, () -> MapLinkEditActions.splitLink(editorMap, data, clickPoint),
-                    data.getEditor());
+            addContextMenuItem(menu, "Split link", null, () ->
+            {
+                MapLinkEditActions.splitLink(editorMap, data, clickPoint);
+            }, data.getEditor());
             addLinkShapeContextMenu(menu, data);
             String current = data.getNode().getAttributeValueOrDefault("Priority");
             Set<Priority> currentPriority = current == null ? Set.of(Priority.NONE)
