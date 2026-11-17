@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.line.Ray2d;
@@ -193,15 +194,18 @@ final class MapContextActions
         if (!data.isConnector())
         {
             Point2D clickPoint = event.getPoint();
-            addContextMenuItem(menu, "Split link", null, () ->
+            Icon icon = IconUtil.of("Node24.png").imageSize(ICON_SIZE, ICON_SIZE).get();
+            addContextMenuItem(menu, "Split link", icon, () ->
             {
                 MapLinkEditActions.splitLink(editorMap, data, clickPoint);
             }, data.getEditor());
+
             addLinkShapeContextMenu(menu, data);
             String current = data.getNode().getAttributeValueOrDefault("Priority");
             Set<Priority> currentPriority = current == null ? Set.of(Priority.NONE)
                     : Arrays.stream(Priority.values()).noneMatch(e -> e.name().equals(current)) ? Collections.emptySet()
                             : Set.of(Priority.valueOf(current));
+            menu.add(new JSeparator());
             addPriorityContextMenu(menu, List.of(data), currentPriority);
         }
         // otherwise no items; menu will be skipped

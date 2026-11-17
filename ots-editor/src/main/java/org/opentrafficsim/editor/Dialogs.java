@@ -72,8 +72,21 @@ public class Dialogs
      */
     public boolean confirmGeneral(final String message)
     {
-        return JOptionPane.showConfirmDialog(this.editor, message, "Please confirm",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, QUESTION_ICON) == JOptionPane.OK_OPTION;
+        return JOptionPane.showConfirmDialog(this.editor, message, "Please confirm", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, QUESTION_ICON) == JOptionPane.OK_OPTION;
+    }
+
+    /**
+     * Shows a dialog in a modal pane to confirm message with yes/no/cancel.
+     * @param message message to be confirmed
+     * @return whether message was confirmed.
+     */
+    public Optional<Boolean> confirmYesNo(final String message)
+    {
+        int ans = JOptionPane.showConfirmDialog(this.editor, message, "Please confirm", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, QUESTION_ICON);
+        return Optional.ofNullable(
+                ans == JOptionPane.CANCEL_OPTION || ans == JOptionPane.CLOSED_OPTION ? null : ans == JOptionPane.YES_OPTION);
     }
 
     /**

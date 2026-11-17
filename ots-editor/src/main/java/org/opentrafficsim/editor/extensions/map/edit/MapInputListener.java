@@ -259,7 +259,7 @@ public class MapInputListener extends InputListener implements EventListener
             {
                 // dragging?
                 List<Draggable<?>> draggablesDatas = locatables.stream().filter(Draggable.class::isInstance)
-                        .<Draggable<?>>map(Draggable.class::cast).toList();
+                        .<Draggable<?>> map(Draggable.class::cast).toList();
                 if (!draggablesDatas.isEmpty())
                 {
                     Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
@@ -500,8 +500,8 @@ public class MapInputListener extends InputListener implements EventListener
         Optional<MapData> selected = mapDatas.stream().filter(this::isSelected).findFirst();
         if (selected.isEmpty() || e.isControlDown()
                 || !MapContextActions.showContextMenu(
-                        this.selectionIndicators.stream().map((a) -> a.getSource().mapData()).toList(),
-                        this.editorMap, this.editorMap.getPanel(), e))
+                        this.selectionIndicators.stream().map((a) -> a.getSource().mapData()).toList(), this.editorMap,
+                        this.editorMap.getPanel(), e))
         {
             showSelectLocatableMenu(mapDatas, e);
         }
@@ -764,7 +764,12 @@ public class MapInputListener extends InputListener implements EventListener
                         if (selectedData instanceof MapNodeData nodeData)
                         {
                             XsdTreeNode network = nodeData.getNode().getParent();
-                            if (MapLinkEditActions.tryMergeNodeOnDelete(this.editor, nodeData.getNode()))
+                            Optional<Boolean> ans = MapLinkEditActions.tryMergeNodeOnDelete(this.editor, nodeData.getNode());
+                            if (ans.isEmpty())
+                            {
+                                return; // Explicit cancel
+                            }
+                            if (ans.get())
                             {
                                 deselect();
                                 if (network != null)

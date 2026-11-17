@@ -112,12 +112,12 @@ final class MapLinkEditActions
      * @param node node to be deleted
      * @return whether merge was performed
      */
-    static boolean tryMergeNodeOnDelete(final OtsEditor editor, final XsdTreeNode node)
+    static Optional<Boolean> tryMergeNodeOnDelete(final OtsEditor editor, final XsdTreeNode node)
     {
         if (node == null || !XsdPaths.NODE.equals(node.getPathString()) || !node.isActive() || node.getParent() == null
                 || node.getId() == null)
         {
-            return false;
+            return Optional.of(false);
         }
 
         XsdTreeNode incoming = null;
@@ -133,7 +133,7 @@ final class MapLinkEditActions
             {
                 if (incoming != null)
                 {
-                    return false; // not a node on a corridor; we can't merge the links
+                    return Optional.of(false); // not a node on a corridor; we can't merge the links
                 }
                 incoming = element;
             }
@@ -142,19 +142,14 @@ final class MapLinkEditActions
             {
                 if (outgoing != null)
                 {
-                    return false; // not a node on a corridor; we can't merge the links
+                    return Optional.of(false); // not a node on a corridor; we can't merge the links
                 }
                 outgoing = element;
             }
         }
         if (incoming == null || outgoing == null)
         {
-            return false;
-        }
-
-        if (!editor.dialogs().confirmGeneral("Merge adjacent links while deleting node '" + node.getId() + "'?"))
-        {
-            return false;
+            return Optional.of(false);
         }
 
         String nodeId = node.getId();
@@ -162,9 +157,16 @@ final class MapLinkEditActions
         String c = outgoing.getAttributeValueOrDefault("NodeEnd");
         if (a == null || c == null)
         {
-            return false;
+            return Optional.of(false);
         }
         String incomingId = incoming.getId();
+
+        Optional<Boolean> ans =
+                editor.dialogs().confirmYesNo("Merge adjacent links while deleting node '" + node.getId() + "'?");
+        if (ans.isEmpty() || !ans.get())
+        {
+            return ans;
+        }
 
         editor.getUndo().startAction(ActionType.REMOVE, node.getParent(), null);
         incoming.setAttributeValue("NodeEnd", c);
@@ -180,7 +182,7 @@ final class MapLinkEditActions
         }
         outgoing.remove();
         node.remove();
-        return true;
+        return Optional.of(true);
     }
 
     /**
