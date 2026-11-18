@@ -107,18 +107,6 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     }
 
     /**
-     * Fires the event on this node, and additionally on the all node listeners. Events on child nodes are forwarded by
-     * {@code XsdTreeNode.fireEvent(...)}.
-     * @param event event to fire
-     */
-    @Override
-    public void fireEvent(final Event event)
-    {
-        super.fireEvent(event);
-        notifyAllNodesListeners(event);
-    }
-
-    /**
      * Add a listener that receives events on any node in the tree.
      * @param listener listener
      * @param type event type
