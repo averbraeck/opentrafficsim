@@ -157,9 +157,6 @@ public class MapInputListener extends InputListener implements EventListener
     /** Whether the mouse release following Esc should be ignored. */
     private boolean ignoreMouseReleaseAfterEscape;
 
-    /** Node of poly line coordinate that is selected. */
-    // private XsdTreeNode selectedPolyLineCoordinateNode;
-
     /** Set of draggables of current selected element. */
     private Set<DraggableAnnotation> draggables = new LinkedHashSet<>();
 
@@ -259,7 +256,7 @@ public class MapInputListener extends InputListener implements EventListener
             {
                 // dragging?
                 List<Draggable<?>> draggablesDatas = locatables.stream().filter(Draggable.class::isInstance)
-                        .<Draggable<?>> map(Draggable.class::cast).toList();
+                        .<Draggable<?>>map(Draggable.class::cast).toList();
                 if (!draggablesDatas.isEmpty())
                 {
                     Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
@@ -690,7 +687,7 @@ public class MapInputListener extends InputListener implements EventListener
      */
     private void addPoint(final Point2d coordinate, final boolean centroid)
     {
-        XsdTreeNode added = MapAdder.addPoint(this.editor, this.editorMap, pointToCoordinateString(coordinate), centroid);
+        XsdTreeNode added = MapAdder.addPoint(this.editor, this.editorMap, pointToCoordinateString(coordinate), centroid, null);
         if (added != null)
         {
             select(added);
@@ -987,20 +984,25 @@ public class MapInputListener extends InputListener implements EventListener
     public void setSelection(final Collection<XsdTreeNode> nodes)
     {
         int i = 0;
+        XsdTreeNode lastSelected = null;
         for (XsdTreeNode node : nodes)
         {
             Optional<MapData> data = this.editorMap.getData(node);
-            if (data.isPresent())
+            if (data.isPresent() && data.get().isValid())
             {
                 if (i == 0)
                 {
                     deselect();
                 }
+                lastSelected = data.get().getNode();
                 select(data.get(), i++ > 0, false, false);
             }
         }
-        XsdTreeNode highlight = this.editor.getHighlight();
-        if (highlight != null && highlight.getParent() == null)
+        if (i == 1)
+        {
+            this.editor.setHighlight(lastSelected);
+        }
+        else if (this.editor.getHighlight() != null && i > 1)
         {
             this.editor.setHighlight(null);
         }

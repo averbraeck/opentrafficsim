@@ -197,7 +197,11 @@ final class MapContextActions
             Icon icon = IconUtil.of("Node24.png").imageSize(ICON_SIZE, ICON_SIZE).get();
             addContextMenuItem(menu, "Split link", icon, () ->
             {
-                MapLinkEditActions.splitLink(editorMap, data, clickPoint);
+                XsdTreeNode newLink = MapLinkEditActions.splitLink(editorMap, data, clickPoint);
+                if (newLink != null)
+                {
+                    data.getEditor().getUndo().setPostActionShowNode(newLink);
+                }
             }, data.getEditor());
 
             addLinkShapeContextMenu(menu, data);

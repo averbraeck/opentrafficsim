@@ -37,34 +37,35 @@ final class MapLinkEditActions
      * @param editorMap editor map
      * @param linkData selected link data
      * @param screenPoint clicked screen location
+     * @return new node representing second new part, or {@code null} if not split for some reason
      */
-    static void splitLink(final EditorMap editorMap, final MapLinkData linkData, final Point2D screenPoint)
+    static XsdTreeNode splitLink(final EditorMap editorMap, final MapLinkData linkData, final Point2D screenPoint)
     {
         if (linkData == null || linkData.isConnector() || screenPoint == null)
         {
-            return;
+            return null;
         }
         Point2d world = editorMap.getPanel().getRenderableScale().getWorldCoordinates(screenPoint,
                 editorMap.getPanel().getExtent(), editorMap.getPanel().getSize());
         if (world == null)
         {
-            return;
+            return null;
         }
         PolyLine2d centerLine = linkData.getCenterLine();
         if (centerLine == null)
         {
-            return;
+            return null;
         }
 
         double f = centerLine.projectOrthogonalFractional(world);
         if (f <= 0.0 || f >= 1.0 || Double.isNaN(f))
         {
-            return;
+            return null;
         }
         DirectedPoint2d split = centerLine.getLocationFraction(f);
         if (split == null)
         {
-            return;
+            return null;
         }
 
         XsdTreeNode linkNode = linkData.getNode();
@@ -72,13 +73,14 @@ final class MapLinkEditActions
         String endId = linkNode.getAttributeValueOrDefault("NodeEnd");
         if (startId == null || endId == null)
         {
-            return;
+            return null;
         }
 
-        XsdTreeNode addedNode = MapAdder.addPoint(linkData.getEditor(), editorMap, "(" + split.x + "," + split.y + ")", false);
+        XsdTreeNode addedNode = MapAdder.addPoint(linkData.getEditor(), editorMap, "(" + split.x + "," + split.y + ")", false,
+                linkData.getNode());
         if (addedNode == null || addedNode.getId() == null)
         {
-            return;
+            return null;
         }
         addedNode.setAttributeValue("Direction", Math.toDegrees(split.dirZ) + " deg");
 
@@ -94,7 +96,7 @@ final class MapLinkEditActions
         {
             linkNode.setId(startId + "-" + newNodeId);
             newLink.setId(newNodeId + "-" + endId);
-            return;
+            return newLink;
         }
 
         Set<String> usedLinkIds = collectLinkIds(linkNode.getParent());
@@ -104,6 +106,8 @@ final class MapLinkEditActions
         String second = uniqueAppendedId(oldLinkId, usedLinkIds);
         linkNode.setId(first);
         newLink.setId(second);
+
+        return newLink;
     }
 
     /**

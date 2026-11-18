@@ -1,10 +1,12 @@
 package org.opentrafficsim.editor;
 
 import java.util.ArrayDeque;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.swing.AbstractButton;
@@ -35,7 +37,7 @@ public class Undo implements EventListener, EventProducer
 
     /** Undo event. */
     public static final EventType UNDO_EVENT = new EventType(new MetaData("UNDO_EVENT", "undo event",
-            new ObjectDescriptor("nodes", "Collection (unmodifiable) of affected nodes by an undo or redo", Collection.class)));
+            new ObjectDescriptor("nodes", "Set (unmodifiable) of affected nodes by an undo or redo", Set.class)));
 
     /** Maximum number of undo actions stored. */
     private static final int MAX_UNDO = 50;
@@ -50,10 +52,10 @@ public class Undo implements EventListener, EventProducer
     private int cursor = -1;
 
     /** Current queue of sub-actions from a single user input. */
-    private Deque<SubAction> currentSubActionSet;
+    private Deque<SubAction> currentSubActionDeque;
 
-    /** Current queue of nodes affected by a single user input. */
-    private Deque<XsdTreeNode> currentNodesAffected;
+    /** Current set of nodes affected by a single user input. */
+    private Set<XsdTreeNode> currentNodesAffected;
 
     /** OTS editor. */
     private final OtsEditor editor;
@@ -92,7 +94,7 @@ public class Undo implements EventListener, EventProducer
     public void clear()
     {
         this.ignoreChanges = false;
-        this.currentSubActionSet = null;
+        this.currentSubActionDeque = null;
         this.currentNodesAffected = null;
         this.nextAction = null;
         this.cursor = -1;
@@ -139,7 +141,7 @@ public class Undo implements EventListener, EventProducer
         }
         // allocate a next action with the right type, nodes and attribute, but with an empty set of sub-actions for now
         // this does not yet represent an actual undoable action until any sub-action is added to it
-        this.nextAction = new Action(type, new ArrayDeque<>(), new ArrayDeque<>(), node, node.parent, attribute);
+        this.nextAction = new Action(type, new ArrayDeque<>(), new LinkedHashSet<>(), node, node.parent, attribute);
     }
 
     /**
@@ -162,7 +164,7 @@ public class Undo implements EventListener, EventProducer
             {
                 this.queue.pollLast();
             }
-            this.currentSubActionSet = this.nextAction.subActions;
+            this.currentSubActionDeque = this.nextAction.subActions;
             this.currentNodesAffected = this.nextAction.affectedNodes;
             this.queue.add(this.nextAction);
             while (this.queue.size() > MAX_UNDO)
@@ -173,9 +175,9 @@ public class Undo implements EventListener, EventProducer
             this.cursor = this.queue.size() - 1;
             updateButtons();
         }
-        Throw.when(this.currentSubActionSet == null, IllegalStateException.class,
+        Throw.when(this.currentSubActionDeque == null, IllegalStateException.class,
                 "Adding undo action without having called startUndoAction()");
-        this.currentSubActionSet.add(subAction);
+        this.currentSubActionDeque.add(subAction);
         if (affectedNode != null)
         {
             this.currentNodesAffected.add(affectedNode);
@@ -262,7 +264,7 @@ public class Undo implements EventListener, EventProducer
         {
             this.ignoreChanges = false;
         }
-        fireEvent(UNDO_EVENT, new java.util.ArrayList<>(action.affectedNodes));
+        fireEvent(UNDO_EVENT, Collections.unmodifiableSet(action.affectedNodes));
     }
 
     /**
@@ -306,7 +308,7 @@ public class Undo implements EventListener, EventProducer
         {
             this.ignoreChanges = false;
         }
-        fireEvent(UNDO_EVENT, new java.util.ArrayList<>(action.affectedNodes));
+        fireEvent(UNDO_EVENT, Collections.unmodifiableSet(action.affectedNodes));
     }
 
     /**
@@ -406,11 +408,11 @@ public class Undo implements EventListener, EventProducer
             // for include nodes, setAttributeValue will trigger addition and removal of nodes, we can ignore these events
             if (node.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
-                if (this.currentSubActionSet == null)
+                if (this.currentSubActionDeque == null)
                 {
                     return;
                 }
-                this.currentSubActionSet.clear();
+                this.currentSubActionDeque.clear();
             }
             add(new SubAction(() ->
             {
@@ -483,7 +485,7 @@ public class Undo implements EventListener, EventProducer
         }
         else if (event.getType().equals(CoupledValidator.COUPLING))
         {
-            if (this.currentSubActionSet == null)
+            if (this.currentSubActionDeque == null)
             {
                 return; // We can ignore couplings created by node expansion after loading a file
             }
@@ -599,8 +601,8 @@ public class Undo implements EventListener, EventProducer
         /** Queue of sub-actions. */
         private final Deque<SubAction> subActions;
 
-        /** Queue of affected nodes. */
-        private final Deque<XsdTreeNode> affectedNodes;
+        /** Set of affected nodes. */
+        private final Set<XsdTreeNode> affectedNodes;
 
         /** Node involved in the action. */
         private final XsdTreeNode node;
@@ -626,7 +628,7 @@ public class Undo implements EventListener, EventProducer
          * @param parent parent node of the node involved in the action.
          * @param attribute attribute for an attribute change, {@code null} otherwise.
          */
-        Action(final ActionType type, final Deque<SubAction> subActions, final Deque<XsdTreeNode> affectedNodes,
+        Action(final ActionType type, final Deque<SubAction> subActions, final Set<XsdTreeNode> affectedNodes,
                 final XsdTreeNode node, final XsdTreeNode parent, final String attribute)
         {
             this.type = type;

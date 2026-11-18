@@ -36,12 +36,13 @@ final class MapAdder
      * @param map editor map
      * @param coordinate XML coordinate string
      * @param centroid whether to add a centroid
+     * @param eventSource node on which event was started, can be {@code null}
      * @return added element, or {@code null} if it could not be created
      */
     public static XsdTreeNode addPoint(final OtsEditor editor, final EditorMap map, final String coordinate,
-            final boolean centroid)
+            final boolean centroid, final XsdTreeNode eventSource)
     {
-        XsdTreeNode added = addNetworkElement(editor, map, centroid ? XsdPaths.CENTROID : XsdPaths.NODE);
+        XsdTreeNode added = addNetworkElement(editor, map, centroid ? XsdPaths.CENTROID : XsdPaths.NODE, eventSource);
         if (added == null)
         {
             return null;
@@ -83,7 +84,7 @@ final class MapAdder
     private static XsdTreeNode addLink(final OtsEditor editor, final EditorMap map, final MapNodeData start,
             final MapNodeData end, final String shape, final String roadLayout, final String linkType)
     {
-        XsdTreeNode link = addNetworkElement(editor, map, XsdPaths.LINK);
+        XsdTreeNode link = addNetworkElement(editor, map, XsdPaths.LINK, null);
         if (link == null)
         {
             return null;
@@ -126,7 +127,7 @@ final class MapAdder
     private static XsdTreeNode addConnector(final OtsEditor editor, final EditorMap map, final MapNodeData start,
             final MapNodeData end, final String linkType)
     {
-        XsdTreeNode connector = addNetworkElement(editor, map, XsdPaths.CONNECTOR);
+        XsdTreeNode connector = addNetworkElement(editor, map, XsdPaths.CONNECTOR, null);
         if (connector == null)
         {
             return null;
@@ -151,9 +152,11 @@ final class MapAdder
      * @param editor editor
      * @param map editor map
      * @param path XSD path of the element to create
+     * @param eventSource node on which event was started, can be {@code null}
      * @return created element, or {@code null} if no matching choice is available
      */
-    private static XsdTreeNode addNetworkElement(final OtsEditor editor, final EditorMap map, final String path)
+    private static XsdTreeNode addNetworkElement(final OtsEditor editor, final EditorMap map, final String path,
+            final XsdTreeNode eventSource)
     {
         XsdTreeNode network = map.getNetworkNode();
         if (network == null)
@@ -176,15 +179,15 @@ final class MapAdder
                 return option;
             }
         }
-        XsdTreeNode source = network.getChildren().stream().filter(
+        XsdTreeNode addSource = network.getChildren().stream().filter(
                 (node) -> node.getOptions().stream().anyMatch((option) -> option.optionNode().getPathString().equals(path)))
                 .findFirst().orElse(null);
-        if (source == null)
+        if (addSource == null)
         {
             return null;
         }
-        editor.getUndo().startAction(ActionType.ADD, source, null);
-        XsdTreeNode added = source.add();
+        editor.getUndo().startAction(ActionType.ADD, eventSource == null ? addSource : eventSource, null);
+        XsdTreeNode added = addSource.add();
         if (!added.getPathString().equals(path))
         {
             XsdTreeNode option = findOption(added, path);
