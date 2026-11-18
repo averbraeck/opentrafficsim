@@ -56,10 +56,15 @@ final class MapLinkEditActions
         {
             return null;
         }
-
-        double f = centerLine.projectOrthogonalFractional(world);
-        if (f <= 0.0 || f >= 1.0 || Double.isNaN(f))
+        double len = centerLine.getLength();
+        double min = MapInputListener.DIST_MIN_M / len;
+        double max = (len - MapInputListener.DIST_MIN_M) / len;
+        double f = centerLine.projectOrthogonalFractionalExtended(world);
+        if (f < min || f > max)
         {
+            linkData.getEditor().dialogs().notification(
+                    "The split location is " + (f > max ? "beyond the end" : "before the start") + " of the link",
+                    "Invalid split location");
             return null;
         }
         DirectedPoint2d split = centerLine.getLocationFraction(f);

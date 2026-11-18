@@ -86,6 +86,9 @@ public class MapInputListener extends InputListener implements EventListener
     /** Snap angle options. */
     private static final List<String> SNAP_ANGLE_OPTIONS = List.of("0.5 deg", "1 deg", "3 deg", "5 deg", "10 deg", "15 deg");
 
+    /** Minimum distance between points, for example on polyline or where a link can be split. */
+    static final double DIST_MIN_M = 0.05;
+
     /** Format for grid sizes. */
     private static final DecimalFormat GRID_FORMAT = new DecimalFormat("0.0#", DecimalFormatSymbols.getInstance(Locale.US));
 

@@ -35,9 +35,6 @@ import org.opentrafficsim.editor.extensions.map.edit.HelperAnnotation.Scaling;
 final class MapPolylineEditHelper
 {
 
-    /** Minimum distance between point on polyline. */
-    private static final double POLYLINE_DIST_MIN_M = 0.05;
-
     /** Editor map. */
     private final EditorMap editorMap;
 
@@ -141,7 +138,7 @@ final class MapPolylineEditHelper
             Ray2d snapStartRay = coordinates.firstKey().equals(entry.getKey()) ? startRay : null;
             Ray2d snapEndRay = coordinates.lastKey().equals(entry.getKey()) ? endRay : null;
 
-            if (prev.distance(entry.getValue()) > POLYLINE_DIST_MIN_M * 2)
+            if (prev.distance(entry.getValue()) > MapInputListener.DIST_MIN_M * 2)
             {
                 intermediary = addPolyLineDraggable(line, intermediaryLocation, MapInputListener.CIRCLE, (p) ->
                 {
@@ -184,7 +181,7 @@ final class MapPolylineEditHelper
             prev = entry.getValue();
         }
 
-        if (prev.distance(line.getLast()) > POLYLINE_DIST_MIN_M * 2)
+        if (prev.distance(line.getLast()) > MapInputListener.DIST_MIN_M * 2)
         {
             Ray2d snapStartRay = coordinates.isEmpty() ? startRay : null;
             Point2d from = coordinates.isEmpty() || coordinates.size() == 1 && coordinates.values().contains(null)
@@ -231,7 +228,7 @@ final class MapPolylineEditHelper
         {
             Point2d point = snapToRaysOrGrid(p, startRay, endRay);
             if (line.getPointList().stream()
-                    .noneMatch((c) -> c.distance(point) < POLYLINE_DIST_MIN_M && c.distance(initialLocation) > 1e-9))
+                    .noneMatch((c) -> c.distance(point) < MapInputListener.DIST_MIN_M && c.distance(initialLocation) > 1e-9))
             {
                 lastPoint.set(point);
             }
@@ -257,11 +254,11 @@ final class MapPolylineEditHelper
             {
                 return this.snapToGrid.apply(point);
             }
-            return closestPointOnRayAtMinimumDistance(point, endRay, POLYLINE_DIST_MIN_M);
+            return closestPointOnRayAtMinimumDistance(point, endRay, MapInputListener.DIST_MIN_M);
         }
         if (endRay == null)
         {
-            return closestPointOnRayAtMinimumDistance(point, startRay, POLYLINE_DIST_MIN_M);
+            return closestPointOnRayAtMinimumDistance(point, startRay, MapInputListener.DIST_MIN_M);
         }
         return intersectionOrMidPoint(startRay, endRay);
     }
