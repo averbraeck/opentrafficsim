@@ -24,6 +24,18 @@ public class AnimationLaneData extends AnimationCrossSectionElementData<Lane> im
     }
 
     @Override
+    public boolean hasNextLane()
+    {
+        return !getObject().nextLanes(null).isEmpty();
+    }
+
+    @Override
+    public boolean hasPrevLane()
+    {
+        return !getObject().prevLanes(null).isEmpty();
+    }
+
+    @Override
     public String toString()
     {
         return "Lane " + getObject().getFullId();

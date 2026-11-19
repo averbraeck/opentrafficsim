@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.road;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.util.function.Supplier;
@@ -10,13 +11,13 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.animation.DrawLevel;
 import org.opentrafficsim.animation.LineLocatable;
 import org.opentrafficsim.animation.OtsRenderable;
 import org.opentrafficsim.animation.PaintLine;
 import org.opentrafficsim.animation.RenderableTextSource;
 import org.opentrafficsim.animation.TextAlignment;
-import org.opentrafficsim.animation.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.animation.road.LaneAnimation.LaneData;
 import org.opentrafficsim.base.geometry.OtsShape;
 
@@ -53,8 +54,9 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         super(lane, contextualized, color);
         this.color = color;
         this.text = new Text(lane, lane::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized);
-        this.centerLineAnimation = new CenterLineAnimation(
-                new CenterLine(lane.getCenterLine(), lane.getLinkId() + "." + lane.getId()), contextualized);
+        this.centerLineAnimation =
+                new CenterLineAnimation(new CenterLine(lane.getCenterLine(), lane.getLinkId() + "." + lane.getId()),
+                        contextualized, lane::hasPrevLane, lane::hasNextLane);
     }
 
     /**
@@ -169,18 +171,32 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         /** Drawing color for the center line. */
         private static final Color COLOR = Color.MAGENTA.darker().darker();
 
+        /** Diameter of end-point bulbs in world units. */
+        private static final double BULB_DIAMETER = 0.45;
+
         /** Drawable path. */
         private final Path2D.Float path;
+
+        /** Whether the lane has an upstream lane. */
+        private final Supplier<Boolean> hasPrevLane;
+
+        /** Whether the lane has a downstream lane. */
+        private final Supplier<Boolean> hasNextLane;
 
         /**
          * Construct a new CenterLineAnimation.
          * @param centerLine the center line of a lane
          * @param contextualized context provider
+         * @param hasPrevLane whether the lane has an upstream lane
+         * @param hasNextLane whether the lane has a downstream lane
          */
-        public CenterLineAnimation(final CenterLine centerLine, final Contextualized contextualized)
+        public CenterLineAnimation(final CenterLine centerLine, final Contextualized contextualized,
+                final Supplier<Boolean> hasPrevLane, final Supplier<Boolean> hasNextLane)
         {
             super(centerLine, contextualized);
             this.path = PaintLine.getPath(getSource().getLocation(), getSource().getCenterLine());
+            this.hasPrevLane = hasPrevLane;
+            this.hasNextLane = hasNextLane;
         }
 
         @Override
@@ -188,7 +204,32 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         {
             setRendering(graphics);
             PaintLine.paintLine(graphics, COLOR, 0.1, this.path);
+            PolyLine2d line = getSource().getCenterLine();
+            if (line.size() >= 2)
+            {
+                if (!this.hasPrevLane.get())
+                {
+                    drawBulb(graphics, line.getFirst());
+                }
+                if (!this.hasNextLane.get())
+                {
+                    drawBulb(graphics, line.getLast());
+                }
+            }
             resetRendering(graphics);
+        }
+
+        /**
+         * Draw a bulb at the given absolute point.
+         * @param graphics graphics
+         * @param point absolute point
+         */
+        private void drawBulb(final Graphics2D graphics, final Point2d point)
+        {
+            Point2d relative = OtsShape.toRelativeTransform(getSource().getLocation()).transform(point);
+            double r = BULB_DIAMETER / 2.0;
+            graphics.setColor(COLOR);
+            graphics.fill(new Ellipse2D.Double(relative.x - r, -relative.y - r, BULB_DIAMETER, BULB_DIAMETER));
         }
 
     }
@@ -246,6 +287,18 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         {
             return DrawLevel.LANE.getZ();
         }
+
+        /**
+         * Returns whether the lane has a downstream lane.
+         * @return whether the lane has a downstream lane
+         */
+        boolean hasNextLane();
+
+        /**
+         * Returns whether the lane has an upstream lane.
+         * @return whether the lane has an upstream lane
+         */
+        boolean hasPrevLane();
     }
 
 }

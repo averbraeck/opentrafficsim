@@ -192,6 +192,9 @@ public final class EditorMap extends JPanel implements EventListener
     /** Whether synchronization of stripes is scheduled. */
     private boolean stripeSynchronizationScheduled = false;
 
+    /** Whether lane connection cache clearing is scheduled. */
+    private boolean laneConnectionCacheClearScheduled = false;
+
     /** Listeners to lane and stripe overrides. */
     private final Map<XsdTreeNode, ChangeListener<Object>> overrideListeners = new LinkedHashMap<>();
 
@@ -1525,6 +1528,37 @@ public final class EditorMap extends JPanel implements EventListener
             stripe.resetDashOffset();
         }
         StripeSynchronization.synchronize(new LinkedHashMap<>(this.synStripes));
+    }
+
+    /**
+     * Schedules clearing of cached lane connection information on all links. Multiple requests within one event cycle are
+     * bundled.
+     */
+    public void scheduleLaneConnectionCacheClear()
+    {
+        if (!this.laneConnectionCacheClearScheduled)
+        {
+            this.laneConnectionCacheClearScheduled = true;
+            SwingUtilities.invokeLater(() ->
+            {
+                this.laneConnectionCacheClearScheduled = false;
+                clearLaneConnectionCaches();
+            });
+        }
+    }
+
+    /**
+     * Clears cached lane connection information on all links.
+     */
+    private void clearLaneConnectionCaches()
+    {
+        for (MapData data : this.datas.values())
+        {
+            if (data instanceof MapLinkData linkData)
+            {
+                linkData.clearLaneConnectionCache();
+            }
+        }
     }
 
     /**

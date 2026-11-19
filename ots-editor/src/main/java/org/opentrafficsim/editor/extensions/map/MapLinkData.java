@@ -61,6 +61,7 @@ import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
+import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
@@ -157,6 +158,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Stripe data. */
     private java.util.Map<String, MapStripeData> stripeData = new LinkedHashMap<>();
+
+    /** Cached downstream lane connection state per lane. */
+    private final Map<MapLaneData, Boolean> hasNextLaneCache = new LinkedHashMap<>();
+
+    /** Cached upstream lane connection state per lane. */
+    private final Map<MapLaneData, Boolean> hasPrevLaneCache = new LinkedHashMap<>();
 
     /** Priority animation. */
     private PriorityAnimation priorityAnimation;
@@ -929,7 +936,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                             CrossSectionGeometry.of(this.designLine, getFlattener(), offsetFunc, widthFunc);
                     if (node.getNodeName().equals("Lane"))
                     {
-                        MapLaneData mapLaneData = new MapLaneData(node.getId(), getNode(), geometry);
+                        MapLaneData mapLaneData = new MapLaneData(node.getId(), getNode(), geometry, this);
                         LaneAnimation lane =
                                 new LaneAnimation(mapLaneData, getMap().getContextualized(), Color.GRAY.brighter());
                         this.crossSectionElements.add(lane);
@@ -956,6 +963,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             }
         }
         getMap().scheduleStripeSynchronization();
+        getMap().scheduleLaneConnectionCacheClear();
         this.dirtyLayout = false;
         fireEvent(LAYOUT_REBUILT, this);
         getMap().update();
@@ -1272,6 +1280,141 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     public MapLaneData getLaneData(final String laneId)
     {
         return this.laneData.get(laneId);
+    }
+
+    /**
+     * Returns whether the lane has a downstream lane on another link.
+     * @param lane lane
+     * @return whether the lane has a downstream lane on another link
+     */
+    public boolean hasNextLane(final MapLaneData lane)
+    {
+        return this.hasNextLaneCache.computeIfAbsent(lane, this::computeHasNextLane);
+    }
+
+    /**
+     * Returns whether the lane has an upstream lane on another link.
+     * @param lane lane
+     * @return whether the lane has an upstream lane on another link
+     */
+    public boolean hasPrevLane(final MapLaneData lane)
+    {
+        return this.hasPrevLaneCache.computeIfAbsent(lane, this::computeHasPrevLane);
+    }
+
+    /**
+     * Computes whether the lane has a downstream lane on another link.
+     * @param lane lane
+     * @return whether the lane has a downstream lane on another link
+     */
+    private boolean computeHasNextLane(final MapLaneData lane)
+    {
+        XsdTreeNode endNode = getEndNode();
+        XsdTreeNode networkNode = getMap().getNetworkNode();
+        if (endNode == null || networkNode == null)
+        {
+            return false;
+        }
+        PolyLine2d centerLine = lane.getCenterLine();
+        if (centerLine == null || centerLine.size() < 1)
+        {
+            return false;
+        }
+        Point2d ownEnd = centerLine.getLast();
+        for (XsdTreeNode child : networkNode.getChildren())
+        {
+            if (!XsdPaths.LINK.equals(child.getPathString()))
+            {
+                continue;
+            }
+            MapData data = getMap().getData(child).orElse(null);
+            if (!(data instanceof MapLinkData other) || other == this)
+            {
+                continue;
+            }
+            if (endNode.equals(other.getStartNode()) && hasConnectingLane(other, ownEnd, true))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Computes whether the lane has an upstream lane on another link.
+     * @param lane lane
+     * @return whether the lane has an upstream lane on another link
+     */
+    private boolean computeHasPrevLane(final MapLaneData lane)
+    {
+        XsdTreeNode startNode = getStartNode();
+        XsdTreeNode networkNode = getMap().getNetworkNode();
+        if (startNode == null || networkNode == null)
+        {
+            return false;
+        }
+        PolyLine2d centerLine = lane.getCenterLine();
+        if (centerLine == null || centerLine.size() < 1)
+        {
+            return false;
+        }
+        Point2d ownStart = centerLine.getFirst();
+        for (XsdTreeNode child : networkNode.getChildren())
+        {
+            if (!XsdPaths.LINK.equals(child.getPathString()))
+            {
+                continue;
+            }
+            MapData data = getMap().getData(child).orElse(null);
+            if (!(data instanceof MapLinkData other) || other == this)
+            {
+                continue;
+            }
+            if (startNode.equals(other.getEndNode()) && hasConnectingLane(other, ownStart, false))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether any lane or shoulder on the given link connects to the given point within {@link Lane#MARGIN}.
+     * @param other other link data
+     * @param point own endpoint
+     * @param next looking for next lane (otherwise prev)
+     * @return whether any lane or shoulder on the given link connects to the given point
+     */
+    private boolean hasConnectingLane(final MapLinkData other, final Point2d point, final boolean next)
+    {
+        for (Renderable2d<?> element : other.crossSectionElements)
+        {
+            Object source = element.getSource();
+            if (!(source instanceof MapLaneData) && !(source instanceof MapShoulderData))
+            {
+                continue;
+            }
+            PolyLine2d otherCenterLine = ((MapCrossSectionData) source).getCenterLine();
+            if (otherCenterLine == null || otherCenterLine.size() < 1)
+            {
+                continue;
+            }
+            double jump = next ? otherCenterLine.getFirst().distance(point) : otherCenterLine.getLast().distance(point);
+            if (jump < Lane.MARGIN.si)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Clears cached lane connection information.
+     */
+    public void clearLaneConnectionCache()
+    {
+        this.hasNextLaneCache.clear();
+        this.hasPrevLaneCache.clear();
     }
 
     /**

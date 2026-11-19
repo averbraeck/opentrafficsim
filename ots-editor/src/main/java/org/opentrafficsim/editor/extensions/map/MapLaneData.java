@@ -18,22 +18,40 @@ public class MapLaneData extends MapCrossSectionData implements LaneData
     /** Id. */
     private final String id;
 
+    /** Link data. */
+    private final MapLinkData linkData;
+
     /**
      * Constructor.
      * @param id id
      * @param linkNode node representing the element
      * @param geometry geometry
+     * @param linkData link data
      */
-    public MapLaneData(final String id, final XsdTreeNode linkNode, final CrossSectionGeometry geometry)
+    public MapLaneData(final String id, final XsdTreeNode linkNode, final CrossSectionGeometry geometry,
+            final MapLinkData linkData)
     {
         super(linkNode, geometry);
         this.id = id;
+        this.linkData = linkData;
     }
 
     @Override
     public String getId()
     {
         return this.id;
+    }
+
+    @Override
+    public boolean hasNextLane()
+    {
+        return this.linkData.hasNextLane(this);
+    }
+
+    @Override
+    public boolean hasPrevLane()
+    {
+        return this.linkData.hasPrevLane(this);
     }
 
     @Override
