@@ -18,6 +18,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeUtil;
 import org.opentrafficsim.editor.XsdTreeTableModel;
 
 /**
@@ -72,6 +73,11 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
     {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
         XsdTreeNode node = (XsdTreeNode) value;
+        String filter = ((XsdTreeTableModel) tree.getModel()).getActiveFilterText();
+        if (filter != null)
+        {
+            setText(highlightNodeText(node, filter));
+        }
         Optional<Icon> customIcon = this.editor.getCustomIcon(node.getPathString());
         if (customIcon.isPresent())
         {
@@ -85,7 +91,8 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         {
             preAppend(this.description, false);
         }
-        if (node.isChoice() && !node.isIncluded() && !node.equals(((XsdTreeTableModel) tree.getModel()).getDataRoot()))
+        if (filter == null && node.isChoice() && !node.isIncluded()
+                && !node.equals(((XsdTreeTableModel) tree.getModel()).getDataRoot()))
         {
             preAppend(this.dropdown, false);
         }
@@ -135,6 +142,96 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
             setBorder(new EmptyBorder(0, 0, 0, 0));
         }
         return this;
+    }
+
+    /**
+     * Returns the display text with the matching filter part in bold. This only affects rendering.
+     * @param node node
+     * @param filter active filter text (lower case)
+     * @return display text with highlighted filter match
+     */
+    private static String highlightNodeText(final XsdTreeNode node, final String filter)
+    {
+        String fullText = node.toString();
+        int[] range = filterRange(fullText, filter);
+        if (range == null)
+        {
+            return htmlEscape(fullText);
+        }
+        return "<html>" + htmlEscape(fullText.substring(0, range[0])) + "<b>"
+                + htmlEscape(fullText.substring(range[0], range[1])) + "</b>" + htmlEscape(fullText.substring(range[1]))
+                + "</html>";
+    }
+
+    /**
+     * Returns start/end indices in the original label for the first filter match, or {@code null} if there is no match.
+     * @param label label to search in
+     * @param filter normalized lower-case filter text
+     * @return start/end indices in the original label for the first filter match, or {@code null} if there is no match
+     */
+    private static int[] filterRange(final String label, final String filter)
+    {
+        String lower = label.toLowerCase();
+        String thinAsSpace = lower.replace(XsdTreeNodeUtil.THIN_SPACE, " ");
+        int direct = thinAsSpace.indexOf(filter);
+        if (direct >= 0)
+        {
+            return new int[] {direct, direct + filter.length()};
+        }
+        String thinRemoved = lower.replace(XsdTreeNodeUtil.THIN_SPACE, "");
+        int compact = thinRemoved.indexOf(filter);
+        if (compact < 0)
+        {
+            return null;
+        }
+        return compactRangeToOriginal(label, compact, filter.length());
+    }
+
+    /**
+     * Maps a match range in the label with removed thin spaces back to indices in the original label.
+     * @param label original label
+     * @param startCompact start index in compact label
+     * @param lengthCompact match length in compact label
+     * @return start/end range in original label
+     */
+    private static int[] compactRangeToOriginal(final String label, final int startCompact, final int lengthCompact)
+    {
+        char thin = XsdTreeNodeUtil.THIN_SPACE.charAt(0);
+        int compactPos = 0;
+        int start = -1;
+        int end = label.length();
+        for (int i = 0; i < label.length(); i++)
+        {
+            if (label.charAt(i) == thin)
+            {
+                continue;
+            }
+            if (compactPos == startCompact)
+            {
+                start = i;
+            }
+            compactPos++;
+            if (compactPos == startCompact + lengthCompact)
+            {
+                end = i + 1;
+                break;
+            }
+        }
+        if (start < 0)
+        {
+            start = 0;
+        }
+        return new int[] {start, end};
+    }
+
+    /**
+     * Escapes HTML-sensitive characters in plain text.
+     * @param text plain text
+     * @return escaped text
+     */
+    private static String htmlEscape(final String text)
+    {
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
     }
 
     /**

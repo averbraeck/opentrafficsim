@@ -214,7 +214,7 @@ public class NodeActions
      * @param path path in the tree of the node.
      * @param expanded whether the node is currently expanded.
      */
-    public void expand(final XsdTreeNode node, final TreePath path, final boolean expanded)
+    public void toggleExpansion(final XsdTreeNode node, final TreePath path, final boolean expanded)
     {
         if (expanded)
         {
@@ -222,11 +222,6 @@ public class NodeActions
         }
         else
         {
-            if (!node.isActive())
-            {
-                this.editor.getUndo().startAction(ActionType.ACTIVATE, node, null);
-                node.setActive();
-            }
             this.treeTable.getTree().expandPath(path);
         }
         this.editor.show(node, null);

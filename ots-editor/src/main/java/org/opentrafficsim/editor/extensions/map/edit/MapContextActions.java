@@ -42,9 +42,6 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 final class MapContextActions
 {
 
-    /** Icon size in context menu items. */
-    private static final int ICON_SIZE = 18;
-
     /** Utility class. */
     private MapContextActions()
     {
@@ -68,7 +65,7 @@ final class MapContextActions
         {
             return false;
         }
-        menu.show(visualizationPanel, (int) event.getPoint().getX(), (int) event.getPoint().getY());
+        visualizationPanel.showContextMenu(menu, event);
         return true;
     }
 
@@ -166,7 +163,7 @@ final class MapContextActions
             return;
         }
         // Note: each action should specify its own suitable undo action
-        Icon autoFix = IconUtil.of("AutoFix24.png").imageSize(ICON_SIZE, ICON_SIZE).get();
+        Icon autoFix = IconUtil.of("AutoFix24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get();
         if (data.isStraight())
         {
             addContextMenuItem(menu, "Align node directions", autoFix, () -> alignStraightNodeDirections(data),
@@ -194,7 +191,7 @@ final class MapContextActions
         if (!data.isConnector())
         {
             Point2D clickPoint = event.getPoint();
-            Icon icon = IconUtil.of("Node24.png").imageSize(ICON_SIZE, ICON_SIZE).get();
+            Icon icon = IconUtil.of("Node24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get();
             addContextMenuItem(menu, "Split link", icon, () ->
             {
                 XsdTreeNode newLink = MapLinkEditActions.splitLink(editorMap, data, clickPoint);
@@ -224,8 +221,8 @@ final class MapContextActions
     {
         JMenuItem shapeMenu = new JMenu("Shape");
         String current = linkData.getShapeNode().getNodeName();
-        shapeMenu.setIcon(IconUtil.of("Bezier24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
-        Icon check = IconUtil.of("Check24.png").imageSize(ICON_SIZE, ICON_SIZE).get();
+        shapeMenu.setIcon(IconUtil.of("Bezier24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get());
+        Icon check = IconUtil.of("Check24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get();
         for (String shape : EditorMap.LINK_SHAPES)
         {
             addContextMenuItem(shapeMenu, shape, current.equals(shape) ? check : null, () -> setShape(linkData, shape),
@@ -244,9 +241,9 @@ final class MapContextActions
             final Set<Priority> currentPriorities)
     {
         JMenuItem priorityMenu = new JMenu("Priority");
-        priorityMenu.setIcon(IconUtil.of("Priority24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
+        priorityMenu.setIcon(IconUtil.of("Priority24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get());
         menu.add(priorityMenu);
-        IconUtil util = IconUtil.of("Check24.png").imageSize(ICON_SIZE, ICON_SIZE);
+        IconUtil util = IconUtil.of("Check24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE);
         if (currentPriorities.size() > 1)
         {
             util = util.gray();

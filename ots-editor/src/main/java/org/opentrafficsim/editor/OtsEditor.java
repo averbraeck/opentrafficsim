@@ -42,6 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.CellEditor;
@@ -62,6 +63,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -120,6 +122,7 @@ import org.opentrafficsim.swing.gui.Appearance;
 import org.opentrafficsim.swing.gui.AppearanceApplication;
 import org.opentrafficsim.swing.gui.AppearanceControlButton;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
+import org.opentrafficsim.swing.gui.AppearanceControlTextField;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -166,6 +169,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     /** Whether to update the windows as the split is being dragged. */
     private static final boolean UPDATE_SPLIT_WHILE_DRAGGING = true;
 
+    /** Standard icon size. */
+    public static final int ICON_SIZE = 18;
+
+    /** Standard square button dimension. */
+    private static final Dimension BUTTON_DIMENSION = new Dimension(24, 24);
+
     /** Indent for first item shown in drop-down. */
     private int dropdownIndent = 0;
 
@@ -186,6 +195,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
 
     /** Split pane on the right-hand side. */
     private final JSplitPane rightSplitPane;
+
+    /** Search toggle button. */
+    private final JToggleButton searchToggle;
+
+    /** Search field. */
+    private final JTextField search;
 
     /** Scenario selection. */
     private final JComboBox<ScenarioWrapper> scenario;
@@ -237,6 +252,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
 
     /** Whether to disregard changes during loading. */
     private boolean ignoreChanges = false;
+
+    /** Whether updates of XsdTreeNode.expanded from tree events are temporarily suppressed. */
+    private boolean suppressExpansionStateUpdates = false;
 
     /** Auto save scheduler. */
     private ScheduledExecutorService autosave;
@@ -294,6 +312,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.rightSplitPane.setDividerSize(DIVIDER_SIZE);
         this.rightSplitPane.setResizeWeight(0.5);
         this.rightSplitPane.setAlignmentX(0.5f);
+        this.rightSplitPane.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        this.rightSplitPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         makeClickFlippable(this.rightSplitPane);
         JPanel rightContainer = new JPanel();
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
@@ -306,13 +326,40 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.visualizationPane.setBorder(new LineBorder(Color.BLACK, 0));
         this.leftRightSplitPane.setLeftComponent(this.visualizationPane);
 
-        // scenario and controls
+        // search, scenario and controls
+        JPanel searchWrapper = new JPanel(new BorderLayout());
+        searchWrapper.setOpaque(false);
+        searchWrapper.setBorder(BorderFactory.createEmptyBorder(1, 3, 2, 4));
+        searchWrapper.setVisible(false);
+        this.search = new AppearanceControlTextField();
+        this.search.getDocument().addDocumentListener(Actions.documentListener(() -> refreshTreeFilter()));
+        this.search.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
+        searchWrapper.add(this.search);
+        this.searchToggle = new JToggleButton(IconUtil.of("Search24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
+        this.searchToggle.setMinimumSize(BUTTON_DIMENSION);
+        this.searchToggle.setMaximumSize(BUTTON_DIMENSION);
+        this.searchToggle.setPreferredSize(BUTTON_DIMENSION);
+        this.searchToggle.setToolTipText("Filter nodes in the tree");
+        this.searchToggle.setFocusPainted(false);
+        this.searchToggle.addActionListener((a) ->
+        {
+            TreePath selectedPath = this.treeTable == null ? null : this.treeTable.getTree().getSelectionPath();
+            XsdTreeNode selectedNode = selectedPath == null ? null : (XsdTreeNode) selectedPath.getLastPathComponent();
+            boolean filterActive = this.searchToggle.isSelected();
+            searchWrapper.setVisible(filterActive);
+            refreshTreeFilter();
+            rightContainer.revalidate();
+            SwingUtilities.invokeLater(() -> restoreSelectionAfterFilterToggle(selectedNode, filterActive));
+        });
         JPanel controlsContainer = new JPanel();
+        controlsContainer.add(Box.createHorizontalStrut(4));
+        controlsContainer.add(this.searchToggle);
+        controlsContainer.add(Box.createHorizontalStrut(2));
         controlsContainer.add(Box.createHorizontalGlue()); // right-aligns everything
         controlsContainer.setLayout(new BoxLayout(controlsContainer, BoxLayout.X_AXIS));
         controlsContainer.setBorder(new LineBorder(null, -1));
-        controlsContainer.setMinimumSize(new Dimension(200, 28));
-        controlsContainer.setPreferredSize(new Dimension(200, 28));
+        controlsContainer.setMinimumSize(new Dimension(240, 28));
+        controlsContainer.setPreferredSize(new Dimension(300, 28));
         controlsContainer.add(new JLabel("Scenario: "));
         this.scenario = new AppearanceControlComboBox<>();
         this.scenario.addItem(new ScenarioWrapper(null));
@@ -322,22 +369,16 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.scenario
                 .addActionListener(new ScenarioActionListener(this, this.visualizationPane, this.scenario, this.evalWrapper));
         populateControls(controlsContainer);
-
         rightContainer.add(controlsContainer);
+        rightContainer.add(searchWrapper);
         rightContainer.add(this.rightSplitPane);
         this.leftRightSplitPane.setRightComponent(rightContainer);
 
-        // There is likely a better way to do this, but setting the icons specific on the tree is impossible for collapsed and
-        // expanded. Also in that case after removal of a node, the tree appearance gets reset and java default icons appear.
-        // This happens to the leaf/open/closed icons that can be set on the tree. This needs to be done before the JTreeTable
-        // is created, otherwise it loads normal default icons.
-        UIManager.put("Tree.collapsedIcon", IconUtil.of("Collapsed24.png").imageSize(18, 18).get());
-        UIManager.put("Tree.expandedIcon", IconUtil.of("Expanded24.png").imageSize(18, 18).get());
-        UIManager.put("Tree.paintLines", false);
-        UIManager.put("Tree.rightChildIndent", 7);
+        setTreeUI();
 
         // empty tree table
-        XsdTreeTableModel emptyModel = new XsdTreeTableModel(null, this::ignoreChanges, this::getEval);
+        XsdTreeTableModel emptyModel = new XsdTreeTableModel(null, this::ignoreChanges, this::getEval,
+                this.searchToggle::isSelected, this.search::getText);
         this.treeTable = new AppearanceControlTreeTable(emptyModel);
         emptyModel.setTreeTable(this.treeTable);
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
@@ -402,43 +443,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
-     * Populates controls container.
-     * @param controlsContainer controls container
-     */
-    private void populateControls(final JPanel controlsContainer)
-    {
-        controlsContainer.add(this.scenario);
-        controlsContainer.add(Box.createHorizontalStrut(2));
-        JButton playRun = new AppearanceControlButton(IconUtil.of("Play24.png").imageSize(18, 18).get());
-        playRun.setToolTipText("Run single run");
-        Dimension iconDimension = new Dimension(24, 24);
-        playRun.setMinimumSize(iconDimension);
-        playRun.setMaximumSize(iconDimension);
-        playRun.setPreferredSize(iconDimension);
-        playRun.addActionListener((a) -> runSingle());
-        controlsContainer.add(playRun);
-        JButton playScenario = new AppearanceControlButton(IconUtil.of("Next24.png").imageSize(18, 18).get());
-        playScenario.setToolTipText("Run scenario (batch)");
-        playScenario.setMinimumSize(iconDimension);
-        playScenario.setMaximumSize(iconDimension);
-        playScenario.setPreferredSize(iconDimension);
-        playScenario.addActionListener((a) -> runBatch(false));
-        controlsContainer.add(playScenario);
-        JButton playAll = new AppearanceControlButton(IconUtil.of("Step24.png").imageSize(18, 18).get());
-        playAll.setToolTipText("Run all (batch)");
-        playAll.setMinimumSize(iconDimension);
-        playAll.setMaximumSize(iconDimension);
-        playAll.setPreferredSize(iconDimension);
-        playAll.addActionListener((a) -> runBatch(true));
-        controlsContainer.add(playAll);
-        controlsContainer.add(Box.createHorizontalStrut(4));
-    }
-
-    /**
      * Makes the divider clickable causing the panel to exchange screen size the other way around.
      * @param pane split pane to make click-flippable.
      */
-    private void makeClickFlippable(final JSplitPane pane)
+    private static void makeClickFlippable(final JSplitPane pane)
     {
         ((BasicSplitPaneUI) pane.getUI()).getDivider().addMouseListener(new MouseAdapter()
         {
@@ -452,6 +460,72 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
                 pane.setDividerLocation(Math.min(Math.max(target, minimum), maximum));
             }
         });
+    }
+
+    /**
+     * Populates controls container.
+     * @param controlsContainer controls container
+     */
+    private void populateControls(final JPanel controlsContainer)
+    {
+        controlsContainer.add(this.scenario);
+        controlsContainer.add(Box.createHorizontalStrut(2));
+        JButton playRun = new AppearanceControlButton(IconUtil.of("Play24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
+        playRun.setToolTipText("Run single run");
+        playRun.setMinimumSize(BUTTON_DIMENSION);
+        playRun.setMaximumSize(BUTTON_DIMENSION);
+        playRun.setPreferredSize(BUTTON_DIMENSION);
+        playRun.addActionListener((a) -> runSingle());
+        controlsContainer.add(playRun);
+        JButton playScenario = new AppearanceControlButton(IconUtil.of("Next24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
+        playScenario.setToolTipText("Run scenario (batch)");
+        playScenario.setMinimumSize(BUTTON_DIMENSION);
+        playScenario.setMaximumSize(BUTTON_DIMENSION);
+        playScenario.setPreferredSize(BUTTON_DIMENSION);
+        playScenario.addActionListener((a) -> runBatch(false));
+        controlsContainer.add(playScenario);
+        JButton playAll = new AppearanceControlButton(IconUtil.of("Step24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
+        playAll.setToolTipText("Run all (batch)");
+        playAll.setMinimumSize(BUTTON_DIMENSION);
+        playAll.setMaximumSize(BUTTON_DIMENSION);
+        playAll.setPreferredSize(BUTTON_DIMENSION);
+        playAll.addActionListener((a) -> runBatch(true));
+        controlsContainer.add(playAll);
+        controlsContainer.add(Box.createHorizontalStrut(4));
+    }
+
+    /**
+     * Sets tree UI values.
+     */
+    private static void setTreeUI()
+    {
+        // There is likely a better way to do this, but setting the icons specific on the tree is impossible for collapsed and
+        // expanded. Also in that case after removal of a node, the tree appearance gets reset and java default icons appear.
+        // This happens to the leaf/open/closed icons that can be set on the tree. This needs to be done before the JTreeTable
+        // is created, otherwise it loads normal default icons.
+        UIManager.put("Tree.collapsedIcon", IconUtil.of("Collapsed24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
+        UIManager.put("Tree.expandedIcon", IconUtil.of("Expanded24.png").imageSize(ICON_SIZE, ICON_SIZE).get());
+        UIManager.put("Tree.paintLines", false);
+        UIManager.put("Tree.rightChildIndent", 7);
+    }
+
+    /**
+     * Refreshes the tree model after a search filter state change.
+     */
+    private void refreshTreeFilter()
+    {
+        if (this.treeTable != null && this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model)
+        {
+            model.refresh();
+            SwingUtilities.invokeLater(() ->
+            {
+                XsdTreeNode root = (XsdTreeNode) model.getRoot();
+                if (root != null)
+                {
+                    restoreExpansion(root, new TreePath(root));
+                }
+            });
+        }
     }
 
     /**
@@ -581,7 +655,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         TreePath path = this.treeTable.getTree().getSelectionPath();
         if (this.treeTable.getTree().isExpanded(path))
         {
-            actions().getNodeActions().expand(node, path, true);
+            actions().getNodeActions().toggleExpansion(node, path, true);
         }
     }
 
@@ -622,7 +696,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      */
     private void show(final XsdTreeNode node, final String attribute, final boolean scroll)
     {
-        if (node.getParent() == null)
+        Object root = this.treeTable.getTree().getModel().getRoot();
+        if (node.getParent() == null && node != root)
         {
             return; // trying to show node that is in collapsed part of the tree
         }
@@ -643,7 +718,11 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             }
         }
         List<XsdTreeNode> nodePath = node.getPath();
-        int rootIndex = nodePath.indexOf(this.treeTable.getTree().getModel().getRoot());
+        int rootIndex = nodePath.indexOf(root);
+        if (rootIndex < 0)
+        {
+            return;
+        }
         if (rootIndex > 0)
         {
             nodePath = nodePath.subList(rootIndex, nodePath.size());
@@ -711,21 +790,36 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
-     * Restore node expansion.
+     * Restore node expansion while suppressing updates to persisted expansion-state flags.
      * @param node node
      * @param path path
      */
     private void restoreExpansion(final XsdTreeNode node, final TreePath path)
     {
-        if (node.expanded)
+        boolean topLevel = !this.suppressExpansionStateUpdates;
+        if (topLevel)
         {
-            this.treeTable.getTree().expandPath(path);
+            this.suppressExpansionStateUpdates = true;
         }
-        if (node.getChildCount() > 0)
+        try
         {
-            for (XsdTreeNode child : node.getChildren())
+            if (node.expanded)
             {
-                restoreExpansion(child, path.pathByAddingChild(child));
+                this.treeTable.getTree().expandPath(path);
+            }
+            if (node.getChildCount() > 0)
+            {
+                for (XsdTreeNode child : node.getChildren())
+                {
+                    restoreExpansion(child, path.pathByAddingChild(child));
+                }
+            }
+        }
+        finally
+        {
+            if (topLevel)
+            {
+                this.suppressExpansionStateUpdates = false;
             }
         }
     }
@@ -1004,7 +1098,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.attributesTableModel.setNode(null);
 
         // tree table
-        XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument, this::ignoreChanges, this::getEval);
+        XsdTreeTableModel treeModel = new XsdTreeTableModel(this.xsdDocument, this::ignoreChanges, this::getEval,
+                this.searchToggle::isSelected, this.search::getText);
         this.treeTable = new AppearanceControlTreeTable(treeModel);
         treeModel.setTreeTable(this.treeTable);
         this.treeTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1035,13 +1130,23 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             @Override
             public void treeExpanded(final TreeExpansionEvent event)
             {
-                ((XsdTreeNode) event.getPath().getLastPathComponent()).expanded = true;
+                boolean filterActive = OtsEditor.this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model
+                        && model.isFilterActive();
+                if (!OtsEditor.this.suppressExpansionStateUpdates && !filterActive)
+                {
+                    ((XsdTreeNode) event.getPath().getLastPathComponent()).expanded = true;
+                }
             }
 
             @Override
             public void treeCollapsed(final TreeExpansionEvent event)
             {
-                ((XsdTreeNode) event.getPath().getLastPathComponent()).expanded = false;
+                boolean filterActive = OtsEditor.this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model
+                        && model.isFilterActive();
+                if (!OtsEditor.this.suppressExpansionStateUpdates && !filterActive)
+                {
+                    ((XsdTreeNode) event.getPath().getLastPathComponent()).expanded = false;
+                }
             }
         });
 
@@ -1985,6 +2090,41 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     public void setTreeColumnColor(final Color color)
     {
         this.treeTable.setBackground(color);
+    }
+
+    /**
+     * Restores the selection to the given node if it is still visible in the current tree view.
+     * @param node node to restore selection for
+     * @param filterActive whether the search filter is active
+     */
+    private void restoreSelectionAfterFilterToggle(final XsdTreeNode node, final boolean filterActive)
+    {
+        Object rootNode = this.treeTable.getTree().getModel().getRoot();
+        if (node == null || this.treeTable == null || !node.getPath().contains(rootNode))
+        {
+            return;
+        }
+        if (!filterActive)
+        {
+            show(node, null);
+            return;
+        }
+        List<XsdTreeNode> nodePath = node.getPath();
+        int rootIndex = nodePath.indexOf(rootNode);
+        TreePath path = new TreePath(nodePath.subList(rootIndex, nodePath.size()).toArray());
+        if (this.treeTable.getTree().isVisible(path))
+        {
+            this.treeTable.getTree().setSelectionPath(path);
+        }
+    }
+
+    /**
+     * Returns whether expansion-state updates are currently suppressed for programmatic restoration.
+     * @return whether expansion-state updates are currently suppressed for programmatic restoration
+     */
+    public boolean isSuppressingExpansionStateUpdates()
+    {
+        return this.suppressExpansionStateUpdates;
     }
 
     @Override

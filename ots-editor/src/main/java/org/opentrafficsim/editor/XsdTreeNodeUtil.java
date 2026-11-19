@@ -49,6 +49,9 @@ public final class XsdTreeNodeUtil
             "Provide a relative path to your file. Built-in defaults can be loaded using \"" + XmlParser.BUILTIN + "{x}\", "
                     + "where \"{x}\" is any of definition node names in lowercase, e.g. \"" + XmlParser.BUILTIN + "gtutypes\"";
 
+    /** Narrow space. */
+    public static final String THIN_SPACE = "\u2009";
+
     /** Options for all built-in include files. */
     private static List<String> includeOptions;
 

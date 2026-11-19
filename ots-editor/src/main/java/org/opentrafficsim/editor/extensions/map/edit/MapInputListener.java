@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,11 +23,10 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 
 import org.djunits.value.vdouble.scalar.Angle;
@@ -39,6 +39,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
+import org.opentrafficsim.animation.data.util.IconUtil;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
@@ -413,74 +414,88 @@ public class MapInputListener extends InputListener implements EventListener
 
         List<MapData> mapDatas = this.editorMap.getPanel().getSelectedObjects(e.getPoint()).stream()
                 .filter(MapData.class::isInstance).map(MapData.class::cast).toList();
-        if (mapDatas.size() == 1 && SwingUtilities.isLeftMouseButton(e))
+        if (SwingUtilities.isLeftMouseButton(e))
         {
-            if (!e.isControlDown())
+            if (this.editorMap.getPanel().consumeContextMenuJustClosed() && this.selectionIndicators.size() > 1)
             {
-                this.editor.setHighlight(!e.isShiftDown() ? mapDatas.get(0).getNode() : null);
-                // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
-                SwingUtilities.invokeLater(() -> select(mapDatas.get(0), e.isControlDown(), true, e.isShiftDown()));
+                // click to remove context menu
+                e.consume();
             }
-            else
+            else if (mapDatas.size() == 1)
             {
-                this.editor.setHighlight(null);
-                select(mapDatas.get(0), e.isControlDown(), false, e.isShiftDown());
+                selectSingleObject(mapDatas.get(0), e);
+            }
+            else if (!mapDatas.isEmpty())
+            {
+                Optional<MapData> highest = mapDatas.stream().max(Comparator.comparingDouble(MapData::getZ));
+                if (highest.isPresent())
+                {
+                    selectSingleObject(highest.get(), e);
+                }
+            }
+            else if (e.getClickCount() == 1)
+            {
+                if (!e.isControlDown() && !this.selectionIndicators.isEmpty())
+                {
+                    // normal click but there is a selection -> deselect even in add mode
+                    this.editor.setHighlight(null);
+                    deselect();
+                }
+                else if (isAddMode(e) && (!e.isControlDown() || this.selectionIndicators.size() < 2))
+                {
+                    // skip ctrl click if there is a multi-selection (losing your selection is annoying)
+                    this.snap = !this.editorMap.isAddMode() || this.snapSetting;
+                    Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
+                            this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
+                    addPoint(snapPointToGrid(world), this.editorMap.isCentroidMode() ^ e.isShiftDown());
+                }
             }
         }
-        else if (!mapDatas.isEmpty() && SwingUtilities.isLeftMouseButton(e))
+        else if (SwingUtilities.isRightMouseButton(e))
         {
-            Optional<MapData> highest = mapDatas.stream().max(Comparator.comparingDouble(MapData::getZ));
-            if (highest.isPresent())
+            if (!mapDatas.isEmpty())
             {
-                if (!e.isControlDown())
+                if (mapDatas.size() == 1)
                 {
-                    this.editor.setHighlight(!e.isShiftDown() ? highest.get().getNode() : null);
-                    // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
-                    SwingUtilities.invokeLater(() -> select(highest.get(), e.isControlDown(), true, e.isShiftDown()));
+                    if (!e.isControlDown())
+                    {
+                        // no-op when there is a multi-selection and we are right-clicking on some other object
+                        if (this.selectionIndicators.size() > 1 && !isSelected(mapDatas.get(0)))
+                        {
+                            return;
+                        }
+                        XsdTreeNode highlight = this.editor.getHighlight();
+                        if (highlight != null && !highlight.equals(mapDatas.get(0).getNode()))
+                        {
+                            // highlighted some other node; do not keep this highlight
+                            this.editor.setHighlight(null);
+                        }
+                        // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
+                        SwingUtilities.invokeLater(() ->
+                        {
+                            if (this.selectionIndicators.size() <= 1)
+                            {
+                                // select this one if there is no multi-selection, so a relevant operations menu can be shown
+                                this.editor.select(mapDatas.get(0).getNode(), null);
+                                select(mapDatas.get(0), false, true, false);
+                            }
+                            showContextMenu(mapDatas, e);
+                        });
+                    }
+                    else
+                    {
+                        // treat ctrl right-click on single object as ctrl left-click (no point in showSelectLocatableMenu)
+                        selectSingleObject(mapDatas.get(0), e);
+                    }
                 }
                 else
                 {
-                    this.editor.setHighlight(null);
-                    select(highest.get(), e.isControlDown(), false, e.isShiftDown());
-                }
-            }
-        }
-        else if (!mapDatas.isEmpty() && SwingUtilities.isRightMouseButton(e))
-        {
-            if (mapDatas.size() == 1 && this.selectionIndicators.size() <= 1)
-            {
-                this.editor.setHighlight(mapDatas.get(0).getNode());
-                // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
-                SwingUtilities.invokeLater(() ->
-                {
-                    select(mapDatas.get(0), false, true, false);
                     showContextMenu(mapDatas, e);
-                });
+                }
             }
             else
             {
-                showContextMenu(mapDatas, e);
-            }
-        }
-        else if (mapDatas.isEmpty() && SwingUtilities.isRightMouseButton(e))
-        {
-            showSettingsMenu(e);
-        }
-        else if (mapDatas.isEmpty() && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1)
-        {
-            if (!e.isControlDown() && !this.selectionIndicators.isEmpty())
-            {
-                // normal click but there is a selection -> deselect even in add mode
-                this.editor.setHighlight(null);
-                deselect();
-            }
-            else if (isAddMode(e) && (!e.isControlDown() || this.selectionIndicators.size() < 2))
-            {
-                // skip ctrl click if there is a multi-selection (losing your selection is annoying)
-                this.snap = !this.editorMap.isAddMode() || this.snapSetting;
-                Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
-                        this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
-                addPoint(snapPointToGrid(world), this.editorMap.isCentroidMode() ^ e.isShiftDown());
+                showSettingsMenu(e);
             }
         }
         else if (!e.isControlDown() || !isAddMode(e))
@@ -491,17 +506,46 @@ public class MapInputListener extends InputListener implements EventListener
     }
 
     /**
-     * Show context menu based on map data's under the mouse.
+     * Select an object that was the only object clicked.
+     * @param data data of clicked object
+     * @param e mouse event
+     */
+    private void selectSingleObject(final MapData data, final MouseEvent e)
+    {
+        if (!e.isControlDown())
+        {
+            this.editor.setHighlight(!e.isShiftDown() ? data.getNode() : null);
+            // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
+            SwingUtilities.invokeLater(() -> select(data, false, true, e.isShiftDown()));
+        }
+        else
+        {
+            this.editor.setHighlight(null);
+            select(data, true, false, e.isShiftDown());
+        }
+    }
+
+    /**
+     * Show context menu based on map data's under the mouse. If one of the map data's is already selected and ctrl is not held
+     * down, then operations based on the selection are shown, if any.
      * @param mapDatas map data's
      * @param e mouse event
      */
     private void showContextMenu(final List<MapData> mapDatas, final MouseEvent e)
     {
-        Optional<MapData> selected = mapDatas.stream().filter(this::isSelected).findFirst();
-        if (selected.isEmpty() || e.isControlDown()
-                || !MapContextActions.showContextMenu(
-                        this.selectionIndicators.stream().map((a) -> a.getSource().mapData()).toList(), this.editorMap,
-                        this.editorMap.getPanel(), e))
+        boolean atLeastOneUnderMouseSelected = mapDatas.stream().anyMatch(this::isSelected);
+        boolean adding = e.isControlDown();
+        boolean contextMenuHandled = atLeastOneUnderMouseSelected && !adding // only allow context actions on existing selection
+                && MapContextActions.showContextMenu(
+                        this.selectionIndicators.stream().map(a -> a.getSource().mapData()).toList(), this.editorMap,
+                        this.editorMap.getPanel(), e);
+        if (contextMenuHandled)
+        {
+            return;
+        }
+        boolean multipleUnderMouse = mapDatas.size() > 1;
+        boolean multiSelection = this.selectionIndicators.size() > 1;
+        if (multipleUnderMouse && (!multiSelection || adding))
         {
             showSelectLocatableMenu(mapDatas, e);
         }
@@ -879,10 +923,10 @@ public class MapInputListener extends InputListener implements EventListener
 
     /**
      * Show menu to select locatable.
-     * @param locatables list of locatables under mouse event
+     * @param mapDatas list of map datas under mouse event
      * @param e mouse event
      */
-    private void showSelectLocatableMenu(final List<MapData> locatables, final MouseEvent e)
+    private void showSelectLocatableMenu(final List<MapData> mapDatas, final MouseEvent e)
     {
         AtomicReference<HighlightAnnotation> highlight = new AtomicReference<>();
         Runnable remover = () ->
@@ -895,9 +939,39 @@ public class MapInputListener extends InputListener implements EventListener
             }
         };
         JPopupMenu popup = new JPopupMenu();
-        for (MapData mapData : locatables)
+        List<MapData> list = mapDatas;
+        if (mapDatas.size() <= 1000)
         {
-            JMenuItem item = new JMenuItem(mapData.getNode().toString());
+            // skip multi-object selection menu sorting if there are many objects in the network
+            List<XsdTreeNode> children = mapDatas.get(0).getNode().getParent().getChildren();
+            Comparator<MapData> comp = new Comparator<>()
+            {
+                @Override
+                public int compare(final MapData o1, final MapData o2)
+                {
+                    return Integer.compare(children.indexOf(o1.getNode()), children.indexOf(o2.getNode()));
+                }
+            };
+            list = mapDatas.stream().sorted(comp).toList();
+        }
+        Map<String, Icon> iconMap = new HashMap<>();
+        int size = OtsEditor.ICON_SIZE;
+        for (MapData mapData : list)
+        {
+            String path = mapData.getNode().getPathString();
+            Icon icon = iconMap.computeIfAbsent(path, (p) ->
+            {
+                return switch (p)
+                {
+                    case XsdPaths.CENTROID -> IconUtil.of("Centroid24.png").imageSize(size, size).get();
+                    case XsdPaths.CONNECTOR -> IconUtil.of("Connector24.png").imageSize(size, size).get();
+                    case XsdPaths.NODE -> IconUtil.of("Node24.png").imageSize(size, size).get();
+                    case XsdPaths.LINK -> IconUtil.of("Link24.png").imageSize(size, size).get();
+                    case XsdPaths.TRAFFIC_LIGHT -> IconUtil.of("TrafficLight24.png").imageSize(size, size).get();
+                    default -> null;
+                };
+            });
+            JMenuItem item = new JMenuItem(mapData.getNode().toString(), icon);
             item.addActionListener((ev) ->
             {
                 if (!e.isControlDown() && !e.isShiftDown())
@@ -926,7 +1000,7 @@ public class MapInputListener extends InputListener implements EventListener
                 }
             });
         }
-        popup.show(this.editorMap.getPanel(), (int) e.getPoint().getX(), (int) e.getPoint().getY());
+        this.editorMap.getPanel().showContextMenu(popup, e);
     }
 
     /**
@@ -936,21 +1010,31 @@ public class MapInputListener extends InputListener implements EventListener
     private void showSettingsMenu(final MouseEvent event)
     {
         JPopupMenu popup = new JPopupMenu();
-
-        JCheckBoxMenuItem snapItem = new JCheckBoxMenuItem("Snap", this.snapSetting);
+        IconUtil util = IconUtil.of("Check24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE);
+        Icon check = util.get();
+        if (!this.snapSetting)
+        {
+            util = util.gray();
+        }
+        JMenuItem snapItem = new JMenuItem("Snap", util.get());
         snapItem.addActionListener((ev) ->
         {
-            this.snapSetting = snapItem.isSelected();
+            this.snapSetting = !this.snapSetting;
             OtsEditor.PROPERTIES_STORE.setBoolean(SNAP_KEY, this.snapSetting);
         });
         popup.add(snapItem);
 
         JMenu gridMenu = new JMenu("Snap distance");
         ButtonGroup gridGroup = new ButtonGroup();
+        gridMenu.setIcon(IconUtil.of("Grid24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get());
         for (String gridSizeStringValue : SNAP_DISTANCE_OPTIONS)
         {
             Length value = Length.valueOf(gridSizeStringValue);
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(gridSizeStringValue, this.snapDistance.eq(value));
+            JMenuItem item = new JMenuItem(gridSizeStringValue);
+            if (this.snapDistance.eq(value))
+            {
+                item.setIcon(check);
+            }
             item.addActionListener((ev) ->
             {
                 this.snapDistance = value;
@@ -963,10 +1047,15 @@ public class MapInputListener extends InputListener implements EventListener
 
         JMenu angleMenu = new JMenu("Snap angle");
         ButtonGroup angleGroup = new ButtonGroup();
+        angleMenu.setIcon(IconUtil.of("Arc24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get());
         for (String snapAngleStringValue : SNAP_ANGLE_OPTIONS)
         {
             Angle value = Angle.valueOf(snapAngleStringValue);
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(snapAngleStringValue, this.snapAngle.eq(value));
+            JMenuItem item = new JMenuItem(snapAngleStringValue);
+            if (this.snapAngle.eq(value))
+            {
+                item.setIcon(check);
+            }
             item.addActionListener((ev) ->
             {
                 this.snapAngle = value;
@@ -977,7 +1066,7 @@ public class MapInputListener extends InputListener implements EventListener
         }
         popup.add(angleMenu);
 
-        popup.show(this.editorMap.getPanel(), (int) event.getPoint().getX(), (int) event.getPoint().getY());
+        this.editorMap.getPanel().showContextMenu(popup, event);
     }
 
     /**
@@ -1032,6 +1121,7 @@ public class MapInputListener extends InputListener implements EventListener
             removeActivationListener(selectedData.getNode());
             this.selectionIndicators.remove(annotation);
             this.editorMap.removeAnimation(annotation);
+            this.editorMap.update();
             return;
         }
         else if (add && this.selectionIndicators.size() == 1)

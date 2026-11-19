@@ -1,9 +1,11 @@
 package org.opentrafficsim.editor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -78,18 +80,28 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
     /** Whether changes should be ignored, e.g. while loading a file. */
     private final Supplier<Boolean> ignoreChanges;
 
+    /** Whether filtering is enabled from the UI. */
+    private final Supplier<Boolean> filterEnabled;
+
+    /** Search text from the UI used to filter visible rows. */
+    private final Supplier<String> filterText;
+
     /**
      * Constructor.
      * @param document XSD document.
      * @param ignoreChanges whether to ignore changes
      * @param evalSupplier eval supplier
+     * @param filterEnabled whether row filtering is enabled
+     * @param filterText search text supplier used for row filtering
      */
     protected XsdTreeTableModel(final Document document, final Supplier<Boolean> ignoreChanges,
-            final Supplier<Eval> evalSupplier)
+            final Supplier<Eval> evalSupplier, final Supplier<Boolean> filterEnabled, final Supplier<String> filterText)
     {
         super(document == null ? null : new XsdTreeNodeRoot(new Schema(document), ignoreChanges, evalSupplier));
         this.dataStructureRoot = (XsdTreeNodeRoot) this.root; // created in line above, set by super
         this.ignoreChanges = ignoreChanges;
+        this.filterEnabled = filterEnabled;
+        this.filterText = filterText;
         if (this.dataStructureRoot != null)
         {
             this.dataStructureRoot.addAllNodesListener(this, XsdTreeNodeRoot.NODE_CREATED);
@@ -159,9 +171,9 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
     public void refresh()
     {
         this.inserted.clear();
-        if (this.dataStructureRoot != null)
+        if (this.root != null)
         {
-            markInserted(this.dataStructureRoot);
+            markInserted((XsdTreeNode) this.root);
         }
         if (this.root != null)
         {
@@ -191,8 +203,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
             }
             else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED) || event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
             {
-                structuralEvent = false;
-                nodeChanged((XsdTreeNode) content[0]);
+                structuralEvent = nodeChanged((XsdTreeNode) content[0]);
             }
             else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
             {
@@ -236,7 +247,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         {
             return;
         }
-        int index = parent.children == null ? -1 : parent.children.indexOf(node);
+        int index = visibleChildren(parent).indexOf(node);
         if (index < 0)
         {
             return; // node is not part of the visible tree (yet)
@@ -278,8 +289,8 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         }
         if (isDescendantOrSelf(node, this.selectedNode))
         {
-            int childCount = parent.children == null ? 0 : parent.children.size();
-            this.selectedNode = childCount == 0 ? parent : parent.children.get(Math.min(index, childCount - 1));
+            List<XsdTreeNode> siblings = visibleChildren(parent);
+            this.selectedNode = siblings.isEmpty() ? parent : siblings.get(Math.min(index, siblings.size() - 1));
         }
         try
         {
@@ -299,14 +310,21 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
      * editing. A value or attribute change does not alter the tree structure, so a repaint is sufficient and keeps the
      * selection and the cell editor intact.
      * @param node changed node
+     * @return whether a structural event was fired
      */
-    private void nodeChanged(final XsdTreeNode node)
+    private boolean nodeChanged(final XsdTreeNode node)
     {
+        if (isFilterActive())
+        {
+            refresh();
+            return true;
+        }
         if (this.treeTable != null && pathTo(node) != null)
         {
             node.invalidate();
             this.treeTable.repaint();
         }
+        return false;
     }
 
     /**
@@ -345,7 +363,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
             // firing an event would apply an index of a hidden parent to the current tree root.
             return;
         }
-        int index = parent.children == null ? -1 : parent.children.indexOf(selected);
+        int index = visibleChildren(parent).indexOf(selected);
         if (index < 0)
         {
             return;
@@ -408,6 +426,11 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         Object[] path = pathTo(parent);
         if (path == null || !this.inserted.contains(node))
         {
+            return;
+        }
+        if (isFilterActive())
+        {
+            fireTreeStructureChanged(this, path, null, null);
             return;
         }
         try
@@ -535,14 +558,127 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
      */
     private void markInserted(final XsdTreeNode node)
     {
-        this.inserted.add(node);
-        if (node.children != null)
+        if (pathTo(node) == null)
         {
-            for (XsdTreeNode child : node.children)
+            return;
+        }
+        this.inserted.add(node);
+        for (XsdTreeNode child : visibleChildren(node))
+        {
+            markInserted(child);
+        }
+    }
+
+    /**
+     * Returns all children of the node that are visible in the current model and filter state.
+     * @param parent parent node
+     * @return visible children
+     */
+    private List<XsdTreeNode> visibleChildren(final XsdTreeNode parent)
+    {
+        if (parent == null || !parent.isActive())
+        {
+            return Collections.emptyList();
+        }
+        String filter = getActiveFilterText();
+        int count = parent.getChildCount();
+        if (count == 0)
+        {
+            return Collections.emptyList();
+        }
+        List<XsdTreeNode> result = new ArrayList<>(count);
+        for (int i = 0; i < count; i++)
+        {
+            XsdTreeNode child = parent.getChild(i);
+            if (filter == null || isVisible(child, filter))
             {
-                markInserted(child);
+                result.add(child);
             }
         }
+        return result;
+    }
+
+    /**
+     * Returns the active filter text in lower case, or {@code null} if no filter is active.
+     * @return active filter text in lower case, or {@code null} if no filter is active
+     */
+    public String getActiveFilterText()
+    {
+        if (this.filterEnabled == null || this.filterText == null || !Boolean.TRUE.equals(this.filterEnabled.get()))
+        {
+            return null;
+        }
+        String text = this.filterText.get();
+        if (text == null || text.isEmpty())
+        {
+            return null;
+        }
+        return text.toLowerCase(Locale.ROOT).replace(XsdTreeNodeUtil.THIN_SPACE, " ");
+    }
+
+    /**
+     * Returns whether a search filter is currently active.
+     * @return whether a search filter is currently active
+     */
+    public boolean isFilterActive()
+    {
+        return hasActiveFilter();
+    }
+
+    /**
+     * Returns whether a search filter is currently active.
+     * @return whether a search filter is currently active
+     */
+    private boolean hasActiveFilter()
+    {
+        return getActiveFilterText() != null;
+    }
+
+    /**
+     * Returns whether a node should be visible under the supplied filter.
+     * @param node node to evaluate
+     * @param filter filter text (lower case)
+     * @return whether the node should be visible
+     */
+    private boolean isVisible(final XsdTreeNode node, final String filter)
+    {
+        if (node == null)
+        {
+            return false;
+        }
+        if (node == this.dataStructureRoot)
+        {
+            return true;
+        }
+        if (matchesFilter(node.toString(), filter))
+        {
+            return true;
+        }
+        int childCount = node.getChildCount();
+        for (int i = 0; i < childCount; i++)
+        {
+            if (isVisible(node.getChild(i), filter))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether a node label matches the filter, while treating narrow spaces in labels as optional or regular spaces.
+     * @param label node label
+     * @param filter filter text (lower case)
+     * @return whether the label matches the filter
+     */
+    private static boolean matchesFilter(final String label, final String filter)
+    {
+        String lower = label.toLowerCase(Locale.ROOT);
+        if (lower.replace(XsdTreeNodeUtil.THIN_SPACE, " ").contains(filter))
+        {
+            return true;
+        }
+        return lower.replace(XsdTreeNodeUtil.THIN_SPACE, "").contains(filter);
     }
 
     /**
@@ -564,10 +700,15 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         {
             return null;
         }
+        String filter = getActiveFilterText();
+        if (filter != null && node != this.dataStructureRoot && !isVisible(node, filter))
+        {
+            return null;
+        }
         for (int i = index + 1; i < path.size(); i++)
         {
             XsdTreeNode parent = path.get(i - 1);
-            if (!parent.isActive() || parent.children == null || !parent.children.contains(path.get(i)))
+            if (!parent.isActive() || !visibleChildren(parent).contains(path.get(i)))
             {
                 return null; // node is not part of the visible tree
             }
@@ -637,13 +778,13 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
     @Override
     public Object getChild(final Object parent, final int index)
     {
-        return ((XsdTreeNode) parent).getChild(index);
+        return visibleChildren((XsdTreeNode) parent).get(index);
     }
 
     @Override
     public int getChildCount(final Object parent)
     {
-        return ((XsdTreeNode) parent).getChildCount();
+        return visibleChildren((XsdTreeNode) parent).size();
     }
 
     @Override

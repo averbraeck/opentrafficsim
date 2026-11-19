@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -21,13 +22,13 @@ import javax.swing.tree.TreePath;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.opentrafficsim.editor.Actions;
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdOption;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.editor.XsdTreeNodeRoot;
 import org.opentrafficsim.editor.XsdTreeTableModel;
 
 import de.javagl.treetable.JTreeTable;
@@ -193,6 +194,12 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     public void treeWillExpand(final TreeExpansionEvent event) throws ExpandVetoException
     {
         this.editor.setMayPresentChoice(false);
+        if (this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model && model.isFilterActive()
+                && !this.editor.isSuppressingExpansionStateUpdates())
+        {
+            // The arrow click expands one level by default; in filtered mode we expand the full visible branch.
+            SwingUtilities.invokeLater(() -> Actions.deepExpandVisibleDescendants(this.treeTable, event.getPath()));
+        }
     }
 
     @Override
@@ -292,6 +299,10 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             {
                 return;
             }
+            if (this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model && model.isFilterActive())
+            {
+                return;
+            }
             int x = 0; // columns can be reordered, so adjust x coordinate to frame of tree column within the tree table
             for (int c = 0; c < col; c++)
             {
@@ -301,7 +312,8 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                     .getPathBounds(this.treeTable.getTree().getPathForLocation(e.getPoint().x - x, e.getPoint().y));
             if (labelPortion != null && labelPortion.contains(e.getPoint().x - x, e.getPoint().y)
                     && this.editor.mayPresentChoice() && treeNode.isChoice()
-                    && !treeNode.equals(((XsdTreeTableModel) this.treeTable.getTree().getModel()).getDataRoot()))
+                    && this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model
+                    && !treeNode.equals(model.getDataRoot()))
             {
                 JPopupMenu popup = new JPopupMenu();
                 for (XsdOption option : treeNode.getOptions())
@@ -343,6 +355,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     private void createRightClickPopup(final MouseEvent e, final XsdTreeNode treeNode)
     {
         JPopupMenu popup = new JPopupMenu();
+        boolean filterActive = this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model && model.isFilterActive();
 
         boolean anyAdded = false;
         if (treeNode.isActive())
@@ -356,7 +369,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 anyAdded = true;
             }
         }
-        if (treeNode.getDescription().isPresent()) // description is the only thing we show with the node disabled
+        if (treeNode.getDescription().isPresent())
         {
             JMenuItem item = new JMenuItem(this.editor.actions().showTreeNodeDescription());
             item.setFont(this.treeTable.getFont());
@@ -376,19 +389,21 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
         }
 
-        if (!treeNode.isIncluded())
+        /*
+         * Accelerators are added so they are shown in the menu as shortcuts. However, they will only trigger on key events when
+         * the right-click menu is actually shown. Therefore XsdTreeKeyListener also implements the responses for when keys are
+         * pressed.
+         */
+        boolean groupAdded = false;
+        if (!filterActive && !treeNode.isIncluded())
         {
-            /*
-             * Accelerators are added so they are shown in the menu as shortcuts. However, they will only trigger on key events
-             * when the right-click menu is actually shown. Therefore XsdTreeKeyListener also implements the responses for when
-             * keys are pressed.
-             */
-            boolean groupAdded = addAddRemoveGroup(popup, treeNode, anyAdded);
+            groupAdded = addAddRemoveGroup(popup, treeNode, anyAdded);
             anyAdded = anyAdded || groupAdded;
-
-            groupAdded = addBranchingGroup(popup, treeNode, groupAdded);
-            anyAdded = anyAdded || groupAdded;
-
+        }
+        groupAdded = addBranchingGroup(popup, treeNode, groupAdded, filterActive);
+        anyAdded = anyAdded || groupAdded;
+        if (!filterActive && !treeNode.isIncluded())
+        {
             groupAdded = addMoveNodeGroup(treeNode, popup, groupAdded);
             anyAdded = anyAdded || groupAdded;
         }
@@ -475,14 +490,16 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
      * @param popup popup menu
      * @param treeNode node for which the menu is made
      * @param separatorNeeded whether a separator is needed when the first item is added
+     * @param filterActive whether the filter is active
      * @return whether any menu item was added
      */
-    private boolean addBranchingGroup(final JPopupMenu popup, final XsdTreeNode treeNode, final boolean separatorNeeded)
+    private boolean addBranchingGroup(final JPopupMenu popup, final XsdTreeNode treeNode, final boolean separatorNeeded,
+            final boolean filterActive)
     {
         boolean groupAdded = false;
         boolean sepNeeded = separatorNeeded;
         List<XsdOption> options = treeNode.getOptions();
-        if (treeNode.isActive() && treeNode.isChoice() && options.size() > 1)
+        if (!filterActive && !treeNode.isIncluded() && treeNode.isActive() && treeNode.isChoice() && options.size() > 1)
         {
             sepNeeded = addSeparator(popup, sepNeeded);
             JMenuItem revolve = new JMenuItem(this.editor.actions().revolveNode());
@@ -490,16 +507,20 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             popup.add(revolve);
             groupAdded = true;
         }
-        if (treeNode instanceof XsdTreeNodeRoot)
+        if (treeNode == this.treeTable.getTree().getModel().getRoot())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
-            JMenuItem expand = new JMenuItem(this.editor.actions().collapseAll());
+            JMenuItem expand = new JMenuItem(this.editor.actions().expandAll());
             expand.setFont(this.treeTable.getFont());
             popup.add(expand);
+            JMenuItem collapse = new JMenuItem(this.editor.actions().collapseAll());
+            collapse.setFont(this.treeTable.getFont());
+            popup.add(collapse);
             groupAdded = true;
         }
-        else if (!treeNode.isActive() || treeNode.getChildCount() > 0)
+        else if (this.treeTable.getTree().getModel().getChildCount(treeNode) > 0)
         {
+            // treeNode.getChildCount() does not obey search filter so we ask the tree model
             sepNeeded = addSeparator(popup, sepNeeded);
             JMenuItem expand = new JMenuItem(this.editor.actions().expandOrCollapseNode());
             expand.setFont(this.treeTable.getFont());

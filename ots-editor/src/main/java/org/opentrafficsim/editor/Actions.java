@@ -149,6 +149,16 @@ public class Actions
         return ((AttributesTableModel) Actions.this.attributesTable.getModel()).getNode();
     }
 
+    /**
+     * Returns whether a tree filter is active.
+     * @return whether a tree filter is active
+     */
+    private boolean isTreeFilterActive()
+    {
+        return this.treeTable != null && this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model
+                && model.isFilterActive();
+    }
+
     // ----- Actions; pairs of methods to obtain them and private final fields that store them. ----- //
 
     /**
@@ -275,6 +285,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (node.isAddable())
             {
@@ -302,6 +316,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (node.isAddable())
             {
@@ -329,6 +347,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (node.isRemovable())
             {
@@ -359,6 +381,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (node.isActive() && (node.isRemovable() || node.isAddable()))
             {
@@ -386,6 +412,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (node.isActive() && node.isRemovable())
             {
@@ -413,6 +443,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (Actions.this.editor.getClipboard() != null && node.canContain(Actions.this.editor.getClipboard())
                     && node.isActive() && node.isAddable())
@@ -441,6 +475,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (Actions.this.editor.getClipboard() != null && node.canContain(Actions.this.editor.getClipboard())
                     && (!node.isActive() || node.isAddable()))
@@ -469,6 +507,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             List<XsdOption> options = node.getOptions();
             if (node.isChoice() && options.size() > 1)
@@ -501,6 +543,29 @@ public class Actions
     };
 
     /**
+     * Action to expand all.
+     * @return action to expand all
+     */
+    public Action expandAll()
+    {
+        return this.expandAllAction;
+    }
+
+    /** Action to expand all. */
+    private final Action expandAllAction = new AbstractAction("Expand all")
+    {
+        @Override
+        public void actionPerformed(final ActionEvent e)
+        {
+            Object root = Actions.this.treeTable.getTree().getModel().getRoot();
+            if (root != null)
+            {
+                deepExpandVisibleDescendants(Actions.this.treeTable, new TreePath(root));
+            }
+        }
+    };
+
+    /**
      * Action to expand or collapse node.
      * @return action to expand or collapse node
      */
@@ -521,11 +586,41 @@ public class Actions
         public void actionPerformed(final ActionEvent e)
         {
             TreePath path = Actions.this.treeTable.getTree().getSelectionPath();
+            if (path == null)
+            {
+                return;
+            }
             XsdTreeNode node = (XsdTreeNode) path.getLastPathComponent();
+            if (Actions.this.treeTable.getTree().getModel().getChildCount(node) == 0)
+            {
+                return;
+            }
             boolean expanded = Actions.this.treeTable.getTree().isExpanded(path);
-            getNodeActions().expand(node, path, expanded);
+            getNodeActions().toggleExpansion(node, path, expanded);
+            if (!expanded && Actions.this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model
+                    && model.isFilterActive())
+            {
+                deepExpandVisibleDescendants(Actions.this.treeTable, path);
+            }
         }
     };
+
+    /**
+     * Expands all currently visible descendants from the given path.
+     * @param treeTable tree table
+     * @param path path to expand deeply
+     */
+    public static void deepExpandVisibleDescendants(final JTreeTable treeTable, final TreePath path)
+    {
+        treeTable.getTree().expandPath(path);
+        Object node = path.getLastPathComponent();
+        int childCount = treeTable.getTree().getModel().getChildCount(node);
+        for (int i = 0; i < childCount; i++)
+        {
+            Object child = treeTable.getTree().getModel().getChild(node, i);
+            deepExpandVisibleDescendants(treeTable, path.pathByAddingChild(child));
+        }
+    }
 
     /**
      * Action to move node up.
@@ -546,6 +641,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (node.canMoveUp())
             {
@@ -573,6 +672,10 @@ public class Actions
         @Override
         public void actionPerformed(final ActionEvent e)
         {
+            if (isTreeFilterActive())
+            {
+                return;
+            }
             XsdTreeNode node = getSelectedTreeNode();
             if (node.canMoveDown())
             {

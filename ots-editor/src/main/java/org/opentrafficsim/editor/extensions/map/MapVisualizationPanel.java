@@ -2,6 +2,9 @@ package org.opentrafficsim.editor.extensions.map;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 import java.rmi.RemoteException;
@@ -9,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
+import javax.swing.JPopupMenu;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
@@ -43,6 +49,9 @@ public class MapVisualizationPanel extends VisualizationPanel
     /** Event when extent changed. */
     public static final EventType EXTENT_CHANGED = new EventType(new MetaData("EXTENT_CHANGED", "EXTENT_CHANGED"));
 
+    /** Whether a context menu has just been closed. */
+    private boolean contextMenuJustClosed;
+
     /**
      * Constructor.
      * @param homeExtent the initial extent
@@ -55,6 +64,58 @@ public class MapVisualizationPanel extends VisualizationPanel
             throws RemoteException, NamingException
     {
         super(homeExtent, producer, context);
+        addFocusListener(new FocusAdapter()
+        {
+            @Override
+            public void focusLost(final FocusEvent e)
+            {
+                // next left-click on map may deselect a multi-selection after focus was lost
+                // focusLost is not guaranteed to occur for any click that makes the popup disappear, so this is
+                MapVisualizationPanel.this.contextMenuJustClosed = false;
+            }
+        });
+    }
+
+    /**
+     * Set context menu.
+     * @param menu context menu
+     * @param event mouse event
+     */
+    public void showContextMenu(final JPopupMenu menu, final MouseEvent event)
+    {
+        this.contextMenuJustClosed = false;
+        menu.addPopupMenuListener(new PopupMenuListener()
+        {
+            @Override
+            public void popupMenuWillBecomeVisible(final PopupMenuEvent e)
+            {
+                MapVisualizationPanel.this.contextMenuJustClosed = false;
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e)
+            {
+                MapVisualizationPanel.this.contextMenuJustClosed = true;
+            }
+
+            @Override
+            public void popupMenuCanceled(final PopupMenuEvent e)
+            {
+                MapVisualizationPanel.this.contextMenuJustClosed = true;
+            }
+        });
+        menu.show(this, (int) event.getPoint().getX(), (int) event.getPoint().getY());
+    }
+
+    /**
+     * Returns whether a context menu has just closed and clears that state.
+     * @return whether a context menu has just closed
+     */
+    public boolean consumeContextMenuJustClosed()
+    {
+        boolean out = this.contextMenuJustClosed;
+        this.contextMenuJustClosed = false;
+        return out;
     }
 
     @Override

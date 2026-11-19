@@ -1405,10 +1405,6 @@ public class XsdTreeNode extends LocalEventProducer
             int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
             XsdTreeNode node = new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes,
                     this.choice.referringXsdNode);
-            if (this.active)
-            {
-                node.setActive();
-            }
             getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                     new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             node.createOptions();
@@ -1422,7 +1418,10 @@ public class XsdTreeNode extends LocalEventProducer
             {
                 selectedOption.fireEvent(MOVED, new Object[] {selectedOption, movedFrom, index});
             }
-            node.options.get(indexSelected).setActive();
+            if (this.active)
+            {
+                selectedOption.setActive();
+            }
             copyNode = selectedOption;
         }
         else
@@ -1994,7 +1993,7 @@ public class XsdTreeNode extends LocalEventProducer
                                 || child.xsdNode.getNodeName().equals("xsd:all"))
                         {
                             stringBuilder.append(separator).append(child.getShortString());
-                            separator = "\u2009|\u2009"; // thin space | thin space
+                            separator = XsdTreeNodeUtil.THIN_SPACE + "|" + XsdTreeNodeUtil.THIN_SPACE;
                             coveredTypes.add(child.getPathString());
                         }
                     }
@@ -2055,7 +2054,7 @@ public class XsdTreeNode extends LocalEventProducer
         }
         if (isIdentifiable() && getId() != null && !getId().isEmpty())
         {
-            string.append("\u2009").append(getId()); // thin space
+            string.append(XsdTreeNodeUtil.THIN_SPACE).append(getId()); // thin space
         }
         /*-
         if (this.minOccurs == this.maxOccurs)
@@ -2073,7 +2072,7 @@ public class XsdTreeNode extends LocalEventProducer
             String v = this.stringFunction.apply(this);
             if (v != null)
             {
-                string.append("\u2009(").append(v).append(")"); // u2009 = thin space
+                string.append(XsdTreeNodeUtil.THIN_SPACE).append("(").append(v).append(")");
             }
         }
         return string.toString();

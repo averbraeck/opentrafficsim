@@ -270,7 +270,7 @@ public final class EditorMap extends JPanel implements EventListener
         Dimension shapeSizeLarge = new Dimension(100, 22);
         Dimension definitionSizeSmall = new Dimension(50, 22);
         Dimension definitionSizeLarge = new Dimension(150, 22);
-        Border paintBorder = new CompoundBorder(new MatteBorder(1, 0, 1, 1, MetalLookAndFeel.getControlDarkShadow()),
+        Border applyBorder = new CompoundBorder(new MatteBorder(1, 0, 1, 1, MetalLookAndFeel.getControlDarkShadow()),
                 new EmptyBorder(0, 1, 0, 0));
 
         // add tools
@@ -325,7 +325,7 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(this.defaultRoadLayout);
         this.roadLayoutApplyButton =
                 createToolButton(applyButtonSize, "Apply24.png", "Apply road layout to selection", false, applyIconSize);
-        this.roadLayoutApplyButton.setBorder(paintBorder);
+        this.roadLayoutApplyButton.setBorder(applyBorder);
         this.roadLayoutApplyButton.addActionListener((a) ->
         {
             String selected = (String) this.defaultRoadLayout.getSelectedItem();
@@ -347,7 +347,7 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(this.defaultLinkType);
         this.linkTypeApplyButton =
                 createToolButton(applyButtonSize, "Apply24.png", "Apply link type to selection", false, applyIconSize);
-        this.linkTypeApplyButton.setBorder(paintBorder);
+        this.linkTypeApplyButton.setBorder(applyBorder);
         this.linkTypeApplyButton.addActionListener((a) ->
         {
             String selected = (String) this.defaultLinkType.getSelectedItem();
@@ -358,7 +358,7 @@ public final class EditorMap extends JPanel implements EventListener
         });
         this.linkTypeShowButton =
                 createToolButton(applyButtonSize, "Eye24.png", "Show links with link type", true, applyIconSize);
-        this.linkTypeShowButton.setBorder(paintBorder);
+        this.linkTypeShowButton.setBorder(applyBorder);
         storedToggleSetting(this.linkTypeShowButton, "showLinkType");
         this.linkTypeShowButton.addActionListener((a) -> updateLinkTypeColors());
 
@@ -373,18 +373,21 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(Box.createHorizontalStrut(5));
         JButton resetY = new JButton(IconUtil.of("UpDown24.png").imageSize(iconSize, iconSize).get());
         setSize(resetY, buttonSize, buttonSize);
+        resetY.setFocusPainted(false);
         resetY.setToolTipText("Reset Y-zoom");
         resetY.addActionListener((e) -> this.visualizationPanel.resetZoomY());
         this.toolPanel.add(resetY);
 
         JButton extent = new JButton(IconUtil.of("ZoomAll24.png").imageSize(iconSize, iconSize).get());
         setSize(extent, buttonSize, buttonSize);
+        extent.setFocusPainted(false);
         extent.setToolTipText("Zoom whole network");
         extent.addActionListener((e) -> safeZoomAll());
         this.toolPanel.add(extent);
 
         JButton grid = new JButton(IconUtil.of("Grid24.png").imageSize(iconSize, iconSize).get());
         setSize(grid, buttonSize, buttonSize);
+        grid.setFocusPainted(false);
         grid.setToolTipText("Toggle grid on/off");
         grid.addActionListener((e) ->
         {
