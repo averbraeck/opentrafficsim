@@ -64,7 +64,7 @@ public class NodeAnimation extends OtsRenderableLabeled<NodeData, Text>
         double scale = Math.sqrt(graphics.getTransform().getDeterminant());
         double factor = 4.0 / Math.min(scale, 4.0); // do not make smaller when zooming out below scale 4
         graphics.scale(factor, factor);
-        graphics.setColor(Color.BLACK);
+        graphics.setColor(getSource().getColor());
         graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
         if (!getSource().isCentroid())
@@ -129,6 +129,15 @@ public class NodeAnimation extends OtsRenderableLabeled<NodeData, Text>
          * @return whether this node is a centroid
          */
         boolean isCentroid();
+
+        /**
+         * Returns the color.
+         * @return color
+         */
+        default Color getColor()
+        {
+            return Color.BLACK;
+        }
 
         @Override
         default double signedDistance(final Point2d point)

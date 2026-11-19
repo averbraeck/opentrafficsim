@@ -16,6 +16,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.animation.data.util.IconUtil;
@@ -263,9 +264,11 @@ final class MapContextActions
      */
     private static void alignStraightNodeDirections(final MapLinkData data)
     {
-        Direction direction = direction(data.getStartPoint(), data.getEndPoint());
+        Direction direction =
+                straightDirection(data.getStartPoint(), data.getEndPoint(), data.getStartOffset(), data.getEndOffset());
         if (direction == null)
         {
+            noValidGeometryDialog(data);
             return;
         }
         data.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, data.getNode(), null);
@@ -274,58 +277,122 @@ final class MapContextActions
     }
 
     /**
-     * Returns the direction from one point to another.
+     * Returns the direction of the straight design line that is tangent to the offset circle at both points. Both offsets are
+     * measured perpendicular to the returned direction, positive to the left. With {@code n} the left normal of the direction
+     * {@code theta}, the tangency points are {@code from + startOffset * n} and {@code to + endOffset * n}. Both lie on the
+     * design line if {@code (to - from) . n == startOffset - endOffset}, which with {@code d} the distance between the points
+     * and {@code phi} the direction from one point to the other boils down to
+     * {@code d * sin(phi - theta) == diff == startOffset - endOffset}. The solution near {@code phi} is
+     * {@code theta = phi - asin(diff / d)}.
      * @param from from point
      * @param to to point
-     * @return direction from one point to another, or {@code null} if the points are not available or coincide
+     * @param startOffset offset at the from point, may be {@code null} for no offset
+     * @param endOffset offset at the to point, may be {@code null} for no offset
+     * @return direction of the design line through both offset points, or {@code null} if the points are not available,
+     *         coincide, or the offsets are too large for a common tangent line
      */
-    private static Direction direction(final Point2d from, final Point2d to)
+    private static Direction straightDirection(final Point2d from, final Point2d to, final Length startOffset,
+            final Length endOffset)
     {
-        if (from == null || to == null || from.distance(to) < 1e-9)
+        if (from == null || to == null)
         {
             return null;
         }
-        return Direction.ofSI(Math.atan2(to.y - from.y, to.x - from.x));
+        double dx = to.x - from.x;
+        double dy = to.y - from.y;
+        double distance = Math.hypot(dx, dy);
+        double diff = (startOffset == null ? 0.0 : startOffset.si) - (endOffset == null ? 0.0 : endOffset.si);
+        if (distance < 1e-9 || Math.abs(diff) >= distance)
+        {
+            return null;
+        }
+        return Direction.ofSI(Math.atan2(dy, dx) - Math.asin(diff / distance));
     }
 
     /**
-     * Aligns the arc with the coordinates of both nodes and the direction of one of the nodes. The radius and direction of the
-     * arc are set, as well as the direction of the node that is not kept.
+     * Aligns the arc with the coordinates and offsets of both nodes and the direction of one of the nodes. The radius and
+     * direction of the arc are set, as well as the direction of the node that is not kept.
      * @param data map element for which to show the context menu
      * @param keepStart whether to keep the start node direction, otherwise the end node direction is kept
      */
     private static void alignArc(final MapLinkData data, final boolean keepStart)
     {
-        if (data.getStartPoint() == null || data.getEndPoint() == null)
+        Point2d pointStart = data.getStartPoint();
+        Point2d pointEnd = data.getEndPoint();
+        if (pointStart == null || pointEnd == null)
         {
             return;
         }
         Direction kept = keepStart ? data.getStartDirection() : data.getEndDirection();
-        Point2d pointEnd = data.getEndPoint();
-        Point2d pointStart = data.getStartPoint();
-        double dx = pointEnd.x - pointStart.x;
-        double dy = pointEnd.y - pointStart.y;
-        double lengthSquared = dx * dx + dy * dy;
-        if (kept == null || lengthSquared < 1e-9)
+        if (kept == null)
         {
+            return;
+        }
+        Point2d keptPoint = keepStart ? pointStart : pointEnd;
+        Point2d otherPoint = keepStart ? pointEnd : pointStart;
+        Length keptOffset = keepStart ? data.getStartOffset() : data.getEndOffset();
+        Length otherOffset = keepStart ? data.getEndOffset() : data.getStartOffset();
+        double ok = keptOffset == null ? 0.0 : keptOffset.si;
+        double oa = otherOffset == null ? 0.0 : otherOffset.si;
+        double dx = otherPoint.x - keptPoint.x;
+        double dy = otherPoint.y - keptPoint.y;
+        double lengthSquared = dx * dx + dy * dy;
+        if (lengthSquared < 1e-9)
+        {
+            noValidGeometryDialog(data);
             return;
         }
         double sin = Math.sin(kept.si);
         double cos = Math.cos(kept.si);
-        // dot product of the chord with the normal at the kept side
-        double dot = keepStart ? -dx * sin + dy * cos : dx * sin - dy * cos;
-        if (Math.abs(dot) < 1e-9 * Math.sqrt(lengthSquared))
+        // dot product of the chord (from kept point to other point) with the normal at the kept side
+        double dot = -dx * sin + dy * cos;
+        double diff = ok - oa;
+        double sum = ok + oa;
+        if (Math.abs(dot - diff) < 1e-9 * Math.sqrt(lengthSquared))
         {
-            return; // nodes and direction are collinear, there is no finite arc
+            noValidGeometryDialog(data);
+            return; // nodes, directions and offsets are collinear, there is no finite arc
         }
-        double radius = lengthSquared / (2.0 * Math.abs(dot));
-        boolean left = dot > 0.0;
-        double chordDirection = Math.atan2(dy, dx);
-        Direction alignedDirection = Direction.ofSI(2.0 * chordDirection - kept.si);
+        /*
+         * The centre of the circle is at keptPoint + (ok + signedRadius) * n, with n the normal at the kept side and
+         * signedRadius positive for a left turn and negative for a right turn. At the other side the centre is at (oa +
+         * signedRadius) * n from the other node. Equating both centre distances gives a linear equation: d^2 - 2 * ok * dot +
+         * (ok - oa) * (ok + oa) = 2 * (dot - ok + oa) * signedRadius.
+         */
+        double signedRadius = (lengthSquared - 2.0 * dot * ok + diff * sum) / (2.0 * (dot - diff));
+        if (Math.abs(signedRadius) < 1e-9)
+        {
+            noValidGeometryDialog(data);
+            return; // degenerate arc
+        }
+        double centreX = keptPoint.x - (ok + signedRadius) * sin;
+        double centreY = keptPoint.y + (ok + signedRadius) * cos;
+        Direction alignedDirection = null;
+        if (Math.abs(oa + signedRadius) >= 1e-9)
+        {
+            // the normal at the other side points from the other node to the centre, scaled by oa + signedRadius
+            double normalX = (centreX - otherPoint.x) / (oa + signedRadius);
+            double normalY = (centreY - otherPoint.y) / (oa + signedRadius);
+            alignedDirection = Direction.ofSI(Math.atan2(-normalX, normalY));
+        }
         data.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, data.getShapeNode(), null);
-        data.getShapeNode().setAttributeValue("Radius", radius + "m");
-        data.getShapeNode().setAttributeValue("Direction", left ? ArcDirection.LEFT.toString() : ArcDirection.RIGHT.toString());
-        setNodeDirection(keepStart ? data.getEndNode() : data.getStartNode(), alignedDirection);
+        data.getShapeNode().setAttributeValue("Radius", Math.abs(signedRadius) + "m");
+        data.getShapeNode().setAttributeValue("Direction",
+                signedRadius > 0.0 ? ArcDirection.LEFT.toString() : ArcDirection.RIGHT.toString());
+        if (alignedDirection != null)
+        {
+            setNodeDirection(keepStart ? data.getEndNode() : data.getStartNode(), alignedDirection);
+        }
+    }
+
+    /**
+     * Shows a dialog that there is no valid geometry.
+     * @param data link data for which the geometry was attempted to be calculated
+     */
+    private static void noValidGeometryDialog(final MapLinkData data)
+    {
+        data.getEditor().dialogs().notification("There is no solution for given node positions and link start and end offest.",
+                "No solution");
     }
 
     /**

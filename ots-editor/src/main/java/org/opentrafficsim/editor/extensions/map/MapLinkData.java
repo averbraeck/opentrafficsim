@@ -768,6 +768,26 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         this.priorityAnimation = new PriorityAnimation(new MapPriorityData(this), getMap().getContextualized());
         buildLayout();
+        updateNode(this.nodeStart);
+        updateNode(this.nodeEnd);
+    }
+
+    /**
+     * Invokes {@code update()} on the map data of the given node, if available. This refreshes the node color, which depends on
+     * the alignment of all links connected to the node.
+     * @param node node
+     */
+    private void updateNode(final XsdTreeNode node)
+    {
+        if (node == null)
+        {
+            return;
+        }
+        MapData data = getMap().getData(node).orElse(null);
+        if (data instanceof MapNodeData nodeData)
+        {
+            nodeData.update();
+        }
     }
 
     /**
@@ -1644,6 +1664,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         // later as flattener may not be loaded yet during loading
                         laterIfNotDestroyed(() ->
                         {
+                            if (!this.shapeNode.isActive() || this.shapeNode.getChildCount() < 1)
+                            {
+                                Logger.ots().info("Not listening to Clothoid choice");
+                                return;
+                            }
                             this.shapeNode.getChild(0).addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
                             for (XsdTreeNode option : this.shapeNode.getChild(0).getChildren())
                             {
@@ -1739,7 +1764,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 MapLinkData.this.flattenerListener.destroy();
             }
-            MapLinkData.this.flattenerListener = new FlattenerListener(this.shapeNode.getChild(0), () -> getEval());
+            // Bezier (0), Clothoid (1), Arc (0), i.e. last child
+            MapLinkData.this.flattenerListener =
+                    new FlattenerListener(this.shapeNode.getChild(this.shapeNode.getChildCount() - 1), () -> getEval());
             MapLinkData.this.flattenerListener.addListener(MapLinkData.this, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
             this.shapeNode.getChild(0).addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         }
@@ -1924,7 +1951,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                             return null;
                         }
                     }
-                    return new PolyLineCurve2d(new PolyLine2d(0.0, list), fromPoint.dirZ, toPoint.dirZ);
+                    PolyLine2d line = new PolyLine2d(0.0, list);
+                    return new PolyLineCurve2d(line, line.getLocationFraction(0.0).dirZ, line.getLocationFraction(1.0).dirZ);
                 case "Bezier":
                     // similar to how Clothoid fixes this
                     double[] phiBezier = phi(fromPoint, toPoint);

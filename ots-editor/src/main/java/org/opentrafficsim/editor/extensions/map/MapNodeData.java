@@ -1,16 +1,23 @@
 package org.opentrafficsim.editor.extensions.map;
 
+import java.awt.Color;
+
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
+import org.djutils.math.AngleUtil;
 import org.opentrafficsim.animation.network.NodeAnimation.NodeData;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.OtsEditorProperties;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
@@ -29,6 +36,16 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     /** Bounds. */
     private static final Bounds2d BOUNDS = new Bounds2d(2.0, 2.0);
 
+    /** Invalid alignment color. */
+    private static final Color INVALID_COLOR =
+            OtsEditorProperties.PROPERTIES_STORE.getColorOrDefault("map.node.invalidAlignmentColor", new Color(255, 103, 0));
+
+    /** Invalid angle alignment threshold. */
+    private static final double INVALID_ANG = Math.PI / 360.0; // 0.5 deg
+
+    /** Invalid distance alignment threshold. */
+    private static final double INVALID_DIST = 0.05; // 5cm
+
     /** String attribute. */
     private String id = "";
 
@@ -46,6 +63,9 @@ public class MapNodeData extends MapData implements NodeData, EventListener
 
     /** Relative contour. */
     private Polygon2d relativeContour;
+
+    /** Color. */
+    private Color color = NodeData.super.getColor();
 
     /**
      * Constructor.
@@ -116,6 +136,12 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     }
 
     @Override
+    public Color getColor()
+    {
+        return this.color;
+    }
+
+    @Override
     public void notify(final Event event)
     {
         String attribute = (String) ((Object[]) event.getContent())[1];
@@ -151,6 +177,60 @@ public class MapNodeData extends MapData implements NodeData, EventListener
             executeForAttribute((v) -> this.direction = v, node, "Direction", Adapters.get(Direction.class));
         }
         setLocation();
+        setColor();
+    }
+
+    /**
+     * Sets the color based on the alignment of the links connected to this node. The color is invalid if any connected link has
+     * a direction that differs too much from the node direction, or an end-point that is too far from the offset node location.
+     */
+    private void setColor()
+    {
+        XsdTreeNode node = getNode();
+        XsdTreeNode parent = node == null ? null : node.getParent();
+        if (parent == null)
+        {
+            this.color = NodeData.super.getColor();
+            return;
+        }
+        DirectedPoint2d loc = getLocation();
+        for (XsdTreeNode child : parent.getChildren())
+        {
+            if (!child.getPathString().equals(XsdPaths.LINK))
+            {
+                continue;
+            }
+            MapData data = getMap().getData(child).orElse(null);
+            if (!(data instanceof MapLinkData linkData))
+            {
+                continue;
+            }
+            boolean atStart = node.equals(linkData.getStartNode());
+            if (!atStart && !node.equals(linkData.getEndNode()))
+            {
+                continue;
+            }
+            OffsetCurve2d designLine = linkData.getDesignLine();
+            if (designLine == null)
+            {
+                continue;
+            }
+            double linkEndPointDirection = atStart ? designLine.getStartDirection() : designLine.getEndDirection();
+            if (Math.abs(AngleUtil.normalizeAroundZero(linkEndPointDirection - loc.dirZ)) > INVALID_ANG)
+            {
+                this.color = INVALID_COLOR;
+                return;
+            }
+            Point2d linkEndPointPoint = atStart ? designLine.getStartPoint() : designLine.getEndPoint();
+            Length offset = atStart ? linkData.getStartOffset() : linkData.getEndOffset();
+            Point2d offsetLocation = OtsGeometryUtil.offsetPoint(loc, offset == null ? 0.0 : offset.si);
+            if (linkEndPointPoint.distance(offsetLocation) > INVALID_DIST)
+            {
+                this.color = INVALID_COLOR;
+                return;
+            }
+        }
+        this.color = NodeData.super.getColor();
     }
 
     /**
