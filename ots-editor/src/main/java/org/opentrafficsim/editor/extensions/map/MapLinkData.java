@@ -742,18 +742,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
 
         // Node
-        double dirStart = this.directionStart == null ? 0.0 : this.directionStart.si;
-        DirectedPoint2d fromPoint = new DirectedPoint2d(this.pointStart, dirStart);
-        double dirEnd = this.directionEnd == null ? 0.0 : this.directionEnd.si;
-        DirectedPoint2d toPoint = new DirectedPoint2d(this.pointEnd, dirEnd);
-        if (this.offsetStart != null)
-        {
-            fromPoint = OtsGeometryUtil.offsetPoint(fromPoint, this.offsetStart.si);
-        }
-        if (this.offsetEnd != null)
-        {
-            toPoint = OtsGeometryUtil.offsetPoint(toPoint, this.offsetEnd.si);
-        }
+        DirectedPoint2d fromPoint = getOffsetStartPoint();
+        DirectedPoint2d toPoint = getOffsetEndPoint();
 
         // Geometry
         this.designLine = this.shapeListener.getContiuousLine(fromPoint, toPoint);
@@ -770,6 +760,42 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         buildLayout();
         updateNode(this.nodeStart);
         updateNode(this.nodeEnd);
+    }
+
+    /**
+     * Returns the offset start point.
+     * @return offset start point
+     */
+    public DirectedPoint2d getOffsetStartPoint()
+    {
+        return getOffsetPoint(this.pointStart, this.directionStart, this.offsetStart);
+    }
+
+    /**
+     * Returns the offset end point.
+     * @return offset end point
+     */
+    public DirectedPoint2d getOffsetEndPoint()
+    {
+        return getOffsetPoint(this.pointEnd, this.directionEnd, this.offsetEnd);
+    }
+
+    /**
+     * Returns the offset end point.
+     * @param point original point
+     * @param dir point direction
+     * @param offset offset
+     * @return offset poitn
+     */
+    private DirectedPoint2d getOffsetPoint(final Point2d point, final Direction dir, final Length offset)
+    {
+        double dirStart = dir == null ? 0.0 : dir.si;
+        DirectedPoint2d fromPoint = new DirectedPoint2d(point, dirStart);
+        if (offset != null)
+        {
+            fromPoint = OtsGeometryUtil.offsetPoint(fromPoint, offset.si);
+        }
+        return fromPoint;
     }
 
     /**
@@ -1256,6 +1282,20 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         checkDirtyGeometry();
         return this.designLine;
+    }
+
+    /**
+     * Returns the design line for a temporarily overridden offset at one of the link ends. A {@code null} offset is treated as
+     * zero, consistent with the regular design line construction.
+     * @param startOffset offset to use at start
+     * @param endOffset offset to use at end
+     * @return virtual design line, or {@code null} if it cannot be determined
+     */
+    public OffsetCurve2d getVirtualDesignLine(final Length startOffset, final Length endOffset)
+    {
+        DirectedPoint2d fromPoint = getOffsetPoint(this.pointStart, this.directionStart, startOffset);
+        DirectedPoint2d toPoint = getOffsetPoint(this.pointEnd, this.directionEnd, endOffset);
+        return this.shapeListener.getContiuousLine(fromPoint, toPoint);
     }
 
     /**

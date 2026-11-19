@@ -127,9 +127,9 @@ final class MapPolylineEditHelper
         PolyLine2d line = linkData.getCenterLine();
         Point2d prev = line.getFirst();
         DraggableAnnotation intermediary;
-        Ray2d startRay = new Ray2d(linkData.getStartPoint(), linkData.getStartDirection().si);
+        Ray2d startRay = new Ray2d(linkData.getOffsetStartPoint(), linkData.getStartDirection().si);
         Ray2d endRay =
-                new Ray2d(linkData.getEndPoint(), AngleUtil.normalizeAroundZero(linkData.getEndDirection().si + Math.PI));
+                new Ray2d(linkData.getOffsetEndPoint(), AngleUtil.normalizeAroundZero(linkData.getEndDirection().si + Math.PI));
         Point2d intermediaryLocation =
                 coordinates.isEmpty() ? null : line.getFirst().interpolate(coordinates.firstEntry().getValue(), 0.5);
 

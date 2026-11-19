@@ -58,12 +58,13 @@ final class MapBezierDraggablesHelper
      * @param editorMap editor map
      * @param editor editor
      * @param linkData link data
-     * @param draggingSupplier dragging state supplier
+     * @param draggingFunction dragging state function
      * @param registerDraggable callback to register draggables
      */
     // () -> this.dragging
     static void addBezierDraggables(final EditorMap editorMap, final OtsEditor editor, final MapLinkData linkData,
-            final Supplier<Boolean> draggingSupplier, final Consumer<DraggableAnnotation> registerDraggable)
+            final Function<DraggableAnnotation, Boolean> draggingFunction,
+            final Consumer<DraggableAnnotation> registerDraggable)
     {
         if (linkData.getDesignLine() instanceof Straight2d)
         {
@@ -143,7 +144,7 @@ final class MapBezierDraggablesHelper
         };
         HelperAnnotation predictionLine =
                 new HelperAnnotation(new Helper(linkData.getLocation(), predictionFunction), editorMap, Scaling.SCALE)
-                        .setPredicate(draggingSupplier);
+                        .setPredicate(() -> draggingFunction.apply(draggable1) || draggingFunction.apply(draggable2));
         draggable1.addHelperAnnotation(predictionLine, UpdateMode.DYNAMIC);
         draggable2.addHelperAnnotation(predictionLine, UpdateMode.DYNAMIC);
     }

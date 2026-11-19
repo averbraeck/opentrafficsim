@@ -33,13 +33,18 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.curve.Flattener2d;
+import org.djutils.draw.curve.Flattener2d.NumSegments;
+import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.animation.data.util.IconUtil;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
@@ -1145,15 +1150,25 @@ public class MapInputListener extends InputListener implements EventListener
             }
             else if (mapData instanceof MapLinkData linkData)
             {
+                boolean needToListen = false;
                 if (linkData.isBezier())
                 {
-                    MapBezierDraggablesHelper.addBezierDraggables(this.editorMap, this.editor, linkData, () -> this.dragging,
-                            this.draggables::add);
-                    mapData.addListener(this, MapData.MAP_DATA_CHANGED, ReferenceType.WEAK);
+                    MapBezierDraggablesHelper.addBezierDraggables(this.editorMap, this.editor, linkData,
+                            (d) -> this.dragging && d.equals(this.selectedDraggable), this.draggables::add);
+                    needToListen = true;
                 }
                 else if (linkData.isPolyline())
                 {
-                    addPolylineDraggables(linkData);
+                    this.polylineEditHelper.addPolylineDraggables(linkData);
+                    needToListen = true;
+                }
+                if (!linkData.isConnector())
+                {
+                    addLinkOffsetDraggables(linkData);
+                    needToListen = true;
+                }
+                if (needToListen)
+                {
                     mapData.addListener(this, MapData.MAP_DATA_CHANGED, ReferenceType.WEAK);
                 }
             }
@@ -1245,6 +1260,92 @@ public class MapInputListener extends InputListener implements EventListener
         Polygon2d circle = circle(ANGLE_POINT_OFFSET_PX, 32);
         positionDraggable.addHelperAnnotation(new HelperAnnotation(new Helper(nodeData.getLocation(), (p) -> circle),
                 MapInputListener.this.editorMap, Scaling.NO_SCALE), UpdateMode.STATIC);
+    }
+
+    /**
+     * Add draggables to edit the start and end offset of a link. The link is checked not to be a connector.
+     * @param linkData link data
+     */
+    private void addLinkOffsetDraggables(final MapLinkData linkData)
+    {
+        OffsetCurve2d designLine = linkData.getDesignLine();
+        if (designLine == null || linkData.getStartPoint() == null || linkData.getEndPoint() == null)
+        {
+            return;
+        }
+        DraggableAnnotation draggable1 = addLinkOffsetDraggable(linkData, true, designLine.getStartPoint());
+        DraggableAnnotation draggable2 = addLinkOffsetDraggable(linkData, false, designLine.getEndPoint());
+
+        // shape prediction line
+        Flattener2d flattener = new NumSegments(32);
+        Function<Point2d, PolyLine2d> predictionFunction = (p) ->
+        {
+            OffsetCurve2d virtualLine = linkData.getVirtualDesignLine(
+                    draggable1.equals(this.selectedDraggable) ? (Length) draggable1.getSource().getValue()
+                            : linkData.getStartOffset(),
+                    draggable2.equals(this.selectedDraggable) ? (Length) draggable2.getSource().getValue()
+                            : linkData.getEndOffset());
+            if (virtualLine == null)
+            {
+                return new PolyLine2d(new Point2d(0.0, 0.0), new Point2d(1e-6, 0.0));
+            }
+            return OtsShape.transformLine(virtualLine.toPolyLine(flattener), p);
+        };
+        HelperAnnotation predictionLine =
+                new HelperAnnotation(new Helper(linkData.getLocation(), predictionFunction), this.editorMap, Scaling.SCALE)
+                        .setPredicate(() -> this.dragging
+                                && (draggable1.equals(this.selectedDraggable) || draggable2.equals(this.selectedDraggable)));
+        draggable1.addHelperAnnotation(predictionLine, UpdateMode.DYNAMIC);
+        draggable2.addHelperAnnotation(predictionLine, UpdateMode.DYNAMIC);
+    }
+
+    /**
+     * Add a draggable to edit one of the link offsets, including a perpendicular snapping line and a live preview of the
+     * resulting design line.
+     * @param linkData link data
+     * @param start whether this draggable edits the start offset
+     * @param initialLocation current design line end-point corresponding to the offset
+     * @return draggable annotation
+     */
+    private DraggableAnnotation addLinkOffsetDraggable(final MapLinkData linkData, final boolean start,
+            final Point2d initialLocation)
+    {
+        String attribute = start ? "OffsetStart" : "OffsetEnd";
+        Point2d origin = start ? linkData.getStartPoint() : linkData.getEndPoint();
+        Direction direction = start ? linkData.getStartDirection() : linkData.getEndDirection();
+        DirectedPoint2d nodePoint = new DirectedPoint2d(origin, direction == null ? 0.0 : direction.si);
+        UnaryOperator<Point2d> snapper = (p) ->
+        {
+            double offset = lateralOffset(p, nodePoint);
+            if (this.snap)
+            {
+                offset = Math.round(offset / this.snapDistance.si) * this.snapDistance.si;
+            }
+            return OtsGeometryUtil.offsetPoint(nodePoint, offset);
+        };
+        Function<Point2d, Length> valueFunction = (p) -> Length.ofSI(lateralOffset(p, nodePoint));
+        Consumer<Length> valueWriter = (v) ->
+        {
+            String value = v == null ? null : this.snap ? GRID_FORMAT.format(v.si) + "m" : v.si + "m";
+            this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, linkData.getNode(), attribute);
+            linkData.getNode().setAttributeValue(attribute, value);
+        };
+        Draggable<Length> source = new Draggable<>(initialLocation, CIRCLE, snapper, valueFunction, valueWriter)
+                .setDefaultValue(null).setNodeAttribute(linkData.getNode(), attribute);
+        DraggableAnnotation draggable = new DraggableAnnotation(source, this.editorMap);
+        this.draggables.add(draggable);
+        return draggable;
+    }
+
+    /**
+     * Returns the signed lateral offset of a point from a directed node point, left of the direction being positive.
+     * @param point point
+     * @param nodePoint directed node point
+     * @return signed lateral offset
+     */
+    private static double lateralOffset(final Point2d point, final DirectedPoint2d nodePoint)
+    {
+        return -(point.x - nodePoint.x) * Math.sin(nodePoint.dirZ) + (point.y - nodePoint.y) * Math.cos(nodePoint.dirZ);
     }
 
     /**
@@ -1345,15 +1446,6 @@ public class MapInputListener extends InputListener implements EventListener
         double x = data.getLocation().x + ANGLE_POINT_OFFSET_PX * rX * Math.cos(angle);
         double y = data.getLocation().y + ANGLE_POINT_OFFSET_PX * rY * Math.sin(angle);
         return new Point2d(x, y);
-    }
-
-    /**
-     * Add polyline link draggables. The link is checked to be a polyline.
-     * @param linkData link data
-     */
-    private void addPolylineDraggables(final MapLinkData linkData)
-    {
-        this.polylineEditHelper.addPolylineDraggables(linkData);
     }
 
     /**
