@@ -1504,7 +1504,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * Returns whether the link has a polyline shape. Connectors have no shape child and return {@code false}.
      * @return whether the link has a polyline shape
      */
-    public boolean isPolyline()
+    public boolean isPolyLine()
     {
         return isShape(PolyLine.class);
     }
@@ -1514,7 +1514,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * an empty map.
      * @return a safe copy of the polyline coordinates, or an empty map when no shape child is present
      */
-    public NavigableMap<XsdTreeNode, Point2d> getPolylineCoordinates()
+    public NavigableMap<XsdTreeNode, Point2d> getPolyLineCoordinates()
     {
         return hasShapeNode() ? new TreeMap<>(this.shapeListener.coordinates) : new TreeMap<>();
     }

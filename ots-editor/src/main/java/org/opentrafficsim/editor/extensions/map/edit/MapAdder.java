@@ -112,6 +112,7 @@ final class MapAdder
                 layout.setValue(roadLayout);
             }
         }
+        MapContextActions.autoFixAddedLink(map, link, start.getNode(), end.getNode());
         return link;
     }
 

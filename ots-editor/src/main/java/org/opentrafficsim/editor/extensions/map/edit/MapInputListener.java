@@ -10,6 +10,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -355,7 +356,22 @@ public class MapInputListener extends InputListener implements EventListener
         {
             Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
                     this.editorMap.getPanel().getExtent(), this.editorMap.getPanel().getSize());
+            Draggable<?> draggable = this.selectedDraggable.getSource();
             this.selectedDraggable.mouseReleased(world);
+            XsdTreeNode draggableNode = draggable.getNode();
+            String draggableAttribute = draggable.getAttribute();
+            if (draggableNode != null && "Coordinate".equals(draggableAttribute)
+                    && XsdPaths.NODE.equals(draggableNode.getPathString()))
+            {
+                MapContextActions.autoFixNodeRepositioned(this.editorMap, draggableNode);
+            }
+            else if (draggableNode != null && "Direction".equals(draggableAttribute)
+                    && XsdPaths.NODE.equals(draggableNode.getPathString()))
+            {
+                Set<XsdTreeNode> visited = new HashSet<>();
+                visited.add(draggableNode);
+                MapContextActions.autoFixNodeDirectionChanged(this.editorMap, draggableNode, visited);
+            }
         }
         else if (this.addingStart != null)
         {
@@ -1157,7 +1173,7 @@ public class MapInputListener extends InputListener implements EventListener
                             (d) -> this.dragging && d.equals(this.selectedDraggable), this.draggables::add);
                     needToListen = true;
                 }
-                else if (linkData.isPolyline())
+                else if (linkData.isPolyLine())
                 {
                     this.polylineEditHelper.addPolylineDraggables(linkData);
                     needToListen = true;

@@ -2,10 +2,15 @@ package org.opentrafficsim.editor.extensions.map.edit;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -14,6 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
@@ -167,20 +173,20 @@ final class MapContextActions
         Icon autoFix = IconUtil.of("AutoFix24.png").imageSize(OtsEditor.ICON_SIZE, OtsEditor.ICON_SIZE).get();
         if (data.isStraight())
         {
-            addContextMenuItem(menu, "Align node directions", autoFix, () -> alignStraightNodeDirections(data),
-                    data.getEditor());
+            addContextMenuItem(menu, "Align node directions", autoFix,
+                    () -> alignStraightNodeDirections(editorMap, data, new HashSet<>()), data.getEditor());
         }
         else if (data.isArc())
         {
             if (data.getStartDirection() != null)
             {
-                addContextMenuItem(menu, "Align with nodes and start direction", autoFix, () -> alignArc(data, true),
-                        data.getEditor());
+                addContextMenuItem(menu, "Align with nodes and start direction", autoFix,
+                        () -> alignArc(editorMap, data, true, new HashSet<>()), data.getEditor());
             }
             if (data.getEndDirection() != null)
             {
-                addContextMenuItem(menu, "Align with nodes and end direction", autoFix, () -> alignArc(data, false),
-                        data.getEditor());
+                addContextMenuItem(menu, "Align with nodes and end direction", autoFix,
+                        () -> alignArc(editorMap, data, false, new HashSet<>()), data.getEditor());
             }
         }
         else if (data.isBezier())
@@ -260,20 +266,41 @@ final class MapContextActions
 
     /**
      * Aligns the directions of both connected nodes with the straight link.
+     * @param map editor map
      * @param data map element for which to show the context menu
+     * @param visited visited nodes
      */
-    private static void alignStraightNodeDirections(final MapLinkData data)
+    static void alignStraightNodeDirections(final EditorMap map, final MapLinkData data, final Set<XsdTreeNode> visited)
+    {
+        alignStraightNodeDirections(map, data, true, visited);
+    }
+
+    /**
+     * Aligns the directions of both connected nodes with the straight link.
+     * @param map editor map
+     * @param data map element for which to show the context menu
+     * @param interactive whether to show a dialog when there is no valid geometry
+     * @param visited visited nodes
+     */
+    private static void alignStraightNodeDirections(final EditorMap map, final MapLinkData data, final boolean interactive,
+            final Set<XsdTreeNode> visited)
     {
         Direction direction =
                 straightDirection(data.getStartPoint(), data.getEndPoint(), data.getStartOffset(), data.getEndOffset());
         if (direction == null)
         {
-            noValidGeometryDialog(data);
+            if (interactive)
+            {
+                noValidGeometryDialog(data);
+            }
             return;
         }
-        data.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, data.getNode(), null);
-        setNodeDirection(data.getStartNode(), direction);
-        setNodeDirection(data.getEndNode(), direction);
+        if (interactive)
+        {
+            data.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, data.getNode(), null);
+        }
+        setNodeDirection(map, data.getStartNode(), direction, visited);
+        setNodeDirection(map, data.getEndNode(), direction, visited);
     }
 
     /**
@@ -312,10 +339,27 @@ final class MapContextActions
     /**
      * Aligns the arc with the coordinates and offsets of both nodes and the direction of one of the nodes. The radius and
      * direction of the arc are set, as well as the direction of the node that is not kept.
+     * @param map editor map
      * @param data map element for which to show the context menu
      * @param keepStart whether to keep the start node direction, otherwise the end node direction is kept
+     * @param visited visited nodes
      */
-    private static void alignArc(final MapLinkData data, final boolean keepStart)
+    static void alignArc(final EditorMap map, final MapLinkData data, final boolean keepStart, final Set<XsdTreeNode> visited)
+    {
+        alignArc(map, data, keepStart, true, visited);
+    }
+
+    /**
+     * Aligns the arc with the coordinates and offsets of both nodes and the direction of one of the nodes. The radius and
+     * direction of the arc are set, as well as the direction of the node that is not kept.
+     * @param map editor map
+     * @param data map element for which to show the context menu
+     * @param keepStart whether to keep the start node direction, otherwise the end node direction is kept
+     * @param interactive whether to show a dialog when there is no valid geometry
+     * @param visited visited nodes
+     */
+    private static void alignArc(final EditorMap map, final MapLinkData data, final boolean keepStart,
+            final boolean interactive, final Set<XsdTreeNode> visited)
     {
         Point2d pointStart = data.getStartPoint();
         Point2d pointEnd = data.getEndPoint();
@@ -339,7 +383,10 @@ final class MapContextActions
         double lengthSquared = dx * dx + dy * dy;
         if (lengthSquared < 1e-9)
         {
-            noValidGeometryDialog(data);
+            if (interactive)
+            {
+                noValidGeometryDialog(data);
+            }
             return;
         }
         double sin = Math.sin(kept.si);
@@ -350,7 +397,10 @@ final class MapContextActions
         double sum = ok + oa;
         if (Math.abs(dot - diff) < 1e-9 * Math.sqrt(lengthSquared))
         {
-            noValidGeometryDialog(data);
+            if (interactive)
+            {
+                noValidGeometryDialog(data);
+            }
             return; // nodes, directions and offsets are collinear, there is no finite arc
         }
         /*
@@ -362,7 +412,10 @@ final class MapContextActions
         double signedRadius = (lengthSquared - 2.0 * dot * ok + diff * sum) / (2.0 * (dot - diff));
         if (Math.abs(signedRadius) < 1e-9)
         {
-            noValidGeometryDialog(data);
+            if (interactive)
+            {
+                noValidGeometryDialog(data);
+            }
             return; // degenerate arc
         }
         double centreX = keptPoint.x - (ok + signedRadius) * sin;
@@ -375,13 +428,17 @@ final class MapContextActions
             double normalY = (centreY - otherPoint.y) / (oa + signedRadius);
             alignedDirection = Direction.ofSI(Math.atan2(-normalX, normalY));
         }
-        data.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, data.getShapeNode(), null);
+        if (interactive)
+        {
+            data.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, data.getShapeNode(), null);
+        }
         data.getShapeNode().setAttributeValue("Radius", Math.abs(signedRadius) + "m");
         data.getShapeNode().setAttributeValue("Direction",
                 signedRadius > 0.0 ? ArcDirection.LEFT.toString() : ArcDirection.RIGHT.toString());
         if (alignedDirection != null)
         {
-            setNodeDirection(keepStart ? data.getEndNode() : data.getStartNode(), alignedDirection);
+            XsdTreeNode node = keepStart ? data.getEndNode() : data.getStartNode();
+            setNodeDirection(map, node, alignedDirection, visited);
         }
     }
 
@@ -397,15 +454,235 @@ final class MapContextActions
 
     /**
      * Sets the direction attribute of a node. This does not start an undo action.
+     * @param map editor map
      * @param node node
      * @param direction direction
+     * @param visited visited nodes
      */
-    private static void setNodeDirection(final XsdTreeNode node, final Direction direction)
+    private static void setNodeDirection(final EditorMap map, final XsdTreeNode node, final Direction direction,
+            final Set<XsdTreeNode> visited)
     {
-        if (node != null)
+        if (node != null && visited.add(node) && visited.size() < 1000)
         {
             node.setAttributeValue("Direction", Math.toDegrees(direction.si) + " deg");
+            // this is where auto-fix can cascade through the network, only adjusting node directions and never positions
+            autoFixNodeDirectionChanged(map, node, visited);
         }
+    }
+
+    /**
+     * Aligns the first or last intermediate polyline coordinate with the line from the node in the direction of the node at the
+     * given end, taking link offset into account. The coordinate is projected onto that line closest to its current position.
+     * The coordinate is not moved if there are fewer than two intermediate coordinates, or if the projected point is closer
+     * than {@link MapInputListener#DIST_MIN_M} to a neighboring point.
+     * @param data link data
+     * @param atStart {@code true} to align the first coordinate, {@code false} to align the last coordinate
+     */
+    private static void alignPolyLineCoordinate(final MapLinkData data, final boolean atStart)
+    {
+        NavigableMap<XsdTreeNode, Point2d> coordinates = data.getPolyLineCoordinates();
+        if (coordinates.size() < 2)
+        {
+            return;
+        }
+        XsdTreeNode coordNode;
+        Point2d current;
+        Point2d neighbor;
+        Point2d boundary;
+        Direction direction;
+        if (atStart)
+        {
+            Map.Entry<XsdTreeNode, Point2d> first = coordinates.firstEntry();
+            coordNode = first.getKey();
+            current = first.getValue();
+            neighbor = coordinates.higherEntry(coordNode).getValue();
+            boundary = data.getOffsetStartPoint();
+            direction = data.getStartDirection();
+        }
+        else
+        {
+            Map.Entry<XsdTreeNode, Point2d> last = coordinates.lastEntry();
+            coordNode = last.getKey();
+            current = last.getValue();
+            neighbor = coordinates.lowerEntry(coordNode).getValue();
+            boundary = data.getOffsetEndPoint();
+            direction = data.getEndDirection();
+        }
+        if (current == null || neighbor == null || boundary == null || direction == null)
+        {
+            return;
+        }
+        double cos = Math.cos(direction.si);
+        double sin = Math.sin(direction.si);
+        double t = (current.x - boundary.x) * cos + (current.y - boundary.y) * sin;
+        if ((t <= 0.0 && atStart) || (t >= 0.0 && !atStart))
+        {
+            return;
+        }
+        Point2d projected = new Point2d(boundary.x + t * cos, boundary.y + t * sin);
+        if (projected.distance(boundary) < MapInputListener.DIST_MIN_M
+                || projected.distance(neighbor) < MapInputListener.DIST_MIN_M)
+        {
+            return;
+        }
+        // no undo, this is always part of another change
+        coordNode.setValue(String.format(Locale.US, "(%f,%f)", projected.x, projected.y));
+    }
+
+    /**
+     * Returns all link data attached to the given node.
+     * @param map editor map
+     * @param node node
+     * @return attached link data
+     */
+    static List<MapLinkData> getAttachedLinks(final EditorMap map, final XsdTreeNode node)
+    {
+        List<MapLinkData> links = new ArrayList<>();
+        XsdTreeNode network = map.getNetworkNode();
+        if (network == null)
+        {
+            return links;
+        }
+        for (XsdTreeNode child : network.getChildren())
+        {
+            if (!XsdPaths.LINK.equals(child.getPathString()))
+            {
+                continue;
+            }
+            MapData data = map.getData(child).orElse(null);
+            if (data instanceof MapLinkData linkData
+                    && (node.equals(linkData.getStartNode()) || node.equals(linkData.getEndNode())))
+            {
+                links.add(linkData);
+            }
+        }
+        return links;
+    }
+
+    /**
+     * Applies auto-fix for a newly added link, if enabled and applicable.
+     * @param map editor map
+     * @param linkNode link node
+     * @param startNode start node
+     * @param endNode end node
+     */
+    static void autoFixAddedLink(final EditorMap map, final XsdTreeNode linkNode, final XsdTreeNode startNode,
+            final XsdTreeNode endNode)
+    {
+        if (!map.isAutoFixMode() || linkNode == null)
+        {
+            return;
+        }
+        SwingUtilities.invokeLater(() ->
+        {
+            MapData data = map.getData(linkNode).orElse(null);
+            if (!(data instanceof MapLinkData linkData) || !linkData.isValid())
+            {
+                return;
+            }
+            if (linkData.isStraight())
+            {
+                alignStraightNodeDirections(map, linkData, false, new HashSet<>());
+            }
+            else if (linkData.isArc())
+            {
+                int startAttached = getAttachedLinks(map, startNode).size();
+                int endAttached = getAttachedLinks(map, endNode).size();
+                alignArc(map, linkData, startAttached >= endAttached, false, new HashSet<>());
+            }
+        });
+    }
+
+    /**
+     * Applies auto-fix after a node was repositioned.
+     * @param map editor map
+     * @param node node
+     */
+    static void autoFixNodeRepositioned(final EditorMap map, final XsdTreeNode node)
+    {
+        if (!map.isAutoFixMode() || node == null)
+        {
+            return;
+        }
+        SwingUtilities.invokeLater(() ->
+        {
+            Set<XsdTreeNode> visited = new HashSet<>();
+            for (MapLinkData linkData : getAttachedLinks(map, node))
+            {
+                boolean atStart = node.equals(linkData.getStartNode());
+                boolean atEnd = node.equals(linkData.getEndNode());
+                if (linkData.isStraight())
+                {
+                    alignStraightNodeDirections(map, linkData, false, visited);
+                }
+                if (linkData.isArc())
+                {
+                    if (atStart)
+                    {
+                        alignArc(map, linkData, false, false, visited);
+                    }
+                    else if (atEnd)
+                    {
+                        alignArc(map, linkData, true, false, visited);
+                    }
+                }
+                if (linkData.isPolyLine())
+                {
+                    if (atStart)
+                    {
+                        alignPolyLineCoordinate(linkData, true);
+                    }
+                    else if (atEnd)
+                    {
+                        alignPolyLineCoordinate(linkData, false);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Applies auto-fix after a node direction changed.
+     * @param map editor map
+     * @param node node
+     * @param visited visited nodes
+     */
+    static void autoFixNodeDirectionChanged(final EditorMap map, final XsdTreeNode node, final Set<XsdTreeNode> visited)
+    {
+        if (!map.isAutoFixMode() || node == null)
+        {
+            return;
+        }
+        SwingUtilities.invokeLater(() ->
+        {
+            for (MapLinkData linkData : getAttachedLinks(map, node))
+            {
+                boolean atStart = node.equals(linkData.getStartNode());
+                boolean atEnd = node.equals(linkData.getEndNode());
+                if (linkData.isArc())
+                {
+                    if (atStart)
+                    {
+                        alignArc(map, linkData, true, false, visited);
+                    }
+                    else if (atEnd)
+                    {
+                        alignArc(map, linkData, false, false, visited);
+                    }
+                }
+                if (linkData.isPolyLine())
+                {
+                    if (atStart)
+                    {
+                        alignPolyLineCoordinate(linkData, true);
+                    }
+                    else if (atEnd)
+                    {
+                        alignPolyLineCoordinate(linkData, false);
+                    }
+                }
+            }
+        });
     }
 
     /**

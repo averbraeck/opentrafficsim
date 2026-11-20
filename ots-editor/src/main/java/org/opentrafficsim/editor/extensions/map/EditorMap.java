@@ -283,7 +283,7 @@ public final class EditorMap extends JPanel implements EventListener
         this.centroidModeButton =
                 createToolButton(buttonSize, "Centroid24.png", "Add centroid rather than node (shift)", true, iconSize);
         this.autoFixButton =
-                createToolButton(buttonSize, "AutoFix24.png", "Automatically align created elements", true, iconSize);
+                createToolButton(buttonSize, "AutoFix24.png", "Automatically align node directions", true, iconSize);
         storedToggleSetting(this.addModeButton, "addMode");
         storedToggleSetting(this.centroidModeButton, "centroidMode");
         storedToggleSetting(this.autoFixButton, "autoFix");

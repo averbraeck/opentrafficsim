@@ -295,6 +295,15 @@ public class DraggableAnnotation extends MapAnnotation<Draggable<?>>
         }
 
         /**
+         * Returns the affected attribute.
+         * @return affected attribute
+         */
+        String getAttribute()
+        {
+            return this.attribute;
+        }
+
+        /**
          * Sets node and attribute of the node of which this draggable affects the value. This is for display purposes
          * (shift-click draggable to show in tree) and to avoid changing expression values.
          * @param node node of which this draggable affects an attribute value

@@ -107,7 +107,7 @@ final class MapPolylineEditHelper
      */
     void addPolylineDraggables(final MapLinkData linkData)
     {
-        NavigableMap<XsdTreeNode, Point2d> coordinates = linkData.getPolylineCoordinates();
+        NavigableMap<XsdTreeNode, Point2d> coordinates = linkData.getPolyLineCoordinates();
         if (coordinates.isEmpty())
         {
             // link in process of being deleted
