@@ -1,7 +1,11 @@
 package org.opentrafficsim.editor.extensions.map.edit;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.Set;
 
@@ -89,6 +93,30 @@ final class MapLinkEditActions
         }
         addedNode.setAttributeValue("Direction", Math.toDegrees(split.dirZ) + " deg");
 
+        List<XsdTreeNode> latterCoordinateNodes = new ArrayList<>();
+        int formerCoordinateNodes = 0;
+        if (linkData.isPolyLine())
+        {
+            NavigableMap<XsdTreeNode, Point2d> polyCoords = linkData.getPolyLineCoordinates();
+            for (Map.Entry<XsdTreeNode, Point2d> entry : polyCoords.entrySet())
+            {
+                Point2d point = entry.getValue();
+                if (point == null)
+                {
+                    continue;
+                }
+                double cf = centerLine.projectOrthogonalFractionalExtended(point);
+                if (cf >= f)
+                {
+                    latterCoordinateNodes.add(entry.getKey());
+                }
+                else
+                {
+                    formerCoordinateNodes++;
+                }
+            }
+        }
+
         String oldLinkId = linkNode.getId();
         String newNodeId = addedNode.getId();
 
@@ -96,6 +124,31 @@ final class MapLinkEditActions
         XsdTreeNode newLink = linkNode.duplicate();
         newLink.setAttributeValue("NodeStart", newNodeId);
         newLink.setAttributeValue("NodeEnd", endId);
+
+        if (formerCoordinateNodes > 0)
+        {
+            XsdTreeNode newShapeNode = newLink.getChildCount() > 0 ? newLink.getChild(0) : null;
+            if (newShapeNode != null)
+            {
+                for (int i = 0; i < formerCoordinateNodes; i++)
+                {
+                    if (newShapeNode.getChildCount() > 0)
+                    {
+                        newShapeNode.getChild(0).remove();
+                    }
+                }
+            }
+        }
+        if (!latterCoordinateNodes.isEmpty())
+        {
+            for (XsdTreeNode coordNodeOrigLink : latterCoordinateNodes)
+            {
+                if (coordNodeOrigLink.getParent() != null)
+                {
+                    coordNodeOrigLink.remove();
+                }
+            }
+        }
 
         if ((startId + "-" + endId).equals(oldLinkId))
         {
