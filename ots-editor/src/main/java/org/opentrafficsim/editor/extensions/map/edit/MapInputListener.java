@@ -182,6 +182,9 @@ public class MapInputListener extends InputListener implements EventListener
     /** Snap angle. */
     private Angle snapAngle;
 
+    /** Last tree highlight when tab was released. */
+    private XsdTreeNode highlightOnRelease;
+
     /**
      * Constructor.
      * @param editor editor
@@ -204,6 +207,10 @@ public class MapInputListener extends InputListener implements EventListener
         this.editor.addListener(this, OtsEditor.NEW_FILE);
         this.editor.addListener((e) ->
         {
+            if (!this.editor.isFocusedTab(EditorMap.MAP_TAB))
+            {
+                return;
+            }
             Object[] payload = (Object[]) e.getContent();
             XsdTreeNode node = (XsdTreeNode) payload[0];
             MouseEvent me = (MouseEvent) payload[1];
@@ -220,6 +227,10 @@ public class MapInputListener extends InputListener implements EventListener
         }, OtsEditor.MOUSE_EVENT);
         this.editor.addListener((e) ->
         {
+            if (!this.editor.isFocusedTab(EditorMap.MAP_TAB))
+            {
+                return;
+            }
             XsdTreeNode node = (XsdTreeNode) e.getContent();
             MapData data = editorMap.getData(node).orElse(null);
             if (data != null && data.isValid() && this.selectionIndicators.size() < 2)
@@ -227,6 +238,68 @@ public class MapInputListener extends InputListener implements EventListener
                 select(data, false, false, false);
             }
         }, OtsEditor.SELECTION_CHANGED);
+        // OtsEditor invokes release actions before any other tab change handling, regardless of tab construction order.
+        editor.addTabSelectAction(EditorMap.MAP_TAB, () ->
+        {
+            if (this.highlightOnRelease != null)
+            {
+                this.editor.setHighlight(this.highlightOnRelease);
+            }
+        });
+        this.editor.addTabReleaseAction(EditorMap.MAP_TAB, () ->
+        {
+            this.highlightOnRelease = this.editor.getHighlight();
+            this.editor.setHighlight(null);
+        });
+    }
+
+    /**
+     * Sets the tree table highlight, only if the map tab is focused.
+     * @param node node to highlight, may be {@code null}.
+     */
+    private void setHighlight(final XsdTreeNode node)
+    {
+        if (this.editor.isFocusedTab(EditorMap.MAP_TAB))
+        {
+            this.editor.setHighlight(node);
+        }
+    }
+
+    /**
+     * Shows a node in the tree table, only if the map tab is focused.
+     * @param node node to show.
+     * @param attribute attribute to show, may be {@code null}.
+     */
+    private void show(final XsdTreeNode node, final String attribute)
+    {
+        if (this.editor.isFocusedTab(EditorMap.MAP_TAB))
+        {
+            this.editor.show(node, attribute);
+        }
+    }
+
+    /**
+     * Selects a node in the tree table, only if the map tab is focused.
+     * @param node node to select.
+     * @param attribute attribute to select, may be {@code null}.
+     */
+    private void select(final XsdTreeNode node, final String attribute)
+    {
+        if (this.editor.isFocusedTab(EditorMap.MAP_TAB))
+        {
+            this.editor.select(node, attribute);
+        }
+    }
+
+    /**
+     * Clears the tree table selection, only if the map tab is focused.
+     */
+    private void clearSelection()
+    {
+        if (this.editor.isFocusedTab(EditorMap.MAP_TAB))
+        {
+            this.editor.clearSelection();
+        }
     }
 
     /**
@@ -459,7 +532,7 @@ public class MapInputListener extends InputListener implements EventListener
                 if (!e.isControlDown() && !this.selectionIndicators.isEmpty())
                 {
                     // normal click but there is a selection -> deselect even in add mode
-                    this.editor.setHighlight(null);
+                    setHighlight(null);
                     deselect();
                 }
                 else if (isAddMode(e) && (!e.isControlDown() || this.selectionIndicators.size() < 2))
@@ -489,7 +562,7 @@ public class MapInputListener extends InputListener implements EventListener
                         if (highlight != null && !highlight.equals(mapDatas.get(0).getNode()))
                         {
                             // highlighted some other node; do not keep this highlight
-                            this.editor.setHighlight(null);
+                            setHighlight(null);
                         }
                         // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
                         SwingUtilities.invokeLater(() ->
@@ -497,7 +570,7 @@ public class MapInputListener extends InputListener implements EventListener
                             if (this.selectionIndicators.size() <= 1)
                             {
                                 // select this one if there is no multi-selection, so a relevant operations menu can be shown
-                                this.editor.select(mapDatas.get(0).getNode(), null);
+                                select(mapDatas.get(0).getNode(), null);
                                 select(mapDatas.get(0), false, true, false);
                             }
                             showContextMenu(mapDatas, e);
@@ -521,7 +594,7 @@ public class MapInputListener extends InputListener implements EventListener
         }
         else if (!e.isControlDown() || !isAddMode(e))
         {
-            this.editor.setHighlight(null);
+            setHighlight(null);
             deselect();
         }
     }
@@ -535,13 +608,13 @@ public class MapInputListener extends InputListener implements EventListener
     {
         if (!e.isControlDown())
         {
-            this.editor.setHighlight(!e.isShiftDown() ? data.getNode() : null);
+            setHighlight(!e.isShiftDown() ? data.getNode() : null);
             // TreeTableModelAdapter.delayedFireTableDataChanged() uses invokeLater, need to be after that
             SwingUtilities.invokeLater(() -> select(data, false, true, e.isShiftDown()));
         }
         else
         {
-            this.editor.setHighlight(null);
+            setHighlight(null);
             select(data, true, false, e.isShiftDown());
         }
     }
@@ -783,9 +856,8 @@ public class MapInputListener extends InputListener implements EventListener
      */
     private void select(final XsdTreeNode node)
     {
-        this.editor.setHighlight(node);
-        this.editorMap.getData(node).ifPresentOrElse((data) -> select(data, false, true, false),
-                () -> this.editor.select(node, null));
+        setHighlight(node);
+        this.editorMap.getData(node).ifPresentOrElse((data) -> select(data, false, true, false), () -> select(node, null));
     }
 
     /**
@@ -839,7 +911,7 @@ public class MapInputListener extends InputListener implements EventListener
                                 deselect();
                                 if (network != null)
                                 {
-                                    this.editor.show(network, null);
+                                    show(network, null);
                                 }
                                 break; // exits switch
                             }
@@ -863,11 +935,11 @@ public class MapInputListener extends InputListener implements EventListener
                     nodes.forEach((n) -> n.remove());
                     if (multiple)
                     {
-                        this.editor.clearSelection();
+                        clearSelection();
                     }
                     else
                     {
-                        this.editor.show(network, null);
+                        show(network, null);
                     }
                 }
                 break;
@@ -997,7 +1069,7 @@ public class MapInputListener extends InputListener implements EventListener
             {
                 if (!e.isControlDown() && !e.isShiftDown())
                 {
-                    this.editor.setHighlight(mapData.getNode());
+                    setHighlight(mapData.getNode());
                 }
                 select(mapData, e.isControlDown(), true, e.isShiftDown());
                 this.editorMap.update();
@@ -1113,11 +1185,11 @@ public class MapInputListener extends InputListener implements EventListener
         }
         if (i == 1)
         {
-            this.editor.setHighlight(lastSelected);
+            setHighlight(lastSelected);
         }
         else if (this.editor.getHighlight() != null && i > 1)
         {
-            this.editor.setHighlight(null);
+            setHighlight(null);
         }
     }
 
@@ -1201,11 +1273,11 @@ public class MapInputListener extends InputListener implements EventListener
         {
             if (showInTree)
             {
-                this.editor.show(mapData.getNode(), null);
+                show(mapData.getNode(), null);
             }
             else if (selectInTree)
             {
-                this.editor.select(mapData.getNode(), null);
+                select(mapData.getNode(), null);
             }
         }
     }

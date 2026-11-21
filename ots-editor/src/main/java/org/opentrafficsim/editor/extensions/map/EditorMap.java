@@ -103,6 +103,9 @@ public final class EditorMap extends JPanel implements EventListener
     /** Serialization version UID. */
     private static final long serialVersionUID = 20231010L;
 
+    /** Name of the map tab in the editor. */
+    public static final String MAP_TAB = "Map";
+
     /** All types that are valid to show in the map. */
     private static final Set<String> TYPES = Set.of(XsdPaths.CENTROID, XsdPaths.CONNECTOR, XsdPaths.NODE, XsdPaths.LINK,
             XsdPaths.TRAFFIC_LIGHT, XsdPaths.SINK, XsdPaths.GENERATOR, XsdPaths.LIST_GENERATOR);

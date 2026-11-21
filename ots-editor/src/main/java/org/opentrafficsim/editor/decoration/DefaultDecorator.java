@@ -161,7 +161,8 @@ public final class DefaultDecorator
      */
     private static void setupTabs(final OtsEditor editor) throws RemoteException, NamingException
     {
-        editor.addTab("Map", IconUtil.of("Network24.png").imageSize(18, 18).get(), EditorMap.build(editor), "Map editor");
+        editor.addTab(EditorMap.MAP_TAB, IconUtil.of("Network24.png").imageSize(18, 18).get(), EditorMap.build(editor),
+                "Map editor");
         editor.addTab("Parameters", IconUtil.of("Parameter24.png").imageSize(18, 18).get(), buildParameterPane(), null);
         editor.addTab("Text", IconUtil.of("Text24.png").imageSize(18, 18).get(), buildTextPane(), null);
 

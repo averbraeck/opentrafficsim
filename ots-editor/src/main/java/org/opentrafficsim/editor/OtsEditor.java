@@ -193,6 +193,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     /** Main tabbed pane at the left-hand side. */
     private final JTabbedPane visualizationPane;
 
+    /** Title of the tab selected at the previous tab change. */
+    private String focusedTab;
+
+    /** Actions invoked when the corresponding tab loses focus, before other tab change handling. */
+    private final Map<String, List<Runnable>> tabReleaseActions = new LinkedHashMap<>();
+
+    /** Actions invoked when the corresponding tab is selected, before other tab change handling. */
+    private final Map<String, List<Runnable>> tabSelectActions = new LinkedHashMap<>();
+
     /** Split pane on the right-hand side. */
     private final JSplitPane rightSplitPane;
 
@@ -325,6 +334,23 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         this.visualizationPane.setPreferredSize(new Dimension(900, 900));
         this.visualizationPane.setBorder(new LineBorder(Color.BLACK, 0));
         this.leftRightSplitPane.setLeftComponent(this.visualizationPane);
+        // Registered before any tab is added, so tab actions run before other tab change handlers.
+        this.visualizationPane.addChangeListener((e) ->
+        {
+            int index = this.visualizationPane.getSelectedIndex();
+            String newTab = index < 0 ? null : this.visualizationPane.getTitleAt(index);
+            if (Objects.equal(this.focusedTab, newTab))
+            {
+                return;
+            }
+            String oldTab = this.focusedTab;
+            this.focusedTab = newTab;
+            if (oldTab != null)
+            {
+                runTabActions(this.tabReleaseActions.get(oldTab));
+            }
+            runTabActions(this.tabSelectActions.get(newTab));
+        });
 
         // search, scenario and controls
         JPanel searchWrapper = new JPanel(new BorderLayout());
@@ -1376,6 +1402,60 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             if (this.visualizationPane.getTitleAt(index).equals(name))
             {
                 this.visualizationPane.setSelectedIndex(index);
+            }
+        }
+    }
+
+    /**
+     * Returns whether the tab with given name is currently selected.
+     * @param name name of the tab.
+     * @return whether the tab with given name is currently selected.
+     */
+    public boolean isFocusedTab(final String name)
+    {
+        for (int index = 0; index < this.visualizationPane.getTabCount(); index++)
+        {
+            if (this.visualizationPane.getTitleAt(index).equals(name))
+            {
+                return this.visualizationPane.getSelectedIndex() == index;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Registers an action that is invoked when the given tab loses focus. The action is invoked before any other
+     * tab change handling, independent of the order in which tabs were added.
+     * @param tabName name of the tab.
+     * @param action action to invoke.
+     */
+    public void addTabReleaseAction(final String tabName, final Runnable action)
+    {
+        this.tabReleaseActions.computeIfAbsent(tabName, (n) -> new ArrayList<>()).add(action);
+    }
+
+    /**
+     * Registers an action that is invoked when the given tab is selected. The action is invoked after release actions
+     * for the previous tab and before any other tab change handling.
+     * @param tabName name of the tab.
+     * @param action action to invoke.
+     */
+    public void addTabSelectAction(final String tabName, final Runnable action)
+    {
+        this.tabSelectActions.computeIfAbsent(tabName, (n) -> new ArrayList<>()).add(action);
+    }
+
+    /**
+     * Runs the given tab actions.
+     * @param acts actions, may be {@code null}.
+     */
+    private void runTabActions(final List<Runnable> acts)
+    {
+        if (acts != null)
+        {
+            for (Runnable action : new ArrayList<>(acts)) // an action may register another action
+            {
+                action.run();
             }
         }
     }
