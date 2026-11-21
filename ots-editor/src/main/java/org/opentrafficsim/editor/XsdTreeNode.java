@@ -555,7 +555,7 @@ public class XsdTreeNode extends LocalEventProducer
                 IllegalStateException.class, "Can only add options for a node of type xsd:choice or xsd:all.");
         this.options = new ArrayList<>();
         this.choice = this;
-        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
+        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false);
         for (XsdTreeNode option : this.options)
         {
             option.minOccurs = this.minOccurs;
@@ -779,7 +779,7 @@ public class XsdTreeNode extends LocalEventProducer
                 new ImmutableArrayList<>(Collections.emptyList()), this.schema);
         for (Entry<Node, ImmutableList<Node>> entry : relevantNodes.entrySet())
         {
-            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, true, -1);
+            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, true);
         }
         for (int index = 0; index < this.children.size(); index++)
         {
@@ -1399,92 +1399,21 @@ public class XsdTreeNode extends LocalEventProducer
      */
     public XsdTreeNode duplicate(final XsdTreeNode newParent)
     {
-        XsdTreeNode copyNode;
-        if (this.choice != null)
-        {
-            int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
-            XsdTreeNode node =
-                    new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes, this.choice.referringXsdNode);
-            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
-            node.createOptions();
-            int indexSelected = this.choice.options.indexOf(this.choice.selected);
-            XsdTreeNode selectedOption = node.options.get(indexSelected);
-            node.choice.setOption(selectedOption);
-            int movedFrom = newParent.children.indexOf(selectedOption);
-            newParent.children.remove(selectedOption); // needs to be at the right index
-            newParent.children.add(index, selectedOption);
-            if (movedFrom != index)
-            {
-                selectedOption.fireEvent(MOVED, new Object[] {selectedOption, movedFrom, index});
-            }
-            if (this.active)
-            {
-                selectedOption.setActive();
-            }
-            copyNode = selectedOption;
-        }
-        else
-        {
-            int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
-            XsdTreeNode node = new XsdTreeNode(newParent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
-            newParent.children.add(index, node);
-            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
-            if (this.active)
-            {
-                node.setActive();
-            }
-            copyNode = node;
-        }
-
-        // value
-        if (copyNode.isEditable())
-        {
-            copyNode.setValue(this.getValue());
-        }
-
-        // attributes
-        copyNode.assureAttributesAndDescription();
-        for (int index = 0; index < attributeCount(); index++)
-        {
-            copyNode.setAttributeValue(index, this.getAttributeValue(index));
-        }
-
-        // children
-        copyChildrenInto(copyNode);
-
-        return copyNode;
+        int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
+        return createCopy(newParent, index);
     }
 
     /**
-     * Creates an empty copy of this node, i.e.&nbsp;without children, options, attributes.
-     * @return empty copy.
+     * Creates a copy of this node under the given parent, at the given index. The node is inserted and its creation
+     * event is fired before any of its state is copied, so listeners can track all subsequent changes.
+     * @param newParent parent for the copy.
+     * @param index index in the parent at which to insert the visible copy.
+     * @return newly created node.
      */
-    public XsdTreeNode emptyCopy()
+    public XsdTreeNode createCopy(final XsdTreeNode newParent, final int index)
     {
-        return emptyCopy(this.parent);
-    }
-
-    /**
-     * Returns an empty copy of this node under the given parent.
-     * @param newParent new parent.
-     * @return empty copy.
-     */
-    private XsdTreeNode emptyCopy(final XsdTreeNode newParent)
-    {
-        int indexOfNode = this.parent.children.indexOf(this);
-        if (newParent.equals(this.parent))
-        {
-            indexOfNode++; // its a copy so does not matter, but in case of exceptions it is clearer the copy is below 'this'
-        }
-        XsdTreeNode copyNode = new XsdTreeNode(newParent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
-        if (newParent.children == null)
-        {
-            newParent.children = new ArrayList<>();
-        }
-        newParent.children.add(indexOfNode, copyNode);
-        copyNode.parent = newParent;
+        XsdTreeNode copyNode = createCopyStructure(newParent, index);
+        copyStateInto(copyNode);
         return copyNode;
     }
 
@@ -1503,7 +1432,8 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Copies the active status, value, choice, attributes and children of this node in to the given node.
+     * Copies the state of this node into an existing node. The target is assumed to be part of the tree already, so
+     * its creation event has been fired and listeners can track the changes made here.
      * @param copyNode node to copy data in to.
      */
     public void copyInto(final XsdTreeNode copyNode)
@@ -1512,64 +1442,94 @@ public class XsdTreeNode extends LocalEventProducer
         {
             return;
         }
-        copyOwnStateInto(copyNode);
-        copyChildrenInto(copyNode);
+        copyStateInto(copyNode);
     }
 
     /**
-     * Copies value, include-state, choice/option structure, and attributes into copyNode. Does not copy child nodes.
-     * @param copyNode node to copy data in to
+     * Creates the structure of a copy, without copying value, attributes or children. Any creation event for the copy,
+     * or for options created as part of its structure, is fired before the other events for those nodes.
+     * @param newParent parent for the copy.
+     * @param index index in the parent at which to insert the visible copy.
+     * @return newly created visible node.
      */
-    private void copyOwnStateInto(final XsdTreeNode copyNode)
+    private XsdTreeNode createCopyStructure(final XsdTreeNode newParent, final int index)
     {
-        if (this.equals(copyNode))
-        {
-            return;
-        }
-        copyNode.value = this.value;
-        copyNode.isIncluded = this.isIncluded;
-        // copy choice
         if (this.choice != null)
         {
-            XsdTreeNode choiceNode = new XsdTreeNode(copyNode.parent, this.choice.xsdNode, this.choice.hiddenNodes,
-                    this.choice.referringXsdNode);
-            choiceNode.choice = choiceNode;
-            // populate options, but skip the copyNode option that was created above, insert it afterwards
-            int selectedIndex = this.choice.options.indexOf(this);
-            choiceNode.options = new ArrayList<>();
-            XsdTreeNodeUtil.addChildren(this.choice.xsdNode, copyNode.parent, choiceNode.options, this.choice.hiddenNodes,
-                    this.schema, false, selectedIndex);
-            choiceNode.options.add(selectedIndex, copyNode);
-            choiceNode.selected = choiceNode.options.get(selectedIndex);
-            if (this.choice.getNodeName().equals("xsd:all"))
-            {
-                XsdTreeNodeUtil.addXsdAllValidator(choiceNode, choiceNode);
-            }
-            for (int index = 0; index < choiceNode.options.size(); index++)
-            {
-                XsdTreeNode option = choiceNode.options.get(index);
-                if (this.choice.getNodeName().equals("xsd:all"))
-                {
-                    XsdTreeNodeUtil.addXsdAllValidator(choiceNode, option);
-                }
-                option.minOccurs = choiceNode.minOccurs;
-                option.maxOccurs = choiceNode.maxOccurs;
-                if (choiceNode.minOccurs > 0)
-                {
-                    option.setActive();
-                }
-                option.active = this.choice.options.get(index).active;
-                option.choice = choiceNode;
-            }
-            choiceNode.invalidate();
-            choiceNode.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, new Object[] {choiceNode, choiceNode.selected, choiceNode});
+            return createChoiceCopyStructure(newParent, index);
         }
-        // copy attributes
+        XsdTreeNode node = new XsdTreeNode(newParent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
+        newParent.children.add(index, node);
+        newParent.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                new Object[] {node, node.parent, node.parent.children.indexOf(node)});
+        return node;
+    }
+
+    /**
+     * Creates a choice wrapper with options for a copy. The option corresponding to this node is selected and
+     * returned as the visible copy.
+     * @param newParent parent for the copy.
+     * @param index index in the parent at which to insert the selected option.
+     * @return visible selected option.
+     */
+    private XsdTreeNode createChoiceCopyStructure(final XsdTreeNode newParent, final int index)
+    {
+        XsdTreeNode choiceNode =
+                new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes, this.choice.referringXsdNode);
+        newParent.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                new Object[] {choiceNode, choiceNode.parent, choiceNode.parent.children.indexOf(choiceNode)});
+        choiceNode.createOptions();
+        XsdTreeNode selectedOption = choiceNode.options.get(this.choice.options.indexOf(this));
+        for (int optionIndex = 0; optionIndex < choiceNode.options.size(); optionIndex++)
+        {
+            XsdTreeNode option = choiceNode.options.get(optionIndex);
+            XsdTreeNode sourceOption = this.choice.options.get(optionIndex);
+            option.minOccurs = sourceOption.minOccurs;
+            option.maxOccurs = sourceOption.maxOccurs;
+        }
+        choiceNode.setOption(selectedOption);
+        int movedFrom = newParent.children.indexOf(selectedOption);
+        if (movedFrom != index)
+        {
+            selectedOption.move(index - movedFrom);
+        }
+        for (int optionIndex = 0; optionIndex < choiceNode.options.size(); optionIndex++)
+        {
+            XsdTreeNode option = choiceNode.options.get(optionIndex);
+            if (!option.equals(selectedOption) && this.choice.options.get(optionIndex).active && !option.active)
+            {
+                option.setActive();
+            }
+        }
+        if (this.active)
+        {
+            selectedOption.setActive();
+        }
+        return selectedOption;
+    }
+
+    /**
+     * Copies activation, value, include-state, attributes and children into the given node, using event-firing
+     * methods.
+     * @param copyNode node to copy data in to.
+     */
+    private void copyStateInto(final XsdTreeNode copyNode)
+    {
+        copyNode.isIncluded = this.isIncluded;
+        if (this.active)
+        {
+            copyNode.setActive();
+        }
+        if (copyNode.isEditable())
+        {
+            copyNode.setValue(this.getValue());
+        }
         copyNode.assureAttributesAndDescription();
         for (int index = 0; index < attributeCount(); index++)
         {
-            copyNode.attributeValues.set(index, this.attributeValues.get(index));
+            copyNode.setAttributeValue(index, this.getAttributeValue(index));
         }
+        copyChildrenInto(copyNode);
     }
 
     /**
@@ -1579,12 +1539,13 @@ public class XsdTreeNode extends LocalEventProducer
     private void copyChildrenInto(final XsdTreeNode copyNode)
     {
         // remove existing children of target (relevant for paste/overwrite scenarios)
+        XsdTreeNodeRoot root = copyNode.getRoot();
         if (copyNode.children != null)
         {
             while (!copyNode.children.isEmpty())
             {
                 XsdTreeNode child = copyNode.children.remove(0);
-                getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, copyNode, 0});
+                root.fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, copyNode, 0});
                 child.parent = null;
             }
         }

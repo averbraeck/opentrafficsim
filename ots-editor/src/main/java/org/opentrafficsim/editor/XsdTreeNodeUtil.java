@@ -105,13 +105,10 @@ public final class XsdTreeNodeUtil
      * @param schema schema to get types and referred elements from.
      * @param flattenSequence when true, treats an xsd:sequence child as an extension of the node. In the context of a choice
      *            this should be {@code null}.
-     * @param skip child index to skip, this is used when copying choice options from an option that is already created (i.e.
-     *            {@code copyNode} in {@code XsdTreeNode.copyInto(copyNode)}).
      */
     static void addChildren(final Node node, final XsdTreeNode parentNode, final List<XsdTreeNode> children,
-            final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence, final int skip)
+            final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence)
     {
-        int skipIndex = skip;
         XsdTreeNode root = parentNode.getRoot();
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
@@ -119,11 +116,6 @@ public final class XsdTreeNodeUtil
             switch (child.getNodeName())
             {
                 case "xsd:element":
-                    if (children.size() == skipIndex)
-                    {
-                        skipIndex = -1;
-                        break;
-                    }
                     XsdTreeNode element;
                     Optional<String> ref = DocumentReader.getAttribute(child, "ref");
                     Optional<String> type = DocumentReader.getAttribute(child, "type");
@@ -153,14 +145,10 @@ public final class XsdTreeNodeUtil
                             new Object[] {element, parentNode, parentNode.children.indexOf(element)});
                     break;
                 case "xsd:sequence":
-                    if (children.size() == skipIndex)
-                    {
-                        skipIndex = -1;
-                        break;
-                    }
                     if (flattenSequence)
                     {
-                        addChildren(child, parentNode, children, XsdTreeNodeUtil.append(hiddenNodes, node), schema, false, -1);
+                        addChildren(child, parentNode, children, XsdTreeNodeUtil.append(hiddenNodes, node), schema,
+                                false);
                     }
                     else
                     {
@@ -172,11 +160,6 @@ public final class XsdTreeNodeUtil
                     break;
                 case "xsd:choice":
                 case "xsd:all":
-                    if (children.size() == skipIndex)
-                    {
-                        skipIndex = -1;
-                        break;
-                    }
                     XsdTreeNode choice = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
                     root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {choice, parentNode, parentNode.children.indexOf(choice)});
@@ -185,11 +168,6 @@ public final class XsdTreeNodeUtil
                     choice.setOption(choice.options.get(0));
                     break;
                 case "xsd:extension":
-                    if (children.size() == skipIndex)
-                    {
-                        skipIndex = -1;
-                        break;
-                    }
                     XsdTreeNode extension = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
                     root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {extension, parentNode, parentNode.children.indexOf(extension)});

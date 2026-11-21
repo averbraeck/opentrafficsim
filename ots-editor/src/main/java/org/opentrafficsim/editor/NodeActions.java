@@ -122,13 +122,9 @@ public class NodeActions
      */
     public void insert(final XsdTreeNode node)
     {
-        // TODO: this will not be robust for undo/redo
         this.editor.getUndo().startAction(ActionType.INSERT, node, null);
-        XsdTreeNode newNode = node.emptyCopy();
-        newNode.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                new Object[] {newNode, newNode.getParent(), newNode.getParent().getChildren().indexOf(newNode)});
-        newNode.move(-1);
-        this.editor.getClipboard().copyInto(newNode);
+        XsdTreeNode parent = node.getParent();
+        XsdTreeNode newNode = this.editor.getClipboard().createCopy(parent, parent.getChildren().indexOf(node));
         this.editor.removeClipboardWhenCut();
         this.editor.getUndo().setPostActionShowNode(newNode);
         this.editor.show(newNode, null);
@@ -140,28 +136,21 @@ public class NodeActions
      */
     public void paste(final XsdTreeNode node)
     {
-        // TODO: this will not be robust for undo/redo
         this.editor.getUndo().startAction(ActionType.PASTE, node, null);
+        XsdTreeNode clipboard = this.editor.getClipboard();
         XsdTreeNode newNode;
         if (!node.isActive())
         {
             node.setActive();
             newNode = node;
-        }
-        else
-        {
-            newNode = node.emptyCopy();
-            newNode.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                    new Object[] {newNode, newNode.getParent(), newNode.getParent().getChildren().indexOf(newNode)});
-        }
-        this.editor.getClipboard().copyInto(newNode);
-        if (!node.equals(newNode))
-        {
-            this.editor.removeClipboardWhenCut();
-        }
-        else
-        {
+            clipboard.copyInto(newNode);
             this.editor.setClipboard(null, false);
+        }
+        else
+        {
+            XsdTreeNode parent = node.getParent();
+            newNode = clipboard.createCopy(parent, parent.getChildren().indexOf(node) + 1);
+            this.editor.removeClipboardWhenCut();
         }
         this.editor.getUndo().setPostActionShowNode(newNode);
         this.editor.show(newNode, null);

@@ -275,7 +275,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     public void mouseClicked(final MouseEvent e)
     {
         XsdTreeNode treeNode = this.editor.getTreeNodeAtPoint(e.getPoint());
-        if (e.getButton() == MouseEvent.BUTTON1)
+        if (SwingUtilities.isLeftMouseButton(e))
         {
             if (e.getClickCount() > 1 && this.treeTable
                     .convertColumnIndexToModel(this.treeTable.columnAtPoint(e.getPoint())) == XsdTreeTableModel.TREE_COLUMN)
@@ -337,7 +337,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 popup.show(this.treeTable, (int) labelPortion.getMinX() + x, (int) labelPortion.getMaxY() - 1);
             }
         }
-        else if (e.getButton() == MouseEvent.BUTTON3)
+        else if (SwingUtilities.isRightMouseButton(e))
         {
             // show actions popup
             int row = this.treeTable.rowAtPoint(e.getPoint());
@@ -355,7 +355,8 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     private void createRightClickPopup(final MouseEvent e, final XsdTreeNode treeNode)
     {
         JPopupMenu popup = new JPopupMenu();
-        boolean filterActive = this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model && model.isFilterActive();
+        boolean noMod = !(this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model) || model.isFilterActive()
+                || treeNode.equals(model.getRoot());
 
         boolean anyAdded = false;
         if (treeNode.isActive())
@@ -395,14 +396,14 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
          * pressed.
          */
         boolean groupAdded = false;
-        if (!filterActive && !treeNode.isIncluded())
+        if (!noMod && !treeNode.isIncluded())
         {
             groupAdded = addAddRemoveGroup(popup, treeNode, anyAdded);
             anyAdded = anyAdded || groupAdded;
         }
-        groupAdded = addBranchingGroup(popup, treeNode, groupAdded, filterActive);
+        groupAdded = addBranchingGroup(popup, treeNode, groupAdded, noMod);
         anyAdded = anyAdded || groupAdded;
-        if (!filterActive && !treeNode.isIncluded())
+        if (!noMod && !treeNode.isIncluded())
         {
             groupAdded = addMoveNodeGroup(treeNode, popup, groupAdded);
             anyAdded = anyAdded || groupAdded;
@@ -490,16 +491,16 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
      * @param popup popup menu
      * @param treeNode node for which the menu is made
      * @param separatorNeeded whether a separator is needed when the first item is added
-     * @param filterActive whether the filter is active
+     * @param noMod whether modifications are allowed
      * @return whether any menu item was added
      */
     private boolean addBranchingGroup(final JPopupMenu popup, final XsdTreeNode treeNode, final boolean separatorNeeded,
-            final boolean filterActive)
+            final boolean noMod)
     {
         boolean groupAdded = false;
         boolean sepNeeded = separatorNeeded;
         List<XsdOption> options = treeNode.getOptions();
-        if (!filterActive && !treeNode.isIncluded() && treeNode.isActive() && treeNode.isChoice() && options.size() > 1)
+        if (!noMod && !treeNode.isIncluded() && treeNode.isActive() && treeNode.isChoice() && options.size() > 1)
         {
             sepNeeded = addSeparator(popup, sepNeeded);
             JMenuItem revolve = new JMenuItem(this.editor.actions().revolveNode());
