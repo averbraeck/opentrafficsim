@@ -1403,8 +1403,8 @@ public class XsdTreeNode extends LocalEventProducer
         if (this.choice != null)
         {
             int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
-            XsdTreeNode node = new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes,
-                    this.choice.referringXsdNode);
+            XsdTreeNode node =
+                    new XsdTreeNode(newParent, this.choice.xsdNode, this.choice.hiddenNodes, this.choice.referringXsdNode);
             getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                     new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             node.createOptions();
@@ -1429,12 +1429,12 @@ public class XsdTreeNode extends LocalEventProducer
             int index = Math.min(this.parent.children.indexOf(this) + 1, newParent.children.size());
             XsdTreeNode node = new XsdTreeNode(newParent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
             newParent.children.add(index, node);
+            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             if (this.active)
             {
                 node.setActive();
             }
-            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             copyNode = node;
         }
 
