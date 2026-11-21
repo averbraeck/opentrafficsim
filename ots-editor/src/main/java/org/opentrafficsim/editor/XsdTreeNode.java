@@ -1509,13 +1509,12 @@ public class XsdTreeNode extends LocalEventProducer
     }
 
     /**
-     * Copies activation, value, include-state, attributes and children into the given node, using event-firing
-     * methods.
+     * Copies activation, value, attributes and children into the given node, using event-firing methods. The target's
+     * include-state is left untouched.
      * @param copyNode node to copy data in to.
      */
     private void copyStateInto(final XsdTreeNode copyNode)
     {
-        copyNode.isIncluded = this.isIncluded;
         if (this.active)
         {
             copyNode.setActive();
@@ -1557,7 +1556,7 @@ public class XsdTreeNode extends LocalEventProducer
         {
             for (int index = 0; index < this.children.size(); index++)
             {
-                this.children.get(index).duplicate(copyNode);
+                this.children.get(index).createCopy(copyNode, index);
             }
         }
     }

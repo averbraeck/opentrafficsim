@@ -395,12 +395,8 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
          * the right-click menu is actually shown. Therefore XsdTreeKeyListener also implements the responses for when keys are
          * pressed.
          */
-        boolean groupAdded = false;
-        if (!noMod && !treeNode.isIncluded())
-        {
-            groupAdded = addAddRemoveGroup(popup, treeNode, anyAdded);
-            anyAdded = anyAdded || groupAdded;
-        }
+        boolean groupAdded = addAddRemoveGroup(popup, treeNode, anyAdded, noMod, treeNode.isIncluded());
+        anyAdded = anyAdded || groupAdded;
         groupAdded = addBranchingGroup(popup, treeNode, groupAdded, noMod);
         anyAdded = anyAdded || groupAdded;
         if (!noMod && !treeNode.isIncluded())
@@ -423,13 +419,17 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
      * @param popup popup menu
      * @param treeNode node for which the menu is made
      * @param separatorNeeded whether a separator is needed when the first item is added
+     * @param noMod whether modifications are not allowed
+     * @param included whether the node is included and must not be modified
      * @return whether any menu item was added
      */
-    private boolean addAddRemoveGroup(final JPopupMenu popup, final XsdTreeNode treeNode, final boolean separatorNeeded)
+    private boolean addAddRemoveGroup(final JPopupMenu popup, final XsdTreeNode treeNode, final boolean separatorNeeded,
+            final boolean noMod, final boolean included)
     {
         boolean groupAdded = false;
         boolean sepNeeded = separatorNeeded;
-        if (treeNode.isActive() && treeNode.isAddable())
+        boolean canModify = !noMod && !included;
+        if (canModify && treeNode.isAddable())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
             JMenuItem add = new JMenuItem(this.editor.actions().addNode());
@@ -440,7 +440,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             popup.add(duplicate);
             groupAdded = true;
         }
-        if (treeNode.isActive() && treeNode.isRemovable())
+        if (canModify && treeNode.isRemovable())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
             JMenuItem remove = new JMenuItem(this.editor.actions().deleteNode());
@@ -448,7 +448,8 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             popup.add(remove);
             groupAdded = true;
         }
-        if (treeNode.isActive() && (treeNode.isRemovable() || treeNode.isAddable()))
+        // Copying does not modify the node, so it is available for included nodes and when modifications are disabled.
+        if (!noMod && treeNode.isActive() && (treeNode.isRemovable() || treeNode.isAddable()))
         {
             sepNeeded = addSeparator(popup, sepNeeded);
             JMenuItem copy = new JMenuItem(this.editor.actions().copyNode());
@@ -456,7 +457,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             popup.add(copy);
             groupAdded = true;
         }
-        if (treeNode.isActive() && treeNode.isRemovable())
+        if (canModify && treeNode.isRemovable())
         {
             sepNeeded = addSeparator(popup, sepNeeded);
             JMenuItem cut = new JMenuItem(this.editor.actions().cutNode());
@@ -464,9 +465,9 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             popup.add(cut);
             groupAdded = true;
         }
-        if (this.editor.getClipboard() != null && treeNode.canContain(this.editor.getClipboard()))
+        if (canModify && this.editor.getClipboard() != null && treeNode.canContain(this.editor.getClipboard()))
         {
-            if (treeNode.isActive() && treeNode.isAddable())
+            if (treeNode.isAddable())
             {
                 sepNeeded = addSeparator(popup, sepNeeded);
                 JMenuItem insert = new JMenuItem(this.editor.actions().insertNode());
@@ -491,7 +492,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
      * @param popup popup menu
      * @param treeNode node for which the menu is made
      * @param separatorNeeded whether a separator is needed when the first item is added
-     * @param noMod whether modifications are allowed
+     * @param noMod whether modifications are not allowed
      * @return whether any menu item was added
      */
     private boolean addBranchingGroup(final JPopupMenu popup, final XsdTreeNode treeNode, final boolean separatorNeeded,

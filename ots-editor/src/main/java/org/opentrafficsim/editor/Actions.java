@@ -290,6 +290,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (node.isAddable())
             {
                 getNodeActions().add(node);
@@ -321,6 +325,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (node.isAddable())
             {
                 getNodeActions().duplicate(node);
@@ -352,6 +360,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (node.isRemovable())
             {
                 if (Actions.this.editor.dialogs().confirmNodeRemoval(node))
@@ -417,6 +429,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (node.isActive() && node.isRemovable())
             {
                 getNodeActions().cut(node);
@@ -448,6 +464,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (Actions.this.editor.getClipboard() != null && node.canContain(Actions.this.editor.getClipboard())
                     && node.isActive() && node.isAddable())
             {
@@ -480,6 +500,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (Actions.this.editor.getClipboard() != null && node.canContain(Actions.this.editor.getClipboard())
                     && (!node.isActive() || node.isAddable()))
             {
@@ -512,6 +536,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             List<XsdOption> options = node.getOptions();
             if (node.isChoice() && options.size() > 1)
             {
@@ -646,6 +674,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (node.canMoveUp())
             {
                 getNodeActions().move(node, -1);
@@ -677,6 +709,10 @@ public class Actions
                 return;
             }
             XsdTreeNode node = getSelectedTreeNode();
+            if (node.isIncluded())
+            {
+                return;
+            }
             if (node.canMoveDown())
             {
                 getNodeActions().move(node, 1);
