@@ -52,13 +52,10 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      * de-activation as it is the last RoadLayout, etc., it becomes non-trivial that the coupling from a Link to its RoadLayout
      * is correctly created, or broken, when a specific attribute is validated by this class. EventListeners are sorted by:
      * KeyValidators, KeyrefValidators, CoupledValidator, and then all other listeners. This does not guarantee that in the
-     * cascade of nodes being altered and the GUI repainting, the node coupling and painting on screen is correct. With selected
-     * usage of SwingUtilities.invokeLater(), which should specifically not be used in other locations, the implementation below
-     * seems to produce the right result for all the actions mentioned above. This appears more arbitrarily so, than that it's
-     * guaranteed by a clear flow in the program. To make the system more robust and simpler to understand and use, it might be
-     * better to allocate validation to a separate thread. This thread could absorb various requests to re-validate nodes, but
-     * only do so when any user action results in interrupting the thread. This interruption would be triggered after any change
-     * to a node is made, including a cascade of nested changes.
+     * cascade of nodes being altered and the GUI repainting, the node coupling and painting on screen is correct. Revalidation
+     * is therefore deferred to a single, coalesced SwingUtilities.invokeLater() pass, so that all requests from one event
+     * cascade are combined after the data structure has settled. Since this class runs on the event dispatch thread, further
+     * robustness would come from batching requests per user action, not from moving validation to a separate thread.
      */
 
     /** Ordering id. **/
@@ -96,6 +93,21 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /** Coupled layout element nodes that are successfully validated to. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNodes = new LinkedHashMap<>();
+
+    /** Validated nodes for which an individual update is pending. */
+    private final Set<XsdTreeNode> pendingNodes = new LinkedHashSet<>();
+
+    /** Links for which an update of all dependent nodes is pending. */
+    private final Set<XsdTreeNode> pendingLinks = new LinkedHashSet<>();
+
+    /** Layouts for which an update of all dependent nodes is pending. */
+    private final Set<XsdTreeNode> pendingLayouts = new LinkedHashSet<>();
+
+    /** Whether a full update of all validated nodes is pending. */
+    private boolean pendingFullUpdate = false;
+
+    /** Whether a deferred validation pass is already scheduled on the event dispatch thread. */
+    private boolean validationScheduled = false;
 
     /** Boolean supplier with logic on when to ignore validation. */
     private final Supplier<Boolean> ignoreValidation;
@@ -150,7 +162,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                     this.nonParentId.add(node);
                 }
             }
-            SwingUtilities.invokeLater(() -> update(node)); // during creation not all info might be available yet
+            requestUpdate(node); // during creation not all info might be available yet
         }
     }
 
@@ -195,7 +207,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT) || node.getPathString().equals(XsdPaths.LINK))
             {
                 // Id change on defined layout or link, update all nodes that use this validator
-                SwingUtilities.invokeLater(() -> updateAllActive());
+                requestUpdateAllActive();
             }
             else
             {
@@ -207,18 +219,18 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         {
             // road layout option in link changed
             XsdTreeNode linkNode = ((XsdTreeNode) ((Object[]) event.getContent())[0]).getParent();
-            updateAllByLink(linkNode);
+            requestUpdateAllByLink(linkNode);
         }
         else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
         {
             // value of defined layout changed
             XsdTreeNode linkNode = ((XsdTreeNode) ((Object[]) event.getContent())[0]).getParent().getParent();
-            updateAllByLink(linkNode);
+            requestUpdateAllByLink(linkNode);
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
         {
             // activation of defined layout or link changed
-            updateAllActive();
+            requestUpdateAllActive();
         }
         else
         {
@@ -236,7 +248,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                 if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT) || node.getPathString().equals(XsdPaths.LINK))
                 {
                     // defined layout
-                    SwingUtilities.invokeLater(() -> updateAllActive()); // during creation not all info might be available yet
+                    requestUpdateAllActive(); // during creation not all info might be available yet
                     node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
                     node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
                     return;
@@ -248,7 +260,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                     // parent is layout node, i.e. this node is an element; listen to id change and update
                     LayoutIdListener listener = this.layoutIdListener.computeIfAbsent(parent, (n) -> new LayoutIdListener());
                     node.addListener(listener, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-                    updateAllByLayout(parent);
+                    requestUpdateAllByLayout(parent);
                     return;
                 }
             }
@@ -259,7 +271,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                 if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT) || node.getPathString().equals(XsdPaths.LINK))
                 {
                     // defined layout
-                    updateAllActive();
+                    requestUpdateAllActive();
                     node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
                     node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
                     return;
@@ -271,7 +283,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                     // parent is layout node, i.e. this node is an element; un-listen to id change and update
                     LayoutIdListener listener = this.layoutIdListener.computeIfAbsent(parent, (n) -> new LayoutIdListener());
                     node.removeListener(listener, XsdTreeNode.ATTRIBUTE_CHANGED);
-                    updateAllByLayout(parent);
+                    requestUpdateAllByLayout(parent);
                     return;
                 }
             }
@@ -292,6 +304,99 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         this.nonParentId.clear();
         this.layoutIdListener.clear();
         this.coupledNodes.clear();
+        this.pendingNodes.clear();
+        this.pendingLinks.clear();
+        this.pendingLayouts.clear();
+        this.pendingFullUpdate = false;
+    }
+
+    /**
+     * Requests a deferred update of a single validated node. Multiple requests are combined in one pass on the event dispatch
+     * thread.
+     * @param node node to update.
+     */
+    private void requestUpdate(final XsdTreeNode node)
+    {
+        this.pendingNodes.add(node);
+        scheduleValidation();
+    }
+
+    /**
+     * Requests a deferred update of all nodes that depend on the given link.
+     * @param link link node.
+     */
+    private void requestUpdateAllByLink(final XsdTreeNode link)
+    {
+        this.pendingLinks.add(link);
+        scheduleValidation();
+    }
+
+    /**
+     * Requests a deferred update of all nodes that depend on the given layout.
+     * @param layout layout node.
+     */
+    private void requestUpdateAllByLayout(final XsdTreeNode layout)
+    {
+        this.pendingLayouts.add(layout);
+        scheduleValidation();
+    }
+
+    /**
+     * Requests a deferred update of all validated nodes.
+     */
+    private void requestUpdateAllActive()
+    {
+        this.pendingFullUpdate = true;
+        scheduleValidation();
+    }
+
+    /**
+     * Schedules one validation pass on the event dispatch thread if none is pending yet.
+     */
+    private void scheduleValidation()
+    {
+        if (this.validationScheduled)
+        {
+            return;
+        }
+        this.validationScheduled = true;
+        SwingUtilities.invokeLater(this::runPendingUpdates);
+    }
+
+    /**
+     * Runs one combined validation pass for all requests received since the previous pass.
+     */
+    private void runPendingUpdates()
+    {
+        this.validationScheduled = false;
+        boolean full = this.pendingFullUpdate;
+        Set<XsdTreeNode> nodes = new LinkedHashSet<>(this.pendingNodes);
+        Set<XsdTreeNode> links = new LinkedHashSet<>(this.pendingLinks);
+        Set<XsdTreeNode> layouts = new LinkedHashSet<>(this.pendingLayouts);
+        this.pendingFullUpdate = false;
+        this.pendingNodes.clear();
+        this.pendingLinks.clear();
+        this.pendingLayouts.clear();
+        if (full)
+        {
+            updateAllActive();
+            return;
+        }
+        for (XsdTreeNode node : nodes)
+        {
+            if (node.getParent() != null)
+            {
+                update(node);
+            }
+        }
+        for (XsdTreeNode link : links)
+        {
+            updateAllByLink(link);
+        }
+        for (XsdTreeNode layout : layouts)
+        {
+            updateAllByLayout(layout);
+        }
     }
 
     /**
@@ -300,9 +405,13 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      */
     private void updateAllByLink(final XsdTreeNode link)
     {
-        if (this.linkValidatedNodes.containsKey(link))
+        Set<XsdTreeNode> nodes = this.linkValidatedNodes.get(link);
+        if (nodes != null)
         {
-            this.linkValidatedNodes.get(link).forEach((n) -> update(n));
+            for (XsdTreeNode node : new ArrayList<>(nodes)) // update() may change the registration of nodes
+            {
+                update(node);
+            }
         }
     }
 
@@ -312,9 +421,13 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      */
     private void updateAllByLayout(final XsdTreeNode layout)
     {
-        if (this.layoutValidatedNodes.containsKey(layout))
+        Set<XsdTreeNode> nodes = this.layoutValidatedNodes.get(layout);
+        if (nodes != null)
         {
-            this.layoutValidatedNodes.get(layout).forEach((n) -> update(n));
+            for (XsdTreeNode node : new ArrayList<>(nodes)) // update() may change the registration of nodes
+            {
+                update(node);
+            }
         }
     }
 
@@ -323,14 +436,14 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      */
     private void updateAllActive()
     {
-        for (XsdTreeNode node : this.parentIdListener.keySet())
+        for (XsdTreeNode node : new ArrayList<>(this.parentIdListener.keySet())) // update() may change the registrations
         {
             if (node.isActive())
             {
                 update(node);
             }
         }
-        for (XsdTreeNode node : this.nonParentId)
+        for (XsdTreeNode node : new ArrayList<>(this.nonParentId)) // update() may change the registrations
         {
             if (node.isActive())
             {
@@ -425,7 +538,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         // remove node as validated by former link/layout
         if (formerLinkNode != null && !formerLinkNode.equals(linkNode))
         {
-            this.linkValidatedNodes.computeIfAbsent(formerLinkNode, (n) -> new LinkedHashSet<>()).remove(node);
+            Set<XsdTreeNode> formerLinkNodes = this.linkValidatedNodes.get(formerLinkNode);
+            if (formerLinkNodes != null)
+            {
+                formerLinkNodes.remove(node);
+            }
             for (XsdOption option : formerLinkNode.getChild(1).getOptions()) // 2nd child is RoadLayout/DefinedRoadLayout choice
             {
                 option.optionNode().removeListener(this, XsdTreeNode.OPTION_CHANGED);
@@ -439,13 +556,20 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         }
         if (formerLayoutNode != null && !formerLayoutNode.equals(layoutNode))
         {
-            this.layoutValidatedNodes.computeIfAbsent(formerLayoutNode, (n) -> new LinkedHashSet<>()).remove(node);
-            LayoutIdListener listener = this.layoutIdListener.computeIfAbsent(formerLayoutNode, (n) -> new LayoutIdListener());
-            listener.nodes.remove(node);
-            formerLayoutNode.removeListener(listener, XsdTreeNode.ATTRIBUTE_CHANGED);
-            for (XsdTreeNode element : formerLayoutNode.getChildren())
+            Set<XsdTreeNode> formerLayoutNodes = this.layoutValidatedNodes.get(formerLayoutNode);
+            if (formerLayoutNodes != null)
             {
-                element.removeListener(listener, XsdTreeNode.ATTRIBUTE_CHANGED);
+                formerLayoutNodes.remove(node);
+            }
+            LayoutIdListener listener = this.layoutIdListener.get(formerLayoutNode);
+            if (listener != null)
+            {
+                listener.nodes.remove(node);
+                formerLayoutNode.removeListener(listener, XsdTreeNode.ATTRIBUTE_CHANGED);
+                for (XsdTreeNode element : formerLayoutNode.getChildren())
+                {
+                    element.removeListener(listener, XsdTreeNode.ATTRIBUTE_CHANGED);
+                }
             }
         }
         node.invalidate();
@@ -638,7 +762,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                 if (!"RoadLayout".equals(element))
                 {
                     // element id was changed
-                    for (XsdTreeNode node : this.nodes)
+                    for (XsdTreeNode node : new ArrayList<>(this.nodes)) // setting values may change the registrations
                     {
                         if (changedNode.equals(getCouplings().get(node)))
                         {
@@ -655,12 +779,16 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
                             }
                         }
                     }
-                    this.nodes.forEach((n) -> n.invalidate()); // any can now have the right value with new element id
+                    // any can now have the right value with new element id
+                    for (XsdTreeNode node : new ArrayList<>(this.nodes))
+                    {
+                        node.invalidate();
+                    }
                 }
                 else
                 {
                     // road layout id was changed, need to update defined layout in link and all nodes
-                    updateAllActive();
+                    requestUpdateAllActive();
                 }
             }
         }
