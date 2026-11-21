@@ -313,7 +313,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             if (labelPortion != null && labelPortion.contains(e.getPoint().x - x, e.getPoint().y)
                     && this.editor.mayPresentChoice() && treeNode.isChoice()
                     && this.treeTable.getTree().getModel() instanceof XsdTreeTableModel model
-                    && !treeNode.equals(model.getDataRoot()))
+                    && !treeNode.equals(model.getRoot()))
             {
                 JPopupMenu popup = new JPopupMenu();
                 for (XsdOption option : treeNode.getOptions())

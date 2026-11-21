@@ -92,7 +92,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
             preAppend(this.description, false);
         }
         if (filter == null && node.isChoice() && !node.isIncluded()
-                && !node.equals(((XsdTreeTableModel) tree.getModel()).getDataRoot()))
+                && !node.equals(((XsdTreeTableModel) tree.getModel()).getRoot()))
         {
             preAppend(this.dropdown, false);
         }
