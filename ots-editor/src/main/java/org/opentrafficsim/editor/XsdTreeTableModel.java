@@ -282,6 +282,10 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
         {
             return;
         }
+        if (node.equals(this.root))
+        {
+            setRoot(null);
+        }
         Object[] path = pathTo(parent);
         if (path == null || !this.inserted.remove(node))
         {
