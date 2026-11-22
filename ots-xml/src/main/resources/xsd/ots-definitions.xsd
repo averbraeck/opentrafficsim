@@ -255,13 +255,15 @@
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="CseLane">
-    <xsd:complexContent>
-      <xsd:extension base="ots:CrossSectionElement">
-        <xsd:attribute name="Id" type="ots:IdType" use="required" />
-        <xsd:attribute name="LaneType" type="ots:string" use="required" />
-      </xsd:extension>
-    </xsd:complexContent>
+  <xsd:complexType name="LaneCustom">
+    <xsd:sequence>
+      <xsd:element ref="ots:Compatibility" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:choice minOccurs="0">
+        <xsd:element name="SpeedLimit" type="ots:SpeedLimit" />
+        <xsd:element name="TemporalSpeedLimit" type="ots:TemporalSpeedLimit" />
+      </xsd:choice>
+      <xsd:element ref="ots:GtuTypeSpeedLimit" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="CseShoulder">
@@ -390,89 +392,84 @@
     </xsd:attribute>
   </xsd:complexType>
 
-  <xsd:complexType name="CseStripe">
+  <xsd:complexType name="StripeCustom">
     <xsd:sequence>
-      <xsd:choice minOccurs="0">
-        <xsd:element name="CenterOffset" type="ots:LengthType" />
-        <xsd:sequence>
-          <xsd:element name="CenterOffsetStart" type="ots:LengthType" />
-          <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
-        </xsd:sequence>
-      </xsd:choice>
-      <xsd:choice>
-        <xsd:element name="DefinedStripe" type="ots:string" />
-        <xsd:element name="Custom">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="Elements" type="ots:StripeElements" />
-              <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
-              <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0" maxOccurs="unbounded" />
-            </xsd:sequence>
-            <xsd:attribute name="LeftChangeLane" type="ots:boolean" use="required" />
-            <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
-            <xsd:attribute name="Block" type="ots:boolean" />
-            <xsd:attribute name="LateralSync" type="ots:LateralSync" />
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:choice>
+      <xsd:element name="Elements" type="ots:StripeElements" minOccurs="0" />
+      <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
+      <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
-    <xsd:attribute name="Id" type="ots:IdType" />
+    <xsd:attribute name="LeftChangeLane" type="ots:boolean" />
+    <xsd:attribute name="RightChangeLane" type="ots:boolean" />
+    <xsd:attribute name="Block" type="ots:boolean" />
+    <xsd:attribute name="LateralSync" type="ots:LateralSync" />
   </xsd:complexType>
 
   <xsd:element name="RoadLayouts">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="ots:RoadLayout" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element name="RoadLayout" minOccurs="0" maxOccurs="unbounded">
+          <xsd:annotation>
+            <xsd:documentation xml:lang="en"> Road layout. Lanes to the right of the design line have negative offset.
+              Those to the left have positive offset. When not specifying offsets, sequence the lines from right (most
+              negative) to left (most positive).
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                <xsd:element name="Stripe" minOccurs="0" maxOccurs="unbounded">
+                  <xsd:complexType>
+                    <xsd:sequence>
+                      <xsd:choice minOccurs="0">
+                        <xsd:element name="CenterOffset" type="ots:LengthType" />
+                        <xsd:sequence>
+                          <xsd:element name="CenterOffsetStart" type="ots:LengthType" />
+                          <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
+                        </xsd:sequence>
+                      </xsd:choice>
+                    </xsd:sequence>
+                    <xsd:attribute name="Id" type="ots:IdType" />
+                    <xsd:attribute name="StripeType" type="ots:string" use="required" />
+                  </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Lane" minOccurs="0" maxOccurs="unbounded">
+                  <xsd:complexType>
+                    <xsd:complexContent>
+                      <xsd:extension base="ots:CrossSectionElement">
+                        <xsd:attribute name="Id" type="ots:IdType" use="required" />
+                      </xsd:extension>
+                    </xsd:complexContent>
+                  </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Shoulder" type="ots:CseShoulder" minOccurs="0" maxOccurs="unbounded" />
+              </xsd:choice>
+            </xsd:sequence>
+            <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" />
+            <xsd:attribute name="Id" type="ots:IdType" use="required" />
+            <xsd:attribute name="Builtin" type="xsd:boolean" use="optional" default="false" />
+          </xsd:complexType>
+
+          <!-- RoadLayout.Stripe.Id unique -->
+          <xsd:unique name="roadLayoutStripeId">
+            <xsd:selector xpath="ots:Stripe" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+          <!-- RoadLayout.Lane.Id key -->
+          <xsd:key name="roadLayoutLaneId">
+            <xsd:selector xpath="ots:Lane" />
+            <xsd:field xpath="@Id" />
+          </xsd:key>
+
+          <!-- RoadLayout.Shoulder.Id unique -->
+          <xsd:unique name="roadLayoutShoulderId">
+            <xsd:selector xpath="ots:Shoulder" />
+            <xsd:field xpath="@Id" />
+          </xsd:unique>
+
+        </xsd:element>
       </xsd:sequence>
     </xsd:complexType>
-  </xsd:element>
-
-  <xsd:complexType name="BasicRoadLayout">
-    <xsd:sequence>
-      <xsd:choice minOccurs="1" maxOccurs="unbounded">
-        <xsd:element name="Stripe" type="ots:CseStripe" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="Lane" type="ots:CseLane" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="Shoulder" type="ots:CseShoulder" minOccurs="0" maxOccurs="unbounded" />
-      </xsd:choice>
-    </xsd:sequence>
-    <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" />
-  </xsd:complexType>
-
-  <xsd:element name="RoadLayout">
-    <xsd:annotation>
-      <xsd:documentation xml:lang="en"> Road layout. Lanes to the right of the design line have negative offset.
-        Those to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to
-        left (most positive).
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:complexType>
-      <xsd:complexContent>
-        <xsd:extension base="ots:BasicRoadLayout">
-          <xsd:attribute name="Id" type="ots:IdType" use="required" />
-          <xsd:attribute name="LinkType" type="ots:string" use="required" />
-          <xsd:attribute name="Builtin" type="xsd:boolean" use="optional" default="false" />
-        </xsd:extension>
-      </xsd:complexContent>
-    </xsd:complexType>
-
-    <!-- RoadLayout.Stripe.Id unique -->
-    <xsd:unique name="roadLayoutStripeId">
-      <xsd:selector xpath="ots:Stripe" />
-      <xsd:field xpath="@Id" />
-    </xsd:unique>
-
-    <!-- RoadLayout.Lane.Id key -->
-    <xsd:key name="roadLayoutLaneId">
-      <xsd:selector xpath="ots:Lane" />
-      <xsd:field xpath="@Id" />
-    </xsd:key>
-
-    <!-- RoadLayout.Shoulder.Id unique -->
-    <xsd:unique name="roadLayoutShoulderId">
-      <xsd:selector xpath="ots:Shoulder" />
-      <xsd:field xpath="@Id" />
-    </xsd:unique>
-
   </xsd:element>
 
   <xsd:element name="ParameterTypes">

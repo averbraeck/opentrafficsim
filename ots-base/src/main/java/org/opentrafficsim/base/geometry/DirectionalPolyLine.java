@@ -1,5 +1,6 @@
 package org.opentrafficsim.base.geometry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Direction;
@@ -65,7 +66,45 @@ public class DirectionalPolyLine extends OtsLine2d
     {
         PolyLine2d start = directionalOffsetLine(startOffset);
         PolyLine2d end = directionalOffsetLine(endOffset);
-        return new DirectionalPolyLine(start.transitionLine(end, (f) -> f), this.startDirection, this.endDirection);
+        return new DirectionalPolyLine(transitionLine(start, end), this.startDirection, this.endDirection);
+    }
+
+    /**
+     * Altered copy of PolyLine2d.transitionLine() with duplicate point filter.
+     * @param startLine start line
+     * @param endLine end line
+     * @return transitioned line
+     */
+    public static PolyLine2d transitionLine(final PolyLine2d startLine, final PolyLine2d endLine)
+    {
+        List<Point2d> pointList = new ArrayList<>();
+        int indexInStart = 0;
+        int indexInEnd = 0;
+        while (indexInStart < startLine.size() && indexInEnd < endLine.size())
+        {
+            double fractionInStart = startLine.lengthAtIndex(indexInStart) / startLine.getLength();
+            double fractionInEnd = endLine.lengthAtIndex(indexInEnd) / endLine.getLength();
+            if (fractionInStart < fractionInEnd)
+            {
+                pointList.add(startLine.get(indexInStart)
+                        .interpolate(endLine.getLocation(fractionInStart * endLine.getLength()), fractionInStart));
+                indexInStart++;
+            }
+            else if (fractionInStart > fractionInEnd)
+            {
+                pointList.add(startLine.getLocation(fractionInEnd * startLine.getLength()).interpolate(endLine.get(indexInEnd),
+                        fractionInEnd));
+                indexInEnd++;
+            }
+            else
+            {
+                pointList.add(startLine.get(indexInStart).interpolate(endLine.getLocation(fractionInEnd * endLine.getLength()),
+                        fractionInStart));
+                indexInStart++;
+                indexInEnd++;
+            }
+        }
+        return new PolyLine2d(1e-9, pointList);
     }
 
     @Override

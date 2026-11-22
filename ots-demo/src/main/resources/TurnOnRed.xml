@@ -28,21 +28,17 @@
     <ots:StripeTypes>
       <ots:StripeType Id="SOLID" RightChangeLane="false" LeftChangeLane="false">
         <ots:Elements>
-          <ots:Line Width="20cm">
-            <ots:Continuous />
-          </ots:Line>
+          <ots:Continuous Width="20cm" />
         </ots:Elements>
       </ots:StripeType>
       <ots:StripeType Id="DASHED" RightChangeLane="true" LeftChangeLane="true">
         <ots:Elements>
-          <ots:Line Width="20cm">
-            <ots:Dashed>
-              <ots:GapDash>
-                <ots:Gap>9m</ots:Gap>
-                <ots:Dash>3m</ots:Dash>
-              </ots:GapDash>
-            </ots:Dashed>
-          </ots:Line>
+          <ots:Dashed Width="20cm">
+            <ots:GapDash>
+              <ots:Gap>9m</ots:Gap>
+              <ots:Dash>3m</ots:Dash>
+            </ots:GapDash>
+          </ots:Dashed>
         </ots:Elements>
         <ots:DashOffset>
           <ots:SyncUpstream />
@@ -50,14 +46,12 @@
       </ots:StripeType>
       <ots:StripeType Id="BLOCK" RightChangeLane="true" LeftChangeLane="true">
         <ots:Elements>
-          <ots:Line Width="40cm">
-            <ots:Dashed>
-              <ots:GapDash>
-                <ots:Gap>3m</ots:Gap>
-                <ots:Dash>1m</ots:Dash>
-              </ots:GapDash>
-            </ots:Dashed>
-          </ots:Line>
+          <ots:Dashed Width="40cm">
+            <ots:GapDash>
+              <ots:Gap>3m</ots:Gap>
+              <ots:Dash>1m</ots:Dash>
+            </ots:GapDash>
+          </ots:Dashed>
         </ots:Elements>
         <ots:DashOffset>
           <ots:SyncUpstream />
@@ -70,87 +64,78 @@
       </ots:LaneType>
     </ots:LaneTypes>
     <ots:RoadLayouts>
-      <ots:RoadLayout Id="turnlane" LinkType="URBAN">
+      <ots:RoadLayout Id="turnlane">
         <ots:Shoulder>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Lane Id="lane1" LaneType="URBAN">
-          <ots:Width>3.5m</ots:Width>
-        </ots:Lane>
-        <ots:Shoulder>
-          <ots:Width>2m</ots:Width>
-        </ots:Shoulder>
-      </ots:RoadLayout>
-      <ots:RoadLayout Id="2lane" LinkType="URBAN">
-        <ots:Shoulder>
-          <ots:Width>2m</ots:Width>
-        </ots:Shoulder>
-        <ots:Stripe Id="1">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
-        </ots:Stripe>
-        <ots:Lane Id="lane2" LaneType="URBAN">
-          <ots:Width>3.5m</ots:Width>
-        </ots:Lane>
-        <ots:Stripe Id="2">
-          <ots:DefinedStripe>DASHED</ots:DefinedStripe>
-        </ots:Stripe>
-        <ots:Lane Id="lane1" LaneType="URBAN">
-          <ots:Width>3.5m</ots:Width>
-        </ots:Lane>
-        <ots:Stripe Id="3">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
-        </ots:Stripe>
-        <ots:Shoulder>
-          <ots:Width>2m</ots:Width>
-        </ots:Shoulder>
-      </ots:RoadLayout>
-      <ots:RoadLayout Id="2turnlane" LinkType="URBAN">
-        <ots:Shoulder>
-          <ots:Width>2m</ots:Width>
-        </ots:Shoulder>
-        <ots:Lane Id="lane2" LaneType="URBAN">
-          <ots:Width>3.5m</ots:Width>
-        </ots:Lane>
-        <ots:Stripe Id="1">
-          <ots:DefinedStripe>DASHED</ots:DefinedStripe>
-        </ots:Stripe>
-        <ots:Lane Id="lane1" LaneType="URBAN">
+        <ots:Lane Id="lane1">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Shoulder>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="4lane" LinkType="URBAN">
+      <ots:RoadLayout Id="2lane">
         <ots:Shoulder>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Stripe Id="1" StripeType="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="lane4" LaneType="URBAN">
+        <ots:Lane Id="lane2">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
-          <ots:DefinedStripe>BLOCK</ots:DefinedStripe>
+        <ots:Stripe Id="2" StripeType="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="lane3" LaneType="URBAN">
+        <ots:Lane Id="lane1">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
-          <ots:DefinedStripe>DASHED</ots:DefinedStripe>
+        <ots:Stripe Id="3" StripeType="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="lane2" LaneType="URBAN">
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
+      <ots:RoadLayout Id="2turnlane">
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Lane Id="lane2">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="4">
-          <ots:DefinedStripe>BLOCK</ots:DefinedStripe>
+        <ots:Stripe Id="1" StripeType="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="lane1" LaneType="URBAN">
+        <ots:Lane Id="lane1">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="5">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
+      <ots:RoadLayout Id="4lane">
+        <ots:Shoulder>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Stripe Id="1" StripeType="SOLID">
+        </ots:Stripe>
+        <ots:Lane Id="lane4">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Id="2" StripeType="BLOCK">
+        </ots:Stripe>
+        <ots:Lane Id="lane3">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Id="3" StripeType="DASHED">
+        </ots:Stripe>
+        <ots:Lane Id="lane2">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Id="4" StripeType="BLOCK">
+        </ots:Stripe>
+        <ots:Lane Id="lane1">
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Id="5" StripeType="SOLID">
         </ots:Stripe>
         <ots:Shoulder>
           <ots:Width>2m</ots:Width>

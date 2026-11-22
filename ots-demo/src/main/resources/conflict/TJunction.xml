@@ -53,12 +53,12 @@
       </ots:LaneType>
     </ots:LaneTypes>
     <ots:RoadLayouts>
-      <ots:RoadLayout Id="RIGHT" LinkType="URBAN">
+      <ots:RoadLayout Id="RIGHT">
         <ots:Shoulder>
           <ots:CenterOffset>-2.75m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Lane Id="LANE" LaneType="URBAN">
+        <ots:Lane Id="LANE">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -67,20 +67,19 @@
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="RIGHT2" LinkType="URBAN">
+      <ots:RoadLayout Id="RIGHT2">
         <ots:Shoulder>
           <ots:CenterOffset>-2.75m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Lane Id="LANE" LaneType="URBAN">
+        <ots:Lane Id="LANE">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.DASHED">
           <ots:CenterOffset>2.75m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="TURNLANE" LaneType="URBAN">
+        <ots:Lane Id="TURNLANE">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -89,20 +88,19 @@
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="RIGHT2TAPER" LinkType="URBAN">
+      <ots:RoadLayout Id="RIGHT2TAPER">
         <ots:Shoulder>
           <ots:CenterOffset>-2.75m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Lane Id="LANE" LaneType="URBAN">
+        <ots:Lane Id="LANE">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.DASHED">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="TURNLANE" LaneType="URBAN">
+        <ots:Lane Id="TURNLANE">
           <ots:CenterOffsetStart>0.0m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>3.5m</ots:CenterOffsetEnd>
           <ots:Width>3.5m</ots:Width>

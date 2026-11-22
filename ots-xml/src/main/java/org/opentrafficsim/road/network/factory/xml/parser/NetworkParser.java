@@ -64,7 +64,6 @@ import org.opentrafficsim.road.network.conflict.ConflictBuilder.RelativeWidthGen
 import org.opentrafficsim.road.network.conflict.ConflictBuilder.WidthGenerator;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.DefinitionsParser.SpeedLimits;
-import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
@@ -74,19 +73,18 @@ import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.speed.LaneSpeedLimits;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import org.opentrafficsim.xml.bindings.types.StringType;
-import org.opentrafficsim.xml.generated.BasicRoadLayout;
-import org.opentrafficsim.xml.generated.CseLane;
+import org.opentrafficsim.xml.generated.Compatibility;
 import org.opentrafficsim.xml.generated.CseShoulder;
-import org.opentrafficsim.xml.generated.CseStripe;
-import org.opentrafficsim.xml.generated.CseStripe.Custom;
 import org.opentrafficsim.xml.generated.FlattenerType;
 import org.opentrafficsim.xml.generated.GtuTypeSpeedLimit;
+import org.opentrafficsim.xml.generated.LaneCustom;
 import org.opentrafficsim.xml.generated.Link;
 import org.opentrafficsim.xml.generated.Link.LaneOverride;
 import org.opentrafficsim.xml.generated.Link.StripeOverride;
 import org.opentrafficsim.xml.generated.Network;
-import org.opentrafficsim.xml.generated.RoadLayout;
+import org.opentrafficsim.xml.generated.RoadLayouts;
 import org.opentrafficsim.xml.generated.StripeCompatibility;
+import org.opentrafficsim.xml.generated.StripeCustom;
 import org.opentrafficsim.xml.generated.StripeElements.Continuous;
 import org.opentrafficsim.xml.generated.StripeElements.Dashed;
 import org.opentrafficsim.xml.generated.StripeElements.Dashed.GapDash;
@@ -296,8 +294,9 @@ public final class NetworkParser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GtuException when construction of the Strategical Planner failed
      */
+    @SuppressWarnings("checkstyle:methodlength")
     static void applyRoadLayouts(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
-            final Map<String, RoadLayout> roadLayoutMap,
+            final Map<String, RoadLayouts.RoadLayout> roadLayoutMap,
             final Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap,
             final Map<String, OffsetCurve2d> designLines, final Map<String, CurveFlattener> flatteners,
             final Map<String, StripeType> stripes, final Eval eval)
@@ -315,89 +314,31 @@ public final class NetworkParser
         }
         SpeedLimits networkSpeedLimits = new SpeedLimits(null, null, networkGtuTypeSpeedLimits);
 
+        // Virtual LaneTypes mirror the LinkType hierarchy and are shared by lanes on links with the same LinkType.
+        Map<String, LaneType> virtualLaneTypes = new LinkedHashMap<>();
+
         Map<Stripe, SynchronizableStripe<Stripe>> stripesSync = new LinkedHashMap<>();
         for (Link xmlLink : network.getLink())
         {
             CrossSectionLink csl = getLink(otsNetwork, xmlLink.getId());
             List<CrossSectionElement> cseList = new ArrayList<>();
             Map<String, Lane> lanes = new LinkedHashMap<>();
-            Map<CseLane, SpeedLimits> overruleSpeedLimits = new LinkedHashMap<>();
+            Map<Link.RoadLayout.Lane, LaneType> laneTypes = new LinkedHashMap<>();
+            Map<Link.RoadLayout.Lane, SpeedLimits> overruleSpeedLimits = new LinkedHashMap<>();
 
             // Get the RoadLayout (either defined here, or via pointer to Definitions)
-            BasicRoadLayout roadLayoutTag;
+            Link.RoadLayout roadLayoutTag;
             if (xmlLink.getDefinedLayout() != null)
             {
                 Throw.when(xmlLink.getRoadLayout() != null, XmlParserException.class,
                         "Link %s Ambiguous RoadLayout; both DefinedRoadLayout and RoadLayout defined", xmlLink.getId());
                 String definedLayoutId = xmlLink.getDefinedLayout().get(eval);
-                RoadLayout roadLayoutTagBase = roadLayoutMap.get(definedLayoutId);
+                RoadLayouts.RoadLayout roadLayoutTagBase = roadLayoutMap.get(definedLayoutId);
                 Throw.when(roadLayoutTagBase == null, XmlParserException.class, "Link %s Could not find defined RoadLayout %s",
                         xmlLink.getId(), definedLayoutId);
-                // Process LaneOverrides
-                roadLayoutTag = Cloner.clone(roadLayoutTagBase);
-                for (LaneOverride laneOverride : xmlLink.getLaneOverride())
-                {
-                    for (CseLane lane : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseLane.class))
-                    {
-                        if (lane.getId().equals(laneOverride.getLane().get(eval)))
-                        {
-                            Map<GtuType, Speed> gtuTypeSpeedLimits = new LinkedHashMap<>();
-                            for (GtuTypeSpeedLimit gtuTypeSpeedLimit : laneOverride.getGtuTypeSpeedLimit())
-                            {
-                                GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeSpeedLimit.getId().get(eval));
-                                Speed speed = gtuTypeSpeedLimit.getValue().get(eval);
-                                gtuTypeSpeedLimits.put(gtuType, speed);
-                            }
-                            overruleSpeedLimits.put(lane, new SpeedLimits(laneOverride.getSpeedLimit(),
-                                    laneOverride.getTemporalSpeedLimit(), gtuTypeSpeedLimits));
-                        }
-                    }
-                }
+                roadLayoutTag = convertDefinitionLayout(roadLayoutTagBase);
                 setAllStripesCustom(roadLayoutTag, stripes, eval);
-                // Process StripeOverrides
-                for (StripeOverride stripeOverride : xmlLink.getStripeOverride())
-                {
-                    for (CseStripe stripe : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(),
-                            CseStripe.class))
-                    {
-                        if (stripe.getId().equals(stripeOverride.getStripe().get(eval)))
-                        {
-                            if (stripeOverride.getDefinedStripe() != null)
-                            {
-                                StripeType stripeType = stripes.get(stripeOverride.getDefinedStripe().get(eval));
-                                setDefinedStripe(stripe, stripeType);
-                            }
-                            else if (stripeOverride.getCustom() != null)
-                            {
-                                if (stripeOverride.getCustom().getElements() != null)
-                                {
-                                    stripe.getCustom().setElements(stripeOverride.getCustom().getElements());
-                                }
-                                if (stripeOverride.getCustom().getDashOffset() != null)
-                                {
-                                    stripe.getCustom().setDashOffset(stripeOverride.getCustom().getDashOffset());
-                                }
-                                if (stripeOverride.getCustom().getLateralSync() != null)
-                                {
-                                    stripe.getCustom().setLateralSync(stripeOverride.getCustom().getLateralSync());
-                                }
-                                if (stripeOverride.getCustom().getLeftChangeLane() != null)
-                                {
-                                    stripe.getCustom().setLeftChangeLane(stripeOverride.getCustom().getLeftChangeLane());
-                                }
-                                if (stripeOverride.getCustom().getRightChangeLane() != null)
-                                {
-                                    stripe.getCustom().setRightChangeLane(stripeOverride.getCustom().getRightChangeLane());
-                                }
-                                if (stripeOverride.getCustom().getBlock() != null)
-                                {
-                                    stripe.getCustom().setBlock(stripeOverride.getCustom().getBlock());
-                                }
-                                stripe.getCustom().getCompatibility().addAll(stripeOverride.getCustom().getCompatibility());
-                            }
-                        }
-                    }
-                }
+                applyStripeOverrides(xmlLink, roadLayoutTag, stripes, eval);
             }
             else
             {
@@ -409,6 +350,18 @@ public final class NetworkParser
                 setAllStripesCustom(roadLayoutTag, stripes, eval);
             }
 
+            // Resolve the LaneType for every lane. Lanes without a defined type derive their type from the LinkType.
+            for (Link.RoadLayout.Lane laneTag : ParseUtil
+                    .getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), Link.RoadLayout.Lane.class))
+            {
+                applyLaneChoice(laneTag, csl.getType(), definitions, eval, laneTypes, overruleSpeedLimits, virtualLaneTypes);
+            }
+            if (xmlLink.getDefinedLayout() != null)
+            {
+                applyLaneOverrides(xmlLink, csl.getType(), definitions, eval, roadLayoutTag, laneTypes, overruleSpeedLimits,
+                        virtualLaneTypes);
+            }
+
             // calculate for each lane and stripe what the start and end offset is
             List<CseData> cseDataList = new ArrayList<>();
             Map<Object, Integer> cseTagMap = new LinkedHashMap<>();
@@ -417,7 +370,8 @@ public final class NetworkParser
             // Stripe
             OffsetCurve2d designLine = designLines.get(xmlLink.getId());
             CurveFlattener flattener = flatteners.get(xmlLink.getId());
-            for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseStripe.class))
+            for (Link.RoadLayout.Stripe stripeTag : ParseUtil
+                    .getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), Link.RoadLayout.Stripe.class))
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(stripeTag));
                 makeStripe(csl, designLine, flattener, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList,
@@ -437,9 +391,11 @@ public final class NetworkParser
                 CrossSectionGeometry geometry = CrossSectionGeometry.of(designLine, flattener, offset, width);
 
                 // Lane
-                if (cseTag instanceof CseLane laneTag)
+                if (cseTag instanceof Link.RoadLayout.Lane laneTag)
                 {
-                    LaneType laneType = definitions.getOrThrow(LaneType.class, laneTag.getLaneType().get(eval));
+                    LaneType laneType = laneTypes.get(laneTag);
+                    Throw.when(laneType == null, XmlParserException.class, "Link %s Lane %s has no LaneType", xmlLink.getId(),
+                            laneTag.getId());
 
                     // collect overruled speed limits
                     LinkType linkType = csl.getType();
@@ -513,19 +469,296 @@ public final class NetworkParser
     }
 
     /**
+     * Converts a lane/stripe layout from Definitions into the equivalent network layout tags. Definition lanes deliberately do
+     * not carry a LaneType; those are resolved from the LinkType of the link that uses the layout.
+     * @param layoutTag defined road layout
+     * @return network road layout
+     */
+    private static Link.RoadLayout convertDefinitionLayout(final RoadLayouts.RoadLayout layoutTag)
+    {
+        Link.RoadLayout layout = new Link.RoadLayout();
+        layout.setLaneKeeping(layoutTag.getLaneKeeping());
+        for (Serializable serializable : layoutTag.getStripeOrLaneOrShoulder())
+        {
+            if (serializable instanceof RoadLayouts.RoadLayout.Stripe stripeTag)
+            {
+                Link.RoadLayout.Stripe stripe = new Link.RoadLayout.Stripe();
+                stripe.setCenterOffset(stripeTag.getCenterOffset());
+                stripe.setCenterOffsetStart(stripeTag.getCenterOffsetStart());
+                stripe.setCenterOffsetEnd(stripeTag.getCenterOffsetEnd());
+                stripe.setId(stripeTag.getId());
+                stripe.setDefinedStripe(stripeTag.getStripeType());
+                layout.getStripeOrLaneOrShoulder().add(stripe);
+            }
+            else if (serializable instanceof RoadLayouts.RoadLayout.Lane laneTag)
+            {
+                Link.RoadLayout.Lane lane = new Link.RoadLayout.Lane();
+                copyCrossSectionElement(laneTag, lane);
+                lane.setId(laneTag.getId());
+                layout.getStripeOrLaneOrShoulder().add(lane);
+            }
+            else if (serializable instanceof CseShoulder shoulderTag)
+            {
+                CseShoulder shoulder = new CseShoulder();
+                copyCrossSectionElement(shoulderTag, shoulder);
+                shoulder.setId(shoulderTag.getId());
+                layout.getStripeOrLaneOrShoulder().add(shoulder);
+            }
+        }
+        return layout;
+    }
+
+    /**
+     * Copies the offset and width attributes of a cross-section element.
+     * @param source source tag
+     * @param target target tag
+     */
+    private static void copyCrossSectionElement(final org.opentrafficsim.xml.generated.CrossSectionElement source,
+            final org.opentrafficsim.xml.generated.CrossSectionElement target)
+    {
+        target.setCenterOffset(source.getCenterOffset());
+        target.setLeftOffset(source.getLeftOffset());
+        target.setRightOffset(source.getRightOffset());
+        target.setCenterOffsetStart(source.getCenterOffsetStart());
+        target.setLeftOffsetStart(source.getLeftOffsetStart());
+        target.setRightOffsetStart(source.getRightOffsetStart());
+        target.setCenterOffsetEnd(source.getCenterOffsetEnd());
+        target.setLeftOffsetEnd(source.getLeftOffsetEnd());
+        target.setRightOffsetEnd(source.getRightOffsetEnd());
+        target.setWidth(source.getWidth());
+        target.setWidthStart(source.getWidthStart());
+        target.setWidthEnd(source.getWidthEnd());
+    }
+
+    /**
+     * Resolves the LaneType for a lane in a network road layout.
+     * @param laneTag lane tag
+     * @param linkType LinkType of the link
+     * @param definitions parsed definitions
+     * @param eval expression evaluator
+     * @param laneTypes resolved LaneTypes, modified
+     * @param overruleSpeedLimits speed limits from lane customizations, modified
+     * @param virtualLaneTypes cache of virtual LaneTypes that mirror the LinkType hierarchy, modified
+     * @throws XmlParserException when a referred definition cannot be found
+     */
+    private static void applyLaneChoice(final Link.RoadLayout.Lane laneTag, final LinkType linkType,
+            final Definitions definitions, final Eval eval, final Map<Link.RoadLayout.Lane, LaneType> laneTypes,
+            final Map<Link.RoadLayout.Lane, SpeedLimits> overruleSpeedLimits, final Map<String, LaneType> virtualLaneTypes)
+            throws XmlParserException
+    {
+        if (laneTag.getDefinedLane() != null)
+        {
+            laneTypes.put(laneTag, definitions.getOrThrow(LaneType.class, laneTag.getDefinedLane().get(eval)));
+        }
+        else
+        {
+            LaneType laneType = deriveLaneType(linkType, laneTag.getId(), definitions, virtualLaneTypes);
+            if (laneTag.getCustom() != null)
+            {
+                applyLaneCustom(laneType, laneTag.getCustom(), laneTag, definitions, eval, overruleSpeedLimits);
+            }
+            laneTypes.put(laneTag, laneType);
+        }
+    }
+
+    /**
+     * Applies LaneOverrides to a converted defined road layout.
+     * @param xmlLink link tag
+     * @param linkType LinkType of the link
+     * @param definitions parsed definitions
+     * @param eval expression evaluator
+     * @param roadLayoutTag converted road layout
+     * @param laneTypes resolved LaneTypes, modified
+     * @param overruleSpeedLimits speed limits from lane overrides, modified
+     * @param virtualLaneTypes cache of virtual LaneTypes that mirror the LinkType hierarchy, modified
+     * @throws XmlParserException when a referred definition cannot be found
+     */
+    private static void applyLaneOverrides(final Link xmlLink, final LinkType linkType, final Definitions definitions,
+            final Eval eval, final Link.RoadLayout roadLayoutTag, final Map<Link.RoadLayout.Lane, LaneType> laneTypes,
+            final Map<Link.RoadLayout.Lane, SpeedLimits> overruleSpeedLimits, final Map<String, LaneType> virtualLaneTypes)
+            throws XmlParserException
+    {
+        for (LaneOverride laneOverride : xmlLink.getLaneOverride())
+        {
+            String laneId = laneOverride.getLane().get(eval);
+            for (Link.RoadLayout.Lane lane : ParseUtil
+                    .getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), Link.RoadLayout.Lane.class))
+            {
+                if (!lane.getId().equals(laneId))
+                {
+                    continue;
+                }
+                if (laneOverride.getDefinedLane() != null)
+                {
+                    laneTypes.put(lane, definitions.getOrThrow(LaneType.class, laneOverride.getDefinedLane().get(eval)));
+                }
+                else if (laneOverride.getCustom() != null)
+                {
+                    LaneType laneType = deriveLaneType(linkType, lane.getId(), definitions, virtualLaneTypes);
+                    applyLaneCustom(laneType, laneOverride.getCustom(), lane, definitions, eval, overruleSpeedLimits);
+                    laneTypes.put(lane, laneType);
+                }
+                else
+                {
+                    throw new XmlParserException("Link " + xmlLink.getId() + " LaneOverride " + laneId + " has no lane type");
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates a simulation LaneType for a specific lane. Its parent is a cached virtual LaneType that mirrors the LinkType
+     * hierarchy, so compatibility declared on any LinkType ancestor is retained. The lane type is not added to the Definitions
+     * as it only applies to this specific lane.
+     * @param linkType LinkType of the link
+     * @param laneId lane id, used as id of the LaneType
+     * @param definitions parsed definitions, used to obtain all GtuTypes
+     * @param virtualLaneTypes cache of virtual LaneTypes that mirror the LinkType hierarchy, modified
+     * @return generated LaneType
+     */
+    private static LaneType deriveLaneType(final LinkType linkType, final String laneId, final Definitions definitions,
+            final Map<String, LaneType> virtualLaneTypes)
+    {
+        return new LaneType(laneId, createVirtualLaneType(linkType, definitions, virtualLaneTypes));
+    }
+
+    /**
+     * Creates, or reuses, the virtual LaneType that mirrors a LinkType. The virtual LaneType has the same Id as the LinkType
+     * and is cached by that Id. Its parent is the virtual LaneType of the LinkType parent, if any, which is created
+     * recursively. Only compatibility declared directly on the LinkType is copied; compatibility inherited from ancestors
+     * follows from the parent hierarchy.
+     * @param linkType LinkType to mirror
+     * @param definitions parsed definitions, used to obtain all GtuTypes
+     * @param virtualLaneTypes cache of virtual LaneTypes that mirror the LinkType hierarchy, modified
+     * @return virtual LaneType mirroring the LinkType
+     */
+    private static LaneType createVirtualLaneType(final LinkType linkType, final Definitions definitions,
+            final Map<String, LaneType> virtualLaneTypes)
+    {
+        LaneType cached = virtualLaneTypes.get(linkType.getId());
+        if (cached != null)
+        {
+            return cached;
+        }
+        LaneType parent = linkType.getParent()
+                .map((parentLinkType) -> createVirtualLaneType(parentLinkType, definitions, virtualLaneTypes)).orElse(null);
+        LaneType virtualLaneType = new LaneType(linkType.getId(), parent);
+        for (GtuType gtuType : definitions.getAll(GtuType.class).values())
+        {
+            Boolean compatible = linkType.isCompatibleOnInfraLevel(gtuType);
+            if (compatible != null)
+            {
+                if (compatible)
+                {
+                    virtualLaneType.addCompatibleGtuType(gtuType);
+                }
+                else
+                {
+                    virtualLaneType.addIncompatibleGtuType(gtuType);
+                }
+            }
+        }
+        virtualLaneTypes.put(linkType.getId(), virtualLaneType);
+        return virtualLaneType;
+    }
+
+    /**
+     * Applies compatibility and speed limits from a Custom lane tag to a generated LaneType.
+     * @param laneType generated LaneType, modified
+     * @param custom Custom lane tag
+     * @param laneTag lane that owns the Custom tag
+     * @param definitions parsed definitions
+     * @param eval expression evaluator
+     * @param overruleSpeedLimits speed limits, modified
+     * @throws XmlParserException when a referred definition cannot be found
+     */
+    private static void applyLaneCustom(final LaneType laneType, final LaneCustom custom, final Link.RoadLayout.Lane laneTag,
+            final Definitions definitions, final Eval eval, final Map<Link.RoadLayout.Lane, SpeedLimits> overruleSpeedLimits)
+            throws XmlParserException
+    {
+        for (Compatibility compatibility : custom.getCompatibility())
+        {
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, compatibility.getGtuType().get(eval));
+            if (compatibility.getCompatible().get(eval))
+            {
+                laneType.addCompatibleGtuType(gtuType);
+            }
+            else
+            {
+                laneType.addIncompatibleGtuType(gtuType);
+            }
+        }
+        Map<GtuType, Speed> gtuTypeSpeedLimits = new LinkedHashMap<>();
+        for (GtuTypeSpeedLimit gtuTypeSpeedLimit : custom.getGtuTypeSpeedLimit())
+        {
+            GtuType gtuType = definitions.getOrThrow(GtuType.class, gtuTypeSpeedLimit.getId().get(eval));
+            gtuTypeSpeedLimits.put(gtuType, gtuTypeSpeedLimit.getValue().get(eval));
+        }
+        overruleSpeedLimits.put(laneTag,
+                new SpeedLimits(custom.getSpeedLimit(), custom.getTemporalSpeedLimit(), gtuTypeSpeedLimits));
+    }
+
+    /**
+     * Applies StripeOverrides to a road layout whose stripes have already been made custom.
+     * @param xmlLink link tag
+     * @param roadLayoutTag road layout
+     * @param stripes defined stripes
+     * @param eval expression evaluator
+     * @throws XmlParserException when a defined stripe cannot be found
+     */
+    private static void applyStripeOverrides(final Link xmlLink, final Link.RoadLayout roadLayoutTag,
+            final Map<String, StripeType> stripes, final Eval eval) throws XmlParserException
+    {
+        for (StripeOverride stripeOverride : xmlLink.getStripeOverride())
+        {
+            String stripeId = stripeOverride.getStripe().get(eval);
+            for (Link.RoadLayout.Stripe stripe : ParseUtil
+                    .getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), Link.RoadLayout.Stripe.class))
+            {
+                if (!stripe.getId().equals(stripeId))
+                {
+                    continue;
+                }
+                if (stripeOverride.getDefinedStripe() != null)
+                {
+                    String stripeTypeId = stripeOverride.getDefinedStripe().get(eval);
+                    StripeType stripeType = stripes.get(stripeTypeId);
+                    Throw.when(stripeType == null, XmlParserException.class,
+                            "Link %s Stripe %s could not find defined StripeType %s", xmlLink.getId(), stripeId, stripeTypeId);
+                    setDefinedStripe(stripe, stripeType);
+                }
+                else if (stripeOverride.getCustom() != null)
+                {
+                    overlayStripeCustom(stripe.getCustom(), stripeOverride.getCustom());
+                }
+                else
+                {
+                    throw new XmlParserException(
+                            "Link " + xmlLink.getId() + " StripeOverride " + stripeId + " has no stripe type");
+                }
+            }
+        }
+    }
+
+    /**
      * Sets all defined stripes in the road layout as custom, based on the referred stripe type.
      * @param roadLayoutTag road layout tag
      * @param stripes defined stripes
      * @param eval expression evaluator
+     * @throws XmlParserException when a defined stripe cannot be found
      */
-    private static void setAllStripesCustom(final BasicRoadLayout roadLayoutTag, final Map<String, StripeType> stripes,
-            final Eval eval)
+    private static void setAllStripesCustom(final Link.RoadLayout roadLayoutTag, final Map<String, StripeType> stripes,
+            final Eval eval) throws XmlParserException
     {
-        for (CseStripe stripe : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseStripe.class))
+        for (Link.RoadLayout.Stripe stripe : ParseUtil
+                .getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), Link.RoadLayout.Stripe.class))
         {
             if (stripe.getDefinedStripe() != null)
             {
-                StripeType stripeType = stripes.get(stripe.getDefinedStripe().get(eval));
+                String stripeTypeId = stripe.getDefinedStripe().get(eval);
+                StripeType stripeType = stripes.get(stripeTypeId);
+                Throw.when(stripeType == null, XmlParserException.class, "Stripe %s could not find defined StripeType %s",
+                        stripe.getId(), stripeTypeId);
                 setDefinedStripe(stripe, stripeType);
             }
         }
@@ -536,9 +769,9 @@ public final class NetworkParser
      * @param stripe stripe tag
      * @param stripeType defined stripe type
      */
-    private static void setDefinedStripe(final CseStripe stripe, final StripeType stripeType)
+    private static void setDefinedStripe(final Link.RoadLayout.Stripe stripe, final StripeType stripeType)
     {
-        Custom custom = new Custom();
+        StripeCustom custom = new StripeCustom();
         stripe.setCustom(custom);
         stripe.setDefinedStripe(null);
         custom.setElements(stripeType.getElements());
@@ -547,6 +780,40 @@ public final class NetworkParser
         custom.setLeftChangeLane(stripeType.getLeftChangeLane());
         custom.setRightChangeLane(stripeType.getRightChangeLane());
         custom.setBlock(stripeType.getBlock());
+    }
+
+    /**
+     * Overlays a partial custom stripe definition on an existing custom stripe.
+     * @param target existing custom stripe, modified
+     * @param source partial custom stripe
+     */
+    private static void overlayStripeCustom(final StripeCustom target, final StripeCustom source)
+    {
+        if (source.getElements() != null)
+        {
+            target.setElements(source.getElements());
+        }
+        if (source.getDashOffset() != null)
+        {
+            target.setDashOffset(source.getDashOffset());
+        }
+        if (source.getLateralSync() != null)
+        {
+            target.setLateralSync(source.getLateralSync());
+        }
+        if (source.getLeftChangeLane() != null)
+        {
+            target.setLeftChangeLane(source.getLeftChangeLane());
+        }
+        if (source.getRightChangeLane() != null)
+        {
+            target.setRightChangeLane(source.getRightChangeLane());
+        }
+        if (source.getBlock() != null)
+        {
+            target.setBlock(source.getBlock());
+        }
+        target.getCompatibility().addAll(source.getCompatibility());
     }
 
     /** Temporary fix for CseShoulder.getLaneType() always being null. */
@@ -560,7 +827,7 @@ public final class NetworkParser
      * @param flattener flattener.
      * @param startOffset the offset of the start node
      * @param endOffset the offset of the end node
-     * @param stripeTag the CseStripe tag in the XML file
+     * @param stripeTag the Link.RoadLayout.Stripe tag in the XML file
      * @param cseList the list of CrossSectionElements to which the stripes should be added
      * @param stripesSync stripes
      * @param definitions definitions
@@ -569,13 +836,17 @@ public final class NetworkParser
      * @throws XmlParserException when the stripe type cannot be recognized
      */
     private static void makeStripe(final CrossSectionLink csl, final OffsetCurve2d designLine, final CurveFlattener flattener,
-            final Length startOffset, final Length endOffset, final CseStripe stripeTag,
+            final Length startOffset, final Length endOffset, final Link.RoadLayout.Stripe stripeTag,
             final List<CrossSectionElement> cseList, final Map<Stripe, SynchronizableStripe<Stripe>> stripesSync,
             final Definitions definitions, final Eval eval) throws NetworkException, XmlParserException
     {
+        StripeCustom custom = stripeTag.getCustom();
+        Throw.when(
+                custom == null || custom.getElements() == null || custom.getElements().getContinuousOrDashedOrGap().isEmpty(),
+                XmlParserException.class, "Stripe %s has no elements", stripeTag.getId());
         Length width = Length.ZERO;
         List<StripeElement> elements = new ArrayList<>();
-        for (Serializable serializable : stripeTag.getCustom().getElements().getContinuousOrDashedOrGap())
+        for (Serializable serializable : custom.getElements().getContinuousOrDashedOrGap())
         {
             if (serializable instanceof Gap gap)
             {
@@ -603,34 +874,34 @@ public final class NetworkParser
         boolean leftLaneChange = false;
         boolean rightLaneChange = false;
         boolean block = false;
-        if (stripeTag.getCustom().getLeftChangeLane() != null)
+        if (custom.getLeftChangeLane() != null)
         {
-            leftLaneChange = stripeTag.getCustom().getLeftChangeLane().get(eval);
+            leftLaneChange = custom.getLeftChangeLane().get(eval);
         }
-        if (stripeTag.getCustom().getRightChangeLane() != null)
+        if (custom.getRightChangeLane() != null)
         {
-            rightLaneChange = stripeTag.getCustom().getRightChangeLane().get(eval);
+            rightLaneChange = custom.getRightChangeLane().get(eval);
         }
-        if (stripeTag.getCustom().getBlock() != null)
+        if (custom.getBlock() != null)
         {
-            block = stripeTag.getCustom().getBlock().get(eval);
+            block = custom.getBlock().get(eval);
         }
         StripeData stripeData = new StripeData(elements, leftLaneChange, rightLaneChange, block);
         Stripe stripe = new Stripe(stripeTag.getId(), stripeData, csl,
                 CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc));
 
-        if (stripeTag.getCustom().getDashOffset() != null)
+        if (custom.getDashOffset() != null)
         {
-            if (stripeTag.getCustom().getDashOffset().getFixed() != null)
+            if (custom.getDashOffset().getFixed() != null)
             {
-                stripe.setDashOffset(stripeTag.getCustom().getDashOffset().getFixed().getOffset().get(eval));
+                stripe.setDashOffset(custom.getDashOffset().getFixed().getOffset().get(eval));
                 stripe.setPhaseSync(StripePhaseSync.NONE);
             }
-            else if (stripeTag.getCustom().getDashOffset().getSyncUpstream() != null)
+            else if (custom.getDashOffset().getSyncUpstream() != null)
             {
                 stripe.setPhaseSync(StripePhaseSync.UPSTREAM);
             }
-            else if (stripeTag.getCustom().getDashOffset().getSyncDownstream() != null)
+            else if (custom.getDashOffset().getSyncDownstream() != null)
             {
                 stripe.setPhaseSync(StripePhaseSync.DOWNSTREAM);
             }
@@ -638,12 +909,12 @@ public final class NetworkParser
 
         stripesSync.put(stripe, StripeSynchronization.of(stripe));
 
-        if (stripeTag.getCustom().getLateralSync() != null)
+        if (custom.getLateralSync() != null)
         {
-            stripe.setLateralSync(stripeTag.getCustom().getLateralSync().get(eval));
+            stripe.setLateralSync(custom.getLateralSync().get(eval));
         }
 
-        for (StripeCompatibility compatibility : stripeTag.getCustom().getCompatibility())
+        for (StripeCompatibility compatibility : custom.getCompatibility())
         {
             String dir = compatibility.getDirection().get(eval);
             GtuType gtuType = definitions.getOrThrow(GtuType.class, compatibility.getGtuType().get(eval));

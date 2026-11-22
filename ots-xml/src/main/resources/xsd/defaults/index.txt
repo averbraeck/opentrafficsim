@@ -6,3 +6,4 @@ default_lanetypes.xml
 default_lanebiases.xml
 default_detectortypes.xml
 default_parametertypes.xml
+default_roadlayouts.xml

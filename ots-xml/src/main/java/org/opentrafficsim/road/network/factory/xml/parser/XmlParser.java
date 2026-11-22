@@ -47,7 +47,7 @@ import org.opentrafficsim.xml.generated.Demand;
 import org.opentrafficsim.xml.generated.ModelType;
 import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.Ots;
-import org.opentrafficsim.xml.generated.RoadLayout;
+import org.opentrafficsim.xml.generated.RoadLayouts;
 import org.opentrafficsim.xml.generated.ScenarioType;
 import org.opentrafficsim.xml.generated.StripeType;
 import org.xml.sax.EntityResolver;
@@ -330,7 +330,7 @@ public final class XmlParser
 
         // definitions
         Map<String, StripeType> stripeTags = new LinkedHashMap<>();
-        Map<String, RoadLayout> roadLayoutTags = new LinkedHashMap<>();
+        Map<String, RoadLayouts.RoadLayout> roadLayoutTags = new LinkedHashMap<>();
         Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplateTags = new LinkedHashMap<>();
         Map<String, LaneBias> laneBiases = new LinkedHashMap<>();
         Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap = new LinkedHashMap<>();

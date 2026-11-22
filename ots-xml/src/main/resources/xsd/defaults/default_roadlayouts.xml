@@ -1,0 +1,885 @@
+<ots:RoadLayouts xmlns:ots="http://www.opentrafficsim.org/ots"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
+
+  <ots:RoadLayout Id="URBAN TURN 1" Builtin="true">
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN TURN 2" Builtin="true">
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN TURN 3" Builtin="true">
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.DASHED_TURN">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN 1" Builtin="true">
+    <ots:Stripe Id="Stripe2" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN 2" Builtin="true">
+    <ots:Stripe Id="Stripe3" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN 3" Builtin="true">
+    <ots:Stripe Id="Stripe4" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN 4" Builtin="true">
+    <ots:Stripe Id="Stripe5" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN 5" Builtin="true">
+    <ots:Stripe Id="Stripe6" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="URBAN 6" Builtin="true">
+    <ots:Stripe Id="Stripe7" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane6">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe6" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED_URBAN">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 1" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe2" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 2" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe3" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 2+1" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe4" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 2+2" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe5" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 2+3" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe6" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 3" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe4" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 3+1" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe5" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 3+2" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe6" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 3+3" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe7" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane6">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe6" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 4" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe5" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 4+1" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe6" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 4+2" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe7" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane6">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe6" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 5" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe6" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 6" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe7" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane6">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe6" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 2+2MT" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe5" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:WidthStart>3.5m</ots:WidthStart>
+      <ots:WidthEnd>0.0m</ots:WidthEnd>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 3+2MT" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe6" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:WidthStart>3.5m</ots:WidthStart>
+      <ots:WidthEnd>0.0m</ots:WidthEnd>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 4+2MT" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe7" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane6">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe6" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:WidthStart>3.5m</ots:WidthStart>
+      <ots:WidthEnd>0.0m</ots:WidthEnd>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 2+2DT" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe5" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:WidthStart>0.0m</ots:WidthStart>
+      <ots:WidthEnd>3.5m</ots:WidthEnd>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 3+2DT" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe6" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:WidthStart>0.0m</ots:WidthStart>
+      <ots:WidthEnd>3.5m</ots:WidthEnd>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+  <ots:RoadLayout Id="HIGHWAY 4+2DT" Builtin="true">
+    <ots:Shoulder Id="RightShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+    <ots:Stripe Id="Stripe7" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Lane Id="Lane6">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe6" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane5">
+      <ots:WidthStart>0.0m</ots:WidthStart>
+      <ots:WidthEnd>3.5m</ots:WidthEnd>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe5" StripeType="NL.BLOCK">
+    </ots:Stripe>
+    <ots:Lane Id="Lane4">
+      <ots:CenterOffset>0.0m</ots:CenterOffset>
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe4" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane3">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe3" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane2">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe2" StripeType="NL.DASHED">
+    </ots:Stripe>
+    <ots:Lane Id="Lane1">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Lane>
+    <ots:Stripe Id="Stripe1" StripeType="NL.SOLID">
+    </ots:Stripe>
+    <ots:Shoulder Id="LeftShoulder">
+      <ots:Width>3.5m</ots:Width>
+    </ots:Shoulder>
+  </ots:RoadLayout>
+
+</ots:RoadLayouts>

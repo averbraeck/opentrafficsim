@@ -890,7 +890,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         if (cseDataMap != null)
         {
             MiddleOffset middleOffset = new MiddleOffset();
-            Map<String, XsdTreeNode> laneOverrides = new LinkedHashMap<>();
             Map<String, XsdTreeNode> stripeOverrides = new LinkedHashMap<>();
             if (new ChildNodeFinder(getNode()).hasActiveChild("DefinedLayout"))
             {
@@ -900,11 +899,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         for (XsdTreeNode override : child.getChildren())
                         {
-                            if (override.getNodeName().equals("LaneOverride") && override.isActive())
-                            {
-                                laneOverrides.put(override.getAttributeValueOrDefault("Lane"), override);
-                            }
-                            else if (override.getNodeName().equals("StripeOverride") && override.isActive())
+                            if (override.getNodeName().equals("StripeOverride") && override.isActive())
                             {
                                 stripeOverrides.put(override.getAttributeValueOrDefault("Stripe"), override);
                             }
@@ -985,56 +980,36 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         StripeLateralSync lateralSync = StripeLateralSync.LINK;
         List<XsdTreeNode> elementNodes;
 
-        ChildNodeFinder overrideFinder =
-                stripeOverrides.containsKey(node.getId()) ? new ChildNodeFinder(stripeOverrides.get(node.getId())) : null;
-        if (overrideFinder != null && overrideFinder.hasActiveChild("DefinedStripe"))
+        XsdTreeNode overrideNode = stripeOverrides.get(node.getId());
+        XsdTreeNode overrideDataNode = null;
+        XsdTreeNode stripeDataNode;
+        XsdTreeNode definedOverride = overrideNode == null ? null : findActiveChild(overrideNode, "DefinedStripe");
+        if (definedOverride != null)
         {
             // override with defined stripe; take that stripe definition completely
-            XsdTreeNode stripeNode = overrideFinder.get().getCoupledNodeValue().orElse(null);
-            if (stripeNode == null)
+            stripeDataNode = definedOverride.getCoupledNodeValue().orElse(null);
+            if (stripeDataNode == null)
             {
                 return null;
             }
-            ChildNodeFinder stripeFinder = new ChildNodeFinder(stripeNode);
-
-            StripeData stripeDat = collectStripeData(stripeFinder, null);
-            phaseSync = stripeDat.phaseSync();
-            dashOffset = stripeDat.dashOffset();
-            lateralSync = stripeDat.lateralSync();
-            elementNodes = stripeDat.elementNodes();
         }
         else
         {
-            XsdTreeNode stripeNode;
-            ChildNodeFinder stripeRefFinder = new ChildNodeFinder(node);
-            if (stripeRefFinder.hasActiveChild("DefinedStripe"))
+            if (overrideNode != null)
             {
-                stripeNode = stripeRefFinder.get().getCoupledNodeValue().orElse(null);
+                overrideDataNode = findActiveChild(overrideNode, "Custom");
             }
-            else if (stripeRefFinder.hasActiveChild("Custom"))
-            {
-                stripeNode = stripeRefFinder.get();
-            }
-            else
+            stripeDataNode = resolveStripeNode(node);
+            if (stripeDataNode == null)
             {
                 return null;
             }
-            ChildNodeFinder stripeFinder = new ChildNodeFinder(stripeNode);
-            if (overrideFinder != null && overrideFinder.hasActiveChild("Custom"))
-            {
-                overrideFinder = new ChildNodeFinder(overrideFinder.get());
-            }
-            else
-            {
-                overrideFinder = null;
-            }
-
-            StripeData stripeDat = collectStripeData(stripeFinder, overrideFinder);
-            phaseSync = stripeDat.phaseSync();
-            dashOffset = stripeDat.dashOffset();
-            lateralSync = stripeDat.lateralSync();
-            elementNodes = stripeDat.elementNodes();
         }
+        StripeData stripeDat = collectStripeData(stripeDataNode, overrideDataNode);
+        phaseSync = stripeDat.phaseSync();
+        dashOffset = stripeDat.dashOffset();
+        lateralSync = stripeDat.lateralSync();
+        elementNodes = stripeDat.elementNodes();
 
         Length width = Length.ZERO;
         List<StripeElement> elements = new ArrayList<>();
@@ -1100,27 +1075,58 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Collect stripe data.
-     * @param stripeFinder finder on stripe node (where ever it is defined)
-     * @param overrideFinder finder on override node (not being a defined stripe override), can be {@code null}
-     * @return collected stripe data
+     * Resolves the node that contains the stripe data for a stripe in a road layout.
+     * @param stripeNode node Stripe in a road layout.
+     * @return node with stripe data, {@code null} if the reference could not be resolved.
      */
-    private StripeData collectStripeData(final ChildNodeFinder stripeFinder, final ChildNodeFinder overrideFinder)
+    private XsdTreeNode resolveStripeNode(final XsdTreeNode stripeNode)
+    {
+        if (stripeNode == null)
+        {
+            return null;
+        }
+        if (stripeNode.hasAttribute("StripeType"))
+        {
+            // Definition layouts refer to a StripeType through an attribute instead of a DefinedStripe child.
+            XsdTreeNode coupled = stripeNode.getCoupledNodeAttribute("StripeType").orElse(null);
+            if (coupled != null)
+            {
+                return coupled;
+            }
+            return findNodeById(stripeNode.getRoot(), "StripeType", stripeNode.getAttributeValueOrDefault("StripeType"));
+        }
+        XsdTreeNode defined = findActiveChild(stripeNode, "DefinedStripe");
+        if (defined != null)
+        {
+            return defined.getCoupledNodeValue().orElse(null);
+        }
+        return findActiveChild(stripeNode, "Custom");
+    }
+
+    /**
+     * Collect stripe data.
+     * @param stripeNode node where the stripe data is defined.
+     * @param overrideNode node with custom overrides, can be {@code null}.
+     * @return collected stripe data.
+     */
+    private StripeData collectStripeData(final XsdTreeNode stripeNode, final XsdTreeNode overrideNode)
     {
         StripePhaseSync phaseSync = StripePhaseSync.NONE;
         Length dashOffset = Length.ZERO;
         StripeLateralSync lateralSync = StripeLateralSync.LINK;
         List<XsdTreeNode> elementNodes;
 
-        if ((overrideFinder != null && overrideFinder.hasActiveChild("DashOffset"))
-                || stripeFinder.hasActiveChild("DashOffset"))
+        XsdTreeNode dashOffsetNode = findActiveChild(overrideNode, "DashOffset");
+        if (dashOffsetNode == null)
+        {
+            dashOffsetNode = findActiveChild(stripeNode, "DashOffset");
+        }
+        if (dashOffsetNode != null && dashOffsetNode.getChildCount() > 0)
         {
             try
             {
-                XsdTreeNode dashOffsetNode = overrideFinder != null && overrideFinder.hasActiveChild("DashOffset")
-                        ? overrideFinder.get().getChild(0) : stripeFinder.get().getChild(0);
-
-                switch (dashOffsetNode.getNodeName())
+                XsdTreeNode phaseNode = dashOffsetNode.getChild(0);
+                switch (phaseNode.getNodeName())
                 {
                     case "SyncUpstream":
                     {
@@ -1135,13 +1141,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     case "Fixed":
                     {
                         phaseSync = StripePhaseSync.NONE;
-                        dashOffset = Adapters.get(Length.class).unmarshal(dashOffsetNode.getAttributeValueOrDefault("Offset"))
+                        dashOffset = Adapters.get(Length.class).unmarshal(phaseNode.getAttributeValueOrDefault("Offset"))
                                 .get(getEval());
                         break;
                     }
                     default:
                     {
-                        Logger.ots().warn("Dash synchronization " + dashOffsetNode.getNodeName() + " is unknown.");
+                        Logger.ots().warn("Dash synchronization " + phaseNode.getNodeName() + " is unknown.");
                     }
                 }
             }
@@ -1150,29 +1156,76 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 // ignore
             }
         }
-        if ((overrideFinder != null && overrideFinder.hasActiveChild("LateralSync"))
-                || stripeFinder.hasActiveChild("LateralSync"))
+        String latSyncName = overrideNode != null && overrideNode.hasAttribute("LateralSync")
+                ? overrideNode.getAttributeValueOrDefault("LateralSync") : null;
+        if (latSyncName == null && stripeNode.hasAttribute("LateralSync"))
         {
-            String latSyncName = overrideFinder != null && overrideFinder.hasActiveChild("LateralSync")
-                    ? overrideFinder.get().getValueOrDefault() : stripeFinder.get().getValueOrDefault();
-            lateralSync = latSyncName == null ? StripeLateralSync.LINK
-                    : Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
+            latSyncName = stripeNode.getAttributeValueOrDefault("LateralSync");
+        }
+        if (latSyncName != null)
+        {
+            lateralSync = Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
         }
 
-        if (overrideFinder != null && overrideFinder.hasActiveChild("Elements"))
+        XsdTreeNode elements = findActiveChild(overrideNode, "Elements");
+        if (elements == null)
         {
-            elementNodes = overrideFinder.get().getChildren();
+            elements = findActiveChild(stripeNode, "Elements");
         }
-        else if (stripeFinder.hasActiveChild("Elements"))
-        {
-            elementNodes = stripeFinder.get().getChildren();
-        }
-        else
-        {
-            elementNodes = Collections.emptyList();
-        }
+        elementNodes = elements == null ? Collections.emptyList() : elements.getChildren();
 
         return new StripeData(phaseSync, dashOffset, lateralSync, elementNodes);
+    }
+
+    /**
+     * Returns the first active child with the given name.
+     * @param parent parent node, can be {@code null}.
+     * @param name child name.
+     * @return active child, {@code null} if not present.
+     */
+    private static XsdTreeNode findActiveChild(final XsdTreeNode parent, final String name)
+    {
+        if (parent == null)
+        {
+            return null;
+        }
+        for (XsdTreeNode child : parent.getChildren())
+        {
+            if (child.isActive() && child.getNodeName().equals(name))
+            {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds a node by name and Id below the given parent.
+     * @param parent parent node, can be {@code null}.
+     * @param nodeName node name.
+     * @param id Id value.
+     * @return matching node, {@code null} if not found.
+     */
+    private static XsdTreeNode findNodeById(final XsdTreeNode parent, final String nodeName, final String id)
+    {
+        if (parent == null || id == null)
+        {
+            return null;
+        }
+        if (parent.getNodeName().equals(nodeName) && parent.hasAttribute("Id")
+                && id.equals(parent.getAttributeValueOrDefault("Id")))
+        {
+            return parent;
+        }
+        for (XsdTreeNode child : parent.getChildren())
+        {
+            XsdTreeNode found = findNodeById(child, nodeName, id);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+        return null;
     }
 
     /**

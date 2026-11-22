@@ -53,134 +53,121 @@
       </ots:LaneType>
     </ots:LaneTypes>
     <ots:RoadLayouts>
-      <ots:RoadLayout Id="2LANELC" LinkType="URBAN">
+      <ots:RoadLayout Id="2LANELC">
         <ots:Shoulder>
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="RIGHT" LaneType="URBAN">
+        <ots:Lane Id="RIGHT">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.DASHED">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="LEFT" LaneType="URBAN">
+        <ots:Lane Id="LEFT">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
+        <ots:Stripe Id="3" StripeType="NL.SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="3LANELC" LinkType="URBAN">
+      <ots:RoadLayout Id="3LANELC">
         <ots:Shoulder>
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="RIGHT" LaneType="URBAN">
+        <ots:Lane Id="RIGHT">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.DASHED">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="LEFT" LaneType="URBAN">
+        <ots:Lane Id="LEFT">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
+        <ots:Stripe Id="3" StripeType="NL.SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="2LANE" LinkType="URBAN">
+      <ots:RoadLayout Id="2LANE">
         <ots:Shoulder>
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="RIGHT" LaneType="URBAN">
+        <ots:Lane Id="RIGHT">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="LEFT" LaneType="URBAN">
+        <ots:Lane Id="LEFT">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
+        <ots:Stripe Id="3" StripeType="NL.SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="1LEFT" LinkType="URBAN">
+      <ots:RoadLayout Id="1LEFT">
         <ots:Shoulder>
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>-3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="LANE" LaneType="URBAN">
+        <ots:Lane Id="LANE">
           <ots:CenterOffset>-1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="1RIGHT" LinkType="URBAN">
+      <ots:RoadLayout Id="1RIGHT">
         <ots:Shoulder>
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="LANE" LaneType="URBAN">
+        <ots:Lane Id="LANE">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>5m</ots:CenterOffset>

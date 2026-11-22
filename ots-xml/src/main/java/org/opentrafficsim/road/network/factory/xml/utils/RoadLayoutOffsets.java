@@ -7,8 +7,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.eval.Eval;
-import org.opentrafficsim.xml.generated.BasicRoadLayout;
-import org.opentrafficsim.xml.generated.CseStripe;
+import org.opentrafficsim.xml.generated.Link;
 
 /**
  * Utility class to calculate offsets in a road layout. This can be used either for parsing XML, or editing.
@@ -148,7 +147,7 @@ public final class RoadLayoutOffsets
      * @param eval expression evaluator
      */
     @SuppressWarnings("checkstyle:methodlength")
-    public static void calculateOffsets(final BasicRoadLayout roadLayoutTag, final List<CseData> cseDataList,
+    public static void calculateOffsets(final Link.RoadLayout roadLayoutTag, final List<CseData> cseDataList,
             final Map<Object, Integer> cseTagMap, final Eval eval)
     {
         Iterator<Serializable> tags = roadLayoutTag.getStripeOrLaneOrShoulder().iterator();
@@ -168,9 +167,9 @@ public final class RoadLayoutOffsets
                 Length offsetStart;
                 Length offsetEnd;
                 Serializable object = tags.next();
-                if (object instanceof CseStripe)
+                if (object instanceof Link.RoadLayout.Stripe)
                 {
-                    CseStripe stripe = (CseStripe) object;
+                    Link.RoadLayout.Stripe stripe = (Link.RoadLayout.Stripe) object;
                     widthStart = Length.ZERO;
                     widthEnd = Length.ZERO;
                     if (stripe.getCenterOffset() != null)

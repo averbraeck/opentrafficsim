@@ -40,25 +40,41 @@
     <ots:StripeTypes>
       <ots:StripeType Id="SOLID" LeftChangeLane="false" RightChangeLane="false">
         <ots:Elements>
-          <ots:Line Width="20cm">
-            <ots:Continuous/>
-          </ots:Line>
+          <ots:Continuous Width="20cm" />
         </ots:Elements>
       </ots:StripeType>
       <ots:StripeType Id="DASHED" LeftChangeLane="true" RightChangeLane="true">
         <ots:Elements>
-          <ots:Line Width="20cm">
-            <ots:Dashed>
-              <ots:GapDash>
-                <ots:Gap>9m</ots:Gap>
-                <ots:Dash>3m</ots:Dash>
-              </ots:GapDash>
-            </ots:Dashed>
-          </ots:Line>
+          <ots:Dashed Width="20cm">
+            <ots:GapDash>
+              <ots:Gap>9m</ots:Gap>
+              <ots:Dash>3m</ots:Dash>
+            </ots:GapDash>
+          </ots:Dashed>
         </ots:Elements>
         <ots:DashOffset>
           <ots:SyncUpstream/>
         </ots:DashOffset>
+      </ots:StripeType>
+      <ots:StripeType Id="TAPER_RIGHT" LeftChangeLane="false" RightChangeLane="true">
+        <ots:Elements>
+          <ots:Dashed Width="40cm">
+            <ots:GapDash>
+              <ots:Gap>3m</ots:Gap>
+              <ots:Dash>1m</ots:Dash>
+            </ots:GapDash>
+          </ots:Dashed>
+        </ots:Elements>
+      </ots:StripeType>
+      <ots:StripeType Id="TAPER_LEFT" LeftChangeLane="true" RightChangeLane="false">
+        <ots:Elements>
+          <ots:Dashed Width="40cm">
+            <ots:GapDash>
+              <ots:Gap>3m</ots:Gap>
+              <ots:Dash>1m</ots:Dash>
+            </ots:GapDash>
+          </ots:Dashed>
+        </ots:Elements>
       </ots:StripeType>
     </ots:StripeTypes>
     <ots:LaneTypes>
@@ -77,114 +93,80 @@
       </ots:LaneBias>
     </ots:LaneBiases>
     <ots:RoadLayouts>
-      <ots:RoadLayout Id="2" LinkType="FREEWAY">
+      <ots:RoadLayout Id="2">
         <ots:Shoulder>
           <ots:Width>3.5m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Stripe Id="1" StripeType="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="Lane1" LaneType="FREEWAY">
+        <ots:Lane Id="Lane1">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
-          <ots:DefinedStripe>DASHED</ots:DefinedStripe>
+        <ots:Stripe Id="2" StripeType="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="Lane2" LaneType="FREEWAY">
+        <ots:Lane Id="Lane2">
           <ots:LeftOffset>0m</ots:LeftOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Stripe Id="3" StripeType="SOLID">
         </ots:Stripe>
         <ots:Shoulder>
           <ots:Width>0.6m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="Taper" LinkType="FREEWAY">
+      <ots:RoadLayout Id="Taper">
         <ots:Shoulder>
           <ots:Width>3.5m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Stripe Id="1" StripeType="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="Lane1" LaneType="FREEWAY">
+        <ots:Lane Id="Lane1">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
-          <ots:Custom LeftChangeLane="false" RightChangeLane="true">
-            <ots:Elements>
-              <ots:Line Width="40cm">
-                <ots:Dashed>
-                  <ots:GapDash>
-                    <ots:Gap>3m</ots:Gap>
-                    <ots:Dash>1m</ots:Dash>
-                  </ots:GapDash>
-                </ots:Dashed>
-              </ots:Line>
-            </ots:Elements>
-          </ots:Custom>
+        <ots:Stripe Id="2" StripeType="TAPER_RIGHT">
         </ots:Stripe>
-        <ots:Lane Id="Lane2" LaneType="FREEWAY">
+        <ots:Lane Id="Lane2">
           <ots:WidthStart>3.5m</ots:WidthStart>
           <ots:WidthEnd>0.01m</ots:WidthEnd>
         </ots:Lane>
-        <ots:Stripe Id="3">
-          <ots:Custom LeftChangeLane="true" RightChangeLane="false">
-            <ots:Elements>
-              <ots:Line Width="40cm">
-                <ots:Dashed>
-                  <ots:GapDash>
-                    <ots:Gap>3m</ots:Gap>
-                    <ots:Dash>1m</ots:Dash>
-                  </ots:GapDash>
-                </ots:Dashed>
-              </ots:Line>
-            </ots:Elements>
-          </ots:Custom>
+        <ots:Stripe Id="3" StripeType="TAPER_LEFT">
         </ots:Stripe>
-        <ots:Lane Id="Lane3" LaneType="FREEWAY">
+        <ots:Lane Id="Lane3">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="4">
-          <ots:DefinedStripe>DASHED</ots:DefinedStripe>
+        <ots:Stripe Id="4" StripeType="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="Lane4" LaneType="FREEWAY">
+        <ots:Lane Id="Lane4">
           <ots:LeftOffset>0m</ots:LeftOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="5">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Stripe Id="5" StripeType="SOLID">
         </ots:Stripe>
         <ots:Shoulder>
           <ots:Width>0.6m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
-      <ots:RoadLayout Id="3" LinkType="FREEWAY">
+      <ots:RoadLayout Id="3">
         <ots:Shoulder>
           <ots:Width>3.5m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Stripe Id="1" StripeType="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="Lane1" LaneType="FREEWAY">
+        <ots:Lane Id="Lane1">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
-          <ots:DefinedStripe>DASHED</ots:DefinedStripe>
+        <ots:Stripe Id="2" StripeType="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="Lane2" LaneType="FREEWAY">
+        <ots:Lane Id="Lane2">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
-          <ots:DefinedStripe>DASHED</ots:DefinedStripe>
+        <ots:Stripe Id="3" StripeType="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="Lane3" LaneType="FREEWAY">
+        <ots:Lane Id="Lane3">
           <ots:LeftOffset>0m</ots:LeftOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="4">
-          <ots:DefinedStripe>SOLID</ots:DefinedStripe>
+        <ots:Stripe Id="4" StripeType="SOLID">
         </ots:Stripe>
         <ots:Shoulder>
           <ots:Width>0.6m</ots:Width>

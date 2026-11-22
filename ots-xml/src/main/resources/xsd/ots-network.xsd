@@ -108,10 +108,48 @@
         <xsd:choice>
           <xsd:element name="RoadLayout">
             <xsd:complexType>
-              <xsd:complexContent>
-                <xsd:extension base="ots:BasicRoadLayout">
-                </xsd:extension>
-              </xsd:complexContent>
+              <xsd:sequence>
+                <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                  <xsd:element name="Stripe" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:choice minOccurs="0">
+                          <xsd:element name="CenterOffset" type="ots:LengthType" />
+                          <xsd:sequence>
+                            <xsd:element name="CenterOffsetStart" type="ots:LengthType" />
+                            <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
+                          </xsd:sequence>
+                        </xsd:choice>
+                        <xsd:choice>
+                          <xsd:element name="DefinedStripe" type="ots:string" />
+                          <xsd:element name="Custom" type="ots:StripeCustom" />
+                        </xsd:choice>
+                      </xsd:sequence>
+                      <xsd:attribute name="Id" type="ots:IdType" />
+                    </xsd:complexType>
+                  </xsd:element>
+                  <xsd:element name="Lane" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                      <xsd:complexContent>
+                        <xsd:extension base="ots:CrossSectionElement">
+                          <xsd:choice minOccurs="0">
+                            <xsd:element name="DefinedLane" type="ots:string" />
+                            <xsd:element name="Custom" type="ots:LaneCustom">
+                              <xsd:key name="laneCustomSpeedLimitGtuTypeId">
+                                <xsd:selector xpath="ots:GtuTypeSpeedLimit" />
+                                <xsd:field xpath="@Id" />
+                              </xsd:key>
+                            </xsd:element>
+                          </xsd:choice>
+                          <xsd:attribute name="Id" type="ots:IdType" use="required" />
+                        </xsd:extension>
+                      </xsd:complexContent>
+                    </xsd:complexType>
+                  </xsd:element>
+                  <xsd:element name="Shoulder" type="ots:CseShoulder" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:choice>
+              </xsd:sequence>
+              <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" />
             </xsd:complexType>
           </xsd:element>
           <xsd:sequence>
@@ -123,38 +161,23 @@
             <xsd:element name="DefinedLayout" type="ots:string" />
             <xsd:element name="LaneOverride" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
-                <xsd:sequence>
-                  <xsd:choice minOccurs="0">
-                    <xsd:element name="SpeedLimit" type="ots:SpeedLimit" />
-                    <xsd:element name="TemporalSpeedLimit" type="ots:TemporalSpeedLimit" />
-                  </xsd:choice>
-                  <xsd:element ref="ots:GtuTypeSpeedLimit" minOccurs="0" maxOccurs="unbounded" />
-                </xsd:sequence>
+                <xsd:choice>
+                  <xsd:element name="DefinedLane" type="ots:string" />
+                  <xsd:element name="Custom" type="ots:LaneCustom">
+                    <xsd:key name="laneOverrideCustomSpeedLimitGtuTypeId">
+                      <xsd:selector xpath="ots:GtuTypeSpeedLimit" />
+                      <xsd:field xpath="@Id" />
+                    </xsd:key>
+                  </xsd:element>
+                </xsd:choice>
                 <xsd:attribute name="Lane" type="ots:string" use="required" />
               </xsd:complexType>
-              <!-- LaneOverride.GtuTypeSpeedLimit.Id key -->
-              <xsd:key name="laneOverrideSpeedLimitGtuTypeId">
-                <xsd:selector xpath="ots:GtuTypeSpeedLimit" />
-                <xsd:field xpath="@Id" />
-              </xsd:key>
             </xsd:element>
             <xsd:element name="StripeOverride" minOccurs="0" maxOccurs="unbounded">
               <xsd:complexType>
                 <xsd:choice>
                   <xsd:element name="DefinedStripe" type="ots:string" />
-                  <xsd:element name="Custom">
-                    <xsd:complexType>
-                      <xsd:sequence>
-                        <xsd:element name="Elements" type="ots:StripeElements" minOccurs="0" />
-                        <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
-                        <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0" maxOccurs="unbounded" />
-                      </xsd:sequence>
-                      <xsd:attribute name="LeftChangeLane" type="ots:boolean" />
-                      <xsd:attribute name="RightChangeLane" type="ots:boolean" />
-                      <xsd:attribute name="Block" type="ots:boolean" />
-                      <xsd:attribute name="LateralSync" type="ots:LateralSync" />
-                    </xsd:complexType>
-                  </xsd:element>
+                  <xsd:element name="Custom" type="ots:StripeCustom" />
                 </xsd:choice>
                 <xsd:attribute name="Stripe" type="ots:string" use="required" />
               </xsd:complexType>
@@ -184,6 +207,12 @@
     <xsd:key name="linkTrafficLightKey">
       <xsd:selector xpath="ots:TrafficLight" />
       <xsd:field xpath="@Id" />
+      <xsd:field xpath="@Lane" />
+    </xsd:key>
+
+    <!-- Link.LaneOverride.Lane key -->
+    <xsd:key name="linkLaneOverrideKey">
+      <xsd:selector xpath="ots:LaneOverride" />
       <xsd:field xpath="@Lane" />
     </xsd:key>
 

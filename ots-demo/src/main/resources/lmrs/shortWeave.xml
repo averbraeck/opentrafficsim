@@ -45,46 +45,41 @@
 
     <ots:RoadLayouts>
 
-      <ots:RoadLayout Id="4LaneHighway" LinkType="HIGHWAY">
+      <ots:RoadLayout Id="4LaneHighway">
         <ots:Shoulder>
           <ots:CenterOffset>12.1m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>10.8m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD1">
           <ots:CenterOffset>9.0m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.DASHED">
           <ots:CenterOffset>7.2m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD2">
           <ots:CenterOffset>5.4m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
+        <ots:Stripe Id="3" StripeType="NL.DASHED">
           <ots:CenterOffset>3.6m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD3" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD3">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="4">
+        <ots:Stripe Id="4" StripeType="NL.DASHED">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD4" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD4">
           <ots:CenterOffset>-1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="5">
+        <ots:Stripe Id="5" StripeType="NL.SOLID">
           <ots:CenterOffset>-3.6m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>-5.1m</ots:CenterOffset>
@@ -92,38 +87,34 @@
         </ots:Shoulder>
       </ots:RoadLayout>
 
-      <ots:RoadLayout Id="3LaneHighway" LinkType="HIGHWAY">
+      <ots:RoadLayout Id="3LaneHighway">
         <ots:Shoulder>
           <ots:CenterOffset>12.1m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>10.8m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD1">
           <ots:CenterOffset>9.0m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.DASHED">
           <ots:CenterOffset>7.2m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD2">
           <ots:CenterOffset>5.4m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
+        <ots:Stripe Id="3" StripeType="NL.DASHED">
           <ots:CenterOffset>3.6m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD3" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD3">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="4">
+        <ots:Stripe Id="4" StripeType="NL.SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
@@ -131,30 +122,27 @@
         </ots:Shoulder>
       </ots:RoadLayout>
 
-      <ots:RoadLayout Id="2LaneHighway" LinkType="HIGHWAY">
+      <ots:RoadLayout Id="2LaneHighway">
         <ots:Shoulder>
           <ots:CenterOffset>8.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>7.2m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD1">
           <ots:CenterOffset>5.4m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.DASHED">
           <ots:CenterOffset>3.6m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD2">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3">
+        <ots:Stripe Id="3" StripeType="NL.SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
@@ -162,22 +150,20 @@
         </ots:Shoulder>
       </ots:RoadLayout>
 
-      <ots:RoadLayout Id="1LaneHighway" LinkType="HIGHWAY">
+      <ots:RoadLayout Id="1LaneHighway">
         <ots:Shoulder>
           <ots:CenterOffset>4.9m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>3.6m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD1">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
@@ -185,22 +171,20 @@
         </ots:Shoulder>
       </ots:RoadLayout>
 
-      <ots:RoadLayout Id="1LaneLocal" LinkType="LOCAL">
+      <ots:RoadLayout Id="1LaneLocal">
         <ots:Shoulder>
           <ots:CenterOffset>4.9m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1">
+        <ots:Stripe Id="1" StripeType="NL.SOLID">
           <ots:CenterOffset>3.6m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="NL.HIGHWAY">
+        <ots:Lane Id="FORWARD1">
           <ots:CenterOffset>1.8m</ots:CenterOffset>
           <ots:Width>3.6m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2">
+        <ots:Stripe Id="2" StripeType="NL.SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
-          <ots:DefinedStripe>NL.SOLID</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Shoulder>
           <ots:CenterOffset>-1.5m</ots:CenterOffset>

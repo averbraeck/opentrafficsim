@@ -34,7 +34,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.Compatibility;
 import org.opentrafficsim.xml.generated.GtuTypeSpeedLimit;
-import org.opentrafficsim.xml.generated.RoadLayout;
+import org.opentrafficsim.xml.generated.RoadLayouts;
 import org.opentrafficsim.xml.generated.SpeedLimit;
 import org.opentrafficsim.xml.generated.StripeType;
 import org.opentrafficsim.xml.generated.TemporalSpeedLimit;
@@ -73,7 +73,7 @@ public final class DefinitionsParser
      * @throws XmlParserException on parsing error
      */
     public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
-            final Map<String, RoadLayout> roadLayoutTags,
+            final Map<String, RoadLayouts.RoadLayout> roadLayoutTags,
             final Map<String, org.opentrafficsim.xml.generated.GtuTemplate> gtuTemplateTags,
             final Map<String, LaneBias> laneBiases, final Map<GtuCompatibleInfraType<?, ?>, SpeedLimits> infraSpeedLimitMap,
             final Map<String, StripeType> stripeTags, final Eval eval) throws XmlParserException
@@ -118,10 +118,10 @@ public final class DefinitionsParser
                 stripeTags.put(stripeTag.getId(), stripeTag);
             }
         };
-        BiConsumerThrows<org.opentrafficsim.xml.generated.RoadLayout, Object> roadLayoutConsumer = new BiConsumerThrows<>()
+        BiConsumerThrows<RoadLayouts.RoadLayout, Object> roadLayoutConsumer = new BiConsumerThrows<>()
         {
             @Override
-            public void accept(final org.opentrafficsim.xml.generated.RoadLayout layoutTag, final Object dummy)
+            public void accept(final RoadLayouts.RoadLayout layoutTag, final Object dummy)
             {
                 roadLayoutTags.put(layoutTag.getId(), layoutTag);
             }
@@ -142,10 +142,10 @@ public final class DefinitionsParser
                 org.opentrafficsim.xml.generated.GtuType.class, GtuType.class, null, eval);
         // explicit type definitions may be required for javac that maven runs, even if the IDE compiler accepts it without
         DefinitionsParser.<org.opentrafficsim.xml.generated.LinkTypes, org.opentrafficsim.xml.generated.SpeedLimitInfraType,
-                LinkType> parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
+                LinkType>parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LinkTypes.class,
                         org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LinkType.class, infraTypeConsumer, eval);
         DefinitionsParser.<org.opentrafficsim.xml.generated.LaneTypes, org.opentrafficsim.xml.generated.SpeedLimitInfraType,
-                LaneType> parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
+                LaneType>parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneTypes.class,
                         org.opentrafficsim.xml.generated.SpeedLimitInfraType.class, LaneType.class, infraTypeConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.DetectorTypes.class,
                 org.opentrafficsim.xml.generated.DetectorType.class, DetectorType.class, null, eval);
@@ -154,8 +154,8 @@ public final class DefinitionsParser
                 org.opentrafficsim.xml.generated.GtuTemplate.class, GtuType.class, gtuTemplateConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.StripeTypes.class,
                 org.opentrafficsim.xml.generated.StripeType.class, GtuType.class, stripeConsumer, eval);
-        parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.RoadLayouts.class,
-                org.opentrafficsim.xml.generated.RoadLayout.class, GtuType.class, roadLayoutConsumer, eval);
+        parseDefinitionType(definitions, parsedDefinitions, RoadLayouts.class, RoadLayouts.RoadLayout.class, GtuType.class,
+                roadLayoutConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneBiases.class,
                 org.opentrafficsim.xml.generated.LaneBias.class, GtuType.class, biasConsumer, eval);
 

@@ -339,7 +339,7 @@ public class MapInputListener extends InputListener implements EventListener
             {
                 // dragging?
                 List<Draggable<?>> draggablesDatas = locatables.stream().filter(Draggable.class::isInstance)
-                        .<Draggable<?>>map(Draggable.class::cast).toList();
+                        .<Draggable<?>> map(Draggable.class::cast).toList();
                 if (!draggablesDatas.isEmpty())
                 {
                     Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
@@ -1753,8 +1753,10 @@ public class MapInputListener extends InputListener implements EventListener
         this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, network, null);
         for (SelectionAnnotation i : this.selectionIndicators)
         {
-            XsdTreeNode link = i.getSource().mapData().getNode();
-            link.setAttributeValue("Type", linkType);
+            if (i.getSource().mapData() instanceof MapLinkData mapLinkData)
+            {
+                mapLinkData.getNode().setAttributeValue("Type", linkType);
+            }
         }
     }
 

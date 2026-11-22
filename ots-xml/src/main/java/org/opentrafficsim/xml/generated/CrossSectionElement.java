@@ -70,7 +70,8 @@ import org.opentrafficsim.xml.bindings.PositiveLengthAdapter;
     "widthEnd"
 })
 @XmlSeeAlso({
-    CseLane.class,
+    org.opentrafficsim.xml.generated.RoadLayouts.RoadLayout.Lane.class,
+    org.opentrafficsim.xml.generated.Link.RoadLayout.Lane.class,
     CseShoulder.class
 })
 @SuppressWarnings("all") public class CrossSectionElement implements Serializable

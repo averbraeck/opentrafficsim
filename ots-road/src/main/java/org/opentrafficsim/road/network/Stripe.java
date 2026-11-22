@@ -180,7 +180,7 @@ public class Stripe extends CrossSectionElement
                     getLink().getEndNode().getHeading());
             PolyLine2d start = directionalLine.directionalOffsetLine(.5 * (offsetMin0 + offsetMax0));
             PolyLine2d end = directionalLine.directionalOffsetLine(.5 * (offsetMin1 + offsetMax1));
-            this.linkReferenceLine = start.transitionLine(end, (f) -> f);
+            this.linkReferenceLine = DirectionalPolyLine.transitionLine(start, end);
         }
         return this.linkReferenceLine;
     }

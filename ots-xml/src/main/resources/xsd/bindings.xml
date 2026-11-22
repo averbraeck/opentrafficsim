@@ -139,15 +139,6 @@
       node="//xsd:element[@name='Clothoid']/xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='Interpolated']">
       <simplify:as-element-property />
     </jaxb:bindings>
-    <jaxb:bindings
-      node="//xsd:element[@name='StripeOverride']/xsd:complexType/xsd:choice/xsd:element[@name='Custom']/xsd:complexType/xsd:attribute[@name='LateralSync']">
-      <jaxb:property>
-        <jaxb:baseType>
-          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"
-            adapter="org.opentrafficsim.xml.bindings.StripeLateralSyncAdapter" />
-        </jaxb:baseType>
-      </jaxb:property>
-    </jaxb:bindings>
   </jaxb:bindings>
 
   <jaxb:bindings schemaLocation="ots-definitions.xsd">
@@ -159,7 +150,7 @@
         </jaxb:baseType>
       </jaxb:property>
     </jaxb:bindings>
-    <jaxb:bindings node="//xsd:element[@name='Custom']/xsd:complexType/xsd:attribute[@name='LateralSync']">
+    <jaxb:bindings node="//xsd:complexType[@name='StripeCustom']/xsd:attribute[@name='LateralSync']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"

@@ -50,6 +50,32 @@
       <ots:SyncUpstream />
     </ots:DashOffset>
   </ots:StripeType>
+  <ots:StripeType Id="NL.DASHED_URBAN" RightChangeLane="true" LeftChangeLane="true" Builtin="true">
+    <ots:Elements>
+      <ots:Dashed Width="20cm">
+        <ots:GapDash>
+          <ots:Gap>3m</ots:Gap>
+          <ots:Dash>1m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
+    </ots:Elements>
+    <ots:DashOffset>
+      <ots:SyncUpstream />
+    </ots:DashOffset>
+  </ots:StripeType>
+  <ots:StripeType Id="NL.DASHED_TURN" RightChangeLane="true" LeftChangeLane="true" Builtin="true" LateralSync="NONE">
+    <ots:Elements>
+      <ots:Dashed Width="10cm">
+        <ots:GapDash>
+          <ots:Gap>1m</ots:Gap>
+          <ots:Dash>1m</ots:Dash>
+        </ots:GapDash>
+      </ots:Dashed>
+    </ots:Elements>
+    <ots:DashOffset>
+      <ots:SyncUpstream />
+    </ots:DashOffset>
+  </ots:StripeType>
   <ots:StripeType Id="NL.DOUBLE_SOLID" RightChangeLane="false" LeftChangeLane="false" Builtin="true">
     <ots:Elements>
       <ots:Continuous Width="20cm" />

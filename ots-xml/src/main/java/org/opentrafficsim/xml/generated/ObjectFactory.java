@@ -53,6 +53,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link RoadLayouts }
+     * 
+     * @return
+     *     the new instance of {@link RoadLayouts }
+     */
+    public RoadLayouts createRoadLayouts() {
+        return new RoadLayouts();
+    }
+
+    /**
      * Create an instance of {@link org.opentrafficsim.xml.generated.Control }
      * 
      * @return
@@ -343,13 +353,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout }
      * 
      * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout }
      */
-    public org.opentrafficsim.xml.generated.Link.StripeOverride createLinkStripeOverride() {
-        return new org.opentrafficsim.xml.generated.Link.StripeOverride();
+    public org.opentrafficsim.xml.generated.Link.RoadLayout createLinkRoadLayout() {
+        return new org.opentrafficsim.xml.generated.Link.RoadLayout();
     }
 
     /**
@@ -463,13 +473,13 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link CseStripe }
+     * Create an instance of {@link RoadLayouts.RoadLayout }
      * 
      * @return
-     *     the new instance of {@link CseStripe }
+     *     the new instance of {@link RoadLayouts.RoadLayout }
      */
-    public CseStripe createCseStripe() {
-        return new CseStripe();
+    public RoadLayouts.RoadLayout createRoadLayoutsRoadLayout() {
+        return new RoadLayouts.RoadLayout();
     }
 
     /**
@@ -800,56 +810,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public StripeTypes createStripeTypes() {
         return new StripeTypes();
-    }
-
-    /**
-     * Create an instance of {@link RoadLayouts }
-     * 
-     * @return
-     *     the new instance of {@link RoadLayouts }
-     */
-    public RoadLayouts createRoadLayouts() {
-        return new RoadLayouts();
-    }
-
-    /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.RoadLayout }
-     * 
-     * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.RoadLayout }
-     */
-    public org.opentrafficsim.xml.generated.RoadLayout createRoadLayout() {
-        return new org.opentrafficsim.xml.generated.RoadLayout();
-    }
-
-    /**
-     * Create an instance of {@link BasicRoadLayout }
-     * 
-     * @return
-     *     the new instance of {@link BasicRoadLayout }
-     */
-    public BasicRoadLayout createBasicRoadLayout() {
-        return new BasicRoadLayout();
-    }
-
-    /**
-     * Create an instance of {@link CseLane }
-     * 
-     * @return
-     *     the new instance of {@link CseLane }
-     */
-    public CseLane createCseLane() {
-        return new CseLane();
-    }
-
-    /**
-     * Create an instance of {@link CseShoulder }
-     * 
-     * @return
-     *     the new instance of {@link CseShoulder }
-     */
-    public CseShoulder createCseShoulder() {
-        return new CseShoulder();
     }
 
     /**
@@ -1233,16 +1193,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout }
-     * 
-     * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout }
-     */
-    public org.opentrafficsim.xml.generated.Link.RoadLayout createLinkRoadLayout() {
-        return new org.opentrafficsim.xml.generated.Link.RoadLayout();
-    }
-
-    /**
      * Create an instance of {@link org.opentrafficsim.xml.generated.Link.LaneOverride }
      * 
      * @return
@@ -1250,6 +1200,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public org.opentrafficsim.xml.generated.Link.LaneOverride createLinkLaneOverride() {
         return new org.opentrafficsim.xml.generated.Link.LaneOverride();
+    }
+
+    /**
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
+     * 
+     * @return
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride }
+     */
+    public org.opentrafficsim.xml.generated.Link.StripeOverride createLinkStripeOverride() {
+        return new org.opentrafficsim.xml.generated.Link.StripeOverride();
     }
 
     /**
@@ -1453,6 +1413,26 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link LaneCustom }
+     * 
+     * @return
+     *     the new instance of {@link LaneCustom }
+     */
+    public LaneCustom createLaneCustom() {
+        return new LaneCustom();
+    }
+
+    /**
+     * Create an instance of {@link CseShoulder }
+     * 
+     * @return
+     *     the new instance of {@link CseShoulder }
+     */
+    public CseShoulder createCseShoulder() {
+        return new CseShoulder();
+    }
+
+    /**
      * Create an instance of {@link StripeCompatibility }
      * 
      * @return
@@ -1460,6 +1440,16 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public StripeCompatibility createStripeCompatibility() {
         return new StripeCompatibility();
+    }
+
+    /**
+     * Create an instance of {@link StripeCustom }
+     * 
+     * @return
+     *     the new instance of {@link StripeCustom }
+     */
+    public StripeCustom createStripeCustom() {
+        return new StripeCustom();
     }
 
     /**
@@ -2293,13 +2283,23 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride.Custom }
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout.Stripe }
      * 
      * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.StripeOverride.Custom }
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout.Stripe }
      */
-    public org.opentrafficsim.xml.generated.Link.StripeOverride.Custom createLinkStripeOverrideCustom() {
-        return new org.opentrafficsim.xml.generated.Link.StripeOverride.Custom();
+    public org.opentrafficsim.xml.generated.Link.RoadLayout.Stripe createLinkRoadLayoutStripe() {
+        return new org.opentrafficsim.xml.generated.Link.RoadLayout.Stripe();
+    }
+
+    /**
+     * Create an instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout.Lane }
+     * 
+     * @return
+     *     the new instance of {@link org.opentrafficsim.xml.generated.Link.RoadLayout.Lane }
+     */
+    public org.opentrafficsim.xml.generated.Link.RoadLayout.Lane createLinkRoadLayoutLane() {
+        return new org.opentrafficsim.xml.generated.Link.RoadLayout.Lane();
     }
 
     /**
@@ -2403,13 +2403,23 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link CseStripe.Custom }
+     * Create an instance of {@link RoadLayouts.RoadLayout.Stripe }
      * 
      * @return
-     *     the new instance of {@link CseStripe.Custom }
+     *     the new instance of {@link RoadLayouts.RoadLayout.Stripe }
      */
-    public CseStripe.Custom createCseStripeCustom() {
-        return new CseStripe.Custom();
+    public RoadLayouts.RoadLayout.Stripe createRoadLayoutsRoadLayoutStripe() {
+        return new RoadLayouts.RoadLayout.Stripe();
+    }
+
+    /**
+     * Create an instance of {@link RoadLayouts.RoadLayout.Lane }
+     * 
+     * @return
+     *     the new instance of {@link RoadLayouts.RoadLayout.Lane }
+     */
+    public RoadLayouts.RoadLayout.Lane createRoadLayoutsRoadLayoutLane() {
+        return new RoadLayouts.RoadLayout.Lane();
     }
 
     /**

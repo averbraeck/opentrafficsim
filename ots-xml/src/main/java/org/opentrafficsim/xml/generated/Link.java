@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -21,7 +22,6 @@ import org.opentrafficsim.xml.bindings.Point2dAdapter;
 import org.opentrafficsim.xml.bindings.PositiveLengthAdapter;
 import org.opentrafficsim.xml.bindings.PriorityAdapter;
 import org.opentrafficsim.xml.bindings.StringAdapter;
-import org.opentrafficsim.xml.bindings.StripeLateralSyncAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType;
 import org.opentrafficsim.xml.bindings.types.BooleanType;
 import org.opentrafficsim.xml.bindings.types.DoubleType;
@@ -30,7 +30,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
 import org.opentrafficsim.xml.bindings.types.Point2dType;
 import org.opentrafficsim.xml.bindings.types.PriorityType;
 import org.opentrafficsim.xml.bindings.types.StringType;
-import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
 /**
@@ -114,8 +113,49 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *           <element name="RoadLayout">
  *             <complexType>
  *               <complexContent>
- *                 <extension base="{http://www.opentrafficsim.org/ots}BasicRoadLayout">
- *                 </extension>
+ *                 <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   <sequence>
+ *                     <choice maxOccurs="unbounded">
+ *                       <element name="Stripe" maxOccurs="unbounded" minOccurs="0">
+ *                         <complexType>
+ *                           <complexContent>
+ *                             <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                               <sequence>
+ *                                 <choice minOccurs="0">
+ *                                   <element name="CenterOffset" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+ *                                   <sequence>
+ *                                     <element name="CenterOffsetStart" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+ *                                     <element name="CenterOffsetEnd" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+ *                                   </sequence>
+ *                                 </choice>
+ *                                 <choice>
+ *                                   <element name="DefinedStripe" type="{http://www.opentrafficsim.org/ots}string"/>
+ *                                   <element name="Custom" type="{http://www.opentrafficsim.org/ots}StripeCustom"/>
+ *                                 </choice>
+ *                               </sequence>
+ *                               <attribute name="Id" type="{http://www.opentrafficsim.org/ots}IdType" />
+ *                             </restriction>
+ *                           </complexContent>
+ *                         </complexType>
+ *                       </element>
+ *                       <element name="Lane" maxOccurs="unbounded" minOccurs="0">
+ *                         <complexType>
+ *                           <complexContent>
+ *                             <extension base="{http://www.opentrafficsim.org/ots}CrossSectionElement">
+ *                               <choice minOccurs="0">
+ *                                 <element name="DefinedLane" type="{http://www.opentrafficsim.org/ots}string"/>
+ *                                 <element name="Custom" type="{http://www.opentrafficsim.org/ots}LaneCustom"/>
+ *                               </choice>
+ *                               <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
+ *                             </extension>
+ *                           </complexContent>
+ *                         </complexType>
+ *                       </element>
+ *                       <element name="Shoulder" type="{http://www.opentrafficsim.org/ots}CseShoulder" maxOccurs="unbounded" minOccurs="0"/>
+ *                     </choice>
+ *                   </sequence>
+ *                   <attribute name="LaneKeeping" type="{http://www.opentrafficsim.org/ots}LaneKeepingType" />
+ *                 </restriction>
  *               </complexContent>
  *             </complexType>
  *           </element>
@@ -125,13 +165,10 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *               <complexType>
  *                 <complexContent>
  *                   <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                     <sequence>
- *                       <choice minOccurs="0">
- *                         <element name="SpeedLimit" type="{http://www.opentrafficsim.org/ots}SpeedLimit"/>
- *                         <element name="TemporalSpeedLimit" type="{http://www.opentrafficsim.org/ots}TemporalSpeedLimit"/>
- *                       </choice>
- *                       <element ref="{http://www.opentrafficsim.org/ots}GtuTypeSpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
- *                     </sequence>
+ *                     <choice>
+ *                       <element name="DefinedLane" type="{http://www.opentrafficsim.org/ots}string"/>
+ *                       <element name="Custom" type="{http://www.opentrafficsim.org/ots}LaneCustom"/>
+ *                     </choice>
  *                     <attribute name="Lane" use="required" type="{http://www.opentrafficsim.org/ots}string" />
  *                   </restriction>
  *                 </complexContent>
@@ -143,23 +180,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
  *                   <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                     <choice>
  *                       <element name="DefinedStripe" type="{http://www.opentrafficsim.org/ots}string"/>
- *                       <element name="Custom">
- *                         <complexType>
- *                           <complexContent>
- *                             <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                               <sequence>
- *                                 <element name="Elements" type="{http://www.opentrafficsim.org/ots}StripeElements" minOccurs="0"/>
- *                                 <element name="DashOffset" type="{http://www.opentrafficsim.org/ots}DashOffset" minOccurs="0"/>
- *                                 <element name="Compatibility" type="{http://www.opentrafficsim.org/ots}StripeCompatibility" maxOccurs="unbounded" minOccurs="0"/>
- *                               </sequence>
- *                               <attribute name="LeftChangeLane" type="{http://www.opentrafficsim.org/ots}boolean" />
- *                               <attribute name="RightChangeLane" type="{http://www.opentrafficsim.org/ots}boolean" />
- *                               <attribute name="Block" type="{http://www.opentrafficsim.org/ots}boolean" />
- *                               <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
- *                             </restriction>
- *                           </complexContent>
- *                         </complexType>
- *                       </element>
+ *                       <element name="Custom" type="{http://www.opentrafficsim.org/ots}StripeCustom"/>
  *                     </choice>
  *                     <attribute name="Stripe" use="required" type="{http://www.opentrafficsim.org/ots}string" />
  *                   </restriction>
@@ -1315,13 +1336,10 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      * <complexType>
      *   <complexContent>
      *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       <sequence>
-     *         <choice minOccurs="0">
-     *           <element name="SpeedLimit" type="{http://www.opentrafficsim.org/ots}SpeedLimit"/>
-     *           <element name="TemporalSpeedLimit" type="{http://www.opentrafficsim.org/ots}TemporalSpeedLimit"/>
-     *         </choice>
-     *         <element ref="{http://www.opentrafficsim.org/ots}GtuTypeSpeedLimit" maxOccurs="unbounded" minOccurs="0"/>
-     *       </sequence>
+     *       <choice>
+     *         <element name="DefinedLane" type="{http://www.opentrafficsim.org/ots}string"/>
+     *         <element name="Custom" type="{http://www.opentrafficsim.org/ots}LaneCustom"/>
+     *       </choice>
      *       <attribute name="Lane" use="required" type="{http://www.opentrafficsim.org/ots}string" />
      *     </restriction>
      *   </complexContent>
@@ -1332,103 +1350,69 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "speedLimit",
-        "temporalSpeedLimit",
-        "gtuTypeSpeedLimit"
+        "definedLane",
+        "custom"
     })
     public static class LaneOverride
         implements Serializable
     {
 
         private static final long serialVersionUID = 10102L;
-        @XmlElement(name = "SpeedLimit")
-        protected SpeedLimit speedLimit;
-        @XmlElement(name = "TemporalSpeedLimit")
-        protected TemporalSpeedLimit temporalSpeedLimit;
-        @XmlElement(name = "GtuTypeSpeedLimit")
-        protected List<GtuTypeSpeedLimit> gtuTypeSpeedLimit;
+        @XmlElement(name = "DefinedLane", type = String.class)
+        @XmlJavaTypeAdapter(StringAdapter.class)
+        protected StringType definedLane;
+        @XmlElement(name = "Custom")
+        protected LaneCustom custom;
         @XmlAttribute(name = "Lane", required = true)
         @XmlJavaTypeAdapter(StringAdapter.class)
         protected StringType lane;
 
         /**
-         * Gets the value of the speedLimit property.
+         * Gets the value of the definedLane property.
          * 
          * @return
          *     possible object is
-         *     {@link SpeedLimit }
+         *     {@link String }
          *     
          */
-        public SpeedLimit getSpeedLimit() {
-            return speedLimit;
+        public StringType getDefinedLane() {
+            return definedLane;
         }
 
         /**
-         * Sets the value of the speedLimit property.
+         * Sets the value of the definedLane property.
          * 
          * @param value
          *     allowed object is
-         *     {@link SpeedLimit }
+         *     {@link String }
          *     
          */
-        public void setSpeedLimit(SpeedLimit value) {
-            this.speedLimit = value;
+        public void setDefinedLane(StringType value) {
+            this.definedLane = value;
         }
 
         /**
-         * Gets the value of the temporalSpeedLimit property.
+         * Gets the value of the custom property.
          * 
          * @return
          *     possible object is
-         *     {@link TemporalSpeedLimit }
+         *     {@link LaneCustom }
          *     
          */
-        public TemporalSpeedLimit getTemporalSpeedLimit() {
-            return temporalSpeedLimit;
+        public LaneCustom getCustom() {
+            return custom;
         }
 
         /**
-         * Sets the value of the temporalSpeedLimit property.
+         * Sets the value of the custom property.
          * 
          * @param value
          *     allowed object is
-         *     {@link TemporalSpeedLimit }
+         *     {@link LaneCustom }
          *     
          */
-        public void setTemporalSpeedLimit(TemporalSpeedLimit value) {
-            this.temporalSpeedLimit = value;
-        }
-
-        /**
-         * Gets the value of the gtuTypeSpeedLimit property.
-         * 
-         * <p>This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the gtuTypeSpeedLimit property.</p>
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * </p>
-         * <pre>
-         * getGtuTypeSpeedLimit().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link GtuTypeSpeedLimit }
-         * </p>
-         * 
-         * 
-         * @return
-         *     The value of the gtuTypeSpeedLimit property.
-         */
-        public List<GtuTypeSpeedLimit> getGtuTypeSpeedLimit() {
-            if (gtuTypeSpeedLimit == null) {
-                gtuTypeSpeedLimit = new ArrayList<>();
-            }
-            return this.gtuTypeSpeedLimit;
+        public void setCustom(LaneCustom value) {
+            this.custom = value;
         }
 
         /**
@@ -1533,8 +1517,49 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      * <pre>{@code
      * <complexType>
      *   <complexContent>
-     *     <extension base="{http://www.opentrafficsim.org/ots}BasicRoadLayout">
-     *     </extension>
+     *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       <sequence>
+     *         <choice maxOccurs="unbounded">
+     *           <element name="Stripe" maxOccurs="unbounded" minOccurs="0">
+     *             <complexType>
+     *               <complexContent>
+     *                 <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *                   <sequence>
+     *                     <choice minOccurs="0">
+     *                       <element name="CenterOffset" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+     *                       <sequence>
+     *                         <element name="CenterOffsetStart" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+     *                         <element name="CenterOffsetEnd" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+     *                       </sequence>
+     *                     </choice>
+     *                     <choice>
+     *                       <element name="DefinedStripe" type="{http://www.opentrafficsim.org/ots}string"/>
+     *                       <element name="Custom" type="{http://www.opentrafficsim.org/ots}StripeCustom"/>
+     *                     </choice>
+     *                   </sequence>
+     *                   <attribute name="Id" type="{http://www.opentrafficsim.org/ots}IdType" />
+     *                 </restriction>
+     *               </complexContent>
+     *             </complexType>
+     *           </element>
+     *           <element name="Lane" maxOccurs="unbounded" minOccurs="0">
+     *             <complexType>
+     *               <complexContent>
+     *                 <extension base="{http://www.opentrafficsim.org/ots}CrossSectionElement">
+     *                   <choice minOccurs="0">
+     *                     <element name="DefinedLane" type="{http://www.opentrafficsim.org/ots}string"/>
+     *                     <element name="Custom" type="{http://www.opentrafficsim.org/ots}LaneCustom"/>
+     *                   </choice>
+     *                   <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
+     *                 </extension>
+     *               </complexContent>
+     *             </complexType>
+     *           </element>
+     *           <element name="Shoulder" type="{http://www.opentrafficsim.org/ots}CseShoulder" maxOccurs="unbounded" minOccurs="0"/>
+     *         </choice>
+     *       </sequence>
+     *       <attribute name="LaneKeeping" type="{http://www.opentrafficsim.org/ots}LaneKeepingType" />
+     *     </restriction>
      *   </complexContent>
      * </complexType>
      * }</pre>
@@ -1542,13 +1567,402 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @XmlType(name = "", propOrder = {
+        "stripeOrLaneOrShoulder"
+    })
     public static class RoadLayout
-        extends BasicRoadLayout
         implements Serializable
     {
 
         private static final long serialVersionUID = 10102L;
+        @XmlElements({
+            @XmlElement(name = "Stripe", type = Link.RoadLayout.Stripe.class),
+            @XmlElement(name = "Lane", type = Link.RoadLayout.Lane.class),
+            @XmlElement(name = "Shoulder", type = CseShoulder.class)
+        })
+        protected List<Serializable> stripeOrLaneOrShoulder;
+        @XmlAttribute(name = "LaneKeeping")
+        @XmlJavaTypeAdapter(LaneKeepingPolicyAdapter.class)
+        protected LaneKeepingPolicyType laneKeeping;
+
+        /**
+         * Gets the value of the stripeOrLaneOrShoulder property.
+         * 
+         * <p>This accessor method returns a reference to the live list,
+         * not a snapshot. Therefore any modification you make to the
+         * returned list will be present inside the JAXB object.
+         * This is why there is not a <CODE>set</CODE> method for the stripeOrLaneOrShoulder property.</p>
+         * 
+         * <p>
+         * For example, to add a new item, do as follows:
+         * </p>
+         * <pre>
+         * getStripeOrLaneOrShoulder().add(newItem);
+         * </pre>
+         * 
+         * 
+         * <p>
+         * Objects of the following type(s) are allowed in the list
+         * {@link CseShoulder }
+         * {@link Link.RoadLayout.Lane }
+         * {@link Link.RoadLayout.Stripe }
+         * </p>
+         * 
+         * 
+         * @return
+         *     The value of the stripeOrLaneOrShoulder property.
+         */
+        public List<Serializable> getStripeOrLaneOrShoulder() {
+            if (stripeOrLaneOrShoulder == null) {
+                stripeOrLaneOrShoulder = new ArrayList<>();
+            }
+            return this.stripeOrLaneOrShoulder;
+        }
+
+        /**
+         * Gets the value of the laneKeeping property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public LaneKeepingPolicyType getLaneKeeping() {
+            return laneKeeping;
+        }
+
+        /**
+         * Sets the value of the laneKeeping property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setLaneKeeping(LaneKeepingPolicyType value) {
+            this.laneKeeping = value;
+        }
+
+
+        /**
+         * <p>Java class for anonymous complex type</p>.
+         * 
+         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * 
+         * <pre>{@code
+         * <complexType>
+         *   <complexContent>
+         *     <extension base="{http://www.opentrafficsim.org/ots}CrossSectionElement">
+         *       <choice minOccurs="0">
+         *         <element name="DefinedLane" type="{http://www.opentrafficsim.org/ots}string"/>
+         *         <element name="Custom" type="{http://www.opentrafficsim.org/ots}LaneCustom"/>
+         *       </choice>
+         *       <attribute name="Id" use="required" type="{http://www.opentrafficsim.org/ots}IdType" />
+         *     </extension>
+         *   </complexContent>
+         * </complexType>
+         * }</pre>
+         * 
+         * 
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "", propOrder = {
+            "definedLane",
+            "custom"
+        })
+        public static class Lane
+            extends CrossSectionElement
+            implements Serializable
+        {
+
+            private static final long serialVersionUID = 10102L;
+            @XmlElement(name = "DefinedLane", type = String.class)
+            @XmlJavaTypeAdapter(StringAdapter.class)
+            protected StringType definedLane;
+            @XmlElement(name = "Custom")
+            protected LaneCustom custom;
+            @XmlAttribute(name = "Id", required = true)
+            protected String id;
+
+            /**
+             * Gets the value of the definedLane property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public StringType getDefinedLane() {
+                return definedLane;
+            }
+
+            /**
+             * Sets the value of the definedLane property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setDefinedLane(StringType value) {
+                this.definedLane = value;
+            }
+
+            /**
+             * Gets the value of the custom property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link LaneCustom }
+             *     
+             */
+            public LaneCustom getCustom() {
+                return custom;
+            }
+
+            /**
+             * Sets the value of the custom property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link LaneCustom }
+             *     
+             */
+            public void setCustom(LaneCustom value) {
+                this.custom = value;
+            }
+
+            /**
+             * Gets the value of the id property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public String getId() {
+                return id;
+            }
+
+            /**
+             * Sets the value of the id property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setId(String value) {
+                this.id = value;
+            }
+
+        }
+
+
+        /**
+         * <p>Java class for anonymous complex type</p>.
+         * 
+         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * 
+         * <pre>{@code
+         * <complexType>
+         *   <complexContent>
+         *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       <sequence>
+         *         <choice minOccurs="0">
+         *           <element name="CenterOffset" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+         *           <sequence>
+         *             <element name="CenterOffsetStart" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+         *             <element name="CenterOffsetEnd" type="{http://www.opentrafficsim.org/ots}LengthType"/>
+         *           </sequence>
+         *         </choice>
+         *         <choice>
+         *           <element name="DefinedStripe" type="{http://www.opentrafficsim.org/ots}string"/>
+         *           <element name="Custom" type="{http://www.opentrafficsim.org/ots}StripeCustom"/>
+         *         </choice>
+         *       </sequence>
+         *       <attribute name="Id" type="{http://www.opentrafficsim.org/ots}IdType" />
+         *     </restriction>
+         *   </complexContent>
+         * </complexType>
+         * }</pre>
+         * 
+         * 
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "", propOrder = {
+            "centerOffset",
+            "centerOffsetStart",
+            "centerOffsetEnd",
+            "definedStripe",
+            "custom"
+        })
+        public static class Stripe implements Serializable
+        {
+
+            private static final long serialVersionUID = 10102L;
+            @XmlElement(name = "CenterOffset", type = String.class)
+            @XmlJavaTypeAdapter(LengthAdapter.class)
+            protected org.opentrafficsim.xml.bindings.types.LengthType centerOffset;
+            @XmlElement(name = "CenterOffsetStart", type = String.class)
+            @XmlJavaTypeAdapter(LengthAdapter.class)
+            protected org.opentrafficsim.xml.bindings.types.LengthType centerOffsetStart;
+            @XmlElement(name = "CenterOffsetEnd", type = String.class)
+            @XmlJavaTypeAdapter(LengthAdapter.class)
+            protected org.opentrafficsim.xml.bindings.types.LengthType centerOffsetEnd;
+            @XmlElement(name = "DefinedStripe", type = String.class)
+            @XmlJavaTypeAdapter(StringAdapter.class)
+            protected StringType definedStripe;
+            @XmlElement(name = "Custom")
+            protected StripeCustom custom;
+            @XmlAttribute(name = "Id")
+            protected String id;
+
+            /**
+             * Gets the value of the centerOffset property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public org.opentrafficsim.xml.bindings.types.LengthType getCenterOffset() {
+                return centerOffset;
+            }
+
+            /**
+             * Sets the value of the centerOffset property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setCenterOffset(org.opentrafficsim.xml.bindings.types.LengthType value) {
+                this.centerOffset = value;
+            }
+
+            /**
+             * Gets the value of the centerOffsetStart property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public org.opentrafficsim.xml.bindings.types.LengthType getCenterOffsetStart() {
+                return centerOffsetStart;
+            }
+
+            /**
+             * Sets the value of the centerOffsetStart property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setCenterOffsetStart(org.opentrafficsim.xml.bindings.types.LengthType value) {
+                this.centerOffsetStart = value;
+            }
+
+            /**
+             * Gets the value of the centerOffsetEnd property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public org.opentrafficsim.xml.bindings.types.LengthType getCenterOffsetEnd() {
+                return centerOffsetEnd;
+            }
+
+            /**
+             * Sets the value of the centerOffsetEnd property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setCenterOffsetEnd(org.opentrafficsim.xml.bindings.types.LengthType value) {
+                this.centerOffsetEnd = value;
+            }
+
+            /**
+             * Gets the value of the definedStripe property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public StringType getDefinedStripe() {
+                return definedStripe;
+            }
+
+            /**
+             * Sets the value of the definedStripe property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setDefinedStripe(StringType value) {
+                this.definedStripe = value;
+            }
+
+            /**
+             * Gets the value of the custom property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link StripeCustom }
+             *     
+             */
+            public StripeCustom getCustom() {
+                return custom;
+            }
+
+            /**
+             * Sets the value of the custom property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link StripeCustom }
+             *     
+             */
+            public void setCustom(StripeCustom value) {
+                this.custom = value;
+            }
+
+            /**
+             * Gets the value of the id property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public String getId() {
+                return id;
+            }
+
+            /**
+             * Sets the value of the id property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setId(String value) {
+                this.id = value;
+            }
+
+        }
 
     }
 
@@ -1564,23 +1978,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
      *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       <choice>
      *         <element name="DefinedStripe" type="{http://www.opentrafficsim.org/ots}string"/>
-     *         <element name="Custom">
-     *           <complexType>
-     *             <complexContent>
-     *               <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 <sequence>
-     *                   <element name="Elements" type="{http://www.opentrafficsim.org/ots}StripeElements" minOccurs="0"/>
-     *                   <element name="DashOffset" type="{http://www.opentrafficsim.org/ots}DashOffset" minOccurs="0"/>
-     *                   <element name="Compatibility" type="{http://www.opentrafficsim.org/ots}StripeCompatibility" maxOccurs="unbounded" minOccurs="0"/>
-     *                 </sequence>
-     *                 <attribute name="LeftChangeLane" type="{http://www.opentrafficsim.org/ots}boolean" />
-     *                 <attribute name="RightChangeLane" type="{http://www.opentrafficsim.org/ots}boolean" />
-     *                 <attribute name="Block" type="{http://www.opentrafficsim.org/ots}boolean" />
-     *                 <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
-     *               </restriction>
-     *             </complexContent>
-     *           </complexType>
-     *         </element>
+     *         <element name="Custom" type="{http://www.opentrafficsim.org/ots}StripeCustom"/>
      *       </choice>
      *       <attribute name="Stripe" use="required" type="{http://www.opentrafficsim.org/ots}string" />
      *     </restriction>
@@ -1604,7 +2002,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         @XmlJavaTypeAdapter(StringAdapter.class)
         protected StringType definedStripe;
         @XmlElement(name = "Custom")
-        protected Link.StripeOverride.Custom custom;
+        protected StripeCustom custom;
         @XmlAttribute(name = "Stripe", required = true)
         @XmlJavaTypeAdapter(StringAdapter.class)
         protected StringType stripe;
@@ -1638,10 +2036,10 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
          * 
          * @return
          *     possible object is
-         *     {@link Link.StripeOverride.Custom }
+         *     {@link StripeCustom }
          *     
          */
-        public Link.StripeOverride.Custom getCustom() {
+        public StripeCustom getCustom() {
             return custom;
         }
 
@@ -1650,10 +2048,10 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
          * 
          * @param value
          *     allowed object is
-         *     {@link Link.StripeOverride.Custom }
+         *     {@link StripeCustom }
          *     
          */
-        public void setCustom(Link.StripeOverride.Custom value) {
+        public void setCustom(StripeCustom value) {
             this.custom = value;
         }
 
@@ -1679,240 +2077,6 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
          */
         public void setStripe(StringType value) {
             this.stripe = value;
-        }
-
-
-        /**
-         * <p>Java class for anonymous complex type</p>.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
-         * 
-         * <pre>{@code
-         * <complexType>
-         *   <complexContent>
-         *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       <sequence>
-         *         <element name="Elements" type="{http://www.opentrafficsim.org/ots}StripeElements" minOccurs="0"/>
-         *         <element name="DashOffset" type="{http://www.opentrafficsim.org/ots}DashOffset" minOccurs="0"/>
-         *         <element name="Compatibility" type="{http://www.opentrafficsim.org/ots}StripeCompatibility" maxOccurs="unbounded" minOccurs="0"/>
-         *       </sequence>
-         *       <attribute name="LeftChangeLane" type="{http://www.opentrafficsim.org/ots}boolean" />
-         *       <attribute name="RightChangeLane" type="{http://www.opentrafficsim.org/ots}boolean" />
-         *       <attribute name="Block" type="{http://www.opentrafficsim.org/ots}boolean" />
-         *       <attribute name="LateralSync" type="{http://www.opentrafficsim.org/ots}LateralSync" />
-         *     </restriction>
-         *   </complexContent>
-         * </complexType>
-         * }</pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "elements",
-            "dashOffset",
-            "compatibility"
-        })
-        public static class Custom
-            implements Serializable
-        {
-
-            private static final long serialVersionUID = 10102L;
-            @XmlElement(name = "Elements")
-            protected StripeElements elements;
-            @XmlElement(name = "DashOffset")
-            protected DashOffset dashOffset;
-            @XmlElement(name = "Compatibility")
-            protected List<StripeCompatibility> compatibility;
-            @XmlAttribute(name = "LeftChangeLane")
-            @XmlJavaTypeAdapter(BooleanAdapter.class)
-            protected BooleanType leftChangeLane;
-            @XmlAttribute(name = "RightChangeLane")
-            @XmlJavaTypeAdapter(BooleanAdapter.class)
-            protected BooleanType rightChangeLane;
-            @XmlAttribute(name = "Block")
-            @XmlJavaTypeAdapter(BooleanAdapter.class)
-            protected BooleanType block;
-            @XmlAttribute(name = "LateralSync")
-            @XmlJavaTypeAdapter(StripeLateralSyncAdapter.class)
-            protected StripeLateralSyncType lateralSync;
-
-            /**
-             * Gets the value of the elements property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link StripeElements }
-             *     
-             */
-            public StripeElements getElements() {
-                return elements;
-            }
-
-            /**
-             * Sets the value of the elements property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link StripeElements }
-             *     
-             */
-            public void setElements(StripeElements value) {
-                this.elements = value;
-            }
-
-            /**
-             * Gets the value of the dashOffset property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link DashOffset }
-             *     
-             */
-            public DashOffset getDashOffset() {
-                return dashOffset;
-            }
-
-            /**
-             * Sets the value of the dashOffset property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link DashOffset }
-             *     
-             */
-            public void setDashOffset(DashOffset value) {
-                this.dashOffset = value;
-            }
-
-            /**
-             * Gets the value of the compatibility property.
-             * 
-             * <p>This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the compatibility property.</p>
-             * 
-             * <p>
-             * For example, to add a new item, do as follows:
-             * </p>
-             * <pre>
-             * getCompatibility().add(newItem);
-             * </pre>
-             * 
-             * 
-             * <p>
-             * Objects of the following type(s) are allowed in the list
-             * {@link StripeCompatibility }
-             * </p>
-             * 
-             * 
-             * @return
-             *     The value of the compatibility property.
-             */
-            public List<StripeCompatibility> getCompatibility() {
-                if (compatibility == null) {
-                    compatibility = new ArrayList<>();
-                }
-                return this.compatibility;
-            }
-
-            /**
-             * Gets the value of the leftChangeLane property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public BooleanType getLeftChangeLane() {
-                return leftChangeLane;
-            }
-
-            /**
-             * Sets the value of the leftChangeLane property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setLeftChangeLane(BooleanType value) {
-                this.leftChangeLane = value;
-            }
-
-            /**
-             * Gets the value of the rightChangeLane property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public BooleanType getRightChangeLane() {
-                return rightChangeLane;
-            }
-
-            /**
-             * Sets the value of the rightChangeLane property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setRightChangeLane(BooleanType value) {
-                this.rightChangeLane = value;
-            }
-
-            /**
-             * Gets the value of the block property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public BooleanType getBlock() {
-                return block;
-            }
-
-            /**
-             * Sets the value of the block property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setBlock(BooleanType value) {
-                this.block = value;
-            }
-
-            /**
-             * Gets the value of the lateralSync property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
-             */
-            public StripeLateralSyncType getLateralSync() {
-                return lateralSync;
-            }
-
-            /**
-             * Sets the value of the lateralSync property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
-             */
-            public void setLateralSync(StripeLateralSyncType value) {
-                this.lateralSync = value;
-            }
-
         }
 
     }

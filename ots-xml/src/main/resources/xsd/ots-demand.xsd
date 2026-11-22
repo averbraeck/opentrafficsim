@@ -37,7 +37,7 @@
       <xsd:attribute name="GlobalInterpolation" type="ots:InterpolationType" use="optional" default="LINEAR">
         <xsd:annotation>
           <xsd:appinfo>
-            <ots:defaultValue>PASSIVIMO</ots:defaultValue>
+            <ots:defaultValue>LINEAR</ots:defaultValue>
           </xsd:appinfo>
         </xsd:annotation>
       </xsd:attribute>
