@@ -108,7 +108,8 @@ public interface Relaxation extends NamedConstants
         {
             Acceleration b = params.getParameter(ParameterTypes.B);
             double k = requiredRelaxationLevel(params, egoSpeed, leader.getDistance().si, leader.getSpeed(), b);
-            k = Math.max(0.0, Math.min(k, 1.0));
+            double kCur = params.getParameter(AbstractIdm.KAPPA);
+            k = Math.max(kCur, Math.min(k, 1.0));
             double tMax = params.getParameter(ParameterTypes.TMAX).si;
             params.setClaimedParameter(AbstractIdm.KAPPA, k, KAPPA_KEY);
             params.setClaimedParameter(ParameterTypes.T, Duration.ofSI((1 - k) * tMax), T_KEY);
