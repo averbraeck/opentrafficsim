@@ -43,7 +43,7 @@ public final class SpeedLimitUtil
 
     /** Maximum comfortable acceleration in the lateral direction. */
     public static final ParameterTypeAcceleration A_LAT = new ParameterTypeAcceleration("aLat",
-            "Maximum comfortable lateral acceleration", Acceleration.ofSI(1.0), NumericConstraint.POSITIVE);
+            "Maximum comfortable lateral acceleration", Acceleration.ofSI(2.0), NumericConstraint.POSITIVE);
 
     /**
      * Returns the speed for which the given lateral acceleration follows in the curve.
