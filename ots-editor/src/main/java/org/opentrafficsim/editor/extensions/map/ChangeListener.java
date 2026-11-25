@@ -2,7 +2,6 @@ package org.opentrafficsim.editor.extensions.map;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.djutils.eval.Eval;
 import org.djutils.event.Event;
@@ -17,17 +16,15 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
- * Generic implementation to listen to any changes under a node, including its own attributes and activation status. The node
- * represents some logical data in which any change requires an update. For example, this can be used to listen to any change in
- * a road layout, causing all links that use the layout to be redrawn.
+ * Generic implementation to listen to any changes under a node, including its own attributes and activation status. All events
+ * are forwarded in to a CHANGE_EVENT. This includes the case where {@link Eval} is updated.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author Wouter Schakel
- * @param <T> type of data that listeners require from what the main node represents.
  */
-public abstract class ChangeListener<T> extends LocalEventProducer implements EventListener, EvalListener
+public abstract class ChangeListener extends LocalEventProducer implements EventListener, EvalListener
 {
 
     /** Event that any change happened to the main node or anything under it. */
@@ -43,29 +40,65 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
     /** Set of all elements that, when removed, change the layout. */
     private final Set<XsdTreeNode> elementNodes = new LinkedHashSet<>();
 
-    /** Expression evaluator supplier. */
-    private final Supplier<Eval> eval;
-
-    /** Flag when change occurred and offsets need to be recalculated. */
-    private boolean dataIsDirty = true;
-
-    /** Cached data. */
-    private T data;
-
     /**
      * Constructor.
      * @param node node of the layout, either in definitions or under a link.
-     * @param eval supplier of expression evaluator, either from the main map, or from a map link data.
      */
-    public ChangeListener(final XsdTreeNode node, final Supplier<Eval> eval)
+    public ChangeListener(final XsdTreeNode node)
     {
         this.node = node;
-        this.eval = eval;
-        node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-        node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
+        addListeners(node);
         this.root = this.node.getRoot();
         this.root.addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
         this.root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
+        addExistingNodes(node);
+    }
+
+    /**
+     * Adds listeners for all relevant event types to the given node.
+     * @param xsdNode node to listen to.
+     */
+    private void addListeners(final XsdTreeNode xsdNode)
+    {
+        xsdNode.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
+        xsdNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+        xsdNode.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
+        xsdNode.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+        xsdNode.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+    }
+
+    /**
+     * Remove listeners for all relevant event types to the given node.
+     * @param xsdNode node to no longer listen to.
+     */
+    private void removeListeners(final XsdTreeNode xsdNode)
+    {
+        xsdNode.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        xsdNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+        xsdNode.removeListener(this, XsdTreeNode.MOVED);
+        xsdNode.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+        xsdNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+    }
+
+    /**
+     * Adds listeners to nodes that already existed when this listener was created. Nodes created later are registered in
+     * {@link #listen(Event)}.
+     * @param xsdNode node to inspect, including its children.
+     */
+    private void addExistingNodes(final XsdTreeNode xsdNode)
+    {
+        if (xsdNode != this.node && !canBeIgnored(xsdNode))
+        {
+            addListeners(xsdNode);
+            this.elementNodes.add(xsdNode);
+        }
+        if (xsdNode.getChildCount() > 0)
+        {
+            for (XsdTreeNode child : xsdNode.getChildren())
+            {
+                addExistingNodes(child);
+            }
+        }
     }
 
     /**
@@ -74,21 +107,10 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
     public void destroy()
     {
         removeAsListener(this.node);
-        this.node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        this.node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         this.elementNodes.clear();
         this.root.removeListener(this, XsdTreeNodeRoot.NODE_CREATED);
         this.root.removeListener(this, XsdTreeNodeRoot.NODE_REMOVED);
         removeAllListeners();
-        destroyData();
-    }
-
-    /**
-     * Destroys the data. Can be overridden by subclasses. By default does nothing.
-     */
-    protected void destroyData()
-    {
-        //
     }
 
     /**
@@ -97,9 +119,9 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
      */
     private void removeAsListener(final XsdTreeNode xsdNode)
     {
-        if (canBeIgnored(xsdNode))
+        if (!canBeIgnored(xsdNode))
         {
-            return;
+            removeListeners(xsdNode);
         }
         if (xsdNode.getChildCount() > 0)
         {
@@ -108,15 +130,23 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
                 removeAsListener(child);
             }
         }
-        xsdNode.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-        xsdNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        xsdNode.removeListener(this, XsdTreeNode.MOVED);
-        xsdNode.removeListener(this, XsdTreeNode.OPTION_CHANGED);
-        xsdNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
     }
 
     @Override
     public void notify(final Event event)
+    {
+        if (listen(event))
+        {
+            fireEvent(CHANGE_EVENT, this.node);
+        }
+    }
+
+    /**
+     * Listen to node.
+     * @param event event
+     * @return whether the event is relevant for this listener
+     */
+    protected boolean listen(final Event event)
     {
         // for all events this listens to, the node is the first object in the content
         XsdTreeNode xsdNode = (XsdTreeNode) ((Object[]) event.getContent())[0];
@@ -125,13 +155,9 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
             if (!xsdNode.getPath().contains(this.node) || canBeIgnored(xsdNode))
             {
                 // not the node of this listener
-                return;
+                return false;
             }
-            xsdNode.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
-            xsdNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-            xsdNode.addListener(this, XsdTreeNode.MOVED, ReferenceType.WEAK);
-            xsdNode.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-            xsdNode.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+            addListeners(xsdNode);
             // remember the nodes, as their paths are empty after being removed, hence .contains(this.node) does not work
             this.elementNodes.add(xsdNode);
         }
@@ -139,26 +165,15 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
         {
             if (!this.elementNodes.remove(xsdNode))
             {
-                return;
+                return false;
             }
-            xsdNode.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-            xsdNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            xsdNode.removeListener(this, XsdTreeNode.MOVED);
-            xsdNode.removeListener(this, XsdTreeNode.OPTION_CHANGED);
-            xsdNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+            removeListeners(xsdNode);
         }
-        // for all events for which this method did not return, indicate a change
-        this.dataIsDirty = true;
-        fireEvent(CHANGE_EVENT, this.node);
-    }
-
-    /**
-     * Returns a current valid evaluator.
-     * @return evaluator.
-     */
-    public Eval getEval()
-    {
-        return this.eval.get();
+        else
+        {
+            return xsdNode == this.node || this.elementNodes.contains(xsdNode);
+        }
+        return true;
     }
 
     /**
@@ -171,6 +186,12 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
         return false;
     }
 
+    @Override
+    public void evalChanged()
+    {
+        fireEvent(CHANGE_EVENT, this.node);
+    }
+
     /**
      * Returns the main node.
      * @return main node.
@@ -178,32 +199,6 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
     public XsdTreeNode getNode()
     {
         return this.node;
-    }
-
-    /**
-     * Returns the data that the node of this listener represents.
-     * @return data that the node of this listener represents.
-     */
-    public final T getData()
-    {
-        if (this.dataIsDirty)
-        {
-            this.data = calculateData();
-            this.dataIsDirty = false;
-        }
-        return this.data;
-    }
-
-    /**
-     * Calculates the data. This is called when data is required by a listener and the there have been changes.
-     * @return calculated data based on content of the main node.
-     */
-    abstract T calculateData();
-
-    @Override
-    public void evalChanged()
-    {
-        this.dataIsDirty = true;
     }
 
 }

@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.Offse
  * </p>
  * @author Wouter Schakel
  */
-public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>>
+public class RoadLayoutListener extends DataListener<Map<XsdTreeNode, CseData>>
 {
 
     /**

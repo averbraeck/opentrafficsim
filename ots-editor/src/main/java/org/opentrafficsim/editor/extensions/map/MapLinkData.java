@@ -3,7 +3,6 @@ package org.opentrafficsim.editor.extensions.map;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.curve.Arc2d;
 import org.djutils.draw.curve.Clothoid2d;
 import org.djutils.draw.curve.OffsetCurve2d;
@@ -56,17 +54,17 @@ import org.opentrafficsim.core.geometry.BezierCubic2d;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.geometry.PolyLineCurve2d;
 import org.opentrafficsim.editor.ChildNodeFinder;
+import org.opentrafficsim.editor.Coalesced;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeUtil;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.StripeData.StripePhaseSync;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
-import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
-import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.generated.Link.Arc;
 import org.opentrafficsim.xml.generated.Link.Bezier;
 import org.opentrafficsim.xml.generated.Link.Clothoid;
@@ -183,11 +181,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /** Whether layout is dirty. */
     private boolean dirtyLayout = true;
 
-    /** Whether a rebuild is scheduled. */
-    private boolean rebuildScheduled = false;
-
     /** Escape delayed execution when object was destroyed. */
     private volatile boolean destroyed = false;
+
+    /** Schedules a rebuild of dirty geometry and layout. */
+    private final Coalesced rebuild = new Coalesced(() ->
+    {
+        if (!this.destroyed)
+        {
+            checkDirtyGeometry();
+        }
+    });
 
     /**
      * Constructor.
@@ -545,7 +549,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             oldNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             if (oldNode.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETER_STRING))
             {
-                XsdTreeNode node = getInputNode(newNode);
+                XsdTreeNode node = findInputNode(newNode);
                 if (node != null)
                 {
                     node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -557,7 +561,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             newNode.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
             if (newNode.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETER_STRING))
             {
-                XsdTreeNode node = getInputNode(newNode);
+                XsdTreeNode node = findInputNode(newNode);
                 if (node != null)
                 {
                     node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
@@ -573,7 +577,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * @param inputParameter input parameter node (default).
      * @return the actual node (Ots.Network.Node).
      */
-    private XsdTreeNode getInputNode(final XsdTreeNode inputParameter)
+    private XsdTreeNode findInputNode(final XsdTreeNode inputParameter)
     {
         String inputId = inputParameter.getId();
         String nodeId;
@@ -611,7 +615,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         if (this.shapeListener.shapeNode != null && this.shapeListener.shapeNode.equals(node.getParent()))
         {
-            this.shapeListener.coordinates.put(node, orNull(node.getValueOrDefault(), Adapters.get(Point2d.class)));
+            this.shapeListener.coordinates.put(node, Adapters.parseOrNull(getEval(), node.getValueOrDefault(), Point2d.class));
             setDirtyAndCheckValidity();
             node.addListener(this.shapeListener, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
             node.addListener(this.shapeListener, XsdTreeNode.MOVED, ReferenceType.WEAK);
@@ -648,7 +652,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private void setDirtyAndCheckValidity()
     {
         this.dirtyGeometry = true;
-        scheduleRebuild();
+        this.rebuild.request();
 
         // Connector
         if (this.isConnector)
@@ -695,26 +699,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private void setDirtyLayout()
     {
         this.dirtyLayout = true;
-        scheduleRebuild();
+        this.rebuild.request();
         fireEvent(new Event(MAP_DATA_CHANGED, null));
-    }
-
-    /**
-     * Schedules a rebuild of dirty geometry and layout. The geometry is otherwise only rebuilt when the map requests it for
-     * drawing. Therefore, changes in the link shape would not update the lane, shoulder and stripe animations when links are
-     * not shown. Multiple changes within one event cycle are combined into a single rebuild.
-     */
-    private void scheduleRebuild()
-    {
-        if (!this.rebuildScheduled)
-        {
-            this.rebuildScheduled = true;
-            laterIfNotDestroyed(() ->
-            {
-                this.rebuildScheduled = false;
-                checkDirtyGeometry();
-            });
-        }
     }
 
     /**
@@ -983,7 +969,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         XsdTreeNode overrideNode = stripeOverrides.get(node.getId());
         XsdTreeNode overrideDataNode = null;
         XsdTreeNode stripeDataNode;
-        XsdTreeNode definedOverride = overrideNode == null ? null : findActiveChild(overrideNode, "DefinedStripe");
+        XsdTreeNode definedOverride =
+                overrideNode == null ? null : XsdTreeNodeUtil.findActiveChild(overrideNode, "DefinedStripe");
         if (definedOverride != null)
         {
             // override with defined stripe; take that stripe definition completely
@@ -997,59 +984,25 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             if (overrideNode != null)
             {
-                overrideDataNode = findActiveChild(overrideNode, "Custom");
+                overrideDataNode = XsdTreeNodeUtil.findActiveChild(overrideNode, "Custom");
             }
-            stripeDataNode = resolveStripeNode(node);
+            stripeDataNode = MapStripeDefinitionUtil.resolveStripeNode(node);
             if (stripeDataNode == null)
             {
                 return null;
             }
         }
-        StripeData stripeDat = collectStripeData(stripeDataNode, overrideDataNode);
+        StripeDefinition stripeDat = MapStripeDefinitionUtil.collectStripeData(stripeDataNode, overrideDataNode, getEval());
         phaseSync = stripeDat.phaseSync();
         dashOffset = stripeDat.dashOffset();
         lateralSync = stripeDat.lateralSync();
         elementNodes = stripeDat.elementNodes();
 
+        List<StripeElement> elements = MapStripeDefinitionUtil.createStripeElements(elementNodes, getEval(), this::setInvalid);
         Length width = Length.ZERO;
-        List<StripeElement> elements = new ArrayList<>();
-        ExpressionAdapter<Length, ExpressionType<Length>> lengthAdapter = Adapters.get(Length.class);
-        for (XsdTreeNode elementNode : elementNodes)
+        for (StripeElement element : elements)
         {
-            if (elementNode.isValid())
-            {
-                Length w = lengthAdapter.unmarshal(elementNode.getAttributeValueOrDefault("Width")).get(getEval());
-                width = width.plus(w);
-                if (elementNode.getNodeName().equals("Continuous") || elementNode.getNodeName().equals("Dashed"))
-                {
-                    String colorName = elementNode.getAttributeValueOrDefault("Color");
-                    Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
-                    if (elementNode.getNodeName().equals("Continuous"))
-                    {
-                        elements.add(StripeElement.continuous(w, color));
-                    }
-                    else
-                    {
-                        List<Double> gapsAndDashes = new ArrayList<>();
-                        for (XsdTreeNode gapDash : elementNode.getChildren())
-                        {
-                            executeForNonNullAttribute((v) -> gapsAndDashes.add(v.si), gapDash.getChild(0), null,
-                                    lengthAdapter);
-                            executeForNonNullAttribute((v) -> gapsAndDashes.add(v.si), gapDash.getChild(1), null,
-                                    lengthAdapter);
-                        }
-                        if (!gapsAndDashes.isEmpty())
-                        {
-                            elements.add(StripeElement.dashed(w, color,
-                                    new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
-                        }
-                    }
-                }
-                else
-                {
-                    elements.add(StripeElement.gap(w));
-                }
-            }
+            width = width.plus(element.width());
         }
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         CrossSectionGeometry geometry = CrossSectionGeometry.of(this.designLine, getFlattener(), offsetFunc, widthFunc);
@@ -1060,172 +1013,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         getMap().getSynchronizableStripes().put(data, new SynchronizableMapStripe(this, data, phaseSync));
         this.stripeData.put(node.getId(), data);
         return new StripeAnimation(data, getMap().getContextualized());
-    }
-
-    /**
-     * Container of collected stripe data.
-     * @param phaseSync phase synchronization
-     * @param dashOffset dash offset
-     * @param lateralSync lateral synchronization
-     * @param elementNodes element nodes
-     */
-    private record StripeData(StripePhaseSync phaseSync, Length dashOffset, StripeLateralSync lateralSync,
-            List<XsdTreeNode> elementNodes)
-    {
-    }
-
-    /**
-     * Resolves the node that contains the stripe data for a stripe in a road layout.
-     * @param stripeNode node Stripe in a road layout.
-     * @return node with stripe data, {@code null} if the reference could not be resolved.
-     */
-    private XsdTreeNode resolveStripeNode(final XsdTreeNode stripeNode)
-    {
-        if (stripeNode == null)
-        {
-            return null;
-        }
-        if (stripeNode.hasAttribute("StripeType"))
-        {
-            // Definition layouts refer to a StripeType through an attribute instead of a DefinedStripe child.
-            XsdTreeNode coupled = stripeNode.getCoupledNodeAttribute("StripeType").orElse(null);
-            if (coupled != null)
-            {
-                return coupled;
-            }
-            return findNodeById(stripeNode.getRoot(), "StripeType", stripeNode.getAttributeValueOrDefault("StripeType"));
-        }
-        XsdTreeNode defined = findActiveChild(stripeNode, "DefinedStripe");
-        if (defined != null)
-        {
-            return defined.getCoupledNodeValue().orElse(null);
-        }
-        return findActiveChild(stripeNode, "Custom");
-    }
-
-    /**
-     * Collect stripe data.
-     * @param stripeNode node where the stripe data is defined.
-     * @param overrideNode node with custom overrides, can be {@code null}.
-     * @return collected stripe data.
-     */
-    private StripeData collectStripeData(final XsdTreeNode stripeNode, final XsdTreeNode overrideNode)
-    {
-        StripePhaseSync phaseSync = StripePhaseSync.NONE;
-        Length dashOffset = Length.ZERO;
-        StripeLateralSync lateralSync = StripeLateralSync.LINK;
-        List<XsdTreeNode> elementNodes;
-
-        XsdTreeNode dashOffsetNode = findActiveChild(overrideNode, "DashOffset");
-        if (dashOffsetNode == null)
-        {
-            dashOffsetNode = findActiveChild(stripeNode, "DashOffset");
-        }
-        if (dashOffsetNode != null && dashOffsetNode.getChildCount() > 0)
-        {
-            try
-            {
-                XsdTreeNode phaseNode = dashOffsetNode.getChild(0);
-                switch (phaseNode.getNodeName())
-                {
-                    case "SyncUpstream":
-                    {
-                        phaseSync = StripePhaseSync.UPSTREAM;
-                        break;
-                    }
-                    case "SyncDownstream":
-                    {
-                        phaseSync = StripePhaseSync.DOWNSTREAM;
-                        break;
-                    }
-                    case "Fixed":
-                    {
-                        phaseSync = StripePhaseSync.NONE;
-                        dashOffset = Adapters.get(Length.class).unmarshal(phaseNode.getAttributeValueOrDefault("Offset"))
-                                .get(getEval());
-                        break;
-                    }
-                    default:
-                    {
-                        Logger.ots().warn("Dash synchronization " + phaseNode.getNodeName() + " is unknown.");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                // ignore
-            }
-        }
-        String latSyncName = overrideNode != null && overrideNode.hasAttribute("LateralSync")
-                ? overrideNode.getAttributeValueOrDefault("LateralSync") : null;
-        if (latSyncName == null && stripeNode.hasAttribute("LateralSync"))
-        {
-            latSyncName = stripeNode.getAttributeValueOrDefault("LateralSync");
-        }
-        if (latSyncName != null)
-        {
-            lateralSync = Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
-        }
-
-        XsdTreeNode elements = findActiveChild(overrideNode, "Elements");
-        if (elements == null)
-        {
-            elements = findActiveChild(stripeNode, "Elements");
-        }
-        elementNodes = elements == null ? Collections.emptyList() : elements.getChildren();
-
-        return new StripeData(phaseSync, dashOffset, lateralSync, elementNodes);
-    }
-
-    /**
-     * Returns the first active child with the given name.
-     * @param parent parent node, can be {@code null}.
-     * @param name child name.
-     * @return active child, {@code null} if not present.
-     */
-    private static XsdTreeNode findActiveChild(final XsdTreeNode parent, final String name)
-    {
-        if (parent == null)
-        {
-            return null;
-        }
-        for (XsdTreeNode child : parent.getChildren())
-        {
-            if (child.isActive() && child.getNodeName().equals(name))
-            {
-                return child;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds a node by name and Id below the given parent.
-     * @param parent parent node, can be {@code null}.
-     * @param nodeName node name.
-     * @param id Id value.
-     * @return matching node, {@code null} if not found.
-     */
-    private static XsdTreeNode findNodeById(final XsdTreeNode parent, final String nodeName, final String id)
-    {
-        if (parent == null || id == null)
-        {
-            return null;
-        }
-        if (parent.getNodeName().equals(nodeName) && parent.hasAttribute("Id")
-                && id.equals(parent.getAttributeValueOrDefault("Id")))
-        {
-            return parent;
-        }
-        for (XsdTreeNode child : parent.getChildren())
-        {
-            XsdTreeNode found = findNodeById(child, nodeName, id);
-            if (found != null)
-            {
-                return found;
-            }
-        }
-        return null;
     }
 
     /**
@@ -1302,26 +1089,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             this.connectorNode = null;
             setDirtyAndCheckValidity();
-        }
-    }
-
-    /**
-     * Returns the value with appropriate adapter, or {@code null} if the value is {@code null}.
-     * @param <T> type of the value after unmarshaling.
-     * @param value value.
-     * @param adapter adapter for values of type T.
-     * @return unmarshaled value.
-     */
-    private <T> T orNull(final String value, final ExpressionAdapter<T, ?> adapter)
-    {
-        try
-        {
-            return value == null ? null : adapter.unmarshal(value).get(getEval());
-        }
-        catch (IllegalArgumentException ex)
-        {
-            // illegal or missing value for adapter
-            return null;
         }
     }
 
@@ -1748,70 +1515,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Remembers minimum and maximum start and end offset, to return the mean of both.
-     */
-    public class MiddleOffset
-    {
-        /** Minimum start offset. */
-        private double startOffsetMin = Double.POSITIVE_INFINITY;
-
-        /** Minimum start offset. */
-        private double startOffsetMax = Double.NEGATIVE_INFINITY;
-
-        /** Minimum end offset. */
-        private double endOffsetMin = Double.POSITIVE_INFINITY;
-
-        /** Maximum end offset. */
-        private double endOffsetMax = Double.NEGATIVE_INFINITY;
-
-        /**
-         * Constructor.
-         */
-        public MiddleOffset()
-        {
-            //
-        }
-
-        /**
-         * Get start offset.
-         * @return start offset
-         */
-        public double getStartOffset()
-        {
-            return .5 * (this.startOffsetMin + this.startOffsetMax);
-        }
-
-        /**
-         * Add start offset.
-         * @param startOffset start offset.
-         */
-        public void addStartOffset(final double startOffset)
-        {
-            this.startOffsetMin = Math.min(this.startOffsetMin, startOffset);
-            this.startOffsetMax = Math.max(this.startOffsetMax, startOffset);
-        }
-
-        /**
-         * Get end offset.
-         * @return end offset
-         */
-        public double getEndOffset()
-        {
-            return .5 * (this.endOffsetMin + this.endOffsetMax);
-        }
-
-        /**
-         * Add end offset.
-         * @param endOffset end offset
-         */
-        public void addEndOffset(final double endOffset)
-        {
-            this.endOffsetMin = Math.min(this.endOffsetMin, endOffset);
-            this.endOffsetMax = Math.max(this.endOffsetMax, endOffset);
-        }
-    }
-
-    /**
      * Listener to events that affect the shape. This class can also deliver the resulting line.
      * @author Wouter Schakel
      */
@@ -1939,19 +1642,21 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     switch (node.getNodeName())
                     {
                         case "Coordinate":
-                            this.coordinates.put(node, orNull(node.getValueOrDefault(), Adapters.get(Point2d.class)));
+                            this.coordinates.put(node,
+                                    Adapters.parseOrNull(getEval(), node.getValueOrDefault(), Point2d.class));
                             break;
                         case "StartCurvature":
-                            this.startCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                            this.startCurvature =
+                                    Adapters.parseOrNull(getEval(), node.getValueOrDefault(), LinearDensity.class);
                             break;
                         case "EndCurvature":
-                            this.endCurvature = orNull(node.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                            this.endCurvature = Adapters.parseOrNull(getEval(), node.getValueOrDefault(), LinearDensity.class);
                             break;
                         case "Length":
-                            this.length = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
+                            this.length = Adapters.parseOrNull(getEval(), node.getValueOrDefault(), Length.class);
                             break;
                         case "A":
-                            this.a = orNull(node.getValueOrDefault(), Adapters.get(Length.class));
+                            this.a = Adapters.parseOrNull(getEval(), node.getValueOrDefault(), Length.class);
                             break;
                         default:
                             Logger.ots().warn(node.getNodeName()
@@ -2036,11 +1741,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         try
                         {
-                            this.coordinates.put(child, orNull(child.getValueOrDefault(), Adapters.get(Point2d.class)));
+                            this.coordinates.put(child,
+                                    Adapters.parseOrNull(getEval(), child.getValueOrDefault(), Point2d.class));
                         }
                         catch (Exception ex)
                         {
-                            orNull(child.getValueOrDefault(), Adapters.get(Point2d.class));
+                            Adapters.parseOrNull(getEval(), child.getValueOrDefault(), Point2d.class);
                             throw new OtsRuntimeException(
                                     "Expression adapter could not unmarshal value for polyline coordinate.");
                         }
@@ -2066,17 +1772,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                                 {
                                     case "StartCurvature":
                                         this.startCurvature =
-                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                                                Adapters.parseOrNull(getEval(), child.getValueOrDefault(), LinearDensity.class);
                                         break;
                                     case "EndCurvature":
                                         this.endCurvature =
-                                                orNull(child.getValueOrDefault(), Adapters.get(LinearDensity.class));
+                                                Adapters.parseOrNull(getEval(), child.getValueOrDefault(), LinearDensity.class);
                                         break;
                                     case "Length":
-                                        this.length = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
+                                        this.length = Adapters.parseOrNull(getEval(), child.getValueOrDefault(), Length.class);
                                         break;
                                     case "A":
-                                        this.a = orNull(child.getValueOrDefault(), Adapters.get(Length.class));
+                                        this.a = Adapters.parseOrNull(getEval(), child.getValueOrDefault(), Length.class);
                                         break;
                                     default:
                                         throw new OtsRuntimeException(
@@ -2123,36 +1829,28 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             switch (attribute)
             {
                 case "Shape":
-                    this.shape = getOrNull(attribute, Adapters.DOUBLE_POSITIVE_ADAPTER);
+                    this.shape = Adapters.parseOrNull(getEval(), this.shapeNode.getAttributeValueOrDefault(attribute),
+                            Adapters.DOUBLE_POSITIVE_ADAPTER);
                     break;
                 case "Weighted":
-                    this.weighted = getOrNull(attribute, Adapters.get(Boolean.class));
+                    this.weighted = Adapters.parseOrNull(getEval(), this.shapeNode.getAttributeValueOrDefault(attribute),
+                            Boolean.class);
                     break;
                 case "Length":
-                    this.length = getOrNull(attribute, Adapters.get(Length.class));
+                    this.length =
+                            Adapters.parseOrNull(getEval(), this.shapeNode.getAttributeValueOrDefault(attribute), Length.class);
                     break;
                 case "Radius":
-                    this.radius = getOrNull(attribute, Adapters.get(Length.class));
+                    this.radius =
+                            Adapters.parseOrNull(getEval(), this.shapeNode.getAttributeValueOrDefault(attribute), Length.class);
                     break;
                 case "Direction":
-                    this.direction = getOrNull(attribute, Adapters.get(ArcDirection.class));
+                    this.direction = Adapters.parseOrNull(getEval(), this.shapeNode.getAttributeValueOrDefault(attribute),
+                            ArcDirection.class);
                     break;
                 default:
                     // an attribute was changed that does not change the shape
             }
-        }
-
-        /**
-         * Returns the attribute value with appropriate adapter, or {@code null} if the attribute is not given.
-         * @param <T> type of the attribute value after unmarshaling.
-         * @param attribute attribute.
-         * @param adapter adapter for values of type T.
-         * @return unmarshaled value.
-         */
-        private <T> T getOrNull(final String attribute, final ExpressionAdapter<T, ?> adapter)
-        {
-            String value = this.shapeNode.getAttributeValueOrDefault(attribute);
-            return orNull(value, adapter);
         }
 
         /**

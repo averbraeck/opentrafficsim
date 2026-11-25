@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.point.Point2d;
+import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
@@ -91,6 +92,41 @@ public final class Adapters
         Throw.when(!ADAPTERS.containsKey(clazz), OtsRuntimeException.class,
                 "No adapter for class %s available. Add it in the static code block of MapData or create one directly.");
         return (ExpressionAdapter<T, E>) ADAPTERS.get(clazz);
+    }
+
+    /**
+     * Returns the value of a string with the adapter registered for the given class, or {@code null} if the value is
+     * {@code null} or invalid.
+     * @param <T> type of the value after unmarshaling.
+     * @param eval expression evaluator.
+     * @param value value, can be {@code null}.
+     * @param clazz class for which to obtain the adapter.
+     * @return unmarshaled value, or {@code null} if the value is {@code null} or invalid.
+     */
+    public static <T> T parseOrNull(final Eval eval, final String value, final Class<T> clazz)
+    {
+        return parseOrNull(eval, value, get(clazz));
+    }
+
+    /**
+     * Returns the value of a string with the given adapter, or {@code null} if the value is {@code null} or invalid.
+     * @param <T> type of the value after unmarshaling.
+     * @param eval expression evaluator.
+     * @param value value, can be {@code null}.
+     * @param adapter adapter for values of type T.
+     * @return unmarshaled value, or {@code null} if the value is {@code null} or invalid.
+     */
+    public static <T> T parseOrNull(final Eval eval, final String value, final ExpressionAdapter<T, ?> adapter)
+    {
+        try
+        {
+            return value == null ? null : adapter.unmarshal(value).get(eval);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // illegal or missing value for adapter
+            return null;
+        }
     }
 
     /**

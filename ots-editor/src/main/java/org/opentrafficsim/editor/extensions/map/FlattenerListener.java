@@ -18,7 +18,7 @@ import org.opentrafficsim.editor.extensions.Adapters;
  * </p>
  * @author Wouter Schakel
  */
-public class FlattenerListener extends ChangeListener<CurveFlattener>
+public class FlattenerListener extends DataListener<CurveFlattener>
 {
 
     /**

@@ -31,7 +31,8 @@ import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.w3c.dom.Node;
 
 /**
- * This class exists to keep {@code XsdTreeNode} at manageable size. It houses all static methods used in {@code XsdTreeNode}.
+ * This class exists to keep {@code XsdTreeNode} at manageable size. It houses static methods used in {@code XsdTreeNode} and
+ * static helpers for working with {@code XsdTreeNode} structures.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -357,6 +358,57 @@ public final class XsdTreeNodeUtil
         boolean value1Empty = value1 == null || value1.isEmpty();
         boolean value2Empty = value2 == null || value2.isEmpty();
         return (value1Empty && value2Empty) || (value1 != null && value1.equals(value2));
+    }
+
+    /**
+     * Returns the first active child with the given name.
+     * @param parent parent node, can be {@code null}.
+     * @param name child name.
+     * @return active child, {@code null} if not present.
+     */
+    public static XsdTreeNode findActiveChild(final XsdTreeNode parent, final String name)
+    {
+        if (parent == null || !parent.isActive())
+        {
+            return null;
+        }
+        for (XsdTreeNode child : parent.getChildren())
+        {
+            if (child.isActive() && child.getNodeName().equals(name))
+            {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds a node by name and Id below the given parent.
+     * @param parent parent node, can be {@code null}.
+     * @param nodeName node name.
+     * @param id Id value.
+     * @return matching node, {@code null} if not found.
+     */
+    public static XsdTreeNode findNodeById(final XsdTreeNode parent, final String nodeName, final String id)
+    {
+        if (parent == null || id == null || !parent.isActive())
+        {
+            return null;
+        }
+        if (parent.getNodeName().equals(nodeName) && parent.hasAttribute("Id")
+                && id.equals(parent.getAttributeValueOrDefault("Id")))
+        {
+            return parent;
+        }
+        for (XsdTreeNode child : parent.getChildren())
+        {
+            XsdTreeNode found = findNodeById(child, nodeName, id);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+        return null;
     }
 
     /**

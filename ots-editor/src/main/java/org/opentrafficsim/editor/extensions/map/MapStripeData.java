@@ -12,7 +12,6 @@ import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.editor.extensions.map.MapLinkData.MiddleOffset;
 import org.opentrafficsim.road.network.CrossSectionGeometry;
 
 /**
