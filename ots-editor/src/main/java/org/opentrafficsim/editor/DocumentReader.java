@@ -60,8 +60,11 @@ public final class DocumentReader
         // source.setSystemId(resource.asUri().toString());
         // return source;
         // });
-        Document doc = db.parse(documentResource.stream(), documentResource.systemId());
-        return doc;
+        try (InputStream stream = documentResource.stream())
+        {
+            Document doc = db.parse(stream, documentResource.systemId());
+            return doc;
+        }
     }
 
     /**

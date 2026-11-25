@@ -73,7 +73,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                     new ObjectDescriptor("Parent", "Parent node", XsdTreeNode.class),
                     new ObjectDescriptor("Index", "Index where it was in the parent", Integer.class)));
 
-    /** Directory, relevant for relative paths in include nodes. */
+    /** Base URI used to resolve relative paths in include nodes. */
     private URI baseUri;
 
     /** Whether validation should be ignored for the entire tree. */
@@ -117,8 +117,8 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     }
 
     /**
-     * Returns the directory.
-     * @return directory
+     * Returns the base URI.
+     * @return base URI
      */
     public URI getBaseUri()
     {
@@ -127,7 +127,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /**
      * Set the base URI.
-     * @param baseUri bas URI
+     * @param baseUri base URI
      */
     public void setBaseUri(final URI baseUri)
     {

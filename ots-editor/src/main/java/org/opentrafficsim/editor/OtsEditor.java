@@ -21,14 +21,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -247,11 +249,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     /** Root node of the XSD file. */
     private Document xsdDocument;
 
-    /** Last directory from which a file was loaded or in to which a file was saved. */
-    private URI lastDirectory;
-
-    /** Last file that was loaded or saved. */
-    private String lastFile;
+    /** Last file that was loaded or saved, {@code null} if no file is known. */
+    private Path lastPath;
 
     /** Whether there is unsaved content. */
     private boolean unsavedChanges = false;
@@ -953,16 +952,28 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
                 {
                     if (!this.unsavedChanges || dialogs().confirmDiscardChanges())
                     {
-                        File f = new File(file);
-                        this.lastDirectory = Path.of(f.getParent()).toUri();
-                        this.lastFile = f.getName();
-                        if (!loadFile(f, "File loaded"))
+                        Path path;
+                        try
+                        {
+                            path = Path.of(file).normalize().toAbsolutePath();
+                        }
+                        catch (InvalidPathException exception)
                         {
                             if (dialogs().confirmRemoveRecentFile())
                             {
                                 PROPERTIES_STORE.removeFromList(RECENT_FILES_KEY, file);
                                 updateRecentFileMenu();
                             }
+                            return;
+                        }
+                        if (loadFile(path.toFile(), "File loaded"))
+                        {
+                            setCurrentFile(path);
+                        }
+                        else if (dialogs().confirmRemoveRecentFile())
+                        {
+                            PROPERTIES_STORE.removeFromList(RECENT_FILES_KEY, file);
+                            updateRecentFileMenu();
                         }
                     }
                 });
@@ -1007,9 +1018,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         }
         this.unsavedChanges = unsavedChanges;
         StringBuilder title = new StringBuilder("OTS | The Open Traffic Simulator | Editor");
-        if (this.lastFile != null)
+        if (this.lastPath != null)
         {
-            title.append(" (").append(Path.of(this.lastDirectory).resolve(this.lastFile)).append(")");
+            title.append(" (").append(this.lastPath).append(")");
         }
         if (this.unsavedChanges)
         {
@@ -1043,52 +1054,93 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      */
     private void checkAutosave()
     {
-        Path tmpPath = Paths.get(System.getProperty("java.io.tmpdir") + "ots" + File.separator);
-        File tmpDir = tmpPath.toFile();
-        if (!tmpDir.exists())
-        {
-            tmpDir.mkdir();
-        }
-        Iterator<Path> it;
+        Path tmpPath = autosaveDirectory();
         try
         {
-            it = Files.newDirectoryStream(tmpPath, "autosave*.xml").iterator();
+            Files.createDirectories(tmpPath);
         }
         catch (IOException ioe)
         {
             // skip presenting user with autosave, but also do not delete file
             return;
         }
-        if (it.hasNext())
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tmpPath, "autosave*.xml"))
         {
-            File file = it.next().toFile();
-            Optional<Boolean> userInput = dialogs().confirmLoadAutosaveFile(file);
-            if (userInput.isPresent() && userInput.get())
+            Iterator<Path> it = stream.iterator();
+            if (it.hasNext())
             {
-                boolean loaded;
-                try
+                File file = it.next().toFile();
+                Path source = autosaveSource();
+                URI basePath = source == null ? null : source.toUri();
+                Optional<Boolean> userInput = dialogs().confirmLoadAutosaveFile(file);
+                if (userInput.isPresent() && userInput.get())
                 {
-                    loaded = loadFile(DocumentResource.of(file), "Autosave file loaded", file.toURI());
-                }
-                catch (FileNotFoundException ex)
-                {
-                    loaded = false;
-                }
-                if (!loaded)
-                {
-                    if (dialogs().confirmRemoveAutosaveFile())
+                    boolean loaded;
+                    try
                     {
-                        file.delete();
+                        loaded = loadFile(DocumentResource.of(file), "Autosave file loaded", basePath);
                     }
-                    return;
+                    catch (FileNotFoundException ex)
+                    {
+                        loaded = false;
+                    }
+                    if (!loaded)
+                    {
+                        if (dialogs().confirmRemoveAutosaveFile())
+                        {
+                            file.delete();
+                            PROPERTIES_STORE.clearProperty(AUTOSAVE_SOURCE_KEY);
+                        }
+                        return;
+                    }
+                    if (source != null)
+                    {
+                        setCurrentFile(source);
+                    }
+                    setUnsavedChanges(true);
+                    file.delete();
+                    PROPERTIES_STORE.clearProperty(AUTOSAVE_SOURCE_KEY);
                 }
-                setUnsavedChanges(true);
-                file.delete();
+                else if (userInput.isPresent() && !userInput.get())
+                {
+                    file.delete();
+                    PROPERTIES_STORE.clearProperty(AUTOSAVE_SOURCE_KEY);
+                }
             }
-            else if (userInput.isPresent() && !userInput.get())
-            {
-                file.delete();
-            }
+        }
+        catch (IOException ioe)
+        {
+            // skip presenting user with autosave, but also do not delete file
+        }
+    }
+
+    /**
+     * Returns the directory used for autosave files.
+     * @return directory used for autosave files
+     */
+    private static Path autosaveDirectory()
+    {
+        return Path.of(System.getProperty("java.io.tmpdir"), "ots");
+    }
+
+    /**
+     * Returns the source file of the current autosave, used as base for relative includes.
+     * @return source file of the current autosave, or {@code null} if unknown or invalid
+     */
+    private static Path autosaveSource()
+    {
+        String source = PROPERTIES_STORE.getProperty(AUTOSAVE_SOURCE_KEY);
+        if (source == null || source.isBlank())
+        {
+            return null;
+        }
+        try
+        {
+            return Path.of(source).normalize().toAbsolutePath();
+        }
+        catch (InvalidPathException exception)
+        {
+            return null;
         }
     }
 
@@ -1102,6 +1154,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             try
             {
                 this.undo.setIgnoreChanges(true);
+                this.lastPath = null;
                 initializeTree();
                 this.undo.clear();
             }
@@ -1229,11 +1282,27 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
         if (OtsEditor.this.unsavedChanges)
         {
             setStatusLabel("Autosaving...");
-            File file = new File(System.getProperty("java.io.tmpdir") + "ots" + File.separator
-                    + (OtsEditor.this.lastFile == null ? "autosave.xml" : "autosave_" + OtsEditor.this.lastFile));
-            save(file, root, false);
-            file.deleteOnExit();
-            setStatusLabel("Autosaved");
+            Path dir = autosaveDirectory();
+            try
+            {
+                Files.createDirectories(dir);
+            }
+            catch (IOException exception)
+            {
+                return;
+            }
+            String name = this.lastPath == null ? "autosave.xml" : "autosave_" + this.lastPath.getFileName();
+            File file = dir.resolve(name).toFile();
+            if (save(file, root, false))
+            {
+                PROPERTIES_STORE.setProperty(AUTOSAVE_SOURCE_KEY, this.lastPath == null ? "" : this.lastPath.toString());
+                file.deleteOnExit();
+                setStatusLabel("Autosaved");
+            }
+            else
+            {
+                setStatusLabel("Autosave failed");
+            }
         }
     }
 
@@ -1781,25 +1850,78 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             return;
         }
         FileDialog fileDialog = new FileDialog(this, "Open XML", FileDialog.LOAD);
-        fileDialog.setFilenameFilter((dir, name) -> name.toLowerCase().endsWith(".xml"));
+        if (this.lastPath != null && this.lastPath.getParent() != null)
+        {
+            try
+            {
+                fileDialog.setDirectory(this.lastPath.getParent().toString());
+            }
+            catch (RuntimeException exception)
+            {
+                // fall back to the platform default directory
+            }
+        }
+        fileDialog.setFilenameFilter((dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".xml"));
         fileDialog.setVisible(true);
+        Path path = resolveDialogPath(fileDialog);
+        if (path == null)
+        {
+            return;
+        }
+        if (!path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".xml"))
+        {
+            dialogs().notification("Only XML files can be opened.", "Unable to open file");
+            return;
+        }
+        if (!Files.isRegularFile(path) || !Files.isReadable(path))
+        {
+            dialogs().notification("The file cannot be read.", "Unable to open file");
+            return;
+        }
+        if (loadFile(path.toFile(), "File loaded"))
+        {
+            setCurrentFile(path);
+        }
+        else
+        {
+            dialogs().notification("Unable to read file.", "Unable to open file");
+        }
+    }
+
+    /**
+     * Resolves the path selected in a file dialog. Deals with a missing directory and invalid path strings.
+     * @param fileDialog file dialog from which a file was selected
+     * @return selected, normalized and absolute path, or {@code null} if no file was selected or the path is invalid
+     */
+    private Path resolveDialogPath(final FileDialog fileDialog)
+    {
         String fileName = fileDialog.getFile();
         if (fileName == null)
         {
-            return;
+            return null;
         }
-        if (!fileName.toLowerCase().endsWith(".xml"))
+        try
         {
-            return;
+            String directory = fileDialog.getDirectory();
+            Path path = directory == null || directory.isBlank() ? Path.of(fileName)
+                    : Path.of(directory).resolve(fileName);
+            return path.normalize().toAbsolutePath();
         }
-        this.lastDirectory = Path.of(fileDialog.getDirectory()).toUri();
-        this.lastFile = fileName;
-        File file = new File(this.lastDirectory + this.lastFile);
-        boolean loaded = loadFile(file, "File loaded");
-        if (!loaded)
+        catch (InvalidPathException exception)
         {
-            dialogs().notification("Unable to read file.");
+            dialogs().notification("Invalid file path.", "Invalid path");
+            return null;
         }
+    }
+
+    /**
+     * Sets the file that is currently open, and updates the window title.
+     * @param path file that is currently open
+     */
+    private void setCurrentFile(final Path path)
+    {
+        this.lastPath = path.normalize().toAbsolutePath();
+        setUnsavedChanges(this.unsavedChanges);
     }
 
     /**
@@ -1812,7 +1934,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     }
 
     /**
-     * Load file. It is stored in recent files. This method assumes {@link #lastDirectory} is already set.
+     * Load file. On success it is stored in recent files, and the document URI is used as base for relative includes.
      * @param file file to load
      * @param postLoadStatus status message in status bar to show after loading
      * @return whether the file was successfully loaded
@@ -1821,11 +1943,14 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     {
         try
         {
-            boolean out = loadFile(DocumentResource.of(file), postLoadStatus, this.lastDirectory);
-            PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
-                    PROPERTIES_STORE.getInteger(MAX_RECENT_FILES_KEY));
-            updateRecentFileMenu();
-            return out;
+            boolean loaded = loadFile(DocumentResource.of(file), postLoadStatus, file.toURI());
+            if (loaded)
+            {
+                PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.toPath().normalize().toAbsolutePath().toString(),
+                        PROPERTIES_STORE.getInteger(MAX_RECENT_FILES_KEY));
+                updateRecentFileMenu();
+            }
+            return loaded;
         }
         catch (FileNotFoundException exception)
         {
@@ -1846,8 +1971,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     public void preLoadFile(final ResourceHandle resource) throws IOException
     {
         loadFile(new DocumentResource(resource.openStream(), resource.asUri().toString()), "", resource.asUri());
-        this.lastDirectory = null;
-        this.lastFile = null;
+        this.lastPath = null;
         this.setUnsavedChanges(true);
     }
 
@@ -1855,7 +1979,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      * Load file.
      * @param documentResource document resource
      * @param postLoadStatus status message in status bar to show after loading
-     * @param basePath base path, this is lastDirectory for regular file loading
+     * @param basePath base URI against which relative includes are resolved, typically the document URI
      * @return whether the file was successfully loaded
      */
     private boolean loadFile(final DocumentResource documentResource, final String postLoadStatus, final URI basePath)
@@ -1912,14 +2036,16 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     private void saveFile()
     {
         XsdTreeNodeRoot root = ((XsdTreeTableModel) this.treeTable.getTree().getModel()).getDataRoot();
-        if (this.lastDirectory == null || this.lastFile == null)
+        if (this.lastPath == null)
         {
             saveFileAs(root);
             return;
         }
-        save(Path.of(this.lastDirectory).resolve(this.lastFile).toFile(), root, true);
-        setUnsavedChanges(false);
-        setStatusLabel("Saved");
+        if (save(this.lastPath.toFile(), root, true))
+        {
+            setUnsavedChanges(false);
+            setStatusLabel("Saved");
+        }
     }
 
     /**
@@ -1929,27 +2055,37 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
     public void saveFileAs(final XsdTreeNode node)
     {
         FileDialog fileDialog = new FileDialog(this, "Save XML", FileDialog.SAVE);
+        if (this.lastPath != null && this.lastPath.getParent() != null)
+        {
+            try
+            {
+                fileDialog.setDirectory(this.lastPath.getParent().toString());
+            }
+            catch (RuntimeException exception)
+            {
+                // fall back to the platform default directory
+            }
+        }
         fileDialog.setFile("*.xml");
         fileDialog.setVisible(true);
-        String fileName = fileDialog.getFile();
-        if (fileName == null)
+        Path path = resolveDialogPath(fileDialog);
+        if (path == null)
         {
             return;
         }
-        if (!fileName.toLowerCase().endsWith(".xml"))
+        if (!path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".xml"))
         {
-            fileName = fileName + ".xml";
+            path = path.resolveSibling(path.getFileName().toString() + ".xml");
         }
-        if (node instanceof XsdTreeNodeRoot)
+        if (!save(path.toFile(), node, true))
         {
-            this.lastDirectory = Path.of(fileDialog.getDirectory()).toUri();
-            this.lastFile = fileName;
+            return;
         }
-        save(new File(fileDialog.getDirectory() + fileName), node, true);
         if (node instanceof XsdTreeNodeRoot root)
         {
             this.undo.setIgnoreChanges(true);
-            root.setBaseUri(this.lastDirectory);
+            setCurrentFile(path);
+            root.setBaseUri(path.toUri());
             invalidateAndRepaint();
             setUnsavedChanges(false);
             this.undo.setIgnoreChanges(false);
@@ -1962,8 +2098,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      * @param file file to save.
      * @param root root node of tree to save, can be a sub-tree of the full tree.
      * @param storeAsRecent whether to store the file under recent files.
+     * @return whether the file was successfully saved
      */
-    private void save(final File file, final XsdTreeNode root, final boolean storeAsRecent)
+    private boolean save(final File file, final XsdTreeNode root, final boolean storeAsRecent)
     {
         try (FileOutputStream fileOutputStream = new FileOutputStream(file))
         {
@@ -2023,14 +2160,16 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
             // end of fix
             if (storeAsRecent)
             {
-                PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.getAbsolutePath(),
+                PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.toPath().normalize().toAbsolutePath().toString(),
                         PROPERTIES_STORE.getInteger(MAX_RECENT_FILES_KEY));
                 updateRecentFileMenu();
             }
+            return true;
         }
         catch (ParserConfigurationException | TransformerException | IOException exception)
         {
             dialogs().notification("Unable to save file.");
+            return false;
         }
     }
 

@@ -31,6 +31,7 @@ public interface OtsEditorProperties
             setProperty(MAX_DROPDOWN_ITEMS_KEY, PropertiesStore.valueToString(20));
             setProperty(MAX_NAVIGATE_STEPS_KEY, PropertiesStore.valueToString(50));
             setProperty(AUTOSAVE_MS_KEY, PropertiesStore.valueToString(60000));
+            setProperty(AUTOSAVE_SOURCE_KEY, "");
         }
     }, "editor", "editor user settings");
 
@@ -60,5 +61,8 @@ public interface OtsEditorProperties
 
     /** Key to store auto-save milliseconds. */
     String AUTOSAVE_MS_KEY = "autosaveMs";
+
+    /** Key to store the source file of the current auto-save, used to resolve relative includes. */
+    String AUTOSAVE_SOURCE_KEY = "autosaveSource";
 
 }
