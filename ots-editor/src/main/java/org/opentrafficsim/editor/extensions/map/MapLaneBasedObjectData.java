@@ -66,6 +66,12 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     /** Node of link. */
     private XsdTreeNode lastLinkNode;
 
+    /** Link data on which this object listens for layout rebuilds. */
+    private MapLinkData lastLinkData;
+
+    /** Whether this data object has been destroyed. */
+    private boolean destroyed;
+
     /**
      * Constructor.
      * @param map map.
@@ -98,30 +104,34 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
      */
     protected void setLinkNode(final XsdTreeNode linkNode)
     {
-        if (this.lastLinkNode != null)
+        if (this.lastLinkData != null)
         {
-            Optional<MapData> data = getMap().getData(linkNode);
-            if (data.isPresent())
-            {
-                ((MapLinkData) data.get()).removeListener(this, MapLinkData.LAYOUT_REBUILT);
-            }
+            this.lastLinkData.removeListener(this, MapLinkData.LAYOUT_REBUILT);
+            this.lastLinkData = null;
         }
         this.lastLinkNode = linkNode;
-        Optional<MapData> data = getMap().getData(linkNode);
-        if (data.isPresent())
+        if (linkNode == null)
         {
-            ((MapLinkData) data.get()).addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
+            return;
+        }
+        Optional<MapData> data = getMap().getData(linkNode);
+        if (data.orElse(null) instanceof MapLinkData linkData)
+        {
+            this.lastLinkData = linkData;
+            linkData.addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
         }
     }
 
     @Override
     public void destroy()
     {
+        this.destroyed = true;
         super.destroy();
         getNode().removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        if (this.lastLinkNode != null)
+        if (this.lastLinkData != null)
         {
-            this.lastLinkNode.removeListener(this, MapLinkData.LAYOUT_REBUILT);
+            this.lastLinkData.removeListener(this, MapLinkData.LAYOUT_REBUILT);
+            this.lastLinkData = null;
         }
     }
 
@@ -194,6 +204,10 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     @Override
     public void update()
     {
+        if (this.destroyed)
+        {
+            return;
+        }
         if (getNode().isIdentifiable())
         {
             this.id = getNode().getId() == null ? "" : getNode().getId();
@@ -212,6 +226,10 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     @Override
     public void notify(final Event event)
     {
+        if (this.destroyed)
+        {
+            return;
+        }
         if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
             String attribute = (String) ((Object[]) event.getContent())[1];

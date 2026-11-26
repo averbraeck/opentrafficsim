@@ -9,15 +9,21 @@ import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.djutils.eval.Eval;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.editor.extensions.map.EditorMap;
 import org.opentrafficsim.editor.extensions.map.MapLinkData;
+import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType;
+import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
  * Utility actions for link split and merge operations.
@@ -49,8 +55,7 @@ final class MapLinkEditActions
         {
             return null;
         }
-        Point2d world = editorMap.getPanel().getRenderableScale().getWorldCoordinates(screenPoint,
-                editorMap.getPanel().getExtent(), editorMap.getPanel().getSize());
+        Point2d world = editorMap.getSnappedWorldCoordinate(screenPoint);
         if (world == null)
         {
             return null;
@@ -125,6 +130,8 @@ final class MapLinkEditActions
         newLink.setAttributeValue("NodeStart", newNodeId);
         newLink.setAttributeValue("NodeEnd", endId);
 
+        assignPositionedChildren(linkNode, newLink, f, len, linkData.getEditor().getEval());
+
         if (formerCoordinateNodes > 0)
         {
             XsdTreeNode newShapeNode = newLink.getChildCount() > 0 ? newLink.getChild(0) : null;
@@ -166,6 +173,120 @@ final class MapLinkEditActions
         newLink.setId(second);
 
         return newLink;
+    }
+
+    /**
+     * Assign children that are located along a link to the correct part after the link has been split. Any direct child of the
+     * link with both a {@code Lane} and a {@code Position} attribute is considered, e.g. {@code TrafficLight} and
+     * {@code TrafficLightSensor}. Children at or beyond the split location remain on the duplicated link representing the
+     * latter part, with their {@code Position} recalculated for that part. Children before the split location remain on the
+     * original link. This method is generic in the child type; no specific child names are used.
+     * @param linkNode original link node, representing the former part
+     * @param newLink duplicate of the original link node, representing the latter part
+     * @param splitFraction fractional location of the split on the original link
+     * @param linkLength length of the original link
+     * @param eval expression evaluator used to parse {@code Position} values, may be {@code null}
+     */
+    static void assignPositionedChildren(final XsdTreeNode linkNode, final XsdTreeNode newLink, final double splitFraction,
+            final double linkLength, final Eval eval)
+    {
+        if (linkNode == null || newLink == null)
+        {
+            return;
+        }
+        List<XsdTreeNode> originalChildren = findPositionedChildren(linkNode);
+        List<XsdTreeNode> copiedChildren = findPositionedChildren(newLink);
+        for (int index = 0; index < Math.min(originalChildren.size(), copiedChildren.size()); index++)
+        {
+            XsdTreeNode original = originalChildren.get(index);
+            XsdTreeNode copy = copiedChildren.get(index);
+            String positionValue = original.getAttributeValueOrDefault("Position");
+            LengthBeginEnd position = Adapters.parseOrNull(eval, positionValue, LengthBeginEnd.class);
+            double positionFraction = positionFraction(position, linkLength);
+            if (!Double.isNaN(positionFraction) && positionFraction >= splitFraction)
+            {
+                String adaptedPosition = adaptPosition(position, splitFraction, linkLength);
+                if (original.getParent() != null)
+                {
+                    original.remove();
+                }
+                copy.setAttributeValue("Position", adaptedPosition);
+            }
+            else if (copy.getParent() != null)
+            {
+                copy.remove();
+            }
+        }
+    }
+
+    /**
+     * Returns all direct children of the given link node that have both a {@code Lane} and a {@code Position} attribute.
+     * @param linkNode link node
+     * @return positioned children of the link node
+     */
+    private static List<XsdTreeNode> findPositionedChildren(final XsdTreeNode linkNode)
+    {
+        List<XsdTreeNode> children = new ArrayList<>();
+        for (XsdTreeNode child : linkNode.getChildren())
+        {
+            if (child.hasAttribute("Lane") && child.hasAttribute("Position"))
+            {
+                children.add(child);
+            }
+        }
+        return children;
+    }
+
+    /**
+     * Returns the fractional location along the link of a position, or {@code NaN} if the position cannot be resolved.
+     * @param position position, may be {@code null}
+     * @param linkLength length of the link
+     * @return fractional location along the link, or {@code NaN}
+     */
+    private static double positionFraction(final LengthBeginEnd position, final double linkLength)
+    {
+        if (position == null || linkLength <= 0.0)
+        {
+            return Double.NaN;
+        }
+        return ParseUtil.parseLengthBeginEnd(position, Length.ofSI(linkLength)).si / linkLength;
+    }
+
+    /**
+     * Returns the position expressed for the latter part of a split link. An offset from the end does not change as the end of
+     * the link remains the same. A fraction or an offset from the begin is recalculated against the begin of the latter link.
+     * @param position parsed original position
+     * @param splitFraction fractional location of the split on the original link
+     * @param linkLength length of the original link
+     * @return adapted position attribute value
+     */
+    private static String adaptPosition(final LengthBeginEnd position, final double splitFraction, final double linkLength)
+    {
+        if (!position.isAbsolute())
+        {
+            if (splitFraction >= 1.0)
+            {
+                return marshalPosition(new LengthBeginEnd(0.0));
+            }
+            double fraction = (position.getFraction() - splitFraction) / (1.0 - splitFraction);
+            return marshalPosition(new LengthBeginEnd(Math.max(0.0, Math.min(1.0, fraction))));
+        }
+        if (!position.isBegin())
+        {
+            return marshalPosition(position);
+        }
+        double offset = position.getOffset().si - splitFraction * linkLength;
+        return marshalPosition(new LengthBeginEnd(true, Length.ofSI(Math.max(0.0, offset))));
+    }
+
+    /**
+     * Converts a position into its XML attribute representation.
+     * @param position position
+     * @return XML attribute value
+     */
+    private static String marshalPosition(final LengthBeginEnd position)
+    {
+        return Adapters.get(LengthBeginEnd.class).marshal(new LengthBeginEndType(position));
     }
 
     /**

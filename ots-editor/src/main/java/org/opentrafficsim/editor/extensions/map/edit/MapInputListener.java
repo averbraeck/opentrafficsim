@@ -339,7 +339,7 @@ public class MapInputListener extends InputListener implements EventListener
             {
                 // dragging?
                 List<Draggable<?>> draggablesDatas = locatables.stream().filter(Draggable.class::isInstance)
-                        .<Draggable<?>> map(Draggable.class::cast).toList();
+                        .<Draggable<?>>map(Draggable.class::cast).toList();
                 if (!draggablesDatas.isEmpty())
                 {
                     Point2d world = this.editorMap.getPanel().getRenderableScale().getWorldCoordinates(e.getPoint(),
@@ -1508,7 +1508,7 @@ public class MapInputListener extends InputListener implements EventListener
      * @param point point to snap
      * @return point snapped to grid
      */
-    private Point2d snapPointToGrid(final Point2d point)
+    public Point2d snapPointToGrid(final Point2d point)
     {
         if (!this.snap)
         {

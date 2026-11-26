@@ -152,10 +152,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private Set<Renderable2d<?>> crossSectionElements = new LinkedHashSet<>();
 
     /** Lane data. */
-    private java.util.Map<String, MapLaneData> laneData = new LinkedHashMap<>();
+    private Map<String, MapLaneData> laneData = new LinkedHashMap<>();
 
     /** Stripe data. */
-    private java.util.Map<String, MapStripeData> stripeData = new LinkedHashMap<>();
+    private Map<String, MapStripeData> stripeData = new LinkedHashMap<>();
 
     /** Cached downstream lane connection state per lane. */
     private final Map<MapLaneData, Boolean> hasNextLaneCache = new LinkedHashMap<>();

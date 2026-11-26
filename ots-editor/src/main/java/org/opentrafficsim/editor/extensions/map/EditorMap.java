@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -46,6 +47,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
@@ -1646,6 +1648,18 @@ public final class EditorMap extends JPanel implements EventListener
             }
         }
         return new CurveFlattener(64);
+    }
+
+    /**
+     * Returns the world coordinate of a screen point, snapped to the grid.
+     * @param screenPoint screen point
+     * @return world coordinate of the screen point, snapped to the grid
+     */
+    public Point2d getSnappedWorldCoordinate(final Point2D screenPoint)
+    {
+        Point2d world = getPanel().getRenderableScale().getWorldCoordinates(screenPoint,
+                getPanel().getExtent(), getPanel().getSize());
+        return this.inputListener.snapPointToGrid(world);
     }
 
     /**
