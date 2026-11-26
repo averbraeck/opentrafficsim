@@ -18,6 +18,7 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.editor.extensions.map.EditorMap;
 import org.opentrafficsim.editor.extensions.map.MapLinkData;
@@ -125,12 +126,29 @@ final class MapLinkEditActions
         String oldLinkId = linkNode.getId();
         String newNodeId = addedNode.getId();
 
+        String formerLinkId;
+        String latterLinkId;
+        if ((startId + "-" + endId).equals(oldLinkId))
+        {
+            formerLinkId = startId + "-" + newNodeId;
+            latterLinkId = newNodeId + "-" + endId;
+        }
+        else
+        {
+            Set<String> usedLinkIds = collectLinkIds(linkNode.getParent());
+            usedLinkIds.remove(oldLinkId);
+            formerLinkId = uniqueAppendedId(oldLinkId, usedLinkIds);
+            usedLinkIds.add(formerLinkId);
+            latterLinkId = uniqueAppendedId(oldLinkId, usedLinkIds);
+        }
+
         linkNode.setAttributeValue("NodeEnd", newNodeId);
         XsdTreeNode newLink = linkNode.duplicate();
         newLink.setAttributeValue("NodeStart", newNodeId);
         newLink.setAttributeValue("NodeEnd", endId);
+        newLink.setId(latterLinkId);
 
-        assignPositionedChildren(linkNode, newLink, f, len, linkData.getEditor().getEval());
+        assignSplitChildren(linkNode, newLink, f, len, linkData.getEditor().getEval(), latterLinkId);
 
         if (formerCoordinateNodes > 0)
         {
@@ -157,21 +175,7 @@ final class MapLinkEditActions
             }
         }
 
-        if ((startId + "-" + endId).equals(oldLinkId))
-        {
-            linkNode.setId(startId + "-" + newNodeId);
-            newLink.setId(newNodeId + "-" + endId);
-            return newLink;
-        }
-
-        Set<String> usedLinkIds = collectLinkIds(linkNode.getParent());
-        usedLinkIds.remove(oldLinkId);
-        String first = uniqueAppendedId(oldLinkId, usedLinkIds);
-        usedLinkIds.add(first);
-        String second = uniqueAppendedId(oldLinkId, usedLinkIds);
-        linkNode.setId(first);
-        newLink.setId(second);
-
+        linkNode.setId(formerLinkId);
         return newLink;
     }
 
@@ -186,16 +190,17 @@ final class MapLinkEditActions
      * @param splitFraction fractional location of the split on the original link
      * @param linkLength length of the original link
      * @param eval expression evaluator used to parse {@code Position} values, may be {@code null}
+     * @param newLinkId id that the latter link will receive, used to shift couplings to children that remain on that link
      */
-    static void assignPositionedChildren(final XsdTreeNode linkNode, final XsdTreeNode newLink, final double splitFraction,
-            final double linkLength, final Eval eval)
+    private static void assignSplitChildren(final XsdTreeNode linkNode, final XsdTreeNode newLink, final double splitFraction,
+            final double linkLength, final Eval eval, final String newLinkId)
     {
         if (linkNode == null || newLink == null)
         {
             return;
         }
-        List<XsdTreeNode> originalChildren = findPositionedChildren(linkNode);
-        List<XsdTreeNode> copiedChildren = findPositionedChildren(newLink);
+        List<XsdTreeNode> originalChildren = findPositionedLinkChildren(linkNode);
+        List<XsdTreeNode> copiedChildren = findPositionedLinkChildren(newLink);
         for (int index = 0; index < Math.min(originalChildren.size(), copiedChildren.size()); index++)
         {
             XsdTreeNode original = originalChildren.get(index);
@@ -205,7 +210,8 @@ final class MapLinkEditActions
             double positionFraction = positionFraction(position, linkLength);
             if (!Double.isNaN(positionFraction) && positionFraction >= splitFraction)
             {
-                String adaptedPosition = adaptPosition(position, splitFraction, linkLength);
+                String adaptedPosition = adaptSplitPosition(position, splitFraction, linkLength);
+                shiftCouplings(linkNode, original, newLinkId);
                 if (original.getParent() != null)
                 {
                     original.remove();
@@ -217,24 +223,6 @@ final class MapLinkEditActions
                 copy.remove();
             }
         }
-    }
-
-    /**
-     * Returns all direct children of the given link node that have both a {@code Lane} and a {@code Position} attribute.
-     * @param linkNode link node
-     * @return positioned children of the link node
-     */
-    private static List<XsdTreeNode> findPositionedChildren(final XsdTreeNode linkNode)
-    {
-        List<XsdTreeNode> children = new ArrayList<>();
-        for (XsdTreeNode child : linkNode.getChildren())
-        {
-            if (child.hasAttribute("Lane") && child.hasAttribute("Position"))
-            {
-                children.add(child);
-            }
-        }
-        return children;
     }
 
     /**
@@ -260,7 +248,7 @@ final class MapLinkEditActions
      * @param linkLength length of the original link
      * @return adapted position attribute value
      */
-    private static String adaptPosition(final LengthBeginEnd position, final double splitFraction, final double linkLength)
+    private static String adaptSplitPosition(final LengthBeginEnd position, final double splitFraction, final double linkLength)
     {
         if (!position.isAbsolute())
         {
@@ -280,22 +268,14 @@ final class MapLinkEditActions
     }
 
     /**
-     * Converts a position into its XML attribute representation.
-     * @param position position
-     * @return XML attribute value
-     */
-    private static String marshalPosition(final LengthBeginEnd position)
-    {
-        return Adapters.get(LengthBeginEnd.class).marshal(new LengthBeginEndType(position));
-    }
-
-    /**
-     * Merge adjacent incoming and outgoing links when deleting a node.
+     * Merge adjacent upstream and downstream links when deleting a node. Coordinates and positioned children of the downstream
+     * link are assigned to the upstream link, and references to moved children are changed to the remaining link ID.
      * @param editor editor
+     * @param editorMap editor map
      * @param node node to be deleted
      * @return whether merge was performed
      */
-    static Optional<Boolean> tryMergeNodeOnDelete(final OtsEditor editor, final XsdTreeNode node)
+    static Optional<Boolean> tryMergeNodeOnDelete(final OtsEditor editor, final EditorMap editorMap, final XsdTreeNode node)
     {
         if (node == null || !XsdPaths.NODE.equals(node.getPathString()) || !node.isActive() || node.getParent() == null
                 || node.getId() == null)
@@ -303,8 +283,8 @@ final class MapLinkEditActions
             return Optional.of(false);
         }
 
-        XsdTreeNode incoming = null;
-        XsdTreeNode outgoing = null;
+        XsdTreeNode upstream = null;
+        XsdTreeNode downstream = null;
         for (XsdTreeNode element : node.getParent().getChildren())
         {
             if (!element.isActive() || !XsdPaths.LINK.equals(element.getPathString()))
@@ -314,35 +294,42 @@ final class MapLinkEditActions
             Optional<XsdTreeNode> end = element.getCoupledNodeAttribute("NodeEnd");
             if (end.isPresent() && node.getId().equals(end.get().getId()))
             {
-                if (incoming != null)
+                if (upstream != null)
                 {
                     return Optional.of(false); // not a node on a corridor; we can't merge the links
                 }
-                incoming = element;
+                upstream = element;
             }
             Optional<XsdTreeNode> start = element.getCoupledNodeAttribute("NodeStart");
             if (start.isPresent() && node.getId().equals(start.get().getId()))
             {
-                if (outgoing != null)
+                if (downstream != null)
                 {
                     return Optional.of(false); // not a node on a corridor; we can't merge the links
                 }
-                outgoing = element;
+                downstream = element;
             }
         }
-        if (incoming == null || outgoing == null)
+        if (upstream == null || downstream == null)
         {
             return Optional.of(false);
         }
 
         String nodeId = node.getId();
-        String a = incoming.getAttributeValueOrDefault("NodeStart");
-        String c = outgoing.getAttributeValueOrDefault("NodeEnd");
-        if (a == null || c == null)
+        String upstreamNodeId = upstream.getAttributeValueOrDefault("NodeStart");
+        String downstreamNodeId = downstream.getAttributeValueOrDefault("NodeEnd");
+        if (upstreamNodeId == null || downstreamNodeId == null)
         {
             return Optional.of(false);
         }
-        String incomingId = incoming.getId();
+        String upstreamId = upstream.getId();
+
+        MapLinkData upstreamData = (MapLinkData) editorMap.getData(upstream).orElse(null);
+        MapLinkData downstreamData = (MapLinkData) editorMap.getData(downstream).orElse(null);
+        if (upstreamData == null || !upstreamData.isValid() || downstreamData == null || !downstreamData.isValid())
+        {
+            return Optional.of(false);
+        }
 
         Optional<Boolean> ans =
                 editor.dialogs().confirmYesNo("Merge adjacent links while deleting node '" + node.getId() + "'?");
@@ -351,22 +338,158 @@ final class MapLinkEditActions
             return ans;
         }
 
+        double upstreamLength = upstreamData.getCenterLine().getLength();
+        double downstreamLength = downstreamData.getCenterLine().getLength();
+        List<XsdTreeNode> downstreamCoordinates = collectCoordinateNodes(downstream, downstreamData);
+
         editor.getUndo().startAction(ActionType.REMOVE, node.getParent(), null);
-        incoming.setAttributeValue("NodeEnd", c);
-        if ((a + "-" + nodeId).equals(incomingId))
+        upstream.setAttributeValue("NodeEnd", downstreamNodeId);
+        if ((upstreamNodeId + "-" + nodeId).equals(upstreamId))
         {
-            Set<String> usedLinkIds = collectLinkIds(incoming.getParent());
-            String candidate = a + "-" + c;
+            Set<String> usedLinkIds = collectLinkIds(upstream.getParent());
+            String candidate = upstreamNodeId + "-" + downstreamNodeId;
             if (usedLinkIds.contains(candidate))
             {
                 candidate = uniqueAppendedId(candidate, usedLinkIds);
             }
-            incoming.setId(candidate);
+            upstream.setId(candidate);
         }
-        outgoing.remove();
+        String remainingLinkId = upstream.getId();
+
+        mergeCoordinates(upstream, downstreamCoordinates);
+        movePositionedChildren(upstream, downstream, upstreamLength, downstreamLength, remainingLinkId, editor.getEval());
+        downstream.remove();
         node.remove();
         return Optional.of(true);
     }
+
+    /**
+     * Returns the explicit polyline coordinate nodes of a link.
+     * @param linkNode link node
+     * @param linkData map data of the link
+     * @return explicit coordinate nodes in polyline order
+     */
+    private static List<XsdTreeNode> collectCoordinateNodes(final XsdTreeNode linkNode, final MapLinkData linkData)
+    {
+        List<XsdTreeNode> coordinates = new ArrayList<>();
+        if (linkData != null && linkData.isPolyLine())
+        {
+            coordinates.addAll(linkData.getPolyLineCoordinates().keySet());
+        }
+        else
+        {
+            XsdTreeNode shape = linkNode == null || linkNode.getChildCount() == 0 ? null : linkNode.getChild(0);
+            if (shape != null && "PolyLine".equals(shape.getNodeName()))
+            {
+                for (XsdTreeNode child : shape.getChildren())
+                {
+                    if ("Coordinate".equals(child.getNodeName()))
+                    {
+                        coordinates.add(child);
+                    }
+                }
+            }
+        }
+        return coordinates;
+    }
+
+    /**
+     * Merges explicit polyline coordinates into the {@code PolyLine} shape of the remaining link, after any coordinates it
+     * already has. Coordinates are ignored if the remaining link does not have a {@code PolyLine} shape.
+     * @param upstream link node that remains after the merge
+     * @param coordinates coordinate nodes of the link that is removed
+     */
+    private static void mergeCoordinates(final XsdTreeNode upstream, final List<XsdTreeNode> coordinates)
+    {
+        if (coordinates.isEmpty())
+        {
+            return;
+        }
+        XsdTreeNode target = upstream == null || upstream.getChildCount() == 0 ? null : upstream.getChild(0);
+        if (target == null || !"PolyLine".equals(target.getNodeName()))
+        {
+            return; // merged link will have the shape of the upstream link; ignore coordinates of the downstream link
+        }
+        int index = target.getChildCount();
+        for (XsdTreeNode coordinate : coordinates)
+        {
+            if (coordinate.getParent() == null)
+            {
+                continue;
+            }
+            coordinate.createCopy(target, index++);
+            coordinate.remove();
+        }
+    }
+
+    /**
+     * Moves positioned children of the downstream link to the upstream link, adapts their positions to the merged link and
+     * shifts references to the moved children to the remaining link ID.
+     * @param upstream link node that remains after the merge
+     * @param downstream link node that is removed
+     * @param upstreamLength length of the upstream link
+     * @param downstreamLength length of the downstream link
+     * @param remainingLinkId ID of the remaining link
+     * @param eval expression evaluator used to parse {@code Position} values, may be {@code null}
+     */
+    private static void movePositionedChildren(final XsdTreeNode upstream, final XsdTreeNode downstream,
+            final double upstreamLength, final double downstreamLength, final String remainingLinkId, final Eval eval)
+    {
+        List<XsdTreeNode> originals = findPositionedLinkChildren(downstream);
+        List<XsdTreeNode> copies = new ArrayList<>();
+        for (XsdTreeNode original : originals)
+        {
+            copies.add(original.createCopy(upstream, upstream.getChildCount()));
+        }
+        for (XsdTreeNode original : originals)
+        {
+            shiftCouplings(downstream, original, remainingLinkId);
+            original.remove();
+        }
+        double mergedLength = upstreamLength + downstreamLength;
+        for (XsdTreeNode copy : copies)
+        {
+            LengthBeginEnd position =
+                    Adapters.parseOrNull(eval, copy.getAttributeValueOrDefault("Position"), LengthBeginEnd.class);
+            String adaptedPosition = adaptMergePosition(position, upstreamLength, downstreamLength, mergedLength);
+            if (adaptedPosition != null)
+            {
+                copy.setAttributeValue("Position", adaptedPosition);
+            }
+        }
+    }
+
+    /**
+     * Returns the position expressed for a merged link. The merged link starts at the start of the upstream link and ends at
+     * the end of the downstream link. An offset from the begin is increased with the upstream length, a fraction is rescaled,
+     * and an offset from the end is unchanged.
+     * @param position parsed original position
+     * @param upstreamLength length of the upstream link
+     * @param downstreamLength length of the downstream link
+     * @param mergedLength length of the merged link
+     * @return adapted position attribute value, or {@code null} if the position cannot be adapted
+     */
+    private static String adaptMergePosition(final LengthBeginEnd position, final double upstreamLength,
+            final double downstreamLength, final double mergedLength)
+    {
+        if (position == null || Double.isNaN(upstreamLength) || Double.isNaN(downstreamLength) || mergedLength <= 0.0)
+        {
+            return null;
+        }
+        if (!position.isAbsolute())
+        {
+            double fraction = (upstreamLength + position.getFraction() * downstreamLength) / mergedLength;
+            return marshalPosition(new LengthBeginEnd(Math.max(0.0, Math.min(1.0, fraction))));
+        }
+        if (!position.isBegin())
+        {
+            return marshalPosition(position);
+        }
+        double offset = upstreamLength + position.getOffset().si;
+        return marshalPosition(new LengthBeginEnd(true, Length.ofSI(offset)));
+    }
+
+    // Utility methods for both splitting and merging
 
     /**
      * Collects all active link IDs in the network.
@@ -421,6 +544,51 @@ final class MapLinkEditActions
         }
         while (usedIds.contains(candidate));
         return candidate;
+    }
+
+    /**
+     * Returns all direct positioned children of the given link node, i.e. children that have both a {@code Lane} and a
+     * {@code Position} attribute.
+     * @param linkNode link node
+     * @return positioned children of the link node
+     */
+    private static List<XsdTreeNode> findPositionedLinkChildren(final XsdTreeNode linkNode)
+    {
+        List<XsdTreeNode> children = new ArrayList<>();
+        for (XsdTreeNode child : linkNode.getChildren())
+        {
+            if (child.hasAttribute("Lane") && child.hasAttribute("Position"))
+            {
+                children.add(child);
+            }
+        }
+        return children;
+    }
+
+    /**
+     * Forwards the moved child and the target link ID to the key validator on the link ID. The validator chain determines which
+     * referring nodes are coupled to the moved child's sub-tree and updates their link reference.
+     * @param linkNode link node on which the key validator is found
+     * @param movedChild child that is assigned to the surviving link
+     * @param targetLinkId ID of the surviving link
+     */
+    private static void shiftCouplings(final XsdTreeNode linkNode, final XsdTreeNode movedChild, final String targetLinkId)
+    {
+        Optional<KeyValidator> keyValidator = linkNode.getKeyValidator("Id");
+        if (keyValidator.isPresent() && targetLinkId != null)
+        {
+            keyValidator.get().shiftCoupling(movedChild, targetLinkId);
+        }
+    }
+
+    /**
+     * Converts a position into its XML attribute representation.
+     * @param position position
+     * @return XML attribute value
+     */
+    private static String marshalPosition(final LengthBeginEnd position)
+    {
+        return Adapters.get(LengthBeginEnd.class).marshal(new LengthBeginEndType(position));
     }
 
 }

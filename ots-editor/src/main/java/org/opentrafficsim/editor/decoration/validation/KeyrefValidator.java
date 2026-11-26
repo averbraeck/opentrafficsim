@@ -283,6 +283,69 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     }
 
     /**
+     * Shifts couplings to the new key value for nodes that refer to this key and are coupled to the moved child sub-tree.
+     * @param movedChild child that was moved from the coupled node to a different similar node
+     * @param newValue new key value pointing to the different similar node
+     */
+    public void shiftCoupling(final XsdTreeNode movedChild, final String newValue)
+    {
+        Set<XsdTreeNode> referringNodes = new LinkedHashSet<>(this.valueValidatingKeyrefNodes);
+        this.attributeValidatingKeyrefNodes.values().forEach(referringNodes::addAll);
+        for (XsdTreeNode referringNode : referringNodes)
+        {
+            if (!refersToSubtree(referringNode, movedChild))
+            {
+                continue;
+            }
+            boolean shifted = false;
+            if (this.valueValidatingKeyrefNodes.contains(referringNode))
+            {
+                CoupledValidator.setValueIfNotNull(referringNode, newValue);
+                shifted = true;
+            }
+            for (Entry<String, Set<XsdTreeNode>> entry : this.attributeValidatingKeyrefNodes.entrySet())
+            {
+                if (entry.getValue().contains(referringNode))
+                {
+                    CoupledValidator.setAttributeIfNotNull(referringNode, entry.getKey(), newValue);
+                    shifted = true;
+                }
+            }
+            if (shifted)
+            {
+                removeCoupling(referringNode);
+            }
+        }
+    }
+
+    /**
+     * Returns whether a referring node is coupled to the given sub-tree.
+     * @param node referring node
+     * @param subtreeRoot root of the moved sub-tree
+     * @return whether any coupling of the node points into the sub-tree
+     */
+    private boolean refersToSubtree(final XsdTreeNode node, final XsdTreeNode subtreeRoot)
+    {
+        if (node.isEditable())
+        {
+            Optional<XsdTreeNode> coupled = node.getCoupledNodeValue();
+            if (coupled.isPresent() && coupled.get().getPath().contains(subtreeRoot))
+            {
+                return true;
+            }
+        }
+        for (int index = 0; index < node.attributeCount(); index++)
+        {
+            Optional<XsdTreeNode> coupled = node.getCoupledNodeAttribute(index);
+            if (coupled.isPresent() && coupled.get().getPath().contains(subtreeRoot))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Invalidates all nodes that are validating through this keyref. Used by a key validator to notify when nodes are added or
      * removed, activated or deactivated, or an attribute or value is changed, possibly making any keyref valid or invalid.
      */

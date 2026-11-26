@@ -2125,6 +2125,27 @@ public class XsdTreeNode extends LocalEventProducer
     // ====== Coupling ======
 
     /**
+     * Returns the {@link KeyValidator} that validates the given attribute, if any.
+     * @param attribute attribute name.
+     * @return key validator for the attribute, empty if no key validator is active on the attribute.
+     */
+    public Optional<KeyValidator> getKeyValidator(final String attribute)
+    {
+        SortedSet<ValueValidator> validators = this.attributeValidators.get(attribute);
+        if (validators != null)
+        {
+            for (ValueValidator validator : validators)
+            {
+                if (validator instanceof KeyValidator keyValidator)
+                {
+                    return Optional.of(keyValidator);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Returns the node to which the value refers via a {@link CoupledValidator}.
      * @return node to which the value refers via a {@link CoupledValidator}, empty if no such node.
      */

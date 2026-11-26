@@ -901,7 +901,8 @@ public class MapInputListener extends InputListener implements EventListener
                         if (selectedData instanceof MapNodeData nodeData)
                         {
                             XsdTreeNode network = nodeData.getNode().getParent();
-                            Optional<Boolean> ans = MapLinkEditActions.tryMergeNodeOnDelete(this.editor, nodeData.getNode());
+                            Optional<Boolean> ans =
+                                    MapLinkEditActions.tryMergeNodeOnDelete(this.editor, this.editorMap, nodeData.getNode());
                             if (ans.isEmpty())
                             {
                                 return; // Explicit cancel

@@ -351,6 +351,17 @@ public class KeyValidator extends XPathValidator implements EventListener
     }
 
     /**
+     * Shifts couplings that refer to this key to a new key value. The request is forwarded to all keyref validators that listen
+     * to this key; each determines which of its referring nodes are related to the moved child sub-tree.
+     * @param movedChild child that was moved from the coupled node to a different similar node
+     * @param newValue new key value pointing to the different similar node
+     */
+    public void shiftCoupling(final XsdTreeNode movedChild, final String newValue)
+    {
+        this.listeningKeyrefValidators.forEach((validator) -> validator.shiftCoupling(movedChild, newValue));
+    }
+
+    /**
      * Adds a keyref validator as listening to this key.
      * @param keyrefValidator keyref validator
      */
