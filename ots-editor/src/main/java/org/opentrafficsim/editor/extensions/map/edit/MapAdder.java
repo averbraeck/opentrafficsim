@@ -47,7 +47,7 @@ final class MapAdder
         {
             return null;
         }
-        added.setAttributeValue("Id", nextAlphabeticId(networkIds(map, Set.of(XsdPaths.NODE, XsdPaths.CENTROID))));
+        added.setAttributeValue("Id", nextAlphabeticId(networkIds(map, Set.of(XsdPaths.NODE, XsdPaths.CENTROID), null)));
         added.setAttributeValue("Coordinate", coordinate);
         return added;
     }
@@ -95,9 +95,7 @@ final class MapAdder
         {
             link.setAttributeValue("Type", linkType);
         }
-        Set<String> ids = networkIds(map, Set.of(XsdPaths.LINK, XsdPaths.CONNECTOR));
-        String candidate = start.getId() + "-" + end.getId();
-        link.setAttributeValue("Id", ids.contains(candidate) ? nextAlphabeticId(ids) : candidate);
+        assignConnectionId(link, start.getId() + "-" + end.getId(), map);
         if (shape != null)
         {
             selectChoiceOption(link, (option) -> option.getNodeName().equalsIgnoreCase(shape));
@@ -142,10 +140,26 @@ final class MapAdder
         {
             connector.setAttributeValue("Type", linkType);
         }
-        Set<String> ids = networkIds(map, Set.of(XsdPaths.LINK, XsdPaths.CONNECTOR));
-        String candidate = start.getId() + "-" + end.getId();
-        connector.setAttributeValue("Id", ids.contains(candidate) ? nextAlphabeticId(ids) : candidate);
+        assignConnectionId(connector, start.getId() + "-" + end.getId(), map);
         return connector;
+    }
+
+    /**
+     * Keeps a generated link or connector Id if it already follows the {@code A-B} pattern, and only falls back to an
+     * alphabetic Id when that pattern is already used by another link or connector.
+     * @param connection link or connector node
+     * @param candidate Id based on the connected element Ids
+     * @param map editor map
+     */
+    private static void assignConnectionId(final XsdTreeNode connection, final String candidate, final EditorMap map)
+    {
+        String currentId = connection.getAttributeValueOrDefault("Id");
+        Set<String> ids = networkIds(map, Set.of(XsdPaths.LINK, XsdPaths.CONNECTOR), connection);
+        String id = ids.contains(candidate) ? nextAlphabeticId(ids) : candidate;
+        if (!id.equals(currentId))
+        {
+            connection.setAttributeValue("Id", id);
+        }
     }
 
     /**
@@ -292,9 +306,10 @@ final class MapAdder
      * Collect IDs from identifiable Network children whose paths are in the requested set.
      * @param map editor map
      * @param paths element paths to include
+     * @param excluded node to exclude, may be {@code null}
      * @return existing IDs
      */
-    private static Set<String> networkIds(final EditorMap map, final Set<String> paths)
+    private static Set<String> networkIds(final EditorMap map, final Set<String> paths, final XsdTreeNode excluded)
     {
         Set<String> ids = new LinkedHashSet<>();
         XsdTreeNode network = map.getNetworkNode();
@@ -302,7 +317,8 @@ final class MapAdder
         {
             for (XsdTreeNode child : network.getChildren())
             {
-                if (paths.contains(child.getPathString()) && child.isIdentifiable() && child.getId() != null)
+                if (child != excluded && paths.contains(child.getPathString()) && child.isIdentifiable()
+                        && child.getId() != null)
                 {
                     ids.add(child.getId());
                 }

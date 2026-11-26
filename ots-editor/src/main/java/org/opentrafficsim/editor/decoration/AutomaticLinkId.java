@@ -2,29 +2,22 @@ package org.opentrafficsim.editor.decoration;
 
 import java.util.function.Predicate;
 
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
- * Sets the Id of a link if it is not defined yet, and both NodeStart and NodeEnd are defined.
+ * Sets the Id of a link when it is not defined yet and both NodeStart and NodeEnd are defined. An Id that follows the
+ * {@code StartNode-EndNode} pattern is updated immediately when a node changes, including changes caused by coupled
+ * node Id updates.
  * <p>
  * Copyright (c) 2023-2026 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author Wouter Schakel
  */
-public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements CellEditorListener
+public class AutomaticLinkId extends AbstractNodeDecoratorAttribute
 {
-
-    /** Last node. */
-    private XsdTreeNode lastNode = null;
-
-    /** Last id. */
-    private String lastId = null;
 
     /**
      * Constructor.
@@ -33,7 +26,6 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     public AutomaticLinkId(final OtsEditor editor)
     {
         super(editor, (node) -> node.isType(XsdPaths.LINK), "NodeStart", "NodeEnd");
-        editor.addAttributeCellEditorListener(this);
     }
 
     /**
@@ -45,9 +37,6 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     protected AutomaticLinkId(final OtsEditor editor, final Predicate<XsdTreeNode> predicate, final String... attributes)
     {
         super(editor, predicate, attributes);
-        // Update the link id only when both NodeStart and NodeEnd finished being typed.
-        // Otherwise we only include the first character of the second one being defined in the link id.
-        editor.addAttributeCellEditorListener(this);
     }
 
     @Override
@@ -60,39 +49,66 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     {
         String nodeStart = node.getAttributeValueOrDefault("NodeStart");
         String nodeEnd = node.getAttributeValueOrDefault("NodeEnd");
+        if (nodeStart == null || nodeEnd == null)
+        {
+            return;
+        }
+        String start = debrace(nodeStart);
+        String end = debrace(nodeEnd);
         String id = node.getAttributeValueOrDefault("Id");
-        if (nodeStart != null && nodeEnd != null && id == null)
+        boolean startChanged = "NodeStart".equals(attribute);
+        boolean endChanged = "NodeEnd".equals(attribute);
+        if (!isPatternId(startChanged, endChanged, start, end, id))
         {
-            this.lastNode = node;
-            this.lastId = debrace(nodeStart + "-" + nodeEnd);
+            return;
         }
-        else
+        String newId = start + "-" + end;
+        if (!newId.equals(id))
         {
-            this.lastNode = null;
-            this.lastId = null;
-        }
-    }
-
-    @Override
-    public void editingStopped(final ChangeEvent e)
-    {
-        if (this.lastNode != null)
-        {
-            this.lastNode.setId(this.lastId);
-            this.lastNode = null;
-            this.lastId = null;
+            node.setId(newId);
         }
     }
 
-    @Override
-    public void editingCanceled(final ChangeEvent e)
+    /**
+     * Returns whether the current Id follows the start-end pattern for a change of one side of the pattern.
+     * @param startChanged whether the start value changed
+     * @param endChanged whether the end value changed
+     * @param start debraced start value
+     * @param end debraced end value
+     * @param id current Id
+     * @return whether the Id follows the pattern
+     */
+    protected static boolean isPatternId(final boolean startChanged, final boolean endChanged, final String start,
+            final String end, final String id)
     {
-        if (this.lastNode != null)
+        if (id == null || id.isEmpty())
         {
-            this.lastNode.setId(this.lastId);
-            this.lastNode = null;
-            this.lastId = null;
+            return true;
         }
+        String currentId = debrace(id);
+        if (endChanged)
+        {
+            String prefix = start + "-";
+            return currentId.startsWith(prefix) && currentId.length() > prefix.length();
+        }
+        if (startChanged)
+        {
+            String suffix = "-" + end;
+            return currentId.endsWith(suffix) && currentId.length() > suffix.length();
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether the current Id exactly follows the start-end pattern.
+     * @param start debraced start value
+     * @param end debraced end value
+     * @param id current Id
+     * @return whether the Id follows the pattern
+     */
+    protected static boolean isPatternId(final String start, final String end, final String id)
+    {
+        return id == null || id.isEmpty() || (start + "-" + end).equals(debrace(id));
     }
 
     /**
@@ -100,27 +116,9 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
      * @param value candidate value.
      * @return string with the { and } removed
      */
-    private String debrace(final String value)
+    protected static String debrace(final String value)
     {
         return value.replace("{", "").replace("}", "");
-    }
-
-    /**
-     * Set last node from attribute change.
-     * @param lastNode last node from attribute change
-     */
-    protected void setLastNode(final XsdTreeNode lastNode)
-    {
-        this.lastNode = lastNode;
-    }
-
-    /**
-     * Set last id value from attribute change.
-     * @param lastId last id value from attribute change
-     */
-    protected void setLastId(final String lastId)
-    {
-        this.lastId = lastId == null ? null : debrace(lastId);
     }
 
 }
