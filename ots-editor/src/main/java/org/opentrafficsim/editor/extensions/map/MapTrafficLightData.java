@@ -2,6 +2,7 @@ package org.opentrafficsim.editor.extensions.map;
 
 import java.awt.Color;
 
+import org.djutils.event.Event;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -18,6 +19,9 @@ import org.opentrafficsim.editor.XsdTreeNodeUtil;
 public class MapTrafficLightData extends MapLaneBasedObjectData implements TrafficLightData
 {
 
+    /** Listener for changes to the traffic light node and its TurnOnRed children. */
+    private final ChangeListener changeListener;
+
     /**
      * Constructor.
      * @param map map.
@@ -28,6 +32,28 @@ public class MapTrafficLightData extends MapLaneBasedObjectData implements Traff
     {
         super(map, node, editor);
         setLinkNode(getNode().getParent());
+        this.changeListener = new ChangeListener(node); // update on TurnOnRed change to show/hide bulb
+        this.changeListener.addListener(this, ChangeListener.CHANGE_EVENT);
+    }
+
+    @Override
+    public void destroy()
+    {
+        this.changeListener.destroy();
+        super.destroy();
+    }
+
+    @Override
+    public void notify(final Event event)
+    {
+        if (event.getType().equals(ChangeListener.CHANGE_EVENT))
+        {
+            update();
+        }
+        else
+        {
+            super.notify(event);
+        }
     }
 
     @Override

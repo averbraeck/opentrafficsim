@@ -24,7 +24,7 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
  * </p>
  * @author Wouter Schakel
  */
-public abstract class ChangeListener extends LocalEventProducer implements EventListener, EvalListener
+public class ChangeListener extends LocalEventProducer implements EventListener, EvalListener
 {
 
     /** Event that any change happened to the main node or anything under it. */
