@@ -63,7 +63,7 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute
             return;
         }
         String newId = start + "-" + end;
-        if (!newId.equals(id))
+        if (!newId.equals(id) && node.canSetId(newId))
         {
             node.setId(newId);
         }

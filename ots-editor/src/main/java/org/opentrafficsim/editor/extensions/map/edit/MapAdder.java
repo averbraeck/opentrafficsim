@@ -1,8 +1,7 @@
 package org.opentrafficsim.editor.extensions.map.edit;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import org.opentrafficsim.base.AlphabeticIdGenerator;
@@ -47,7 +46,7 @@ final class MapAdder
         {
             return null;
         }
-        added.setAttributeValue("Id", nextAlphabeticId(networkIds(map, Set.of(XsdPaths.NODE, XsdPaths.CENTROID), null)));
+        added.setId(nextAvailableId(added));
         added.setAttributeValue("Coordinate", coordinate);
         return added;
     }
@@ -95,7 +94,7 @@ final class MapAdder
         {
             link.setAttributeValue("Type", linkType);
         }
-        assignConnectionId(link, start.getId() + "-" + end.getId(), map);
+        assignConnectionId(link, start.getId() + "-" + end.getId());
         if (shape != null)
         {
             selectChoiceOption(link, (option) -> option.getNodeName().equalsIgnoreCase(shape));
@@ -140,7 +139,7 @@ final class MapAdder
         {
             connector.setAttributeValue("Type", linkType);
         }
-        assignConnectionId(connector, start.getId() + "-" + end.getId(), map);
+        assignConnectionId(connector, start.getId() + "-" + end.getId());
         return connector;
     }
 
@@ -149,16 +148,21 @@ final class MapAdder
      * alphabetic Id when that pattern is already used by another link or connector.
      * @param connection link or connector node
      * @param candidate Id based on the connected element Ids
-     * @param map editor map
      */
-    private static void assignConnectionId(final XsdTreeNode connection, final String candidate, final EditorMap map)
+    private static void assignConnectionId(final XsdTreeNode connection, final String candidate)
     {
         String currentId = connection.getAttributeValueOrDefault("Id");
-        Set<String> ids = networkIds(map, Set.of(XsdPaths.LINK, XsdPaths.CONNECTOR), connection);
-        String id = ids.contains(candidate) ? nextAlphabeticId(ids) : candidate;
-        if (!id.equals(currentId))
+        if (candidate.equals(currentId))
         {
-            connection.setAttributeValue("Id", id);
+            return;
+        }
+        if (connection.canSetId(candidate))
+        {
+            connection.setId(candidate);
+        }
+        else
+        {
+            connection.setId(nextAvailableId(connection));
         }
     }
 
@@ -303,45 +307,24 @@ final class MapAdder
     }
 
     /**
-     * Collect IDs from identifiable Network children whose paths are in the requested set.
-     * @param map editor map
-     * @param paths element paths to include
-     * @param excluded node to exclude, may be {@code null}
-     * @return existing IDs
+     * Generate the first alphabetic Id that is available on the given node. If no Id is found within the configured
+     * number of attempts, a UUID is used as a guaranteed fresh Id.
+     * @param node node for which an Id is generated
+     * @return available Id
      */
-    private static Set<String> networkIds(final EditorMap map, final Set<String> paths, final XsdTreeNode excluded)
+    private static String nextAvailableId(final XsdTreeNode node)
     {
-        Set<String> ids = new LinkedHashSet<>();
-        XsdTreeNode network = map.getNetworkNode();
-        if (network != null)
+        int attempts = OtsEditor.PROPERTIES_STORE.getIntegerOrDefault("map.idAttempts", 10000);
+        AlphabeticIdGenerator generator = new AlphabeticIdGenerator();
+        for (int i = 0; i < attempts; i++)
         {
-            for (XsdTreeNode child : network.getChildren())
+            String id = generator.get();
+            if (node.canSetId(id))
             {
-                if (child != excluded && paths.contains(child.getPathString()) && child.isIdentifiable()
-                        && child.getId() != null)
-                {
-                    ids.add(child.getId());
-                }
+                return id;
             }
         }
-        return ids;
-    }
-
-    /**
-     * Generate the first alphabetic ID that is not already in use.
-     * @param ids existing IDs
-     * @return unused alphabetic ID
-     */
-    private static String nextAlphabeticId(final Set<String> ids)
-    {
-        AlphabeticIdGenerator generator = new AlphabeticIdGenerator();
-        String id;
-        do
-        {
-            id = generator.get();
-        }
-        while (ids.contains(id));
-        return id;
+        return UUID.randomUUID().toString();
     }
 
 }

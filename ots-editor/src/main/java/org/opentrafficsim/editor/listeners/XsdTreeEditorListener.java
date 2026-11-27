@@ -2,6 +2,8 @@ package org.opentrafficsim.editor.listeners;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
@@ -18,7 +20,8 @@ import de.javagl.treetable.JTreeTable;
 /**
  * Listener to tree editors. This listener:
  * <ul>
- * <li>Sets Id or Value while typing in the JTreeTable.</li>
+ * <li>Sets Id or Value while typing in the JTreeTable, using the duplicate-key guard.</li>
+ * <li>Commits the Id or Value on an explicit Enter, bypassing the duplicate-key guard.</li>
  * <li>Starts undo action (ending the previous one) whenever editing stops or focus is gained or lost in the JTreeTable
  * editor.</li>
  * </ul>
@@ -60,31 +63,38 @@ public class XsdTreeEditorListener implements FocusListener, CellEditorListener
              */
             if (XsdTreeEditorListener.this.treeTable.isEditing())
             {
-                setValue(field);
+                setValue(field, false);
             }
         }));
+        field.addKeyListener(new KeyAdapter()
+        {
+            @Override
+            public void keyPressed(final KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && XsdTreeEditorListener.this.treeTable.isEditing())
+                {
+                    // Explicit Enter commits the typed value, even when it duplicates an existing Id or is empty.
+                    setValue(field, true);
+                }
+            }
+        });
     }
 
     /**
      * Set value based on content of JTextField, which is the Component of either the default String or Object editor.
      * @param textField text field
+     * @param force whether to bypass the duplicate-key guard
      */
-    private void setValue(final JTextField textField)
+    private void setValue(final JTextField textField, final boolean force)
     {
-        int editorCol = this.treeTable.convertColumnIndexToView(this.treeTable.getSelectedColumn());
-        if (editorCol == XsdTreeTableModel.ID_COLUMN || editorCol == XsdTreeTableModel.VALUE_COLUMN)
+        int modelCol = this.treeTable.convertColumnIndexToModel(this.treeTable.getSelectedColumn());
+        if (modelCol == XsdTreeTableModel.ID_COLUMN || modelCol == XsdTreeTableModel.VALUE_COLUMN)
         {
             int row = this.treeTable.getSelectedRow();
-            int col = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may be moved
-            XsdTreeNode treeNode = (XsdTreeNode) this.treeTable.getValueAt(row, col);
-            if (editorCol == XsdTreeTableModel.ID_COLUMN)
-            {
-                treeNode.setId(textField.getText());
-            }
-            else if (editorCol == XsdTreeTableModel.VALUE_COLUMN)
-            {
-                treeNode.setValue(textField.getText());
-            }
+            int treeCol = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // may be moved
+            XsdTreeNode treeNode = (XsdTreeNode) this.treeTable.getValueAt(row, treeCol);
+            XsdTreeTableModel model = (XsdTreeTableModel) this.treeTable.getTree().getModel();
+            model.setValueAt(textField.getText(), treeNode, modelCol, force);
         }
     }
 

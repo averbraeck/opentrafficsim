@@ -77,6 +77,9 @@ public class AutomaticConnectorId extends AutomaticLinkId
                 return;
             }
         }
-        node.setId(targetId);
+        if (node.canSetId(targetId))
+        {
+            node.setId(targetId);
+        }
     }
 }

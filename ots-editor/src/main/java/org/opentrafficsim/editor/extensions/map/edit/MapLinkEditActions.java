@@ -566,18 +566,20 @@ final class MapLinkEditActions
     }
 
     /**
-     * Forwards the moved child and the target link ID to the key validator on the link ID. The validator chain determines which
-     * referring nodes are coupled to the moved child's sub-tree and updates their link reference.
-     * @param linkNode link node on which the key validator is found
+     * Forwards the moved child and the target link ID to each key validator on the link ID. The validator chains determine
+     * which referring nodes are coupled to the moved child's sub-tree and update their link reference.
+     * @param linkNode link node on which the key validators are found
      * @param movedChild child that is assigned to the surviving link
      * @param targetLinkId ID of the surviving link
      */
     private static void shiftCouplings(final XsdTreeNode linkNode, final XsdTreeNode movedChild, final String targetLinkId)
     {
-        Optional<KeyValidator> keyValidator = linkNode.getKeyValidator("Id");
-        if (keyValidator.isPresent() && targetLinkId != null)
+        if (targetLinkId != null)
         {
-            keyValidator.get().shiftCoupling(movedChild, targetLinkId);
+            for (KeyValidator keyValidator : linkNode.getKeyValidator("Id"))
+            {
+                keyValidator.shiftCoupling(movedChild, targetLinkId);
+            }
         }
     }
 

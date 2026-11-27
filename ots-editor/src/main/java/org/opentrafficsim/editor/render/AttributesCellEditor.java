@@ -60,21 +60,48 @@ public class AttributesCellEditor extends DefaultCellEditor
         getComponent().addKeyListener(new KeyAdapter()
         {
             @Override
+            public void keyPressed(final KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                {
+                    // Explicit Enter commits the typed value, even when it duplicates an existing Id or is empty.
+                    setValue(table, (JTextField) e.getComponent(), true);
+                }
+            }
+
+            @Override
             public void keyReleased(final KeyEvent e)
             {
-                int col = table.getSelectedColumn();
-                int editorCol = table.convertColumnIndexToView(col);
-                if (editorCol == 1)
+                if (e.getKeyCode() != KeyEvent.VK_ENTER)
                 {
-                    int row = table.getSelectedRow();
-                    String value = ((JTextField) e.getComponent()).getText();
-                    table.getModel().setValueAt(value, row, col);
+                    setValue(table, (JTextField) e.getComponent(), false);
                 }
             }
         });
         setClickCountToStart(1);
         this.checkBox.setBorder(new EmptyBorder(0, 0, 0, 0));
         this.editor = editor;
+    }
+
+    /**
+     * Applies the text field content to the attribute table model.
+     * @param table attribute table
+     * @param field text field
+     * @param force whether to bypass the duplicate-key guard
+     */
+    private void setValue(final JTable table, final JTextField field, final boolean force)
+    {
+        int viewColumn = table.getSelectedColumn();
+        if (viewColumn < 0)
+        {
+            return;
+        }
+        int modelColumn = table.convertColumnIndexToModel(viewColumn);
+        if (modelColumn == AttributesTableModel.VALUE_COLUMN)
+        {
+            int row = table.getSelectedRow();
+            ((AttributesTableModel) table.getModel()).setValueAt(field.getText(), row, modelColumn, force);
+        }
     }
 
     @Override

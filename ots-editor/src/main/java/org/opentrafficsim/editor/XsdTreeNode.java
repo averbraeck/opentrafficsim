@@ -960,18 +960,10 @@ public class XsdTreeNode extends LocalEventProducer
     {
         Objects.checkIndex(index, attributeCount());
         String previous = this.attributeValues.get(index);
-        Whitespace whitespace = this.attributeWhiteSpaces == null ? Whitespace.NONE
-                : this.attributeWhiteSpaces.getOrDefault(index, Whitespace.NONE);
-        String next = whitespace.parse(value);
+        String next = parseAttributeValue(index, value);
         if (!XsdTreeNodeUtil.valuesAreEqual(previous, next))
         {
-            boolean isDefaultBoolean = false;
-            if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type").orElse(null)))
-            {
-                Optional<String> defaultValue = getDefaultAttributeValue(index);
-                isDefaultBoolean = defaultValue.isPresent() && defaultValue.get().equals(next);
-            }
-            this.attributeValues.set(index, (next == null || next.isEmpty() || isDefaultBoolean) ? null : next);
+            this.attributeValues.set(index, next);
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
                 removeChildren();
@@ -981,6 +973,27 @@ public class XsdTreeNode extends LocalEventProducer
             invalidate();
             fireEvent(ATTRIBUTE_CHANGED, new Object[] {this, getAttributeNameByIndex(index), previous});
         }
+    }
+
+    /**
+     * Parses a candidate attribute value with the whitespace rules of the attribute.
+     * @param index attribute index
+     * @param value candidate value
+     * @return parsed value, or {@code null} if the value is empty or equals the default boolean value
+     */
+    @SuppressWarnings("checkstyle:hiddenfield")
+    private String parseAttributeValue(final int index, final String value)
+    {
+        Whitespace whitespace = this.attributeWhiteSpaces == null ? Whitespace.NONE
+                : this.attributeWhiteSpaces.getOrDefault(index, Whitespace.NONE);
+        String next = whitespace.parse(value);
+        boolean isDefaultBoolean = false;
+        if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type").orElse(null)))
+        {
+            Optional<String> defaultValue = getDefaultAttributeValue(index);
+            isDefaultBoolean = defaultValue.isPresent() && defaultValue.get().equals(next);
+        }
+        return next == null || next.isEmpty() || isDefaultBoolean ? null : next;
     }
 
     /**
@@ -1284,13 +1297,26 @@ public class XsdTreeNode extends LocalEventProducer
         Throw.when(!isEditable(), IllegalStateException.class,
                 "Node is not an xsd:simpleType or xsd:complexType with xsd:simpleContent, hence no value is allowed.");
         String previous = this.value;
-        String next = this.whiteSpace.parse(value);
+        String next = parseNodeValue(value);
         if (!XsdTreeNodeUtil.valuesAreEqual(previous, next))
         {
-            this.value = (next == null || next.isEmpty()) ? null : next;
+            this.value = next;
             invalidate();
             fireEvent(new Event(VALUE_CHANGED, new Object[] {this, previous}));
         }
+    }
+
+    /**
+     * Parses a candidate node value with the whitespace rules of the node.
+     * @param value candidate value
+     * @return parsed value, or {@code null} if the value is empty
+     */
+    @SuppressWarnings("checkstyle:hiddenfield")
+    private String parseNodeValue(final String value)
+    {
+        Whitespace whitespace = this.whiteSpace == null ? Whitespace.NONE : this.whiteSpace;
+        String next = whitespace.parse(value);
+        return next == null || next.isEmpty() ? null : next;
     }
 
     /**
@@ -2125,12 +2151,13 @@ public class XsdTreeNode extends LocalEventProducer
     // ====== Coupling ======
 
     /**
-     * Returns the {@link KeyValidator} that validates the given attribute, if any.
-     * @param attribute attribute name.
-     * @return key validator for the attribute, empty if no key validator is active on the attribute.
+     * Returns all {@link KeyValidator}s that validate the given attribute, including keys with multiple fields.
+     * @param attribute attribute name
+     * @return key validators active on the attribute
      */
-    public Optional<KeyValidator> getKeyValidator(final String attribute)
+    public Set<KeyValidator> getKeyValidator(final String attribute)
     {
+        Set<KeyValidator> result = new LinkedHashSet<>();
         SortedSet<ValueValidator> validators = this.attributeValidators.get(attribute);
         if (validators != null)
         {
@@ -2138,11 +2165,84 @@ public class XsdTreeNode extends LocalEventProducer
             {
                 if (validator instanceof KeyValidator keyValidator)
                 {
-                    return Optional.of(keyValidator);
+                    result.add(keyValidator);
                 }
             }
         }
-        return Optional.empty();
+        return result;
+    }
+
+    /**
+     * Returns all {@link KeyValidator}s that validate the value of this node, including keys with multiple fields.
+     * @return key validators active on the value
+     */
+    public Set<KeyValidator> getKeyValidator()
+    {
+        Set<KeyValidator> result = new LinkedHashSet<>();
+        for (ValueValidator validator : this.valueValidators.keySet())
+        {
+            if (validator instanceof KeyValidator keyValidator)
+            {
+                result.add(keyValidator);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns whether the given Id candidate can be set without creating a duplicate key.
+     * @param id candidate Id
+     * @return whether the candidate is available as Id
+     */
+    public boolean canSetId(final String id)
+    {
+        return canSetAttributeValue("Id", id);
+    }
+
+    /**
+     * Returns whether the given attribute candidate can be set without creating a duplicate key. All keys attached to
+     * the attribute are checked, including composite keys.
+     * @param attribute attribute name
+     * @param candidate candidate value
+     * @return whether the candidate is available on the attribute
+     */
+    public boolean canSetAttributeValue(final String attribute, final String candidate)
+    {
+        int index = getAttributeIndexByName(attribute);
+        String parsed = parseAttributeValue(index, candidate);
+        SortedSet<ValueValidator> validators = this.attributeValidators.get(attribute);
+        if (validators == null)
+        {
+            return true;
+        }
+        for (ValueValidator validator : validators)
+        {
+            if (validator instanceof KeyValidator keyValidator
+                    && !keyValidator.isAttributeValueAvailable(this, attribute, parsed))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether the given value candidate can be set without creating a duplicate key. All keys attached to the
+     * value are checked, including composite keys.
+     * @param candidate candidate value
+     * @return whether the candidate is available as value
+     */
+    public boolean canSetValue(final String candidate)
+    {
+        String parsed = parseNodeValue(candidate);
+        for (ValueValidator validator : this.valueValidators.keySet())
+        {
+            if (validator instanceof KeyValidator keyValidator && !keyValidator.isValueAvailable(this, parsed))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

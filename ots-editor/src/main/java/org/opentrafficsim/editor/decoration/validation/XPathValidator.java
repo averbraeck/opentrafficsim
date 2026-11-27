@@ -208,6 +208,22 @@ public abstract class XPathValidator implements ValueValidator
     }
 
     /**
+     * Returns the node at the level of the selector, starting from a node that attaches to a field or from the selector
+     * node itself.
+     * @param node node
+     * @return node at the level of the selector, or {@code null} if the node is not in the context of this validator
+     */
+    protected XsdTreeNode getSelectorNode(final XsdTreeNode node)
+    {
+        XsdTreeNode selectorNode = node;
+        while (selectorNode != null && !isSelectedInContext(selectorNode))
+        {
+            selectorNode = selectorNode.getParent();
+        }
+        return selectorNode;
+    }
+
+    /**
      * Adds node to this key, if applicable. Nodes are stored per parent instance that defines the context at the level of the
      * path at which the key was defined. This method is called by a listener that the root node has set up, for every created
      * node.

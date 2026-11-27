@@ -809,13 +809,34 @@ public class XsdTreeTableModel extends AbstractTreeTableModel implements EventLi
     @Override
     public void setValueAt(final Object aValue, final Object node, final int column)
     {
+        setValueAt(aValue, node, column, false);
+    }
+
+    /**
+     * Sets an Id or value, optionally bypassing the duplicate-key check. The guarded variant is used while editing,
+     * such that intermediate duplicate values are not applied. An explicit commit may bypass that guard.
+     * @param aValue new value
+     * @param node node on which the value is set
+     * @param column column index
+     * @param force whether to set the value even if it creates a duplicate key
+     */
+    public void setValueAt(final Object aValue, final Object node, final int column, final boolean force)
+    {
+        XsdTreeNode treeNode = (XsdTreeNode) node;
+        String value = aValue == null ? null : aValue.toString();
         if (column == ID_COLUMN)
         {
-            ((XsdTreeNode) node).setId(aValue.toString());
+            if (force || treeNode.canSetId(value))
+            {
+                treeNode.setId(value);
+            }
         }
         else if (column == VALUE_COLUMN)
         {
-            ((XsdTreeNode) node).setValue(aValue.toString());
+            if (force || treeNode.canSetValue(value))
+            {
+                treeNode.setValue(value);
+            }
         }
     }
 

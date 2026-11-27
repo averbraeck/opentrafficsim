@@ -159,6 +159,19 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
     @Override
     public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
     {
+        setValueAt(aValue, rowIndex, columnIndex, false);
+    }
+
+    /**
+     * Sets an attribute value, optionally bypassing the duplicate-key check. The guarded variant is used while editing,
+     * such that intermediate duplicate values are not applied. An explicit commit may bypass that guard.
+     * @param aValue new value
+     * @param rowIndex row index
+     * @param columnIndex column index
+     * @param force whether to set the value even if it creates a duplicate key
+     */
+    public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex, final boolean force)
+    {
         Throw.when(columnIndex != VALUE_COLUMN, IllegalArgumentException.class,
                 "Attribute table model requested to set a value from a column that does not represent the attribute value.");
         if (aValue == null)
@@ -170,7 +183,16 @@ public class AttributesTableModel extends AbstractTableModel implements EventLis
             // node was deleted
             return;
         }
-        this.node.setAttributeValue(rowIndex, aValue.toString());
+        String attribute = DocumentReader.getAttribute(this.node.getAttributeNode(rowIndex), "name").get();
+        String value = aValue.toString();
+        if (force || this.node.canSetAttributeValue(attribute, value))
+        {
+            this.node.setAttributeValue(rowIndex, value);
+        }
+        else
+        {
+            fireTableCellUpdated(rowIndex, columnIndex);
+        }
     }
 
     /**

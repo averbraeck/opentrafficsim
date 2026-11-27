@@ -60,6 +60,67 @@ public class KeyValidator extends XPathValidator implements EventListener
                 IllegalArgumentException.class, "The given node is not an xsd:key or xsd:unique node.");
     }
 
+    /**
+     * Returns whether the candidate can be set on the given attribute without creating a duplicate key. Other fields of
+     * a composite key are taken from their current values.
+     * @param node node on which the attribute is set
+     * @param attribute attribute name
+     * @param candidate parsed candidate value, may be {@code null}
+     * @return whether the candidate is available
+     */
+    public boolean isAttributeValueAvailable(final XsdTreeNode node, final String attribute, final String candidate)
+    {
+        if (ignoreValidation())
+        {
+            return true;
+        }
+        Map<String, Integer> fieldIndices = this.keyNodeAttributeFieldIndices.get(node);
+        Integer fieldIndex = fieldIndices == null ? null : fieldIndices.get(attribute);
+        return fieldIndex == null || isAvailable(node, fieldIndex, candidate);
+    }
+
+    /**
+     * Returns whether the candidate can be set as the value of the given node without creating a duplicate key. Other
+     * fields of a composite key are taken from their current values.
+     * @param node node on which the value is set
+     * @param candidate parsed candidate value, may be {@code null}
+     * @return whether the candidate is available
+     */
+    public boolean isValueAvailable(final XsdTreeNode node, final String candidate)
+    {
+        if (ignoreValidation())
+        {
+            return true;
+        }
+        Integer fieldIndex = this.keyNodeValueFieldIndices.get(node);
+        return fieldIndex == null || isAvailable(node, fieldIndex, candidate);
+    }
+
+    /**
+     * Returns whether a candidate for one field gives a key tuple that is not used by another node in the same context.
+     * @param node node on which the field value is set
+     * @param fieldIndex index of the field that is set
+     * @param candidate parsed candidate value, may be {@code null}
+     * @return whether the resulting key tuple is available
+     */
+    private boolean isAvailable(final XsdTreeNode node, final int fieldIndex, final String candidate)
+    {
+        String value = candidate == null || candidate.isEmpty() ? null : candidate;
+        if (value == null && getKeyNode().getNodeName().equals("xsd:key"))
+        {
+            return false; // a required key field may not be empty
+        }
+        List<String> values = gatherFieldValues(node);
+        if (fieldIndex < 0 || fieldIndex >= values.size())
+        {
+            return true;
+        }
+        values.set(fieldIndex, value);
+        Map<XsdTreeNode, List<String>> contextValues = gatherFieldValuesInContext(node);
+        contextValues.remove(getSelectorNode(node));
+        return !contextValues.containsValue(values);
+    }
+
     @Override
     public void addNode(final XsdTreeNode node)
     {
@@ -177,7 +238,11 @@ public class KeyValidator extends XPathValidator implements EventListener
         else if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            updateReferringKeyrefs(node, this.keyNodeValueFieldIndices.get(node), node.getValueOrDefault());
+            Integer fieldIndex = this.keyNodeValueFieldIndices.get(node);
+            if (fieldIndex != null)
+            {
+                updateReferringKeyrefs(node, fieldIndex, node.getValueOrDefault());
+            }
             invalidateAllDependent();
         }
         else if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
@@ -264,57 +329,22 @@ public class KeyValidator extends XPathValidator implements EventListener
     }
 
     /**
-     * Update value in nodes that refer with xsd:keyref to a value that was changed, but only if the key is not duplicate and
-     * the value is not empty.
+     * Update value in nodes that refer with xsd:keyref to a value that was changed. A value only reaches the model when
+     * it is valid, or when it is explicitly committed, so coupled keyrefs follow the actual value in both cases.
      * @param node node on which the value was changed
      * @param fieldIndex index of field that was changed
      * @param newValue new value
      */
     private void updateReferringKeyrefs(final XsdTreeNode node, final int fieldIndex, final String newValue)
     {
-        if (canUpdateKeyRefs(node, fieldIndex, newValue))
+        if (ignoreValidation() || fieldIndex < 0)
         {
-            for (KeyrefValidator validator : this.listeningKeyrefValidators)
-            {
-                validator.updateFieldValue(node, fieldIndex, newValue);
-            }
+            return; // bulk changes and uncoupled fields do not update keyrefs
         }
-    }
-
-    /**
-     * Returns whether keyrefs can be updated. This is not true if there are duplicate keys or the new value is empty.
-     * @param keyNode node where key is changed
-     * @param fieldIndex index of the field
-     * @param newValue new value
-     * @return whether keyrefs can be updated
-     */
-    private boolean canUpdateKeyRefs(final XsdTreeNode keyNode, final int fieldIndex, final String newValue)
-    {
-        /*
-         * FIXME This approach allows the following to happen. A coupled id is 'Abcd'. The user wants to remove the id by
-         * hitting backspace a few times. The value changes each time, and each change is allowed to change the coupled values.
-         * Finally the 'A' is also removed causing an empty value and the coupled values not to be updated. Effectively,
-         * removing the id value has now changed all coupled values from 'Abcd' to 'A'. A similar thing can happen with the last
-         * valid value before a duplicate new value is encountered. It is difficult to define a closed logic that can know when
-         * there is a final change of the id. Any operation in the editor can change id values, such as an extension, not only
-         * editor fields in the tree table or attributes table. The JTreeTable also has no clear event when editing starts, so
-         * we can't set some boolean to prevent updating the keyrefs during an episode of editing.
-         */
-        if (newValue == null || newValue.isEmpty())
+        for (KeyrefValidator validator : this.listeningKeyrefValidators)
         {
-            return false; // value is empty
+            validator.updateFieldValue(node, fieldIndex, newValue);
         }
-        Map<XsdTreeNode, List<String>> allValues = gatherFieldValuesInContext(keyNode);
-        List<String> values = allValues.remove(keyNode);
-        if (values == null)
-        {
-            return true;
-        }
-        if (allValues.containsValue(values))
-        {
-            return false; // there is at least one duplicate to the values pertaining to the key node
-        }
-        return true;
     }
 
     /**
