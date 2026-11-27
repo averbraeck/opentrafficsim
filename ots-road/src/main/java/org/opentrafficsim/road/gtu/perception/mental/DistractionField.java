@@ -19,6 +19,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.structure.LaneStructure;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.object.RoadSideDistraction;
 
@@ -113,8 +115,8 @@ public class DistractionField implements EventListener
         double odo = this.gtu.getOdometer().si;
         for (RelativeLane lane : laneStructure.getRootCrossSection())
         {
-            for (Entry<RoadSideDistraction> distraction : laneStructure.getDownstreamObjects(lane, RoadSideDistraction.class,
-                    RelativePosition.FRONT, false))
+            for (Entry<RoadSideDistraction> distraction : laneStructure.getDownstreamObjects(lane, Reachability.ALL_BRANCHES,
+                    Provenance.ANY, RoadSideDistraction.class, RelativePosition.FRONT, false))
             {
                 this.odos.put(distraction.object(), odo + distraction.distance().si);
                 this.lanes.computeIfAbsent(lane, (l) -> new LinkedHashSet<>()).add(distraction.object());

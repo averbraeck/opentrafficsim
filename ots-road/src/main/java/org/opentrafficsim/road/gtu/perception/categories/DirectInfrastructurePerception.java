@@ -25,6 +25,8 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.structure.LaneRecord;
 import org.opentrafficsim.road.gtu.perception.structure.LaneStructure;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.Lane;
 import org.opentrafficsim.road.network.LaneAccessLaw;
@@ -348,8 +350,8 @@ public class DirectInfrastructurePerception extends AbstractLanePerceptionCatego
      */
     private Optional<DistancedObject<Speed>> computeSpeedBump()
     {
-        Iterable<Entry<SpeedBump>> speedBumps =
-                getLaneStructure().getDownstreamObjects(RelativeLane.CURRENT, SpeedBump.class, RelativePosition.FRONT, true);
+        Iterable<Entry<SpeedBump>> speedBumps = getLaneStructure().getDownstreamObjects(RelativeLane.CURRENT,
+                Reachability.REACHABLE, Provenance.ANY, SpeedBump.class, RelativePosition.FRONT, true);
         for (Entry<SpeedBump> entry : speedBumps)
         {
             // first speed bump only

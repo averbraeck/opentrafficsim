@@ -19,6 +19,7 @@ import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerceptio
 import org.opentrafficsim.road.gtu.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
@@ -77,8 +78,8 @@ public final class AccelerationNoSlowLaneOvertake implements AccelerationIncenti
                     context.getDesiredSpeed()).si > vCong.si)
             {
                 // TODO depends on left/right traffic
-                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                        context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(RelativeLane.LEFT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = context.getPerception()
+                        .getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(RelativeLane.LEFT, Reachability.REACHABLE);
                 if (!leaders.isEmpty())
                 {
                     for (PerceivedGtu leader : ignore.le0() ? leaders

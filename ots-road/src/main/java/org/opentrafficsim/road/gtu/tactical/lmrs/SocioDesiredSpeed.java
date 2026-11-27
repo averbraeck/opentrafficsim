@@ -12,6 +12,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.gtu.tactical.following.Initialisable;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
@@ -68,7 +69,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
         Optional<NeighborsPerception> neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE);
         if (neighbors.isPresent())
         {
-            var followers = neighbors.get().getFollowers(RelativeLane.CURRENT);
+            var followers = neighbors.get().getFollowers(RelativeLane.CURRENT, Reachability.REACHABLE);
             if (!followers.isEmpty())
             {
                 double sigma = parameters.getParameter(SOCIO);

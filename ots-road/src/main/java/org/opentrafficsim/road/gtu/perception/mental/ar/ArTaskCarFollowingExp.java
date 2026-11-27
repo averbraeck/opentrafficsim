@@ -15,6 +15,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.TaskHeadwayCollector;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 
 /**
  * Car-following task demand based on headway with exponential relationship.
@@ -49,7 +50,8 @@ public final class ArTaskCarFollowingExp extends AbstractArTask implements State
         Parameters parameters = gtu.getParameters();
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("No NeighborsPerception in perception"));
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
+                neighbors.getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE);
         Duration headway = leaders.collect(new TaskHeadwayCollector(gtu.getSpeed()));
         return headway == null ? 0.0 : Math.exp(-headway.si / parameters.getParameter(HEXP).si);
     }

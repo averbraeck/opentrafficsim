@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.AnticipationSpeed.SpeedSet;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 
 /**
  * Traffic perception using neighbors perception. Speed is anticipated as in the LMRS. Density is simply distance of the
@@ -146,7 +147,7 @@ public class AnticipationTrafficPerception extends AbstractLanePerceptionCategor
             final Speed desiredSpeed) throws ParameterException
     {
         AnticipationSpeed anticipationSpeed = new AnticipationSpeed(desiredSpeed, params.getParameter(LOOKAHEAD), lane);
-        SpeedSet speedSet = neighbors.getLeaders(lane).collect(anticipationSpeed);
+        SpeedSet speedSet = neighbors.getLeaders(lane, Reachability.ALL_BRANCHES).collect(anticipationSpeed);
         this.antFromLeft.put(lane.getRight(), speedSet.getRight().si);
         this.antInLane.put(lane, speedSet.getCurrent().si);
         this.antFromRight.put(lane.getLeft(), speedSet.getLeft().si);
@@ -160,8 +161,8 @@ public class AnticipationTrafficPerception extends AbstractLanePerceptionCategor
         if (tK == null || tK.timestamp().si < now.si)
         {
             LinearDensity k = getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
-                    .orElseThrow(() -> new NoSuchElementException("No neighbors perception category")).getLeaders(lane)
-                    .collect(DENSITY);
+                    .orElseThrow(() -> new NoSuchElementException("No neighbors perception category"))
+                    .getLeaders(lane, Reachability.ALL_BRANCHES).collect(DENSITY);
             this.density.put(lane, new TimeStampedObject<>(k, now));
             return k;
         }

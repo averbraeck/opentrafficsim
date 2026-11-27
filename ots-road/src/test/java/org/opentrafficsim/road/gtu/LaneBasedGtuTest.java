@@ -40,6 +40,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.gtu.tactical.lmrs.Lmrs;
@@ -182,14 +183,14 @@ public final class LaneBasedGtuTest implements UNITS
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
         PerceivedObject leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
-                .getLeaders(RelativeLane.CURRENT).first();
+                .getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE).first();
         assertTrue(forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0,
                 "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance");
         assertEquals(null, leader.getId(), "With one vehicle in the network forward headwayGTU should return null");
         // TODO see how we can ask the vehicle to look this far behind
         Length reverseMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKBACK);
         PerceivedObject follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
-                .getFollowers(RelativeLane.CURRENT).first();
+                .getFollowers(RelativeLane.CURRENT, Reachability.REACHABLE).first();
         assertTrue(Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0,
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|");
         assertEquals(null, follower.getId(), "With one vehicle in the network reverse headwayGTU should return null");
@@ -221,7 +222,7 @@ public final class LaneBasedGtuTest implements UNITS
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
-                        .getLeaders(RelativeLane.CURRENT).first();
+                        .getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE).first();
                 double actualHeadway = leader.getDistance().si;
                 double expectedHeadway = laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
                         || step - truckPosition.getSI() - truckLength.getSI() <= 0 ? Double.MAX_VALUE
@@ -242,7 +243,7 @@ public final class LaneBasedGtuTest implements UNITS
                 }
                 // TODO follower = truck.headway(reverseMaxDistance);
                 follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
-                        .getFollowers(RelativeLane.CURRENT).first();
+                        .getFollowers(RelativeLane.CURRENT, Reachability.REACHABLE).first();
                 double actualReverseHeadway = follower.getDistance().si;
                 double expectedReverseHeadway = laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
                         || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE
@@ -272,7 +273,7 @@ public final class LaneBasedGtuTest implements UNITS
                         }
                     }
                     leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
-                            .getLeaders(RelativeLane.CURRENT).first();
+                            .getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE).first();
                     actualHeadway = leader.getDistance().si;
                     expectedHeadway = laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
                             || step - truckLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE
@@ -290,7 +291,7 @@ public final class LaneBasedGtuTest implements UNITS
                         assertEquals(null, leaderGtuId, "Leader id should be null");
                     }
                     follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
-                            .getFollowers(RelativeLane.CURRENT).first();
+                            .getFollowers(RelativeLane.CURRENT, Reachability.REACHABLE).first();
                     actualReverseHeadway = follower.getDistance().si;
                     expectedReverseHeadway = laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
                             || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE
@@ -308,8 +309,9 @@ public final class LaneBasedGtuTest implements UNITS
                         assertEquals(null, followerGtuId, "Follower id should be null");
                     }
                 }
-                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leftParallel = truck.getTacticalPlanner().getPerception()
-                        .getPerceptionCategory(NeighborsPerception.TYPE).getFollowers(RelativeLane.LEFT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leftParallel =
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
+                                .getFollowers(RelativeLane.LEFT, Reachability.REACHABLE);
                 int expectedLeftSize = laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
                         || step + carLength.getSI() <= truckPosition.getSI()
                         || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
@@ -336,8 +338,9 @@ public final class LaneBasedGtuTest implements UNITS
                     }
                 }
                 assertTrue(foundCar, "car was not found in rightParallel");
-                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> rightParallel = truck.getTacticalPlanner().getPerception()
-                        .getPerceptionCategory(NeighborsPerception.TYPE).getFollowers(RelativeLane.RIGHT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> rightParallel =
+                        truck.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
+                                .getFollowers(RelativeLane.RIGHT, Reachability.REACHABLE);
                 int expectedRightSize = laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
                         || step + carLength.getSI() < truckPosition.getSI()
                         || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;

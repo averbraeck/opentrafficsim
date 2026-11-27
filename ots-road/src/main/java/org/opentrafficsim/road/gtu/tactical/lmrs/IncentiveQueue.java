@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerc
 import org.opentrafficsim.road.gtu.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedTrafficLight;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
@@ -85,7 +86,8 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
         double dLeft = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.LEFT))
         {
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.LEFT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
+                    neigbors.getLeaders(RelativeLane.LEFT, Reachability.REACHABLE);
             if (!leaders.isEmpty())
             {
                 Acceleration acc = CarFollowingUtil.followSingleLeader(context, leaders.first());
@@ -95,7 +97,8 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
         double dRight = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.RIGHT))
         {
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.RIGHT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
+                    neigbors.getLeaders(RelativeLane.RIGHT, Reachability.REACHABLE);
             if (!leaders.isEmpty())
             {
                 Acceleration acc = CarFollowingUtil.followSingleLeader(context, leaders.first());

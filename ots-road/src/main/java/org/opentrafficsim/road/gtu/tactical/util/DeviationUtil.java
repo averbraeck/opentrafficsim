@@ -18,6 +18,7 @@ import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerceptio
 import org.opentrafficsim.road.gtu.perception.categories.WienerProcess;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.network.LanePosition;
 
@@ -103,9 +104,10 @@ public final class DeviationUtil
     {
         NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
         InfrastructurePerception infra = context.getPerception().getPerceptionCategory(InfrastructurePerception.TYPE);
-        considerLeaders(context, tManeuver, neighbors.getLeaders(RelativeLane.LEFT), -1.0,
+        considerLeaders(context, tManeuver, neighbors.getLeaders(RelativeLane.LEFT, Reachability.REACHABLE), -1.0,
                 infra.isShoulder(RelativeLane.RIGHT));
-        considerLeaders(context, tManeuver, neighbors.getLeaders(RelativeLane.RIGHT), 1.0, infra.isShoulder(RelativeLane.LEFT));
+        considerLeaders(context, tManeuver, neighbors.getLeaders(RelativeLane.RIGHT, Reachability.REACHABLE), 1.0,
+                infra.isShoulder(RelativeLane.LEFT));
     }
 
     /**
@@ -230,8 +232,8 @@ public final class DeviationUtil
          * <ul>
          * <li>Around a deviation of 0 the distribution is essentially normally distributed (with a linear scaling of about
          * 0.564).</li>
-         * <li>Towards the edges there is a <i>saturation</i> effect prohibiting further deviation. This can be seen as a pushing
-         * force from the edge.</li>
+         * <li>Towards the edges there is a <i>saturation</i> effect prohibiting further deviation. This can be seen as a
+         * pushing force from the edge.</li>
          * </ul>
          * @return random value in the range [-1 1]
          */

@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.mental.AbstractTask;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 
 /**
  * Task demand for signal (front: brake lights, left: right indicator, right: left indicator). This applies to the first leader
@@ -100,7 +101,8 @@ public class ChannelTaskSignal extends AbstractTask implements ChannelTask
     {
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
-        Iterator<DistancedObject<LaneBasedGtu>> leaders = neighbors.getLeaders(this.lane).underlyingWithDistance();
+        Iterator<DistancedObject<LaneBasedGtu>> leaders =
+                neighbors.getLeaders(this.lane, Reachability.REACHABLE).underlyingWithDistance();
         while (leaders.hasNext())
         {
             DistancedObject<LaneBasedGtu> leader = leaders.next();

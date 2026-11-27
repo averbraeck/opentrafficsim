@@ -16,6 +16,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.mental.AbstractTask;
 import org.opentrafficsim.road.gtu.perception.mental.ar.ArTaskCarFollowingExp;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 
 /**
  * Task demand for car-following. This is defined as {@code exp(-T/h)} where {@code T} is the time headway to the leader and
@@ -54,7 +55,7 @@ public class ChannelTaskCarFollowing extends AbstractTask implements ChannelTask
             NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                     .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
             Iterator<DistancedObject<LaneBasedGtu>> leader =
-                    neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
+                    neighbors.getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE).underlyingWithDistance();
             if (!leader.hasNext())
             {
                 return null;

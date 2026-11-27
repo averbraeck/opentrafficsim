@@ -9,6 +9,7 @@ import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.LaneBasedPerceptionCategory;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 
 /**
  * Perception of surrounding vehicles.
@@ -97,17 +98,19 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory<Neighbo
      * Set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT. Leaders are sorted by
      * distance.
      * @param lane relative lateral lane
+     * @param reachability reachability of the lanes where leaders are found
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
-    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getLeaders(RelativeLane lane);
+    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getLeaders(RelativeLane lane, Reachability reachability);
 
     /**
      * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Followers are sorted
      * by distance.
      * @param lane relative lateral lane
+     * @param reachability reachability of the lanes where followers are found
      * @return set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT
      */
-    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getFollowers(RelativeLane lane);
+    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getFollowers(RelativeLane lane, Reachability reachability);
 
     /**
      * Keys for caching.
@@ -115,10 +118,16 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory<Neighbo
     enum Keys
     {
         /** Leaders. */
-        LEADERS,
+        LEADERS_REACHABLE,
+
+        /** Leaders. */
+        LEADERS_ALL_BRANCHES,
 
         /** Followers. */
-        FOLLOWERS,
+        FOLLOWERS_REACHABLE,
+
+        /** Followers. */
+        FOLLOWERS_ALL_BRANCHES,
 
         /** First leaders. */
         FIRST_LEADERS,

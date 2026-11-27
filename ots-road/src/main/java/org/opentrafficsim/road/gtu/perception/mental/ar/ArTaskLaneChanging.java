@@ -11,6 +11,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.TaskHeadwayCollector;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 
 /**
@@ -61,8 +62,8 @@ public final class ArTaskLaneChanging extends ArTaskHeadwayBased implements Stat
         {
             return Duration.ZERO;
         }
-        Duration h1 = neighbors.getLeaders(lane).collect(new TaskHeadwayCollector(getSpeed()));
-        Duration h2 = neighbors.getFollowers(lane).collect(new TaskHeadwayCollector(getSpeed()));
+        Duration h1 = neighbors.getLeaders(lane, Reachability.REACHABLE).collect(new TaskHeadwayCollector(getSpeed()));
+        Duration h2 = neighbors.getFollowers(lane, Reachability.REACHABLE).collect(new TaskHeadwayCollector(getSpeed()));
         if (h1 == null)
         {
             return h2 == null ? null : h2.divide(lat);

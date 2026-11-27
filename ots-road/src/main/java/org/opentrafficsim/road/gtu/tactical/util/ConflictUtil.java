@@ -53,6 +53,7 @@ import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuBase;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtuSimple;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.Blockable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
@@ -163,8 +164,8 @@ public final class ConflictUtil
         {
             conflicts = AccelerationIncentive.onRoute(conflicts, context.getRoute().orElse(null));
         }
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(lane);
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = context.getPerception()
+                .getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(lane, Reachability.REACHABLE);
 
         boolean blocking = false;
 

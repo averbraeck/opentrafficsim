@@ -25,6 +25,7 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerc
 import org.opentrafficsim.road.gtu.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedTrafficLight;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContext;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
@@ -113,7 +114,8 @@ public final class LmrsUtil implements LmrsParameters
 
         // obtain objects to get info
         NeighborsPerception neighbors = context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
+                neighbors.getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE);
 
         // regular car-following
         Acceleration a;
@@ -149,7 +151,7 @@ public final class LmrsUtil implements LmrsParameters
                 initiatedOrContinuedLaneChange = LateralDirectionality.LEFT;
                 turnIndicatorStatus = TurnIndicatorStatus.LEFT;
                 context.getParameters().setClaimedParameter(DLC, desire.desireLeft(), PARAMETER_KEY);
-                leaders = neighbors.getLeaders(RelativeLane.LEFT);
+                leaders = neighbors.getLeaders(RelativeLane.LEFT, Reachability.REACHABLE);
                 if (!leaders.isEmpty())
                 {
                     context.getCarFollowingModel().getRelaxation().initRelaxation(context.getParameters(), context.getSpeed(),
@@ -159,7 +161,8 @@ public final class LmrsUtil implements LmrsParameters
                 }
                 a = Acceleration.min(a,
                         context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
-                                context.getSpeedLimits(), context.getMaximumSpeed(), neighbors.getLeaders(RelativeLane.LEFT)));
+                                context.getSpeedLimits(), context.getMaximumSpeed(),
+                                neighbors.getLeaders(RelativeLane.LEFT, Reachability.REACHABLE)));
             }
         }
         else if (!desire.leftIsLargerOrEqual() && desire.desireRight() >= dFree)
@@ -170,7 +173,7 @@ public final class LmrsUtil implements LmrsParameters
                 initiatedOrContinuedLaneChange = LateralDirectionality.RIGHT;
                 turnIndicatorStatus = TurnIndicatorStatus.RIGHT;
                 context.getParameters().setClaimedParameter(DLC, desire.desireRight(), PARAMETER_KEY);
-                leaders = neighbors.getLeaders(RelativeLane.RIGHT);
+                leaders = neighbors.getLeaders(RelativeLane.RIGHT, Reachability.REACHABLE);
                 if (!leaders.isEmpty())
                 {
                     context.getCarFollowingModel().getRelaxation().initRelaxation(context.getParameters(), context.getSpeed(),
@@ -180,7 +183,8 @@ public final class LmrsUtil implements LmrsParameters
                 }
                 a = Acceleration.min(a,
                         context.getCarFollowingModel().followingAcceleration(context.getParameters(), context.getSpeed(),
-                                context.getSpeedLimits(), context.getMaximumSpeed(), neighbors.getLeaders(RelativeLane.RIGHT)));
+                                context.getSpeedLimits(), context.getMaximumSpeed(),
+                                neighbors.getLeaders(RelativeLane.RIGHT, Reachability.REACHABLE)));
             }
         }
 
@@ -458,7 +462,8 @@ public final class LmrsUtil implements LmrsParameters
         // cut-in vehicles from 2nd lane
         RelativeLane lane = RelativeLane.of(lat, 2);
         double b = -context.getParameters().getParameter(ParameterTypes.B).si;
-        for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(lane))
+        for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(lane,
+                Reachability.REACHABLE))
         {
             if (leader.getManeuver().isChangingLane(lat.flip()) && CarFollowingUtil.followSingleLeader(context, leader).si < b)
             {

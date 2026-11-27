@@ -15,6 +15,8 @@ import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedBusStop;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.conflict.Conflict;
 import org.opentrafficsim.road.network.object.BusStop;
@@ -62,8 +64,8 @@ public class DirectBusStopPerception extends AbstractLanePerceptionCategory<BusS
                     new MultiLanePerceptionIterable<>(getGtu());
             for (RelativeLane lane : getPerception().getLaneStructure().getRootCrossSection())
             {
-                Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
-                        RelativePosition.FRONT, true);
+                Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane,
+                        Reachability.REACHABLE, Provenance.ANY, BusStop.class, RelativePosition.FRONT, true);
                 PerceptionReiterable<LaneBasedGtu, PerceivedBusStop, BusStop> it =
                         new PerceptionReiterable<>(getGtu(), busStops, (object, distance) ->
                         {

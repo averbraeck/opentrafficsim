@@ -10,6 +10,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.TaskHeadwayCollector;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 
 /**
  * Task demand for car-following.
@@ -36,7 +37,7 @@ public final class ArTaskCarFollowing extends ArTaskHeadwayBased implements Stat
     {
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not available."));
-        return neighbors.getLeaders(RelativeLane.CURRENT).collect(new TaskHeadwayCollector(getSpeed()));
+        return neighbors.getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE).collect(new TaskHeadwayCollector(getSpeed()));
     }
 
     @Override

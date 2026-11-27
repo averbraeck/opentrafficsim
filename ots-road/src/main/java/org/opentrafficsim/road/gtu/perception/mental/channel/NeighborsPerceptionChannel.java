@@ -21,6 +21,8 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerc
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.PerceivedGtuType.AnticipationPerceivedGtuType;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 
 /**
@@ -91,7 +93,8 @@ public class NeighborsPerceptionChannel extends AbstractLanePerceptionCategory<N
             SortedSet<PerceivedGtu> set = new TreeSet<>();
             PerceivedGtuType perceivedGtuType = lat.isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight;
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(RelativeLane.of(lat, 1),
-                    RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR))
+                    Reachability.REACHABLE, Provenance.SAME, RelativePosition.FRONT, RelativePosition.REAR,
+                    RelativePosition.FRONT, RelativePosition.REAR))
             {
                 set.add(perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), true));
             }
@@ -123,7 +126,8 @@ public class NeighborsPerceptionChannel extends AbstractLanePerceptionCategory<N
             SortedSet<PerceivedGtu> set = new TreeSet<>();
             PerceivedGtuType perceivedGtuType = lat.isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight;
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(RelativeLane.of(lat, 1),
-                    RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT))
+                    Reachability.REACHABLE, Provenance.SAME, RelativePosition.REAR, RelativePosition.FRONT,
+                    RelativePosition.REAR, RelativePosition.FRONT))
             {
                 set.add(perceivedGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), false));
             }
@@ -154,7 +158,8 @@ public class NeighborsPerceptionChannel extends AbstractLanePerceptionCategory<N
         {
             // check if any GTU is downstream of the rear, within the vehicle length
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(RelativeLane.of(lat, 1),
-                    RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR))
+                    Reachability.REACHABLE, Provenance.SAME, RelativePosition.REAR, RelativePosition.FRONT,
+                    RelativePosition.FRONT, RelativePosition.REAR))
             {
                 if (entry.distance().le0())
                 {
@@ -164,7 +169,8 @@ public class NeighborsPerceptionChannel extends AbstractLanePerceptionCategory<N
 
             // check if any GTU is upstream of the front, within the vehicle length
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(RelativeLane.of(lat, 1),
-                    RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.REAR, RelativePosition.FRONT))
+                    Reachability.REACHABLE, Provenance.SAME, RelativePosition.FRONT, RelativePosition.REAR,
+                    RelativePosition.REAR, RelativePosition.FRONT))
             {
                 if (entry.distance().le0())
                 {
@@ -181,23 +187,27 @@ public class NeighborsPerceptionChannel extends AbstractLanePerceptionCategory<N
     }
 
     @Override
-    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getLeaders(final RelativeLane lane)
+    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getLeaders(final RelativeLane lane,
+            final Reachability reachability)
     {
         Throw.whenNull(lane, "Lane may not be null.");
-        return computeIfAbsent(Keys.LEADERS, () -> computeLeaders(lane), lane);
+        return computeIfAbsent(Reachability.REACHABLE == reachability ? Keys.LEADERS_REACHABLE : Keys.LEADERS_ALL_BRANCHES,
+                () -> computeLeaders(lane, reachability), lane);
     }
 
     /**
      * Computes leaders.
      * @param lane lane
+     * @param reachability reachability of the lanes where leaders are found
      * @return perception iterable for leaders
      */
-    private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
+    private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane,
+            final Reachability reachability)
     {
         Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() ->
         {
-            return getPerception().getLaneStructure().getDownstreamGtus(lane, RelativePosition.FRONT, RelativePosition.FRONT,
-                    RelativePosition.FRONT, RelativePosition.REAR);
+            return getPerception().getLaneStructure().getDownstreamGtus(lane, reachability, Provenance.SAME,
+                    RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR);
         }, "Unable to get leaders from LaneStructure");
         PerceivedGtuType perceivedGtuType = lane.getLateralDirectionality().isNone() ? this.perceivedGtuTypeFront
                 : (lane.getLateralDirectionality().isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight);
@@ -209,23 +219,27 @@ public class NeighborsPerceptionChannel extends AbstractLanePerceptionCategory<N
     }
 
     @Override
-    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getFollowers(final RelativeLane lane)
+    public PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getFollowers(final RelativeLane lane,
+            final Reachability reachability)
     {
         Throw.whenNull(lane, "Lane may not be null.");
-        return computeIfAbsent(Keys.FOLLOWERS, () -> computeFollowers(lane), lane);
+        return computeIfAbsent(Reachability.REACHABLE == reachability ? Keys.FOLLOWERS_REACHABLE : Keys.FOLLOWERS_ALL_BRANCHES,
+                () -> computeFollowers(lane, reachability), lane);
     }
 
     /**
      * Computes followers.
      * @param lane lane
+     * @param reachability reachability of the lanes where followers are found
      * @return perception iterable for followers
      */
-    private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
+    private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane,
+            final Reachability reachability)
     {
         Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() ->
         {
-            return getPerception().getLaneStructure().getUpstreamGtus(lane, RelativePosition.FRONT, RelativePosition.FRONT,
-                    RelativePosition.REAR, RelativePosition.FRONT);
+            return getPerception().getLaneStructure().getUpstreamGtus(lane, reachability, Provenance.SAME,
+                    RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT);
         }, "Unable to get followers from LaneStructure");
         PerceivedGtuType perceivedGtuType = lane.getLateralDirectionality().isNone() ? this.perceivedGtuTypeRear
                 : (lane.getLateralDirectionality().isLeft() ? this.perceivedGtuTypeLeft : this.perceivedGtuTypeRight);

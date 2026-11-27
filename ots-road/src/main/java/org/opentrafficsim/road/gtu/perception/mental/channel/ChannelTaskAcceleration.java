@@ -21,6 +21,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.mental.AbstractTask;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 
 /**
  * Task demand for acceleration from stand-still or low speeds. This mostly functions to increase attention when leaving a
@@ -82,7 +83,8 @@ public class ChannelTaskAcceleration extends AbstractTask implements ChannelTask
                 .orElseThrow(() -> new OtsRuntimeException("Parameter VCONG not present"));
         Length x0 = perception.getGtu().getParameters().getOptionalParameter(X0)
                 .orElseThrow(() -> new OtsRuntimeException("Parameter LOOKAHEAD not present."));
-        Iterator<DistancedObject<LaneBasedGtu>> leaders = neighbors.getLeaders(RelativeLane.CURRENT).underlyingWithDistance();
+        Iterator<DistancedObject<LaneBasedGtu>> leaders =
+                neighbors.getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE).underlyingWithDistance();
         /*
          * We limit this search by a first conflict. Traffic from other directions on the intersection should not let the
          * required level of attention for free acceleration flicker for each passing vehicle.

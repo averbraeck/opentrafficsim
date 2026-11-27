@@ -14,6 +14,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 
@@ -193,7 +194,7 @@ public interface GapAcceptance extends NamedConstants
                     range = Length.max(range, leader.getDistance());
                 }
             }
-            for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 2)))
+            for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 2), Reachability.REACHABLE))
             {
                 if (leader.getDistance().gt(range))
                 {
@@ -257,7 +258,7 @@ public interface GapAcceptance extends NamedConstants
                         range = s > range ? s : range;
                     }
                 }
-                for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 2)))
+                for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 2), Reachability.REACHABLE))
                 {
                     if (leader.getDistance().si > range)
                     {

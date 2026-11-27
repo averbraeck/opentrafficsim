@@ -9,6 +9,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 
@@ -65,7 +66,7 @@ public interface Cooperation extends NamedConstants
             Relaxation relaxation = context.getCarFollowingModel().getRelaxation();
             String coop = null;
             for (PerceivedGtu leader : context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE)
-                    .getLeaders(relativeLane))
+                    .getLeaders(relativeLane, Reachability.ALL_BRANCHES))
             {
                 SingleUrgency urgency = getLaneChangeUrgency(leader, lat.flip(), dCoop);
                 if (urgency.desire() >= dCoop)

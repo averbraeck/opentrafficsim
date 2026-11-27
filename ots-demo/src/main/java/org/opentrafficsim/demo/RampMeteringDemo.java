@@ -79,6 +79,7 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.DirectNeighbo
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlanner;
@@ -760,7 +761,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                     || this.gtu.getSpeed().lt(this.settings.getParameter(ParameterTypes.VCONG)))
             {
                 PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                        neighbors.getLeaders(RelativeLane.of(this.direction, 1));
+                        neighbors.getLeaders(RelativeLane.of(this.direction, 1), Reachability.ALL_BRANCHES);
                 if (!leaders.isEmpty())
                 {
                     PerceivedGtu leader = leaders.first();

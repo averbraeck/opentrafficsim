@@ -21,6 +21,7 @@ import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.network.object.LaneBasedObject;
 
 /**
@@ -60,7 +61,8 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
         {
             NeighborsPerception neighbors =
                     gtu.getTacticalPlanner().getPerception().getPerceptionCategory(NeighborsPerception.TYPE);
-            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
+                    neighbors.getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE);
             Iterator<DistancedObject<LaneBasedGtu>> gtus = leaders.underlyingWithDistance();
             if (!gtus.hasNext())
             {

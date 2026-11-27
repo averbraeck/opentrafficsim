@@ -30,6 +30,9 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
     /** Relative lane. */
     private final RelativeLane relativeLane;
 
+    /** Number of lateral moves at which the lane was discovered. */
+    private final int lateralMoves;
+
     /** Start distance. */
     private double startDistance;
 
@@ -52,13 +55,16 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      * Constructor.
      * @param lane lane.
      * @param relativeLane relative lane.
+     * @param lateralMoves number of lateral moves at which the lane was discovered.
      * @param startDistance start distance.
      * @param mergeDistance merge distance, i.e. the distance after which this road merges with the road the GTU is at.
      */
-    public LaneRecord(final Lane lane, final RelativeLane relativeLane, final double startDistance, final Length mergeDistance)
+    public LaneRecord(final Lane lane, final RelativeLane relativeLane, final int lateralMoves, final double startDistance,
+            final Length mergeDistance)
     {
         this.lane = lane;
         this.relativeLane = relativeLane;
+        this.lateralMoves = lateralMoves;
         this.startDistance = startDistance;
         this.mergeDistance = mergeDistance;
     }
@@ -80,6 +86,15 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
     public RelativeLane getRelativeLane()
     {
         return this.relativeLane;
+    }
+
+    /**
+     * Returns the number of lateral moves at which the lane was discovered.
+     * @return number of lateral moves at which the lane was discovered
+     */
+    public int getLateralMoves()
+    {
+        return this.lateralMoves;
     }
 
     /**

@@ -16,6 +16,8 @@ import org.opentrafficsim.road.gtu.perception.PerceptionReiterable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.AbstractLanePerceptionCategory;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 
 /**
@@ -71,8 +73,8 @@ public class CaccPerception extends AbstractLanePerceptionCategory<LongitudinalC
         firstIfNotEmpty.add((byte) 1);
         try
         {
-            Iterable<Entry<LaneBasedGtu>> leaders = new FilteredIterable<Entry<LaneBasedGtu>>(
-                    getPerception().getLaneStructure().getDownstreamGtus(RelativeLane.CURRENT, RelativePosition.FRONT,
+            Iterable<Entry<LaneBasedGtu>> leaders = new FilteredIterable<Entry<LaneBasedGtu>>(getPerception().getLaneStructure()
+                    .getDownstreamGtus(RelativeLane.CURRENT, Reachability.REACHABLE, Provenance.SAME, RelativePosition.FRONT,
                             RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR),
                     (t) ->
                     {

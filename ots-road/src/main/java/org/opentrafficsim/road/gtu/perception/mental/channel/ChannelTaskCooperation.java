@@ -16,6 +16,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.mental.AbstractTask;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 
 /**
@@ -71,7 +72,8 @@ public final class ChannelTaskCooperation extends AbstractTask implements Channe
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
         Iterator<DistancedObject<LaneBasedGtu>> leaders =
-                neighbors.getLeaders(this.left ? RelativeLane.LEFT : RelativeLane.RIGHT).underlyingWithDistance();
+                neighbors.getLeaders(this.left ? RelativeLane.LEFT : RelativeLane.RIGHT, Reachability.ALL_BRANCHES)
+                        .underlyingWithDistance();
         ParameterTypeDouble param = this.left ? LmrsParameters.DRIGHT : LmrsParameters.DLEFT;
         Length x0 = perception.getGtu().getParameters().getOptionalParameter(X0_D)
                 .orElseThrow(() -> new OtsRuntimeException("Parameter x0_d not present."));

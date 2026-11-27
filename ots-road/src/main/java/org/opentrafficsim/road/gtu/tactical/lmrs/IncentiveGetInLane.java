@@ -14,6 +14,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
@@ -83,7 +84,7 @@ public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<I
                 if (!info.isEmpty() && !info.first().deadEnd() && dCur < dAdj)
                 {
                     double v = Double.POSITIVE_INFINITY;
-                    for (PerceivedGtu neighbor : neighbors.getLeaders(lane))
+                    for (PerceivedGtu neighbor : neighbors.getLeaders(lane, Reachability.REACHABLE))
                     {
                         v = Math.min(v, neighbor.getSpeed().si);
                     }
@@ -105,7 +106,7 @@ public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<I
                 {
                     if (Double.isInfinite(vCur))
                     {
-                        for (PerceivedGtu neighbor : neighbors.getLeaders(RelativeLane.CURRENT))
+                        for (PerceivedGtu neighbor : neighbors.getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE))
                         {
                             vCur = Math.min(vCur, neighbor.getSpeed().si);
                         }

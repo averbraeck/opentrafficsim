@@ -96,22 +96,26 @@ public class LaneStructure
      * <p>
      * This method does not support finding objects that start at upstream lanes, but who's length reach the GTU.
      * @param <T> type of {@code LaneBasedObject}.
-     * @param relativeLane lane.
-     * @param clazz class of lane-based object type.
-     * @param position relative position relative to which objects are found and distances are given.
-     * @param onRoute whether the objects have to be on-route.
-     * @return iterator over objects.
+     * @param relativeLane lane
+     * @param reachability reachability of included lanes
+     * @param provenance provenance of included lanes
+     * @param clazz class of lane-based object type
+     * @param position relative position relative to which objects are found and distances are given
+     * @param onRoute whether the objects have to be on-route
+     * @return iterator over objects
      */
     public <T extends LaneBasedObject> Iterable<Entry<T>> getDownstreamObjects(final RelativeLane relativeLane,
-            final Class<T> clazz, final RelativePosition.Type position, final boolean onRoute)
+            final Reachability reachability, final Provenance provenance, final Class<T> clazz,
+            final RelativePosition.Type position, final boolean onRoute)
     {
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePosition(position).dx();
         return new NavigatingIterable<>(clazz, this.downstream, true,
-                start((record) -> startDownstream(record, position), relativeLane), (record) ->
+                start((record) -> startDownstream(record, position), relativeLane, reachability, provenance), (record) ->
                 {
                     // this navigator only includes records of lanes on the route
-                    return onRoute ? onRoute(record.getNext()) : record.getNext();
+                    return ofProvenance(onRoute ? onRoute(record.getNext()) : record.getNext(), provenance,
+                            relativeLane.getNumLanes());
                 }, (record) ->
                 {
                     // this navigator selects all objects fully or partially downstream
@@ -155,28 +159,60 @@ public class LaneStructure
     }
 
     /**
+     * Returns a set that only contains the element in the input set that have the given provenance.
+     * @param set input set
+     * @param provenance provenance of included lanes
+     * @param numLanes number of lanes in the relative lane
+     * @return a set that only contains the element in the input set that have the given provenance
+     */
+    private static Set<LaneRecord> ofProvenance(final Set<LaneRecord> set, final Provenance provenance, final int numLanes)
+    {
+        if (Provenance.ANY == provenance)
+        {
+            return set;
+        }
+        Set<LaneRecord> filtered = null;
+        for (LaneRecord r : set)
+        {
+            if (r.getLateralMoves() != numLanes)
+            {
+                if (filtered == null)
+                {
+                    filtered = new SmallArraySet<>();
+                    filtered.addAll(set); // copy only when needed
+                }
+                filtered.remove(r);
+            }
+        }
+        return filtered == null ? set : filtered;
+    }
+
+    /**
      * Returns an iterator over objects perceived on a relative lane, ordered close to far. This can be objects on different
      * roads, e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two
      * on-ramps that are very close by, or even the shoulder. Objects that are partially upstream are also included.
      * @param <T> type of {@code LaneBasedObject}.
-     * @param relativeLane lane.
-     * @param clazz class of lane-based object type.
-     * @param position relative position relative to which objects are found and distances are given.
-     * @return iterator over objects.
+     * @param relativeLane lane
+     * @param reachability reachability of included lanes
+     * @param provenance provenance of included lanes
+     * @param clazz class of lane-based object type
+     * @param position relative position relative to which objects are found and distances are given
+     * @return iterator over objects
      */
     public <T extends LaneBasedObject> Iterable<Entry<T>> getUpstreamObjects(final RelativeLane relativeLane,
-            final Class<T> clazz, final RelativePosition.Type position)
+            final Reachability reachability, final Provenance provenance, final Class<T> clazz,
+            final RelativePosition.Type position)
     {
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePosition(position).dx();
         return new NavigatingIterable<>(clazz, this.upstream, false,
-                start((record) -> startUpstream(record, position), relativeLane), (record) ->
+                start((record) -> startUpstream(record, position), relativeLane, reachability, provenance), (record) ->
                 {
                     // this navigator combines the upstream and lateral records
                     Set<LaneRecord> set = new SmallArraySet<>();
                     set.addAll(record.getPrev());
                     set.addAll(record.lateral());
-                    return set;
+                    return ofProvenance(set, provenance, relativeLane.getNumLanes());
                 }, (record) ->
                 {
                     // this lister reverses the list
@@ -201,22 +237,24 @@ public class LaneStructure
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder. When from a lane on the route, a downstream lane is not on the route, GTUs
      * on the downstream lane are not included. A split conflict should deal with possible GTUs there.
-     * @param relativeLane lane.
-     * @param egoPosition position of ego GTU relative to which objects are found.
-     * @param otherPosition position of other GTU that must be downstream of egoPosition.
-     * @param egoDistancePosition position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition position of other GTU to which the distance is determined.
-     * @return iterator over GTUs.
+     * @param relativeLane lane
+     * @param reachability reachability of included lanes
+     * @param provenance provenance of included lanes
+     * @param egoPosition position of ego GTU relative to which objects are found
+     * @param otherPosition position of other GTU that must be downstream of egoPosition
+     * @param egoDistancePosition position of ego GTU from which the distance is determined
+     * @param otherDistancePosition position of other GTU to which the distance is determined
+     * @return iterator over GTUs
      */
-    public Iterable<Entry<LaneBasedGtu>> getDownstreamGtus(final RelativeLane relativeLane,
-            final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
+    public Iterable<Entry<LaneBasedGtu>> getDownstreamGtus(final RelativeLane relativeLane, final Reachability reachability,
+            final Provenance provenance, final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
             final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
     {
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
         Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
         return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream, true,
-                start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
+                start((record) -> startDownstream(record, egoPosition), relativeLane, reachability, provenance), (record) ->
                 {
                     // this navigator ignores downstream lanes that are not on the route, if the current record is on the route
                     Set<LaneRecord> next = new SmallArraySet<>();
@@ -230,7 +268,7 @@ public class LaneStructure
                             next.add(nextLane);
                         }
                     }
-                    return next;
+                    return ofProvenance(next, provenance, relativeLane.getNumLanes());
                 }, (record) ->
                 {
                     // this lister finds the relevant sublist of GTUs
@@ -266,28 +304,30 @@ public class LaneStructure
      * Returns an iterator over GTUs perceived on a relative lane, ordered close to far. This can be GTUs on different roads,
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder.
-     * @param relativeLane lane.
-     * @param egoPosition position of ego GTU relative to which objects are found.
-     * @param otherPosition position of other GTU that must be upstream of egoPosition.
-     * @param egoDistancePosition position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition position of other GTU to which the distance is determined.
-     * @return iterator over GTUs.
+     * @param relativeLane lane
+     * @param reachability reachability of included lanes
+     * @param provenance provenance of included lanes
+     * @param egoPosition position of ego GTU relative to which objects are found
+     * @param otherPosition position of other GTU that must be upstream of egoPosition
+     * @param egoDistancePosition position of ego GTU from which the distance is determined
+     * @param otherDistancePosition position of other GTU to which the distance is determined
+     * @return iterator over GTUs
      */
-    public Iterable<Entry<LaneBasedGtu>> getUpstreamGtus(final RelativeLane relativeLane,
-            final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
+    public Iterable<Entry<LaneBasedGtu>> getUpstreamGtus(final RelativeLane relativeLane, final Reachability reachability,
+            final Provenance provenance, final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
             final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
     {
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
         Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
         return new NavigatingIterable<>(LaneBasedGtu.class, this.upstream, false,
-                start((record) -> startUpstream(record, egoPosition), relativeLane), (record) ->
+                start((record) -> startUpstream(record, egoPosition), relativeLane, reachability, provenance), (record) ->
                 {
                     // this navigator combines the upstream and lateral records
                     Set<LaneRecord> set = new SmallArraySet<>();
                     set.addAll(record.getPrev());
                     set.addAll(record.lateral());
-                    return set;
+                    return ofProvenance(set, provenance, relativeLane.getNumLanes());
                 }, (record) ->
                 {
                     // this lister finds the relevant sublist of GTUs and reverses it
@@ -321,27 +361,31 @@ public class LaneStructure
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder. This function differs from {@code getDownstreamGtus()} in that it will halt
      * further searching on on branch it finds a GTU on.
-     * @param relativeLane lane.
-     * @param egoPosition position of ego GTU relative to which objects are found.
-     * @param otherPosition position of other GTU that must be downstream of egoPosition.
-     * @param egoDistancePosition position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition position of other GTU to which the distance is determined.
-     * @return iterator over GTUs.
+     * @param relativeLane lane
+     * @param reachability reachability of included lanes
+     * @param provenance provenance of included lanes
+     * @param egoPosition position of ego GTU relative to which objects are found
+     * @param otherPosition position of other GTU that must be downstream of egoPosition
+     * @param egoDistancePosition position of ego GTU from which the distance is determined
+     * @param otherDistancePosition position of other GTU to which the distance is determined
+     * @return iterator over GTUs
      */
     public Iterable<Entry<LaneBasedGtu>> getFirstDownstreamGtus(final RelativeLane relativeLane,
-            final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
-            final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
+            final Reachability reachability, final Provenance provenance, final RelativePosition.Type egoPosition,
+            final RelativePosition.Type otherPosition, final RelativePosition.Type egoDistancePosition,
+            final RelativePosition.Type otherDistancePosition)
     {
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
         Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
         return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream, true,
-                start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
+                start((record) -> startDownstream(record, egoPosition), relativeLane, reachability, provenance), (record) ->
                 {
                     // this navigator only returns records when there are no GTUs on the lane
                     return record.getLane()
                             .getGtuAhead(Length.ofSI(-record.getStartDistance() + dx.si), otherPosition, this.updateTime)
-                            .isEmpty() ? record.getNext() : Collections.emptySet();
+                            .isEmpty() ? ofProvenance(record.getNext(), provenance, relativeLane.getNumLanes())
+                                    : Collections.emptySet();
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
@@ -356,22 +400,24 @@ public class LaneStructure
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder. This function differs from {@code getDownstreamGtus()} in that it will halt
      * further searching on on branch it finds a GTU on.
-     * @param relativeLane lane.
-     * @param egoPosition position of ego GTU relative to which objects are found.
-     * @param otherPosition position of other GTU that must be upstream of egoPosition.
-     * @param egoDistancePosition position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition position of other GTU to which the distance is determined.
-     * @return iterator over GTUs.
+     * @param relativeLane lane
+     * @param reachability reachability of included lanes
+     * @param provenance provenance of included lanes
+     * @param egoPosition position of ego GTU relative to which objects are found
+     * @param otherPosition position of other GTU that must be upstream of egoPosition
+     * @param egoDistancePosition position of ego GTU from which the distance is determined
+     * @param otherDistancePosition position of other GTU to which the distance is determined
+     * @return iterator over GTUs
      */
-    public Iterable<Entry<LaneBasedGtu>> getFirstUpstreamGtus(final RelativeLane relativeLane,
-            final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
+    public Iterable<Entry<LaneBasedGtu>> getFirstUpstreamGtus(final RelativeLane relativeLane, final Reachability reachability,
+            final Provenance provenance, final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
             final RelativePosition.Type egoDistancePosition, final RelativePosition.Type otherDistancePosition)
     {
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePosition(egoPosition).dx();
         Length dxDistance = LaneStructure.this.egoGtu.getRelativePosition(egoDistancePosition).dx();
         return new NavigatingIterable<>(LaneBasedGtu.class, this.upstream, false,
-                start((record) -> startUpstream(record, egoPosition), relativeLane), (record) ->
+                start((record) -> startUpstream(record, egoPosition), relativeLane, reachability, provenance), (record) ->
                 {
                     // this navigator only returns records when there are no GTUs on the lane (it may thus ignore a GTU on a
                     // lateral lane that is closer) and combines the upstream and lateral records
@@ -384,7 +430,7 @@ public class LaneStructure
                     Set<LaneRecord> set = new SmallArraySet<>();
                     set.addAll(record.getPrev());
                     set.addAll(record.lateral());
-                    return set;
+                    return ofProvenance(set, provenance, relativeLane.getNumLanes());
                 }, (record) ->
                 {
                     // this lister finds the first GTU and returns it as the only GTU in the list
@@ -398,15 +444,44 @@ public class LaneStructure
      * Gathers the records using a starter logic on all records in the cross section on the relative lane.
      * @param starter starter logic
      * @param relativeLane relative lane
+     * @param reachability reachability of included lanes
+     * @param provenance provenance of included lanes
      * @return the records using a starter logic on all records in the cross section on the relative lane
      */
     private Collection<LaneRecord> start(final Function<LaneRecord, Collection<LaneRecord>> starter,
-            final RelativeLane relativeLane)
+            final RelativeLane relativeLane, final Reachability reachability, final Provenance provenance)
     {
         Collection<LaneRecord> collection = new SmallArraySet<>();
+        if (reachability == Reachability.REACHABLE)
+        {
+            if (this.rootCrossSection.containsKey(relativeLane))
+            {
+                LaneRecord record = this.rootCrossSection.get(relativeLane);
+                switch (provenance)
+                {
+                    case ANY:
+                    {
+                        collection.addAll(starter.apply(record));
+                        break;
+                    }
+                    case SAME:
+                    {
+                        if (record.getLateralMoves() == relativeLane.getNumLanes())
+                        {
+                            collection.addAll(starter.apply(record));
+                        }
+                        break;
+                    }
+                    default:
+                        throw new IllegalArgumentException(
+                                "Unknown " + Provenance.class.getSimpleName() + " value " + provenance);
+                }
+            }
+            return collection;
+        }
         if (this.rootAtLane.containsKey(relativeLane))
         {
-            for (LaneRecord record : this.rootAtLane.get(relativeLane))
+            for (LaneRecord record : ofProvenance(this.rootAtLane.get(relativeLane), provenance, relativeLane.getNumLanes()))
             {
                 collection.addAll(starter.apply(record));
             }
@@ -417,9 +492,9 @@ public class LaneStructure
     /**
      * Recursively move to upstream records if the relative position is upstream of the record, to start a downstream search
      * from these upstream records.
-     * @param record current record in search.
-     * @param position relative position type.
-     * @return records to start from.
+     * @param record current record in search
+     * @param position relative position type
+     * @return records to start from
      */
     private Collection<LaneRecord> startDownstream(final LaneRecord record, final RelativePosition.Type position)
     {
@@ -431,8 +506,8 @@ public class LaneStructure
     /**
      * Recursively move to upstream records if the relative position is upstream of the record, to start a downstream search
      * from these upstream records.
-     * @param record current record in search.
-     * @param position relative position type.
+     * @param record current record in search
+     * @param position relative position type
      * @param result result to store found lane records in
      */
     private void startDownstream(final LaneRecord record, final RelativePosition.Type position,
@@ -452,9 +527,9 @@ public class LaneStructure
     /**
      * Recursively move to downstream records if the relative position is downstream of the record, to start an upstream search
      * from these downstream records.
-     * @param record current record in search.
-     * @param position relative position type.
-     * @return records to start from.
+     * @param record current record in search
+     * @param position relative position type
+     * @return records to start from
      */
     private Collection<LaneRecord> startUpstream(final LaneRecord record, final RelativePosition.Type position)
     {
@@ -466,8 +541,8 @@ public class LaneStructure
     /**
      * Recursively move to downstream records if the relative position is downstream of the record, to start an upstream search
      * from these downstream records.
-     * @param record current record in search.
-     * @param position relative position type.
+     * @param record current record in search
+     * @param position relative position type
      * @param result result to store found lane records in
      */
     private void startUpstream(final LaneRecord record, final RelativePosition.Type position,
@@ -486,9 +561,9 @@ public class LaneStructure
 
     /**
      * Returns the position of the GTU on the lane of the given record.
-     * @param record lane record.
-     * @param positionType relative position type.
-     * @return position of the GTU on the lane of the given record.
+     * @param record lane record
+     * @param positionType relative position type
+     * @return position of the GTU on the lane of the given record
      */
     private double egoPosition(final LaneRecordInterface<?> record, final RelativePosition.Type positionType)
     {
@@ -497,10 +572,10 @@ public class LaneStructure
 
     /**
      * Returns the position of the GTU on the lane of the given record.
-     * @param gtu gtu.
-     * @param record lane record.
-     * @param positionType relative position type.
-     * @return position of the GTU on the lane of the given record.
+     * @param gtu GTU
+     * @param record lane record
+     * @param positionType relative position type
+     * @return position of the GTU on the lane of the given record
      */
     private double position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
             final RelativePosition.Type positionType)
@@ -542,13 +617,13 @@ public class LaneStructure
         this.rootAtLane.clear();
         this.rootCrossSection.clear();
         this.rootCrossSectionRecords.clear();
-        Set<Lane> visited = new HashSet<>();
+        Set<VisitedLane> visited = new HashSet<>();
         Deque<LaneRecord> downQueue = new ArrayDeque<>();
         Deque<LaneRecord> upQueue = new ArrayDeque<>();
         Deque<LaneRecord> latDownQueue = new ArrayDeque<>();
         Deque<LaneRecord> latUpQueue = new ArrayDeque<>();
-        LaneRecord root = new LaneRecord(lane, RelativeLane.CURRENT, -positionSI, Length.ZERO);
-        visited.add(lane);
+        LaneRecord root = new LaneRecord(lane, RelativeLane.CURRENT, 0, -positionSI, Length.ZERO);
+        visited.add(new VisitedLane(lane, RelativeLane.CURRENT));
         checkRoot(root);
         downQueue.add(root); // given effectiveDownstream there is an inherent downstream move, no need to check distance
         if (-root.getStartDistance() < this.upstream.si)
@@ -585,11 +660,12 @@ public class LaneStructure
 
     /**
      * Progress to downstream lanes of first record in the downstream queue.
-     * @param visited visited records in the entire structure so far
+     * @param visited visited lanes in the entire structure so far
      * @param downQueue queue of records to be processed in downstream search
      * @param latDownQueue queue of records to be processed in lateral direction, as part of a downstream search
      */
-    private void nextDown(final Set<Lane> visited, final Deque<LaneRecord> downQueue, final Deque<LaneRecord> latDownQueue)
+    private void nextDown(final Set<VisitedLane> visited, final Deque<LaneRecord> downQueue,
+            final Deque<LaneRecord> latDownQueue)
     {
         LaneRecord record = downQueue.poll();
         Set<Lane> downstreamLanes = record.getLane().nextLanes(null);
@@ -605,10 +681,11 @@ public class LaneStructure
             {
                 continue;
             }
-            LaneRecord down = new LaneRecord(lane, record.getRelativeLane(), record.getEndDistance(), Length.ZERO);
+            LaneRecord down = new LaneRecord(lane, record.getRelativeLane(), record.getLateralMoves(), record.getEndDistance(),
+                    Length.ZERO);
             record.addNext(down, true);
             down.addPrev(record, false);
-            visited.add(lane);
+            visited.add(new VisitedLane(lane, record.getRelativeLane()));
             checkRoot(down);
             if (down.getEndDistance() < this.effectiveDownstream)
             {
@@ -620,26 +697,28 @@ public class LaneStructure
 
     /**
      * Progress to upstream lanes of first record in the upstream queue.
-     * @param visited visited records in the entire structure so far
+     * @param visited visited lanes in the entire structure so far
      * @param upQueue queue of records to be processed in upstream search
      * @param latUpQueue queue of records to be processed in lateral direction, as part of an upstream search
      */
-    private void nextUp(final Set<Lane> visited, final Deque<LaneRecord> upQueue, final Deque<LaneRecord> latUpQueue)
+    private void nextUp(final Set<VisitedLane> visited, final Deque<LaneRecord> upQueue,
+            final Deque<LaneRecord> latUpQueue)
     {
         LaneRecord record = upQueue.poll();
         for (Lane lane : record.getLane().prevLanes(null))
         {
+            VisitedLane visitedLane = new VisitedLane(lane, record.getRelativeLane());
             /*
-             * Upstream of a merge we ignore visited lanes. Upstream not of a merge, we just continue. I.e. on a roundabout one
-             * lane can be both upstream and downstream.
+             * Upstream of a merge we ignore visited lane/relative-lane pairs. Upstream not of a merge, we just continue. I.e.
+             * on a roundabout one lane can be both upstream and downstream.
              */
-            if (!visited.contains(lane) || record.getMergeDistance().si == 0.0)
+            if (!visited.contains(visitedLane) || record.getMergeDistance().si == 0.0)
             {
-                LaneRecord up = new LaneRecord(lane, record.getRelativeLane(), record.getStartDistance() - lane.getLength().si,
-                        record.getMergeDistance());
+                LaneRecord up = new LaneRecord(lane, record.getRelativeLane(), record.getLateralMoves(),
+                        record.getStartDistance() - lane.getLength().si, record.getMergeDistance());
                 record.addPrev(up, true);
                 up.addNext(record, false);
-                visited.add(lane);
+                visited.add(visitedLane);
                 checkRoot(up);
                 if (-up.getStartDistance() + up.getMergeDistance().si < this.upstream.si)
                 {
@@ -657,33 +736,35 @@ public class LaneStructure
 
     /**
      * Progress to lateral lanes for downstream search if any, or for upstream search otherwise.
-     * @param visited visited records in the entire structure so far
+     * @param visited visited lanes in the entire structure so far
      * @param downQueue queue of records to be processed in downstream search
      * @param upQueue queue of records to be processed in upstream search
      * @param latDownQueue queue of records to be processed in lateral direction, as part of a downstream search
      * @param latUpQueue queue of records to be processed in lateral direction, as part of an upstream search
      * @param down whether this step is a part of a downstream or upstream search
      */
-    private void nextLateral(final Set<Lane> visited, final Deque<LaneRecord> downQueue, final Deque<LaneRecord> upQueue,
-            final Deque<LaneRecord> latDownQueue, final Deque<LaneRecord> latUpQueue, final boolean down)
+    private void nextLateral(final Set<VisitedLane> visited, final Deque<LaneRecord> downQueue,
+            final Deque<LaneRecord> upQueue, final Deque<LaneRecord> latDownQueue, final Deque<LaneRecord> latUpQueue,
+            final boolean down)
     {
         LaneRecord record = down ? latDownQueue.poll() : latUpQueue.poll();
         for (LateralDirectionality latDirection : LateralDirectionality.LEFT_AND_RIGHT)
         {
             for (Lane lane : record.getLane().accessibleAdjacentLanesPhysical(latDirection, null))
             {
-                if (!visited.contains(lane))
+                /*
+                 * The relative lane stays the same if we are searching upstream. This is because traffic on this adjacent
+                 * lane will have to change lane to this existing relative lane, before it can be in relevant interaction
+                 * with the perceiving GTU. One can think of two lanes merging in to one just before an on-ramp. Traffic on
+                 * both lanes is then considered to be on the same relative lane as the acceleration lane. Otherwise the
+                 * lateral lane is shifted once.
+                 */
+                RelativeLane relativeLane = !down ? record.getRelativeLane() : (latDirection.isLeft()
+                        ? record.getRelativeLane().getLeft() : record.getRelativeLane().getRight());
+                int lateralMoves = !down ? record.getLateralMoves() : record.getLateralMoves() + 1;
+                VisitedLane visitedLane = new VisitedLane(lane, relativeLane);
+                if (!visited.contains(visitedLane))
                 {
-                    /*
-                     * The relative lane stays the same if we are searching upstream. This is because traffic on this adjacent
-                     * lane will have to change lane to this existing relative lane, before it can be in relevant interaction
-                     * with the perceiving GTU. One can think of two lanes merging in to one just before an on-ramp. Traffic on
-                     * both lanes is then considered to be on the same relative lane as the acceleration lane. Otherwise the
-                     * lateral lane is shifted once.
-                     */
-                    RelativeLane relativeLane = !down ? record.getRelativeLane() : (latDirection.isLeft()
-                            ? record.getRelativeLane().getLeft() : record.getRelativeLane().getRight());
-
                     /*
                      * If the zero-position is on the record, the fractional position is used. Otherwise the start distance is
                      * such that the start is equal in a downstream search, and the end is equal in an upstream search.
@@ -724,9 +805,9 @@ public class LaneStructure
                     {
                         mergeDistance = record.getMergeDistance(); // zero, or continue same value in upstream branch
                     }
-                    LaneRecord lat = new LaneRecord(lane, relativeLane, startDistance, mergeDistance);
+                    LaneRecord lat = new LaneRecord(lane, relativeLane, lateralMoves, startDistance, mergeDistance);
                     record.addLateral(lat, down);
-                    visited.add(lane);
+                    visited.add(visitedLane);
                     checkRoot(lat);
                     // from the cross-section directly from the root, we initiate both an upstream and downstream search
                     if (this.rootCrossSectionRecords.contains(record))
@@ -813,7 +894,7 @@ public class LaneStructure
 
     /**
      * Returns all the lanes that are in the root cross-section, i.e. to our direct left and right.
-     * @return set of lanes in the root cross-section.
+     * @return set of lanes in the root cross-section
      */
     public SortedSet<RelativeLane> getRootCrossSection()
     {
@@ -823,8 +904,8 @@ public class LaneStructure
 
     /**
      * Returns whether the lane exists within the structure.
-     * @param lane lane.
-     * @return whether the lane exists within the structure.
+     * @param lane lane
+     * @return whether the lane exists within the structure
      */
     public boolean exists(final RelativeLane lane)
     {
@@ -834,8 +915,8 @@ public class LaneStructure
 
     /**
      * Returns the root record on the given lane.
-     * @param lane lane.
-     * @return root record on the lane.
+     * @param lane lane
+     * @return root record on the lane
      */
     public LaneRecord getRootRecord(final RelativeLane lane)
     {
@@ -942,6 +1023,42 @@ public class LaneStructure
             }
         }
         return low;
+    }
+
+    /**
+     * Reachability determines the root type to start a search.
+     */
+    public enum Reachability
+    {
+        /**
+         * Search starts on multiple branches at each {@link LaneRecord} including the 0 position or being the most upstream
+         * {@link LaneRecord} in an upstream search, branched from a downstream search, not reaching the 0 position.
+         */
+        ALL_BRANCHES,
+
+        /** Search starts from a single {@link LaneRecord} on the current link of the GTU. */
+        REACHABLE;
+    }
+
+    /**
+     * Provenance defines the number of lateral moves at which a lane was discovered that is acceptable.
+     */
+    public enum Provenance
+    {
+        /** The number of lateral moves must be equal to {@link RelativeLane#getNumLanes}. */
+        SAME,
+
+        /** The number of lateral moves can have any value. */
+        ANY;
+    }
+
+    /**
+     * Visited lane and relative lane combination.
+     * @param lane lane
+     * @param relativeLane relative lane
+     */
+    private record VisitedLane(Lane lane, RelativeLane relativeLane)
+    {
     }
 
 }

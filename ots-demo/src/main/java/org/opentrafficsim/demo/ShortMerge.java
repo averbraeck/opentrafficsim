@@ -81,6 +81,8 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplat
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.gtu.tactical.LaneBasedTacticalPlannerFactory;
@@ -701,8 +703,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                     try
                     {
                         Iterable<Entry<LaneBasedGtu>> leaders = lGtu.getTacticalPlanner().getPerception().getLaneStructure()
-                                .getFirstDownstreamGtus(lane, RelativePosition.FRONT, RelativePosition.REAR,
-                                        RelativePosition.FRONT, RelativePosition.REAR);
+                                .getFirstDownstreamGtus(lane, Reachability.REACHABLE, Provenance.ANY, RelativePosition.FRONT,
+                                        RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR);
                         double minLeadGap = Double.MAX_VALUE;
                         double minLeadTtc = Double.MAX_VALUE;
                         for (Entry<LaneBasedGtu> entry : leaders)
@@ -719,8 +721,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
 
                         LaneBasedGtu nearestFollower = null;
                         Iterable<Entry<LaneBasedGtu>> followers = lGtu.getTacticalPlanner().getPerception().getLaneStructure()
-                                .getFirstUpstreamGtus(lane, RelativePosition.REAR, RelativePosition.FRONT,
-                                        RelativePosition.REAR, RelativePosition.FRONT);
+                                .getFirstUpstreamGtus(lane, Reachability.REACHABLE, Provenance.ANY, RelativePosition.REAR,
+                                        RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT);
                         double minLagGap = Double.MAX_VALUE;
                         double minLagTtc = Double.MAX_VALUE;
                         for (Entry<LaneBasedGtu> entry : followers)
@@ -808,9 +810,9 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             try
             {
-                Iterable<Entry<LaneBasedGtu>> leaders =
-                        gtu.getTacticalPlanner().getPerception().getLaneStructure().getDownstreamGtus(lane,
-                                RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR);
+                Iterable<Entry<LaneBasedGtu>> leaders = gtu.getTacticalPlanner().getPerception().getLaneStructure()
+                        .getDownstreamGtus(lane, Reachability.REACHABLE, Provenance.ANY, RelativePosition.FRONT,
+                                RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR);
                 Iterator<Entry<LaneBasedGtu>> it = leaders.iterator();
                 if (it.hasNext())
                 {

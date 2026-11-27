@@ -25,6 +25,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.LanePosition;
 import org.opentrafficsim.road.network.speed.SpeedLimits;
@@ -140,7 +141,7 @@ public class TacticalContextEgo implements TacticalContext
             var leaders = getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                     .orElseThrow(() -> new NoSuchElementException(
                             "To obtain car-following acceleration a neighbors perception category is required."))
-                    .getLeaders(RelativeLane.CURRENT);
+                    .getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE);
             this.carFollowingAcceleration = getCarFollowingModel().followingAcceleration(getParameters(), getSpeed(),
                     getSpeedLimits(), getMaximumSpeed(), leaders);
         }

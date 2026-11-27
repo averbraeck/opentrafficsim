@@ -13,6 +13,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
@@ -75,7 +76,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
         boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
         for (LateralDirectionality dir : LateralDirectionality.LEFT_AND_RIGHT)
         {
-            Iterable<PerceivedGtu> leaders = neighbors.getLeaders(RelativeLane.of(dir, 1));
+            Iterable<PerceivedGtu> leaders = neighbors.getLeaders(RelativeLane.of(dir, 1), Reachability.ALL_BRANCHES);
             if (leaders != null)
             {
                 for (PerceivedGtu leader : leaders)
@@ -104,7 +105,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                 }
             }
             // consider close followers on 2 lanes away
-            Iterable<PerceivedGtu> followers = neighbors.getFollowers(RelativeLane.of(dir, 2));
+            Iterable<PerceivedGtu> followers = neighbors.getFollowers(RelativeLane.of(dir, 2), Reachability.ALL_BRANCHES);
             if (followers != null)
             {
                 for (PerceivedGtu follower : followers)
@@ -136,7 +137,7 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                     }
                 }
             }
-            leaders = neighbors.getLeaders(RelativeLane.of(dir, 2));
+            leaders = neighbors.getLeaders(RelativeLane.of(dir, 2), Reachability.ALL_BRANCHES);
             if (leaders != null)
             {
                 for (PerceivedGtu leader : leaders)

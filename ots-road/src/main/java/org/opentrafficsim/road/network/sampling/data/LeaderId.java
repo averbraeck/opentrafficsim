@@ -8,6 +8,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
 import org.opentrafficsim.road.gtu.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**
@@ -41,7 +42,7 @@ public class LeaderId extends ExtendedDataString<GtuDataRoad>
             throw new NoSuchElementException(
                     "Leader id can only be stored in trajectories if the GTU's have NeighborsPerception.");
         }
-        Iterator<LaneBasedGtu> it = neigbors.get().getLeaders(RelativeLane.CURRENT).underlying();
+        Iterator<LaneBasedGtu> it = neigbors.get().getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE).underlying();
         return Optional.ofNullable(it.hasNext() ? it.next().getId() : "");
     }
 

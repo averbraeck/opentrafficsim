@@ -9,6 +9,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 
@@ -44,7 +45,7 @@ public final class AccelerationLaneChangers implements AccelerationIncentive, St
         for (LateralDirectionality lat : LateralDirectionality.LEFT_AND_RIGHT)
         {
             LateralDirectionality flip = lat.flip();
-            for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 1)))
+            for (PerceivedGtu leader : neighbors.getLeaders(RelativeLane.of(lat, 1), Reachability.REACHABLE))
             {
                 if (leader.getManeuver().isChangingLane(flip))
                 {

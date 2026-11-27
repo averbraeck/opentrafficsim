@@ -16,6 +16,7 @@ import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.network.LanePosition;
 
@@ -63,7 +64,7 @@ public interface Tailgating
             PerceptionCollectable<PerceivedGtu,
                     LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
-                            .getLeaders(RelativeLane.CURRENT);
+                            .getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE);
             try
             {
                 if (leaders == null || leaders.isEmpty())
@@ -102,7 +103,7 @@ public interface Tailgating
             PerceptionCollectable<PerceivedGtu,
                     LaneBasedGtu> leaders = context.getPerception().getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                             .orElseThrow(() -> new NoSuchElementException("No neighbors perception category."))
-                            .getLeaders(RelativeLane.CURRENT);
+                            .getLeaders(RelativeLane.CURRENT, Reachability.REACHABLE);
             try
             {
                 if (leaders == null || leaders.isEmpty())

@@ -26,6 +26,8 @@ import org.opentrafficsim.road.gtu.perception.categories.neighbors.PerceivedGtuT
 import org.opentrafficsim.road.gtu.perception.object.PerceivedConflict;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedTrafficLightChannel;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.conflict.Conflict;
 import org.opentrafficsim.road.network.object.trafficlight.TrafficLight;
@@ -107,8 +109,8 @@ public class IntersectionPerceptionChannel extends AbstractLanePerceptionCategor
     {
         Iterable<Entry<TrafficLight>> iterable = Try.assign(() ->
         {
-            return getPerception().getLaneStructure().getDownstreamObjects(lane, TrafficLight.class, RelativePosition.FRONT,
-                    true);
+            return getPerception().getLaneStructure().getDownstreamObjects(lane, Reachability.REACHABLE, Provenance.ANY,
+                    TrafficLight.class, RelativePosition.FRONT, true);
         }, "Unable to get downstream traffic lights from LaneStructure");
         Route route = getPerception().getGtu().getStrategicalPlanner().getRoute()
                 .orElseThrow(() -> new OtsRuntimeException("Unable to obtain route"));
@@ -127,8 +129,11 @@ public class IntersectionPerceptionChannel extends AbstractLanePerceptionCategor
      */
     private PerceptionCollectable<PerceivedConflict, Conflict> computeConflicts(final RelativeLane lane)
     {
-        Iterable<Entry<Conflict>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamObjects(lane,
-                Conflict.class, RelativePosition.FRONT, true), "Unable to get downstream conflicts from LaneStructure");
+        Iterable<Entry<Conflict>> iterable =
+                Try.assign(
+                        () -> getPerception().getLaneStructure().getDownstreamObjects(lane, Reachability.REACHABLE,
+                                Provenance.ANY, Conflict.class, RelativePosition.FRONT, true),
+                        "Unable to get downstream conflicts from LaneStructure");
         return new PerceptionReiterable<>(getGtu(), iterable, (conflict, distance) ->
         {
             Length lookAhead = getGtu().getParameters().getOptionalParameter(LOOKAHEAD)
@@ -156,8 +161,8 @@ public class IntersectionPerceptionChannel extends AbstractLanePerceptionCategor
             RelativeLane lane = RelativeLane.of(lat, 1);
             if (getPerception().getLaneStructure().exists(lane))
             {
-                Iterator<Entry<Conflict>> conflicts = getPerception().getLaneStructure()
-                        .getUpstreamObjects(lane, Conflict.class, RelativePosition.FRONT).iterator();
+                Iterator<Entry<Conflict>> conflicts = getPerception().getLaneStructure().getUpstreamObjects(lane,
+                        Reachability.REACHABLE, Provenance.ANY, Conflict.class, RelativePosition.FRONT).iterator();
                 if (conflicts.hasNext())
                 {
                     Entry<Conflict> entry = conflicts.next();

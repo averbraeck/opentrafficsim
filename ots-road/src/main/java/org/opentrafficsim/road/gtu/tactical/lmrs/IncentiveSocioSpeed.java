@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
@@ -88,7 +89,8 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
             // change right to get out of the way
             if (rightLane && mandatoryDesire.right() >= 0.0)
             {
-                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers =
+                        neighbors.getFollowers(RelativeLane.CURRENT, Reachability.REACHABLE);
                 if (!followers.isEmpty())
                 {
                     double rho = context.getParameters().getParameter(RHO);
@@ -103,11 +105,13 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
             // stay right to keep out of the way
             if (leftLane && mandatoryDesire.left() <= 0.0)
             {
-                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.LEFT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers =
+                        neighbors.getFollowers(RelativeLane.LEFT, Reachability.ALL_BRANCHES);
                 if (followers != null && !followers.isEmpty())
                 {
                     double rho;
-                    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.LEFT);
+                    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
+                            neighbors.getLeaders(RelativeLane.LEFT, Reachability.ALL_BRANCHES);
                     if (leaders != null && !leaders.isEmpty())
                     {
                         PerceivedGtu leader = leaders.first();

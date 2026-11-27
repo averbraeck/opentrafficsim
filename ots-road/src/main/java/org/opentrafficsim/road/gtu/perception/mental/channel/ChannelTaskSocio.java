@@ -12,6 +12,7 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.mental.AbstractTask;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.Tailgating;
 
@@ -61,7 +62,7 @@ public class ChannelTaskSocio extends AbstractTask implements ChannelTask, State
     {
         NeighborsPerception neighbors = perception.getPerceptionCategoryOptional(NeighborsPerception.TYPE)
                 .orElseThrow(() -> new NoSuchElementException("NeighborsPerception not present."));
-        Iterator<LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT).underlying();
+        Iterator<LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT, Reachability.REACHABLE).underlying();
         if (!followers.hasNext())
         {
             return 0.0;

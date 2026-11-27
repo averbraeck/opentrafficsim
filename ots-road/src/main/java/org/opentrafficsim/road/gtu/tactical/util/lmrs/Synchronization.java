@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.tactical.TacticalContextEgo;
 import org.opentrafficsim.road.gtu.tactical.util.CarFollowingUtil;
 
@@ -226,8 +227,8 @@ public interface Synchronization extends NamedConstants
             final double desire, final double urgency) throws OperationalPlanException, ParameterException
     {
         double dCoop = context.getParameters().getParameter(LmrsParameters.DCOOP);
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
-                context.getPerception().getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(relativeLane);
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = context.getPerception()
+                .getPerceptionCategory(NeighborsPerception.TYPE).getLeaders(relativeLane, Reachability.ALL_BRANCHES);
         if (!leaders.isEmpty())
         {
             Relaxation relaxation = context.getCarFollowingModel().getRelaxation();
@@ -266,7 +267,7 @@ public interface Synchronization extends NamedConstants
         if (leader != null)
         {
             PerceivedGtu prevLeader = null;
-            for (PerceivedGtu nextLeader : neighbors.getLeaders(relativeLane))
+            for (PerceivedGtu nextLeader : neighbors.getLeaders(relativeLane, Reachability.ALL_BRANCHES))
             {
                 if (nextLeader.equals(leader))
                 {
@@ -282,7 +283,8 @@ public interface Synchronization extends NamedConstants
                 prevLeader = nextLeader;
             }
         }
-        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers = neighbors.getFollowers(relativeLane);
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers =
+                neighbors.getFollowers(relativeLane, Reachability.ALL_BRANCHES);
         return followers.isEmpty() ? null : followers.first();
     }
 

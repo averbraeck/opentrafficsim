@@ -12,7 +12,9 @@ import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.road.gtu.tactical.following.AbstractIdm;
+import org.opentrafficsim.road.gtu.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.tactical.util.lmrs.Synchronization;
 
 /**
  * Creator of set of parameters with default values.
@@ -43,7 +45,8 @@ public final class DefaultTestParameters
         ParameterSet params = new ParameterSet();
 
         // set all default values using reflection
-        for (Class<?> clazz : new Class[] {ParameterTypes.class, LmrsParameters.class, AbstractIdm.class})
+        for (Class<?> clazz : new Class[] {ParameterTypes.class, LmrsParameters.class, AbstractIdm.class,
+                Synchronization.class, ConflictUtil.class})
         {
             Set<Field> fields = ClassUtil.getAllFields(clazz);
             try

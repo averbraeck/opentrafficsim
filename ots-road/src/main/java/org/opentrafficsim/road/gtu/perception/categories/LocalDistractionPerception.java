@@ -14,6 +14,8 @@ import org.opentrafficsim.road.gtu.perception.LanePerception;
 import org.opentrafficsim.road.gtu.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.perception.object.PerceivedLaneBasedObjectBase;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Provenance;
+import org.opentrafficsim.road.gtu.perception.structure.LaneStructure.Reachability;
 import org.opentrafficsim.road.gtu.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.object.LocalDistraction;
 
@@ -56,8 +58,9 @@ public class LocalDistractionPerception extends AbstractLanePerceptionCategory<L
      */
     public PerceptionCollectable<PerceivedLocalDistraction, LocalDistraction> getDistractions() throws ParameterException
     {
-        Iterable<Entry<LocalDistraction>> iterable = getPerception().getLaneStructure()
-                .getDownstreamObjects(RelativeLane.CURRENT, LocalDistraction.class, RelativePosition.FRONT, false);
+        Iterable<Entry<LocalDistraction>> iterable =
+                getPerception().getLaneStructure().getDownstreamObjects(RelativeLane.CURRENT, Reachability.ALL_BRANCHES,
+                        Provenance.ANY, LocalDistraction.class, RelativePosition.FRONT, false);
         return new AbstractPerceptionReiterable<>(getGtu())
         {
             @Override
