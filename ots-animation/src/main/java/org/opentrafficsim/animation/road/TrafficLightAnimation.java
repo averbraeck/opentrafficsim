@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.road;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
 import java.util.function.Supplier;
 
@@ -9,7 +10,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.animation.RenderableTextSource;
 import org.opentrafficsim.animation.TextAlignment;
-import org.opentrafficsim.animation.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.Text;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 
@@ -27,6 +27,9 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightData, Text>
 {
+
+    /** Diameter of the turn-on-red bulb, in meters. */
+    private static final double BULB_DIAMETER = 0.75;
 
     /**
      * Construct the DefaultCarAnimation for a LaneBlock (road block).
@@ -50,6 +53,14 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
     {
         graphics.setColor(getSource().getColor());
         super.paint(graphics, observer);
+        if (getSource().hasTurnOnRed())
+        {
+            setRendering(graphics);
+            graphics.setColor(Color.GREEN);
+            double radius = BULB_DIAMETER / 2.0;
+            graphics.fill(new Ellipse2D.Double(-radius, -radius, BULB_DIAMETER, BULB_DIAMETER));
+            resetRendering(graphics);
+        }
     }
 
     @Override
@@ -94,6 +105,12 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
          * @return traffic light color
          */
         Color getColor();
+
+        /**
+         * Returns whether turn on red is allowed towards at least one node.
+         * @return whether turn on red is allowed towards at least one node
+         */
+        boolean hasTurnOnRed();
     }
 
 }

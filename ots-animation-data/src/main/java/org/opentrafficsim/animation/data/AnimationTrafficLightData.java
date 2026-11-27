@@ -51,6 +51,12 @@ public class AnimationTrafficLightData extends AnimationLaneBasedObjectData<Traf
     }
 
     @Override
+    public boolean hasTurnOnRed()
+    {
+        return getObject().hasTurnOnRed();
+    }
+
+    @Override
     public String toString()
     {
         return "Traffic light " + getObject().getFullId();

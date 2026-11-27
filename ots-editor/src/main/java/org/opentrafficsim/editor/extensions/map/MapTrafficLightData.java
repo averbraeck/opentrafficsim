@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.opentrafficsim.animation.road.TrafficLightAnimation.TrafficLightData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeUtil;
 
 /**
  * Traffic light data for the editor Map.
@@ -33,6 +34,12 @@ public class MapTrafficLightData extends MapLaneBasedObjectData implements Traff
     public Color getColor()
     {
         return Color.RED;
+    }
+
+    @Override
+    public boolean hasTurnOnRed()
+    {
+        return XsdTreeNodeUtil.findActiveChild(getNode(), "TurnOnRed") != null;
     }
 
     @Override

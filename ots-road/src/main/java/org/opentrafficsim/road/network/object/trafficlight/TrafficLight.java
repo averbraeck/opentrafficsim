@@ -126,6 +126,15 @@ public class TrafficLight extends AbstractLaneBasedObject
     }
 
     /**
+     * Returns whether this traffic light has any node towards which GTUs may turn on red.
+     * @return whether turn on red is allowed towards at least one node.
+     */
+    public boolean hasTurnOnRed()
+    {
+        return this.turnOnRed != null && !this.turnOnRed.isEmpty();
+    }
+
+    /**
      * Whether a GTU can turn on red.
      * @param route route.
      * @param gtuType GTU type.
