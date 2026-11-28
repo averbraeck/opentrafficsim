@@ -17,8 +17,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
@@ -2102,15 +2102,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
      */
     private boolean save(final File file, final XsdTreeNode root, final boolean storeAsRecent)
     {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file))
+        try
         {
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = docBuilder.newDocument();
             /*
-             * The following line omits the 'standalone="no"' in the header xml tag. But there will be no new-line after this
-             * header tag. It seems a java bug: https://bugs.openjdk.org/browse/JDK-8249867. Result: <?xml version="1.0"
-             * encoding="UTF-8"?><ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" ... etc. Other lines will be on a new
-             * line and indented.
+             * This omits the 'standalone="no"' in the XML declaration. The JDK transformer does not add a new line after the
+             * declaration (https://bugs.openjdk.org/browse/JDK-8249867); XmlFormatter.format() takes care of that.
              */
             document.setXmlStandalone(true);
             root.saveXmlNodes(document, document);
@@ -2143,21 +2141,17 @@ public class OtsEditor extends AppearanceApplication implements EventProducer, O
                     xmlRoot.setAttribute(prop, value);
                 }
             }
-            StreamResult result = new StreamResult(fileOutputStream);
+            StringWriter stringWriter = new StringWriter();
+            StreamResult result = new StreamResult(stringWriter);
 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
+                    Integer.toString(XmlFormatter.INDENT));
             transformer.transform(new DOMSource(document), result);
 
-            fileOutputStream.close();
-            // this fixes a bug with missing new line
-            String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-            content = content.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.lineSeparator());
-            byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
-            Files.write(file.toPath(), bytes);
-            // end of fix
+            Files.writeString(file.toPath(), XmlFormatter.format(stringWriter.toString()), StandardCharsets.UTF_8);
             if (storeAsRecent)
             {
                 PROPERTIES_STORE.addToList(RECENT_FILES_KEY, file.toPath().normalize().toAbsolutePath().toString(),
