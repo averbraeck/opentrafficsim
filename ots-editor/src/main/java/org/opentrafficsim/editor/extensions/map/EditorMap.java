@@ -1651,15 +1651,15 @@ public final class EditorMap extends JPanel implements EventListener
     }
 
     /**
-     * Returns the world coordinate of a screen point, snapped to the grid.
+     * Returns the world coordinate of a screen point, snapped to the grid if snapping is enabled in the settings.
      * @param screenPoint screen point
-     * @return world coordinate of the screen point, snapped to the grid
+     * @return world coordinate of the screen point, snapped to the grid if snapping is enabled in the settings
      */
     public Point2d getSnappedWorldCoordinate(final Point2D screenPoint)
     {
         Point2d world = getPanel().getRenderableScale().getWorldCoordinates(screenPoint,
                 getPanel().getExtent(), getPanel().getSize());
-        return this.inputListener.snapPointToGrid(world);
+        return this.inputListener.snapPointToGridForAction(world);
     }
 
     /**

@@ -1505,13 +1505,36 @@ public class MapInputListener extends InputListener implements EventListener
     }
 
     /**
-     * Snap point to grid, if snapping is enabled.
+     * Snap point to grid, if snapping is enabled for the current mouse gesture.
      * @param point point to snap
      * @return point snapped to grid
      */
     public Point2d snapPointToGrid(final Point2d point)
     {
-        if (!this.snap)
+        return snapPointToGrid(point, this.snap);
+    }
+
+    /**
+     * Snap point to grid for an action that is not part of a mouse gesture, if snapping is enabled in the settings. The
+     * transient snap state used while dragging or adding may be temporarily inverted with Ctrl and is therefore not
+     * applicable.
+     * @param point point to snap
+     * @return point snapped to grid
+     */
+    public Point2d snapPointToGridForAction(final Point2d point)
+    {
+        return snapPointToGrid(point, this.snapSetting);
+    }
+
+    /**
+     * Snap point to grid, if snapping is enabled.
+     * @param point point to snap
+     * @param enabled whether snapping is enabled
+     * @return point snapped to grid
+     */
+    private Point2d snapPointToGrid(final Point2d point, final boolean enabled)
+    {
+        if (!enabled)
         {
             return point;
         }
