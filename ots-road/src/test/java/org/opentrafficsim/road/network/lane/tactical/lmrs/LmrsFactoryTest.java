@@ -286,9 +286,9 @@ public class LmrsFactoryTest
                 coop.capture(), gap.capture(), any(Tailgating.class));
 
         // Verify defaults are used
-        assertEquals(Synchronization.PASSIVE, sync.getValue());
-        assertEquals(Cooperation.PASSIVE, coop.getValue());
-        assertEquals(GapAcceptance.INFORMED, gap.getValue());
+        assertEquals(Synchronization.ALIGN_GAP_MOVING, sync.getValue());
+        assertEquals(Cooperation.PASSIVE_MOVING, coop.getValue());
+        assertEquals(GapAcceptance.RELAXED, gap.getValue());
     }
 
     /* -------------------- setting overrides -------------------- */
