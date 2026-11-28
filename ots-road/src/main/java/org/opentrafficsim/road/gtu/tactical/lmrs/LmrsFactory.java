@@ -378,7 +378,7 @@ public class LmrsFactory<T extends AbstractIncentivesTacticalPlanner> extends Pa
     private List<GapAcceptance> gapAcceptance = listOf(GapAcceptance.RELAXED);
 
     /** Lane change relaxation: LMRS, STATIC or DYNAMIC (default). */
-    @Option(names = {"--gapAcceptance"}, description = "Lane change relaxation: LMRS, STATIC or DYNAMIC",
+    @Option(names = {"--relaxation"}, description = "Lane change relaxation: LMRS, STATIC or DYNAMIC",
             defaultValue = "DYNAMIC", split = "\\|", splitSynopsisLabel = "|", converter = RelaxationConverter.class)
     private List<Relaxation> relaxation = listOf(Relaxation.DYNAMIC);
 
