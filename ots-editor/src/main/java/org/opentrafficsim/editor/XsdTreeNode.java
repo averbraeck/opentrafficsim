@@ -2836,7 +2836,8 @@ public class XsdTreeNode extends LocalEventProducer
             Optional<Node> sequence = DocumentReader.getChild(complexType.get(), "xsd:sequence");
             if (sequence.isPresent())
             {
-                maxPasses = Occurs.MAX.get(sequence.get());
+                int max = Occurs.MAX.get(sequence.get());
+                maxPasses = max == -1 ? Integer.MAX_VALUE : max;
             }
         }
 
