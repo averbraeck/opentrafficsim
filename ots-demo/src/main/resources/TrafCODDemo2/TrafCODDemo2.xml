@@ -1,144 +1,113 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd"
-  xmlns:xi="http://www.w3.org/2001/XInclude">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd">
   <ots:Definitions>
-
     <xi:include href="builtin:gtutypes">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="builtin:linktypes">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="builtin:stripetypes">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="builtin:lanetypes">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="builtin:detectortypes">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="builtin:gtutemplates">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutemplates.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutemplates.xml"/>
       </xi:fallback>
     </xi:include>
     <xi:include href="builtin:lanebiases">
       <xi:fallback>
-        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanebiases.xml" />
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanebiases.xml"/>
       </xi:fallback>
     </xi:include>
-    
-    <ots:LaneTypes>
-      <ots:LaneType Id="STREET">
-        <ots:Compatibility GtuType="NL.ROAD_USER" />
-      </ots:LaneType>
-    </ots:LaneTypes>
-
-    <ots:GtuTypes>
-      <!-- <ots:GTUTYPE PARENT="ROAD_USER" Id="CAR" /> <ots:GTUTYPE PARENT="ROAD_USER" Id="TRUCK" /> -->
-    </ots:GtuTypes>
-
+    <ots:GtuTypes/>
     <ots:GtuTemplates>
       <ots:GtuTemplate GtuType="NL.CAR" Id="CARS">
         <ots:LengthDist LengthUnit="m">
-          <ots:Uniform Min="4" Max="7" />
+          <ots:Uniform Max="7" Min="4"/>
         </ots:LengthDist>
         <ots:WidthDist LengthUnit="m">
-          <ots:Uniform Min="1.7" Max="2" />
+          <ots:Uniform Max="2" Min="1.7"/>
         </ots:WidthDist>
         <ots:MaxSpeedDist SpeedUnit="km/h">
-          <ots:Constant C="120" />
+          <ots:Constant C="120"/>
         </ots:MaxSpeedDist>
       </ots:GtuTemplate>
       <ots:GtuTemplate GtuType="NL.TRUCK" Id="TRUCKS">
         <ots:LengthDist LengthUnit="m">
-          <ots:Uniform Min="16" Max="24" />
+          <ots:Uniform Max="24" Min="16"/>
         </ots:LengthDist>
         <ots:WidthDist LengthUnit="m">
-          <ots:Uniform Min="2.2" Max="2.7" />
+          <ots:Uniform Max="2.7" Min="2.2"/>
         </ots:WidthDist>
         <ots:MaxSpeedDist SpeedUnit="km/h">
-          <ots:Constant C="100" />
+          <ots:Constant C="100"/>
         </ots:MaxSpeedDist>
-
       </ots:GtuTemplate>
     </ots:GtuTemplates>
-
     <ots:LinkTypes>
       <ots:LinkType Id="STREET">
-        <ots:Compatibility GtuType="NL.ROAD_USER" />
+        <ots:Compatibility GtuType="NL.ROAD_USER"/>
         <ots:SpeedLimit>50 km/h</ots:SpeedLimit>
       </ots:LinkType>
     </ots:LinkTypes>
-
     <ots:RoadLayouts>
       <ots:RoadLayout Id="r1">
         <ots:Shoulder>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1" StripeType="NL.SOLID">
-        </ots:Stripe>
+        <ots:Stripe Id="1" StripeType="NL.SOLID"/>
         <ots:Lane Id="FORWARD3">
           <ots:Width>3.3m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="2" StripeType="NL.DASHED">
-        </ots:Stripe>
+        <ots:Stripe Id="2" StripeType="NL.DASHED"/>
         <ots:Lane Id="FORWARD2">
           <ots:CenterOffset>-4.95m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3" StripeType="NL.DASHED">
-        </ots:Stripe>
+        <ots:Stripe Id="3" StripeType="NL.DASHED"/>
         <ots:Lane Id="FORWARD1">
           <ots:Width>3.3m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="4" StripeType="NL.SOLID">
-        </ots:Stripe>
+        <ots:Stripe Id="4" StripeType="NL.SOLID"/>
       </ots:RoadLayout>
-
       <ots:RoadLayout Id="r1g">
         <ots:Shoulder>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Id="1" StripeType="NL.SOLID">
-        </ots:Stripe>
+        <ots:Stripe Id="1" StripeType="NL.SOLID"/>
         <ots:Lane Id="FORWARD3">
-          <ots:CenterOffsetStart>-1.65m</ots:CenterOffsetStart>
-          <ots:CenterOffsetEnd>-4.95m</ots:CenterOffsetEnd>
-          <ots:Width>3.3m</ots:Width>
+          <ots:WidthStart>0.0m</ots:WidthStart>
+          <ots:WidthEnd>3.3m</ots:WidthEnd>
         </ots:Lane>
-        <ots:Stripe Id="2" StripeType="NL.DASHED">
-          <ots:CenterOffset>-3.3m</ots:CenterOffset>
-        </ots:Stripe>
+        <ots:Stripe Id="2" StripeType="NL.DASHED"/>
         <ots:Lane Id="FORWARD2">
           <ots:CenterOffset>-1.65m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Id="3" StripeType="NL.DASHED">
-          <ots:CenterOffset>0.0m</ots:CenterOffset>
-        </ots:Stripe>
+        <ots:Stripe Id="3" StripeType="NL.DASHED"/>
         <ots:Lane Id="FORWARD1">
-          <ots:CenterOffsetStart>-1.65m</ots:CenterOffsetStart>
-          <ots:CenterOffsetEnd>1.65m</ots:CenterOffsetEnd>
-          <ots:Width>3.3m</ots:Width>
+          <ots:WidthStart>0.0m</ots:WidthStart>
+          <ots:WidthEnd>3.3m</ots:WidthEnd>
         </ots:Lane>
-        <ots:Stripe Id="4" StripeType="NL.SOLID">
-        </ots:Stripe>
+        <ots:Stripe Id="4" StripeType="NL.SOLID"/>
       </ots:RoadLayout>
-
       <ots:RoadLayout Id="r2l">
         <ots:Shoulder>
           <ots:CenterOffset>-4.3m</ots:CenterOffset>
@@ -154,299 +123,266 @@
         <ots:Stripe Id="2" StripeType="NL.SOLID">
           <ots:CenterOffset>0.0m</ots:CenterOffset>
         </ots:Stripe>
-        <!-- <ots:NoTrafficLane> <ots:CenterOffset>0m</ots:CenterOffset> <ots:Width>2.5m</ots:Width> </ots:NoTrafficLane> -->
       </ots:RoadLayout>
-
     </ots:RoadLayouts>
   </ots:Definitions>
   <ots:Network>
-    <ots:Node Id="N" Coordinate="(-4.5,300)" Direction="270 deg(E)" />
-    <ots:Node Id="E" Coordinate="(300,4.5)" Direction="180 deg(E)" />
-    <ots:Node Id="S" Coordinate="(4.5,-300)" Direction="90 deg(E)" />
-    <ots:Node Id="W" Coordinate="(-300,-4.5)" Direction="0 deg(E)" />
-    <ots:Node Id="NO" Coordinate="(4.5,300)" Direction="90 deg(E)" />
-    <ots:Node Id="EO" Coordinate="(300,-4.5)" Direction="0 deg(E)" />
-    <ots:Node Id="SO" Coordinate="(-4.5,-300)" Direction="270 deg(E)" />
-    <ots:Node Id="WO" Coordinate="(-300,4.5)" Direction="180 deg(E)" />
-    <ots:Node Id="N1" Coordinate="(-4.5,240)" Direction="270 deg(E)" />
-    <ots:Node Id="E1" Coordinate="(240,4.5)" Direction="180 deg(E)" />
-    <ots:Node Id="S1" Coordinate="(4.5,-240)" Direction="90 deg(E)" />
-    <ots:Node Id="W1" Coordinate="(-240,-4.5)" Direction="0 deg(E)" />
-    <ots:Node Id="N2" Coordinate="(-1.2,200)" Direction="270 deg(E)" />
-    <ots:Node Id="E2" Coordinate="(200,1.2)" Direction="180 deg(E)" />
-    <ots:Node Id="S2" Coordinate="(1.2,-200)" Direction="90 deg(E)" />
-    <ots:Node Id="W2" Coordinate="(-200,-1.2)" Direction="0 deg(E)" />
-    <ots:Node Id="NC" Coordinate="(-1.2,20)" Direction="270 deg(E)" />
-    <ots:Node Id="EC" Coordinate="(20,1.2)" Direction="180 deg(E)" />
-    <ots:Node Id="SC" Coordinate="(1.2,-20)" Direction="90 deg(E)" />
-    <ots:Node Id="WC" Coordinate="(-20,-1.2)" Direction="0 deg(E)" />
-    <ots:Node Id="NCO" Coordinate="(4.5,20)" Direction="90 deg(E)" />
-    <ots:Node Id="ECO" Coordinate="(20,-4.5)" Direction="0 deg(E)" />
-    <ots:Node Id="SCO" Coordinate="(-4.5,-20)" Direction="270 deg(E)" />
-    <ots:Node Id="WCO" Coordinate="(-20,4.5)" Direction="180 deg(E)" />
-
-    <ots:Link Id="NN1" NodeStart="N" NodeEnd="N1" Type="STREET">
-      <ots:Straight />
+    <ots:Node Coordinate="(-4.5,300)" Direction="270 deg(E)" Id="N"/>
+    <ots:Node Coordinate="(300,4.5)" Direction="180 deg(E)" Id="E"/>
+    <ots:Node Coordinate="(4.5,-300)" Direction="90 deg(E)" Id="S"/>
+    <ots:Node Coordinate="(-300,-4.5)" Direction="0 deg(E)" Id="W"/>
+    <ots:Node Coordinate="(4.5,300)" Direction="90 deg(E)" Id="NO"/>
+    <ots:Node Coordinate="(300,-4.5)" Direction="0 deg(E)" Id="EO"/>
+    <ots:Node Coordinate="(-4.5,-300)" Direction="270 deg(E)" Id="SO"/>
+    <ots:Node Coordinate="(-300,4.5)" Direction="180 deg(E)" Id="WO"/>
+    <ots:Node Coordinate="(-4.5,240)" Direction="270 deg(E)" Id="N1"/>
+    <ots:Node Coordinate="(240,4.5)" Direction="180 deg(E)" Id="E1"/>
+    <ots:Node Coordinate="(4.5,-240)" Direction="90 deg(E)" Id="S1"/>
+    <ots:Node Coordinate="(-240,-4.5)" Direction="0 deg(E)" Id="W1"/>
+    <ots:Node Coordinate="(-1.2,200)" Direction="270 deg(E)" Id="N2"/>
+    <ots:Node Coordinate="(200,1.2)" Direction="180 deg(E)" Id="E2"/>
+    <ots:Node Coordinate="(1.2,-200)" Direction="90 deg(E)" Id="S2"/>
+    <ots:Node Coordinate="(-200,-1.2)" Direction="0 deg(E)" Id="W2"/>
+    <ots:Node Coordinate="(-1.2,20)" Direction="270 deg(E)" Id="NC"/>
+    <ots:Node Coordinate="(20,1.2)" Direction="180 deg(E)" Id="EC"/>
+    <ots:Node Coordinate="(1.2,-20)" Direction="90 deg(E)" Id="SC"/>
+    <ots:Node Coordinate="(-20,-1.2)" Direction="0 deg(E)" Id="WC"/>
+    <ots:Node Coordinate="(4.5,20)" Direction="90 deg(E)" Id="NCO"/>
+    <ots:Node Coordinate="(20,-4.5)" Direction="0 deg(E)" Id="ECO"/>
+    <ots:Node Coordinate="(-4.5,-20)" Direction="270 deg(E)" Id="SCO"/>
+    <ots:Node Coordinate="(-20,4.5)" Direction="180 deg(E)" Id="WCO"/>
+    <ots:Link Id="NN1" NodeEnd="N1" NodeStart="N" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="N1N2" NodeStart="N1" NodeEnd="N2" Type="STREET" OffsetEnd="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="N1N2" NodeEnd="N2" NodeStart="N1" OffsetEnd="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1g</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="N2NC" NodeStart="N2" NodeEnd="NC" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="N2NC" NodeEnd="NC" NodeStart="N2" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3" Id="10" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2" Id="11" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1" Id="12" Position="END-0.00m" />
+      <ots:TrafficLight Id="10" Lane="FORWARD3" Position="END-0.00m"/>
+      <ots:TrafficLight Id="11" Lane="FORWARD2" Position="END-0.00m"/>
+      <ots:TrafficLight Id="12" Lane="FORWARD1" Position="END-0.00m"/>
     </ots:Link>
-
-    <ots:Link Id="EE1" NodeStart="E" NodeEnd="E1" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="EE1" NodeEnd="E1" NodeStart="E" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="E1E2" NodeStart="E1" NodeEnd="E2" Type="STREET" OffsetEnd="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="E1E2" NodeEnd="E2" NodeStart="E1" OffsetEnd="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1g</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="E2EC" NodeStart="E2" NodeEnd="EC" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="E2EC" NodeEnd="EC" NodeStart="E2" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3" Id="01" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2" Id="02" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1" Id="03" Position="END-0.00m" />
+      <ots:TrafficLight Id="01" Lane="FORWARD3" Position="END-0.00m"/>
+      <ots:TrafficLight Id="02" Lane="FORWARD2" Position="END-0.00m"/>
+      <ots:TrafficLight Id="03" Lane="FORWARD1" Position="END-0.00m"/>
     </ots:Link>
-
-    <ots:Link Id="SS1" NodeStart="S" NodeEnd="S1" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="SS1" NodeEnd="S1" NodeStart="S" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="S1S2" NodeStart="S1" NodeEnd="S2" Type="STREET" OffsetEnd="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="S1S2" NodeEnd="S2" NodeStart="S1" OffsetEnd="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1g</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="S2SC" NodeStart="S2" NodeEnd="SC" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="S2SC" NodeEnd="SC" NodeStart="S2" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3" Id="04" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2" Id="05" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1" Id="06" Position="END-0.00m" />
+      <ots:TrafficLight Id="04" Lane="FORWARD3" Position="END-0.00m"/>
+      <ots:TrafficLight Id="05" Lane="FORWARD2" Position="END-0.00m"/>
+      <ots:TrafficLight Id="06" Lane="FORWARD1" Position="END-0.00m"/>
     </ots:Link>
-
-    <ots:Link Id="WW1" NodeStart="W" NodeEnd="W1" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="WW1" NodeEnd="W1" NodeStart="W" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="W1W2" NodeStart="W1" NodeEnd="W2" Type="STREET" OffsetEnd="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="W1W2" NodeEnd="W2" NodeStart="W1" OffsetEnd="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1g</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="W2WC" NodeStart="W2" NodeEnd="WC" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="W2WC" NodeEnd="WC" NodeStart="W2" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r1</ots:DefinedLayout>
-      <ots:TrafficLight Lane="FORWARD3" Id="07" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD2" Id="08" Position="END-0.00m" />
-      <ots:TrafficLight Lane="FORWARD1" Id="09" Position="END-0.00m" />
+      <ots:TrafficLight Id="07" Lane="FORWARD3" Position="END-0.00m"/>
+      <ots:TrafficLight Id="08" Lane="FORWARD2" Position="END-0.00m"/>
+      <ots:TrafficLight Id="09" Lane="FORWARD1" Position="END-0.00m"/>
     </ots:Link>
-
-    <ots:Link Id="ECNC" NodeStart="EC" NodeEnd="NCO" Type="STREET" OffsetStart="-6.6m" OffsetEnd="0m">
-      <ots:Bezier />
+    <ots:Link Id="ECNC" NodeEnd="NCO" NodeStart="EC" OffsetEnd="0m" OffsetStart="-6.6m" Type="STREET">
+      <ots:Bezier/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="ECSC" NodeStart="EC" NodeEnd="SCO" Type="STREET">
-      <ots:Bezier Shape="0.7" />
+    <ots:Link Id="ECSC" NodeEnd="SCO" NodeStart="EC" Type="STREET">
+      <ots:Bezier Shape="0.7"/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="NCWC" NodeStart="NC" NodeEnd="WCO" Type="STREET" OffsetStart="-6.6m" OffsetEnd="0m">
-      <ots:Bezier />
+    <ots:Link Id="NCWC" NodeEnd="WCO" NodeStart="NC" OffsetEnd="0m" OffsetStart="-6.6m" Type="STREET">
+      <ots:Bezier/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="NCEC" NodeStart="NC" NodeEnd="ECO" Type="STREET">
-      <ots:Bezier Shape="0.7" />
+    <ots:Link Id="NCEC" NodeEnd="ECO" NodeStart="NC" Type="STREET">
+      <ots:Bezier Shape="0.7"/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="WCSC" NodeStart="WC" NodeEnd="SCO" Type="STREET" OffsetStart="-6.6m" OffsetEnd="0m">
-      <ots:Bezier />
+    <ots:Link Id="WCSC" NodeEnd="SCO" NodeStart="WC" OffsetEnd="0m" OffsetStart="-6.6m" Type="STREET">
+      <ots:Bezier/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="WCNC" NodeStart="WC" NodeEnd="NCO" Type="STREET">
-      <ots:Bezier Shape="0.7" />
+    <ots:Link Id="WCNC" NodeEnd="NCO" NodeStart="WC" Type="STREET">
+      <ots:Bezier Shape="0.7"/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="SCEC" NodeStart="SC" NodeEnd="ECO" Type="STREET" OffsetStart="-6.6m" OffsetEnd="0m">
-      <ots:Bezier />
+    <ots:Link Id="SCEC" NodeEnd="ECO" NodeStart="SC" OffsetEnd="0m" OffsetStart="-6.6m" Type="STREET">
+      <ots:Bezier/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="SCWC" NodeStart="SC" NodeEnd="WCO" Type="STREET">
-      <ots:Bezier Shape="0.7" />
+    <ots:Link Id="SCWC" NodeEnd="WCO" NodeStart="SC" Type="STREET">
+      <ots:Bezier Shape="0.7"/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="NCSC" NodeStart="NC" NodeEnd="SCO" Type="STREET" OffsetStart="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="NCSC" NodeEnd="SCO" NodeStart="NC" OffsetStart="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="WCEC" NodeStart="WC" NodeEnd="ECO" Type="STREET" OffsetStart="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="WCEC" NodeEnd="ECO" NodeStart="WC" OffsetStart="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="SCNC" NodeStart="SC" NodeEnd="NCO" Type="STREET" OffsetStart="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="SCNC" NodeEnd="NCO" NodeStart="SC" OffsetStart="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="ECWC" NodeStart="EC" NodeEnd="WCO" Type="STREET" OffsetStart="-3.3m">
-      <ots:Straight />
+    <ots:Link Id="ECWC" NodeEnd="WCO" NodeStart="EC" OffsetStart="-3.3m" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="ECOEO" NodeStart="ECO" NodeEnd="EO" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="ECOEO" NodeEnd="EO" NodeStart="ECO" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="NCONO" NodeStart="NCO" NodeEnd="NO" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="NCONO" NodeEnd="NO" NodeStart="NCO" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="WCOWO" NodeStart="WCO" NodeEnd="WO" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="WCOWO" NodeEnd="WO" NodeStart="WCO" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
-    <ots:Link Id="SCOSO" NodeStart="SCO" NodeEnd="SO" Type="STREET">
-      <ots:Straight />
+    <ots:Link Id="SCOSO" NodeEnd="SO" NodeStart="SCO" Type="STREET">
+      <ots:Straight/>
       <ots:DefinedLayout>r2l</ots:DefinedLayout>
     </ots:Link>
-
   </ots:Network>
   <ots:Demand>
-    <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="NL.ROAD_USERS"
-      Options="OdOptions">
-      <ots:Category GtuType="NL.CAR" Id="CAR" />
-      <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
-      <ots:Cell Category="CAR" Origin="W" Destination="NO">
+    <ots:Od GlobalFactor="1.000" GlobalInterpolation="STEPWISE" Id="Traffic Demand" Options="OdOptions" SinkType="NL.ROAD_USERS">
+      <ots:Category GtuType="NL.CAR" Id="CAR"/>
+      <ots:Category GtuType="NL.TRUCK" Id="TRUCK"/>
+      <ots:Cell Category="CAR" Destination="NO" Origin="W">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="W" Destination="EO">
+      <ots:Cell Category="CAR" Destination="EO" Origin="W">
         <ots:Level Time="0s">300.00veh/h</ots:Level>
         <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="W" Destination="SO">
+      <ots:Cell Category="CAR" Destination="SO" Origin="W">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="N" Destination="EO">
+      <ots:Cell Category="CAR" Destination="EO" Origin="N">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="N" Destination="SO">
+      <ots:Cell Category="CAR" Destination="SO" Origin="N">
         <ots:Level Time="0s">300.00veh/h</ots:Level>
         <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="N" Destination="WO">
+      <ots:Cell Category="CAR" Destination="WO" Origin="N">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="E" Destination="SO">
+      <ots:Cell Category="CAR" Destination="SO" Origin="E">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="E" Destination="WO">
+      <ots:Cell Category="CAR" Destination="WO" Origin="E">
         <ots:Level Time="0s">300.00veh/h</ots:Level>
         <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="E" Destination="NO">
+      <ots:Cell Category="CAR" Destination="NO" Origin="E">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="S" Destination="WO">
+      <ots:Cell Category="CAR" Destination="WO" Origin="S">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="S" Destination="NO">
+      <ots:Cell Category="CAR" Destination="NO" Origin="S">
         <ots:Level Time="0s">300.00veh/h</ots:Level>
         <ots:Level Time="3600s">300.00veh/h</ots:Level>
       </ots:Cell>
-      <ots:Cell Category="CAR" Origin="S" Destination="EO">
+      <ots:Cell Category="CAR" Destination="EO" Origin="S">
         <ots:Level Time="0s">200.00veh/h</ots:Level>
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
     </ots:Od>
     <ots:OdOptions Id="OdOptions">
       <ots:OdOptionsItem>
-        <ots:Global />
+        <ots:Global/>
         <ots:LaneBiases>
-          <ots:LaneBias GtuType="NL.TRUCK" Bias="1.0" StickyLanes="2">
+          <ots:LaneBias Bias="1.0" GtuType="NL.TRUCK" StickyLanes="2">
             <ots:FromRight>0.2</ots:FromRight>
           </ots:LaneBias>
-          <ots:DefinedLaneBias GtuType="NL.ROAD_USER"></ots:DefinedLaneBias>
+          <ots:DefinedLaneBias GtuType="NL.ROAD_USER"/>
         </ots:LaneBiases>
       </ots:OdOptionsItem>
     </ots:OdOptions>
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" />
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="ECOEO" Position="END-20m" />
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="SCOSO" Position="END-20m" />
-    <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="WCOWO" Position="END-20m" />
+    <ots:Sink Lane="FORWARD" Link="NCONO" Position="END-20m" Type="NL.ROAD_USERS"/>
+    <ots:Sink Lane="FORWARD" Link="ECOEO" Position="END-20m" Type="NL.ROAD_USERS"/>
+    <ots:Sink Lane="FORWARD" Link="SCOSO" Position="END-20m" Type="NL.ROAD_USERS"/>
+    <ots:Sink Lane="FORWARD" Link="WCOWO" Position="END-20m" Type="NL.ROAD_USERS"/>
   </ots:Demand>
   <ots:Control>
     <ots:TrafCod Id="Complex TrafCOD demo">
       <ots:SignalGroup Id="01">
-        <ots:TrafficLight Link="E2EC" Lane="FORWARD3" TrafficLightId="01" />
+        <ots:TrafficLight Lane="FORWARD3" Link="E2EC" TrafficLightId="01"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="02">
-        <ots:TrafficLight Link="E2EC" Lane="FORWARD2" TrafficLightId="01" />
+        <ots:TrafficLight Lane="FORWARD2" Link="E2EC" TrafficLightId="02"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="03">
-        <ots:TrafficLight Link="E2EC" Lane="FORWARD1" TrafficLightId="01" />
+        <ots:TrafficLight Lane="FORWARD1" Link="E2EC" TrafficLightId="03"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="04">
-        <ots:TrafficLight Link="S2SC" Lane="FORWARD3" TrafficLightId="04" />
+        <ots:TrafficLight Lane="FORWARD3" Link="S2SC" TrafficLightId="04"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="05">
-        <ots:TrafficLight Link="S2SC" Lane="FORWARD2" TrafficLightId="05" />
+        <ots:TrafficLight Lane="FORWARD2" Link="S2SC" TrafficLightId="05"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="06">
-        <ots:TrafficLight Link="S2SC" Lane="FORWARD1" TrafficLightId="06" />
+        <ots:TrafficLight Lane="FORWARD1" Link="S2SC" TrafficLightId="06"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="07">
-        <ots:TrafficLight Link="W2WC" Lane="FORWARD3" TrafficLightId="07" />
+        <ots:TrafficLight Lane="FORWARD3" Link="W2WC" TrafficLightId="07"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="08">
-        <ots:TrafficLight Link="W2WC" Lane="FORWARD2" TrafficLightId="08" />
+        <ots:TrafficLight Lane="FORWARD2" Link="W2WC" TrafficLightId="08"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="09">
-        <ots:TrafficLight Link="W2WC" Lane="FORWARD1" TrafficLightId="09" />
+        <ots:TrafficLight Lane="FORWARD1" Link="W2WC" TrafficLightId="09"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="10">
-        <ots:TrafficLight Link="N2NC" Lane="FORWARD3" TrafficLightId="10" />
+        <ots:TrafficLight Lane="FORWARD3" Link="N2NC" TrafficLightId="10"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="11">
-        <ots:TrafficLight Link="N2NC" Lane="FORWARD2" TrafficLightId="11" />
+        <ots:TrafficLight Lane="FORWARD2" Link="N2NC" TrafficLightId="11"/>
       </ots:SignalGroup>
       <ots:SignalGroup Id="12">
-        <ots:TrafficLight Link="N2NC" Lane="FORWARD1" TrafficLightId="12" />
+        <ots:TrafficLight Lane="FORWARD1" Link="N2NC" TrafficLightId="12"/>
       </ots:SignalGroup>
-
       <ots:Detector Id="D011" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>E2EC</ots:Link>
@@ -495,7 +431,6 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-
       <ots:Detector Id="D041" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>S2SC</ots:Link>
@@ -544,7 +479,6 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-
       <ots:Detector Id="D071" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>W2WC</ots:Link>
@@ -593,7 +527,6 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-
       <ots:Detector Id="D101" Type="NL.TRAFFIC_LIGHT">
         <ots:SingleLane>
           <ots:Link>N2NC</ots:Link>
@@ -642,7 +575,6 @@
           <ots:ExitPosition>END-10m</ots:ExitPosition>
         </ots:SingleLane>
       </ots:Detector>
-
       <ots:Program>
 # Trafcod rules for D:\amsalomons\My Documents\surfdrive\Documents\VoorPeter-Kruising12Dir\Intersection12Dir.vri
 # Produced 2016-12-06 10:58:27
@@ -4442,7 +4374,7 @@ ReN12 .=ER12
       
       </ots:Program>
       <ots:Console>
-        <ots:Map Type="PNG" Encoding="BASE64">
+        <ots:Map Encoding="BASE64" Type="PNG">
 iVBORw0KGgoAAAANSUhEUgAAAlgAAANQCAIAAAB7IIZSAAAQlklEQVR4nO3dW3Lb1hJAUeGWB2qN
 TJ4p8iFfhqYeoSTIDWCv9ZVEJeaU7WRXg2yd5eHpARi0/lyXX8v0KaDrf9MHAIBJQghAmhACkCaE
 AKQJIQBpQghAmhACkCaEAKQtFuoBKDMRApAmhACkCSEAaUIIQJoQApAmhDBs/blOHwHShBCANCEE
@@ -4521,7 +4453,7 @@ hACkCSEAaRbqAUgzEQKQJoQApAkhAGlCCECaEAKQJoQwzEI9zBJCANKEEIA0IQQgTQgBSBNCANKE
 EIA0IQQg7R/Trv9D8BR3NwAAAABJRU5ErkJggg==
       </ots:Map>
         <ots:Coordinates>
-      <!--  mapfile=Intersection12Dir.png -->
+      
 light=01: 428, 310  428, 310
 detector=01.1: 464, 304 464, 304
 detector=01.2: 482, 304 482, 304
@@ -4567,12 +4499,11 @@ detector=12.2: 220, 242 220, 242
     <ots:NumberReplications>1</ots:NumberReplications>
     <ots:RandomStreams>
       <ots:RandomStream Id="default">
-        <ots:Replication Seed="1" Id="1" />
+        <ots:Replication Id="1" Seed="1"/>
       </ots:RandomStream>
       <ots:RandomStream Id="generation">
-        <ots:Replication Seed="1" Id="1" />
+        <ots:Replication Id="1" Seed="1"/>
       </ots:RandomStream>
     </ots:RandomStreams>
   </ots:Run>
-
 </ots:Ots>
